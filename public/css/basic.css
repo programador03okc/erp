@@ -31,3 +31,11 @@ body .login-box {
 .sidebar-mini.sidebar-collapse .main-header .logo > .logo-mini {
     font-size: 15px;
 }
+
+/* Estilos propios */
+.default-link,
+.default-link:active,
+.default-link:hover,
+.default-link:focus {
+    color: #222;
+}

@@ -46,11 +46,15 @@
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
-    @routes
+    <script src="{{ asset('js/function.js?')}}?v={{filemtime(public_path('js/function.js'))}}"></script>
+	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
+
+    <!-- // routes -->
     <script>
-        $(document).ready(function() {
-            const token = '{{ csrf_token() }}';
-        });
+        const token = '{{ csrf_token() }}';
+        var auth_user = JSON.parse('{!!$auth_user!!}');
+
+// 
     </script>
     @yield('scripts')
 </body>

@@ -104,11 +104,13 @@ class User extends Authenticatable
 
 	public function getUltimoRol()
 	{
-		return DB::table('configuracion.usuario_rol')
+		$rol = DB::table('configuracion.usuario_rol')
 			->select('usuario_rol.*', 'sis_rol.descripcion')
 			->join('configuracion.sis_rol', 'sis_rol.id_rol', '=', 'usuario_rol.id_rol')
 			->where('usuario_rol.id_usuario', $this->id_usuario)
-			->where('usuario_rol.estado', 1)->get();
+			->where('usuario_rol.estado', 1)
+			->orderBy('usuario_rol.id_usuario_rol', 'desc')->first();
+		return ($rol) ? $rol->descripcion : 'SN';
 	}
 
 	public function getAllRolUser($id)

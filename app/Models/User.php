@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Administracion\Empresa;
 use App\Models\Configuracion\Acceso;
 use App\Models\Configuracion\Rol;
+use App\Models\mgcp\Usuario\RolUsuario;
 use App\Models\Rrhh\Trabajador;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -211,4 +212,14 @@ class User extends Authenticatable
 	{
 		return ($this->trabajador->roles()->where('rrhh.rrhh_rol.id_rol_concepto', $role)->first()) ? true : false;
 	}
+
+    public function tieneRol($rol)
+    {
+        return (RolUsuario::where('id_usuario', $this->id)->where('id_rol', $rol)->count() > 0) ? true : false;
+    }
+
+    public static function obtenerPorRol($rol)
+    {
+        return User::whereRaw('id IN (SELECT id_usuario FROM mgcp_usuarios.roles_usuario WHERE id_rol=?)', [$rol])->orderBy('name', 'asc')->get();
+    }
 }

@@ -1,43 +1,58 @@
 <?php
 
+use App\Exports\CatalogoProductoExport;
+use App\Http\Controllers\Almacen\Catalogo\CategoriaController;
+use App\Http\Controllers\Almacen\Catalogo\ClasificacionController;
+use App\Http\Controllers\Almacen\Catalogo\MarcaController;
 use App\Http\Controllers\Almacen\Catalogo\ProductoController;
 use App\Http\Controllers\Almacen\Catalogo\SubCategoriaController;
+use App\Http\Controllers\Almacen\Movimiento\CustomizacionController;
+use App\Http\Controllers\Almacen\Movimiento\DevolucionController;
+use App\Http\Controllers\Almacen\Movimiento\GuiaSalidaExcelFormatoOKCController;
+use App\Http\Controllers\Almacen\Movimiento\GuiaSalidaExcelFormatoSVSController;
 use App\Http\Controllers\Almacen\Movimiento\IngresoPdfController;
+use App\Http\Controllers\Almacen\Movimiento\OrdenesPendientesController;
+use App\Http\Controllers\Almacen\Movimiento\ProrrateoCostosController;
+use App\Http\Controllers\Almacen\Movimiento\ReservasAlmacenController;
+use App\Http\Controllers\Almacen\Movimiento\SaldoProductoController;
+use App\Http\Controllers\Almacen\Movimiento\SalidaPdfController;
 use App\Http\Controllers\Almacen\Movimiento\SalidasPendientesController;
 use App\Http\Controllers\Almacen\Movimiento\TransferenciaController;
 use App\Http\Controllers\Almacen\Movimiento\TransformacionController;
+use App\Http\Controllers\Almacen\Reporte\KardexSerieController;
+use App\Http\Controllers\Almacen\Reporte\ListaRequerimientosAlmacenController;
+use App\Http\Controllers\Almacen\Reporte\ListaSalidasController;
+use App\Http\Controllers\Almacen\Reporte\ReportesController;
 use App\Http\Controllers\Almacen\Reporte\SaldosController;
+use App\Http\Controllers\Almacen\StockController;
 use App\Http\Controllers\Almacen\Ubicacion\AlmacenController as UbicacionAlmacenController;
+use App\Http\Controllers\Almacen\Ubicacion\PosicionController;
+use App\Http\Controllers\Almacen\Ubicacion\TipoAlmacenController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Cas\CasMarcaController;
+use App\Http\Controllers\Cas\CasModeloController;
+use App\Http\Controllers\Cas\CasProductoController;
+use App\Http\Controllers\Cas\FichaReporteController;
 use App\Http\Controllers\Cas\IncidenciaController;
 use App\Http\Controllers\Comercial\ClienteController;
 use App\Http\Controllers\ComprasPendientesController;
-use App\Http\Controllers\ConfiguracionController;
-use App\Http\Controllers\ContabilidadController;
-use App\Http\Controllers\EcommerceController;
-use App\Http\Controllers\Finanzas\CentroCosto\CentroCostoController;
-use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoController;
-use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
+use App\Http\Controllers\ComprobanteCompraController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
+use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
+use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
+use App\Http\Controllers\Logistica\Distribucion\OrdenesTransformacionController;
 use App\Http\Controllers\Logistica\RequerimientoController;
-use App\Http\Controllers\Logistica\Requerimientos\MapeoProductosController;
-use App\Http\Controllers\Logistica\Requerimientos\TrazabilidadRequerimientoController;
 use App\Http\Controllers\LogisticaController;
-use App\Http\Controllers\Migraciones\MigrateRequerimientoSoftLinkController;
-use App\Http\Controllers\NecesidadesController;
-use App\Http\Controllers\Notificaciones\NotificacionController;
-use App\Http\Controllers\OrdenController;
-use App\Http\Controllers\ProyectosController;
-use App\Http\Controllers\RecursosHumanosController;
-use App\Http\Controllers\RevisarAprobarController;
-use App\Http\Controllers\Tesoreria\RegistroPagoController;
-use App\Http\Controllers\Tesoreria\RequerimientoPagoController;
+use App\Http\Controllers\Migraciones\MigrateFacturasSoftlinkController;
+use App\Http\Controllers\Tesoreria\Facturacion\PendientesFacturacionController;
+use App\Http\Controllers\Tesoreria\Facturacion\VentasInternasController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use Maatwebsite\Excel\Facades\Excel;
 /*
 |--------------------------------------------------------------------------
 | Web Routes

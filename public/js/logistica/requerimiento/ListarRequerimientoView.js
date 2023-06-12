@@ -365,11 +365,6 @@ class ListarRequerimientoView {
                         imageColor: "#3c8dbc"
                     });
                 },
- 
-                // data: function (params) {
-                //     return Object.assign(params, Util.objectifyForm($('#form-requerimientosElaborados').serializeArray()))
-                // }
-
             },
             'columns': [
                 { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'visible': false },

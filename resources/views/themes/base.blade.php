@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/AdminLTE.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css//skins/skin-blue.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/skins/skin-blue.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/lobibox/dist/css/lobibox.min.css')}}">
     <link rel="stylesheet" href="{{ asset('css/basic.css') }}">
@@ -23,7 +23,7 @@
     <div class="wrapper">
         @include("themes/header")
         @include("themes/aside")
-        
+
         <div class="content-wrapper">
             <section class="content-header">
                 <h1>@yield('cabecera')</h1>
@@ -40,7 +40,7 @@
 
         <div class="control-sidebar-bg"></div>
     </div>
-    
+
     <script src="{{ asset('template/adminlte2-4/plugins/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/dist/js/adminlte.min.js') }}"></script>
@@ -49,7 +49,6 @@
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
     <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>
-    {{--  <script src="{{ asset('js/util.js') }}?v={{ filemtime(public_path('js/util.js')) }}"></script>  --}}
     <script>
         const token = '{{ csrf_token() }}';
         let auth_user = JSON.parse('{!!$auth_user!!}');

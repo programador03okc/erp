@@ -871,7 +871,168 @@ Route::middleware(['auth'])->group(function () {
 			});
 		});
 	});
+
+	/**
+	 * Garantías CAS
+	 */
+	Route::group(['as' => 'cas.', 'prefix' => 'cas'], function () {
+		Route::get('index', [TransformacionController::class,'view_main_cas'])->name('index');
+		Route::group(['as' => 'customizacion.', 'prefix' => 'customizacion'], function () {
+			Route::group(['as' => 'tablero-transformaciones.', 'prefix' => 'tablero-transformaciones'], function () {
+				Route::get('index', [OrdenesTransformacionController::class,'view_tablero_transformaciones'])->name('index');
+				Route::get('listarDespachosInternos/{fec}', [OrdenesDespachoInternoController::class,'listarDespachosInternos']);
+				Route::get('subirPrioridad/{id}', [OrdenesDespachoInternoController::class,'subirPrioridad']);
+				Route::get('bajarPrioridad/{id}', [OrdenesDespachoInternoController::class,'bajarPrioridad']);
+				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class,'pasarProgramadasAlDiaSiguiente']);
+				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class,'listarPendientesAnteriores']);
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class,'imprimir_transformacion']);
+				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class,'cambiaEstado']);
+			});
+
+			Route::group(['as' => 'gestion-customizaciones.', 'prefix' => 'gestion-customizaciones'], function () {
+				//Transformaciones
+				Route::get('index', [TransformacionController::class,'view_listar_transformaciones'])->name('index');
+				Route::get('listarTransformacionesProcesadas', [TransformacionController::class,'listarTransformacionesProcesadas']);
+				Route::post('listar_transformaciones_pendientes', [TransformacionController::class,'listar_transformaciones_pendientes']);
+				Route::post('listarCuadrosCostos', [TransformacionController::class,'listarCuadrosCostos']);
+				Route::post('generarTransformacion', [TransformacionController::class,'generarTransformacion']);
+				Route::get('obtenerCuadro/{id}/{tipo}', [TransformacionController::class,'obtenerCuadro']);
+				Route::get('mostrar_prods', [ProductoController::class,'mostrar_prods']);
+				Route::get('id_ingreso_transformacion/{id}', [TransformacionController::class,'id_ingreso_transformacion']);
+				Route::get('id_salida_transformacion/{id}', [TransformacionController::class,'id_salida_transformacion']);
+				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class,'imprimir_ingreso']);
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class,'imprimir_salida']);
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class,'imprimir_transformacion']);
+				Route::get('recibido_conforme_transformacion/{id}', [TransformacionController::class,'recibido_conforme_transformacion']);
+				Route::get('no_conforme_transformacion/{id}', [TransformacionController::class,'no_conforme_transformacion']);
+				Route::get('iniciar_transformacion/{id}', [TransformacionController::class,'iniciar_transformacion']);
+				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class,'obtenerArchivosOc'])->name('obtener-archivos-oc');
+			});
+
+			Route::group(['as' => 'hoja-transformacion.', 'prefix' => 'hoja-transformacion'], function () {
+				//Transformaciones
+				Route::get('index', [TransformacionController::class,'view_transformacion'])->name('index');
+				Route::post('guardar_transformacion', [TransformacionController::class,'guardar_transformacion']);
+				Route::post('update_transformacion', [TransformacionController::class,'update_transformacion']);
+				Route::get('listar_transformaciones/{tp}', [TransformacionController::class,'listar_transformaciones']);
+				Route::get('mostrar_transformacion/{id}', [TransformacionController::class,'mostrar_transformacion']);
+				Route::get('anular_transformacion/{id}', [TransformacionController::class,'anular_transformacion']);
+				Route::get('listar_materias/{id}', [TransformacionController::class,'listar_materias']);
+				Route::get('listar_directos/{id}', [TransformacionController::class,'listar_directos']);
+				Route::get('listar_indirectos/{id}', [TransformacionController::class,'listar_indirectos']);
+				Route::get('listar_sobrantes/{id}', [TransformacionController::class,'listar_sobrantes']);
+				Route::get('listar_transformados/{id}', [TransformacionController::class,'listar_transformados']);
+				Route::get('iniciar_transformacion/{id}', [TransformacionController::class,'iniciar_transformacion']);
+				Route::post('procesar_transformacion', [TransformacionController::class,'procesar_transformacion']);
+				Route::post('guardar_materia', [TransformacionController::class,'guardar_materia']);
+				Route::post('guardar_directo', [TransformacionController::class,'guardar_directo']);
+				Route::post('guardar_indirecto', [TransformacionController::class,'guardar_indirecto']);
+				Route::post('guardar_sobrante', [TransformacionController::class,'guardar_sobrante']);
+				Route::post('guardar_transformado', [TransformacionController::class,'guardar_transformado']);
+				Route::get('anular_materia/{id}', [TransformacionController::class,'anular_materia']);
+				Route::get('anular_directo/{id}', [TransformacionController::class,'anular_directo']);
+				Route::get('anular_indirecto/{id}', [TransformacionController::class,'anular_indirecto']);
+				Route::get('anular_sobrante/{id}', [TransformacionController::class,'anular_sobrante']);
+				Route::get('anular_transformado/{id}', [TransformacionController::class,'anular_transformado']);
+				Route::get('mostrar_prods', [ProductoController::class,'mostrar_prods']);
+				Route::post('guardar_producto', [ProductoController::class,'guardar_producto']);
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class,'imprimir_transformacion']);
+			});
+		});
+
+		Route::group(['as' => 'garantias.', 'prefix' => 'garantias'], function () {
+			Route::group(['as' => 'incidencias.', 'prefix' => 'incidencias'], function () {
+				Route::get('index', [IncidenciaController::class,'view_incidencia'])->name('index');
+				Route::get('listarIncidencias', [IncidenciaController::class,'listarIncidencias']);
+				Route::get('mostrarIncidencia/{id}', [IncidenciaController::class,'mostrarIncidencia']);
+				Route::get('listarSalidasVenta', [IncidenciaController::class,'listarSalidasVenta']);
+
+				Route::post('verDatosContacto', [OrdenesDespachoExternoController::class,'verDatosContacto']);
+				Route::get('listarContactos/{id}', [OrdenesDespachoExternoController::class,'listarContactos']);
+				Route::post('actualizaDatosContacto', [OrdenesDespachoExternoController::class,'actualizaDatosContacto']);
+				Route::get('seleccionarContacto/{id}/{req}', [OrdenesDespachoExternoController::class,'seleccionarContacto']);
+				Route::get('mostrarContacto/{id}', [OrdenesDespachoExternoController::class,'mostrarContacto']);
+				Route::get('anularContacto/{id}', [OrdenesDespachoExternoController::class,'anularContacto']);
+				Route::get('listar_ubigeos', [AlmacenController::class,'listar_ubigeos']);
+
+				Route::get('listarSeriesProductos/{id}', [IncidenciaController::class,'listarSeriesProductos']);
+				Route::post('guardarIncidencia', [IncidenciaController::class,'guardarIncidencia']);
+				Route::post('actualizarIncidencia', [IncidenciaController::class,'actualizarIncidencia']);
+				Route::get('anularIncidencia/{id}', [IncidenciaController::class,'anularIncidencia']);
+
+				Route::get('imprimirIncidencia/{id}', [IncidenciaController::class,'imprimirIncidencia']);
+				Route::get('imprimirFichaAtencionBlanco/{id}', [IncidenciaController::class,'imprimirFichaAtencionBlanco']);
+
+			});
+
+			Route::group(['as' => 'devolucionCas.', 'prefix' => 'devolucionCas'], function () {
+				//Devoluciones
+				Route::get('index', [DevolucionController::class,'viewDevolucionCas'])->name('index');
+				Route::post('mostrar_prods', [ProductoController::class,'mostrar_prods']);
+				Route::get('listarDevoluciones', [DevolucionController::class,'listarDevoluciones']);
+				Route::post('mostrarContribuyentes', [DevolucionController::class,'mostrarContribuyentes']);
+				Route::get('mostrarDevolucion/{id}', [DevolucionController::class,'mostrarDevolucion']);
+				Route::post('guardarDevolucion', [DevolucionController::class,'guardarDevolucion']);
+				Route::post('actualizarDevolucion', [DevolucionController::class,'actualizarDevolucion']);
+				Route::get('validarEdicion/{id}', [DevolucionController::class,'validarEdicion']);
+				Route::get('anularDevolucion/{id}', [DevolucionController::class,'anularDevolucion']);
+				Route::get('listarSalidasVenta/{alm}/{id}', [DevolucionController::class,'listarSalidasVenta']);
+				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class,'listarIngresos']);
+				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class,'obtenerMovimientoDetalle']);
+				Route::get('listarIncidencias', [IncidenciaController::class,'listarIncidencias']);
+			});
+
+			Route::group(['as' => 'fichas.', 'prefix' => 'fichas'], function () {
+				Route::get('index', [FichaReporteController::class,'view_ficha_reporte'])->name('index');
+				Route::post('listarIncidencias', [FichaReporteController::class,'listarIncidencias']);
+				Route::post('guardarFichaReporte', [FichaReporteController::class,'guardarFichaReporte']);
+				Route::post('actualizarFichaReporte', [FichaReporteController::class,'actualizarFichaReporte']);
+				Route::get('anularFichaReporte/{id}', [FichaReporteController::class,'anularFichaReporte']);
+				Route::get('listarFichasReporte/{id}', [FichaReporteController::class,'listarFichasReporte']);
+				Route::post('cerrarIncidencia', [FichaReporteController::class,'cerrarIncidencia']);
+				Route::post('cancelarIncidencia', [FichaReporteController::class,'cancelarIncidencia']);
+
+				Route::get('verAdjuntosFicha/{id}', [FichaReporteController::class,'verAdjuntosFicha'])->name('ver-adjuntos-ficha');
+
+				Route::get('imprimirFichaReporte/{id}', [FichaReporteController::class,'imprimirFichaReporte']);
+				Route::get('incidenciasExcel', [FichaReporteController::class,'incidenciasExcel'])->name('incidenciasExcel');
+				Route::get('incidenciasExcelConHistorial', [FichaReporteController::class,'incidenciasExcelConHistorial'])->name('incidenciasExcelConHistorial');
+
+				Route::get('listarDevoluciones', [DevolucionController::class,'listarDevoluciones']);
+				Route::post('guardarFichaTecnica', [DevolucionController::class,'guardarFichaTecnica']);
+				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class,'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
+				Route::post('conformidadDevolucion', [DevolucionController::class,'conformidadDevolucion'])->name('conformidad-devolucion');
+				Route::get('revertirConformidad/{id}', [DevolucionController::class,'revertirConformidad'])->name('revertir-devolucion');
+
+                Route::post('clonarIncidencia', [FichaReporteController::class,'clonarIncidencia']);
+			});
+            Route::group(['as' => 'marca.', 'prefix' => 'marca'], function () {
+                Route::get('inicio', [CasMarcaController::class,'inicio'])->name('inicio');
+                Route::post('listar', [CasMarcaController::class,'listar'])->name('listar');
+                Route::post('guardar', [CasMarcaController::class,'guardar'])->name('guardar');
+                Route::get('editar', [CasMarcaController::class,'editar'])->name('editar');
+                Route::post('actualizar', [CasMarcaController::class,'actualizar'])->name('actualizar');
+                Route::post('eliminar', [CasMarcaController::class,'eliminar'])->name('eliminar');
+			});
+
+            Route::group(['as' => 'modelo.', 'prefix' => 'modelo'], function () {
+                Route::get('inicio', [CasModeloController::class,'inicio'])->name('inicio');
+                Route::post('listar', [CasModeloController::class,'listar'])->name('listar');
+                Route::post('guardar', [CasModeloController::class,'guardar'])->name('guardar');
+                Route::get('editar', [CasModeloController::class,'editar'])->name('editar');
+                Route::post('actualizar', [CasModeloController::class,'actualizar'])->name('actualizar');
+                Route::post('eliminar', [CasModeloController::class,'eliminar'])->name('eliminar');
+			});
+
+            Route::group(['as' => 'producto.', 'prefix' => 'producto'], function () {
+                Route::get('inicio', [CasProductoController::class,'inicio'])->name('inicio');
+                Route::post('listar', [CasProductoController::class,'listar'])->name('listar');
+                Route::post('guardar', [CasProductoController::class,'guardar'])->name('guardar');
+                Route::get('editar', [CasProductoController::class,'editar'])->name('editar');
+                Route::post('actualizar', [CasProductoController::class,'actualizar'])->name('actualizar');
+                Route::post('eliminar', [CasProductoController::class,'eliminar'])->name('eliminar');
+			});
+
+		});
+	});
 });
-
-
-

@@ -19,12 +19,11 @@
     @yield('estilos')
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini skin-home">
     <div class="wrapper">
         @include("themes/header")
-        @include("themes/aside")
         
-        <div class="content-wrapper">
+        <div class="okc-content">
             <section class="content-header">
                 <h1>@yield('cabecera')</h1>
                 @yield('breadcrumb')
@@ -33,10 +32,6 @@
                 @yield('cuerpo')
             </section>
         </div>
-
-        <footer class="main-footer">
-            <div class="pull-right hidden-xs"></div>Copyright &copy; 2023 Sistema AGILE
-        </footer>
 
         <div class="control-sidebar-bg"></div>
     </div>
@@ -47,16 +42,11 @@
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
+    <script src="{{ asset('js/function.js?')}}?v={{filemtime(public_path('js/function.js'))}}"></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
-    <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>
-    {{--  <script src="{{ asset('js/util.js') }}?v={{ filemtime(public_path('js/util.js')) }}"></script>  --}}
     <script>
         const token = '{{ csrf_token() }}';
         let auth_user = JSON.parse('{!!$auth_user!!}');
-
-        $(document).ready(function(){
-            Util.seleccionarMenu(window.location);
-        });
     </script>
     @yield('scripts')
 </body>

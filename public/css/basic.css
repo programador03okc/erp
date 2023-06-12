@@ -39,3 +39,6 @@ body .login-box {
 .default-link:focus {
     color: #222;
 }
+.dataTables_wrapper .dataTables_filter {
+    text-align: right;
+}

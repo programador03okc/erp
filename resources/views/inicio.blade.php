@@ -1,4 +1,4 @@
-@extends('themes.base')
+@extends('themes.base_home')
 
 @section('titulo') Bienvenido @endsection
 

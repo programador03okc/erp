@@ -39,8 +39,8 @@ class HomeController extends Controller
             '<div class="col-md-3">
                 <div class="box box-default box-solid">
                     <div class="box-header with-border">Módulo</div>
-                    <div class="box-body">
-                        <h4><a class="default-link" href="'.$link.'">'.$name.'</a></h4>
+                    <div class="box-body ">
+                        <h4><a class="default-link" href="'.$link.'/index">'.$name.'</a></h4>
                     </div>
                 </div>
             </div>';
@@ -48,12 +48,12 @@ class HomeController extends Controller
         return $html;
     }
 
-    public function notasLanzamiento()
-    {
-		return DB::table('configuracion.nota_lanzamiento')
+    public function notasLanzamiento(){
+		$data = DB::table('configuracion.nota_lanzamiento')
             ->select('nota_lanzamiento.*', 'detalle_nota_lanzamiento.*')
             ->join('configuracion.detalle_nota_lanzamiento', 'detalle_nota_lanzamiento.id_nota_lanzamiento', '=', 'nota_lanzamiento.id_nota_lanzamiento')
             ->where('nota_lanzamiento.estado', 1)->where('nota_lanzamiento.version_actual', true)
             ->orderBy('detalle_nota_lanzamiento.fecha_detalle_nota_lanzamiento', 'desc')->get();
+		return $data;
     }
 }

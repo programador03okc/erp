@@ -71,7 +71,6 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::name('configuracion.')->prefix('configuracion')->group(function () { // TODO : falta agregar rutas
-
         Route::get('index', [ConfiguracionController::class, 'view_main_configuracion'])->name('index');
     });
     
@@ -156,8 +155,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}',[PresupuestoInternoController::class],'comboPresupuestoInterno')->name('combo-presupuesto-interno');
                 Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}',[PresupuestoInternoController::class],'PresupuestoInternoController')->name('obtener-detalle-presupuesto-interno');
                 Route::get('obtener-lista-proyectos/{idGrupo?}',[RequerimientoController::class],'obtenerListaProyectos')->name('obtener-lista-proyectos');
-    
             });
+
             Route::name('listado.')->prefix('listado')->group(function () {
                 Route::get('index', [RequerimientoController::class, 'viewLista'])->name('index');
                 Route::post('elaborados', [RequerimientoController::class, 'listarRequerimientosElaborados'])->name('elaborados');
@@ -188,11 +187,9 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('listar-categoria-adjunto', [RequerimientoController::class, 'mostrarCategoriaAdjunto'])->name('listar-categoria-adjunto');
                 Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
                 Route::get('listar-flujo/{idDocumento}', [RevisarAprobarController::class, 'mostrarTodoFlujoAprobacionDeDocumento'])->name('listar-flujo');
-    
             });
     
             Route::name('mapeo.')->prefix('mapeo')->group(function () {
-    
                 Route::get('index', [MapeoProductosController::class, 'view_mapeo_productos'])->name('index');
                 Route::post('listarRequerimientos', [MapeoProductosController::class, 'listarRequerimientos'])->name('listar-requerimiento');
                 Route::get('itemsRequerimiento/{id}', [MapeoProductosController::class, 'itemsRequerimiento'])->name('items-requerimiento');
@@ -243,13 +240,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
                 Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
                 Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
-    
             });
         });
     
         Route::name('revisar-aprobar.')->prefix('revisar-aprobar')->group(function () {
             Route::name('listado.')->prefix('listado')->group(function () {
-    
                 Route::get('index', [RevisarAprobarController::class, 'viewListaRequerimientoPagoPendienteParaAprobacion'])->name('index');
                 Route::post('documentos-pendientes', [RevisarAprobarController::class, 'mostrarListaDeDocumentosPendientes'])->name('documentos-pendientes');
                 Route::post('documentos-aprobados', [RevisarAprobarController::class, 'mostrarListaDeDocumentosAprobados'])->name('documentos-aprobados');
@@ -269,9 +264,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('crear', [EcommerceController::class, 'crear'])->name('crear');
             Route::post('guardar', [EcommerceController::class, 'guardar'])->name('guardar');
             Route::post('buscar-trabajador', [EcommerceController::class, 'buscarTrabajador'])->name('buscar-trabajador');
-    
         });
-    
     });
 });
 

@@ -48,13 +48,9 @@
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
     <script src="{{ asset('js/function.js?')}}?v={{filemtime(public_path('js/function.js'))}}"></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
-
-    <!-- // routes -->
     <script>
         const token = '{{ csrf_token() }}';
-        var auth_user = JSON.parse('{!!$auth_user!!}');
-
-// 
+        let auth_user = JSON.parse('{!!$auth_user!!}');
     </script>
     @yield('scripts')
 </body>

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/AdminLTE.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css//skins/skin-blue.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/skins/skin-blue.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/lobibox/dist/css/lobibox.min.css')}}">
     <link rel="stylesheet" href="{{ asset('css/basic.css') }}">
@@ -22,7 +22,7 @@
     <div class="wrapper">
         @include("themes/header")
         @include("themes/aside")
-        
+
         <div class="content-wrapper">
             <section class="content-header">
                 <h1>@yield('cabecera')</h1>
@@ -39,17 +39,43 @@
 
         <div class="control-sidebar-bg"></div>
     </div>
-    
+
     <script src="{{ asset('template/adminlte2-4/plugins/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/dist/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('js/function.js?')}}?v={{filemtime(public_path('js/function.js'))}}"></script>
     @routes
     <script>
+        const token = '{{ csrf_token() }}';
         $(document).ready(function() {
-            const token = '{{ csrf_token() }}';
+            // const token = '{{ csrf_token() }}';
         });
+        function seleccionarMenu(url) {
+			$('ul.sidebar-menu a').filter(function() {
+				return this.href == url;
+
+			}).parent().addClass('active');
+
+			$('ul.treeview-menu a').filter(function() {
+				return this.href == url;
+			}).parentsUntil(".sidebar-menu > .treeview-menu").addClass('active');
+
+			// sidebar with box collapsed-box
+			$('ul.treeview-menu a').filter(function() {
+				return this.href == url;
+			}).parents("div.box.collapsed-box.active").find('div.box-body.active').removeAttr('style');;
+
+			$('ul.treeview-menu a').filter(function() {
+				return this.href == url;
+			}).parents("div.box.collapsed-box.active").removeClass('collapsed-box');
+
+			$('ul.treeview-menu a').filter(function() {
+				return this.href == url;
+			}).parents('div.box.active').find("button.btn.btn-box-tool i").attr("class", "fa fa-minus");
+		}
     </script>
     @yield('scripts')
 </body>

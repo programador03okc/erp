@@ -333,7 +333,7 @@ Customización
 
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         usuarioSession = '{{Auth::user()->id_usuario}}';
         usuarioNombreSession = '{{Auth::user()->nombre_corto}}';
     });

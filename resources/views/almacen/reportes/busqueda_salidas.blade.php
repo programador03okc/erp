@@ -178,7 +178,7 @@ Detalle de Salidas
     <script>
     $(document).ready(function(){
         vista_extendida();
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

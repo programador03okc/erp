@@ -288,7 +288,7 @@
         };
 
         $(document).ready(function() {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
             $(".sidebar-mini").addClass("sidebar-collapse");
             const compras = new Compras(csrf_token, array_accesos, idioma);
             compras.listar();

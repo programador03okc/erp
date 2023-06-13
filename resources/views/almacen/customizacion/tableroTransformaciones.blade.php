@@ -120,7 +120,7 @@
 
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         vista_extendida();
         $('#fecha_programacion').val(fecha_actual());
         listarDespachosInternos();

@@ -94,7 +94,7 @@ Centros de Costos
     <script src="{{('/js/finanzas/centro_costos/centro_costos.js')}}"></script>
     <script>
         $(document).ready(function () {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
             mostrarCentroCostos();
         });
     </script>

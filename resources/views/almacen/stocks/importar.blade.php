@@ -90,7 +90,7 @@ Importar Inicial
 
     <script>
     // $(document).ready(function(){
-    //     seleccionarMenu(window.location);
+    //     Util.seleccionarMenu(window.location);
     //     iniciar('{{Auth::user()->tieneAccion(83)}}');
     // });
     </script>

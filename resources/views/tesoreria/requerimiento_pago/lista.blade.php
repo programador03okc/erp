@@ -110,7 +110,7 @@ Listado de requerimientos de pago
 
 @section('scripts')
 <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('js/util.js')}}"></script>
+
 <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -137,7 +137,7 @@ Listado de requerimientos de pago
     var gruposUsuario = JSON.parse('{!!$gruposUsuario!!}');
 
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         // console.log('initializeEventHandlerListaRequerimientoPago');
 
         const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));

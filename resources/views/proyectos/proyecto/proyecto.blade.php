@@ -77,7 +77,7 @@ Proyectos
     <script src="{{ asset('js/logistica/clienteModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

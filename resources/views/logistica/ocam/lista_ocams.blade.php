@@ -168,7 +168,7 @@
     <script>
 
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         inicializarRutasListadoOrdenesPropias(
             "{{route('logistica.gestion-logistica.ocam.listado.ordenes-propias')}}"
             );

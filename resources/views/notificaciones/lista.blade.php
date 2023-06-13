@@ -48,7 +48,7 @@
 <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('js/util.js')}}"></script>
+
 <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
 <script>
@@ -56,7 +56,7 @@
     var iTableCounter = 1;
     var oInnerTable;
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        Util.Util.seleccionarMenu(window.location);
 
         const $tabla = $('#tablaNotificacion').DataTable({
             pageLength: 20,

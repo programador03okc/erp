@@ -87,7 +87,7 @@ Gestión de Despachos Internos
 
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
         listarRequerimientosPendientes();
     });

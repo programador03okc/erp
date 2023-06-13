@@ -85,7 +85,7 @@ Tipo de Insumos
     <script src="{{ asset('js/proyectos/variables/tipo_insumo.js') }}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

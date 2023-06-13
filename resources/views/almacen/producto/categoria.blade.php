@@ -104,7 +104,7 @@ Categoría
 <script src="{{ asset('js/almacen/producto/categoria.js')}}"></script>
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
 </script>
 @endsection

@@ -8,11 +8,11 @@
     <title>@yield('titulo') - AGILE</title>
     <link rel="shortcut icon" href="{{ asset('images/icono.ico') }}" />
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/AdminLTE.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/skins/skin-blue.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/lobibox/dist/css/lobibox.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/basic.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">

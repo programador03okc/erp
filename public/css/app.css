@@ -390,28 +390,6 @@ body .login-box {
   color: #000;
 }
 
-/*.page-main h5,
-.page-main input,
-.page-main select,
-.page-main textarea {
-    font-size: 13px;
-}*/
-
-/*
-.page-main *{
-    font-family: 'Open Sans', sans-serif;
-    font-size: 13px;
-} */
-
-.page-main i,
-.page-main span.icon-span-filestyle {
-  /* font-family: "Font Awesome 5 Free"; */
-}
-
-.page-main span.glyphicon-folder-open:before {
-  font-family: "Glyphicons Halflings";
-}
-
 .page-main .input-group-text i {
   font-size: 16px;
   padding: 4px;
@@ -436,13 +414,6 @@ label.btn-primary > span {
   font-weight: bold;
 }
 
-/*.page-main .form-control {
-    height: 32px;
-    border-radius: 5px;
-    font-size: 13px;
-    border-radius: 0;
-}*/
-
 .page-main .row {
   margin-bottom: 10px;
 }
@@ -453,49 +424,11 @@ label.btn-primary > span {
   resize: none;
 }
 
-/*.table-okc-view{
-    width: 100%;
-    font-family: 'Open Sans' , sans-serif;
-    font-size: 13px;
-}*/
-
 .table-okc-view thead {
   background-color: #57616a;
   color: #fff;
   font-weight: bolder;
 }
-
-/*.table-okc-view thead tr th,
-.table-okc-view tbody tr td{
-    padding: 5px;
-}*/
-
-/*.table-okc-view tbody{
-    background-color: #fff;
-}*/
-
-/* dataTables */
-
-/*.modal .dataTables_wrapper{
-    font-size: 13px;
-    font-family: 'Open Sans' , sans-serif;
-}
-.modal .dataTables_wrapper table thead,
-.page-main .dataTables_wrapper table thead{
-    background-color: #57616a;
-    color: #fff;
-}
-.modal .dataTables_wrapper table tbody tr,
-.page-main .dataTables_wrapper table tbody tr{
-    background-color: #fff;
-    cursor: pointer;
-}
-.dataTables_wrapper .dataTables_filter{
-    margin-top: 25px;
-}
-.dataTables_wrapper .dataTables_filter label{
-    width: 100%;
-}*/
 
 #planex .select2-container--default .select2-selection--single {
   border-radius: 0;
@@ -537,42 +470,6 @@ label.btn-primary > span {
   background-color: #ebebe4;
 }
 
-/*#productosSugeridos_wrapper .dataTables_filter label input[type="search"],
-#productosCatalogo_wrapper .dataTables_filter label input[type="search"]{
-    width: 300px;
-}*/
-
-/*.modal #listaProducto_processing{
-    top: 70%;
-    text-align: center;
-    z-index: 9999;
-    border: none;
-    background: transparent !important;
-}*/
-
-/*
-.dataTables_wrapper .dataTables_length{
-    width: 50%;
-    display: inline-block;
-    text-align: left;
-}
-.dataTables_wrapper .dt-buttons{
-    float: none;
-    width: 50%;
-    display: inline-block;
-    text-align: right;
-}
-.dataTables_wrapper .dt-buttons .btn{
-    float: none;
-}
-.dataTables_wrapper .dataTables_length select,
-.dataTables_filter label input[type="search"]{
-    border-radius: 4px;
-}
-.dataTables_wrapper table tbody{
-    font-size: 12px;
-}*/
-
 .modal button span i {
   font-size: 18px;
 }
@@ -587,15 +484,6 @@ button.btn-default span i.fa-file-excel {
 
 button.btn-default span i.fa-copy {
   color: #2b70b6;
-}
-
-span.fa,
-span.fas {
-  font-family: "Font Awesome 5 Free";
-}
-
-span .glyphicon {
-  font-family: "Glyphicons Halflings";
 }
 
 .table-focus {

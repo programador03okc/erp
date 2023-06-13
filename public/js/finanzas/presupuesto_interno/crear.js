@@ -1491,8 +1491,9 @@ $('[name="empresa_id"]').change(function (e) {
     console.log(id);
     $.ajax({
         type: 'GET',
-        url: '/necesidades/requerimiento/elaboracion/listar-sedes-por-empresa/'+id,
-        data: {},
+        url: 'listar-sedes-por-empresa/'+id,
+        data: {
+        },
         // processData: false,
         // contentType: false,
         dataType: 'JSON',

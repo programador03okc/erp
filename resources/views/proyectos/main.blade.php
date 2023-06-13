@@ -94,7 +94,7 @@
 <script src="{{ asset('js/proyectos/dashboardProyectos.js') }}"></script>
 <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
 </script>
 @endsection

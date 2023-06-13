@@ -91,13 +91,13 @@ class GestionCustomizacion {
                     'render':
                         function (data, type, row) {
                             return (row['estado'] == 21 ? (row['conformidad'] ?
-                                `<button type="button" class="conformidad btn btn-success boton" data-toggle="tooltip" 
+                                `<button type="button" class="conformidad btn btn-success boton" data-toggle="tooltip"
                         data-placement="bottom" data-id="${row['id_transformacion']}" title="Cambiar a No Conforme" >
-                        <i class="fas fa-check"></i></button>` :
+                        <i class="fa fa-check"></i></button>` :
 
-                                `<button type="button" class="noconformidad btn btn-danger boton" data-toggle="tooltip" 
+                                `<button type="button" class="noconformidad btn btn-danger boton" data-toggle="tooltip"
                         data-placement="bottom" data-id="${row['id_transformacion']}" title="Cambiar a Recibido Conforme" >
-                        <i class="fas fa-times"></i></button>`) :
+                        <i class="fa fa-times"></i></button>`) :
 
                                 row['estado'] == 24 ? '<i class="fas fa-check green" style="font-size: 15px;"></i>'
                                     : ((row['estado'] == 1 || row['estado'] == 25) ? '' : '<i class="fas fa-check-double blue"  style="font-size: 15px;"></i>'));
@@ -160,14 +160,14 @@ class GestionCustomizacion {
                     data: 'id_transformacion',// searchable: 'false',
                     'render':
                         function (data, type, row) {
-                            return (`<button type="button" class="imprimir btn btn-info btn-flat boton" data-toggle="tooltip" 
+                            return (`<button type="button" class="imprimir btn btn-info btn-flat boton" data-toggle="tooltip"
                                     data-placement="bottom" title="Imprimir Hoja de Transformación" data-id="${row['id_transformacion']}">
-                                    <i class="fas fa-print"></i></button>`+
+                                    <i class="fa fa-print"></i></button>`+
                                 (row['estado'] == 21 ? //entregado
-                                    `<button type="button" class="iniciar btn btn-primary btn-flat boton" data-toggle="tooltip" 
+                                    `<button type="button" class="iniciar btn btn-primary btn-flat boton" data-toggle="tooltip"
                                     data-placement="bottom" title="Iniciar Transformación" data-id="${row['id_transformacion']}"
                                     data-estado="${row['estado']}">
-                                    <i class="fas fa-step-forward"></i></button>`: '')
+                                    <i class="fa fa-step-forward"></i></button>`: '')
                             );
                         }
                 },
@@ -540,7 +540,7 @@ function mostrarCuadros() {
             <td>${element.descripcion}</td>
             <td>${element.total}</td>
             <td>
-                <i class="fas fa-trash icon-tabla red boton delete" 
+                <i class="fas fa-trash icon-tabla red boton delete"
                 data-toggle="tooltip" data-placement="bottom" title="Eliminar" ></i>
             </td>
         </tr>`;

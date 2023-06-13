@@ -174,7 +174,7 @@ Listado de requerimientos logísticos
 
 @section('scripts')
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
-    <script src="{{ asset('js/util.js')}}"></script>
+    
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -196,7 +196,7 @@ Listado de requerimientos logísticos
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
 
         $(document).ready(function() {
-            // seleccionarMenu(window.location); &// TODO
+            // Util.seleccionarMenu(window.location); &// TODO
             const requerimientoModel = new RequerimientoModel();
             const requerimientoController = new RequerimientoCtrl(requerimientoModel);
             const listarRequerimientoView = new ListarRequerimientoView(requerimientoController);

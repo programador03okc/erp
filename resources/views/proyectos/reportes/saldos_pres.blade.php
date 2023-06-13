@@ -86,7 +86,7 @@ Saldos Presupuesto
     <script src="{{ asset('js/proyectos/reportes/estPresejeModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

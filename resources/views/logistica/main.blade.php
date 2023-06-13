@@ -105,7 +105,7 @@
 {{-- <script src="{{ asset('js/almacen/dashboardAlmacen.js')}}"></script> --}}
 <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
 </script>
 @endsection

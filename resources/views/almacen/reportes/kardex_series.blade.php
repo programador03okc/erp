@@ -107,7 +107,7 @@ Búsqueda sensitiva de Series
 
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

@@ -134,7 +134,7 @@ Revisar y aprobar requerimientos
 
 @section('scripts')
 <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('js/util.js')}}"></script>
+
 <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/logistica/requerimiento/scrollToTheTopOfDocument.js') }}"></script>
@@ -153,7 +153,7 @@ var grupos = JSON.parse('{!!$gruposUsuario!!}');
 
 
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm');
         $.fn.dataTable.moment('DD-MM-YYYY');

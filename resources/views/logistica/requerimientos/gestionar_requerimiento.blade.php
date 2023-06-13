@@ -721,7 +721,7 @@ Crear / editar requerimiento
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/util.js')}}"></script>
+    
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -781,7 +781,7 @@ Crear / editar requerimiento
         autoSelectTipoRequerimientoPorDefecto();
 
         window.onload = function() {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
             var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
             var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
             document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form

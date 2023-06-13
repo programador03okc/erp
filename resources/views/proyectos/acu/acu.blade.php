@@ -84,7 +84,7 @@ Análisis de Costos Unitarios
 <script src="{{ asset('js/proyectos/presupuesto/verAcu.js') }}"></script>
 <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         // inicializar("{{route('proyectos.variables-entorno.sistemas-contrato.listar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.mostrar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.guardar')}}");
         // listar();
 

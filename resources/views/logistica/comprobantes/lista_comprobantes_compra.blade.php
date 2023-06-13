@@ -81,7 +81,7 @@
 
     <script>
         $(document).ready(function() {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
             // $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
             // iniciar('{{Auth::user()->tieneAccion(83)}}');
             listar_doc_compra();

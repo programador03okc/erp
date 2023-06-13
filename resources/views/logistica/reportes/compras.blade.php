@@ -42,7 +42,7 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/util.js')}}"></script>
+    
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -58,7 +58,7 @@
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         $(document).ready(function() {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
             const comprasLocales = new ComprasLocales();
             comprasLocales.mostrar('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 3 , 'SIN_FILTRO', 6);
 

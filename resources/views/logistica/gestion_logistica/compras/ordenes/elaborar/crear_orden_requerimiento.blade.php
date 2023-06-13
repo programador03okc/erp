@@ -468,7 +468,7 @@ Orden de compra / servicio
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/util.js')}}"></script>
+    
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -479,7 +479,7 @@ Orden de compra / servicio
 
     <script>
         $(document).ready(function() {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
             $(".sidebar-mini").addClass("sidebar-collapse");
             $('input[type="checkbox"].minimal').iCheck({ checkboxClass: 'icheckbox_minimal-blue' });
         });

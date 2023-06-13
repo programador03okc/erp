@@ -144,7 +144,7 @@ Gestión de incidencias
 
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
         vista_extendida();
         listarIncidencias();

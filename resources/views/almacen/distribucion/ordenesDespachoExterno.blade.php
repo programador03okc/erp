@@ -172,7 +172,7 @@ Gestión de Despachos
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
 
         let usuario = '{{Auth::user()->nombre_corto}}';

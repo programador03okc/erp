@@ -89,7 +89,7 @@ Cuadro de gastos
 <script>
     // let csrf_token = "{{ csrf_token() }}";
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         
     });
 </script>

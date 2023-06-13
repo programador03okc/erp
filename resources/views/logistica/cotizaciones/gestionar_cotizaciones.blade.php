@@ -293,7 +293,7 @@
     <script src="{{('/js/publico/consulta_sunat.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         inicializar(
             "{{route('logistica.gestion-logistica.cotizacion.gestionar.select-sede-by-empresa')}}"
             );

@@ -405,7 +405,7 @@ body .login-box {
 
 .page-main i,
 .page-main span.icon-span-filestyle {
-  font-family: "Font Awesome 5 Free";
+  /* font-family: "Font Awesome 5 Free"; */
 }
 
 .page-main span.glyphicon-folder-open:before {

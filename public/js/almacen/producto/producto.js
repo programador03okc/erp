@@ -444,7 +444,7 @@ function listar_promociones(id_producto) {
                 'render': function (data, type, row) {
                     return '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" ' +
                         'data-placement="bottom" title="Dar de Baja" data-id="' + row['id_promocion'] + '">' +
-                        '<i class="fas fa-trash"></i></button>';
+                        '<i class="fa fa-trash"></i></button>';
                 }, targets: 6
             }
         ]

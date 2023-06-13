@@ -150,7 +150,7 @@ function mostrarContactos() {
         let sel = parseInt(element.id_datos_contacto) == parseInt(id_contacto);
 
         html += `<tr>
-            <td>${sel ? '<i class="fas fa-check green" style="font-size: 15px;"></i>'
+            <td>${sel ? '<i class="fa fa-check green" style="font-size: 15px;"></i>'
                 : ''}</td>
             <td>${element.nombre}</td>
             <td>${element.telefono}</td>
@@ -160,15 +160,15 @@ function mostrarContactos() {
             <td>${element.horario}</td>
             <td>
                 <div style="display:flex;">
-                    <button type="button" class="seleccionar btn btn-${sel ? 'success' : 'default'} btn-flat btn-xs boton" 
+                    <button type="button" class="seleccionar btn btn-${sel ? 'success' : 'default'} btn-flat btn-xs boton"
                         data-toggle="tooltip" data-placement="bottom" data-id="${element.id_datos_contacto}" title="Seleccionar contacto">
-                        <i class="fas fa-check"></i></button>
-                    <button type="button" class="editar btn btn-primary btn-flat btn-xs boton" 
+                        <i class=" fa-check"></i></button>
+                    <button type="button" class="editar btn btn-primary btn-flat btn-xs boton"
                         data-toggle="tooltip" data-placement="bottom" data-id="${element.id_datos_contacto}" title="Editar contacto">
-                        <i class="fas fa-pencil-alt"></i></button>
-                    <button type="button" class="anular btn btn-danger btn-flat btn-xs boton" 
+                        <i class="fa fa-pencil-alt"></i></button>
+                    <button type="button" class="anular btn btn-danger btn-flat btn-xs boton"
                         data-toggle="tooltip" data-placement="bottom" data-id="${element.id_datos_contacto}" title="Anular contacto">
-                        <i class="fas fa-trash"></i></button>
+                        <i class="fa fa-trash"></i></button>
                 </div>
             </td>
             </tr>`;

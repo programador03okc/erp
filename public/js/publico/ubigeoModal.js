@@ -29,11 +29,11 @@ function listarUbigeos() {
                     function (data, type, row) {
                         let action = `
                     <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-success btn-sm" name="btnSeleccionarUbigeo" title="Seleccionar ubigeo" 
+                        <button type="button" class="btn btn-success btn-sm" name="btnSeleccionarUbigeo" title="Seleccionar ubigeo"
                         data-ubigeo-descripcion="${row.descripcion + ' - ' + row.provincia + ' - ' + row.departamento}"
                         data-id-ubigeo="${row.id_dis}"
                         onclick="selectUbigeo(this);">
-                        <i class="fas fa-check"></i>
+                        <i class="fa fa-check"></i>
                         </button>
                     </div>
                     `;

@@ -1,29 +1,29 @@
-@extends('layout.main')
-@include('layout.menu_cas')
 
-@section('cabecera')
-Productos
-@endsection
+@extends('themes.base')
 
+@section('cabecera') Productos @endsection
+@include('layouts.menu_cas')
 @section('estilos')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
-<style>
-    .d-none{
-        display: none;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
-    <li><a href="{{route('cas.index')}}"><i class="fas fa-tachometer-alt"></i> Servicios CAS</a></li>
+    <li><a href="{{route('cas.index')}}"><i class="fa fa-tachometer"></i> Servicios CAS</a></li>
     <li>Garantías</li>
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 
 <div class="page-main" type="incidencia">
 
@@ -48,7 +48,7 @@ Productos
                                             <th hidden></th>
                                             <th>codigo</th>
                                             <th>descripcion</th>
-                                            <th width="70px">Acción</th>
+                                            <th width="90px">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -124,16 +124,18 @@ Productos
 @include('almacen.distribucion.ordenDespachoContacto')
 @include('almacen.distribucion.agregarContacto')
 @include('publico.ubigeoModal')
+
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 
 <script src="{{ asset('js/cas/cas_producto/producto.js') }}"></script>
 
@@ -150,4 +152,5 @@ Productos
         });
     });
 </script>
+
 @endsection

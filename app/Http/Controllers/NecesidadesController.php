@@ -19,7 +19,7 @@ class NecesidadesController extends Controller
 
     function view_main_necesidades()
     {
-        return view('necesidades/main');
+        return view('necesidades.main');
     }
 
 }

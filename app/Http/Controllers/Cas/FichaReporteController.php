@@ -27,7 +27,7 @@ class FichaReporteController extends Controller
         $usuarios = Usuario::join('configuracion.usuario_rol', 'usuario_rol.id_usuario', '=', 'sis_usua.id_usuario')
             ->where([['sis_usua.estado', '=', 1], ['usuario_rol.id_rol', '=', 20]])->get(); //20 CAS
 
-        return view('cas/fichasReporte/fichaReporte', compact('usuarios'));
+        return view('cas.fichasReporte.fichaReporte', compact('usuarios'));
     }
 
     function incidencias()

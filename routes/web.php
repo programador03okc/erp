@@ -126,7 +126,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('mostrar-centro-costos', [CentroCostoController::class, 'mostrarCentroCostosSegunGrupoUsuario'])->name('mostrar-centro-costos');
                 Route::post('guardar-requerimiento', [RequerimientoController::class, 'guardarRequerimiento'])->name('guardar-requerimiento');
                 Route::post('actualizar-requerimiento', [RequerimientoController::class, 'actualizarRequerimiento'])->name('actualizar-requerimiento');
-                Route::get('listar-sedes-por-empresa', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
+                Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
                 Route::get('mostrar-requerimiento/{id?}/{codigo?}', [RequerimientoController::class, 'mostrarRequerimiento'])->name('mostrar-requerimiento');
                 Route::post('elaborados', [RequerimientoController::class, 'listarRequerimientosElaborados'])->name('elaborados');
                 Route::post('imprimir-requerimiento-pdf/{id}/{codigo}', [RequerimientoController::class, 'generar_requerimiento_pdf'])->name('imprimir-requerimiento-pdf');

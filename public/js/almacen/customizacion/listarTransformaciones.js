@@ -233,11 +233,11 @@ class GestionCustomizacion {
                         function (data, type, row) {
                             return ('<button type="button" class="salida btn btn-success btn-flat boton" data-toggle="tooltip" ' +
                                 'data-placement="bottom" title="Ver Salida" data-id="' + row['id_salida'] + '">' +
-                                '<i class="fa fa-sign-out"></i></button>' +
+                                '<i class="fa fa-sign-out-alt"></i></button>' +
 
                                 '<button type="button" class="ingreso btn btn-primary btn-flat boton" data-toggle="tooltip" ' +
                                 'data-placement="bottom" title="Ver Ingreso" data-id="' + row['id_ingreso'] + '">' +
-                                '<i class="fa fa-sign-in"></i></button>');
+                                '<i class="fa fa-sign-in-alt"></i></button>');
                         }
                 },
             ],

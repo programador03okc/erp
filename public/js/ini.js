@@ -11,10 +11,18 @@ $.ajaxSetup({
 $(document).ready(function () {
 	// $(":file").filestyle();
     // verificar si lo usaremos-------------------------------
-	// $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-	// 	checkboxClass: 'icheckbox_flat-green',
-	// 	radioClass: 'iradio_flat-green'
-	// });
+	$('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+		checkboxClass: 'icheckbox_flat-red',
+		radioClass: 'iradio_flat-red'
+	});
+	$('input[type="checkbox"].flat-green, input[type="radio"].flat-green').iCheck({
+		checkboxClass: 'icheckbox_flat-green',
+		radioClass: 'iradio_flat-green'
+	});
+	$('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+		checkboxClass: 'icheckbox_minimal-red',
+		radioClass: 'iradio_minimal-red'
+	});
     // ----------------------------------------------------
 	// $('.js-example-basic-single').select2();
 

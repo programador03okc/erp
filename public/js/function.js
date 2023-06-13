@@ -1169,10 +1169,10 @@ function funcDatatables() {
     };
     var dtdom = "Bfrtip"; //l=lenght / B=button / f=filter / rt=read table
     var dtbuttons = [
-        { extend: "copy", text: '<i class="fas fa-copy"></i>' },
-        { extend: "excel", text: '<i class="fas fa-file-excel"></i>' },
-        { extend: "pdf", text: '<i class="fas fa-file-pdf"></i>' },
-        { extend: "print", text: '<i class="fas fa-print"></i>' }
+        { extend: "copy", text: '<i class="fa fa-copy"></i>' },
+        { extend: "excel", text: '<i class="fa fa-file-excel"></i>' },
+        { extend: "pdf", text: '<i class="fa fa-file-pdf"></i>' },
+        { extend: "print", text: '<i class="fa fa-print"></i>' }
         //falta agregar titulos a los export
     ];
 

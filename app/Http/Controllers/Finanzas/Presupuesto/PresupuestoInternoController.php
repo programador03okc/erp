@@ -1767,5 +1767,9 @@ class PresupuestoInternoController extends Controller
 
         // return response()->json($historial_saldo,200);
     }
+    public function listarSedesPorEmpresa($idEmpresa)
+    {
+        return Sede::listarSedesPorEmpresa($idEmpresa);
+    }
 
 }

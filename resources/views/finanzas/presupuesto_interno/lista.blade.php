@@ -1,23 +1,28 @@
-@extends('layout.main')
-@include('layout.menu_finanzas')
+@extends('themes.base')
 
-@section('cabecera')
-Lista de Presupuestos Interno
-@endsection
-
+@section('cabecera') Lista de Presupuestos Interno @endsection
+@include('layouts.menu_finanzas')
 @section('estilos')
-<link rel="stylesheet" href="{{asset('template/plugins/select2/select2.min.css')}}">
+<link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/select2/css/select2.min.css')}}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
-    <ol class="breadcrumb">
-        <li><a href="{{route('finanzas.index')}}"><i class="fa fa-usd"></i> Finanzas</a></li>
-        <li class="active"> @yield('cabecera')</li>
-    </ol>
+<ol class="breadcrumb">
+    <li><a href="{{route('finanzas.index')}}"><i class="fa fa-usd"></i> Finanzas</a></li>
+    <li class="active"> @yield('cabecera')</li>
+</ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
     @if (in_array(303,$array_accesos))
         <div class="box box-solid">
             <div class="box-header with-border">
@@ -138,19 +143,26 @@ Lista de Presupuestos Interno
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
+
+
+
+
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
+
+
+
+    {{-- <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
     <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
-    <script src="{{asset('template/plugins/select2/select2.min.js')}}"></script>
+    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script> --}}
+    <script src="{{asset('template/adminlte2-4/plugins/select2/js/select2.min.js')}}"></script>
 
     <script src="{{ asset('js/finanzas/presupuesto_interno/lista.js') }}"></script>
 
@@ -219,4 +231,8 @@ Lista de Presupuestos Interno
             return repo.partida || repo.text;
         }
     </script>
+
 @endsection
+
+
+{{-- ------------------------------------- --}}

@@ -24,7 +24,7 @@
         @include("themes/header")
         @include("themes/aside")
 
-        <div class="content-wrapper">
+        <div class="content-wrapper" id="wrapper-okc">
             <section class="content-header">
                 <h1>@yield('cabecera')</h1>
                 @yield('breadcrumb')

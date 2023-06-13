@@ -56,6 +56,7 @@ use App\Http\Controllers\LogisticaController;
 use App\Http\Controllers\Migraciones\MigrateFacturasSoftlinkController;
 use App\Http\Controllers\NecesidadesController;
 use App\Http\Controllers\ProyectosController;
+use App\Http\Controllers\RequerimientoController as ControllersRequerimientoController;
 use App\Http\Controllers\Tesoreria\Facturacion\PendientesFacturacionController;
 use App\Http\Controllers\Tesoreria\Facturacion\VentasInternasController;
 use App\Http\Controllers\TestController;
@@ -1050,7 +1051,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['as' => 'finanzas.', 'prefix' => 'finanzas'], function () {
 		// Finanzas
 		Route::get('index', function () {
-			return view('finanzas/main');
+			return view('finanzas.main');
 		})->name('index');
 
 		Route::group(['as' => 'lista-presupuestos.', 'prefix' => 'lista-presupuestos'], function () {
@@ -1105,6 +1106,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('buscar-partida-combo', [PresupuestoInternoController::class,'buscarPartidaCombo']);
                 // prueba de presupuestos
 				Route::get('cierre-mes', [PresupuestoInternoController::class,'cierreMes']);
+
+				Route::get('listar-sedes-por-empresa/{id}', [PresupuestoInternoController::class,'listarSedesPorEmpresa']);
 
                 Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
                     Route::get('generar-presupuesto-gastos', [ScriptController::class,'generarPresupuestoGastos']);

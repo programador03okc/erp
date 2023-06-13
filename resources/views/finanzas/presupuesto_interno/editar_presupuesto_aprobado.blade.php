@@ -1,32 +1,34 @@
-@extends('layout.main')
-@include('layout.menu_finanzas')
 
-@section('cabecera')
-Presupuesto Interno
-@endsection
 
+@extends('themes.base')
+
+@section('cabecera') Presupuesto Interno @endsection
+@include('layouts.menu_finanzas')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
-<style>
-    .lbl-codigo:hover{
+    <style>
+        .lbl-codigo:hover{
         color:#007bff !important;
         cursor:pointer;
     }
-    .d-none{
-        display: none;
-    }
-</style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
-    <ol class="breadcrumb">
-        <li><i class="fa fa-usd"></i> Finanzas </li>
-        <li class="active"> @yield('cabecera')</li>
-    </ol>
+<ol class="breadcrumb">
+    <li><i class="fa fa-usd"></i> Finanzas </li>
+    <li class="active"> @yield('cabecera')</li>
+</ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 @if (in_array(302,$array_accesos))
     <form action="{{ route('finanzas.presupuesto.presupuesto-interno.actualizar') }}" method="post" data-form="editar-partida" enctype="multipart/formdata">
         <input type="hidden" name="id_presupuesto_interno" value="{{ $id }}">
@@ -1544,28 +1546,33 @@ Presupuesto Interno
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-    @if (in_array(302,$array_accesos))
-    <script>
-        let array = {!! json_encode($array_porcentajes) !!};
-        // $elemento_array
-        $(document).ready(function () {
-            $('select[name="mes"] option[value="'+"{{$presupuesto_interno->mes}}"+'"]').attr('selected',true);
-        });
-    </script>
 
-    <script src="{{asset('js/finanzas/presupuesto_interno/crear.js') }}""></script>
-    @endif
+{{-- <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
+<script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
+<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+{{-- <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script> --}}
+<script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
+@if (in_array(302,$array_accesos))
+<script>
+    let array = {!! json_encode($array_porcentajes) !!};
+    // $elemento_array
+    $(document).ready(function () {
+        $('select[name="mes"] option[value="'+"{{$presupuesto_interno->mes}}"+'"]').attr('selected',true);
+    });
+</script>
+
+<script src="{{asset('js/finanzas/presupuesto_interno/crear.js') }}""></script>
+@endif
+
 @endsection
+
+
+{{-- ------------------- --}}

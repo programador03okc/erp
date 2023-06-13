@@ -1,33 +1,37 @@
-@extends('layout.main')
-@include('layout.menu_finanzas')
 
-@section('cabecera')
-Lista de Presupuestos
-@endsection
+@extends('themes.base')
 
+@section('cabecera') Lista de Presupuestos @endsection
+@include('layouts.menu_finanzas')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}">
-<style>
-    .lbl-codigo:hover{
-        color:#007bff !important; 
-        cursor:pointer;
-    }
-</style>
-@endsection
+{{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}
 
+    <style>
+        .lbl-codigo:hover{
+            color:#007bff !important;
+            cursor:pointer;
+        }
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
+@endsection
 @section('breadcrumb')
-    <ol class="breadcrumb">
-        <li><a href="{{route('finanzas.index')}}"><i class="fa fa-usd"></i> Finanzas</a></li>
-        <li class="active"> @yield('cabecera')</li>
-    </ol>
+<ol class="breadcrumb">
+    <li><a href="{{route('finanzas.index')}}"><i class="fa fa-usd"></i> Finanzas</a></li>
+    <li class="active"> @yield('cabecera')</li>
+</ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
     <div class="box box-solid">
         <div class="box-header with-border">
             <h3 class="box-title">Datos Generales</h3>
             <div class="box-tools pull-right">
-                {{-- <button type="button" data-toggle="modal" data-target="actualizarPartidas" 
+                {{-- <button type="button" data-toggle="modal" data-target="actualizarPartidas"
                     title="Actualizar descripcion de partidas" class="btn btn-box-tool btn-sm btn-info"
                     onClick="actualizarPartidas();">
                     <i class="fas fa-sync-alt"></i>
@@ -37,7 +41,7 @@ Lista de Presupuestos
         <div class="box-body">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="mytable table table-condensed table-bordered table-okc-view" 
+                    <table class="mytable table table-condensed table-bordered table-okc-view"
                         id="listaPresupuestos">
                         <thead>
                             <tr>
@@ -70,19 +74,13 @@ Lista de Presupuestos
 
 @section('scripts')
 
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> -->
-    <!-- <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-    <script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
+
 
     <script>
         $(document).ready(function () {
@@ -123,4 +121,5 @@ Lista de Presupuestos
         }
 
     </script>
+
 @endsection

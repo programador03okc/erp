@@ -11,7 +11,7 @@ function lista() {
     const button_nuevo = (array_accesos.find(
         element => element === 297)?
             {
-            text: '<i class="fas fa-plus"></i> Nuevo presupuesto',
+            text: '<i class="fa fa-plus"></i> Nuevo presupuesto',
             attr: {
                 id: 'btn-nuevo',
                 href:'crear',
@@ -28,7 +28,7 @@ function lista() {
     const button_cierrre_mes = (array_accesos.find(
         element => element === 314)?
             {
-            text: '<i class="fas fa-calendar-times"></i> Cierre mensual',
+            text: '<i class="fa fa-calendar-times"></i> Cierre mensual',
             attr: {
                 id: 'btn-cierre-mensual',
             },
@@ -55,6 +55,7 @@ function lista() {
             type: "POST",
             data:{
                 // filtros
+                _token:token
             },
             beforeSend: data => {
                 $("#lista-presupuesto-interno").LoadingOverlay("show", {
@@ -100,25 +101,25 @@ function lista() {
                 render: function (data, type, row) {
                     html='';
                         (array_accesos.find(element => element === 300)?
-                        html+='<button type="button" class="btn text-black btn-flat botonList ver-presupuesto-interno" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Exportar Excel" data-original-title="Ver"><i class="fas fa-file-excel"></i></button>'
+                        html+='<button type="button" class="btn text-black btn-flat botonList ver-presupuesto-interno" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Exportar Excel" data-original-title="Ver"><i class="fa fa-file-excel"></i></button>'
                         :'');
                         (array_accesos.find(element => element === 298)?
-                        html+='<button type="button" class="btn btn-warning btn-flat botonList editar-registro" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar" data-original-title="Editar"><i class="fas fa-edit"></i></button>'
+                        html+='<button type="button" class="btn btn-warning btn-flat botonList editar-registro" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar" data-original-title="Editar"><i class="fa fa-edit"></i></button>'
                         :'');
                         if (row['estado']==2) {
                             (array_accesos.find(element => element === 302)?
-                            html+='<button type="button" class="btn btn-danger btn-flat botonList editar-registro-aprobado" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar Presupuesto Interno Aprobado" data-original-title="Editar"><i class="fas fa-edit"></i></button>'
+                            html+='<button type="button" class="btn btn-danger btn-flat botonList editar-registro-aprobado" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar Presupuesto Interno Aprobado" data-original-title="Editar"><i class="fa fa-edit"></i></button>'
                             :'');
                         }
                         // html+='<button type="button" class="btn btn-info btn-flat botonList editar-monto-partida" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar monto por partida" data-original-title="Editar"><i class="fas fa-pencil-alt"></i></button>';
 
                         if (row['estado']==1) {
                             (array_accesos.find(element => element === 301)?
-                            html+='<button type="button" class="btn btn-success btn-flat botonList aprobar-presupuesto" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Aprobar" data-original-title="Aprobar"><i class="fas fa-thumbs-up"></i></button>'
+                            html+='<button type="button" class="btn btn-success btn-flat botonList aprobar-presupuesto" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Aprobar" data-original-title="Aprobar"><i class="fa fa-thumbs-up"></i></button>'
                             :'');
 
                             (array_accesos.find(element => element === 299)?
-                            html+='<button type="button" class="btn btn-danger btn-flat botonList eliminar" data-id="'+row['id_presupuesto_interno']+'" title="Eliminar"><i class="fas fa-trash"></i></button>'
+                            html+='<button type="button" class="btn btn-danger btn-flat botonList eliminar" data-id="'+row['id_presupuesto_interno']+'" title="Eliminar"><i class="fa fa-trash"></i></button>'
                             :'');
                         }
 
@@ -330,7 +331,9 @@ function cierreMesual() {
             return $.ajax({
                 type: 'GET',
                 url: 'cierre-mes',
-                data: {},
+                data: {
+                    _token:token
+                },
                 // processData: false,
                 // contentType: false,
                 dataType: 'JSON',

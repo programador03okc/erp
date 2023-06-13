@@ -1,12 +1,13 @@
-@extends('layout.main')
-@include('layout.menu_config')
+@extends('themes.base')
+@include('layouts.menu_config')
 
-@section('cabecera')
-    Gestión de Usuarios
-@endsection
+@section('titulo') Gestión de Usuarios @endsection
 
 @section('estilos')
-    <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 @endsection
 
 @section('breadcrumb')
@@ -17,7 +18,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="usuarios">
     <legend class="mylegend">
         <h2>Usuarios</h2>
@@ -59,7 +60,6 @@
                                 <th>Usuario</th>
                                 <th>Clave</th>
                                 <th>Email</th>
-                                {{-- <th>Rol</th> --}}
                                 <th>Fecha Registro</th>
                                 <th width="15%">Acción</th>
                             </tr>
@@ -434,7 +434,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" tabindex="-1" role="dialog" id="modal_cambio_clave">
     <div class="modal-dialog" style="width: 50%;">
         <form action="" data-form="cambio-clave">
@@ -469,6 +468,7 @@
 
     </div>
 </div>
+
 <div class="modal fade" tabindex="-1" role="dialog" id="modal_accesos">
     <div class="modal-dialog" style="width: 50%;">
         <form action="" data-form="cambio-clave">
@@ -546,7 +546,7 @@
                                     </div>
                                     <div class="tab-pane" id="tab_3">
                                         Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                        Lorem Ipsum has been the industry standard dummy text ever since the 1500s,
                                         when an unknown printer took a galley of type and scrambled it to make a type specimen book.
                                         It has survived not only five centuries, but also the leap into electronic typesetting,
                                         remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
@@ -865,20 +865,16 @@
 
 @endsection
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
 
-
-    <script src="{{('/js/configuracion/usuario.js')}}"></script>
-    <script src="{{('/js/configuracion/modal_asignar_accesos.js')}}"></script>
-    <script src="{{ asset('js/proyectos/residentes/trabajadorModal.js')}}"></script>
+    <script src="{{ asset('js/configuracion/usuario.js') }}"></script>
+    <script src="{{ asset('js/configuracion/modal_asignar_accesos.js') }}"></script>
+    <script src="{{ asset('js/proyectos/residentes/trabajadorModal.js') }}"></script>
 @endsection

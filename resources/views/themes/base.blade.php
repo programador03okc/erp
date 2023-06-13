@@ -27,7 +27,7 @@
 
         <div class="content-wrapper" id="wrapper-okc">
             <section class="content-header">
-                <h1>@yield('cabecera')</h1>
+                <h1>@yield('titulo')</h1>
                 @yield('breadcrumb')
             </section>
             <section class="content">
@@ -56,14 +56,8 @@
     <script>
         const token = '{{ csrf_token() }}';
         let auth_user = JSON.parse('{!!$auth_user!!}');
-
-        /*
-        $(document).ready(function(){
-            Util.seleccionarMenu(window.location);
-        });
-        */
     </script>
+    @routes
     @yield('scripts')
 </body>
-
 </html>

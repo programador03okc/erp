@@ -89,7 +89,7 @@
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         $(document).ready(function() {
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
 
             const proveedorModel = new ProveedorModel();
             const proveedorController = new ProveedorCtrl(proveedorModel);

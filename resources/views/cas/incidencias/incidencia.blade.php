@@ -580,7 +580,7 @@ Registro de incidencia
 
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         $(".select2").select2({
             tags: true
         });

@@ -75,7 +75,7 @@ Opciones Comerciales
     <script src="{{ asset('js/publico/consulta_sunat.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

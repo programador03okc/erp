@@ -42,7 +42,7 @@
 <script src="{{ asset('template/plugins/chartjs/Chart.min.js') }}"></script>
  <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
 </script>
 @endsection

@@ -87,7 +87,7 @@ Lista de Presupuestos
     <script>
         $(document).ready(function () {
 
-            seleccionarMenu(window.location);
+            Util.seleccionarMenu(window.location);
 
             var vardataTables = funcDatatables();
 

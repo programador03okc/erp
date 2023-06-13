@@ -324,7 +324,7 @@ Orden de Transformación
 
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
 </script>
 @endsection

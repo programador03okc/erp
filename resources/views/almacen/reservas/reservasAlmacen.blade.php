@@ -105,7 +105,7 @@ Reservas de almacén
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         listarReservasAlmacen('{{Auth::user()->id_usuario}}');
         // $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
     //     iniciar('{{Auth::user()->tieneAccion(85)}}');

@@ -68,7 +68,7 @@ Reportes de transito de ordenes de compra
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/util.js')}}"></script>
+
 <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -85,7 +85,7 @@ Reportes de transito de ordenes de compra
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         const transitoOrdenesCompra = new TransitoOrdenesCompra();
         transitoOrdenesCompra.mostrar();
         transitoOrdenesCompra.initializeEventHandler();

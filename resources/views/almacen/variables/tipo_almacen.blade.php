@@ -86,7 +86,7 @@
     <script src="{{ asset('js/almacen/ubicacion/tipo_almacen.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

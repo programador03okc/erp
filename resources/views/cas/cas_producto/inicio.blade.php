@@ -144,7 +144,7 @@ Productos
     const route_eliminar = "{{ route('cas.garantias.producto.eliminar') }}";
     $(document).ready(function() {
 
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         $(".select2").select2({
             tags: true
         });

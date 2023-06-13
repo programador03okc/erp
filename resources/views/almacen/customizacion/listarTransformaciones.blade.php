@@ -111,48 +111,47 @@
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    {{-- <script src="{{ asset('datatables/Buttons/js/buttons.procesadasl5.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
+    {{-- <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
 
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
-{{-- <script src="{{ asset('datatables/Buttons/js/buttons.procesadasl5.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
-{{-- <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
-<script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
-{{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
 
+    <script src="{{ asset('js/almacen/customizacion/listarTransformaciones.js')}}"></script>
+    <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}"></script>
+    <script>
+        $(document).ready(function() {
+            Util.seleccionarMenu(window.location);
+            vista_extendida();
+            let gestionCustomizacion = new GestionCustomizacion('{{Auth::user()->tieneAccion(125)}}');
 
-<script src="{{ asset('js/almacen/customizacion/listarTransformaciones.js')}}"></script>
-<script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}"></script>
-<script>
-    $(document).ready(function() {
-        seleccionarMenu(window.location);
-        vista_extendida();
-        let gestionCustomizacion = new GestionCustomizacion('{{Auth::user()->tieneAccion(125)}}');
-
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-            let tab = $(e.target).attr("href") // activated tab
-            if (tab == '#pendientes') {
-                if ($('#listaTransformacionesPendientes tbody tr').length > 0) {
-                    // $('#listaTransformacionesPendientes').DataTable().ajax.reload();
-                    $("#listaTransformacionesPendientes").DataTable().ajax.reload(null, false);
-                } else {
-                    gestionCustomizacion.listarTransformacionesPendientes();
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                let tab = $(e.target).attr("href") // activated tab
+                if (tab == '#pendientes') {
+                    if ($('#listaTransformacionesPendientes tbody tr').length > 0) {
+                        // $('#listaTransformacionesPendientes').DataTable().ajax.reload();
+                        $("#listaTransformacionesPendientes").DataTable().ajax.reload(null, false);
+                    } else {
+                        gestionCustomizacion.listarTransformacionesPendientes();
+                    }
+                } else if (tab == '#procesadas') {
+                    if ($('#listaTransformacionesMadres tbody tr').length > 0) {
+                        $('#listaTransformacionesMadres').DataTable().ajax.reload();
+                    } else {
+                        gestionCustomizacion.listarTransformaciones();
+                    }
                 }
-            } else if (tab == '#procesadas') {
-                if ($('#listaTransformacionesMadres tbody tr').length > 0) {
-                    $('#listaTransformacionesMadres').DataTable().ajax.reload();
-                } else {
-                    gestionCustomizacion.listarTransformaciones();
-                }
-            }
+            });
         });
-    });
-</script>
+    </script>
 
 @endsection
 
@@ -284,7 +283,7 @@ Gestión de Transformaciones
 <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}"></script>
 <script>
     $(document).ready(function() {
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
         vista_extendida();
         let gestionCustomizacion = new GestionCustomizacion('{{Auth::user()->tieneAccion(125)}}');
 

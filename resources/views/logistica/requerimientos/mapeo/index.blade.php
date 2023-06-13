@@ -73,7 +73,7 @@ Mapeo de Productos
 
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
 
         let mapeo = new MapeoProductos();
         mapeo.listarRequerimientos();

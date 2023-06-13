@@ -160,7 +160,7 @@ Requerimientos pendientes
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/util.js')}}"></script>
+
 <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -191,7 +191,7 @@ Requerimientos pendientes
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm');
         $.fn.dataTable.moment('DD-MM-YYYY');
 
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             let tab = $(e.target).attr("href") // activated tab

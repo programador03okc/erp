@@ -98,7 +98,7 @@ Estructura del Presupuesto
     <script src="{{ asset('js/proyectos/presupuesto/pardetModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

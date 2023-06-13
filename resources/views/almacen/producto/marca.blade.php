@@ -101,7 +101,7 @@
     <script src="{{ asset('js/almacen/producto/marca.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

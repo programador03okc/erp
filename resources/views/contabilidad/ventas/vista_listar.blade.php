@@ -82,7 +82,7 @@
     <script>
 
 $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
 
     });
 

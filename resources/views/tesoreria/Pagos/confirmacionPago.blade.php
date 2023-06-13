@@ -111,7 +111,7 @@ Confirmación de Pagos
     <script src="{{ asset('js/almacen/distribucion/requerimientoDetalle.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
 
         let confirmacionPago=new ConfirmacionPago('{{Auth::user()->tieneAccion(78)}}');
 

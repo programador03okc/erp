@@ -88,7 +88,7 @@ Documentos de Prorrateo
     <script src="{{ asset('js/almacen/reporte/docs_prorrateo.js')}}"></script>
     <script>
     $(document).ready(function(){
-        seleccionarMenu(window.location);
+        Util.seleccionarMenu(window.location);
     });
     </script>
 @endsection

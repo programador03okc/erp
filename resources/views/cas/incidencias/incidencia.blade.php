@@ -442,14 +442,11 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group " style="margin-bottom:5px;">
-                                    <div class="col-sm-6">
-                                        <div class="icheckbox_flat-blue">
-                                            <label style="display:flex;">
-                                                {{-- <input type="checkbox" class="flat-red activation" name="equipo_operativo" value="0"> --}}
-                                                <span style="margin-top: 7px;margin-bottom: 10px;margin-right: 25px;">Equipo operativo</span>
-                                                <input type="checkbox" name="equipo_operativo" style="margin-top: 10px;"/>
-                                            </label>
-                                        </div>
+                                    <label class="col-sm-4 control-label">Equipo operativo</label>
+                                    <div class="col-sm-8">
+                                        <label>
+                                            <input type="checkbox" name="equipo_operativo" class="flat-red">
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="form-group " style="margin-bottom:5px;">
@@ -553,7 +550,6 @@
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 
     <script src="{{ asset('js/cas/incidencias/incidenciaModal.js')}}?v={{filemtime(public_path('js/cas/incidencias/incidenciaModal.js'))}}"></script>
     <script src="{{ asset('js/cas/incidencias/salidasVentaModal.js')}}?v={{filemtime(public_path('js/cas/incidencias/salidasVentaModal.js'))}}"></script>

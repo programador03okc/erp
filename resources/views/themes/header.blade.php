@@ -5,7 +5,9 @@
     </a>
 
     <nav class="navbar navbar-static-top">
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button"><span class="sr-only">Toggle navigation</span></a>
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+            <i class="fa fa-bars"></i>
+        </a>
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li>
@@ -15,8 +17,8 @@
                     <a href="#">Sobre Agile</a>
                 </li>
                 <li class="dropdown notifications-menu">
-                    <a href="{#" class="dropdown-toggle">
-                        <i class="fa fa-bell-o"></i>
+                    <a href="#" class="dropdown-toggle">
+                        <i class="fa fa-bell"></i>
                         <span id="spanNotificaciones" class="label label-default">0</span>
                     </a>
                 </li>

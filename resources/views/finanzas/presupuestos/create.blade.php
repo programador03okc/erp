@@ -1,42 +1,47 @@
-@extends('layout.main')
-@include('layout.menu_finanzas')
 
-@section('cabecera')
-Presupuesto
-@endsection
+@extends('themes.base')
 
+@section('cabecera') Orden de Transformación @endsection
+@include('layouts.menu_finanzas')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}">
-<style>
+{{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}
+
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
     .lbl-codigo:hover{
-        color:#007bff !important; 
+        color:#007bff !important;
         cursor:pointer;
     }
-</style>
+    </style>
 @endsection
-
 @section('breadcrumb')
-    <ol class="breadcrumb">
-        <li><i class="fa fa-usd"></i> Finanzas </li>
-        <li class="active"> @yield('cabecera')</li>
-    </ol>
+<ol class="breadcrumb">
+    <li><i class="fa fa-usd"></i> Finanzas </li>
+    <li class="active"> @yield('cabecera')</li>
+</ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 <div class="box box-solid">
     <div class="box-header with-border">
         <h3 class="box-title">Datos Generales</h3>
         <div class="box-tools pull-right">
             <div class="btn-group" role="group">
-                <button data-toggle="modal" title="Nuevo Presupuesto" 
+                <button data-toggle="modal" title="Nuevo Presupuesto"
                     class="btn btn-sm btn-success nuevo-presupuesto">
                     <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
                 </button>
-                <button data-toggle="modal" title="Editar Datos Generales" 
+                <button data-toggle="modal" title="Editar Datos Generales"
                     class="btn btn-sm btn-warning editar-presupuesto">
                     <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
                 </button>
-                <button type="button" data-toggle="modal" data-target="#presupuestosModal" 
+                <button type="button" data-toggle="modal" data-target="#presupuestosModal"
                     title="Buscar Presupuesto" class="btn btn-sm btn-info">
                     <i class="glyphicon glyphicon-search" aria-hidden="true"></i>
                 </button>
@@ -50,7 +55,7 @@ Presupuesto
         <div class="row">
             <div class="col-md-12">
 
-                <input style="display: none" name="id_presup"/> 
+                <input style="display: none" name="id_presup"/>
                 <div class="form-horizontal">
                     <div class="form-group">
                         <label class="col-md-1 control-label">Código:</label>
@@ -97,7 +102,7 @@ Presupuesto
             </ul>
             <div class="tab-content">
                 <div id="partidas" class="tab-pane fade in active">
-                    
+
                     {{-- <div class="row" >
                         <div class="col-md-12"> --}}
 
@@ -106,7 +111,7 @@ Presupuesto
                                     <h3 class="box-title">Partidas</h3>
                                     <div class="box-tools pull-right">
                                         <div class="btn-group" role="group">
-                                            <button data-toggle="tooltip" data-placement="bottom" title="Nuevo Título" 
+                                            <button data-toggle="tooltip" data-placement="bottom" title="Nuevo Título"
                                                 class="btn btn-success btn-sm nuevo-titulo">
                                                 <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
                                             </button>
@@ -143,7 +148,7 @@ Presupuesto
                             <h3 class="box-title">Cuadro de Gastos</h3>
                             <div class="box-tools pull-right">
                                 <div class="btn-group" role="group">
-                                    <button data-toggle="tooltip" data-placement="bottom" title="Exportar a excel" 
+                                    <button data-toggle="tooltip" data-placement="bottom" title="Exportar a excel"
                                         class="btn btn-success btn-sm exportar" style="color:#fff !important;" onClick="exportarCuadroCostos()">
                                         <i class="fas fa-file-excel"></i> Exportar a excel
                                     </button>
@@ -153,7 +158,7 @@ Presupuesto
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="table table-sm table-hover table-bordered dt-responsive nowrap" 
+                                    <table class="table table-sm table-hover table-bordered dt-responsive nowrap"
                                     id="listaGastosPartidas" style="font-size: 13px">
                                         <thead style="background: gainsboro;">
                                             <tr>
@@ -196,21 +201,21 @@ Presupuesto
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
+
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    {{-- <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
     <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
     <script>
-        // let csrf_token = "{{ csrf_token() }}";
         $(document).ready(function () {
             Util.seleccionarMenu(window.location);
         });
@@ -221,4 +226,9 @@ Presupuesto
     <script src="{{('/js/finanzas/presupuestos/partida.js')}}"></script>
     <script src="{{('/js/finanzas/presupuestos/detalle.js')}}"></script>
     <script src="{{('/js/finanzas/presupuestos/cuadroGastos.js')}}"></script>
+
 @endsection
+
+
+{{-- ----------------------- --}}
+

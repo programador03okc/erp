@@ -1,7 +1,16 @@
-@extends('layout.main')
-@include('layout.menu_finanzas')
-@section('cabecera')
-    Dashboard Finanzas
+@extends('themes.base')
+
+@section('cabecera') Dashboard Finanzas @endsection
+@include('layouts.menu_finanzas')
+@section('estilos')
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
 @section('breadcrumb')
 <ol class="breadcrumb">
@@ -9,18 +18,21 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
 
+@section('cuerpo')
 <div class="row">
-    
+
 </div>
 @endsection
+
 @section('scripts')
-<script src="{{ asset('template/plugins/chartjs/Chart.min.js') }}"></script>
-<!-- <script src="{{ asset('js/almacen/dashboardAlmacen.js')}}"></script> -->
+<script src="{{ asset('template/adminlte2-4/plugins/chartjs/Chart.min.js') }}"></script>
 <script>
     $(document).ready(function(){
         Util.seleccionarMenu(window.location);
     });
 </script>
 @endsection
+
+
+{{-- ---- --}}

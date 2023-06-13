@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/lobibox/dist/css/lobibox.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
     <link rel="stylesheet" href="{{ asset('css/basic.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -24,7 +25,7 @@
         @include("themes/header")
         @include("themes/aside")
 
-        <div class="content-wrapper">
+        <div class="content-wrapper" id="wrapper-okc">
             <section class="content-header">
                 <h1>@yield('cabecera')</h1>
                 @yield('breadcrumb')
@@ -46,6 +47,7 @@
     <script src="{{ asset('template/adminlte2-4/dist/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
     <script src="{{ asset('js/ini.js?')}}?v={{filemtime(public_path('js/ini.js'))}}"></script>

@@ -1,7 +1,7 @@
 @extends('themes.base')
 
 @section('cabecera') Gestión de transformaciones @endsection
-
+@include('layouts.menu_cas')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
 {{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}

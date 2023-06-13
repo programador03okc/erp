@@ -35,11 +35,11 @@ function listar() {
                             <div class="btn-group" role="group">
                                 <button type="button" class="editar btn btn-warning boton" data-toggle="tooltip"
                                 data-placement="bottom" data-id="${row['id_cas_producto']}" title="Editar registro" >
-                                <i class="fas fa-edit"></i></button>
+                                <i class="fa fa-edit"></i></button>
 
                                 <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip"
                                 data-placement="bottom" data-id="${row['id_cas_producto']}" title="Anular registro" >
-                                <i class="fas fa-trash"></i></button>
+                                <i class="fa fa-trash"></i></button>
                             </div>`;
                     }, className: "text-center"
             }

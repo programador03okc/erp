@@ -24,7 +24,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-
+@include('layouts.menu_cas')
 @section('cuerpo')
 <div class="page-main" type="transformaciones">
 
@@ -47,7 +47,7 @@
                         </form>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="mytable table table-condensed table-bordered table-okc-view" id="listaTransformacionesPendientes">
+                                <table class="mytable table table-condensed table-bordered table-okc-view" id="listaTransformacionesPendientes" width="100%">
                                     <thead>
                                         <tr>
                                             <th hidden></th>
@@ -76,7 +76,7 @@
                         <br>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="mytable table table-condensed table-bordered table-okc-view" id="listaTransformaciones">
+                                <table class="mytable table table-condensed table-bordered table-okc-view" id="listaTransformaciones" width="100%">
                                     <thead>
                                         <tr>
                                             <th hidden></th>
@@ -116,6 +116,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
     {{-- <script src="{{ asset('datatables/Buttons/js/buttons.procesadasl5.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}

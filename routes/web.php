@@ -38,7 +38,14 @@ use App\Http\Controllers\Cas\IncidenciaController;
 use App\Http\Controllers\Comercial\ClienteController;
 use App\Http\Controllers\ComprasPendientesController;
 use App\Http\Controllers\ComprobanteCompraController;
+use App\Http\Controllers\Finanzas\CentroCosto\CentroCostoController;
+use App\Http\Controllers\Finanzas\Normalizar\NormalizarController;
+use App\Http\Controllers\Finanzas\Presupuesto\PartidaController;
+use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoController;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
+use App\Http\Controllers\Finanzas\Presupuesto\ScriptController;
+use App\Http\Controllers\Finanzas\Presupuesto\TituloController;
+use App\Http\Controllers\Finanzas\Reportes\ReporteGastoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
@@ -94,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::name('configuracion.')->prefix('configuracion')->group(function () { // TODO : falta agregar rutas
         Route::get('index', [ConfiguracionController::class, 'view_main_configuracion'])->name('index');
     });
-    
+
     Route::name('notificaciones.')->prefix('notificaciones')->group(function () {
         Route::get('index', [NotificacionController::class, 'index'])->name('index');
         Route::get('ver/{id}', [NotificacionController::class, 'ver'])->name('ver');
@@ -102,14 +109,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('lista-pendientes', [NotificacionController::class, 'listaPendientes'])->name('lista-pendientes');
         Route::post('cantidad-no-leidas', [NotificacionController::class, 'cantidadNoLeidas'])->name('cantidad-no-leidas');
     });
-    
+
 	/**
 	 * Necesidades
 	 */
     Route::name('necesidades.')->prefix('necesidades')->group(function () {
         Route::get('index', [NecesidadesController::class, 'view_main_necesidades'])->name('index');
         Route::name('requerimiento.')->prefix('requerimiento')->group(function () {
-    
+
             Route::name('elaboracion.')->prefix('elaboracion')->group(function () {
                 Route::get('index', [RequerimientoController::class, 'index'])->name('index');
                 Route::get('mostrar/{idRequerimiento?}', [RequerimientoController::class, 'mostrar'])->name('mostrar');
@@ -212,7 +219,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
                 Route::get('listar-flujo/{idDocumento}', [RevisarAprobarController::class, 'mostrarTodoFlujoAprobacionDeDocumento'])->name('listar-flujo');
             });
-    
+
             Route::name('mapeo.')->prefix('mapeo')->group(function () {
                 Route::get('index', [MapeoProductosController::class, 'view_mapeo_productos'])->name('index');
                 Route::post('listarRequerimientos', [MapeoProductosController::class, 'listarRequerimientos'])->name('listar-requerimiento');
@@ -224,7 +231,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('mostrar_categorias_tipo/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria'])->name('mostrar-categorias-tipo');
             });
         });
-    
+
         Route::name('pago.')->prefix('pago')->group(function () {
             Route::name('listado.')->prefix('listado')->group(function () {
                 Route::get('index', [RequerimientoPagoController::class, 'viewListaRequerimientoPago'])->name('index');
@@ -266,7 +273,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
             });
         });
-    
+
         Route::name('revisar-aprobar.')->prefix('revisar-aprobar')->group(function () {
             Route::name('listado.')->prefix('listado')->group(function () {
                 Route::get('index', [RevisarAprobarController::class, 'viewListaRequerimientoPagoPendienteParaAprobacion'])->name('index');
@@ -282,7 +289,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('test-operacion/{idTipoDocumento}/{idTipoRequerimientoCompra}/{idGrupo}/{idDivision}/{idPrioridad}/{idMoneda}/{montoTotal}/{idTipoRequerimientoPago}/{idRolUsuarioDocList}', [RequerimientoController::class, 'getOperacion'])->name('test-operacion');
             });
         });
-    
+
         Route::name('ecommerce.')->prefix('ecommerce')->group(function () {
             Route::get('index', [EcommerceController::class, 'index'])->name('index');
             Route::get('crear', [EcommerceController::class, 'crear'])->name('crear');
@@ -1036,6 +1043,119 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('eliminar', [CasProductoController::class,'eliminar'])->name('eliminar');
 			});
 
+		});
+	});
+
+    // finanzas
+    Route::group(['as' => 'finanzas.', 'prefix' => 'finanzas'], function () {
+		// Finanzas
+		Route::get('index', function () {
+			return view('finanzas/main');
+		})->name('index');
+
+		Route::group(['as' => 'lista-presupuestos.', 'prefix' => 'lista-presupuestos'], function () {
+			// Lista de Presupuestos
+			Route::get('index', [PresupuestoController::class,'index'])->name('index');
+			Route::get('actualizarPartidas', [PartidaController::class,'actualizarPartidas'])->name('actualizar-partidas');
+		});
+
+		Route::group(['as' => 'presupuesto.', 'prefix' => 'presupuesto'], function () {
+			// Presupuesto
+			Route::get('create', [PresupuestoController::class,'create'])->name('index');
+			Route::get('mostrarPartidas/{id}', [PresupuestoController::class,'mostrarPartidas'])->name('mostrar-partidas');
+			Route::get('mostrarRequerimientosDetalle/{id}', [PresupuestoController::class,'mostrarRequerimientosDetalle'])->name('mostrar-requerimientos-detalle');
+			Route::post('guardar-presupuesto', [PresupuestoController::class,'store'])->name('guardar-presupuesto');
+			Route::post('actualizar-presupuesto', [PresupuestoController::class,'update'])->name('actualizar-presupuesto');
+
+			Route::post('guardar-titulo', [TituloController::class,'store'])->name('guardar-titulo');
+			Route::post('actualizar-titulo', [TituloController::class,'update'])->name('actualizar-titulo');
+			Route::get('anular-titulo/{id}', [TituloController::class,'destroy'])->name('anular-titulo');
+
+			Route::post('guardar-partida', [PartidaController::class,'store'])->name('guardar-partida');
+			Route::post('actualizar-partida', [PartidaController::class,'update'])->name('actualizar-partida');
+			Route::get('anular-partida/{id}', [PartidaController::class,'destroy'])->name('anular-partida');
+
+			Route::get('mostrarGastosPorPresupuesto/{id}', [PresupuestoController::class,'mostrarGastosPorPresupuesto'])->name('mostrar-gastos-presupuesto');
+			Route::post('cuadroGastosExcel', [PresupuestoController::class,'cuadroGastosExcel'])->name('cuadroGastosExcel');
+
+            Route::group(['as' => 'presupuesto-interno.', 'prefix' => 'presupuesto-interno'], function () {
+                //Presupuesto interno
+                Route::get('lista', [PresupuestoInternoController::class,'lista'])->name('lista');
+                Route::post('lista-presupuesto-interno', [PresupuestoInternoController::class,'listaPresupuestoInterno'])->name('lista-presupuesto-interno');
+                Route::get('crear', [PresupuestoInternoController::class,'crear'])->name('crear');
+
+                Route::get('presupuesto-interno-detalle', [PresupuestoInternoController::class,'presupuestoInternoDetalle'])->name('presupuesto-interno-detalle');
+                Route::post('guardar', [PresupuestoInternoController::class,'guardar'])->name('guardar');
+
+                Route::post('editar', [PresupuestoInternoController::class,'editar'])->name('editar');
+                Route::post('editar-presupuesto-aprobado', [PresupuestoInternoController::class,'editarPresupuestoAprobado'])->name('editar-presupuesto-aprobado');
+                Route::post('actualizar', [PresupuestoInternoController::class,'actualizar'])->name('actualizar');
+                Route::post('eliminar', [PresupuestoInternoController::class,'eliminar'])->name('eliminar');
+
+                Route::get('get-area', [PresupuestoInternoController::class,'getArea']);
+                // exportable de presupiesto interno
+                Route::post('get-presupuesto-interno', [PresupuestoInternoController::class,'getPresupuestoInterno']);
+
+                //exportable de excel total ejecutado
+                Route::post('presupuesto-ejecutado-excel', [PresupuestoInternoController::class,'presupuestoEjecutadoExcel']);
+
+                Route::post('aprobar', [PresupuestoInternoController::class,'aprobar']);
+                Route::post('editar-monto-partida', [PresupuestoInternoController::class,'editarMontoPartida']);
+                // buscar partidas
+                Route::post('buscar-partida-combo', [PresupuestoInternoController::class,'buscarPartidaCombo']);
+                // prueba de presupuestos
+				Route::get('cierre-mes', [PresupuestoInternoController::class,'cierreMes']);
+
+                Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
+                    Route::get('generar-presupuesto-gastos', [ScriptController::class,'generarPresupuestoGastos']);
+                    Route::get('homologacion-partidas', [ScriptController::class,'homologarPartida']);
+                    Route::get('total-presupuesto/{presup}/{tipo}', [ScriptController::class,'totalPresupuesto']);
+                    Route::get('total-consumido-mes/{presup}/{tipo}/{mes}', [ScriptController::class,'totalConsumidoMes']);
+                    Route::get('total-ejecutado', [ScriptController::class,'totalEjecutado']);
+                    Route::get('regularizar-montos', [ScriptController::class,'montosRegular']);
+
+                    Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class,'totalPresupuestoAnualPartidasNiveles']);
+                });
+				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class,'actualizaEstadoHistorial']);
+            });
+
+            Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {
+                Route::get('presupuesto', [NormalizarController::class,'lista'])->name('presupuesto');
+                Route::get('listar', [NormalizarController::class,'listar'])->name('listar');
+                Route::post('listar-requerimientos-pagos', [NormalizarController::class,'listarRequerimientosPagos'])->name('listar-requerimientos-pagos');
+                Route::post('listar-ordenes', [NormalizarController::class,'listarOrdenes'])->name('listar-ordenes');
+                Route::post('obtener-presupuesto', [NormalizarController::class,'obtenerPresupuesto'])->name('obtener-presupuesto');
+                Route::post('vincular-partida', [NormalizarController::class,'vincularPartida'])->name('vincular-partida');
+                Route::get('detalle-requerimiento-pago/{id}', [NormalizarController::class,'detalleRequerimientoPago'])->name('detalle-requerimiento-pago');
+
+            });
+		});
+
+		Route::group(['as' => 'centro-costos.', 'prefix' => 'centro-costos'], function () {
+			//Centro de Costos
+			Route::get('index', [CentroCostoController::class,'index'])->name('index');
+			Route::get('mostrar-centro-costos', [CentroCostoController::class,'mostrarCentroCostos'])->name('mostrar-centro-costos');
+			Route::post('guardarCentroCosto', [CentroCostoController::class,'guardarCentroCosto'])->name('guardar-centro-costo');
+			Route::post('actualizar-centro-costo', [CentroCostoController::class,'actualizarCentroCosto'])->name('actualizar-centro-costo');
+			Route::get('anular-centro-costo/{id}', [CentroCostoController::class,'anularCentroCosto'])->name('anular-centro-costo');
+		});
+
+
+		Route::group(['as' => 'reportes.', 'prefix' => 'reportes'], function () {
+			Route::group(['as' => 'gastos.', 'prefix' => 'gastos'], function () {
+				Route::get('index-requerimiento-logistico', [ReporteGastoController::class,'indexReporteGastoRequerimientoLogistico'])->name('index-requerimiento-logistico');
+				Route::get('index-requerimiento-pago', [ReporteGastoController::class,'indexReporteGastoRequerimientoPago'])->name('index-requerimiento-pago');
+				Route::get('index-cdp', [ReporteGastoController::class,'indexReporteGastoCDP'])->name('index-cdp');
+
+				Route::post('lista-requerimiento-logistico', [ReporteGastoController::class,'listaGastoDetalleRequerimientoLogistico'])->name('lista-requerimiento-logistico');
+				Route::post('lista-requerimiento-pago', [ReporteGastoController::class,'listaGastoDetalleRequerimientoPago'])->name('lista-requerimiento-pago');
+				Route::post('lista-cdp', [ReporteGastoController::class,'listaGastoCDP'])->name('lista-cdp');
+
+				Route::get('exportar-requerimiento-logistico-excel', [ReporteGastoController::class,'listaGastoDetalleRequerimientoLogisticoExcel']);
+				Route::get('exportar-requerimiento-pago-excel', [ReporteGastoController::class,'listaGastoDetalleRequerimienoPagoExcel']);
+				Route::get('exportar-cdp-excel', [ReporteGastoController::class,'listaGastoCDPExcel']);
+
+			});
 		});
 	});
 });

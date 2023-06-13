@@ -24,7 +24,7 @@ class TransformacionController extends Controller
 {
     function view_main_cas()
     {
-        return view('almacen/customizacion/main');
+        return view('almacen.customizacion.main');
     }
     function view_transformacion()
     {
@@ -35,8 +35,7 @@ class TransformacionController extends Controller
         // $categorias = TipoProducController::mostrar_categorias_cbo();
         $unidades = GenericoAlmacenController::mostrar_unidades_cbo();
         $usuarios = GenericoAlmacenController::select_usuarios();
-        return view(
-            'almacen/customizacion/transformacion',
+        return view('almacen.customizacion.transformacion',
             compact('almacenes', 'empresas', 'usuarios', 'unidades')
         );
     }

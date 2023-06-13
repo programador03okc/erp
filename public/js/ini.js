@@ -10,10 +10,12 @@ $.ajaxSetup({
 
 $(document).ready(function () {
 	// $(":file").filestyle();
-	$('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-		checkboxClass: 'icheckbox_flat-green',
-		radioClass: 'iradio_flat-green'
-	});
+    // verificar si lo usaremos-------------------------------
+	// $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+	// 	checkboxClass: 'icheckbox_flat-green',
+	// 	radioClass: 'iradio_flat-green'
+	// });
+    // ----------------------------------------------------
 	// $('.js-example-basic-single').select2();
 
 	page = $('.page-main').attr('type');

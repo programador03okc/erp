@@ -9,7 +9,7 @@ function listarIncidencias() {
     // });
 
     const buttonDescargarExcelIncidencias = ({
-        text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar Incidencias',
+        text: '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Descargar Incidencias',
         attr: {
             id: 'btnDescargarListaIncidenciasCabeceraExcel'
         },
@@ -20,7 +20,7 @@ function listarIncidencias() {
         className: 'btn-success btn-sm'
     }),
     buttonDescargarExcelIncidenciasConHistorial = ({
-        text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar a Incidencia con historial',
+        text: '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Descargar a Incidencia con historial',
         attr: {
             id: 'buttonDescargarExcelIncidenciasConHistorial'
         },
@@ -52,7 +52,7 @@ function listarIncidencias() {
                     return (
                         `<button type="button" class="detalle btn btn-primary btn-xs" data-toggle="tooltip"
                             data-placement="bottom" data-id="${row['id_incidencia']}" title="Ver fichas reporte" >
-                            <i class="fas fa-chevron-down"></i>
+                            <i class="fa fa-chevron-down"></i>
                         </button>
                         <a href="#" class="incidencia" data-id="${row["id_incidencia"]}">${row["codigo"]}</a>`
                     );
@@ -109,7 +109,7 @@ function listarIncidencias() {
                 data: 'fecha_documento',
                 'render': function (data, type, row) {
                     return (row['fecha_documento'] != null ? formatDate(row['fecha_documento']) : '');
-                    
+
                 }
             },
             { 'data': 'fecha_registro' },
@@ -124,20 +124,20 @@ function listarIncidencias() {
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn-clonar btn btn-dark boton"
                                     data-id="${row['id_incidencia']}" title="Clonar registro." >
-                                    <i class="fas fa-clone"></i>
+                                    <i class="fa fa-clone"></i>
                                 </button>
 
                                 <button type="button" class="agregar btn btn-success boton" data-toggle="tooltip"
                                 data-placement="bottom" data-id="${row['id_incidencia']}" title="Agregar ficha de atención" >
-                                <i class="fas fa-plus"></i></button>
+                                <i class="fa fa-plus"></i></button>
 
                                 <button type="button" class="cerrar btn btn-primary boton" data-toggle="tooltip"
                                 data-placement="bottom" data-id="${row['id_incidencia']}" title="Cerrar incidencia" >
-                                <i class="fas fa-calendar-check"></i></button>
+                                <i class="fa fa-calendar"></i></button>
 
                                 <button type="button" class="cancelar btn btn-danger boton" data-toggle="tooltip"
                                 data-placement="bottom" data-id="${row['id_incidencia']}" title="Cancelar incidencia" >
-                                <i class="fas fa-ban"></i></button>
+                                <i class="fa fa-ban"></i></button>
                             </div>`;
                         } else {
                             return '';
@@ -157,7 +157,7 @@ function descargarExcelIncidencias(){
 
 function descargarExcelIncidenciasConHistorial(){
     window.open(`incidenciasExcelConHistorial`);
- 
+
 }
 
 

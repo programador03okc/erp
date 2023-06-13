@@ -10,26 +10,26 @@
                 <div class="box-tools pull-right">
 
                     <button type="button" class="btn btn-sm btn-warning nueva-devolucion" data-toggle="tooltip" data-placement="bottom" title="Nueva Customización">
-                        <i class="fas fa-copy"></i> Nuevo
+                        <i class="fa fa-copy"></i> Nuevo
                     </button>
 
                     <input id="submit_devolucion" class="btn btn-sm btn-success guardar-devolucion" type="submit" style="display: none;" data-toggle="tooltip" data-placement="bottom" title="Actualizar devolucion" value="Guardar">
 
                     <button type="button" class="btn btn-sm btn-primary edit-devolucion" data-toggle="tooltip" data-placement="bottom" title="Editar devolucion">
-                        <i class="fas fa-pencil-alt"></i> Editar
+                        <i class="fa fa-pencil-alt"></i> Editar
                     </button>
 
                     <button type="button" class="btn btn-sm btn-danger anular-devolucion" data-toggle="tooltip" data-placement="bottom" title="Anular devolucion" onClick="anularDevolucion();">
-                        <i class="fas fa-trash"></i> Anular
+                        <i class="fa fa-trash"></i> Anular
                     </button>
 
                     <button type="button" class="btn btn-sm btn-info buscar-devolucion" data-toggle="tooltip" data-placement="bottom" title="Buscar historial de registros" onClick="abrirDevolucionModal();">
-                        <i class="fas fa-search"></i> Buscar</button>
+                        <i class="fa fa-search"></i> Buscar</button>
 
                     <button type="button" class="btn btn-sm btn-secondary cancelar" data-toggle="tooltip" data-placement="bottom" title="Cancelar" style="display: none;">
                         Cancelar</button>
 
-                    {{-- <button type="button" class="btn btn-sm btn-success procesar-devolucion" data-toggle="tooltip" data-placement="bottom" 
+                    {{-- <button type="button" class="btn btn-sm btn-success procesar-devolucion" data-toggle="tooltip" data-placement="bottom"
                     title="Procesar devolucion" onClick="procesardevolucion();">
                     <i class="fas fa-share"></i> Procesar
                 </button> --}}
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row" style="padding-left: 10px;padding-right: 10px;margin-top: 0px;">
                     <div class="col-md-4">
                         <label>Revisado por:</label>
@@ -139,7 +139,7 @@
                                 <th width='10%'>Cant.</th>
                                 <th>Unid.</th>
                                 <th width='8%' style="padding:0px;">
-                                    <i class="fas fa-plus-square icon-tabla green boton add-new-sobrante edition" id="addProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar Producto" onClick="abrirProductos();"></i>
+                                    <i class="fa fa-plus-square icon-tabla green boton add-new-sobrante edition" id="addProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar Producto" onClick="abrirProductos();"></i>
                                 </th>
                             </tr>
                         </thead>
@@ -161,7 +161,7 @@
                                 <th>Razon Social del Cliente</th>
                                 <th>Cod.Salida</th>
                                 <th width='8%' style="padding:0px;">
-                                    <i class="fas fa-plus-square icon-tabla green boton add-new-sobrante edition" id="addSobrante" data-toggle="tooltip" data-placement="bottom" title="Agregar Salida Venta" onClick="verSalidasVenta();"></i>
+                                    <i class="fa fa-plus-square icon-tabla green boton add-new-sobrante edition" id="addSobrante" data-toggle="tooltip" data-placement="bottom" title="Agregar Salida Venta" onClick="verSalidasVenta();"></i>
                                 </th>
                             </tr>
                         </thead>
@@ -182,7 +182,7 @@
                                 <th>Razon Social del Proveedor</th>
                                 <th>Cod.Ingreso</th>
                                 <th width='8%' style="padding:0px;">
-                                    <i class="fas fa-plus-square icon-tabla green boton edition" data-toggle="tooltip"
+                                    <i class="fa fa-plus-square icon-tabla green boton edition" data-toggle="tooltip"
                                      data-placement="bottom" title="Agregar Ingreso" onClick="verIngresos();"></i>
                                 </th>
                             </tr>
@@ -205,7 +205,7 @@
                                 <th>Responsable</th>
                                 <th>Estado</th>
                                 <th width='8%' style="padding:0px;">
-                                    <i class="fas fa-plus-square icon-tabla green boton add-new-sobrante edition" id="addSobrante" data-toggle="tooltip" data-placement="bottom" title="Agregar Producto" onClick="abrirIncidenciaModal();"></i>
+                                    <i class="fa fa-plus-square icon-tabla green boton add-new-sobrante edition" id="addSobrante" data-toggle="tooltip" data-placement="bottom" title="Agregar Producto" onClick="abrirIncidenciaModal();"></i>
                                 </th>
                             </tr>
                         </thead>

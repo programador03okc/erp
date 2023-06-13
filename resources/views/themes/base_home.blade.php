@@ -10,21 +10,20 @@
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/AdminLTE.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/skins/skin-blue.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css//skins/skin-blue.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/lobibox/dist/css/lobibox.min.css') }}">
+    <link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/lobibox/dist/css/lobibox.min.css')}}">
     <link rel="stylesheet" href="{{ asset('css/basic.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     @yield('estilos')
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini skin-home">
     <div class="wrapper">
         @include("themes/header")
-        @include("themes/aside")
-
-        <div class="content-wrapper">
+        
+        <div class="okc-content">
             <section class="content-header">
                 <h1>@yield('cabecera')</h1>
                 @yield('breadcrumb')
@@ -34,28 +33,20 @@
             </section>
         </div>
 
-        <footer class="main-footer">
-            <div class="pull-right hidden-xs"></div>Copyright &copy; 2023 Sistema AGILE
-        </footer>
-
         <div class="control-sidebar-bg"></div>
     </div>
-
+    
     <script src="{{ asset('template/adminlte2-4/plugins/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/dist/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
+    <script src="{{ asset('js/function.js?')}}?v={{filemtime(public_path('js/function.js'))}}"></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
-    <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>
     <script>
         const token = '{{ csrf_token() }}';
         let auth_user = JSON.parse('{!!$auth_user!!}');
-
-        $(document).ready(function(){
-            seleccionarMenu(window.location);
-        });
     </script>
     @yield('scripts')
 </body>

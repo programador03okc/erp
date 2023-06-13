@@ -355,6 +355,7 @@ class ListarRequerimientoView {
             'ajax': {
                 'url': 'elaborados',
                 'type': 'POST',
+                'headers': {'X-CSRF-TOKEN': token},
                 'data': { 'meOrAll': meOrAll, 'idEmpresa': idEmpresa, 'idSede': idSede, 'idGrupo': idGrupo, 'idDivision': idDivision, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'idEstado': idEstado },
                 beforeSend: data => {
 
@@ -364,10 +365,6 @@ class ListarRequerimientoView {
                         imageColor: "#3c8dbc"
                     });
                 },
-                // data: function (params) {
-                //     return Object.assign(params, Util.objectifyForm($('#form-requerimientosElaborados').serializeArray()))
-                // }
-
             },
             'columns': [
                 { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'visible': false },

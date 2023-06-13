@@ -1,13 +1,12 @@
-@extends('layout.main')
-@include('layout.menu_necesidades')
+@extends('layouts.main')
 
 {{-- @if(Auth::user()->tieneAccion(102)) --}}
 @section('option')
-@include('layout.option')
+@include('layouts.option')
 @endsection
 {{-- @elseif(Auth::user()->tieneAccion(103)) --}}
 @section('option')
-@include('layout.option_historial')
+@include('layouts.option_historial')
 @endsection
 {{-- @endif --}}
 
@@ -30,7 +29,7 @@ Crear / editar requerimiento
     }
 </style>
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="requerimiento">
     <form id="form-requerimiento" type="register" enctype="multipart/form-data" form="formulario">
         @csrf
@@ -39,18 +38,11 @@ Crear / editar requerimiento
         <input type="text" class="oculto" name="id_requerimiento" primary="ids">
         <input type="text" class="oculto" name="cantidad_aprobaciones">
         <input type="text" class="oculto" name="confirmacion_pago">
-        <input type="text" class="oculto" name="fecha_creacion_cc">
-        <input type="text" class="oculto" name="tipo_cuadro">
-        <input type="text" class="oculto" name="tiene_transformacion" value=false>
         <input type="text" class="oculto" name="justificacion_generar_requerimiento">
-        <input type="hidden" class="" name="id_grupo">
         <input type="text" class="oculto" name="estado">
         <input type="text" class="oculto" name="monto_subtotal">
         <input type="text" class="oculto" name="monto_igv">
         <input type="text" class="oculto" name="monto_total">
-
-
-
 
         <div class="group-table" id="group-historial-revisiones" hidden>
             <div class="row">
@@ -726,98 +718,82 @@ Crear / editar requerimiento
 @include('logistica.requerimientos.modal_detalle_requerimiento')
 @include('almacen.verRequerimientoEstado')
 @include('logistica.requerimientos.modal_promocion_item')
-
-
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/util.js')}}"></script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-<script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-<script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-<!-- <script src="{{ asset('js/logistica/requerimiento/modal_buscar_stock_almacenes.js') }}"></script> -->
-<script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>
-<script src="{{ asset('js/logistica/requerimiento/cuadro_costos.js') }}"></script>
-<script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
+    <script src="{{ asset('js/util.js')}}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
 
-<script src="{{ asset('js/logistica/requerimiento/scrollToTheTopOfDocument.js') }}"></script>
-<script src="{{ asset('js/logistica/requerimiento/duplicar_requerimiento.js') }}"></script>
-<script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
-<script src="{{ asset('js/logistica/requerimiento/modal_detalle_requerimiento.js') }}"></script>
-<script src="{{ asset('js/logistica/requerimiento/mostrar.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/mostrar.js'))}}"></script>
+    <!-- <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script> -->
+    <!-- <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script> -->
+    <!-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script> -->
+    <!-- <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> -->
+    <!-- <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
+    <script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/cuadro_costos.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
 
-<script src="{{ asset('js/logistica/requerimiento/tipo_formulario.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/tipo_formulario.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/cabecera_detalle.js') }}"></script>
-<!-- <script src="{{ asset('js/logistica/requerimiento/inicializar.js') }}"></script> -->
-<script src="{{ asset('js/logistica/requerimiento/modal_almacen_reserva.js')}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/modal_motivo_detalle_requerimiento.js')}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/modal_seleccionar_crear_proveedor.js')}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/public.js') }}"></script>
-<script src="{{ asset('js/logistica/adjuntar_archivos_req.js') }}"></script>
-<script src="{{ asset('js/publico/modal_area.js')}}?v={{filemtime(public_path('js/publico/modal_area.js'))}}"></script>
-<!-- <script src="{{ asset('js/proyectos/opcion/opcionModal.js')}}"></script> -->
-<script src="{{ asset('js/publico/ubigeoModal.js')}}"></script>
-<script src="{{ asset('js/publico/personaModal.js')}}"></script>
-<script src="{{ asset('js/publico/hiddenElement.js')}}"></script>
-<script src="{{ asset('js/logistica/clienteModal.js')}}"></script>
-<script src="{{ asset('js/logistica/add_cliente.js')}}"></script>
-<script src="{{ asset('js/logistica/crear_nuevo_producto.js')}}"></script>
-<script src="{{ asset('js/logistica/crear_nueva_marca.js')}}"></script>
-<script src="{{ asset('js/almacen/producto/saldosModal.js')}}"></script>
-<script src="{{ asset('js/publico/consulta_sunat.js')}}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/scrollToTheTopOfDocument.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/duplicar_requerimiento.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/modal_detalle_requerimiento.js') }}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/mostrar.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/mostrar.js'))}}"></script>
 
-<script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoController.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/incidenciasModal.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/incidenciasModal.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/tipo_formulario.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/tipo_formulario.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/cabecera_detalle.js') }}"></script>
+    <!-- <script src="{{ asset('js/logistica/requerimiento/inicializar.js') }}"></script> -->
+    <script src="{{ asset('js/logistica/requerimiento/modal_almacen_reserva.js')}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/modal_motivo_detalle_requerimiento.js')}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/modal_seleccionar_crear_proveedor.js')}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/public.js') }}"></script>
+    <script src="{{ asset('js/logistica/adjuntar_archivos_req.js') }}"></script>
+    <script src="{{ asset('js/publico/modal_area.js')}}?v={{filemtime(public_path('js/publico/modal_area.js'))}}"></script>
+    <!-- <script src="{{ asset('js/proyectos/opcion/opcionModal.js')}}"></script> -->
+    <script src="{{ asset('js/publico/ubigeoModal.js')}}"></script>
+    <script src="{{ asset('js/publico/personaModal.js')}}"></script>
+    <script src="{{ asset('js/publico/hiddenElement.js')}}"></script>
+    <script src="{{ asset('js/logistica/clienteModal.js')}}"></script>
+    <script src="{{ asset('js/logistica/add_cliente.js')}}"></script>
+    <script src="{{ asset('js/logistica/crear_nuevo_producto.js')}}"></script>
+    <script src="{{ asset('js/logistica/crear_nueva_marca.js')}}"></script>
+    <script src="{{ asset('js/almacen/producto/saldosModal.js')}}"></script>
+    <script src="{{ asset('js/publico/consulta_sunat.js')}}"></script>
 
-<script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
-<script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoController.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/incidenciasModal.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/incidenciasModal.js'))}}"></script>
 
-<script>
-    var grupos = JSON.parse('{!!$grupos!!}');
-    var id_grupo_usuario_sesion_list = [];
+    <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
 
-    autoSelectTipoRequerimientoPorDefecto();
-    // grupos.forEach(element => {
-    //     if(element.id_grupo ==3){ // proyectos
-    //         cambiarTipoFormulario(4)
-    //     }else if(element.id_grupo ==2){ // comercial
-    //         cambiarTipoFormulario(5)
+    <script>
+        var grupos = JSON.parse('{!!$grupos!!}');
+        var id_grupo_usuario_sesion_list = [];
 
-    //     }else if(element.id_grupo ==1){ //administración
-    //         cambiarTipoFormulario(6)
-    //     }
-    // });
+        autoSelectTipoRequerimientoPorDefecto();
 
+        window.onload = function() {
+            seleccionarMenu(window.location);
+            var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
+            var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
+            document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form
 
-    window.onload = function() {
+            const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));
+            presupuestoInternoView.eventos();
 
-        seleccionarMenu(window.location);
-        var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
-        var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
-        document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form
+            const requerimientoModel = new RequerimientoModel();
+            const requerimientoController = new RequerimientoCtrl(requerimientoModel);
+            const requerimientoView = new RequerimientoView(requerimientoController);
+            requerimientoView.init();
 
-        const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));
-        presupuestoInternoView.eventos();
-
-        const requerimientoModel = new RequerimientoModel();
-        const requerimientoController = new RequerimientoCtrl(requerimientoModel);
-        const requerimientoView = new RequerimientoView(requerimientoController);
-        requerimientoView.init();
-
-        
-
-    };
-</script>
+        };
+    </script>
 @endsection

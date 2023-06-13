@@ -1,8 +1,7 @@
 @extends('themes.base')
-
 @section('body')
 	<div class="wrapper">
-		@include('layout.header')
+		@include('layouts.header')
 		<aside class="main-sidebar">
 			<section class="sidebar">
 				<div class="user-panel">

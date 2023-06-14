@@ -1,14 +1,14 @@
 @section('sidebar')
 <li class="header">CONFIGURACION</li>
 
-<li><a href="{{route('configuracion.index')}}"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+<li><a href="{{route('configuracion.dashboard')}}"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
 <li class="treeview">
     <a href="#">
         <i class="fas fa-user-cog"></i> <span> Gestión de Accesos</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-        <li><a href="{{route('configuracion.listarUsuarios')}}"> Usuarios</a></li>
-        <li><a href="accesos"> Roles </a></li>
+        <li><a href="{{ route('configuracion.usuario.index') }}"><i class="far fa-circle fa-xs"></i> Usuarios</a></li>
+        <li><a href="accesos"><i class="far fa-circle fa-xs"></i> Roles </a></li>
     </ul>
 </li>
 
@@ -17,9 +17,9 @@
         <i class="fas fa-map-signs"></i> <span> Flujo de Aprobación</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-        <li><a href="gestionar-flujos"> Gestionar Flujos</a></li>
-        <li><a href="documentos"> Documentos</a></li>
-        <li><a href="historial-aprobaciones"> Historial de Aprobaciones</a></li>
+        <li><a href="gestionar-flujos"><i class="far fa-circle fa-xs"></i> Gestionar Flujos</a></li>
+        <li><a href="documentos"><i class="far fa-circle fa-xs"></i> Documentos</a></li>
+        <li><a href="historial-aprobaciones"><i class="far fa-circle fa-xs"></i> Historial de Aprobaciones</a></li>
     </ul>
 </li>
 
@@ -28,11 +28,11 @@
         <i class="fas fa-cog"></i> <span> Gestión del Sistema</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-        <li><a href="modulo"> Módulos </a></li>
-        <li><a href="aplicaciones"> Aplicaciones</a></li>
-        <li><a href="notas_lanzamiento"> Notas de Lanzamiento</a></li>
-        <li><a href="correo_coorporativo"> Correo Corporativo</a></li>
-        <li><a href="configuracion_socket">Socket</a></li>
+        <li><a href="modulo"><i class="far fa-circle fa-xs"></i> Módulos </a></li>
+        <li><a href="aplicaciones"><i class="far fa-circle fa-xs"></i> Aplicaciones</a></li>
+        <li><a href="notas_lanzamiento"><i class="far fa-circle fa-xs"></i> Notas de Lanzamiento</a></li>
+        <li><a href="correo_coorporativo"><i class="far fa-circle fa-xs"></i> Correo Corporativo</a></li>
+        <li><a href="configuracion_socket"><i class="far fa-circle fa-xs"></i> Socket</a></li>
     </ul>
 </li>
 @endsection

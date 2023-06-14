@@ -30,6 +30,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+use Illuminate\Support\Facades\Hash;
+
 ini_set('max_execution_time', 3600);
 date_default_timezone_set('America/Lima');
 
@@ -605,7 +607,6 @@ class ConfiguracionController extends Controller{
             $status=200;
         }
         $thePass= $this->decode5t($pass);
-
         $output= ['data'=>$thePass, 'status'=>$status];
 
         return $output;
@@ -613,60 +614,51 @@ class ConfiguracionController extends Controller{
     }
 
     public function savePerfil(Request $request){
-        $sis_usua                   = SisUsua::where('id_usuario',$request->id_usuario)->first();
-        $sis_usua->usuario          = $request->usuario;
-        if ($request->clave) {
-            $sis_usua->clave        = StringHelper::encode5t($request->clave);
-        }
-        $sis_usua->nombre_corto     = $request->nombre_corto;
-        $sis_usua->codvend_softlink = $request->codvent_softlink;
-        $sis_usua->email            = $request->email;
+        // $sis_usua = SisUsua::where('id_usuario',$request->id_usuario)->first();
+        $sis_usua = SisUsua::find($request->id_usuario);
+            $sis_usua->usuario = $request->usuario;
+            if ($request->clave) {
+                $sis_usua->clave        = StringHelper::encode5t($request->clave);
+                $sis_usua->password     = Hash::make($request->clave);
+            }
+            $sis_usua->nombre_corto     = $request->nombre_corto;
+            $sis_usua->nombre_largo     = $request->nombre_largo;
+            $sis_usua->codvend_softlink = $request->codvent_softlink;
+            $sis_usua->email            = $request->email;
         $sis_usua->save();
 
         $rrhh_trab = rrhh_trab::where('id_trabajador',$sis_usua->id_trabajador)->first();
-        // $rrhh_trab->id_postulante               = (int) $request->id_postulante;
-        $rrhh_trab->id_tipo_trabajador          = (int) $request->id_tipo_trabajador;
-        $rrhh_trab->id_categoria_ocupacional    = (int) $request->id_categoria_ocupacional;
-        $rrhh_trab->id_tipo_planilla            = (int) $request->id_tipo_planilla;
-        // $rrhh_trab->condicion                   = $request->condicion;
-        $rrhh_trab->hijos                       = $request->hijos;
-        // $rrhh_trab->id_pension                  = (int) $request->id_pension;
-        // $rrhh_trab->cuspp                       = $request->cuspp;
-        // $rrhh_trab->seguro                      = $request->seguro;
-        // $rrhh_trab->confianza                   = $request->confianza;
-        // $rrhh_trab->estado                      = 1;
-        // $rrhh_trab->fecha_registro = date('Y-m-d H:i:s');
+            // $rrhh_trab->id_postulante               = (int) $request->id_postulante;
+            $rrhh_trab->id_tipo_trabajador          = (int) $request->id_tipo_trabajador;
+            $rrhh_trab->id_categoria_ocupacional    = (int) $request->id_categoria_ocupacional;
+            $rrhh_trab->id_tipo_planilla            = (int) $request->id_tipo_planilla;
+            $rrhh_trab->hijos                       = $request->hijos;
         $rrhh_trab->save();
 
         $rrhh_postu = rrhh_postu::where('id_postulante',$rrhh_trab->id_postulante)->first();
-        // $rrhh_postu->id_persona     = (int) $rrhh_perso->id_persona;
-        $rrhh_postu->direccion      = $request->direccion;
-        $rrhh_postu->telefono       = (int) $request->telefono;
-        $rrhh_postu->correo         = $request->email;
-        // $rrhh_postu->brevette       = $request->brevette;
-        $rrhh_postu->id_pais        = (int) $request->pais;
-        $rrhh_postu->ubigeo         = $request->ubigeo;
-        $rrhh_postu->fecha_registro = date('Y-m-d H:i:s');
+            $rrhh_postu->direccion      = $request->direccion;
+            $rrhh_postu->telefono       = (int) $request->telefono;
+            $rrhh_postu->correo         = $request->email;
+            $rrhh_postu->id_pais        = (int) $request->pais;
+            $rrhh_postu->ubigeo         = $request->ubigeo;
+            $rrhh_postu->fecha_registro = date('Y-m-d H:i:s');
         $rrhh_postu->save();
 
         $rrhh_perso = rrhh_perso::where('id_persona', $rrhh_postu->id_persona)->first();
-        $rrhh_perso->id_documento_identidad = 1;
-        $rrhh_perso->nro_documento          = (int) $request->nro_documento;
-        $rrhh_perso->nombres                = $request->nombres;
-        $rrhh_perso->apellido_paterno       = $request->apellido_paterno;
-        $rrhh_perso->apellido_materno       = $request->apellido_materno;
-        $rrhh_perso->fecha_nacimiento       = $request->fecha_nacimiento;
-        $rrhh_perso->sexo                   = $request->sexo;
-        $rrhh_perso->id_estado_civil        = (int) $request->id_estado_civil;
-        // $rrhh_perso->estado                 = 1;
-        // $rrhh_perso->fecha_registro         = date('Y-m-d H:i:s');
-        $rrhh_perso->telefono               = (int) $request->telefono;
-        $rrhh_perso->direccion              = $request->direccion;
-        $rrhh_perso->email                  = $request->email;
+            $rrhh_perso->id_documento_identidad = 1;
+            $rrhh_perso->nro_documento          = (int) $request->nro_documento;
+            $rrhh_perso->nombres                = $request->nombres;
+            $rrhh_perso->apellido_paterno       = $request->apellido_paterno;
+            $rrhh_perso->apellido_materno       = $request->apellido_materno;
+            $rrhh_perso->fecha_nacimiento       = $request->fecha_nacimiento;
+            $rrhh_perso->sexo                   = $request->sexo;
+            $rrhh_perso->id_estado_civil        = (int) $request->id_estado_civil;
+            $rrhh_perso->telefono               = (int) $request->telefono;
+            $rrhh_perso->direccion              = $request->direccion;
+            $rrhh_perso->email                  = $request->email;
         $rrhh_perso->save();
 
-        UsuarioGrupo::where('estado', 1)->where('id_usuario',$request->id_usuario)
-          ->update(['estado' => 7]);
+        UsuarioGrupo::where('estado', 1)->where('id_usuario',$request->id_usuario)->update(['estado' => 7]);
         foreach ($request->id_grupo as $key => $value) {
             $usuario_grupo              = new UsuarioGrupo;
             $usuario_grupo->id_grupo    = $value;
@@ -674,8 +666,7 @@ class ConfiguracionController extends Controller{
             $usuario_grupo->estado      = 1;
             $usuario_grupo->save();
         }
-        UsuarioRol::where('estado', 1)->where('id_usuario',$request->id_usuario)
-        ->update(['estado' => 7]);
+        UsuarioRol::where('estado', 1)->where('id_usuario',$request->id_usuario)->update(['estado' => 7]);
         foreach ($request->id_rol as $key => $value) {
             $usuario_rol                = new UsuarioRol;
             $usuario_rol->id_rol        = $value;
@@ -684,71 +675,72 @@ class ConfiguracionController extends Controller{
             $usuario_rol->save();
         }
 
-        return response()->json([
-            "success"=>true,
-            "status"=>200
-        ]);
+        return response()->json(["success"=>true, "status"=>200]);
         try {
             DB::beginTransaction();
 
-        $status=0;
-        $id_usuario = $request->id_usuario;
-        $nombres = $request->nombres;
-        $apellido_paterno = $request->apellido_paterno;
-        $apellido_materno = $request->apellido_materno;
-        $nombre_corto = $request->nombre_corto;
-        $usuario = $request->usuario;
-        $contraseña =  StringHelper::encode5t($request->contraseña);
-        $email = $request->email;
-        $rol = $request->rol;
+            $status=0;
+            $id_usuario = $request->id_usuario;
+            $nombres = $request->nombres;
+            $apellido_paterno = $request->apellido_paterno;
+            $apellido_materno = $request->apellido_materno;
+            $nombre_corto = $request->nombre_corto;
+            $nombre_largo = $request->nombre_largo;
+            $usuario = $request->usuario;
+            // $clave =  StringHelper::encode5t($request->clave);
+            // $password = Hash::make($request->clave);
+            $email = $request->email;
+            $rol = $request->rol;
 
-        $sis_usua_update = DB::table('configuracion.sis_usua')
-        ->where('id_usuario', $id_usuario)
-        ->update([
-            'usuario' => $usuario,
-            'clave' => $contraseña,
-            'nombre_corto' => $nombre_corto
-        ]);
-
-
-        $sis_acceso_update = DB::table('configuracion.sis_acceso')
-        ->where('id_usuario', $id_usuario)
-        ->update([
-            'id_rol' => $rol
-        ]);
-
-        $rrhh_perso = DB::table('configuracion.sis_usua')
-        ->select(
-            'rrhh_perso.id_persona'
-        )
-        ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
-        ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
-        ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
-
-        ->where('sis_usua.id_usuario', '=', $id_usuario)
-        ->get();
-
-        $id_persona=0;
-        if(count($rrhh_perso) > 0){
-            $id_persona=$rrhh_perso->first()->id_persona;
-
-            $rrhh_perso_update = DB::table('rrhh.rrhh_perso')
-            ->where('id_persona', $id_persona)
+            $sis_usua_update = DB::table('configuracion.sis_usua')
+            ->where('id_usuario', $id_usuario)
             ->update([
-                'nombres' => $nombres,
-                'apellido_paterno' => $apellido_paterno,
-                'apellido_materno' => $apellido_materno,
-                'email' => $email,
+                'usuario' => $usuario,
+                // 'clave' => $clave,
+                // 'password' => $password,
+                'nombre_corto' => $nombre_corto,
+                'nombre_largo' => $nombre_largo
             ]);
-        }
-        if($sis_usua_update > 0  && $sis_acceso_update > 0  && $rrhh_perso_update > 0  ){
-            $status = 200;
-        }
 
 
-        $output= ['status'=>$status];
-        DB::commit();
-        return response()->json($output);
+            $sis_acceso_update = DB::table('configuracion.sis_acceso')
+            ->where('id_usuario', $id_usuario)
+            ->update([
+                'id_rol' => $rol
+            ]);
+
+            $rrhh_perso = DB::table('configuracion.sis_usua')
+            ->select(
+                'rrhh_perso.id_persona'
+            )
+            ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
+            ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
+            ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
+
+            ->where('sis_usua.id_usuario', '=', $id_usuario)
+            ->get();
+
+            $id_persona=0;
+            if(count($rrhh_perso) > 0){
+                $id_persona=$rrhh_perso->first()->id_persona;
+
+                $rrhh_perso_update = DB::table('rrhh.rrhh_perso')
+                ->where('id_persona', $id_persona)
+                ->update([
+                    'nombres' => $nombres,
+                    'apellido_paterno' => $apellido_paterno,
+                    'apellido_materno' => $apellido_materno,
+                    'email' => $email,
+                ]);
+            }
+            if($sis_usua_update > 0  && $sis_acceso_update > 0  && $rrhh_perso_update > 0  ){
+                $status = 200;
+            }
+
+
+            $output= ['status'=>$status];
+            DB::commit();
+            return response()->json($output);
         } catch (\PDOException $e) {
             DB::rollBack();
         }
@@ -808,56 +800,50 @@ class ConfiguracionController extends Controller{
 
         // return $request;exit;
         $rrhh_perso = new rrhh_perso;
-        $rrhh_perso->id_documento_identidad = 1;
-        $rrhh_perso->nro_documento          = (int) $request->nro_documento;
-        $rrhh_perso->nombres                = $request->nombres;
-        $rrhh_perso->apellido_paterno       = $request->apellido_paterno;
-        $rrhh_perso->apellido_materno       = $request->apellido_materno;
-        $rrhh_perso->fecha_nacimiento       = $request->fecha_nacimiento;
-        $rrhh_perso->sexo                   = $request->sexo;
-        // $rrhh_perso->id_estado_civil        = (int) $request->id_estado_civil;
-        $rrhh_perso->estado                 = 1;
-        $rrhh_perso->fecha_registro         = date('Y-m-d H:i:s');
-        $rrhh_perso->telefono               = (int) $request->telefono;
-        $rrhh_perso->direccion              = $request->direccion;
-        $rrhh_perso->email                  = $request->email;
+            $rrhh_perso->id_documento_identidad = 1;
+            $rrhh_perso->nro_documento          = (int) $request->nro_documento;
+            $rrhh_perso->nombres                = $request->nombres;
+            $rrhh_perso->apellido_paterno       = $request->apellido_paterno;
+            $rrhh_perso->apellido_materno       = $request->apellido_materno;
+            $rrhh_perso->fecha_nacimiento       = $request->fecha_nacimiento;
+            $rrhh_perso->sexo                   = $request->sexo;
+            $rrhh_perso->estado                 = 1;
+            $rrhh_perso->fecha_registro         = date('Y-m-d H:i:s');
+            $rrhh_perso->telefono               = (int) $request->telefono;
+            $rrhh_perso->direccion              = $request->direccion;
+            $rrhh_perso->email                  = $request->email;
         $rrhh_perso->save();
 
         $rrhh_postu = new rrhh_postu;
-        $rrhh_postu->id_persona     = (int) $rrhh_perso->id_persona;
-        $rrhh_postu->direccion      = $request->direccion;
-        $rrhh_postu->telefono       = (int) $request->telefono;
-        $rrhh_postu->correo         = $request->email;
-        // $rrhh_postu->brevette       = $request->brevette;
-        $rrhh_postu->id_pais        = (int) $request->pais;
-        $rrhh_postu->ubigeo         = $request->ubigeo;
-        $rrhh_postu->fecha_registro = date('Y-m-d H:i:s');
+            $rrhh_postu->id_persona     = (int) $rrhh_perso->id_persona;
+            $rrhh_postu->direccion      = $request->direccion;
+            $rrhh_postu->telefono       = (int) $request->telefono;
+            $rrhh_postu->correo         = $request->email;
+            $rrhh_postu->id_pais        = (int) $request->pais;
+            $rrhh_postu->ubigeo         = $request->ubigeo;
+            $rrhh_postu->fecha_registro = date('Y-m-d H:i:s');
         $rrhh_postu->save();
 
         $rrhh_trab = new rrhh_trab;
-        $rrhh_trab->id_postulante               = (int) $rrhh_postu->id_postulante;
-        $rrhh_trab->id_tipo_trabajador          = (int) $request->id_tipo_trabajador;
-        $rrhh_trab->id_categoria_ocupacional    = (int) $request->id_categoria_ocupacional;
-        $rrhh_trab->id_tipo_planilla            = (int) $request->id_tipo_planilla;
-        // $rrhh_trab->condicion                   = $request->condicion;
-        $rrhh_trab->hijos                       = $request->hijos;
-        // $rrhh_trab->id_pension                  = (int) $request->id_pension;
-        // $rrhh_trab->cuspp                       = $request->cuspp;
-        // $rrhh_trab->seguro                      = $request->seguro;
-        // $rrhh_trab->confianza                   = $request->confianza;
-        $rrhh_trab->estado                      = 1;
-        $rrhh_trab->fecha_registro = date('Y-m-d H:i:s');
+            $rrhh_trab->id_postulante               = (int) $rrhh_postu->id_postulante;
+            $rrhh_trab->id_tipo_trabajador          = (int) $request->id_tipo_trabajador;
+            $rrhh_trab->id_categoria_ocupacional    = (int) $request->id_categoria_ocupacional;
+            $rrhh_trab->id_tipo_planilla            = (int) $request->id_tipo_planilla;
+            $rrhh_trab->hijos                       = $request->hijos;
+            $rrhh_trab->estado                      = 1;
+            $rrhh_trab->fecha_registro = date('Y-m-d H:i:s');
         $rrhh_trab->save();
 
         $sis_usua                   = new SisUsua;
-        $sis_usua->id_trabajador    = $rrhh_trab->id_trabajador;
-        $sis_usua->usuario          = $request->usuario;
-        $sis_usua->clave            = StringHelper::encode5t('Inicio01');
-        $sis_usua->estado           = 1;
-        $sis_usua->fecha_registro   = date('Y-m-d H:i:s');
-        $sis_usua->nombre_corto     = $request->nombre_corto;
-        $sis_usua->codvend_softlink = $request->codvent_softlink;
-        $sis_usua->email            = $request->email;
+            $sis_usua->id_trabajador    = $rrhh_trab->id_trabajador;
+            $sis_usua->usuario          = $request->usuario;
+            $sis_usua->clave            = StringHelper::encode5t('Inicio01');
+            $sis_usua->password         = Hash::make('Inicio01');
+            $sis_usua->estado           = 1;
+            $sis_usua->fecha_registro   = date('Y-m-d H:i:s');
+            $sis_usua->nombre_corto     = $request->nombre_corto;
+            $sis_usua->codvend_softlink = $request->codvent_softlink;
+            $sis_usua->email            = $request->email;
         $sis_usua->save();
 
         foreach ($request->id_grupo as $key => $value) {
@@ -876,12 +862,7 @@ class ConfiguracionController extends Controller{
             $usuario_rol->save();
         }
 
-
-        return response()->json([
-            "status"=>200,
-            'success'=>true,
-
-        ]);
+        return response()->json(["status"=>200, 'success'=>true]);
     }
 
     public function anular_usuario($id){
@@ -2189,7 +2170,7 @@ public function anular_configuracion_socket($id){
         ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
         ->where('id_usuario',$id)
         ->first();
-        $modulos =DB::table('configuracion.modulos')->where('estado',1)->where('id_padre',0)->get();
+        $modulos = DB::table('configuracion.modulos')->where('estado',1)->where('id_padre',0)->get();
         return view('configuracion.usuario_accesos', compact('modulos','id','usuario'));
     }
     public function getModulosAccion(Request $request)

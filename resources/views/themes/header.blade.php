@@ -11,7 +11,7 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="{{ route('configuracion.index') }}">Configuración</a>
+                    <a href="{{ route('configuracion.dashboard') }}">Configuración</a>
                 </li>
                 <li>
                     <a href="#">Sobre Agile</a>

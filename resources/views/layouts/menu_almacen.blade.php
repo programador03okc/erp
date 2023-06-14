@@ -1,5 +1,5 @@
 @section('sidebar')
-<ul class="sidebar-menu" data-widget="tree">
+{{-- <ul class="sidebar-menu" data-widget="tree"> --}}
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> <span>Almacén</span></a></li>
 
     {{-- @if(Auth::user()->tieneSubModulo(6)) --}}
@@ -163,5 +163,5 @@
         </ul>
     </li>
     {{-- @endif --}}
-</ul>
+{{-- </ul> --}}
 @endsection

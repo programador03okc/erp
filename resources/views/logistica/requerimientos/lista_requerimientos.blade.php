@@ -1,5 +1,6 @@
 @extends('layouts.main')
- 
+@include('layouts.menu_necesidades')
+
 @section('option')
 @endsection
 

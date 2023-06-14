@@ -3,19 +3,21 @@
 
 @section('cabecera') Producto @endsection
 @include('layouts.menu_almacen')
+
 @if(Auth::user()->tieneAccion(69))
-@section('option')
-@include('layouts.option')
-@endsection
+    @section('option')
+        @include('layouts.option')
+    @endsection
 @elseif(Auth::user()->tieneAccion(70))
-@section('option')
-@include('layouts.option_historial')
-@endsection
+    @section('option')
+        @include('layouts.option_historial')
+    @endsection
 @endif
+
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
-<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         .invisible{
             display: none;
@@ -25,6 +27,7 @@
     	}
     </style>
 @endsection
+
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
@@ -331,29 +334,21 @@
 @endsection
 
 @section('scripts')
-
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
-
-
-<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-
-<script src="{{ asset('js/almacen/producto/producto.js')}}"></script>
-<!-- <script src="{{ asset('js/almacen/producto/subcategoriaModal.js')}}"></script> -->
-<script src="{{ asset('js/almacen/producto/productoModal.js')}}"></script>
-<script src="{{ asset('js/almacen/producto/producto_ubicacion.js')}}"></script>
-<script src="{{ asset('js/almacen/producto/producto_serie.js')}}"></script>
-<script>
-    $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
-        //$("#imagen").filestyle();
-    });
-</script>
-
+    <script src="{{ asset('js/almacen/producto/producto.js')}}"></script>
+    <!-- <script src="{{ asset('js/almacen/producto/subcategoriaModal.js')}}"></script> -->
+    <script src="{{ asset('js/almacen/producto/productoModal.js')}}"></script>
+    <script src="{{ asset('js/almacen/producto/producto_ubicacion.js')}}"></script>
+    <script src="{{ asset('js/almacen/producto/producto_serie.js')}}"></script>
+    <script>
+        $(document).ready(function() {
+            Util.seleccionarMenu(window.location);
+            $("#imagen").filestyle();
+        });
+    </script>
 @endsection
-
-
-
-{{-- ----------------------------------- --}}

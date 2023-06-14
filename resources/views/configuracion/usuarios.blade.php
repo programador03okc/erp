@@ -1,7 +1,7 @@
 @extends('themes.base')
 @include('layouts.menu_config')
 
-@section('titulo') Gestión de Usuarios @endsection
+@section('cabecera') Gestión de Usuarios @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">

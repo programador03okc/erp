@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 @include('layouts.menu_config')
-@section('titulo') Dashboard de configuración @endsection
+@section('cabecera') Dashboard de configuración @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">

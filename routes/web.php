@@ -128,9 +128,9 @@ Route::middleware(['auth'])->group(function () {
 		});
 		
 		Route::group(['as' => 'usuario.', 'prefix' => 'usuario'], function () {
-			Route::get('password-user-decode/{id?}', 'ConfiguracionController@getPasswordUserDecode')->name('password-user-decode');
-			Route::get('perfil/{id}', 'ConfiguracionController@getPerfil')->name('get-perfil');
-			Route::post('perfil', 'ConfiguracionController@savePerfil')->name('save-perfil');
+			Route::get('password-user-decode/{id?}', [ConfiguracionController::class, 'getPasswordUserDecode'])->name('password-user-decode');
+			Route::get('perfil/{id}', [ConfiguracionController::class, 'getPerfil'])->name('perfil');
+			Route::post('perfil', [ConfiguracionController::class, 'savePerfil'])->name('save-perfil');
 		});
 		
 		Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
@@ -165,7 +165,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('mostrar-centro-costos', [CentroCostoController::class, 'mostrarCentroCostosSegunGrupoUsuario'])->name('mostrar-centro-costos');
                 Route::post('guardar-requerimiento', [RequerimientoController::class, 'guardarRequerimiento'])->name('guardar-requerimiento');
                 Route::post('actualizar-requerimiento', [RequerimientoController::class, 'actualizarRequerimiento'])->name('actualizar-requerimiento');
-                Route::get('listar-sedes-por-empresa', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
+                Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
                 Route::get('mostrar-requerimiento/{id?}/{codigo?}', [RequerimientoController::class, 'mostrarRequerimiento'])->name('mostrar-requerimiento');
                 Route::post('elaborados', [RequerimientoController::class, 'listarRequerimientosElaborados'])->name('elaborados');
                 Route::post('imprimir-requerimiento-pdf/{id}/{codigo}', [RequerimientoController::class, 'generar_requerimiento_pdf'])->name('imprimir-requerimiento-pdf');

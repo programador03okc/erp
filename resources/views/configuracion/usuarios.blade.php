@@ -6,8 +6,8 @@
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    {{--  <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">  --}}
 @endsection
 
 @section('breadcrumb')
@@ -37,19 +37,6 @@
             </div>
         </div>
         <div class="box-body">
-            {{-- <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="id_rol">Rol : </label>
-                        <select id="id_rol" class="selectpicker" name="id_rol[]"
-                            data-live-search="true" data-width="100%" data-actions-box="true" multiple data-size="10" required>
-                            @foreach ($rol as $item)
-                                <option value="{{$item->id_rol}}" >{{$item->descripcion}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div> --}}
             <div class="row">
                 <div class="col-md-12">
                     <table class="mytable table table-striped table-condensed table-bordered" id="listaUsuarios">
@@ -61,7 +48,7 @@
                                 <th>Clave</th>
                                 <th>Email</th>
                                 <th>Fecha Registro</th>
-                                <th width="15%">Acción</th>
+                                <th width="12%">Acción</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -359,34 +346,6 @@
     </div>
 </div>
 
-<!-- <div class="modal fade" tabindex="-1" role="dialog" id="modal-trabajador">
-    <div class="modal-dialog" style="width: 700px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">Lista de Trabajadores</h3>
-            </div>
-            <div class="modal-body">
-                <table class="mytable table table-striped table-condensed table-bordered" id="listaTrabajadorUser">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Doc. Identidad</th>
-                            <th>Apellidos y Nombres</th>
-                            <th>Empresa</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <label style="display: none;" id="idTr"></label>
-                <label style="display: none;" id="nameTr"></label>
-                <button class="btn btn-sm btn-success" onClick="selectValueTrab();">Aceptar</button>
-            </div>
-        </div>
-    </div>
-</div> -->
 <!-- Accesos -->
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-accesos">
     <div class="modal-dialog" style="width: 80%;">
@@ -867,9 +826,12 @@
 @section('scripts')
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>

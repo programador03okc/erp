@@ -1,5 +1,5 @@
 @section('sidebar')
-<ul class="sidebar-menu" data-widget="tree">
+
     <li><a href="{{route('necesidades.index')}}"><i class="fas fa-tachometer-alt"></i> <span>Necesidades</span></a></li>
     {{-- @if(Auth::user()->tieneSubModulo(51)) --}}
     <li class=" treeview ">
@@ -29,5 +29,5 @@
     <li><a href="{{route('necesidades.revisar-aprobar.listado.index')}}"><i class="fas fa-stamp"></i> <span>Revisar / aprobar</span></a></li>
     {{-- @endif --}}
     {{-- <li><a href="{{route('necesidades.ecommerce.index')}}"><i class="fas fa-shopping-cart"></i> <span>ECOMMERCE</span></a></li> --}}
-</ul>
+
 @endsection

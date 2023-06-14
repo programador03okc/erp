@@ -39,7 +39,7 @@ class ProductoController extends Controller
             $value->accesos;
             array_push($array_accesos_botonera, $value->accesos->accesos_grupo);
         }
-        return view('almacen/producto/producto', compact('tipos', 'categorias', 'clasificaciones', 'subcategorias', 'unidades', 'monedas', 'array_accesos_botonera'));
+        return view('almacen.producto.producto', compact('tipos', 'categorias', 'clasificaciones', 'subcategorias', 'unidades', 'monedas', 'array_accesos_botonera'));
     }
 
     function view_prod_catalogo()
@@ -49,7 +49,7 @@ class ProductoController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view('almacen/producto/prod_catalogo', compact('array_accesos'));
+        return view('almacen.producto.prod_catalogo', compact('array_accesos'));
     }
 
     public function mostrar_prods()

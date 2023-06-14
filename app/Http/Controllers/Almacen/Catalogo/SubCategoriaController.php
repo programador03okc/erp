@@ -34,7 +34,7 @@ class SubCategoriaController extends Controller
         }
         $modulo='almacen';
 
-        return view('almacen/producto/subCategoria', compact('tipos', 'clasificaciones','modulo','array_accesos_botonera'));
+        return view('almacen.producto.subCategoria', compact('tipos', 'clasificaciones','modulo','array_accesos_botonera'));
     }
 
     public function mostrarSubCategoriasPorCategoria($id_tipo)

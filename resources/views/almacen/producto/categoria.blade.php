@@ -1,21 +1,29 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
+
+
+@extends('themes.base')
+
+@section('cabecera') Categoría @endsection
+@include('layouts.menu_almacen')
 <!-- @if(Auth::user()->tieneAccion(61)) -->
 @section('option')
-@include('layout.option')
+@include('layouts.option')
 @endsection
 <!-- @elseif(Auth::user()->tieneAccion(62)) -->
 @section('option')
-@include('layout.option_historial')
+@include('layouts.option_historial')
 @endsection
 <!-- @endif -->
-
-@section('cabecera')
-Categoría
-@endsection
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
 @section('breadcrumb')
 <ol class="breadcrumb">
@@ -25,7 +33,7 @@ Categoría
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="categoria">
     @if (sizeof($array_accesos_botonera)!==0)
         <div class="row">
@@ -90,16 +98,11 @@ Categoría
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/producto/categoria.js')}}"></script>
 <script>
@@ -108,3 +111,4 @@ Categoría
     });
 </script>
 @endsection
+{{-- ----------------- --}}

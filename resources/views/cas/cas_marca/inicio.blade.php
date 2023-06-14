@@ -127,13 +127,13 @@
 
 @section('scripts')
 
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 
 <script src="{{ asset('js/cas/cas_marcas/marcas.js') }}"></script>
 

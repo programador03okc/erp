@@ -1,25 +1,30 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
+@extends('themes.base')
+
+@section('cabecera') Producto @endsection
+@include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(69))
 @section('option')
-@include('layout.option')
+@include('layouts.option')
 @endsection
 @elseif(Auth::user()->tieneAccion(70))
 @section('option')
-@include('layout.option_historial')
+@include('layouts.option_historial')
 @endsection
 @endif
-
-@section('cabecera')
-Producto
-@endsection
-
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/iCheck/all.css') }}">
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
@@ -28,8 +33,7 @@ Producto
 </ol>
 @endsection
 
-@section('content')
-
+@section('cuerpo')
 @if (sizeof($array_accesos_botonera)!==0)
 <div class="box box-solid">
     <div class="box-body">
@@ -325,19 +329,17 @@ Producto
 @include('almacen.producto.subcategoriaModal')
 @include('almacen.producto.productoModal')
 @endsection
+
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-{{-- <script src="{{ asset('template/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script> --}}
-<script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+
+
+<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/producto/producto.js')}}"></script>
 <!-- <script src="{{ asset('js/almacen/producto/subcategoriaModal.js')}}"></script> -->
@@ -350,4 +352,9 @@ Producto
         //$("#imagen").filestyle();
     });
 </script>
+
 @endsection
+
+
+
+{{-- ----------------------------------- --}}

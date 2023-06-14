@@ -10,7 +10,7 @@
 @endsection
 {{-- @endif --}}
 
-@section('cabecera')
+@section('titulo')
 Crear / editar requerimiento
 @endsection
 
@@ -721,7 +721,7 @@ Crear / editar requerimiento
 @endsection
 
 @section('scripts')
-    
+
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -734,7 +734,7 @@ Crear / editar requerimiento
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.pdfmake.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.jszip.min.js') }}"></script>
 
-  
+
     <script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>
     <script src="{{ asset('js/logistica/requerimiento/cuadro_costos.js') }}"></script>
     <script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>

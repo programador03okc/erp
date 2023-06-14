@@ -2,7 +2,7 @@
 @include('layout.menu_logistica')
 
 
-@section('cabecera')
+@section('titulo')
     Lista de proveedores
 @endsection
 @section('estilos')

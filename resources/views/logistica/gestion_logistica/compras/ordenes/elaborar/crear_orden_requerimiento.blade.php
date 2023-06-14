@@ -4,7 +4,7 @@
 @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Orden de compra / servicio
 @endsection
 
@@ -16,7 +16,7 @@ Orden de compra / servicio
             margin-top: 35px;
         }
         .mb-0 {
-            margin-bottom: 0; 
+            margin-bottom: 0;
         }
         .label-check {
             font-weight: normal;
@@ -95,7 +95,7 @@ Orden de compra / servicio
                             <h5>Código orden softlink</h5>
                             <input class="form-control activation" name="codigo_orden" type="text" placeholder="" readonly>
                         </div>
-                        
+
                         <div class="col-md-1" id="group-periodo_orden">
                             <h5>Periodo</h5>
                             <select class="form-control activation handleChangePeriodo" name="id_periodo">
@@ -468,7 +468,7 @@ Orden de compra / servicio
 @endsection
 
 @section('scripts')
-    
+
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>

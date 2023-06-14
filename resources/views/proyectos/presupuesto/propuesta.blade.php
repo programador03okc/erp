@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Propuesta Cliente
 @endsection
 
@@ -25,9 +25,9 @@ Propuesta Cliente
             <li><label id="codigo"></label></li>
             <li><label id="cod_presint"></label></li>
             <li><label>Estado:  <span id="des_estado"></span></h5></li>
-            <li><i id="cronograma" class="fas fa-calendar-alt blue" id="basic-addon2" 
+            <li><i id="cronograma" class="fas fa-calendar-alt blue" id="basic-addon2"
                 data-toggle="tooltip" data-placement="bottom" title="Cronograma generado" ></i></li>
-            <li><i id="cronoval" class="fas fa-donate green" id="basic-addon2" 
+            <li><i id="cronoval" class="fas fa-donate green" id="basic-addon2"
                 data-toggle="tooltip" data-placement="bottom" title="Cronograma Valorizado generado" ></i></li>
         </ol>
     </legend>
@@ -47,7 +47,7 @@ Propuesta Cliente
                         <h5>Seleccione Opcion Comercial</h5>
                         <div class="input-group-okc">
                             <input class="oculto" name="id_op_com" >
-                            <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                            <input type="text" class="form-control" aria-describedby="basic-addon2"
                                 readonly name="nombre_opcion">
                             <div class="input-group-append">
                                 <button type="button" class="input-group-text activation" id="basic-addon2"
@@ -86,12 +86,12 @@ Propuesta Cliente
                         <div style="display:flex;">
                             <input type="text" name="id_presupuesto" class="oculto"/>
                             <input type="number" name="sub_total_presint" class="form-control right" readonly/>
-                            {{-- <button type="button" class="input-group-text btn-success" id="basic-addon2" 
-                                data-toggle="tooltip" data-placement="bottom" title="Copiar partidas del Presupuesto Interno" 
+                            {{-- <button type="button" class="input-group-text btn-success" id="basic-addon2"
+                                data-toggle="tooltip" data-placement="bottom" title="Copiar partidas del Presupuesto Interno"
                                 onClick="copiar_partidas_presint();">
                                 <i class="fas fa-copy"></i>
                             </button> --}}
-                        </div> 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,11 +106,11 @@ Propuesta Cliente
                         <tr>
                             <td>Utilidad</td>
                             <td>
-                                <input type="number" class="porcen activation" name="porcen_utilidad" disabled="true" 
+                                <input type="number" class="porcen activation" name="porcen_utilidad" disabled="true"
                                     onChange="change_utilidad();" value="0"/>
                                 <label>%</label>
                             </td>
-                            <td><input type="number" class="importe activation" name="impor_utilidad" disabled="true" 
+                            <td><input type="number" class="importe activation" name="impor_utilidad" disabled="true"
                                     onChange="change_importe_utilidad();" value="0"/></td>
                         </tr>
                     </tbody>
@@ -156,14 +156,14 @@ Propuesta Cliente
                             <th width="5%">% Utilidad</th>
                             <th width="5%">Importe Uti.</th>
                             <th width="10%">
-                                <i class="fas fa-plus-square icon-tabla  boton" 
-                                    data-toggle="tooltip" data-placement="bottom" 
+                                <i class="fas fa-plus-square icon-tabla  boton"
+                                    data-toggle="tooltip" data-placement="bottom"
                                     title="Agregar Título" onClick="agregar_primer_titulo();"></i>
                                 <i class="fas fa-file-excel icon-tabla green boton"
-                                    data-toggle="tooltip" data-placement="bottom" 
+                                    data-toggle="tooltip" data-placement="bottom"
                                     title="Exportar a Excel" onClick="exportar_propuesta();"></i>
-                                <i class="fas fa-sync-alt icon-tabla orange boton" 
-                                    data-toggle="tooltip" data-placement="bottom" 
+                                <i class="fas fa-sync-alt icon-tabla orange boton"
+                                    data-toggle="tooltip" data-placement="bottom"
                                     title="Refrescar Partidas" onClick="refresh_partidas();"></i>
                             </th>
                             <th hidden>padre</th>
@@ -193,7 +193,7 @@ Propuesta Cliente
     <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
     <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
     <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-    
+
     <script src="{{ asset('js/proyectos/presupuesto/propuestaModal.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/propuesta.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/titulos.js')}}"></script>

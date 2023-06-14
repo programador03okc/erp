@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Cuadro de gastos
 @endsection
 
@@ -30,7 +30,7 @@ Cuadro de gastos
                             @endforeach
                         </select>
                     </div>
-                    <button data-toggle="tooltip" data-placement="bottom" title="Exportar a excel" 
+                    <button data-toggle="tooltip" data-placement="bottom" title="Exportar a excel"
                         class="btn btn-success btn-sm exportar" style="color:#fff !important;" onClick="exportarCuadroCostos()">
                         <i class="fas fa-file-excel"></i> Exportar a excel
                     </button>
@@ -90,7 +90,7 @@ Cuadro de gastos
     // let csrf_token = "{{ csrf_token() }}";
     $(document).ready(function() {
         Util.seleccionarMenu(window.location);
-        
+
     });
 </script>
 @endsection

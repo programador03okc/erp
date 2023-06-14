@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Historial de Precios
 @endsection
 
@@ -12,7 +12,7 @@
 <div class="page-main" type="reporte-historial_precios">
     <legend>
         <div class="row">
-            <div class="col-xs-12 col-md-7"><h2>Reporte - Historial de Precios</h2></div>  
+            <div class="col-xs-12 col-md-7"><h2>Reporte - Historial de Precios</h2></div>
         </div>
     </legend>
     <form id="form-historial_precios" type="register" form="formulario">
@@ -40,7 +40,7 @@
                         @endforeach
                 </select>
             </div>
-            
+
         </div>
 
         <div class="row">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
- 
+
         <br>
         <div class="row">
             <div class="col-md-12">
@@ -70,7 +70,7 @@
 
         <div class="row">
         <div class="col-md-12">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaHistorialPrecios">
                 <thead>
                     <tr>
@@ -89,11 +89,11 @@
             </table>
         </div>
     </div>
- 
+
     </form>
 
-        
- 
+
+
 </div>
 
 

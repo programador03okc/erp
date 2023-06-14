@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('cabecera')
+@section('titulo')
 Importar Inicial
 @endsection
 
@@ -42,7 +42,7 @@ Importar Inicial
                                 <input id="file" name="file" size="30" type="file" class="selected right">
                             </div>
                             <br/>
-                            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" 
+                            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom"
                             title="Cargar Productos" onClick="open_guia_create_seleccionadas();">Cargar Productos</button>
                         </div>
                     </div>
@@ -60,7 +60,7 @@ Importar Inicial
                             </div>
                             <input id="file" name="file" size="30" type="file" class="selected">
                             <br/>
-                            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" 
+                            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom"
                             title="Cargar stocks" onClick="open_guia_create_seleccionadas();">Cargar Productos</button>
                         </div>
                     </div>

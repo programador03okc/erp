@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('cabecera')
+@section('titulo')
 Panel de Control de Despachos
 @endsection
 
@@ -207,7 +207,7 @@ Panel de Control de Despachos
                                         <tbody></tbody>
                                     </table>
                                     @if(Auth::user()->tieneAccion(80))
-                                    <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" 
+                                    <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom"
                                         title="Crear Reparto" onClick="crear_grupo_orden_despacho();">Generar Reparto</button>
                                     @endif
                                 </div>

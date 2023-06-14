@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Categoría de A.C.U.
 @endsection
 
@@ -21,7 +21,7 @@ Categoría de A.C.U.
     <div class="row">
         <div class="col-md-6">
             <fieldset class="group-table">
-                <table class="mytable table table-condensed table-bordered table-okc-view" 
+                <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaCategoriaAcu">
                     <thead>
                         <tr>

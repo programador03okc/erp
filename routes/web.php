@@ -20,6 +20,7 @@ use App\Http\Controllers\Almacen\Movimiento\SalidasPendientesController;
 use App\Http\Controllers\Almacen\Movimiento\TransferenciaController;
 use App\Http\Controllers\Almacen\Movimiento\TransformacionController;
 use App\Http\Controllers\Almacen\Reporte\KardexSerieController;
+use App\Http\Controllers\Almacen\Reporte\ListaIngresosController;
 use App\Http\Controllers\Almacen\Reporte\ListaRequerimientosAlmacenController;
 use App\Http\Controllers\Almacen\Reporte\ListaSalidasController;
 use App\Http\Controllers\Almacen\Reporte\ReportesController;
@@ -126,13 +127,13 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardar-accesos', [ConfiguracionController::class, 'guardarAccesos']);
 			Route::get('accesos-usuario/{id}', [ConfiguracionController::class, 'accesoUsuario']);
 		});
-		
+
 		Route::group(['as' => 'usuario.', 'prefix' => 'usuario'], function () {
 			Route::get('password-user-decode/{id?}', [ConfiguracionController::class, 'getPasswordUserDecode'])->name('password-user-decode');
 			Route::get('perfil/{id}', [ConfiguracionController::class, 'getPerfil'])->name('perfil');
 			Route::post('perfil', [ConfiguracionController::class, 'savePerfil'])->name('save-perfil');
 		});
-		
+
 		Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
 			Route::get('prueba', [ConfiguracionController::class, 'prueba']);
 			Route::get('scripts/{var}', [ConfiguracionController::class, 'scripts']);
@@ -792,7 +793,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar-ingresos-excel/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}/{tra}', [AlmacenController::class, 'ExportarExcelListaIngresos']);
 				// reportes con modelos
 				Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
-				Route::post('listar-ingresos', 'Almacen\Reporte\ListaIngresosController@listarIngresos');
+				// Route::post('listar-ingresos', 'Almacen\Reporte\ListaIngresosController@listarIngresos');
+				Route::post('listar-ingresos', [ListaIngresosController::class,'listarIngresos']);
 			});
 
 			Route::group(['as' => 'lista-salidas.', 'prefix' => 'lista-salidas'], function () {

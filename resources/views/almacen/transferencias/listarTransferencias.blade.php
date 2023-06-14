@@ -1,19 +1,25 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
-@section('cabecera')
-Transferencias
-@endsection
+@extends('themes.base')
 
+@section('titulo') Transferencias @endsection
+@include('layouts.menu_almacen')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/iCheck/all.css') }}">
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
-<link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}">
-<link rel="stylesheet" href="{{ asset('datatables/Datatables/css/dataTables.bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('datatables/Buttons/css/buttons.dataTables.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
-@endsection
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
 
+<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
+@endsection
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
@@ -22,7 +28,8 @@ Transferencias
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 @if (in_array(123,$array_accesos) || in_array(127,$array_accesos) || in_array(131,$array_accesos)|| in_array(133,$array_accesos))
 <div class="box box-solid">
     <div class="box-body">
@@ -246,23 +253,23 @@ Transferencias
 @include('almacen.guias.guia_ven_series')
 @include('tesoreria.facturacion.archivos_oc_mgcp')
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
+
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-<!-- <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
+{{-- <script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script> --}}
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script>
+{{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
 
 <script>
     // let csrf_token = "{{ csrf_token() }}";
@@ -288,4 +295,7 @@ Transferencias
 <script src="{{ asset('js/almacen/guia/guia_ven_series.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_ven_series.js'))}}"></script>
 <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}?v={{filemtime(public_path('js/tesoreria/facturacion/archivosMgcp.js'))}}"></script>
 
+
 @endsection
+
+{{-- ------------------------------------------------------ --}}

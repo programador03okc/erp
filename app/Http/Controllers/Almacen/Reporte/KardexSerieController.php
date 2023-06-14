@@ -17,7 +17,7 @@ class KardexSerieController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/kardex_series',compact('array_accesos'));
+        return view('almacen.reportes.kardex_series',compact('array_accesos'));
     }
 
     public function listar_serie_productos($serie, $descripcion, $codigo, $part_number)

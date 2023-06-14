@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Listado de requerimientos de pago
 @endsection
 
@@ -145,11 +145,11 @@ Listado de requerimientos de pago
 
 
         const listarRequerimientoPagoView = new ListarRequerimientoPagoView(presupuestoInternoView);
-        
+
         listarRequerimientoPagoView.mostrarListaRequerimientoPago('ALL');
-        
+
         listarRequerimientoPagoView.initializeEventHandlerListaRequerimientoPago();
-        
+
         const facturaView = new FacturaView(presupuestoInternoView);
         facturaView.eventos();
 

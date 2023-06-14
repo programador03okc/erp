@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Registro de Bitácora
 @endsection
 
@@ -13,19 +13,19 @@
         <h2>Registro de Bitácora</h2>
         <ol class="breadcrumb">
             <li>
-                {{-- <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                data-placement="bottom" title="Generar Ingreso a Almacén" 
+                {{-- <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                data-placement="bottom" title="Generar Ingreso a Almacén"
                 onClick="generar_ingreso();">Generar Ingreso </button>
                 <a onClick="generar_factura();">
-                    <input type="button" class="btn btn-primary" data-toggle="tooltip" 
-                    data-placement="bottom" title="Generar Factura de Compra" 
+                    <input type="button" class="btn btn-primary" data-toggle="tooltip"
+                    data-placement="bottom" title="Generar Factura de Compra"
                     value="Generar Factura"/>
                 </a> --}}
-                <button type="button" class="btn btn-danger" data-toggle="tooltip" 
-                data-placement="bottom" title="Ver PDF" 
+                <button type="button" class="btn btn-danger" data-toggle="tooltip"
+                data-placement="bottom" title="Ver PDF"
                 onClick="open_ver();">Ver <i class="fas fa-file-pdf"></i></button>
-                <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                    data-placement="bottom" title="Descargar Excel" 
+                <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                    data-placement="bottom" title="Descargar Excel"
                     onClick="downloadControlBitacora();">Descargar <i class="fas fa-file-excel"></i></button>
             </li>
         </ol>
@@ -42,7 +42,7 @@
                             <input type="text" name="id_asignacion" class="oculto">
                             <input type="text" name="id_solicitud" class="oculto">
                             <input type="text" name="id_equipo" class="oculto">
-                            <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                            <input type="text" class="form-control" aria-describedby="basic-addon2"
                                 readonly name="equipo_descripcion" disabled="true">
                             <div class="input-group-append">
                                 <button type="button" class="input-group-text" id="basic-addon2"
@@ -51,7 +51,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>              
+                    </div>
                     <div class="col-md-4">
                         <h5>Area</h5>
                         <input type="text" class="form-control activation" name="area_descripcion" disabled="true">
@@ -96,8 +96,8 @@
                                 <th>Galones</th>
                                 <th>Observaciones</th>
                                 <th>
-                                    <i class="fas fa-plus-square icon-tabla green boton" 
-                                    data-toggle="tooltip" data-placement="bottom" 
+                                    <i class="fas fa-plus-square icon-tabla green boton"
+                                    data-toggle="tooltip" data-placement="bottom"
                                     title="Agregar" onClick="controlModal();"></i>
                                 </th>
                             </tr>

@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Lista de Ventas
 @endsection
 
@@ -18,7 +18,7 @@
 
 @section('content')
 <div class="page-main" type="lista_ventas">
-    <fieldset class="group-table">   
+    <fieldset class="group-table">
         <form id="form-listaVentas" type="register">
             <div class="row">
                 <div class="col-md-6">
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </form>
-    </fieldset> 
+    </fieldset>
 </div>
 
 
@@ -61,7 +61,7 @@
 @include('contabilidad.ventas.modal_filtros_ventas')
 @include('contabilidad.ventas.modal_exportar_lista_ventas')
  <!--  includes -->
- 
+
 
 @endsection
 
@@ -75,7 +75,7 @@
     <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
     <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
     <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
- 
+
     <script src="{{ asset('js/contabilidad/ventas/modal_filtros_ventas.js') }}"></script>
     <script src="{{ asset('js/contabilidad/ventas/modal_exportar_lista_ventas.js') }}"></script>
 

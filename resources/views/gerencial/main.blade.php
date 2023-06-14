@@ -1,6 +1,6 @@
 @extends('layout.main')
 @include('layout.menu_gerencial')
-@section('cabecera')
+@section('titulo')
     Dashboard Gerencial
 @endsection
 @section('breadcrumb')

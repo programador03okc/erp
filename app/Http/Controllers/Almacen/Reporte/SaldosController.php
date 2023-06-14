@@ -34,7 +34,7 @@ class SaldosController extends Controller
             array_push($array_accesos, $value->id_acceso);
         }
 
-        return view('almacen/reportes/saldos', get_defined_vars(), compact('array_accesos'));
+        return view('almacen.reportes.saldos', get_defined_vars(), compact('array_accesos'));
     }
 
     public function filtrar(Request $request)

@@ -3,7 +3,7 @@
 @section('option')
     @include('layout.option')
 @endsection
-@section('cabecera')
+@section('titulo')
     Correos Coorporativos
 @endsection
 

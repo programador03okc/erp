@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Solicitud de Equipo
 @endsection
 
@@ -137,7 +137,7 @@
             {{-- <strong><strong>Flujos de Aprobación</strong></strong> --}}
                 <fieldset class="group-importes"><legend><h6>Flujos de Aprobación</h6></legend>
                     <input type="text" name="id_doc_aprob" class="oculto">
-                    <table class="mytable table table-condensed table-bordered table-group" 
+                    <table class="mytable table table-condensed table-bordered table-group"
                         id="listaSolFlujos" style="margin-bottom:0px;"  width="100%">
                         <thead>
                             <tr>

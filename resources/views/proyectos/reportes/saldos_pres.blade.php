@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Saldos Presupuesto
 @endsection
 
@@ -31,8 +31,8 @@ Saldos Presupuesto
             </div>
             <div class="col-md-1">
                 <h5>.</h5>
-                <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                    data-placement="bottom" title="Buscar Presupuesto de Ejecución" 
+                <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                    data-placement="bottom" title="Buscar Presupuesto de Ejecución"
                     onClick="estPresejeModal();">Buscar</button>
             </div>
         </div>

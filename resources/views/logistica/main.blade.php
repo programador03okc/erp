@@ -1,6 +1,6 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
-@section('cabecera')
+@section('titulo')
     Dashboard Logística
 @endsection
 @section('breadcrumb')
@@ -13,7 +13,7 @@
 
 <div class="row">
     {{-- <div class="col-md-3">
-        
+
         <div class="small-box bg-blue">
             <div class="icon">
                 <i class="fas fa-file-prescription"></i>
@@ -43,9 +43,9 @@
                 @else
                 <a href="#" class="small-box-footer">Ir <i class="fa fa-arrow-circle-right"></i></a>
                 @endif
-            
+
         </div>
-        
+
     </div>
     <div class="col-md-3">
         <div class="small-box bg-teal">
@@ -62,7 +62,7 @@
                 <a href="#" class="small-box-footer">Ir <i class="fa fa-arrow-circle-right"></i></a>
                 @endif
         </div>
-        
+
     </div> --}}
 
 </div>

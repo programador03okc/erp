@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_finanzas')
 
-@section('cabecera')
+@section('titulo')
 Normalizar
 @endsection
 

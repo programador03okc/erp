@@ -180,7 +180,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/variables/tipo_movimiento',compact('array_accesos','array_accesos_botonera','modulo'));
+        return view('almacen.variables.tipo_movimiento',compact('array_accesos','array_accesos_botonera','modulo'));
     }
     function view_unid_med()
     {
@@ -202,7 +202,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/variables/unid_med',compact('array_accesos','array_accesos_botonera','modulo'));
+        return view('almacen.variables.unid_med',compact('array_accesos','array_accesos_botonera','modulo'));
     }
 
     function view_guia_compra()
@@ -278,7 +278,7 @@ class AlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/kardex_general', compact('almacenes', 'empresas','array_accesos'));
+        return view('almacen.reportes.kardex_general', compact('almacenes', 'empresas','array_accesos'));
     }
     function view_kardex_detallado()
     {
@@ -289,7 +289,7 @@ class AlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/kardex_detallado', compact('almacenes', 'empresas','array_accesos'));
+        return view('almacen.reportes.kardex_detallado', compact('almacenes', 'empresas','array_accesos'));
     }
     function view_tipo_doc_almacen()
     {
@@ -313,7 +313,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/variables/tipo_doc_almacen', compact('tp_doc','array_accesos','array_accesos_botonera','modulo'));
+        return view('almacen.variables.tipo_doc_almacen', compact('tp_doc','array_accesos','array_accesos_botonera','modulo'));
     }
     function view_ingresos()
     {
@@ -327,7 +327,7 @@ class AlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/lista_ingresos', compact('almacenes', 'empresas', 'tp_doc_almacen', 'tp_operacion', 'usuarios','array_accesos'));
+        return view('almacen.reportes.lista_ingresos', compact('almacenes', 'empresas', 'tp_doc_almacen', 'tp_operacion', 'usuarios','array_accesos'));
     }
     function view_salidas()
     {
@@ -341,7 +341,7 @@ class AlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/lista_salidas', compact('almacenes', 'empresas', 'tp_doc_almacen', 'tp_operacion', 'usuarios','array_accesos'));
+        return view('almacen.reportes.lista_salidas', compact('almacenes', 'empresas', 'tp_doc_almacen', 'tp_operacion', 'usuarios','array_accesos'));
     }
     function view_busqueda_ingresos()
     {
@@ -353,7 +353,7 @@ class AlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/busqueda_ingresos', compact('almacenes', 'empresas', 'tp_doc_almacen','array_accesos'));
+        return view('almacen.reportes.busqueda_ingresos', compact('almacenes', 'empresas', 'tp_doc_almacen','array_accesos'));
     }
     function view_busqueda_salidas()
     {
@@ -365,7 +365,7 @@ class AlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/busqueda_salidas', compact('almacenes', 'empresas', 'tp_doc_almacen','array_accesos'));
+        return view('almacen.reportes.busqueda_salidas', compact('almacenes', 'empresas', 'tp_doc_almacen','array_accesos'));
     }
 
     function view_serie_numero()
@@ -390,7 +390,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/variables/serie_numero', compact('tipos', 'sedes','array_accesos','array_accesos_botonera','modulo'));
+        return view('almacen.variables.serie_numero', compact('tipos', 'sedes','array_accesos','array_accesos_botonera','modulo'));
     }
     function view_docs_prorrateo()
     {
@@ -7110,7 +7110,7 @@ class AlmacenController extends Controller
 
     function view_stock_series()
     {
-        return view('almacen/reportes/stock_series');
+        return view('almacen.reportes.stock_series');
     }
 
 

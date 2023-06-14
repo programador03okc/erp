@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Cronograma Valorizado de Ejecución
 @endsection
 
@@ -28,10 +28,10 @@ Cronograma Valorizado de Ejecución
                     <div class="input-group-okc">
                         <input type="text" class="oculto" name="id_presupuesto" primary="ids">
                         <input type="text" class="oculto" name="modo">
-                        <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                        <input type="text" class="form-control" aria-describedby="basic-addon2"
                             readonly name="nombre_opcion" disabled="true">
                         {{-- <div class="input-group-append">
-                            <button type="button" class="input-group-text btn btn-primary " id="basic-addon2" data-toggle="tooltip" 
+                            <button type="button" class="input-group-text btn btn-primary " id="basic-addon2" data-toggle="tooltip"
                                 data-placement="bottom" title="Buscar Presupuesto de Ejecución"
                                 onClick="presejeModal('crononuevo');">
                                 <i class="fa fa-search"></i>
@@ -70,13 +70,13 @@ Cronograma Valorizado de Ejecución
                 </div>
                 <div class="col-md-3">
                     Descargar <i class="fas fa-file-excel icon-tabla green boton"
-                        data-toggle="tooltip" data-placement="bottom" 
+                        data-toggle="tooltip" data-placement="bottom"
                         title="Exportar a Excel" onclick="exportTableToExcel('listaPartidas','CronogramaValorizado')"></i>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                    <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                         id="listaPartidas" style="margin-top:10px;">
                         <thead>
                             <tr>

@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Mantenimientos Realizados
 @endsection
 
@@ -31,8 +31,8 @@
             <input type="date" class="form-control" name="fecha_fin">
         </div>
         <div class="col-md-2">
-            <button type="button" class="btn btn-primary" data-toggle="tooltip" 
-                data-placement="bottom" title="Actualizar" 
+            <button type="button" class="btn btn-primary" data-toggle="tooltip"
+                data-placement="bottom" title="Actualizar"
                 onClick="actualizar_reporte();">Actualizar</button>
         </div>
     </div>

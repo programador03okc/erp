@@ -1,15 +1,20 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
-@section('cabecera')
-Customización
-@endsection
+@extends('themes.base')
 
+@section('titulo') Customización @endsection
+@include('layouts.menu_almacen')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('cas.index')}}"><i class="fas fa-tachometer-alt"></i> Almacén</a></li>
@@ -18,7 +23,8 @@ Customización
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 @if (in_array(138,$array_accesos) || in_array(139,$array_accesos) || in_array(140,$array_accesos) || in_array(141,$array_accesos)|| in_array(142,$array_accesos))
 <div class="page-main" type="customizacion">
 
@@ -243,48 +249,6 @@ Customización
                     </table>
                 </div>
             </div>
-            {{-- <div class="row">
-                <div class="col-md-6">
-                    <div class="panel panel-default" style="margin-bottom: 0px;">
-                        <div class="panel-heading"><strong>Servicios Directos</strong></div>
-                        <table id="listaServiciosDirectos" class="table">
-                            <thead>
-                                <tr style="background: lightgray;">
-                                    <th>Descripción</th>
-                                    <th width='15%'>Total</th>
-                                    <th style="padding:0px;">
-                                        <i class="fas fa-plus-square icon-tabla green boton add-new-servicio edition"
-                                        id="addServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar Servicio"></i>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="panel panel-warning" style="margin-bottom: 0px;">
-                        <div class="panel-heading"><strong>Costos Indirectos</strong></div>
-                        <table id="listaCostosIndirectos" class="table">
-                            <thead>
-                                <tr style="background: navajowhite;">
-                                    <!-- <th width='5%'>Nro</th> -->
-                                    <th>Código Item</th>
-                                    <th>Tasa(%)</th>
-                                    <th>Parámetro</th>
-                                    <th>Unit.</th>
-                                    <th>Total</th>
-                                    <th style="padding:0px;">
-                                        <i class="fas fa-plus-square icon-tabla green boton add-new-indirecto edition"
-                                        id="addCostoIndirecto" data-toggle="tooltip" data-placement="bottom" title="Agregar Indirecto"></i>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> --}}
         </div>
     </div>
 </div>
@@ -305,21 +269,19 @@ Customización
 @include('almacen.transferencias.productosAlmacenModal')
 @include('almacen.guias.guia_com_series')
 @include('almacen.guias.guia_ven_series')
+
+
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js')}}?v={{filemtime(public_path('template/plugins/js-xlsx/xlsx.full.min.js'))}}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script> --}}
+
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
+{{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js')}}?v={{filemtime(public_path('template/plugins/js-xlsx/xlsx.full.min.js'))}}"></script> --}}
 
 <script src="{{ asset('js/almacen/customizacion/customizacion.js')}}?v={{filemtime(public_path('js/almacen/customizacion/customizacion.js'))}}"></script>
 <script src="{{ asset('js/almacen/customizacion/transformacionModal.js')}}?v={{filemtime(public_path('js/almacen/customizacion/transformacionModal.js'))}}"></script>
@@ -338,4 +300,9 @@ Customización
         usuarioNombreSession = '{{Auth::user()->nombre_corto}}';
     });
 </script>
+
+
 @endsection
+
+{{-- ------------------------------------------------------- --}}
+

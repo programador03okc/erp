@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Requerimientos pendientes
 @endsection
 

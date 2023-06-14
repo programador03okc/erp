@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Opciones y sus Relaciones
 @endsection
 
@@ -18,7 +18,7 @@ Opciones y sus Relaciones
     <div class="thumbnail" style="padding-left: 20px;padding-right: 20px;padding-top: 20px;">
         <div class="row">
             <div class="col-md-12">
-                <table class="mytable table table-condensed table-bordered table-okc-view" 
+                <table class="mytable table table-condensed table-bordered table-okc-view"
                     id="listaOpcionesTodo">
                     <thead>
                         <tr>

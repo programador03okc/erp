@@ -2,7 +2,7 @@
 @include('layout.menu_proyectos')
 @include('layout.option')
 
-@section('cabecera')
+@section('titulo')
 Sistemas de contrato
 @endsection
 

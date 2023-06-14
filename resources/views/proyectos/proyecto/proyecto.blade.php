@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Proyectos
 @endsection
 
@@ -22,11 +22,11 @@ Proyectos
                 <div class="row">
                     <div class="col-md-12">
                         <div style="text-align: right;">
-                            <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                                data-placement="bottom" title="Crear Proyecto" 
+                            <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                                data-placement="bottom" title="Crear Proyecto"
                                 onClick="open_proyecto_create();">Crear Proyecto</button>
                         </div>
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaProyecto">
                             <thead>
                                 <tr>

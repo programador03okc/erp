@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Producto @endsection
+@section('titulo') Producto @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(69))
 @section('option')

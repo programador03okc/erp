@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('cabecera')
+@section('titulo')
 Mapeo de Productos
 @endsection
 
@@ -33,7 +33,7 @@ Mapeo de Productos
 
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaRequerimientos">
                             <thead>
                                 <tr>
@@ -77,7 +77,7 @@ Mapeo de Productos
 
         let mapeo = new MapeoProductos();
         mapeo.listarRequerimientos();
-        
+
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             let tab = $(e.target).attr("href") // activated tab
             console.log('tab: '+tab);

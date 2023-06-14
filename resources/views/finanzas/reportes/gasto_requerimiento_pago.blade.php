@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Lista de gastos requerimiento pago @endsection
+@section('titulo') Lista de gastos requerimiento pago @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
 <link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/select2/css/select2.min.css')}}">

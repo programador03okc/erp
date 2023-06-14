@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Gestión de Cotizaciones
 @endsection
 
@@ -22,10 +22,10 @@
                         <li role="presentation" class="active"><a href="#createNewCoti" aria-controls="createNewCoti" role="tab" data-toggle="tab">Crear Nueva Cotización</a></li>
                         <li role="presentation" class=""><a href="#cotiListByGroup" onClick="vista_extendida();" aria-controls="cotiListByGroup" role="tab" data-toggle="tab">Lista de Cotizaciones</a></li>
                     </ul>
-                    
+
 
                     <!-- Tab panes -->
- 
+
 
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="createNewCoti">
@@ -70,7 +70,7 @@
                                                                         <input type="checkbox" id="incluir_sede" onchange="handleChangeIncluirSede(event)" /> Inlcuir Sede
                                                                 </div>
                                                             </div>
-                                                            <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                                            <table class="mytable table table-condensed table-bordered table-okc-view"
                                                             id="listaRequerimientoPendientes">
                                                                 <thead>
                                                                     <tr>
@@ -104,8 +104,8 @@
                                                     <div class="panel panel-default">
                                                         <div class="panel-body">
                                                             <h5>Seleccionar Items</h5>
-                                                            <table class="mytable table table-condensed table-bordered table-okc-view" 
-                                                                id="listaItemsRequerimiento" width="100%"> 
+                                                            <table class="mytable table table-condensed table-bordered table-okc-view"
+                                                                id="listaItemsRequerimiento" width="100%">
                                                                 <thead>
                                                                     <tr>
                                                                         <th hidden>Id</th>
@@ -143,7 +143,7 @@
                                                     <div class="panel panel-default">
                                                         <div class="panel-body">
                                                             <h5>Crear Cotización</h5>
- 
+
                                                             <input class="oculto" name="id_cotizacion"/>
                                                             <input type="hidden" name="id_grupo_cotizacion" value="0" primary="ids">
                                                             <div class="row">
@@ -157,7 +157,7 @@
                                                                         <div class="col-md-9 text-right">
                                                                             <h5>&nbsp;</h5>
                                                                             <button class="btn btn-success" id="exampleInputName3" type="button" onClick="nuevaSolicitudCotizacion();">
-                                                                                <i class="fas fa-plus"></i> Crear Solicitud de Cotización 
+                                                                                <i class="fas fa-plus"></i> Crear Solicitud de Cotización
                                                                             </button>
                                                                         </div>
                                                                 </div>
@@ -169,11 +169,11 @@
                                                                             <tr>
                                                                                 <th width='30px'>#</th>
                                                                                 <th>Cotización</th>
-                                                                                <th>Proveedor</th>                                                                        
+                                                                                <th>Proveedor</th>
                                                                                 <th>Req. Vinculados</th>
                                                                                 <th>Estado</th>
-                                                                                <th width='150px'>Acción</th>                                                                        
-                                                                            </tr>    
+                                                                                <th width='150px'>Acción</th>
+                                                                            </tr>
                                                                         </thead>
                                                                         <tbody>
                                                                             <tr>
@@ -198,9 +198,9 @@
                                                                             </tr> -->
                                                                         </tbody>
                                                                     </table>
-                                                                </div>   
-                                                            </div>   
-                                                            
+                                                                </div>
+                                                            </div>
+
                                                             <div class="row">
                                                                 <div class="col-md-12 right">
                                                                 <button class="btn btn-default" role="button"   onClick="gotToThirdToSecondTab(event);">
@@ -214,7 +214,7 @@
                                                                 </button>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -226,7 +226,7 @@
                         <!-- <div role="tabpanel" class="tab-pane" id="cotiListByGroup">
                             <div class="panel panel-default">
                                 <div class="panel-body">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view"
                                     id="listaCotizacionesPorGrupo">
                                         <thead>
                                             <tr>
@@ -252,7 +252,7 @@
                                 </div>
                             </div>
                         </div> -->
- 
+
                     </div>
                 </div>
 

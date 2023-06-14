@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Lista OCAM'S
 @endsection
 
@@ -31,7 +31,7 @@
                         <div role="tabpanel" class="tab-pane active" id="ocams_pendientes">
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        
+
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <h5>Empresa</h5>
@@ -48,7 +48,7 @@
                                                     <h5>Año de publicación</h5>
                                                     <div style="display:flex;">
                                                     <select class="form-control" id="descripcion_año_publicacion_op_pendientes" onChange="handleChangeFilterEmpresaListOrdenesPropiasPendientesByAñoPublicacion(event);">
-                                                           
+
                                                             @foreach ($periodos as $periodo)
                                                                 <option value="{{$periodo->descripcion}}">{{$periodo->descripcion}}</option>
                                                             @endforeach
@@ -81,7 +81,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                        
+
                                     </div>
                                 </div>
                         </div>
@@ -104,7 +104,7 @@
                                                     <h5>Año de publicación</h5>
                                                     <div style="display:flex;">
                                                     <select class="form-control" id="descripcion_año_publicacion_op_vinculadas" onChange="handleChangeFilterEmpresaListOrdenesPropiasVinculadasByAñoPublicacion(event);">
-                                                           
+
                                                             @foreach ($periodos as $periodo)
                                                                 <option value="{{$periodo->descripcion}}">{{$periodo->descripcion}}</option>
                                                             @endforeach
@@ -137,7 +137,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                        
+
                                     </div>
                                 </div>
                         </div>
@@ -164,7 +164,7 @@
     <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
 
     <script src="{{asset('js/logistica/lista_ocams.js')}}"></script>
- 
+
     <script>
 
     $(document).ready(function(){

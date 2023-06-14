@@ -3,7 +3,7 @@
 @section('option')
     @include('layout.option')
 @endsection
-@section('cabecera')
+@section('titulo')
     Historial de Aprobaciones
 @endsection
 
@@ -31,7 +31,7 @@
                 </table>
             </fieldset>
         </div>
- 
+
     </div>
 </div>
 @endsection

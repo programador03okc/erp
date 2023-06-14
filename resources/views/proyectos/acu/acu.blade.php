@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Análisis de Costos Unitarios
 @endsection
 
@@ -22,11 +22,11 @@ Análisis de Costos Unitarios
                 <div class="row">
                     <div class="col-md-12">
                     <div style="text-align: right;">
-                    <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                            data-placement="bottom" title="Crear un ACU" 
+                    <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                            data-placement="bottom" title="Crear un ACU"
                             onClick="open_acu_partida_create();">Crear ACU</button>
                     </div>
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaAcu">
                             <thead>
                                 <tr>

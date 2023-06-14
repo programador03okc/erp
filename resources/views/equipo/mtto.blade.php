@@ -4,7 +4,7 @@
 @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Mantenimiento de Equipos
 @endsection
 
@@ -28,7 +28,7 @@
                         <div style="display:flex;">
                             <input class="oculto" name="id_proveedor"/>
                             <input class="oculto" name="id_contrib"/>
-                            <input type="text" class="form-control activation" name="razon_social" placeholder="Seleccione un proveedor..." 
+                            <input type="text" class="form-control activation" name="razon_social" placeholder="Seleccione un proveedor..."
                                 disabled aria-describedby="basic-addon1" required>
                             <button type="button" class="input-group-text activation" id="basic-addon1" onClick="proveedorModal();">
                                 <i class="fa fa-search"></i>
@@ -117,7 +117,7 @@
                                         </div>
                                         <div style="width:10%;">
                                             <button type="button" class="btn btn-success boton"
-                                                style="padding:5px;height:29px;font-size:12px;" 
+                                                style="padding:5px;height:29px;font-size:12px;"
                                                 data-toggle="tooltip" data-placement="bottom" title="Agregar Mtto"
                                                 onClick="agregar_mtto();">
                                                 Agregar mtto
@@ -134,7 +134,7 @@
                                 <th>Precio Total</th>
                                 <th>Obs</th>
                                 <th>
-                                    <i class="fas fa-plus-square icon-tabla green boton activation" 
+                                    <i class="fas fa-plus-square icon-tabla green boton activation"
                                     data-toggle="tooltip" data-placement="bottom" disabled="true"
                                     title="Agregar Detalle" onClick="mtto_detalleModal();"></i>
                                 </th>

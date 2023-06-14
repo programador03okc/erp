@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Cronograma de Ejecución
 @endsection
 
@@ -63,7 +63,7 @@ Cronograma de Ejecución
                                         <label id="descripcion"></label>
                                     </div>
                                 </div>
-                                <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                                <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                                     id="listaPartidas" style="margin-top:10px;">
                                     <thead>
                                         <tr>

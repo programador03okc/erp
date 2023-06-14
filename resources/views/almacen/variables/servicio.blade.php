@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Servicio
 @endsection
 
@@ -19,7 +19,7 @@
     <div class="row">
         <div class="col-md-6">
             <fieldset class="group-table">
-                <table class="mytable table table-condensed table-bordered table-okc-view" 
+                <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaServicio">
                     <thead>
                         <tr>
@@ -73,7 +73,7 @@
                     <div class="col-md-12">
                     <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
                     </div>
-                </div>                  
+                </div>
             </div>
         </div>
     </form>

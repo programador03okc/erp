@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Gestión Nombres de A.C.U.
 @endsection
 
@@ -22,11 +22,11 @@ Gestión Nombres de A.C.U.
                 <div class="row">
                     <div class="col-md-12">
                     <div style="text-align: right;">
-                        <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                            data-placement="bottom" title="Crear un Nombre ACU" 
+                        <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                            data-placement="bottom" title="Crear un Nombre ACU"
                             onClick="open_acu_create();">Crear Nombre ACU</button>
                     </div>
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaCu">
                             <thead>
                                 <tr>

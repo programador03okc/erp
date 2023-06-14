@@ -3,7 +3,7 @@
 @section('option')
     @include('layout.option')
 @endsection
-@section('cabecera')
+@section('titulo')
     Aplicaciones del Sistema
 @endsection
 @section('content')

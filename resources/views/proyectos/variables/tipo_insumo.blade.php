@@ -2,7 +2,7 @@
 @include('layout.menu_proyectos')
 @include('layout.option')
 
-@section('cabecera')
+@section('titulo')
 Tipo de Insumos
 @endsection
 

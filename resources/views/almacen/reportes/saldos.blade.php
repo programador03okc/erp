@@ -1,13 +1,10 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
+@extends('themes.base')
 
-@section('cabecera')
-Saldos Actuales
-@endsection
-
+@section('titulo') Saldos Actuales @endsection
+@include('layouts.menu_almacen')
 @section('estilos')
-    <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         button.botones {
             margin-top: 35px;
@@ -18,9 +15,15 @@ Saldos Actuales
         table.table-bordered.dataTable tbody td {
             vertical-align: middle;
         }
+
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
     </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
@@ -29,7 +32,7 @@ Saldos Actuales
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 
 @if (in_array(159,$array_accesos) || in_array(160,$array_accesos) || in_array(161,$array_accesos))
 <div class="page-main" type="saldos">
@@ -141,16 +144,19 @@ Saldos Actuales
 </div>
 @endif
 @include('almacen.reportes.verRequerimientoReservas')
+
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+
     <script>
         // let csrf_token = '{{ csrf_token() }}';
         let vardataTables = funcDatatables();
@@ -220,7 +226,7 @@ Saldos Actuales
                     url: "{{ route('almacen.reportes.saldos.listar') }}",
                     method: 'POST',
                     data: {type: type},
-                    headers: {'X-CSRF-TOKEN': csrf_token}
+                    headers: {'X-CSRF-TOKEN': token}
                 },
                 columns: [
                     {data: 'codigo'},
@@ -356,7 +362,7 @@ Saldos Actuales
                     Util.notify("info", "Debe seleccionar solo un almacén");
                 } else {
                     var form = $('<form action="' + route + '" method="post" target="_blank">' +
-                        '<input type="hidden" name="_token" value="' + csrf_token + '" />' +
+                        '<input type="hidden" name="_token" value="' + token + '" />' +
                         '<input type="hidden" name="almacen" value="' + almacen + '" />' +
                         '<input type="hidden" name="fecha" value="' + fecha + '" />' +
                     '</form>');
@@ -368,4 +374,6 @@ Saldos Actuales
             }
         }
     </script>
+
 @endsection
+{{-- ---------------------- --}}

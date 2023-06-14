@@ -1,14 +1,20 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
-@section('cabecera')
-Orden Devolución
-@endsection
+@extends('themes.base')
 
+@section('titulo') Orden Devolución @endsection
+@include('layouts.menu_almacen')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-3/plugins/select2/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacén</a></li>
@@ -17,7 +23,8 @@ Orden Devolución
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 @if (in_array(145,$array_accesos)||in_array(144,$array_accesos)||in_array(143,$array_accesos)||in_array(146,$array_accesos))
 {{-- @if (in_array(Auth::user()->id_usuario,[1,3,27,17,64,16,118,119,93,77,135])) --}}
 @include('almacen.devoluciones.devolucionContenido')
@@ -38,20 +45,18 @@ Orden Devolución
 @include('almacen.devoluciones.salidasModal')
 @include('almacen.devoluciones.ingresosModal')
 @include('cas.incidencias.incidenciaModal')
+
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
 
 <script src="{{ asset('js/almacen/devolucion/devolucion.js')}}?v={{filemtime(public_path('js/almacen/devolucion/devolucion.js'))}}"></script>
 <script src="{{ asset('js/almacen/devolucion/devolucionModal.js')}}?v={{filemtime(public_path('js/almacen/devolucion/devolucionModal.js'))}}"></script>
@@ -73,3 +78,5 @@ Orden Devolución
     });
 </script>
 @endsection
+
+{{-- -------------------------------------------------- --}}

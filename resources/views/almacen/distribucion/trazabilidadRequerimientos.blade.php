@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('cabecera')
+@section('titulo')
 Trazabilidad de Requerimientos
 @endsection
 
@@ -22,7 +22,7 @@ Trazabilidad de Requerimientos
 
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaRequerimientosTrazabilidad">
                             <thead>
                                 <tr>

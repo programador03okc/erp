@@ -20,7 +20,7 @@ class ListaRequerimientosAlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/reportes/requerimientosAlmacen', compact('almacenes','array_accesos'));
+        return view('almacen.reportes.requerimientosAlmacen', compact('almacenes','array_accesos'));
     }
 
     function listarRequerimientosAlmacen()

@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Documento de Compra
 @endsection
 @section('breadcrumb')
@@ -35,7 +35,7 @@
                                     <div class="col-md-3">
                                         <h5>Serie-Número</h5>
                                         <div class="input-group">
-                                            <input type="text" class="form-control activation" name="serie" 
+                                            <input type="text" class="form-control activation" name="serie"
                                                 placeholder="F001" disabled="true">
                                             <span class="input-group-addon">-</span>
                                             <input type="text" class="form-control activation" name="numero"
@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <h5>Tipo de Documento</h5>
-                                        <select class="form-control activation js-example-basic-single" 
+                                        <select class="form-control activation js-example-basic-single"
                                             name="id_tp_doc" disabled="true">
                                             <option value="0">Elija una opción</option>
                                             @foreach ($tp_doc as $tp)
@@ -61,7 +61,7 @@
                                     <div class="col-md-3">
                                         <h5>Condición</h5>
                                         <div style="display:flex;">
-                                            <select class="form-control group-elemento activation" name="id_condicion" 
+                                            <select class="form-control group-elemento activation" name="id_condicion"
                                                 onChange="change_dias();" disabled="true">
                                                 <option value="0">Elija una opción</option>
                                                 @foreach ($condiciones as $cond)
@@ -77,7 +77,7 @@
                                         <div style="display:flex;">
                                             <input class="oculto" name="id_proveedor"/>
                                             <input class="oculto" name="id_contrib"/>
-                                            <input type="text" class="form-control" name="prov_razon_social" placeholder="Seleccione un proveedor..." 
+                                            <input type="text" class="form-control" name="prov_razon_social" placeholder="Seleccione un proveedor..."
                                                 aria-describedby="basic-addon1" disabled="true">
                                             <button type="button" class="input-group-text activation" id="basic-addon1" onClick="proveedorModal();">
                                                 <i class="fa fa-search"></i>
@@ -107,7 +107,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <h5>Responsable</h5>
-                                        <select class="form-control activation js-example-basic-single" 
+                                        <select class="form-control activation js-example-basic-single"
                                             name="usuario" disabled="true">
                                             <option value="0">Elija una opción</option>
                                             @foreach ($usuarios as $usu)
@@ -203,8 +203,8 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <!-- <button type="button" class="btn btn-secondary" data-toggle="tooltip" 
-                                data-placement="bottom" title="pruebs" 
+                                <!-- <button type="button" class="btn btn-secondary" data-toggle="tooltip"
+                                data-placement="bottom" title="pruebs"
                                 onClick="actualiza_totales();">Actualizar</button> -->
                             </div>
                             <div class="col-md-6">

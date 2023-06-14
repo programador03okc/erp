@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_migracion')
 
-@section('cabecera') Migraciones de productos por serie @endsection
+@section('titulo') Migraciones de productos por serie @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
@@ -76,7 +76,7 @@
 
 @section('scripts')
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    
+
     <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>

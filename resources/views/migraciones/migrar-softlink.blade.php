@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_migracion')
 
-@section('cabecera') Migraciones SoftLink @endsection
+@section('titulo') Migraciones SoftLink @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('css/stepper.css')}}">
@@ -70,7 +70,7 @@
 
 @section('scripts')
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    
+
     <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>

@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Dashboard Almacén @endsection
+@section('titulo') Dashboard Almacén @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
     <style>

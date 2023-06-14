@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('cabecera')
+@section('titulo')
 Confirmación de Pagos
 @endsection
 
@@ -31,7 +31,7 @@ Confirmación de Pagos
                         <form id="form-pendientes" type="register"> -->
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view"
                                         id="requerimientosPendientes">
                                         <thead>
                                             <tr>
@@ -60,7 +60,7 @@ Confirmación de Pagos
                         <form id="form-confirmados" type="register">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view"
                                         id="requerimientosConfirmados">
                                         <thead>
                                             <tr>
@@ -90,7 +90,7 @@ Confirmación de Pagos
     </div>
 </div>
 
-    
+
 @include('almacen.distribucion.requerimientoDetalle')
 @include('almacen.distribucion.requerimientoObs')
 @include('almacen.distribucion.verRequerimientoAdjuntos')

@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Estructura del Presupuesto
 @endsection
 
@@ -27,7 +27,7 @@ Estructura del Presupuesto
                     <h5>Fecha Emisión</h5>
                     <input type="date" class="form-control activation" name="fecha_emision" value="<?=date('Y-m-d');?>"  disabled="true"/>
                 </div>
-                <div class="col-md-10">  
+                <div class="col-md-10">
                     <h5>Descripción</h5>
                     <input type="text" class="form-control activation" name="descripcion"/>
                 </div>
@@ -60,11 +60,11 @@ Estructura del Presupuesto
                         <th>Descripción</th>
                         <th>Relacionado</th>
                         <th width="15%">
-                            <i class="fas fa-plus-square icon-tabla green boton" 
-                            data-toggle="tooltip" data-placement="bottom" 
+                            <i class="fas fa-plus-square icon-tabla green boton"
+                            data-toggle="tooltip" data-placement="bottom"
                             title="Agregar Título" onClick="agregar_primer_titulo();"></i>
-                            {{-- <i class="fas fa-archive icon-tabla orange boton" 
-                            data-toggle="tooltip" data-placement="bottom" 
+                            {{-- <i class="fas fa-archive icon-tabla orange boton"
+                            data-toggle="tooltip" data-placement="bottom"
                             title="Agregar ACU" onClick="agregar_acus_cd();"></i> --}}
                         </th>
                         <th hidden>padre</th>

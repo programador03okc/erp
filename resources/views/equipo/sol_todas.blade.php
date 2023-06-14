@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Solicitudes de Equipos
 @endsection
 

@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Productos Comprados
 @endsection
 
@@ -11,7 +11,7 @@
 <div class="page-main" type="reporte-productos_comprados">
     <legend>
         <div class="row">
-            <div class="col-xs-12 col-md-7"><h2>Reporte - Productos Comprados</h2></div>  
+            <div class="col-xs-12 col-md-7"><h2>Reporte - Productos Comprados</h2></div>
         </div>
     </legend>
     <form id="form-productos_comprados" type="register" form="formulario">
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>
- 
+
         <br>
         <div class="row">
             <div class="col-md-12">
@@ -82,7 +82,7 @@
 
         <div class="row">
         <div class="col-md-12">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaProductosComprados">
                 <thead>
                     <tr>
@@ -112,11 +112,11 @@
             </table>
         </div>
     </div>
- 
+
     </form>
 
-        
- 
+
+
 </div>
 
 

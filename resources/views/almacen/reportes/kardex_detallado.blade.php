@@ -1,24 +1,30 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
-@section('cabecera')
-Kardex por Producto
-@endsection
+@extends('themes.base')
 
+@section('titulo') Kardex por Producto @endsection
+@include('layouts.menu_almacen')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
-  <li>Reportes</li>
-  <li class="active">@yield('cabecera')</li>
-</ol>
+    <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
+    <li>Reportes</li>
+    <li class="active">@yield('cabecera')</li>
+  </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 <div class="page-main" type="kardex_detallado">
 
 
@@ -139,19 +145,15 @@ Kardex por Producto
     @endif
 </div>
 @include('almacen.producto.productoModal')
+
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
-    <script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
     <script src="{{ asset('js/almacen/reporte/kardex_detallado.js')}}"></script>
     <script src="{{ asset('js/almacen/producto/productoModal.js')}}"></script>
@@ -160,4 +162,6 @@ Kardex por Producto
         Util.seleccionarMenu(window.location);
     });
     </script>
+
 @endsection
+{{-- ---------------------------- --}}

@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Gestión de Valorizaciones
 @endsection
 
@@ -110,7 +110,7 @@
 
                                                                         </tbody>
                                                                     </table>
-                                                                    
+
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -125,7 +125,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
- 
+
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +134,7 @@
                         <div role="tabpanel" class="tab-pane" id="cotiListValorizadas">
                             <div class="panel panel-default">
                                 <div class="panel-body">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view"
                                     id="listaCotizacionesEnviadasValorizadas">
                                         <thead>
                                             <tr>
@@ -156,7 +156,7 @@
                                 </div>
                             </div>
                         </div>
- 
+
                     </div>
                 </div>
 

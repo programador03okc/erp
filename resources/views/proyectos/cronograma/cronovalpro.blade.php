@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Cronograma Valorizado Propuesta
 @endsection
 
@@ -27,7 +27,7 @@ Cronograma Valorizado Propuesta
                     <li>Duración Total: <label id="duracion"></label></li>
                     <li>Sub Total: <label id="importe"></label></li>
                     <li><i class="fas fa-file-excel icon-tabla green boton"
-                        data-toggle="tooltip" data-placement="bottom" 
+                        data-toggle="tooltip" data-placement="bottom"
                         title="Exportar a Excel" onclick="exportTableToExcel('listaPartidas','CronogramaValorizado')"></i></li>
                 </ol>
             </legend> -->
@@ -39,7 +39,7 @@ Cronograma Valorizado Propuesta
                     <div class="input-group-okc">
                         <input type="text" class="oculto" name="id_presupuesto" primary="ids">
                         <input type="text" class="oculto" name="modo">
-                        <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                        <input type="text" class="form-control" aria-describedby="basic-addon2"
                             readonly name="nombre_opcion" disabled="true">
                     </div>
                 </div>
@@ -74,14 +74,14 @@ Cronograma Valorizado Propuesta
                 </div>
                 <div class="col-md-3">
                     Descargar <i class="fas fa-file-excel icon-tabla green boton"
-                        data-toggle="tooltip" data-placement="bottom" 
+                        data-toggle="tooltip" data-placement="bottom"
                         title="Exportar a Excel" onclick="exportTableToExcel('listaPartidas','CronogramaValorizado')"></i>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <div id="div-scroll">
-                        <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                             id="listaPartidas" style="margin-top:10px;">
                             <thead>
                                 <tr>

@@ -5,7 +5,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Cronograma Propuesta
 @endsection
 
@@ -57,7 +57,7 @@ Cronograma Propuesta
                                         <label id="descripcion"></label>
                                     </div>
                                 </div>
-                                <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                                <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                                     id="listaPartidas" style="margin-top:10px;">
                                     <thead>
                                         <tr>

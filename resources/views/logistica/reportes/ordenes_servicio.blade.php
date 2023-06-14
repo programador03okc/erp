@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Reportes de ordenes servicio
 @endsection
 

@@ -4,7 +4,7 @@
 <!-- @include('layout.option') -->
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Programación de Mantenimientos de Equipos
 @endsection
 
@@ -14,8 +14,8 @@
         <h2>Programación de Mantenimientos de Equipos</h2>
         {{-- <ol class="breadcrumb">
             <li>
-                <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                data-placement="bottom" title="Generar Mantenimiento" 
+                <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                data-placement="bottom" title="Generar Mantenimiento"
                 onClick="mantenimiento_create();">Generar Mantenimiento</button>
             </li>
         </ol> --}}

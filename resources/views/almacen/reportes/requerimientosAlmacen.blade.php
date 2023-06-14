@@ -1,24 +1,29 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
+@extends('themes.base')
 
-@section('cabecera')
-Estado de Atención de Requerimientos
-@endsection
-
+@section('titulo') Estado de Atención de Requerimientos @endsection
+@include('layouts.menu_almacen')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}">
 <link rel="stylesheet" href="{{ asset('datatables/Datatables/css/dataTables.bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('datatables/Buttons/css/buttons.dataTables.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
-<style>
-    #despachosPendientes_filter,
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+        #despachosPendientes_filter,
     #despachosEntregados_filter{
         margin-top:10px;
     }
-</style>
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
@@ -27,7 +32,7 @@ Estado de Atención de Requerimientos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 
 @if (in_array(158,$array_accesos) || in_array(157,$array_accesos) )
 <div class="box box-solid">
@@ -81,20 +86,23 @@ Estado de Atención de Requerimientos
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-<script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-<script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
 
-<script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+{{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
+
+{{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
+{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/reporte/requerimientosAlmacen.js') }}?v={{filemtime(public_path('js/almacen/reporte/requerimientosAlmacen.js'))}}"></script>
 <script src="{{ asset('js/almacen/reporte/cambioRequerimiento.js') }}?v={{filemtime(public_path('js/almacen/reporte/cambioRequerimiento.js'))}}"></script>
@@ -109,4 +117,7 @@ Estado de Atención de Requerimientos
     //     iniciar('{{Auth::user()->tieneAccion(85)}}');
     });
 </script>
+
+
 @endsection
+{{-- ----------------------------------------------- --}}

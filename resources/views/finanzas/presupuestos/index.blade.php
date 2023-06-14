@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Lista de Presupuestos @endsection
+@section('titulo') Lista de Presupuestos @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
 {{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}

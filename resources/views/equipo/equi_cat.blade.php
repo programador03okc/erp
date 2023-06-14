@@ -4,7 +4,7 @@
 @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Categoría de Equipos
 @endsection
 
@@ -14,7 +14,7 @@
     <div class="row">
         <div class="col-md-6">
             <fieldset class="group-table">
-                <table class="mytable table table-condensed table-bordered table-okc-view" 
+                <table class="mytable table table-condensed table-bordered table-okc-view"
                     id="listaEquiCat">
                     <thead>
                         <tr>
@@ -37,7 +37,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <h5>Tipo</h5>
-                        <select class="form-control activation" 
+                        <select class="form-control activation"
                             name="id_tipo" disabled="true">
                             <option value="0">Elija una opción</option>
                             @foreach ($tipos as $tipo)

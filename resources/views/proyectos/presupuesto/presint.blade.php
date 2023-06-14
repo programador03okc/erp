@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Presupuesto Interno
 @endsection
 
@@ -41,10 +41,10 @@ Presupuesto Interno
                     <h5>Seleccione Opcion Comercial</h5>
                     <div class="input-group-okc">
                         <input class="oculto" name="id_op_com" >
-                        <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                        <input type="text" class="form-control" aria-describedby="basic-addon2"
                             readonly name="nombre_opcion" disabled="true">
                         <div class="input-group-append">
-                            <button type="button" class="input-group-text activation btn btn-primary " id="basic-addon2" data-toggle="tooltip" 
+                            <button type="button" class="input-group-text activation btn btn-primary " id="basic-addon2" data-toggle="tooltip"
                                 data-placement="bottom" title="Buscar Opción Comercial"
                                 onClick="open_opcion_modal();">
                                 <i class="fa fa-search"></i>
@@ -61,8 +61,8 @@ Presupuesto Interno
                             @endforeach
                         </select>
                         <div class="input-group-append">
-                            <button type="button" class="btn btn-success input-group-text  " id="basic-addon2" data-toggle="tooltip" 
-                                data-placement="bottom" title="Actualizar Importes" 
+                            <button type="button" class="btn btn-success input-group-text  " id="basic-addon2" data-toggle="tooltip"
+                                data-placement="bottom" title="Actualizar Importes"
                                 onClick="actualiza_moneda();">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
@@ -79,8 +79,8 @@ Presupuesto Interno
                 </div>
                 {{-- <div class="col-md-1">
                     <h5>Copiar</h5>
-                    <button type="button" class="btn btn-warning" data-toggle="tooltip" 
-                        data-placement="bottom" title="Copiar Partidas de un Presupuesto" 
+                    <button type="button" class="btn btn-warning" data-toggle="tooltip"
+                        data-placement="bottom" title="Copiar Partidas de un Presupuesto"
                         onClick="presintCopiaModal();"><i class="fas fa-file-alt"></i></button>
                 </div> --}}
             </div>
@@ -101,7 +101,7 @@ Presupuesto Interno
                         <form id="form-par" type="register">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                                         id="listaAcusCD"  style="margin-top:10px;">
                                         <thead>
                                             <tr>
@@ -114,8 +114,8 @@ Presupuesto Interno
                                                 <th width="100">Total</th>
                                                 <th width="150">Sistema</th>
                                                 <th width="70">
-                                                <i class="fas fa-plus-square icon-tabla green boton" 
-                                                    data-toggle="tooltip" data-placement="bottom" 
+                                                <i class="fas fa-plus-square icon-tabla green boton"
+                                                    data-toggle="tooltip" data-placement="bottom"
                                                     title="Agregar Título" onClick="agregar_componente_cd();"></i>
                                                 </th>
                                                 <th hidden>codPadre</th>
@@ -148,8 +148,8 @@ Presupuesto Interno
                                         <th>P.Unit</th>
                                         <th width="15%">P.Parcial</th>
                                         <th>
-                                        <i class="fas fa-sync-alt icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                        <i class="fas fa-sync-alt icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Refrescar Totales" onClick="refresh_cd();"></i>
                                         </th>
                                     </tr>
@@ -176,11 +176,11 @@ Presupuesto Interno
                                         <th>P.Parcial</th>
                                         <th>SubTotal</th>
                                         <th width="10%">
-                                            <i class="fas fa-plus-square icon-tabla green boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-plus-square icon-tabla green boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Título" onClick="agregar_componente_ci();"></i>
-                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Titulos Base" onClick="crear_titulos_ci();"></i>
                                         </th>
                                         <th hidden>padre</th>
@@ -208,11 +208,11 @@ Presupuesto Interno
                                         <th>P.Parcial</th>
                                         <th>SubTotal</th>
                                         <th width="10%">
-                                            <i class="fas fa-plus-square icon-tabla green boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-plus-square icon-tabla green boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Título" onClick="agregar_componente_gg();"></i>
-                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Titulos Base" onClick="crear_titulos_gg();"></i>
                                         </th>
                                         <th hidden>padre</th>
@@ -231,14 +231,14 @@ Presupuesto Interno
                                         <th>Código</th>
                                         <th>Descripción</th>
                                         <th class="right">Imp.Total
-                                            <i class="fas fa-file-download icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-file-download icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Generar Estructura" onClick="generar_estructura();"></i>
-                                            <i class="fas fa-trash icon-tabla red boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-trash icon-tabla red boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Anular Estructura" onClick="anular_estructura();"></i>
                                             <i class="fas fa-file-excel icon-tabla green boton"
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Exportar a Excel" onClick="exportar_presupuesto();"></i>
                                         </th>
                                         <th hidden>padre</th>
@@ -338,7 +338,7 @@ Presupuesto Interno
     <script src="{{ asset('js/proyectos/presupuesto/verAcu.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/verPartidaInsumo.js')}}"></script>
     <script src="{{ asset('js/proyectos/variables/add_unid_med.js')}}"></script>
-    
+
     <script src="{{ asset('js/proyectos/presupuesto/partidaCICreate.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/partidaGGCreate.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/compo_cd.js')}}"></script>

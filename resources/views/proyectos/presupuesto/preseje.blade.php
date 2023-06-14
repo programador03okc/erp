@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Presupuesto de Ejecución
 @endsection
 
@@ -26,9 +26,9 @@ Presupuesto de Ejecución
                     <li><label id="codigo"></label></li>
                     <li><label id="version" class="label label-default"></label></li>
                     <li><label>Estado:  <span id="des_estado"></span></label></li>
-                    <li><i id="cronograma" class="fas fa-calendar-alt blue" id="basic-addon2" 
+                    <li><i id="cronograma" class="fas fa-calendar-alt blue" id="basic-addon2"
                         data-toggle="tooltip" data-placement="bottom" title="Cronograma generado" ></i></li>
-                    <li><i id="cronoval" class="fas fa-donate green" id="basic-addon2" 
+                    <li><i id="cronoval" class="fas fa-donate green" id="basic-addon2"
                         data-toggle="tooltip" data-placement="bottom" title="Cronograma Valorizado generado" ></i></li>
                 </ol>
             </legend>
@@ -45,10 +45,10 @@ Presupuesto de Ejecución
                     <h5>Seleccione el Proyecto</h5>
                     <div class="input-group-okc">
                         <input class="oculto" name="id_proyecto" >
-                        <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                        <input type="text" class="form-control" aria-describedby="basic-addon2"
                             readonly name="descripcion_proy" disabled="true">
                         <div class="input-group-append">
-                            <button type="button" class="input-group-text activation btn btn-primary" id="basic-addon2"  id="basic-addon2" data-toggle="tooltip" 
+                            <button type="button" class="input-group-text activation btn btn-primary" id="basic-addon2"  id="basic-addon2" data-toggle="tooltip"
                                 data-placement="bottom" title="Buscar Proyecto"
                                 onClick="proyectoModal();">
                                 <i class="fa fa-search"></i>
@@ -66,8 +66,8 @@ Presupuesto de Ejecución
                             @endforeach
                         </select>
                         <div class="input-group-append">
-                            <button type="button" class="input-group-text  btn btn-success " id="basic-addon2" data-toggle="tooltip" 
-                                data-placement="bottom" title="Actualizar Importes" 
+                            <button type="button" class="input-group-text  btn btn-success " id="basic-addon2" data-toggle="tooltip"
+                                data-placement="bottom" title="Actualizar Importes"
                                 onClick="actualiza_moneda();">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
@@ -84,8 +84,8 @@ Presupuesto de Ejecución
                 </div>
                 {{-- <div class="col-md-1">
                     <h5>Copiar</h5>
-                    <button type="button" class="btn btn-warning" data-toggle="tooltip" 
-                        data-placement="bottom" title="Copiar Partidas de un Presupuesto" 
+                    <button type="button" class="btn btn-warning" data-toggle="tooltip"
+                        data-placement="bottom" title="Copiar Partidas de un Presupuesto"
                         onClick="presintCopiaModal();"><i class="fas fa-file-alt"></i></button>
                 </div> --}}
             </div>
@@ -122,13 +122,13 @@ Presupuesto de Ejecución
                                                             <input type="text" name="des_cu" class="form-control input-sm" readOnly/>
                                                         </div>
                                                         <div style="width:7%;">
-                                                            <span class="input-group-addon input-sm btn-primary" style="cursor:pointer; height: 31px;" 
+                                                            <span class="input-group-addon input-sm btn-primary" style="cursor:pointer; height: 31px;"
                                                                 onClick="acuPartidaModal('cd');">
                                                                 <i class="fas fa-search"></i>
                                                             </span>
                                                         </div>
                                                         <div style="width:7%;">
-                                                            <span class="input-group-addon input-sm btn-success" style="cursor:pointer; height: 31px;" 
+                                                            <span class="input-group-addon input-sm btn-success" style="cursor:pointer; height: 31px;"
                                                                 onClick="acuParticaCreateModal();">
                                                                 <i class="fas fa-plus"></i>
                                                             </span>
@@ -142,12 +142,12 @@ Presupuesto de Ejecución
                                                 </td>
                                                 <td>
                                                     <label>Cantidad</label>
-                                                    <input type="number" name="cantidad" class="form-control input-sm" 
+                                                    <input type="number" name="cantidad" class="form-control input-sm"
                                                         onChange="calculaPrecioTotalPartida();"/>
                                                 </td>
                                                 <td>
                                                     <label>Unitario</label>
-                                                    <input type="number" name="precio_unitario" readOnly class="form-control input-sm" 
+                                                    <input type="number" name="precio_unitario" readOnly class="form-control input-sm"
                                                         onChange="calculaPrecioTotalPartida();"/>
                                                 </td>
                                                 <td>
@@ -166,7 +166,7 @@ Presupuesto de Ejecución
                                                 <td>
                                                     <label>Add</label>
                                                     <div style="display:flex;">
-                                                        <button type="button" class="btn btn-success" id="basic-addon2" data-toggle="tooltip" 
+                                                        <button type="button" class="btn btn-success" id="basic-addon2" data-toggle="tooltip"
                                                             data-placement="bottom" title="Guardar Partida" onClick="guardar_partida_cd();">
                                                             <i class="fas fa-plus"></i>
                                                         </button>
@@ -179,7 +179,7 @@ Presupuesto de Ejecución
                             </div> --}}
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                                         id="listaAcusCD"  style="margin-top:10px;">
                                         <thead>
                                             <tr>
@@ -192,8 +192,8 @@ Presupuesto de Ejecución
                                                 <th width="100">Total</th>
                                                 <th width="150">Sistema</th>
                                                 <th width="70">
-                                                <i class="fas fa-plus-square icon-tabla green boton" 
-                                                    data-toggle="tooltip" data-placement="bottom" 
+                                                <i class="fas fa-plus-square icon-tabla green boton"
+                                                    data-toggle="tooltip" data-placement="bottom"
                                                     title="Agregar Título" onClick="agregar_componente_cd();"></i>
                                                 </th>
                                                 <th hidden>codPadre</th>
@@ -226,8 +226,8 @@ Presupuesto de Ejecución
                                         <th>P.Unit</th>
                                         <th width="15%">P.Parcial</th>
                                         <th>
-                                        <i class="fas fa-sync-alt icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                        <i class="fas fa-sync-alt icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Refrescar Totales" onClick="refresh_cd();"></i>
                                         </th>
                                     </tr>
@@ -254,11 +254,11 @@ Presupuesto de Ejecución
                                         <th>P.Parcial</th>
                                         <th>SubTotal</th>
                                         <th width="10%">
-                                            <i class="fas fa-plus-square icon-tabla green boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-plus-square icon-tabla green boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Título" onClick="agregar_componente_ci();"></i>
-                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Titulos Base" onClick="crear_titulos_ci();"></i>
                                         </th>
                                         <th hidden>padre</th>
@@ -286,11 +286,11 @@ Presupuesto de Ejecución
                                         <th>P.Parcial</th>
                                         <th>SubTotal</th>
                                         <th width="10%">
-                                            <i class="fas fa-plus-square icon-tabla green boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-plus-square icon-tabla green boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Título" onClick="agregar_componente_gg();"></i>
-                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-arrow-alt-circle-down icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Titulos Base" onClick="crear_titulos_gg();"></i>
                                         </th>
                                         <th hidden>padre</th>
@@ -310,14 +310,14 @@ Presupuesto de Ejecución
                                         <th>Descripción</th>
                                         {{-- <th>Imp.Base</th> --}}
                                         <th class="right">Imp.Total
-                                            <i class="fas fa-file-download icon-tabla orange boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-file-download icon-tabla orange boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Generar Estructura" onClick="generar_estructura();"></i>
-                                            <i class="fas fa-trash icon-tabla red boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            <i class="fas fa-trash icon-tabla red boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Anular Estructura" onClick="anular_estructura();"></i>
                                             <i class="fas fa-file-excel icon-tabla green boton"
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Exportar a Excel" onClick="exportar_presupuesto();"></i>
                                         </th>
                                         <th hidden>padre</th>
@@ -417,7 +417,7 @@ Presupuesto de Ejecución
     <script src="{{ asset('js/proyectos/presupuesto/verAcu.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/verPartidaInsumo.js')}}"></script>
     <script src="{{ asset('js/proyectos/variables/add_unid_med.js')}}"></script>
-    
+
     <script src="{{ asset('js/proyectos/presupuesto/partidaCICreate.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/partidaGGCreate.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/compo_cd.js')}}"></script>

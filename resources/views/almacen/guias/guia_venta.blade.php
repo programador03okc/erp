@@ -5,7 +5,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Guía de Venta - Salida
 @endsection
 
@@ -44,23 +44,23 @@ Guía de Venta - Salida
                         <label id="codigo_trans"></label>
                     </div>
                     <div class="col-md-7" style="text-align:right;">
-                        <button type="submit" class="btn btn-success" onClick="generar_salida();" data-toggle="tooltip" 
+                        <button type="submit" class="btn btn-success" onClick="generar_salida();" data-toggle="tooltip"
                             data-placement="bottom" title="Generar Salida de Almacén" >Generar Salida </button>
-                        <button type="button" class="btn btn-primary" data-toggle="tooltip" 
-                            data-placement="bottom" title="Imprimir Guia de Venta" 
+                        <button type="button" class="btn btn-primary" data-toggle="tooltip"
+                            data-placement="bottom" title="Imprimir Guia de Venta"
                             onClick="imprimir_guia();"><i class="fas fa-print"></i></button>
-                        <button type="button" class="btn btn-info" data-toggle="tooltip" 
-                            data-placement="bottom" title="Ver Salida de Almacén" 
+                        <button type="button" class="btn btn-info" data-toggle="tooltip"
+                            data-placement="bottom" title="Ver Salida de Almacén"
                             onClick="abrir_salida();"><i class="fas fa-file-alt"></i></button>
-                        <button type="button" class="btn btn-warning" data-toggle="tooltip" 
-                            data-placement="bottom" title="Generar Transferencia" 
+                        <button type="button" class="btn btn-warning" data-toggle="tooltip"
+                            data-placement="bottom" title="Generar Transferencia"
                             onClick="open_transferencia();"><i class="fas fa-file-alt"></i></button>
                     </div>
                 </div>
                     <div class="row">
                         <div class="col-md-4">
                             <h5>Tipo de Documento</h5>
-                            <select class="form-control activation js-example-basic-single" name="id_tp_doc_almacen" disabled="true" 
+                            <select class="form-control activation js-example-basic-single" name="id_tp_doc_almacen" disabled="true"
                             onChange="actualiza_titulo();">
                                 <option value="0">Elija una opción</option>
                                 @foreach ($tp_doc_almacen as $prov)
@@ -87,7 +87,7 @@ Guía de Venta - Salida
                     <div class="row">
                         <div class="col-md-4">
                             <h5>Empresa-Sede</h5>
-                            <select class="form-control activation js-example-basic-single" 
+                            <select class="form-control activation js-example-basic-single"
                             name="id_sede" disabled="true" onChange="cargar_almacenes();">
                                 <option value="0">Elija una opción</option>
                                 @foreach ($sedes as $tp)
@@ -119,13 +119,13 @@ Guía de Venta - Salida
                                     <option value="{{$alm->id_almacen}}">{{$alm->codigo}} - {{$alm->descripcion}}</option>
                                 @endforeach
                             </select>
-                        </div>                        
+                        </div>
                         <div class="col-md-5">
                             <h5>Cliente</h5>
                             <div style="display:flex;">
                                 <input class="oculto" name="id_cliente"/>
                                 <input class="oculto" name="id_contrib"/>
-                                <input type="text" class="form-control" name="cliente_razon_social" placeholder="Seleccione un cliente..." 
+                                <input type="text" class="form-control" name="cliente_razon_social" placeholder="Seleccione un cliente..."
                                     aria-describedby="basic-addon1" disabled>
                                 <button type="button" class="input-group-text activation btn-primary" id="basic-addon1" onClick="clienteModal();">
                                     <i class="fa fa-search"></i>
@@ -134,10 +134,10 @@ Guía de Venta - Salida
                                     <strong>+</strong>
                                 </button>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="col-md-3">
                             <h5>Responsable</h5>
-                            <select class="form-control activation js-example-basic-single" 
+                            <select class="form-control activation js-example-basic-single"
                                 name="usuario" disabled="true">
                                 <option value="0">Elija una opción</option>
                                 @foreach ($usuarios as $usu)
@@ -158,7 +158,7 @@ Guía de Venta - Salida
                     <div class="row">
                         <div class="col-md-4">
                             <h5>Transportista</h5>
-                            <select class="form-control activation js-example-basic-single" 
+                            <select class="form-control activation js-example-basic-single"
                                 name="transportista" disabled="true">
                                 <option value="0">Elija una opción</option>
                                 @foreach ($proveedores as $prov)
@@ -169,7 +169,7 @@ Guía de Venta - Salida
                         <div class="col-md-5">
                             <h5>Guía Transportista Serie-Número</h5>
                             <div class="input-group">
-                                <input type="text" class="form-control activation" name="tra_serie" 
+                                <input type="text" class="form-control activation" name="tra_serie"
                                     placeholder="000">
                                 <span class="input-group-addon">-</span>
                                 <input type="text" class="form-control activation" name="tra_numero"
@@ -233,8 +233,8 @@ Guía de Venta - Salida
                                                         </select>
                                                     </div>
                                                     <div style="width:10%;">
-                                                        <button type="button" class="btn btn-success boton"  
-                                                            style="padding:5px;height:29px;width:100px;font-size:12px;" 
+                                                        <button type="button" class="btn btn-success boton"
+                                                            style="padding:5px;height:29px;width:100px;font-size:12px;"
                                                             data-toggle="tooltip" data-placement="bottom" title="Agregar"
                                                             onClick="agrega_sustento();">
                                                             Agregar
@@ -274,8 +274,8 @@ Guía de Venta - Salida
                                             {{-- <th>Unit.</th>
                                             <th>Total</th> --}}
                                             <th width='5%'>
-                                                <i class="fas fa-plus-square icon-tabla green boton" 
-                                                    data-toggle="tooltip" data-placement="bottom" 
+                                                <i class="fas fa-plus-square icon-tabla green boton"
+                                                    data-toggle="tooltip" data-placement="bottom"
                                                     title="Agregar Producto" onClick="productoModal();"></i>
                                             </th>
                                         </tr>

@@ -1,7 +1,7 @@
 @extends('themes.base')
 <!-- @include('layouts.menu_necesidades') -->
 
-@section('cabecera')
+@section('titulo')
     Dashboard Necesidades
 @endsection
 
@@ -22,6 +22,6 @@
 @section('scripts')
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/chartjs/Chart.min.js') }}"></script> --}}
     <script>
-        
+
     </script>
 @endsection

@@ -1,6 +1,6 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
-@section('cabecera')
+@section('titulo')
     Dashboard Proyectos
 @endsection
 @section('content')

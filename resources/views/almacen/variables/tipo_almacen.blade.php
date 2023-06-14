@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Tipos de Almacén @endsection
+@section('titulo') Tipos de Almacén @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(72))
     @section('option')

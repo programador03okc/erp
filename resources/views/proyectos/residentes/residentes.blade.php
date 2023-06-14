@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Residentes
 @endsection
 
@@ -22,11 +22,11 @@ Residentes
                 <div class="row">
                     <div class="col-md-12">
                         <div style="text-align: right;">
-                            <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                                data-placement="bottom" title="Crear Residente" 
+                            <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                                data-placement="bottom" title="Crear Residente"
                                 onClick="open_residente_create('');">Crear Residente</button>
                         </div>
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaResidentes">
                             <thead>
                                 <tr>

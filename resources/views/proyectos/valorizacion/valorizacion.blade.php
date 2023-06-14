@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Valorización
 @endsection
 
@@ -27,7 +27,7 @@ Valorización
                     <li><label id="numero"></label></li>
                     <li>Total Proyectado: <label id="total"></label></li>
                     <li><i class="fas fa-file-excel icon-tabla green boton"
-                        data-toggle="tooltip" data-placement="bottom" 
+                        data-toggle="tooltip" data-placement="bottom"
                         title="Exportar a Excel" onclick="exportTableToExcel('listaPartidas','Valorizacion')"></i></li>
                 </ol>
             </legend>
@@ -42,7 +42,7 @@ Valorización
                         <input type="text" class="oculto" name="id_periodo">
                         <input type="text" class="oculto" name="numero">
                         <input type="text" class="oculto" name="modo">
-                        <input type="text" class="form-control" aria-describedby="basic-addon2" 
+                        <input type="text" class="form-control" aria-describedby="basic-addon2"
                             readonly name="nombre_opcion" disabled="true">
                     </div>
                 </div>
@@ -74,7 +74,7 @@ Valorización
             <div class="row">
                 <div class="col-md-12">
                     <div id="div-scroll">
-                        <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view" width="100%"
                             id="listaPartidas" style="margin-top:10px;">
                             <thead>
                                 <tr>

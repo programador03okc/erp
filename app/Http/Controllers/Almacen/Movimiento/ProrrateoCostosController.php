@@ -35,8 +35,7 @@ class ProrrateoCostosController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo = 'almacen';
-        return view(
-            'almacen/prorrateo/doc_prorrateo',
+        return view('almacen.prorrateo.doc_prorrateo',
             compact('tp_prorrateo', 'tp_doc', 'monedas', 'sis_identidad', 'tipos_prorrateo','array_accesos_botonera','modulo')
         );
     }

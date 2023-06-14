@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_almacen')
 
-@section('cabecera')
+@section('titulo')
 Documentos de Prorrateo
 @endsection
 
@@ -32,8 +32,8 @@ Documentos de Prorrateo
                         <option value="{{$alm->id_almacen}}">{{$alm->descripcion}}</option>
                     @endforeach
                 </select>
-                <button type="button" class="btn btn-success" data-toggle="tooltip" 
-                    data-placement="bottom" title="Descargar Saldos" 
+                <button type="button" class="btn btn-success" data-toggle="tooltip"
+                    data-placement="bottom" title="Descargar Saldos"
                     onClick="listarSaldos();">Buscar</button>
             </div>
         </div>
@@ -44,7 +44,7 @@ Documentos de Prorrateo
     </div> --}}
     <div class="row">
         <div class="col-md-12">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaDocsProrrateo">
                 <thead>
                     <tr>

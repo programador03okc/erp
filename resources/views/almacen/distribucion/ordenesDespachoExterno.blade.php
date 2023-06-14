@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('cabecera')
+@section('titulo')
 Gestión de Despachos
 @endsection
 

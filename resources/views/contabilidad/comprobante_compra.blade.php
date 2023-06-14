@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Comprobante de Compra
 @endsection
 
@@ -63,7 +63,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                                            <table class="mytable table table-condensed table-bordered table-okc-view"
                                                             id="ListaOrdenes">
                                                                 <thead>
                                                                     <tr>
@@ -87,7 +87,7 @@
                                                 </div>
                                                 <div role="tabpanel" class="tab-pane" id="crear_comprobante_compra">
                                                     <div class="panel panel-default">
-                                                        <div class="panel-body">                                                        
+                                                        <div class="panel-body">
                                                             <div class="row">
                                                                 <div class="col-md-12">
                                                                     <form id="form_crear_comprobante_compra">
@@ -198,10 +198,10 @@
                                                                                     </thead>
                                                                                     <tbody></tbody>
                                                                                 </table>
-                                                                            </div>                    
-                 
-                                                                        </div> 
-                                                                        <div class="row">                   
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="row">
                                                                         <div class="col-md-12 right">
                                                                             <button class="btn btn-default" role="button"   onClick="gotToSecondToFirstTab(event);">
                                                                                     Atras <i class="fas fa-arrow-circle-left"></i>
@@ -209,11 +209,11 @@
                                                                                 <button class="btn btn-success" role="button"   onClick="generar_comprobante_compra(event);">
                                                                                         Generar Comprobante de Compra <i class="fas fa-save"></i>
                                                                                 </button>
-                                                                            </div>   
-                                                                        </div>                    
-                                                                </div>   
-                                                            </div>   
-                                                            
+                                                                            </div>
+                                                                        </div>
+                                                                </div>
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -225,7 +225,7 @@
                         <div role="tabpanel" class="tab-pane" id="listaComprobanteCompraTab">
                             <div class="panel panel-default">
                                 <div class="panel-body" style="position: relative; overflow: auto; width: 100%;">
-                                    <table class="mytable table table-condensed table-bordered table-okc-view" 
+                                    <table class="mytable table table-condensed table-bordered table-okc-view"
                                     id="listaComprobanteCompra">
                                         <thead>
                                             <tr>
@@ -254,7 +254,7 @@
                                 </div>
                             </div>
                         </div>
- 
+
                     </div>
                 </div>
 

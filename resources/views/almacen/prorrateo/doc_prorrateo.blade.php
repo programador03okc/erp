@@ -1,28 +1,33 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
+@extends('themes.base')
+
+@section('titulo') Prorrateo de Costos @endsection
+@include('layouts.menu_almacen')
 @section('option')
-    @include('layout.option')
+    @include('layouts.option')
 @endsection
-
-@section('cabecera')
-Prorrateo de Costos
-@endsection
-
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
-
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
-  <li>Movimientos</li>
-  <li class="active">@yield('cabecera')</li>
-</ol>
+    <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
+    <li>Movimientos</li>
+    <li class="active">@yield('cabecera')</li>
+  </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
+
 @if (sizeof($array_accesos_botonera)!==0)
 <div class="page-main" type="prorrateo">
     <!-- <div class="row"> -->
@@ -214,10 +219,14 @@ Prorrateo de Costos
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
 
     <script src="{{ asset('js/almacen/prorrateo/doc_prorrateo.js')}}?v={{filemtime(public_path('js/almacen/prorrateo/doc_prorrateo.js'))}}"></script>
     <script src="{{ asset('js/almacen/prorrateo/doc_prorrateo_create.js')}}?v={{filemtime(public_path('js/almacen/prorrateo/doc_prorrateo_create.js'))}}"></script>
@@ -230,5 +239,6 @@ Prorrateo de Costos
     <script>
         vista_extendida();
     </script>
-
 @endsection
+
+{{-- ----------------------------------------------- --}}

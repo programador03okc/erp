@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Orden de Transformación @endsection
+@section('titulo') Orden de Transformación @endsection
 @include('layouts.menu_cas')
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">

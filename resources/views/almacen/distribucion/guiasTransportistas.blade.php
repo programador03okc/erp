@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('cabecera')
+@section('titulo')
 Reporte de Despachos con Guías Transportista
 @endsection
 
@@ -21,7 +21,7 @@ Reporte de Despachos con Guías Transportista
 
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="listaGuiasTransportistas">
                             <thead>
                                 <tr>
@@ -50,7 +50,7 @@ Reporte de Despachos con Guías Transportista
                         </table>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>

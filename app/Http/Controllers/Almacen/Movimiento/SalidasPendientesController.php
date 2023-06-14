@@ -36,8 +36,7 @@ class SalidasPendientesController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view(
-            'almacen/guias/despachosPendientes',
+        return view('almacen.guias.despachosPendientes',
             compact('tp_operacion', 'clasificaciones', 'usuarios', 'motivos_anu', 'nro_od_pendientes', 'array_accesos')
         );
     }
@@ -1542,7 +1541,7 @@ class SalidasPendientesController extends Controller
 
             if (intval($periodo_estado) == 2){
                 $msj = 'El periodo esta cerrado. Consulte con contabilidad.';
-                
+
             } else {
 
                 $fecha_anterior = $salida->fecha_almacen;

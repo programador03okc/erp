@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Proveedores con Producto Determinado
 @endsection
 
@@ -11,7 +11,7 @@
 <div class="page-main" type="reporte-proveedores_producto_determinado">
     <legend>
         <div class="row">
-            <div class="col-xs-12 col-md-7"><h2>Reporte - Proveedores con Producto Determinado</h2></div>  
+            <div class="col-xs-12 col-md-7"><h2>Reporte - Proveedores con Producto Determinado</h2></div>
         </div>
     </legend>
     <form id="form-proveedores_producto_determinado" type="register" form="formulario">
@@ -39,7 +39,7 @@
                         @endforeach
                 </select>
             </div>
-            
+
         </div>
 
         <div class="row">
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
- 
+
         <br>
         <div class="row">
             <div class="col-md-12">
@@ -76,7 +76,7 @@
 
         <div class="row">
         <div class="col-md-12">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaProveedoresProductoDeterminado">
                 <thead>
                     <tr>
@@ -89,16 +89,16 @@
                         <th>País</th>
                         <th>Contacto</th>
                     </tr>
-                    
+
                 </thead>
                 <tbody>
- 
- 
+
+
                 </tbody>
             </table>
         </div>
     </div>
- 
+
     </form>
 
 
@@ -112,7 +112,7 @@
                 <h3 class="modal-title">Lista de Contacto</h3>
             </div>
             <div class="modal-body">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                         id="listaContacto">
                         <thead>
                             <tr>
@@ -126,11 +126,11 @@
                                 <th>Tipo Establecimiento</th>
                                 <th>Dirección</th>
                             </tr>
-                            
+
                         </thead>
                         <tbody>
-        
-        
+
+
                         </tbody>
                     </table>
             </div>
@@ -140,8 +140,8 @@
     </div>
 </div>
 
- 
- 
+
+
 </div>
 
 

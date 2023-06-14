@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('cabecera') Cierre / Apertura de Periodo @endsection
+@section('titulo') Cierre / Apertura de Periodo @endsection
 
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
@@ -103,7 +103,7 @@
     <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    
+
     <script src="{{ asset('js/tesoreria/cierreApertura/listarPeriodos.js')}}"></script>
     <script src="{{ asset('js/tesoreria/cierreApertura/nuevoCierreApertura.js')}}"></script>
     <script>

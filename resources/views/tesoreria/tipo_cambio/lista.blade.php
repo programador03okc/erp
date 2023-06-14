@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('cabecera') Tipo de Cambio @endsection
+@section('titulo') Tipo de Cambio @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">
@@ -83,7 +83,7 @@
     <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    
+
     <script>
         // let csrf_token = '{{ csrf_token() }}';
         let vardataTables = funcDatatables();

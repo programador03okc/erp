@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('cabecera')
+@section('titulo')
 Lista de Insumos
 @endsection
 
@@ -22,11 +22,11 @@ Lista de Insumos
                 <div class="row">
                     <div class="col-md-12">
                         <div style="text-align: right;">
-                            <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                                data-placement="bottom" title="Crear un Insumo Base" 
+                            <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                                data-placement="bottom" title="Crear un Insumo Base"
                                 onClick="open_insumo_create();">Crear Insumo</button>
                         </div>
-                        <table class="mytable table table-condensed table-bordered table-okc-view" 
+                        <table class="mytable table table-condensed table-bordered table-okc-view"
                         id="listaInsumo">
                             <thead>
                                 <tr>
@@ -45,7 +45,7 @@ Lista de Insumos
                             </thead>
                             <tbody></tbody>
                         </table>
-                        
+
                     </div>
                 </div>
             </div>

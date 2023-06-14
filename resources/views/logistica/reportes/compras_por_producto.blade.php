@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Compras por Producto
 @endsection
 
@@ -12,7 +12,7 @@
 <div class="page-main" type="reporte-compras_por_producto">
     <legend>
         <div class="row">
-            <div class="col-xs-12 col-md-7"><h2>Reporte - Compras por Producto</h2></div>  
+            <div class="col-xs-12 col-md-7"><h2>Reporte - Compras por Producto</h2></div>
         </div>
     </legend>
     <form id="form-compras_por_producto" type="register" form="formulario">
@@ -40,7 +40,7 @@
                         @endforeach
                 </select>
             </div>
-            
+
         </div>
 
         <div class="row">
@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
- 
+
         <br>
         <div class="row">
             <div class="col-md-12">
@@ -77,7 +77,7 @@
 
         <div class="row">
         <div class="col-md-12">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaComprasPorProducto">
                 <thead>
                     <tr>
@@ -102,11 +102,11 @@
             </table>
         </div>
     </div>
- 
+
     </form>
 
-        
- 
+
+
 </div>
 
 @include('logistica.reportes.modal_catalogo_productos')

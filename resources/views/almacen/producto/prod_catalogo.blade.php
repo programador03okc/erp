@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('cabecera') Catálogo de Productos @endsection
+@section('titulo') Catálogo de Productos @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">

@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Revisar y aprobar requerimientos
 @endsection
 
@@ -50,7 +50,7 @@ Revisar y aprobar requerimientos
                                     <option value="0">Todas</option>
                                     @foreach ($grupos as $grupo)
                                     <option value="{{$grupo->id_grupo}}" >{{$grupo->descripcion}}</option>
-                                    @endforeach                                
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -128,7 +128,7 @@ Revisar y aprobar requerimientos
 @include('logistica.requerimientos.modal_requerimiento')
 @include('logistica.requerimientos.modal_adjuntar_archivos_requerimiento')
 @include('logistica.requerimientos.modal_adjuntar_archivos_detalle_requerimiento')
- 
+
 
 @endsection
 
@@ -139,7 +139,7 @@ Revisar y aprobar requerimientos
 <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/logistica/requerimiento/scrollToTheTopOfDocument.js') }}"></script>
 
- 
+
 <script src="{{ asset('js/logistica/requerimiento/AprobarRequerimientoView.js')}}"></script>
 <!-- <script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}"></script> -->
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}"></script>
@@ -154,7 +154,7 @@ var grupos = JSON.parse('{!!$gruposUsuario!!}');
 
     $(document).ready(function() {
         Util.seleccionarMenu(window.location);
-        
+
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm');
         $.fn.dataTable.moment('DD-MM-YYYY');
 

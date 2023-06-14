@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('cabecera')
+@section('titulo')
     Reporte de Comprobantes de Compra
 @endsection
 @section('breadcrumb')

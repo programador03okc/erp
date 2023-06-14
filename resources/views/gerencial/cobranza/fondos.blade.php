@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_gerencial')
 
-@section('cabecera') Fondos y Auspicios @endsection
+@section('titulo') Fondos y Auspicios @endsection
 
 @section('estilos')
     <link href='{{ asset("template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css") }}' rel="stylesheet" type="text/css" />

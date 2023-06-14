@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Catálogo de Equipos
 @endsection
 
@@ -13,8 +13,8 @@
         <h2>Catálogo de Equipos</h2>
         <ol class="breadcrumb">
             <li>
-                <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                data-placement="bottom" title="Crear Equipo" 
+                <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                data-placement="bottom" title="Crear Equipo"
                 onClick="equipo_create();">Crear Equipo</button>
             </li>
         </ol>

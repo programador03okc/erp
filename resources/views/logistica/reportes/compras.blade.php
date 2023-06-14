@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('cabecera') Reporte de compras @endsection
+@section('titulo') Reporte de compras @endsection
 
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/plugins/iCheck/all.css') }}">
@@ -42,7 +42,7 @@
 @endsection
 
 @section('scripts')
-    
+
     <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -54,7 +54,7 @@
     <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
 
     <script src="{{('/js/logistica/reportes/comprasLocales.js')}}?v={{filemtime(public_path('/js/logistica/reportes/comprasLocales.js'))}}"></script>
-    
+
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         $(document).ready(function() {

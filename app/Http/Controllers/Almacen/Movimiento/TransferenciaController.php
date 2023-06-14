@@ -39,8 +39,7 @@ class TransferenciaController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view(
-            'almacen/transferencias/listarTransferencias',
+        return view('almacen.transferencias.listarTransferencias',
             compact(
                 'clasificaciones',
                 'almacenes',
@@ -754,7 +753,7 @@ class TransferenciaController extends Controller
             if ($trans_actual->id_guia_com!==null || $trans_actual->estado==14){
                 $tipo = 'warning';
                 $mensaje = 'La transferencia ya fue procesada. Actualice la página';
-                
+
             } else {
                 DB::table('almacen.trans')
                 ->where('id_guia_ven', $request->id_guia_ven)
@@ -773,14 +772,14 @@ class TransferenciaController extends Controller
                     ->leftJoin('logistica.log_prove', 'log_prove.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
                     ->where('guia_ven.id_guia_ven', $request->id_guia_ven)
                     ->first();
-                
+
                 $periodo_estado = CierreAperturaController::consultarPeriodo($guia_ven->fecha_emision, $request->id_almacen_destino);
 
                 if (intval($periodo_estado) == 2){
                     $tipo = 'warning';
                     $mensaje = 'El periodo esta cerrado. Consulte con contabilidad.';
                 } else {
-        
+
                     $id_proveedor = null;
 
                     if ($guia_ven->empresa_proveedor !== null) {
@@ -1083,7 +1082,7 @@ class TransferenciaController extends Controller
             if ($request->trans_seleccionadas !== null) {
                 $trans_sel = json_decode($request->trans_seleccionadas);
             }
-            
+
             $t_actual = DB::table('almacen.trans')->select('id_guia_ven','estado');
 
             if ($trans_sel !== null) {
@@ -1102,7 +1101,7 @@ class TransferenciaController extends Controller
             if ($tipo==''){
 
                 $periodo_estado = CierreAperturaController::consultarPeriodo($request->fecha_emision, $request->id_almacen_origen);
-    
+
                 if (intval($periodo_estado) == 2){
                     $tipo = 'warning';
                     $mensaje = 'El periodo esta cerrado. Consulte con contabilidad.';
@@ -1114,7 +1113,7 @@ class TransferenciaController extends Controller
                         ->leftjoin('comercial.com_cliente', 'com_cliente.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
                         ->where('id_almacen', $request->id_almacen_destino)
                         ->first();
-    
+
                     $origen_emp = DB::table('almacen.alm_almacen')
                         ->select('adm_empresa.id_empresa')
                         ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_almacen.id_sede')
@@ -1123,7 +1122,7 @@ class TransferenciaController extends Controller
                         ->first();
                     //Tipo de operacion: transferencia entre almacenes o una Venta interna
                     $operacion = ($destino_emp->id_empresa == $origen_emp->id_empresa ? $operacion_transferencia : $operacion_venta);
-    
+
                     $query = DB::table('almacen.trans_detalle')
                         ->select(
                             'trans_detalle.*',
@@ -1132,23 +1131,23 @@ class TransferenciaController extends Controller
                             'alm_prod.descripcion'
                         )
                         ->join('almacen.alm_prod', 'alm_prod.id_producto', '=', 'trans_detalle.id_producto');
-    
+
                     if ($trans_sel !== null) {
                         $detalle = $query->whereIn('trans_detalle.id_transferencia', $trans_sel)->get();
                     } else {
                         $detalle = $query->where('trans_detalle.id_transferencia', $request->id_transferencia)->get();
                     }
-    
+
                     foreach ($detalle as $det) {
                         $stockDisponible = (new SalidasPendientesController)->validaStockDisponible($det->id_producto, $request->id_almacen_origen);
-    
+
                         if ($stockDisponible <= 0) {
                             $mensaje .= $det->codigo . ' - ' . $det->descripcion . ' \n';
                         }
                     }
-    
+
                     if ($mensaje == '') {
-    
+
                         $id_guia = DB::table('almacen.guia_ven')->insertGetId(
                             [
                                 'id_tp_doc_almacen' => $id_tp_doc_almacen,
@@ -1182,7 +1181,7 @@ class TransferenciaController extends Controller
                         //         ->where('id_serie_numero', $request->id_serie_numero)
                         //         ->update(['estado' => 8]); //emitido -> 8
                         // }
-    
+
                         //actualizo la transferencia
                         if ($trans_sel !== null) {
                             foreach ($trans_sel as $trans) {
@@ -1219,7 +1218,7 @@ class TransferenciaController extends Controller
                             $request->fecha_almacen,
                             $request->id_almacen_origen
                         );
-    
+
                         $id_salida = DB::table('almacen.mov_alm')->insertGetId(
                             [
                                 'id_almacen' => $request->id_almacen_origen,
@@ -1236,11 +1235,11 @@ class TransferenciaController extends Controller
                             ],
                             'id_mov_alm'
                         );
-    
+
                         $detalle_trans = json_decode($request->detalle);
-    
+
                         foreach ($detalle as $det) {
-    
+
                             $id_guia_ven_det = DB::table('almacen.guia_ven_det')->insertGetId(
                                 [
                                     'id_guia_ven' => $id_guia,
@@ -1260,11 +1259,11 @@ class TransferenciaController extends Controller
                                     'estado' => 5,
                                     'id_guia_ven_det' => $id_guia_ven_det
                                 ]);
-    
+
                             foreach ($detalle_trans as $dt) {
-    
+
                                 if ($dt->id_trans_detalle == $det->id_trans_detalle) {
-    
+
                                     foreach ($dt->series as $s) {
                                         //Guardo relacion guia_ven_det en las series
                                         if ($s->id_prod_serie !== null && $s->estado == 1) {
@@ -1276,7 +1275,7 @@ class TransferenciaController extends Controller
                                 }
                             }
                             $costo_promedio = (new SalidaPdfController)->obtenerCostoPromedioSalida($det->id_producto, $request->id_almacen_origen, '2022-01-01', $request->fecha_almacen);
-    
+
                             //Guardo los items de la salida
                             DB::table('almacen.mov_alm_det')->insert(
                                 [
@@ -1294,7 +1293,7 @@ class TransferenciaController extends Controller
                             //Actualizo los saldos del producto
                             OrdenesPendientesController::actualiza_prod_ubi($det->id_producto, $request->id_almacen_origen);
                         }
-    
+
                         $reqs = [];
                         if ($trans_sel !== null) {
                             $reqs = DB::table('almacen.trans')
@@ -1679,7 +1678,7 @@ class TransferenciaController extends Controller
             $tipo = '';
             $array_almacen = [];
             $periodo_estado = 0;
-            
+
             foreach ($request->detalle as $det) {
                 if (!in_array($det['id_almacen_reserva'], $array_almacen)) {
                     array_push($array_almacen, $det['id_almacen_reserva']);
@@ -1696,7 +1695,7 @@ class TransferenciaController extends Controller
             if (intval($periodo_estado) == 2){
                 $mensaje = 'El periodo esta cerrado. Consulte con contabilidad.';
                 $tipo = 'warning';
-                
+
             } else {
                 $req = DB::table('almacen.alm_req')
                     ->select('alm_req.id_requerimiento', 'trans.codigo')
@@ -1816,7 +1815,7 @@ class TransferenciaController extends Controller
             } else {
 
                 $codigo = TransferenciaController::transferencia_nextId($request->id_almacen_origen, $request->fecha);
-                    
+
                 $id_transferencia = DB::table('almacen.trans')->insertGetId(
                     [
                         'id_almacen_origen' => $request->id_almacen_origen,

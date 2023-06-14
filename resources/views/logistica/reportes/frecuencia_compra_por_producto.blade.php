@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
     Frecuencia de Compras por Producto
 @endsection
 
@@ -11,7 +11,7 @@
 <div class="page-main" type="reporte-frecuencia_compra">
     <legend>
         <div class="row">
-            <div class="col-xs-12 col-md-7"><h2>Reporte - Frecuencia de Compras por Producto</h2></div>  
+            <div class="col-xs-12 col-md-7"><h2>Reporte - Frecuencia de Compras por Producto</h2></div>
         </div>
     </legend>
     <form id="form-frecuencia_compra" type="register" form="formulario">
@@ -39,11 +39,11 @@
                         @endforeach
                 </select>
             </div>
-            
+
         </div>
 
         <div class="row">
- 
+
             <div class="col-md-2">
                 <h5>Año</h5>
                 <div class="input-group-okc">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
- 
+
         <br>
         <div class="row">
             <div class="col-md-12">
@@ -70,7 +70,7 @@
 
         <div class="row">
         <div class="col-md-12">
-            <table class="mytable table table-condensed table-bordered table-okc-view" 
+            <table class="mytable table table-condensed table-bordered table-okc-view"
                 id="listaFrecuenciaComra">
                 <thead>
                     <tr>
@@ -88,11 +88,11 @@
             </table>
         </div>
     </div>
- 
+
     </form>
 
-        
- 
+
+
 </div>
 
 

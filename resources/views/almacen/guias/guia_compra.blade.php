@@ -5,7 +5,7 @@
     @include('layout.option')
 @endsection
 
-@section('cabecera')
+@section('titulo')
 Guía de Compra - Ingreso
 @endsection
 
@@ -30,19 +30,19 @@ Guía de Compra - Ingreso
             <li></li>
             <li><label id="tp_doc_abreviatura"></label> - <label id="serie"></label> - <label id="numero"></label></li>
             <li> -->
-                
-                <!-- <button type="submit" class="btn btn-warning" data-toggle="tooltip" 
-                data-placement="bottom" title="Generar Orden de Despacho" 
+
+                <!-- <button type="submit" class="btn btn-warning" data-toggle="tooltip"
+                data-placement="bottom" title="Generar Orden de Despacho"
                 onClick="generar_orden_despacho();"><i class="fas fa-angle-double-right"></i> Ord. Despacho </button> -->
                 <!-- <a onClick="generar_factura();">
-                    <input type="button" class="btn btn-primary" data-toggle="tooltip" 
-                    data-placement="bottom" title="Generar Factura de Compra" 
+                    <input type="button" class="btn btn-primary" data-toggle="tooltip"
+                    data-placement="bottom" title="Generar Factura de Compra"
                     value="Factura"/>
                 </a> -->
-                <!-- <button type="button" class="btn btn-warning" data-toggle="tooltip" 
-                    data-placement="bottom" title="Ver Factura" 
+                <!-- <button type="button" class="btn btn-warning" data-toggle="tooltip"
+                    data-placement="bottom" title="Ver Factura"
                     onClick="abrir_doc();"><i class="fas fa-file-alt"></i></button> -->
-                
+
             <!-- </li>
         </ol>
     </legend> -->
@@ -67,11 +67,11 @@ Guía de Compra - Ingreso
                         </div>
                         <div class="col-md-4"></div>
                         <div class="col-md-2" style="text-align:right;">
-                            <button type="submit" class="btn btn-success" data-toggle="tooltip" 
-                                data-placement="bottom" title="Generar Ingreso a Almacén" 
+                            <button type="submit" class="btn btn-success" data-toggle="tooltip"
+                                data-placement="bottom" title="Generar Ingreso a Almacén"
                                 onClick="generar_ingreso();"><i class="fas fa-angle-double-right"></i> Ingreso </button>
-                            <button type="button" class="btn btn-info" data-toggle="tooltip" 
-                                data-placement="bottom" title="Ver Ingreso a Almacén" 
+                            <button type="button" class="btn btn-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Ver Ingreso a Almacén"
                                 onClick="abrir_ingreso();"><i class="fas fa-file-alt"></i></button>
                         </div>
                     </div>
@@ -103,10 +103,10 @@ Guía de Compra - Ingreso
                         <div class="col-md-4">
                             <h5>Serie-Número</h5>
                             <div class="input-group">
-                                <input type="text" class="form-control info activation" name="serie" 
+                                <input type="text" class="form-control info activation" name="serie"
                                     placeholder="000" onBlur="ceros_numero('serie');" disabled="true">
                                 <span class="input-group-addon">-</span>
-                                <input type="text" class="form-control info activation" 
+                                <input type="text" class="form-control info activation"
                                     name="numero" onBlur="ceros_numero('numero');" placeholder="000000" disabled="true">
                             </div>
                         </div>
@@ -115,7 +115,7 @@ Guía de Compra - Ingreso
                             <div style="display:flex;">
                                 <input class="oculto" name="id_proveedor"/>
                                 <input class="oculto" name="id_contrib"/>
-                                <input type="text" class="form-control" name="prov_razon_social" placeholder="Seleccione un proveedor..." 
+                                <input type="text" class="form-control" name="prov_razon_social" placeholder="Seleccione un proveedor..."
                                     aria-describedby="basic-addon1" disabled="true">
                                 <button type="button" class="input-group-text activation" id="basic-addon1" onClick="proveedorModal();">
                                     <i class="fa fa-search"></i>
@@ -150,7 +150,7 @@ Guía de Compra - Ingreso
                         </div>
                         <div class="col-md-3">
                             <h5>Responsable</h5>
-                            <select class="form-control activation js-example-basic-single" 
+                            <select class="form-control activation js-example-basic-single"
                                 name="usuario" disabled="true">
                                 <option value="0">Elija una opción</option>
                                 @foreach ($usuarios as $usu)
@@ -179,7 +179,7 @@ Guía de Compra - Ingreso
                                         <div class="col-md-4">
                                             <h5>Guía Transportista Serie-Número</h5>
                                             <div class="input-group">
-                                                <input type="text" class="form-control activation" name="tra_serie" 
+                                                <input type="text" class="form-control activation" name="tra_serie"
                                                     placeholder="000" onBlur="ceros_numero('tra_serie');">
                                                 <span class="input-group-addon">-</span>
                                                 <input type="text" class="form-control activation" name="tra_numero"
@@ -188,7 +188,7 @@ Guía de Compra - Ingreso
                                         </div>
                                         <div class="col-md-5">
                                             <h5>Transportista</h5>
-                                            <select class="form-control activation js-example-basic-single" 
+                                            <select class="form-control activation js-example-basic-single"
                                                 name="transportista" disabled="true">
                                                 <option value="0">Elija una opción</option>
                                                 @foreach ($proveedores as $prov)
@@ -234,8 +234,8 @@ Guía de Compra - Ingreso
                                             <th>Proveedor</th>
                                             <th>Tramitado por</th>
                                             <th width="10%">
-                                                <i class="fas fa-plus-square icon-tabla green boton" 
-                                                    data-toggle="tooltip" data-placement="bottom" 
+                                                <i class="fas fa-plus-square icon-tabla green boton"
+                                                    data-toggle="tooltip" data-placement="bottom"
                                                     title="Agregar Orden" onClick="ordenModal();"></i>
                                             </th>
                                         </tr>
@@ -261,8 +261,8 @@ Guía de Compra - Ingreso
                                             <th>Unit.</th>
                                             <th>Total</th>
                                             <th width='5%'>
-                                                <i class="fas fa-plus-square icon-tabla green boton" 
-                                                    data-toggle="tooltip" data-placement="bottom" 
+                                                <i class="fas fa-plus-square icon-tabla green boton"
+                                                    data-toggle="tooltip" data-placement="bottom"
                                                     title="Agregar Producto" onClick="productoModal();"></i>
                                             </th>
                                         </tr>
@@ -308,7 +308,7 @@ Guía de Compra - Ingreso
                                             <div style="display:flex;">
                                                 <input class="oculto" name="doc_id_proveedor" />
                                                 <input class="oculto" name="doc_id_contrib"/>
-                                                <input type="text" class="form-control" name="doc_razon_social" placeholder="Seleccione un proveedor..." 
+                                                <input type="text" class="form-control" name="doc_razon_social" placeholder="Seleccione un proveedor..."
                                                     disabled="true" aria-describedby="basic-addon1" required>
                                                 <button type="button" class="input-group-text" id="basic-addon1" onClick="proveedorModal();">
                                                     <i class="fa fa-search"></i>
@@ -355,7 +355,7 @@ Guía de Compra - Ingreso
                                         </td>
                                         <td>
                                             <h5>Add</h5>
-                                            <input type="submit" class="btn btn-success" data-toggle="tooltip" 
+                                            <input type="submit" class="btn btn-success" data-toggle="tooltip"
                                             data-placement="bottom" title="Agregar Documento" value="Agregar"
                                             />
                                         </td>
@@ -380,8 +380,8 @@ Guía de Compra - Ingreso
                                     <th>Tipo Cambio</th>
                                     <th>Importe</th>
                                     <th width="10%">
-                                        <i class="fas fa-plus-square icon-tabla green boton" 
-                                            data-toggle="tooltip" data-placement="bottom" 
+                                        <i class="fas fa-plus-square icon-tabla green boton"
+                                            data-toggle="tooltip" data-placement="bottom"
                                             title="Agregar Documento de Prorrateo" onClick="open_doc_prorrateo();"></i>
                                     </th>
                                 </tr>

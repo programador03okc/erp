@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('cabecera') Dashboard Finanzas @endsection
+@section('titulo') Dashboard Finanzas @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
     <style>

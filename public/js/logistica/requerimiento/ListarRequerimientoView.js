@@ -353,7 +353,7 @@ class ListarRequerimientoView {
             'serverSide': true,
             'destroy': true,
             'ajax': {
-                'url': 'elaborados',
+                'url': route('necesidades.requerimiento.elaboracion.elaborados'),
                 'type': 'POST',
                 'headers': {'X-CSRF-TOKEN': token},
                 'data': { 'meOrAll': meOrAll, 'idEmpresa': idEmpresa, 'idSede': idSede, 'idGrupo': idGrupo, 'idDivision': idDivision, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'idEstado': idEstado },

@@ -65,7 +65,7 @@
                                                 <img id="img" src="{{ asset('images/product-default.png')}}">
                                             </div>
                                             <div class="row">
-                                                <input type="file" name="imagen" id="imagen" class="filestyle" data-buttonName="btn-primary"
+                                                <input type="file" name="imagen" id="imagen" class="filestyle form-control" data-buttonName="btn-primary"
                                                 data-buttonText="Seleccionar imagen" data-size="sm" data-iconName="fa fa-folder-open">
                                             </div>
                                         </div>
@@ -338,7 +338,6 @@
 
 
 
-<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/producto/producto.js')}}"></script>

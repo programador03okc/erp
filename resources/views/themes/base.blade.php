@@ -30,6 +30,7 @@
             <section class="content-header">
                 <h1>@yield('titulo')</h1>
                 @yield('breadcrumb')
+                <br>
             </section>
             <section class="content">
                 @yield('cuerpo')

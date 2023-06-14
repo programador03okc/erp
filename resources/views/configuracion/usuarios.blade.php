@@ -37,19 +37,6 @@
             </div>
         </div>
         <div class="box-body">
-            {{-- <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="id_rol">Rol : </label>
-                        <select id="id_rol" class="selectpicker" name="id_rol[]"
-                            data-live-search="true" data-width="100%" data-actions-box="true" multiple data-size="10" required>
-                            @foreach ($rol as $item)
-                                <option value="{{$item->id_rol}}" >{{$item->descripcion}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div> --}}
             <div class="row">
                 <div class="col-md-12">
                     <table class="mytable table table-striped table-condensed table-bordered" id="listaUsuarios">
@@ -61,7 +48,7 @@
                                 <th>Clave</th>
                                 <th>Email</th>
                                 <th>Fecha Registro</th>
-                                <th width="15%">Acción</th>
+                                <th width="12%">Acción</th>
                             </tr>
                         </thead>
                         <tbody></tbody>

@@ -24,7 +24,7 @@ $(function(){
             {'data': 'fecha_registro'},
             {'render':
                 function (data, type, row, meta){
-                    return (`<div class="d-flex">
+                    return (`<div class="d-flex text-center">
                             <button type="button" class="btn bg-primary btn-flat botonList" data-toggle="tooltip" data-placement="bottom" title="Editar clave" data-calve="change-clave" data-id="${row['id_usuario']}">
                                 <i class="fas fa-key"></i>
                             </button>

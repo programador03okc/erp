@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Unidades de Medida @endsection
+@section('cabecera') Unidades de Medida @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(135))
     @section('option')

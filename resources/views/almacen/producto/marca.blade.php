@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Marca @endsection
+@section('cabecera') Marca @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(65))
     @section('option')

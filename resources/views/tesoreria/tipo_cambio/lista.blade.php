@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('titulo') Tipo de Cambio @endsection
+@section('cabecera') Tipo de Cambio @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">

@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Clasificación @endsection
+@section('cabecera') Clasificación @endsection
 @include('layouts.menu_almacen')
 <!-- @if(Auth::user()->tieneAccion(67)) -->
     @section('option')

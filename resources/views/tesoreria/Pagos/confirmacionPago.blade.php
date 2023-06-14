@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('titulo')
+@section('cabecera')
 Confirmación de Pagos
 @endsection
 

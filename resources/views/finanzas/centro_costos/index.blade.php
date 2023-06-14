@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Centros de Costos @endsection
+@section('cabecera') Centros de Costos @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
     <style>

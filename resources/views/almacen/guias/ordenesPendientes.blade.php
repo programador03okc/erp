@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Atención de Ingresos @endsection
+@section('cabecera') Atención de Ingresos @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">

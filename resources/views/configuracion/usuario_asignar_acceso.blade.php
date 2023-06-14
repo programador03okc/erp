@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_config')
 
-@section('titulo')
+@section('cabecera')
     Gestión de Usuarios
 @endsection
 @section('content')

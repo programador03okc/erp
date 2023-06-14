@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Gestión de Transformaciones @endsection
+@section('cabecera') Gestión de Transformaciones @endsection
 
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">

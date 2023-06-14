@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
 
-@section('titulo')
+@section('cabecera')
 Envío de Transformaciones
 @endsection
 

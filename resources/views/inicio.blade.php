@@ -1,6 +1,6 @@
 @extends('themes.base_home')
 
-@section('titulo') Bienvenido @endsection
+@section('cabecera') Bienvenido @endsection
 
 @section('estilos')
     

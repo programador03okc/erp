@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Orden de Transformación @endsection
+@section('cabecera') Orden de Transformación @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
 {{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}

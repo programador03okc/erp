@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Lista de Ingresos @endsection
+@section('cabecera') Lista de Ingresos @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">

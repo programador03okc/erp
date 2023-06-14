@@ -2,14 +2,16 @@ var array_title=[];
     array_sub_title=[],
     array_disable_accesos=[],
     array_random = [];
+
 $(document).ready(function () {
     accesosUsuario();
 });
+
 function accesosUsuario() {
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'accesos-usuario/'+$('[name="id_usuario"]').val(),
+        url: route('configuracion.usuario.accesos.datos-usuario', {id: $('[name="id_usuario"]').val()}),
         data: {},
         dataType: 'JSON',
         beforeSend : function(){
@@ -29,6 +31,7 @@ function accesosUsuario() {
         console.log(errorThrown);
     })
 }
+
 function disableAccesos() {
     var count_label=0,
         count_suma=0;
@@ -62,6 +65,7 @@ function disableAccesos() {
         }
     });
 }
+
 function visualizarAccesos(response) {
     var html='',
         numero_random=0;
@@ -84,12 +88,13 @@ function visualizarAccesos(response) {
         // console.log(Math.random());
     });
 }
+
 $(document).on('change','[data-select="modulos-select"]',function () {
     var data = $(this).val();
     $.ajax({
         type: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'get/modulos',
+        url: route('configuracion.usuario.accesos.modulos'),
         data: {data:data},
         dataType: 'JSON',
         beforeSend : function(){
@@ -130,7 +135,7 @@ function crearListaAccesos(response) {
             // html+='</div>';
             html+='<div class="col-md-12">'
                 // html+='<label data-id-modulo="'+id_modulo+'">'+titulo+'</label>';
-                html+='<input class="form-check-input" type="checkbox" name="nivel_1" id="selecionar'+index+'" data-check="selector-check" data-id-modulo="'+element.id_modulo+'" value="1" >'
+                html+='<input class="form-check-input" type="checkbox" name="nivel_1" id="selecionar'+index+'" data-check="selector-check" data-id-modulo="'+element.id_modulo+'" value="1" style="margin-right: 5px;">'
                 html+='<label for="selecionar'+index+'"> '+ element.modulo+'</label>';
                 html+='<div class="box-tools pull-right">'
                     html+='<button type="button" class="btn btn-box-tool" data-toggle="collapse" data-target="#collapse'+index+'" aria-expanded="false" aria-controls="collapseExample" data-action="box-tool"><i class="fa fa-plus"></i></button>'

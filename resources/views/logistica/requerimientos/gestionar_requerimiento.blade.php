@@ -10,7 +10,7 @@
 @endsection
 {{-- @endif --}}
 
-@section('titulo')
+@section('cabecera')
 Crear / editar requerimiento
 @endsection
 

@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_powerbi')
 
-@section('titulo') PowerBi - Cobranzas @endsection
+@section('cabecera') PowerBi - Cobranzas @endsection
 
 @section('content')
 <div class="box box-solid">

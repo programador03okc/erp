@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Estado de Atención de Requerimientos @endsection
+@section('cabecera') Estado de Atención de Requerimientos @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">

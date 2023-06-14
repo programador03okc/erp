@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Presupuesto Interno @endsection
+@section('cabecera') Presupuesto Interno @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
 {{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}

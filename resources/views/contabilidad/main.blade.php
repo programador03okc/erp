@@ -1,6 +1,6 @@
 @extends('layout.main')
 @include('layout.menu_contabilidad')
-@section('titulo')
+@section('cabecera')
     Dashboard Contabilidad
 @endsection
 @section('breadcrumb')

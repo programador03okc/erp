@@ -3,7 +3,7 @@
 @section('option')
     @include('layout.option')
 @endsection
-@section('titulo')
+@section('cabecera')
     Módulos del Sistema
 @endsection
 @section('content')

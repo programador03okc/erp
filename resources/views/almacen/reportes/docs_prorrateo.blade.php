@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_almacen')
 
-@section('titulo')
+@section('cabecera')
 Documentos de Prorrateo
 @endsection
 

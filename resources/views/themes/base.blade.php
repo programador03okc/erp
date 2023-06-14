@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('titulo') - AGILE</title>
+    <title>@yield('cabecera') - AGILE</title>
     <link rel="shortcut icon" href="{{ asset('images/icono.ico') }}" />
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/AdminLTE.min.css') }}">
@@ -28,9 +28,8 @@
         <div class="content-wrapper" id="wrapper-okc">
             @yield('option')
             <section class="content-header">
-                <h1>@yield('titulo')</h1>
+                <h1>@yield('cabecera')</h1>
                 @yield('breadcrumb')
-                <br>
             </section>
             <section class="content">
                 @yield('cuerpo')

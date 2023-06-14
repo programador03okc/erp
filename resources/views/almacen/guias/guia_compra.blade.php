@@ -5,7 +5,7 @@
     @include('layout.option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
 Guía de Compra - Ingreso
 @endsection
 

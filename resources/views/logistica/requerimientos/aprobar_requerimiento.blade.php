@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
 Revisar y aprobar requerimientos
 @endsection
 

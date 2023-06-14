@@ -2,7 +2,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Posiciones en Almacén @endsection
+@section('cabecera') Posiciones en Almacén @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(76))
     @section('option')

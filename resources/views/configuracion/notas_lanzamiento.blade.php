@@ -2,7 +2,7 @@
 @include('layout.menu_config')
 @section('option')
 @endsection
-@section('titulo')
+@section('cabecera')
     Notas de Lanzamiento
 @endsection
 @section('content')

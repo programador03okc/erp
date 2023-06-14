@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Listado de Solicitud de Equipos
 @endsection
 

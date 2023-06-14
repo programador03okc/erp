@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Lista OCAM'S
 @endsection
 

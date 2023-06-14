@@ -3,7 +3,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Categoría @endsection
+@section('cabecera') Categoría @endsection
 @include('layouts.menu_almacen')
 <!-- @if(Auth::user()->tieneAccion(61)) -->
 @section('option')

@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_migracion')
 
-@section('titulo') Actualizar produtos @endsection
+@section('cabecera') Actualizar produtos @endsection
 
 @section('estilos')
     <style>

@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Gestión de transformaciones @endsection
+@section('cabecera') Gestión de transformaciones @endsection
 @include('layouts.menu_cas')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">

@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo')
+@section('cabecera')
 Dashboard Servicios CAS
 @endsection
 @include('layouts.menu_cas')
@@ -26,7 +26,7 @@ Dashboard Servicios CAS
 
 {{-- @extends('layout.main')
 @include('layout.menu_cas')
-@section('titulo')
+@section('cabecera')
 Dashboard Servicios CAS
 @endsection
 @section('breadcrumb')

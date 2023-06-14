@@ -4,7 +4,7 @@
 <!-- @include('layout.option') -->
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Programación de Mantenimientos de Equipos
 @endsection
 

@@ -3,10 +3,11 @@ $(function(){
     var form = $('.page-main form[type=register]').attr('id');
 
     $('#listaUsuarios').dataTable({
+        'dom': 'Bfrtip',
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar_usuarios',
+        'ajax': route('configuracion.usuario.listar_usuarios'),
         'columns': [
             {'data': 'id_usuario'},
             {'render':
@@ -17,7 +18,7 @@ $(function(){
             {'data': 'usuario'},
             {'render':
                 function (data, type, row, meta){
-                    return row['clave']?'<p></span>   <i class="fas fa-eye-slash" onmousedown="showPasswordUser(this,'+row['id_usuario']+');"  onmouseup="hiddenPasswordUser(this); "style="cursor:pointer;"></i> <span name="password">**********</p>':'';
+                    return row['clave'] ? '<p></span><i class="fas fa-eye-slash" onmousedown="showPasswordUser(this,'+row['id_usuario']+');" onmouseup="hiddenPasswordUser(this); "style="cursor:pointer;"></i> <span name="password">**********</p>':'';
                 }
             },
             {'data': 'email'},
@@ -25,21 +26,23 @@ $(function(){
             {'render':
                 function (data, type, row, meta){
                     return (`<div class="d-flex text-center">
-                            <button type="button" class="btn bg-primary btn-flat botonList" data-toggle="tooltip" data-placement="bottom" title="Editar clave" data-calve="change-clave" data-id="${row['id_usuario']}">
+                            <button type="button" class="btn bg-primary btn-flat btn-xs" data-toggle="tooltip" 
+                                data-placement="bottom" title="Editar clave" data-clave="change-clave" data-id="${row['id_usuario']}">
                                 <i class="fas fa-key"></i>
                             </button>
-                            <a class="btn btn-default btn-flat botonList" data-toggle="tooltip" data-placement="bottom"  data-id="${row['id_usuario']}" href="accesos/${row['id_usuario']}">
-                                <i class="fas fa-user-cog text-black"></i>
-                            </a>
-
-                            <button type="button" class="btn bg-orange btn-flat botonList" data-toggle="tooltip"
+                            <button type="button" class="btn btn-default btn-flat btn-xs" data-toggle="tooltip" 
+                                data-placement="bottom" title="Accesos" onclick="verAccesoUsuario(${row['id_usuario']});">
+                                <i class="fas fa-user-cog"></i>
+                            </button>
+                            <button type="button" class="btn bg-orange btn-flat btn-xs" data-toggle="tooltip"
                                 data-placement="bottom" title="Editar" onclick="editarUsuario(${row['id_usuario']});">
-                                <i class="fas fa-edit"></i></button>
-
-                            <button type="button" class="btn bg-red btn-flat botonList" data-toggle="tooltip"
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn bg-red btn-flat btn-xs" data-toggle="tooltip"
                                 data-placement="bottom" title="Anular" onclick="anularUsuario(${row['id_usuario']});">
-                                <i class="fas fa-trash-alt"></i></button>
-                            </div>`
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>`
                     );
                 }
             }
@@ -47,6 +50,17 @@ $(function(){
         'columnDefs': [{ 'aTargets': [0], 'sClass': 'invisible'}],
         'order': [
             [0, 'desc']
+        ],
+        'buttons': [
+            {
+                text: '<i class="fas fa-plus"></i> Nuevo usuario',
+                action: function () {
+                    crear_usuario();
+                },
+                init: function(api, node, config) {
+                    $(node).removeClass('btn-default')
+                }, className: 'btn btn-sm btn-success',
+            },
         ]
     });
     //resizeSide();
@@ -84,7 +98,7 @@ $(function(){
                 $.ajax({
                     type: 'POST',
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url: 'guardar_usuarios',
+                    url: route('configuracion.usuario.guardar_usuarios'),
                     data: data,
                     dataType: 'JSON',
                     success: function(response){
@@ -127,7 +141,7 @@ $(document).on('submit','[data-form="actualizar-usuario"]',function (e) {
     e.preventDefault();
     var data = $(this).serialize();
     Swal.fire({
-        title: '¿Etsá seguro de guardar?',
+        title: '¿Está seguro de guardar?',
         text: "Se editara el registro seleccionado",
         icon: 'question',
         showCancelButton: true,
@@ -139,7 +153,7 @@ $(document).on('submit','[data-form="actualizar-usuario"]',function (e) {
         preConfirm: (respuesta) => {
             return $.ajax({
                 type: 'POST',
-                url:'/configuracion/usuario/perfil',
+                url: route('configuracion.usuario.actualizar_usuario'),
                 data: data,
                 beforeSend: function(){
                 },
@@ -171,18 +185,18 @@ $(document).on('submit','[data-form="actualizar-usuario"]',function (e) {
 
 function getPerfilUsuario(id){
     return new Promise(function(resolve, reject) {
-        $.ajax({
-            type: 'GET',
-            url: route('configuracion.usuario.perfil', {id: id}),
-            dataType: 'JSON',
-            success(response) {
-                resolve(response) // Resolve promise and go to then()
-            },
-            error: function(err) {
-            reject(err) // Reject the promise and go to catch()
-            }
-            });
+    $.ajax({
+        type: 'GET',
+        url: route('configuracion.usuario.perfil', {id: id}),
+        dataType: 'JSON',
+        success(response) {
+            resolve(response) // Resolve promise and go to then()
+        },
+        error: function(err) {
+        reject(err) // Reject the promise and go to catch()
+        }
         });
+    });
 }
 function loadPerfilUsuario(id){
     getPerfilUsuario(id).then(function(res) {
@@ -241,8 +255,6 @@ function editarUsuario(id){
     loadPerfilUsuario(id);
 }
 
-
-
 function updateObjAccesoUsuario(id_accion,valor){
     let updateRegister=false;
     if(acccesoUsuario.length >0){
@@ -261,19 +273,11 @@ function updateObjAccesoUsuario(id_accion,valor){
 }
 
 function addObjAccesoUsuario(id_accion,valor){
-    acccesoUsuario.push(
-        {
-            'id_accion':id_accion,
-            'valor':valor
-        }
-    )
+    acccesoUsuario.push({'id_accion': id_accion, 'valor': valor})
 }
 
 
 function anularUsuario(id){
-
-    // console.log(id);
-    // var id_usuario = id;
     Swal.fire({
         title: 'Eliminar',
         text: "¿Esta seguro de eliminar este registro?",
@@ -322,7 +326,7 @@ function getPasswordUserDecode(id){
     return new Promise(function(resolve, reject) {
         $.ajax({
             type: 'GET',
-            url: '/configuracion/usuario/password-user-decode/'+id,
+            url: route('configuracion.usuario.decodificar-clave', {id: id}),
             dataType: 'JSON',
             success(response) {
                 resolve(response) // Resolve promise and go to then()
@@ -362,38 +366,6 @@ function crear_usuario(){
         backdrop: 'static'
     });
 }
-
-// function modalTrabajadores(){
-//     $('#modal-trabajador').modal({
-//         show: true,
-//         backdrop: 'static'
-//     });
-//     listarTrabajador();
-// }
-
-// function selectValueTrab(){
-//     var myId = $('.modal-footer #idTr').text();
-//     var myName = $('.modal-footer #nameTr').text();
-//     $('[name=id_trabajador]').val(myId);
-//     $('[name=trab]').val(myName);
-//     $('#modal-trabajador').modal('hide');
-// }
-
-// function listarTrabajador(){
-//     var vardataTables = funcDatatables();
-//     $('#listaTrabajadorUser').dataTable({
-//         'language' : vardataTables[0],
-//         "processing": true,
-//         "bDestroy": true,
-//         'ajax': 'listar_trabajador',
-//         'columns': [
-//             {'data': 'id_trabajador'},
-//             {'data': 'nro_documento'},
-//             {'data': 'datos_trabajador'},
-//             {'data': 'empresa'}
-//         ]
-//     });
-// }
 
 function deleteUser(id){
     var ask = confirm('¿Desea eliminar este registro');
@@ -452,6 +424,10 @@ function cargarAplicaciones(value){
     });
 }
 
+function verAccesoUsuario(id) {
+    window.location.href = route('configuracion.usuario.accesos.ver', {id:id});
+}
+
 function guardarAcceso(){
     var access = $('[name=id_acceso]').val();
     var user = $('[name=id_usuario]').val();
@@ -497,7 +473,7 @@ function guardarAcceso(){
     });
     return false;
 }
-$(document).on('click','[data-calve="change-clave"]',function () {
+$(document).on('click','[data-clave="change-clave"]',function () {
 
     // $('#modal_cambio_clave').modal('show');
     $('#modal_cambio_clave [name="id_usuario"]').val($(this).attr('data-id'));

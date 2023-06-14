@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Compras por Producto
 @endsection
 

@@ -1,18 +1,18 @@
 @extends('themes.base')
 @include('layouts.menu_config')
 
-@section('titulo') Gestión de Usuarios @endsection
+@section('cabecera') Gestión de Usuarios @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
-    {{--  <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">  --}}
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">
-    <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Configuraciones</a></li>
+    <li><a href="{{route('configuracion.dashboard')}}"><i class="fas fa-tachometer-alt"></i> Configuraciones</a></li>
     <li>Usuarios</li>
     <li class="active">@yield('cabecera')</li>
 </ol>
@@ -32,9 +32,6 @@
     <div class="box box-solid">
         <div class="box-header">
             <h3 class="box-title">Lista de usuarios</h3>
-            <div class="pull-right box-tools">
-                <button type="submit" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" title="Nuevo Usuario" onClick="crear_usuario();">Nuevo Usuario</button>
-            </div>
         </div>
         <div class="box-body">
             <div class="row">
@@ -128,18 +125,6 @@
                     </div>
 
                     <div class="row">
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_estado_civil">Estado civil : </label>
-                                <select id="id_estado_civil" class="form-control" name="id_estado_civil" required>
-                                    <option value="" >Seleccione...</option>
-                                    @foreach ($estado_civil as $item)
-                                        <option value="{{$item->id_estado_civil}}" >{{$item->descripcion}}</option>
-                                    @endforeach
-
-                                  </select>
-                            </div>
-                        </div> --}}
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="telefono">Telefono : </label>
@@ -172,14 +157,6 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="brevette">Brevette : </label>
-                                <input type="text" class="form-control" id="brevette" name="brevette" required>
-                            </div>
-                        </div> --}}
-                    {{-- </div> --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -224,12 +201,6 @@
                         </div>
                     </div>
                     <div class="row">
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="condicion">Condición : </label>
-                                <input type="text" class="form-control" id="condicion" name="condicion" required>
-                            </div>
-                        </div> --}}
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="hijos">Hijos : </label>
@@ -237,84 +208,35 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_pension">Pension : </label>
-                                <select id="id_pension" class="form-control" name="id_pension" required>
-                                    <option value="" >Seleccione...</option>
-                                    @foreach ($pension as $item)
-                                        <option value="{{$item->id_pension}}" >{{$item->descripcion}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="cuspp">Cuspp : </label>
-                                <input type="text" class="form-control" id="cuspp" name="cuspp" required>
-                            </div>
-                        </div> --}}
-                    {{-- </div> --}}
-                    {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="seguro">Seguro : </label>
-                                <input type="text" class="form-control" id="seguro" name="seguro" required>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Confianza : </label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="confianza" id="confianza1" value="t" required>
-                                            <label class="form-check-label" for="confianza1">Si</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="confianza" id="confianza2" value="f" required>
-                                            <label class="form-check-label" for="confianza2">No</label>
-                                        </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>CREDENCIALES DE USUARIO</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="nombre_corto">Nombre corto : </label>
+                                        <input type="text" class="form-control" id="nombre_corto" name="nombre_corto" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label for="nombre_largo">Nombre largo : </label>
+                                        <input type="text" class="form-control" id="nombre_largo" name="nombre_largo" required>
                                     </div>
                                 </div>
                             </div>
-                        </div> --}}
-                    {{-- </div> --}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>CREDENCIALES</h4>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nombre_corto">Nombre corto : </label>
-                                <input type="text" class="form-control" id="nombre_corto" name="nombre_corto" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="usuario">Usuario : </label>
-                                <input type="text" class="form-control usuario-unico" id="usuario" name="usuario" value="" required >
+                                <input type="text" class="form-control usuario-unico" id="usuario" name="usuario" value="" required>
                             </div>
                         </div>
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="clave">Clave : </label>
-                                <input type="password" class="form-control" id="clave" name="clave" required>
-                            </div>
-                        </div> --}}
                     </div>
-                    {{-- <div class="row"> --}}
-
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="codvent_softlink">Codvend Softlink : </label>
-                                <input type="text" class="form-control" id="codvent_softlink" name="codvent_softlink" required>
-                            </div>
-                        </div> --}}
-                    {{-- </div> --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -394,7 +316,7 @@
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="modal_cambio_clave">
-    <div class="modal-dialog" style="width: 50%;">
+    <div class="modal-dialog modal-sm">
         <form action="" data-form="cambio-clave">
             <div class="modal-content">
                 <div class="modal-header">
@@ -404,13 +326,13 @@
                 <div class="modal-body">
                     <input type="hidden" class="form-control" name="id_usuario" />
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12 mb-3">
                             <div class="form-group">
                                 <label for="nueva_clave">Nueva clave : </label>
                                 <input type="password" class="form-control" id="nueva_clave" name="nueva_clave" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="repetir_clave">Repetir clave : </label>
                                 <input type="password" class="form-control" id="repetir_clave" name="repetir_clave" required>
@@ -419,7 +341,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-sm btn-secundary" type="button"  data-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-sm btn-secundary" type="button" data-dismiss="modal">Cerrar</button>
                     <button class="btn btn-sm btn-primary" type="submit">Guardar</button>
                 </div>
             </div>
@@ -528,13 +450,13 @@
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-editar-usuario">
-    <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title" id="title-detalle_nota_lanzamiento">Editar Usuario</h3>
-            </div>
             <form action="" data-form="actualizar-usuario">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="title-detalle_nota_lanzamiento">Editar Usuario</h3>
+                </div>
                 <div class="modal-body">
                     <input type="hidden" class="form-control icd-okc" name="id_usuario" />
                     <div class="row">
@@ -594,30 +516,17 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_estado_civil_modificar">Estado civil : </label>
-                                <select id="id_estado_civil_modificar" class="form-control" name="id_estado_civil" required>
-                                    <option value="" >Seleccione...</option>
-                                    @foreach ($estado_civil as $item)
-                                        <option value="{{$item->id_estado_civil}}" >{{$item->descripcion}}</option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div> --}}
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="telefon_modificaro">Telefono : </label>
-                                <input type="number" class="form-control" id="telefono_modificar" name="telefono" required>
+                                <input type="number" class="form-control" id="telefono_modificar" name="telefono">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="direccion_modificar">Direccion : </label>
-                                <input type="text" class="form-control" id="direccion_modificar" name="direccion" required>
+                                <input type="text" class="form-control" id="direccion_modificar" name="direccion">
                             </div>
                         </div>
                     </div>
@@ -641,14 +550,6 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="brevette_modificar">Brevette : </label>
-                                <input type="text" class="form-control" id="brevette_modificar" name="brevette" required>
-                            </div>
-                        </div> --}}
-                    {{-- </div> --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -693,97 +594,42 @@
                         </div>
                     </div>
                     <div class="row">
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="condicion_modificar">Condición : </label>
-                                <input type="text" class="form-control" id="condicion_modificar" name="condicion" required>
-                            </div>
-                        </div> --}}
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="hijos_modificar">Hijos : </label>
-                                <input type="number" class="form-control" id="hijos_modificar" name="hijos" required>
+                                <input type="number" class="form-control" id="hijos_modificar" name="hijos">
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_pension_modificar">Pension : </label>
-                                <select id="id_pension_modificar" class="form-control" name="id_pension" required>
-                                    <option value="" >Seleccione...</option>
-                                    @foreach ($pension as $item)
-                                        <option value="{{$item->id_pension}}" >{{$item->descripcion}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="cuspp_modificar">Cuspp : </label>
-                                <input type="text" class="form-control" id="cuspp_modificar" name="cuspp" required>
-                            </div>
-                        </div> --}}
-                    {{-- </div> --}}
-                    {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="seguro_modificar">Seguro : </label>
-                                <input type="text" class="form-control" id="seguro_modificar" name="seguro" required>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Confianza : </label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="confianza" id="confianza1_modificar" value="t" required>
-                                            <label class="form-check-label" for="confianza1_modificar">Si</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="confianza" id="confianza2_modificar" value="f" required>
-                                            <label class="form-check-label" for="confianza2_modificar">No</label>
-                                        </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>CREDENCIALES DE USUARIO</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="nombre_corto_modificar">Nombre corto : </label>
+                                        <input type="text" class="form-control" id="nombre_corto_modificar" name="nombre_corto" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label for="nombre_largo_modificar">Nombre largo : </label>
+                                        <input type="text" class="form-control" id="nombre_largo_modificar" name="nombre_largo" required>
                                     </div>
                                 </div>
                             </div>
-                        </div> --}}
-                    {{-- </div> --}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>CREDENCIALES</h4>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nombre_corto_modificar">Nombre corto : </label>
-                                <input type="text" class="form-control" id="nombre_corto_modificar" name="nombre_corto" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="usuario_modificar">Usuario : </label>
                                 <input type="text" class="form-control" id="usuario_modificar" name="usuario" required>
                             </div>
                         </div>
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="clave_modificar">Clave : </label>
-                                <input type="password" class="form-control" id="clave_modificar" name="clave" >
-                            </div>
-                        </div> --}}
                     </div>
-                    {{-- <div class="row"> --}}
-
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="codvent_softlink_modificar">Codvend Softlink : </label>
-                                <input type="text" class="form-control" id="codvent_softlink_modificar" name="codvent_softlink" required>
-                            </div>
-                        </div> --}}
-                    {{-- </div> --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -810,7 +656,6 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-sm btn-primary" type="submit" >Actualizar</button>
-
                 </div>
             </form>
         </div>

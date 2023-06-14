@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_migracion')
 
-@section('titulo') Migraciones de productos por serie @endsection
+@section('cabecera') Migraciones de productos por serie @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}">

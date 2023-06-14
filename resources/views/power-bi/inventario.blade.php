@@ -1,11 +1,11 @@
 @extends('layout.main')
 @include('layout.menu_powerbi')
 
-@section('titulo') PowerBi - Inventario @endsection
+@section('cabecera') PowerBi - Inventario @endsection
 @extends('layout.main')
 @include('layout.menu_powerbi')
 
-@section('titulo') PowerBi - Inventario @endsection
+@section('cabecera') PowerBi - Inventario @endsection
 
 @section('content')
 <div class="box box-solid">

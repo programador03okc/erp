@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_notificacion')
 
-@section('titulo') Lista de notificaciones @endsection
+@section('cabecera') Lista de notificaciones @endsection
 
 @section('estilos')
 <style>

@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Tipos de Documentos @endsection
+@section('cabecera') Tipos de Documentos @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(133))
     @section('option')

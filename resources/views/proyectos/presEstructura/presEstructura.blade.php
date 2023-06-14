@@ -4,7 +4,7 @@
     @include('layout.option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
 Estructura del Presupuesto
 @endsection
 

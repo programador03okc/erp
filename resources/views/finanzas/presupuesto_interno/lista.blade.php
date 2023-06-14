@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Lista de Presupuestos Interno @endsection
+@section('cabecera') Lista de Presupuestos Interno @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
 <link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/select2/css/select2.min.css')}}">

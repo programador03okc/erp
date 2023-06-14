@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('titulo') Reporte de compras locales @endsection
+@section('cabecera') Reporte de compras locales @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('template/plugins/iCheck/all.css') }}">

@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Orden Devolución @endsection
+@section('cabecera') Orden Devolución @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-3/plugins/select2/select2.min.css') }}">

@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Tipos de Operación @endsection
+@section('cabecera') Tipos de Operación @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(131))
     @section('option')

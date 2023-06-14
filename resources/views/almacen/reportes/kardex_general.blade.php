@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Kardex General @endsection
+@section('cabecera') Kardex General @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">

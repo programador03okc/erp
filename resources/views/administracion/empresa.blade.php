@@ -2,7 +2,7 @@
 @include('layout.menu_admin')
 @include('layout.option')
 
-@section('titulo')
+@section('cabecera')
     Empresa
 @endsection
 

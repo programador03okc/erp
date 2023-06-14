@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_admin')
 
-@section('titulo')
+@section('cabecera')
     Módulo de administración
 @endsection
 

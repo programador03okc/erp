@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Proveedores con Producto Determinado
 @endsection
 

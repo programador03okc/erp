@@ -1,6 +1,6 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
-@section('titulo')
+@section('cabecera')
     Dashboard Tesoreria
 @endsection
 @section('breadcrumb')

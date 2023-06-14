@@ -3,7 +3,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Registro de Bitácora
 @endsection
 

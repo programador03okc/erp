@@ -1,6 +1,6 @@
 @extends('layout.main')
 @include('layout.menu_logistica')
-@section('titulo')
+@section('cabecera')
     Dashboard Logística
 @endsection
 @section('breadcrumb')

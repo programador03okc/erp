@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_migracion')
 
-@section('titulo') Migraciones SoftLink @endsection
+@section('cabecera') Migraciones SoftLink @endsection
 
 @section('estilos')
     <link rel="stylesheet" href="{{ asset('css/stepper.css')}}">

@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('titulo')
+@section('cabecera')
 Registro de pagos
 @endsection
 

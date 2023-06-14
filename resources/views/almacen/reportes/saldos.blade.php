@@ -1,6 +1,6 @@
 @extends('themes.base')
 
-@section('titulo') Saldos Actuales @endsection
+@section('cabecera') Saldos Actuales @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">

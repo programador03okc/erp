@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Prorrateo de Costos @endsection
+@section('cabecera') Prorrateo de Costos @endsection
 @include('layouts.menu_almacen')
 @section('option')
     @include('layouts.option')

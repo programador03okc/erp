@@ -1,6 +1,6 @@
 @extends('layout.base_login')
 
-@section('titulo')
+@section('cabecera')
 Iniciar sesión
 @endsection
 

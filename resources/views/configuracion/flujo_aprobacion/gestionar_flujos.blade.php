@@ -2,7 +2,7 @@
 @include('layout.menu_config')
 @section('option')
 @endsection
-@section('titulo')
+@section('cabecera')
 Gestionar Flujos, prioridades
 @endsection
 

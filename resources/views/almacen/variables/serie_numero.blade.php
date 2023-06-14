@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Series-Numeros @endsection
+@section('cabecera') Series-Numeros @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(129))
     @section('option')

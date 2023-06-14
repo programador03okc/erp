@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_tesoreria')
 
-@section('titulo') Cierre / Apertura de Periodo @endsection
+@section('cabecera') Cierre / Apertura de Periodo @endsection
 
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}">

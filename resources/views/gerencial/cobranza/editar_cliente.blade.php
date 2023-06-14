@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_gerencial')
 
-@section('titulo')
+@section('cabecera')
 Cobranzas
 @endsection
 

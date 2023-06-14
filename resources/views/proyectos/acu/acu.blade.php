@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('titulo')
+@section('cabecera')
 Análisis de Costos Unitarios
 @endsection
 

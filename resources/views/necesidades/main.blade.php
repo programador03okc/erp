@@ -1,7 +1,7 @@
 @extends('themes.base')
 <!-- @include('layouts.menu_necesidades') -->
 
-@section('titulo')
+@section('cabecera')
     Dashboard Necesidades
 @endsection
 

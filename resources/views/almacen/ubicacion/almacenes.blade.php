@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') Orden de Transformación @endsection
+@section('cabecera') Orden de Transformación @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(74))
 @section('option')

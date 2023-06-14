@@ -4,7 +4,7 @@
 @section('option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
 Reportes de transito de ordenes de compra
 @endsection
 

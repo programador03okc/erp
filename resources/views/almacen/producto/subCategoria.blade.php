@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('titulo') SubCategoría @endsection
+@section('cabecera') SubCategoría @endsection
 @include('layouts.menu_almacen')
 <!-- @if(Auth::user()->tieneAccion(63)) -->
 @section('option')

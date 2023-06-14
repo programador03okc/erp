@@ -5,7 +5,7 @@
     @include('layout.option')
 @endsection
 
-@section('titulo')
+@section('cabecera')
     Tipo de Servicio
 @endsection
 

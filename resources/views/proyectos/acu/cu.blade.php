@@ -1,7 +1,7 @@
 @extends('layout.main')
 @include('layout.menu_proyectos')
 
-@section('titulo')
+@section('cabecera')
 Gestión Nombres de A.C.U.
 @endsection
 

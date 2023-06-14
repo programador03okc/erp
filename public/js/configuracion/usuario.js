@@ -10,22 +10,17 @@ $(function(){
         'columns': [
             {'data': 'id_usuario'},
             {'render':
-            function (data, type, row, meta){
-                return (row['nombre_corto']);
-            }
+                function (data, type, row, meta){
+                    return (row['nombre_corto']);
+                }
             },
             {'data': 'usuario'},
             {'render':
-            function (data, type, row, meta){
-                return row['clave']?'<p></span>   <i class="fas fa-eye-slash" onmousedown="showPasswordUser(this,'+row['id_usuario']+');"  onmouseup="hiddenPasswordUser(this); "style="cursor:pointer;"></i> <span name="password">**********</p>':'';
-            }
+                function (data, type, row, meta){
+                    return row['clave']?'<p></span>   <i class="fas fa-eye-slash" onmousedown="showPasswordUser(this,'+row['id_usuario']+');"  onmouseup="hiddenPasswordUser(this); "style="cursor:pointer;"></i> <span name="password">**********</p>':'';
+                }
             },
             {'data': 'email'},
-            // {'render':
-            // function (data, type, row, meta){
-            //     return row['rol']?row['rol']:'';
-            // }
-            // },
             {'data': 'fecha_registro'},
             {'render':
                 function (data, type, row, meta){
@@ -54,7 +49,7 @@ $(function(){
             [0, 'desc']
         ]
     });
-    resizeSide();
+    //resizeSide();
     // del boton
 
     /* Seleccionar valor del DataTable */
@@ -188,7 +183,7 @@ function getPerfilUsuario(id){
     return new Promise(function(resolve, reject) {
         $.ajax({
             type: 'GET',
-            url:'/configuracion/usuario/perfil' +'/'+id,
+            url: route('configuracion.usuario.perfil', {id: id}),
             dataType: 'JSON',
             success(response) {
                 resolve(response) // Resolve promise and go to then()

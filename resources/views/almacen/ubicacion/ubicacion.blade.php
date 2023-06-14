@@ -1,31 +1,38 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
+
+@extends('themes.base')
+
+@section('cabecera') Posiciones en Almacén @endsection
+@include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(76))
     @section('option')
-        @include('layout.option')
+        @include('layouts.option')
     @endsection
 @elseif(Auth::user()->tieneAccion(77))
     @section('option')
-        @include('layout.option_historial')
+        @include('layouts.option_historial')
     @endsection
 @endif
-
-@section('cabecera')
-    Posiciones en Almacén
-@endsection
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
-  <li>Ubicaciones</li>
-  <li class="active">@yield('cabecera')</li>
-</ol>
+    <li><a href="{{route('almacen.index')}}"><i class="fas fa-tachometer-alt"></i> Almacenes</a></li>
+    <li>Ubicaciones</li>
+    <li class="active">@yield('cabecera')</li>
+  </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="ubicacion">
 
     @if (sizeof($array_accesos_botonera)!==0)
@@ -248,19 +255,14 @@
 @include('almacen.ubicacion.almacenModal')
 @include('almacen.ubicacion.estanteModal')
 @include('almacen.ubicacion.nivelModal')
-
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
 
     <script src="{{ asset('js/almacen/ubicacion/ubicacion.js')}}"></script>
     <script src="{{ asset('js/almacen/ubicacion/estante.js')}}"></script>
@@ -275,3 +277,4 @@
     });
     </script>
 @endsection
+{{-- -------------------- --}}

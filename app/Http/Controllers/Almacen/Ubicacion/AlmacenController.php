@@ -28,7 +28,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/ubicacion/almacenes', compact('sedes', 'tipos','modulo','array_accesos_botonera'));
+        return view('almacen.ubicacion.almacenes', compact('sedes', 'tipos','modulo','array_accesos_botonera'));
     }
 
     public static function mostrar_almacenes_cbo()

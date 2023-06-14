@@ -1,21 +1,27 @@
-@extends('layout.main')
-@include('layout.menu_almacen')
 
+@extends('themes.base')
+
+@section('cabecera') Orden de Transformación @endsection
+@include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(74))
 @section('option')
-@include('layout.option')
+@include('layouts.option')
 @endsection
 @elseif(Auth::user()->tieneAccion(75))
 @section('option')
-@include('layout.option_historial')
+@include('layouts.option_historial')
 @endsection
 @endif
-
-@section('cabecera')
-Almacenes
-@endsection
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <style>
+        .invisible{
+            display: none;
+        }
+	.d-none{
+	    display: none;
+    	}
+    </style>
 @endsection
 @section('breadcrumb')
 <ol class="breadcrumb">
@@ -25,7 +31,7 @@ Almacenes
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="almacenes">
 
     @if (sizeof($array_accesos_botonera)!==0)
@@ -139,29 +145,24 @@ Almacenes
     </div>
     @endif
 </div>
-@include('almacen.ubicacion.almacenUsuario')
-@include('publico.ubigeoModal')
-@include('publico.usuarioModal')
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> -->
 
-<script src="{{ asset('js/almacen/ubicacion/almacenes.js')}}"></script>
-<script src="{{ asset('js/almacen/ubicacion/almacenUsuario.js')}}"></script>
-<script src="{{ asset('js/publico/ubigeoModal.js')}}"></script>
-<script src="{{ asset('js/publico/usuarioModal.js')}}"></script>
-<script>
-    $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
-    });
-</script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+
+
+    <script src="{{ asset('js/almacen/ubicacion/almacenes.js')}}"></script>
+    <script src="{{ asset('js/almacen/ubicacion/almacenUsuario.js')}}"></script>
+    <script src="{{ asset('js/publico/ubigeoModal.js')}}"></script>
+    <script src="{{ asset('js/publico/usuarioModal.js')}}"></script>
+    <script>
+        $(document).ready(function() {
+            Util.seleccionarMenu(window.location);
+        });
+    </script>
+
 @endsection
+{{-- ------------------ --}}

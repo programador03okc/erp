@@ -24,7 +24,7 @@ class TipoAlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/variables/tipo_almacen',compact('modulo','array_accesos_botonera'));
+        return view('almacen.variables.tipo_almacen',compact('modulo','array_accesos_botonera'));
     }
 
     /* Tipo Almacen */

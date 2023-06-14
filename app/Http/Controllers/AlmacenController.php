@@ -48,7 +48,7 @@ class AlmacenController extends Controller
         // $cantidad_pagos_pendientes = $cantidades['pagos'];
         $cantidad_transformaciones_pendientes = $cantidades['transformaciones_pend'];
 
-        return view('almacen/main', compact(
+        return view('almacen.main', compact(
             'cantidad_requerimientos',
             'cantidad_ordenes_pendientes',
             'cantidad_despachos_pendientes',
@@ -5346,15 +5346,15 @@ class AlmacenController extends Controller
                     'adm_estado_doc.estado_doc',
                     // 'alm_req.codigo as codigo_requerimiento',
                     // 'oportunidades.codigo_oportunidad',
-                    DB::raw("(CASE WHEN alm_req.id_requerimiento >0  THEN alm_req.codigo 
+                    DB::raw("(CASE WHEN alm_req.id_requerimiento >0  THEN alm_req.codigo
                     WHEN alm_req_t.id_requerimiento > 0  THEN alm_req_t.codigo
                     WHEN alm_req_ts.id_requerimiento > 0  THEN alm_req_ts.codigo
                     ELSE '' END) AS codigo_requerimiento"),
-                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad 
+                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad
                     WHEN oportunidades_t.id > 0  THEN oportunidades_t.codigo_oportunidad
                     WHEN oportunidades_ts.id > 0  THEN oportunidades_ts.codigo_oportunidad
                     ELSE '' END) AS codigo_oportunidad")
-                    // DB::raw("(SELECT 
+                    // DB::raw("(SELECT
                     // FROM almacen.guia_com
                     // WHERE   guia_com.id_guia = mov_alm_det.id_guia_com_det AND
                     // mov_alm_det.estado != 7) AS gg")
@@ -5415,11 +5415,11 @@ class AlmacenController extends Controller
                     'adm_estado_doc.estado_doc',
                     // 'alm_req.codigo as codigo_requerimiento',
                     // 'oportunidades.codigo_oportunidad',
-                    DB::raw("(CASE WHEN alm_req.id_requerimiento > 0 THEN alm_req.codigo 
+                    DB::raw("(CASE WHEN alm_req.id_requerimiento > 0 THEN alm_req.codigo
                     WHEN alm_req_t.id_requerimiento > 0 THEN alm_req_t.codigo
                     WHEN alm_req_ts.id_requerimiento > 0 THEN alm_req_ts.codigo
                     ELSE '' END) AS codigo_requerimiento"),
-                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad 
+                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad
                     WHEN oportunidades_t.id > 0 THEN oportunidades_t.codigo_oportunidad
                     WHEN oportunidades_ts.id > 0 THEN oportunidades_ts.codigo_oportunidad
                     ELSE '' END) AS codigo_oportunidad")

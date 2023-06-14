@@ -5,7 +5,7 @@ $(function () {
     //     button_descargar_pdf = (array_accesos.find(element => element === 39)?vardataTables[2][2]:[]),
     //     button_imprimir = (array_accesos.find(element => element === 40)?vardataTables[2][3]:[]);
 
-    // console.log(vardataTables[2]);
+    // console.log(vardataTables);
     $('#listaProductoCatalogo').dataTable({
         'dom': vardataTables[1],
         'buttons': [[], vardataTables[2][1], [], []],

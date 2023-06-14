@@ -49,6 +49,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
     <script src="{{ asset('js/ini.js?')}}?v={{filemtime(public_path('js/ini.js'))}}"></script>

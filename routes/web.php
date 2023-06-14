@@ -128,9 +128,9 @@ Route::middleware(['auth'])->group(function () {
 		});
 		
 		Route::group(['as' => 'usuario.', 'prefix' => 'usuario'], function () {
-			Route::get('password-user-decode/{id?}', 'ConfiguracionController@getPasswordUserDecode')->name('password-user-decode');
-			Route::get('perfil/{id}', 'ConfiguracionController@getPerfil')->name('get-perfil');
-			Route::post('perfil', 'ConfiguracionController@savePerfil')->name('save-perfil');
+			Route::get('password-user-decode/{id?}', [ConfiguracionController::class, 'getPasswordUserDecode'])->name('password-user-decode');
+			Route::get('perfil/{id}', [ConfiguracionController::class, 'getPerfil'])->name('get-perfil');
+			Route::post('perfil', [ConfiguracionController::class, 'savePerfil'])->name('save-perfil');
 		});
 		
 		Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {

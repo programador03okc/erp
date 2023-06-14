@@ -11,7 +11,7 @@ $(function(){
             {'data': 'id_usuario'},
             {'render':
                 function (data, type, row, meta){
-                    return (row['nombre_corto']);
+                    return (row['nombre_largo']);
                 }
             },
             {'data': 'usuario'},
@@ -103,16 +103,6 @@ $(function(){
                                 }
                             })
                         }
-                        // if (response > 0){
-                        //     alert('Se registro al usuario correctamente');
-                        //     $('#formPage')[0].reset();
-                        //     $('#listaUsuarios').DataTable().ajax.reload();
-                        //     $('#modal-agregarUsuario').modal('hide');
-                        // }else if (response == 'exist'){
-                        //     alert('Ya existe usuario registrado para dicho trabajador');
-                        // }else{
-                        //     alert('Error, inténtelo más tarde');
-                        // }
                     }
                 }).fail( function(jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);

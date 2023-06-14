@@ -82,8 +82,6 @@ class ConfiguracionController extends Controller{
         return view('configuracion/configuracion_socket');
     }
 
-
-
     function view_docuemtos(){ return view('configuracion/flujo_aprobacion/documentos');}
     function view_gestionar_flujos(){
         $grupoFlujo = $this->grupoFlujo();
@@ -786,10 +784,11 @@ class ConfiguracionController extends Controller{
 
 
     public function mostrar_usuarios(){
-        $response = SisUsua::where('estado',1)->where('deleted_at',null)
+        $response = SisUsua::where('estado', 1)->where('deleted_at',null)
         ->select(
             'sis_usua.id_usuario',
             'sis_usua.nombre_corto',
+            'sis_usua.nombre_largo',
             'sis_usua.usuario',
             'sis_usua.clave',
             'sis_usua.fecha_registro',

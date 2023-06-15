@@ -37,7 +37,7 @@ class HomeController extends Controller
 
             $html .=
             '<div class="col-md-3">
-                <div class="box box-default box-solid">
+                <div class="box box-primary box-solid">
                     <div class="box-header with-border">Módulo</div>
                     <div class="box-body ">
                         <h4><a class="default-link" href="'.$link.'/index">'.$name.'</a></h4>

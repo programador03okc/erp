@@ -415,7 +415,7 @@ class ConfiguracionController extends Controller{
     }
     public function mostrar_modulos_edit($value){
         $html = '';
-        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('codigo', 'asc')->get();
+        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('descripcion', 'asc')->get();
 
         foreach ($data as $row){
             $id = $row->id_modulo;
@@ -430,7 +430,7 @@ class ConfiguracionController extends Controller{
     }
     public function mostrar_modulos_combo(){
         $html = '';
-        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('codigo', 'asc')->get();
+        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('descripcion', 'asc')->get();
 
         foreach ($data as $row){
             $id = $row->id_modulo;
@@ -1655,7 +1655,7 @@ public function updateGrupoCriterio(Request $request){
 
 // correo coorporativo
 
-public function mostrar_correo_coorporativo($id_smtp_authentication =null){
+public function mostrar_correo_coorporativo($id_smtp_authentication = 0){
     $option=[];
     if($id_smtp_authentication >0){
         $option[]=['smtp_authentication.id_smtp_authentication', '=', $id_smtp_authentication];
@@ -1668,7 +1668,7 @@ public function mostrar_correo_coorporativo($id_smtp_authentication =null){
     )
     ->leftJoin('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'smtp_authentication.id_empresa')
     ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
-    ->where($option)
+    ->where($option)->where('smtp_authentication.estado', 1)
     ->orderBy('smtp_authentication.id_smtp_authentication', 'asc')
     ->get();
     $output['data']=$data;
@@ -1684,6 +1684,7 @@ public function guardar_correo_coorporativo(Request $request){
         'email'         => $request->email,
         'password'      => $request->password,
         'fecha_registro'=> date('Y-m-d H:i:s'),
+        'id_empresa'    => $request->empresa,
         'estado'        => $request->estado
     ],
     'id_smtp_authentication'
@@ -1703,6 +1704,7 @@ public function actualizar_correo_coorporativo(Request $request){
         'encryption'    => $request->encryption,
         'email'         => $request->email,
         'password'      => $request->password,
+        'id_empresa'    => $request->empresa,
         'estado'        => $request->estado
     ]);
     return response()->json($data);

@@ -28,10 +28,10 @@
         <i class="fas fa-cog"></i> <span> Gestión del Sistema</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-        <li><a href="modulo"><i class="far fa-circle fa-xs"></i> Módulos </a></li>
-        <li><a href="aplicaciones"><i class="far fa-circle fa-xs"></i> Aplicaciones</a></li>
+        <li><a href="{{ route('configuracion.modulo.index') }}"><i class="far fa-circle fa-xs"></i> Módulos </a></li>
+        <li><a href="{{ route('configuracion.aplicaciones.index') }}"><i class="far fa-circle fa-xs"></i> Aplicaciones</a></li>
         <li><a href="notas_lanzamiento"><i class="far fa-circle fa-xs"></i> Notas de Lanzamiento</a></li>
-        <li><a href="correo_coorporativo"><i class="far fa-circle fa-xs"></i> Correo Corporativo</a></li>
+        <li><a href="{{ route('configuracion.correos.index') }}"><i class="far fa-circle fa-xs"></i> Correo Corporativo</a></li>
         <li><a href="configuracion_socket"><i class="far fa-circle fa-xs"></i> Socket</a></li>
     </ul>
 </li>

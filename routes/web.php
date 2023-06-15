@@ -103,22 +103,6 @@ Route::middleware(['auth'])->group(function () {
 	 */
 	Route::group(['as' => 'configuracion.', 'prefix' => 'configuracion'], function () {
 		Route::get('dashboard', [ConfiguracionController::class, 'view_main_configuracion'])->name('dashboard');
-		// Route::post('validar-documento', [ConfiguracionController::class, 'validarDocumento'])->name('validar-documento');
-		// Route::post('validar-usuario', [ConfiguracionController::class, 'validarUsuario'])->name('validar-usuario');
-
-		// Route::post('usuarios/asignar/modulos', [ConfiguracionController::class, 'asiganrModulos'])->name('');
-		// Route::get('listar_trabajadores', 'ProyectosController@listar_trabajadores')->name('listar_trabajadores');
-		// Route::get('anular_usuario/{id}', [ConfiguracionController::class, 'anular_usuario'])->name('anular_usuario');
-		// Route::get('lista-roles-usuario/{id}', [ConfiguracionController::class, 'lista_roles_usuario'])->name('lista-roles-usuario');
-		// Route::get('arbol-acceso/{id_rol}', [ConfiguracionController::class, 'arbol_modulos'])->name('arbol-acceso');
-		// Route::put('actualizar-accesos-usuario', [ConfiguracionController::class, 'actualizar_accesos_usuario'])->name('actualizar-accesos-usuario');
-
-		// Route::get('usuarios/asignar', [ConfiguracionController::class, 'usuarioAsignar']);
-		// Route::get('modulos', [ConfiguracionController::class, 'getModulos']);
-
-		// Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
-			// 	Route::post('guardar-accesos', [ConfiguracionController::class, 'guardarAccesos']);
-			// });
 
 		Route::group(['as' => 'usuario.', 'prefix' => 'usuario'], function () {
 			Route::get('index', [ConfiguracionController::class, 'view_usuario'])->name('index');
@@ -135,6 +119,58 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('modulos', [ConfiguracionController::class, 'getModulosAccion'])->name('modulos');
 			});
 		});
+
+		Route::group(['as' => 'modulo.', 'prefix' => 'modulo'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_modulos'])->name('index');
+			Route::get('listar_modulo', [ConfiguracionController::class, 'mostrar_modulo_table'])->name('listar_modulo');
+			Route::get('combo_modulos', [ConfiguracionController::class, 'mostrar_modulos_combo'])->name('combo_modulos');
+			Route::get('cargar_modulo/{id}', [ConfiguracionController::class, 'mostrar_modulo_id'])->name('cargar_modulo');
+			Route::post('guardar_modulo', [ConfiguracionController::class, 'guardar_modulo'])->name('guardar_modulo');
+			Route::post('editar_modulo', [ConfiguracionController::class, 'actualizar_modulo'])->name('editar_modulo');
+			Route::get('anular_modulo/{id}', [ConfiguracionController::class, 'anular_modulo'])->name('anular_modulo');
+		});
+
+		Route::group(['as' => 'aplicaciones.', 'prefix' => 'aplicaciones'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_aplicaciones'])->name('index');
+			Route::get('cargar_submodulos/{id}', [ConfiguracionController::class, 'mostrar_submodulo_id'])->name('cargar_submodulos');
+			Route::get('listar_aplicaciones', [ConfiguracionController::class, 'mostrar_aplicaciones_table'])->name('listar_aplicaciones');
+			Route::get('cargar_aplicaciones/{id}', [ConfiguracionController::class, 'mostrar_aplicaciones_id'])->name('cargar_aplicaciones');
+			Route::post('guardar_aplicaciones', [ConfiguracionController::class, 'guardar_aplicaciones'])->name('guardar_aplicaciones');
+			Route::post('editar_aplicaciones', [ConfiguracionController::class, 'actualizar_aplicaciones'])->name('editar_aplicaciones');
+			Route::get('anular_aplicaciones/{id}', [ConfiguracionController::class, 'anular_aplicaciones'])->name('anular_aplicaciones');
+		});
+
+		Route::group(['as' => 'correos.', 'prefix' => 'correos'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_correo_coorporativo'])->name('index');
+			Route::get('mostrar_correo_coorporativo/{id}', [ConfiguracionController::class, 'mostrar_correo_coorporativo'])->name('mostrar_correo_coorporativo');
+			Route::put('actualizar_correo_coorporativo', [ConfiguracionController::class, 'actualizar_correo_coorporativo'])->name('actualizar_correo_coorporativo');
+			Route::post('guardar_correo_coorporativo', [ConfiguracionController::class, 'guardar_correo_coorporativo'])->name('guardar_correo_coorporativo');
+			Route::delete('anular_correo_coorporativo/{id}', [ConfiguracionController::class, 'anular_correo_coorporativo'])->name('anular_correo_coorporativo');
+		});
+
+		// Route::get('notas-lanzamiento', 'ConfiguracionController@view_notas_lanzamiento')->name('notas-lanzamiento');
+		// Route::get('configuracion_socket', 'ConfiguracionController@view_configuracion_socket');
+		// Route::put('actualizar_configuracion_socket', 'ConfiguracionController@actualizar_configuracion_socket');
+		// Route::post('guardar_configuracion_socket', 'ConfiguracionController@guardar_configuracion_socket');
+		// Route::delete('anular_configuracion_socket/{id}', 'ConfiguracionController@anular_configuracion_socket');
+
+		// Route::post('update_password', 'ConfiguracionController@cambiar_clave');
+		// Route::post('validar-documento', [ConfiguracionController::class, 'validarDocumento'])->name('validar-documento');
+		// Route::post('validar-usuario', [ConfiguracionController::class, 'validarUsuario'])->name('validar-usuario');
+
+		// Route::post('usuarios/asignar/modulos', [ConfiguracionController::class, 'asiganrModulos'])->name('');
+		// Route::get('listar_trabajadores', 'ProyectosController@listar_trabajadores')->name('listar_trabajadores');
+		// Route::get('anular_usuario/{id}', [ConfiguracionController::class, 'anular_usuario'])->name('anular_usuario');
+		// Route::get('lista-roles-usuario/{id}', [ConfiguracionController::class, 'lista_roles_usuario'])->name('lista-roles-usuario');
+		// Route::get('arbol-acceso/{id_rol}', [ConfiguracionController::class, 'arbol_modulos'])->name('arbol-acceso');
+		// Route::put('actualizar-accesos-usuario', [ConfiguracionController::class, 'actualizar_accesos_usuario'])->name('actualizar-accesos-usuario');
+
+		// Route::get('usuarios/asignar', [ConfiguracionController::class, 'usuarioAsignar']);
+		// Route::get('modulos', [ConfiguracionController::class, 'getModulos']);
+
+		// Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
+			// 	Route::post('guardar-accesos', [ConfiguracionController::class, 'guardarAccesos']);
+			// });
 
 		// Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
 		// 	Route::get('prueba', [ConfiguracionController::class, 'prueba']);

@@ -25,7 +25,7 @@ function mostrar_correo_coorporativo(){
         'language' : vardataTables[0],
         'processing': true,
         'bDestroy': true,
-        'ajax': 'mostrar_correo_coorporativo/null',
+        'ajax': route('configuracion.correos.mostrar_correo_coorporativo', {id: 0}),
         'columns': [
             {'data': 'id_smtp_authentication'},
             {'data': 'razon_social'},
@@ -50,7 +50,7 @@ function mostrar_correo_coorporativo(){
 
 
 function getCorreoCoorporativo(id){
-    baseUrl = 'mostrar_correo_coorporativo/'+id;
+    baseUrl = route('configuracion.correos.mostrar_correo_coorporativo', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -78,11 +78,11 @@ function save_correo_coorporativo(data, action){
      
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar_correo_coorporativo';
+        baseUrl = route('configuracion.correos.guardar_correo_coorporativo');
         msj = 'Correo registrado con exito';
         method = 'POST';
     }else if(action == 'edition'){
-        baseUrl = 'actualizar_correo_coorporativo';
+        baseUrl = route('configuracion.correos.actualizar_correo_coorporativo');
         msj = 'Correo Actualizado con exito';
         method = 'PUT';
     }
@@ -109,7 +109,7 @@ function save_correo_coorporativo(data, action){
 
 function anular_correo_coorporativo(ids){
 // console.log(ids);
-baseUrl = 'anular_correo_coorporativo/'+ids;
+baseUrl = route('configuracion.correos.anular_correo_coorporativo', {id: ids});
 $.ajax({
     type: 'delete',
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

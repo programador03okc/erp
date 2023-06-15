@@ -8,10 +8,14 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar_modulo',
+        'ajax': route('configuracion.modulo.listar_modulo'),
         'columns': [
             {'data': 'id_modulo'},
-            {'data': 'codigo'},
+            {'render':
+                function (data, type, row, meta){
+                    return (row['tipo_modulo'] == 1) ? 'Módulo' : 'Sub módulo';
+                }
+            },
             {'data': 'descripcion'},
             {'data': 'ruta'}
         ],
@@ -36,7 +40,7 @@ $(function(){
 });
 
 function mostrar_modulo(id){
-    baseUrl = 'cargar_modulo/'+id;
+    baseUrl = route('configuracion.modulo.cargar_modulo', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -65,10 +69,10 @@ function mostrar_modulo(id){
 function save_modulo(data, action){
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar_modulo';
+        baseUrl = route('configuracion.modulo.guardar_modulo');
         msj = 'Módulo registrado con exito';
     }else if(action == 'edition'){
-        baseUrl = 'editar_modulo';
+        baseUrl = route('configuracion.modulo.editar_modulo');
         msj = 'Módulo editado con exito';
     }
     $.ajax({
@@ -92,7 +96,7 @@ function save_modulo(data, action){
 }
 
 function anular_modulo(ids){
-    baseUrl = 'anular_modulo/'+ids;
+    baseUrl = route('configuracion.modulo.anular_modulo', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -119,7 +123,7 @@ function cargarModulos(value){
     if (value == 2){
         $('[name=ruta]').attr('readonly', true);
         $('#mod').removeClass('oculto');
-        baseUrl = 'cargar_modulos';
+        baseUrl = route('configuracion.modulo.combo_modulos');
 
         $.ajax({
             type: 'GET',

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('titulo') - AGILE</title>
+    <title>@yield('cabecera') - AGILE</title>
     <link rel="shortcut icon" href="{{ asset('images/icono.ico') }}" />
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/font-awesome/css/font-awesome.min.css') }}">

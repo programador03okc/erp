@@ -1,6 +1,6 @@
 @extends('themes.base_home')
 
-@section('cabecera') Bienvenido @endsection
+@section('cabecera') Inicio @endsection
 
 @section('estilos')
     
@@ -16,7 +16,6 @@
 @endsection
 
 @section('scripts')
-    {{--  <script src='{{ asset("mgcp/js/util.js?v=27") }}'></script>  --}}
     <script>
         $(function () {
         });

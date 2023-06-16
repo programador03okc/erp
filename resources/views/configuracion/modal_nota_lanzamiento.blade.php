@@ -8,31 +8,29 @@
             <div class="modal-body">
                 <input type="hidden" class="form-control icd-okc" name="id_nota_lanzamiento"  />
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <h5>Versión</h5>
                         <div style="display:flex;">
                             <input type="text" class="form-control icd-okc" name="version" placeholder="Versión" />
                         </div>
                                 
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <h5>Version Actual?</h5>
-                        <select class="form-control" name="version_actual" onchange="">
-                            <option value="false" selected >No</option>
+                        <select class="form-control" name="version_actual">
+                            <option value="false" selected>No</option>
                             <option value="true">Si</option>
                         </select>                                    
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <h5>Fecha Registro</h5>
-                        <input type="date" class="form-control icd-okc" name="fecha_nota_lanzamiento" placeholder="Fecha Registro" />
-
+                        <input type="date" class="form-control icd-okc text-center" name="fecha_nota_lanzamiento" placeholder="Fecha Registro"/>
                      </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-sm btn-success" name="btnAgregarNota" onClick="guardarNotaLanzamiento();">Agregar</button>
                 <button class="btn btn-sm btn-primary" name="btnActualizarNota" onClick="actualizarNotaLanzamiento();">Actualizar</button>
-
             </div>
         </div>
     </div>

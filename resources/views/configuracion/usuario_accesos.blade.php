@@ -21,13 +21,6 @@
 
 @section('cuerpo')
 <div class="page-main" type="usuarios">
-    <legend class="mylegend">
-        <h2>Accesos</h2>
-        <ol class="breadcrumb">
-            <li></li>
-        </ol>
-    </legend>
-
     <div class="box box-danger">
         <div class="box-header">
             <h3 class="box-title">Nombres y Apellidos : {{$usuario->nombres.' '.$usuario->apellido_paterno.' '.$usuario->apellido_materno}} </h3>

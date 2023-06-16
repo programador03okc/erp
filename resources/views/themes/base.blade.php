@@ -43,6 +43,8 @@
         <div class="control-sidebar-bg"></div>
     </div>
 
+    @include('themes.modal-clave')
+
     <script src="{{ asset('template/adminlte2-4/plugins/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/dist/js/adminlte.min.js') }}"></script>
@@ -52,14 +54,20 @@
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
-    <script src="{{ asset('js/ini.js?')}}?v={{filemtime(public_path('js/ini.js'))}}"></script>
     <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>
+    <script src="{{ asset('js/myjava.js') }}?v={{ filemtime(public_path('js/myjava.js')) }}"></script>
     <script src="{{ asset('js/util.js') }}?v={{ filemtime(public_path('js/util.js')) }}"></script>
     <script>
         const token = '{{ csrf_token() }}';
         let auth_user = JSON.parse('{!!$auth_user!!}');
     </script>
     @routes
+    <script>
+        $(document).ready(function() {
+            validarClave();
+			notificacionesNoLeidas();
+        });
+    </script>
     @yield('scripts')
 </body>
 </html>

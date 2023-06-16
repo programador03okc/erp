@@ -57,11 +57,13 @@ use App\Http\Controllers\Logistica\RequerimientoController;
 use App\Http\Controllers\LogisticaController;
 use App\Http\Controllers\Migraciones\MigrateFacturasSoftlinkController;
 use App\Http\Controllers\NecesidadesController;
+use App\Http\Controllers\Notificaciones\NotificacionController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\RequerimientoController as ControllersRequerimientoController;
 use App\Http\Controllers\Tesoreria\Facturacion\PendientesFacturacionController;
 use App\Http\Controllers\Tesoreria\Facturacion\VentasInternasController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -90,12 +92,13 @@ Auth::routes();
 Route::view('/', 'auth.login');
 
 Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('modulos');
-
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('cerrar-sesion', [LoginController::class, 'logout'])->name('cerrar-sesion');
     Route::get('inicio', [HomeController::class, 'index'])->name('inicio');
+	Route::get('validar-clave',  [UsuarioController::class, 'validarClave'])->name('validar-clave');
+	Route::post('actualizar-clave',  [UsuarioController::class, 'modificarClave'])->name('actualizar-clave');
 
 
 	/**
@@ -148,36 +151,34 @@ Route::middleware(['auth'])->group(function () {
 			Route::delete('anular_correo_coorporativo/{id}', [ConfiguracionController::class, 'anular_correo_coorporativo'])->name('anular_correo_coorporativo');
 		});
 
-		// Route::get('notas-lanzamiento', 'ConfiguracionController@view_notas_lanzamiento')->name('notas-lanzamiento');
-		// Route::get('configuracion_socket', 'ConfiguracionController@view_configuracion_socket');
-		// Route::put('actualizar_configuracion_socket', 'ConfiguracionController@actualizar_configuracion_socket');
-		// Route::post('guardar_configuracion_socket', 'ConfiguracionController@guardar_configuracion_socket');
-		// Route::delete('anular_configuracion_socket/{id}', 'ConfiguracionController@anular_configuracion_socket');
+		Route::group(['as' => 'notas-lanzamiento.', 'prefix' => 'notas-lanzamiento'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_notas_lanzamiento'])->name('index');
+			Route::get('mostrar', [ConfiguracionController::class, 'mostrar_notas_lanzamiento_select'])->name('mostrar');
+			Route::get('listar_detalle/{id}', [ConfiguracionController::class, 'mostrar_detalle_notas_lanzamiento_table'])->name('listar_detalle');
 
-		// Route::post('update_password', 'ConfiguracionController@cambiar_clave');
-		// Route::post('validar-documento', [ConfiguracionController::class, 'validarDocumento'])->name('validar-documento');
-		// Route::post('validar-usuario', [ConfiguracionController::class, 'validarUsuario'])->name('validar-usuario');
+			Route::put('actualizar_nota_lanzamiento', [ConfiguracionController::class, 'updateNotaLanzamiento'])->name('actualizar_nota_lanzamiento');
+			Route::post('guardar_nota_lanzamiento', [ConfiguracionController::class, 'guardarNotaLanzamiento'])->name('guardar_nota_lanzamiento');
+			Route::put('eliminar_nota_lanzamiento/{id_nota}', [ConfiguracionController::class, 'eliminarNotaLanzamiento'])->name('eliminar_nota_lanzamiento');
+			Route::get('mostrar_detalle_nota_lanzamiento/{id}', [ConfiguracionController::class, 'mostrar_detalle_nota_lanzamiento'])->name('mostrar_detalle_nota_lanzamiento');
+			Route::post('guardar_detalle_nota_lanzamiento', [ConfiguracionController::class, 'guardarDetalleNotaLanzamiento'])->name('guardar_detalle_nota_lanzamiento');
+			Route::put('actualizar_detalle_nota_lanzamiento', [ConfiguracionController::class, 'updateDetalleNotaLanzamiento'])->name('actualizar_detalle_nota_lanzamiento');
+			Route::put('eliminar_detalle_nota_lanzamiento/{id_detalle_nota}', [ConfiguracionController::class, 'eliminarDetalleNotaLanzamiento'])->name('eliminar_detalle_nota_lanzamiento');
+		});
 
-		// Route::post('usuarios/asignar/modulos', [ConfiguracionController::class, 'asiganrModulos'])->name('');
-		// Route::get('listar_trabajadores', 'ProyectosController@listar_trabajadores')->name('listar_trabajadores');
-		// Route::get('anular_usuario/{id}', [ConfiguracionController::class, 'anular_usuario'])->name('anular_usuario');
-		// Route::get('lista-roles-usuario/{id}', [ConfiguracionController::class, 'lista_roles_usuario'])->name('lista-roles-usuario');
-		// Route::get('arbol-acceso/{id_rol}', [ConfiguracionController::class, 'arbol_modulos'])->name('arbol-acceso');
-		// Route::put('actualizar-accesos-usuario', [ConfiguracionController::class, 'actualizar_accesos_usuario'])->name('actualizar-accesos-usuario');
+		Route::group(['as' => 'documentos.', 'prefix' => 'documentos'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_docuemtos'])->name('index');
+			Route::get('listar-documentos', [ConfiguracionController::class, 'mostrar_documento_table'])->name('listar-documentos');
+			Route::get('cargar-documento/{id}', [ConfiguracionController::class, 'mostrar_documento_id'])->name('cargar-documento');
+			Route::post('guardar-documento', [ConfiguracionController::class, 'guardar_documento'])->name('guardar-documento');
+			Route::post('actualizar-documento', [ConfiguracionController::class, 'actualizar_documento'])->name('actualizar-documento');
+			Route::get('anular-documento/{id}', [ConfiguracionController::class, 'anular_documento'])->name('anular-documento');
+		});
 
-		// Route::get('usuarios/asignar', [ConfiguracionController::class, 'usuarioAsignar']);
-		// Route::get('modulos', [ConfiguracionController::class, 'getModulos']);
+		Route::group(['as' => 'historial-aprobaciones.', 'prefix' => 'historial-aprobaciones'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_historial_aprobaciones'])->name('index');
+			Route::get('listar', [ConfiguracionController::class, 'mostrar_historial_aprobacion'])->name('listar');
+		});
 
-		// Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
-			// 	Route::post('guardar-accesos', [ConfiguracionController::class, 'guardarAccesos']);
-			// });
-
-		// Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
-		// 	Route::get('prueba', [ConfiguracionController::class, 'prueba']);
-		// 	Route::get('scripts/{var}', [ConfiguracionController::class, 'scripts']);
-		// 	Route::get('scripts-usuario', [ConfiguracionController::class, 'scriptsAccesos']);
-
-		// });
 	});
 
     Route::name('notificaciones.')->prefix('notificaciones')->group(function () {

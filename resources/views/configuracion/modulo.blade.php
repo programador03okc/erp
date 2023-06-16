@@ -16,7 +16,6 @@
 
 @section('cuerpo')
 <div class="page-main" type="modulo">
-    <legend><h2>Módulos del Sistema</h2></legend>
     <div class="row">
         <div class="col-md-6">
             <fieldset class="group-table">

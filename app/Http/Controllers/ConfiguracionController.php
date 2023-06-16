@@ -87,7 +87,8 @@ class ConfiguracionController extends Controller{
     function view_docuemtos(){ return view('configuracion/flujo_aprobacion/documentos');}
     function view_gestionar_flujos(){
         $grupoFlujo = $this->grupoFlujo();
-        return view('configuracion/flujo_aprobacion/gestionar_flujos',compact('grupoFlujo'));}
+        return view('configuracion/flujo_aprobacion/gestionar_flujos',compact('grupoFlujo'));
+    }
     function view_historial_aprobaciones(){ return view('configuracion/flujo_aprobacion/historial_aprobaciones');}
 
     public function grupoFlujo(){
@@ -1000,6 +1001,30 @@ public function guardarNotaLanzamiento(Request $request){
     return  response()->json($status);
 }
 
+public function guardarDetalleNotaLanzamiento (Request $request) {
+    $detalle = $request->all();
+    $id_nota_lanzamiento = $detalle['id_nota'];
+    $titulo = $detalle['titulo'];
+    $descripcion = $detalle['descripcion'];
+    $fecha = $detalle['fecha_detalle_nota_lanzamiento'];
+    $status='';
+    $guardar = DB::table('configuracion.detalle_nota_lanzamiento')->insertGetId([
+        'id_nota_lanzamiento' => $id_nota_lanzamiento,
+        'titulo' => $titulo,
+        'descripcion' => $descripcion,
+        'fecha_detalle_nota_lanzamiento' => $fecha,
+        'estado' => 1
+    ],'id_detalle_nota_lanzamiento'
+    );
+
+    if($guardar >0){
+        $status='GUARDADO';
+    }else{
+        $status='NO_GUARDADO';
+    }
+    return  response()->json($status);
+}
+
 public function eliminarNotaLanzamiento($id){
     $status='';
     $eliminar = DB::table('configuracion.nota_lanzamiento')
@@ -1099,14 +1124,12 @@ public function mostrarVersionActual(){
             'adm_documentos_aprob.codigo_doc',
             'adm_aprobacion.id_vobo',
             'adm_aprobacion.id_usuario',
-            'adm_aprobacion.id_area',
             'adm_aprobacion.fecha_vobo',
             'adm_aprobacion.detalle_observacion',
             'adm_aprobacion.id_rol',
             'adm_flujo.nombre as nombre_flujo',
             'adm_vobo.descripcion as descripcion_vobo',
             DB::raw("CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno) as nombre_completo_usuario"),
-            'adm_area.descripcion as descripcion_area',
             'rrhh_rol_concepto.descripcion as descripcion_rol_concepto'
         )
         ->join('administracion.adm_flujo', 'adm_aprobacion.id_flujo', '=', 'adm_flujo.id_flujo')
@@ -1115,7 +1138,6 @@ public function mostrarVersionActual(){
         ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
         ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
         ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
-        ->join('administracion.adm_area', 'adm_aprobacion.id_area', '=', 'adm_area.id_area')
         ->join('rrhh.rrhh_rol', 'adm_aprobacion.id_rol', '=', 'rrhh_rol.id_rol')
         ->join('rrhh.rrhh_rol_concepto', 'rrhh_rol.id_rol_concepto', '=', 'rrhh_rol_concepto.id_rol_concepto')
         ->join('administracion.adm_documentos_aprob', 'adm_aprobacion.id_doc_aprob', '=', 'adm_documentos_aprob.id_doc_aprob')

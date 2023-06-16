@@ -1,15 +1,21 @@
-@extends('layout.main')
-@include('layout.menu_config')
+@extends('themes.base')
+@include('layouts.menu_config')
+
 @section('option')
-    @include('layout.option')
-@endsection
-@section('cabecera')
-    Historial de Aprobaciones
+    @include('layouts.option')
 @endsection
 
-@section('content')
+@section('cabecera') Historial de Aprobaciones @endsection
+
+@section('estilos')
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+@endsection
+
+@section('cuerpo')
 <div class="page-main" type="modulo">
-    <legend><h2>Historial de Aprobaciones</h2></legend>
     <div class="row">
         <div class="col-md-12">
             <fieldset class="group-table">
@@ -17,13 +23,12 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th width="30">Flujo</th>
+                            <th width="50">Flujo</th>
                             <th>Documento</th>
                             <th>VoBo</th>
                             <th>Detalle</th>
                             <th>Usuario</th>
                             <th>Rol</th>
-                            <th>Area</th>
                             <th>Fecha</th>
                         </tr>
                     </thead>
@@ -37,14 +42,16 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{('/js/configuracion/flujo_aprobacion/historialAprobaciones.js')}}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
+    <script src="{{ asset('js/configuracion/flujo_aprobacion/historialAprobaciones.js') }}"></script>
 @endsection

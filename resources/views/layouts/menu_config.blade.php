@@ -18,8 +18,8 @@
     </a>
     <ul class="treeview-menu">
         <li><a href="gestionar-flujos"><i class="far fa-circle fa-xs"></i> Gestionar Flujos</a></li>
-        <li><a href="documentos"><i class="far fa-circle fa-xs"></i> Documentos</a></li>
-        <li><a href="historial-aprobaciones"><i class="far fa-circle fa-xs"></i> Historial de Aprobaciones</a></li>
+        <li><a href="{{ route('configuracion.documentos.index') }}"><i class="far fa-circle fa-xs"></i> Documentos</a></li>
+        <li><a href="{{ route('configuracion.historial-aprobaciones.index') }}"><i class="far fa-circle fa-xs"></i> Historial de Aprobaciones</a></li>
     </ul>
 </li>
 
@@ -30,9 +30,8 @@
     <ul class="treeview-menu">
         <li><a href="{{ route('configuracion.modulo.index') }}"><i class="far fa-circle fa-xs"></i> Módulos </a></li>
         <li><a href="{{ route('configuracion.aplicaciones.index') }}"><i class="far fa-circle fa-xs"></i> Aplicaciones</a></li>
-        <li><a href="notas_lanzamiento"><i class="far fa-circle fa-xs"></i> Notas de Lanzamiento</a></li>
+        <li><a href="{{ route('configuracion.notas-lanzamiento.index') }}"><i class="far fa-circle fa-xs"></i> Notas de Lanzamiento</a></li>
         <li><a href="{{ route('configuracion.correos.index') }}"><i class="far fa-circle fa-xs"></i> Correo Corporativo</a></li>
-        <li><a href="configuracion_socket"><i class="far fa-circle fa-xs"></i> Socket</a></li>
     </ul>
 </li>
 @endsection

@@ -54,6 +54,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
+    <script src="{{ asset('js/ini.js') }}?v={{ filemtime(public_path('js/ini.js')) }}"></script>
     <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>
     <script src="{{ asset('js/myjava.js') }}?v={{ filemtime(public_path('js/myjava.js')) }}"></script>
     <script src="{{ asset('js/util.js') }}?v={{ filemtime(public_path('js/util.js')) }}"></script>

@@ -174,6 +174,15 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('anular-documento/{id}', [ConfiguracionController::class, 'anular_documento'])->name('anular-documento');
 		});
 
+		Route::group(['as' => 'roles.', 'prefix' => 'roles'], function () {
+			Route::get('index', [ConfiguracionController::class, 'view_roles'])->name('index');
+			Route::get('listar', [ConfiguracionController::class, 'mostrar_roles_table'])->name('listar');
+			Route::get('cargar-roles/{id}', [ConfiguracionController::class, 'mostrar_roles_id'])->name('cargar-roles');
+			Route::post('guardar_rol', [ConfiguracionController::class, 'guardar_rol'])->name('guardar_rol');
+			Route::post('editar_rol', [ConfiguracionController::class, 'actualizar_rol'])->name('editar_rol');
+			Route::get('anular_rol/{id}', [ConfiguracionController::class, 'anular_rol'])->name('anular_rol');
+		});
+
 		Route::group(['as' => 'historial-aprobaciones.', 'prefix' => 'historial-aprobaciones'], function () {
 			Route::get('index', [ConfiguracionController::class, 'view_historial_aprobaciones'])->name('index');
 			Route::get('listar', [ConfiguracionController::class, 'mostrar_historial_aprobacion'])->name('listar');

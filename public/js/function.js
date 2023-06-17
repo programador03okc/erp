@@ -256,6 +256,9 @@ function eventRegister(type, data, action, frm_active) {
         case "modulo":
             save_modulo(data, action);
             break;
+        case "rol":
+            save_rol(data, action);
+            break;
         case "aplicaciones":
             save_aplicaciones(data, action);
             break;
@@ -576,6 +579,9 @@ function anularRegister(type, ids, active) {
         ////////////////////////// CONFIGURACION //////////////////////////
         case "modulo":
             anular_modulo(ids);
+            break;
+        case "rol":
+            anular_rol(ids);
             break;
         case "aplicaciones":
             anular_aplicaciones(ids);

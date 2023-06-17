@@ -8,7 +8,7 @@
     </a>
     <ul class="treeview-menu">
         <li><a href="{{ route('configuracion.usuario.index') }}"><i class="far fa-circle fa-xs"></i> Usuarios</a></li>
-        <li><a href="accesos"><i class="far fa-circle fa-xs"></i> Roles </a></li>
+        <li><a href="{{ route('configuracion.roles.index') }}"><i class="far fa-circle fa-xs"></i> Roles </a></li>
     </ul>
 </li>
 
@@ -17,7 +17,7 @@
         <i class="fas fa-map-signs"></i> <span> Flujo de Aprobación</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-        <li><a href="gestionar-flujos"><i class="far fa-circle fa-xs"></i> Gestionar Flujos</a></li>
+        {{-- <li><a href="gestionar-flujos"><i class="far fa-circle fa-xs"></i> Gestionar Flujos</a></li> --}}
         <li><a href="{{ route('configuracion.documentos.index') }}"><i class="far fa-circle fa-xs"></i> Documentos</a></li>
         <li><a href="{{ route('configuracion.historial-aprobaciones.index') }}"><i class="far fa-circle fa-xs"></i> Historial de Aprobaciones</a></li>
     </ul>

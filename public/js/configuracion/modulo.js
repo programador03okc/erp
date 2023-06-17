@@ -36,7 +36,6 @@ $(function(){
         mostrar_modulo(id);
         changeStateButton('historial');
     });
-    resizeSide();
 });
 
 function mostrar_modulo(id){

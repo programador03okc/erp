@@ -2596,5 +2596,50 @@ public function anular_configuracion_socket($id){
             "accesos"=>$accesos_modulos
         ]);
     }
+
+    /**
+     * accesos
+     */
+    function view_roles() {
+        return view('configuracion/roles');
+    }
+
+    public function mostrar_roles_table(){
+        $data = DB::table('configuracion.sis_rol')->where('estado', 1)->orderBy('descripcion', 'asc')->get();
+        $output['data'] = $data;
+        return response()->json($output);
+    }
+
+    public function mostrar_roles_id($id){
+        $sql = DB::table('configuracion.sis_rol')->where('id_rol', $id)->get();
+        $data = [0 => $sql];
+        return response()->json($data);
+    }
+
+    public function guardar_rol(Request $request){
+        $id = DB::table('configuracion.sis_rol')->insertGetId(
+            [
+                'descripcion' => $request->descripcion,
+                'estado' => 1
+            ],
+            'id_rol'
+        );
+        return response()->json($id);
+    }
+
+    public function actualizar_rol(Request $request){
+        $data = DB::table('configuracion.sis_rol')->where('id_rol', $request->id_rol)
+        ->update([
+            'descripcion'   => $request->descripcion
+        ]);
+        return response()->json($data);
+    }
+    public function anular_rol($id){
+        $data = DB::table('configuracion.sis_rol')->where('id_rol', $id)
+        ->update([
+            'estado'    => 7
+        ]);
+        return response()->json($data);
+    }
 }
 

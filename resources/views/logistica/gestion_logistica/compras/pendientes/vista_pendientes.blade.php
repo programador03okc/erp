@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('option')
@@ -22,7 +22,7 @@ Requerimientos pendientes
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="lista_compras" id="lista_compras">
     <div class="row">
         <div class="col-md-12">

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_migracion')
 
 @section('cabecera') Actualizar produtos @endsection
@@ -19,7 +19,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="box box-danger">
     {{-- <div class="box-header with-border">
         <h3 class="box-title">Actualizar productos</h3>

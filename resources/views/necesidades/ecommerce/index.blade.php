@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_necesidades')
 
 @section('option')
@@ -19,7 +19,7 @@ Lista de pedidos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="lista_requerimiento">
     <div class="row">
         <div class="col-md-12">

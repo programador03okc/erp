@@ -11,7 +11,7 @@ Dashboard Servicios CAS
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 
 <div class="row">
 </div>
@@ -24,7 +24,7 @@ Dashboard Servicios CAS
 @endsection
 
 
-{{-- @extends('layout.main')
+{{-- @extends('themes.base')
 @include('layout.menu_cas')
 @section('cabecera')
 Dashboard Servicios CAS
@@ -35,7 +35,7 @@ Dashboard Servicios CAS
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 
 <div class="row">
 

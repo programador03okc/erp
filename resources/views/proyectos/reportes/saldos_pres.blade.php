@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Saldos Presupuesto
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="saldos_pres">
     <div class="thumbnail" style="padding-left: 20px;padding-right: 20px;padding-top: 20px;">
         <div class="row">

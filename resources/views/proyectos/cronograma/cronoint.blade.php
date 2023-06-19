@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -20,7 +20,7 @@ Cronograma Interno
 <link rel="stylesheet" href="{{ asset('template/plugins/gantt/dhtmlxgantt.css') }}">
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="cronoint">
     <form id="form-cronoint" type="register" form="formulario">
         <!-- <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;"> -->

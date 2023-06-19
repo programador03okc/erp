@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @include('layout.option')
@@ -8,7 +8,7 @@
     Mantenimiento de Equipos
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="mtto">
     <legend class="mylegend">
         <h2>Mantenimiento de Equipos</h2>

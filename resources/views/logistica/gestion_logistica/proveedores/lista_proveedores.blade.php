@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 
@@ -16,7 +16,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="lista_proveedores">
     @if (in_array(257,$array_accesos) || in_array(254,$array_accesos) || in_array(255,$array_accesos) || in_array(256,$array_accesos))
         <div class="row">

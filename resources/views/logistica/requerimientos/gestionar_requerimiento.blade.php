@@ -1,4 +1,5 @@
-@extends('layouts.main')
+@extends('themes.base')
+@include('layouts.menu_necesidades')
 
 {{-- @if(Auth::user()->tieneAccion(102)) --}}
 @section('option')
@@ -727,12 +728,11 @@ Crear / editar requerimiento
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
 
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.pdfmake.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.jszip.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
 
     <script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>

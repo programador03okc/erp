@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -7,7 +7,7 @@
     Tipo de Equipo
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="equi_tipo">
     <legend><h2>Tipo de Equipo</h2></legend>
     <div class="row">

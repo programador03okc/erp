@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_almacen')
 
 @section('cabecera')
@@ -17,7 +17,7 @@ Documentos de Prorrateo
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="docs_prorrateo">
     {{-- <div class="row">
         <div class="col-md-3">

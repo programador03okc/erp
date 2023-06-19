@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_necesidades')
 
 @section('option')
@@ -16,7 +16,7 @@ Revisar y aprobar requerimientos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="aprobar_requerimiento">
     <div class="row">
         <div class="col-md-12">

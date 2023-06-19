@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('themes.base')
 @include('layouts.menu_necesidades')
 
 @section('option')
@@ -174,7 +174,6 @@ Listado de requerimientos logísticos
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
 
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>

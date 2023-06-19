@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_almacen')
 
 @section('option')
@@ -21,7 +21,7 @@ Guía de Compra - Ingreso
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 
 <div class="page-main" type="guia_compra">
     <!-- <legend class="mylegend">

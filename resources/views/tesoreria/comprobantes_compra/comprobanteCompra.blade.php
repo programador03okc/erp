@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_almacen')
 
 @section('cabecera')
@@ -18,7 +18,7 @@ Crear Comprobante Compra
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="comprobanteCompra">
 
     <div class="box">

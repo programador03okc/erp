@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Residentes
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="residente">
     <div class="box box-solid">
         <div class="box-body">

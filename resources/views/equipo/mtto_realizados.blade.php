@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -7,7 +7,7 @@
     Mantenimientos Realizados
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="mtto_realizados">
     <legend class="mylegend">
         <h2>Mantenimientos Realizados</h2>

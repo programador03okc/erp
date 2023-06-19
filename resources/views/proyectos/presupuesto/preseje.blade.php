@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@ Presupuesto de Ejecución
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="preseje">
     <form id="form-preseje" type="register" form="formulario">
         <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;">

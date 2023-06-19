@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('cabecera')
@@ -24,7 +24,7 @@ Mapeo de Productos
 </style>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="mapeoProductos">
 
     <div class="box box-solid">

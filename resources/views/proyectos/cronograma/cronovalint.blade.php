@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@ Cronograma Valorizado Interno
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="cronovalint">
     <form id="form-cronovalint" type="register" form="formulario">
         <div class="thumbnail" style="padding-left: 20px;padding-right: 10px;padding-top: 20px;">

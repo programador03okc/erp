@@ -887,7 +887,8 @@ class ListarRequerimientoView {
     // }
     abrirOrdenPDF(idOrden) {
         console.log(idOrden);
-        let url = `/logistica/gestion-logistica/compras/ordenes/listado/generar-orden-pdf/${idOrden}`;
+        let url = route('logistica.gestion-logistica.compras.ordenes.listado.generar-orden-pdf',idOrden);
+        // let url = `/logistica/gestion-logistica/compras/ordenes/listado/generar-orden-pdf/${idOrden}`;
         var win = window.open(url, "_blank");
         win.focus();
     }

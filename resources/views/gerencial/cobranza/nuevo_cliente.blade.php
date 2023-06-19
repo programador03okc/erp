@@ -752,9 +752,9 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/i18n/es.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/i18n/es.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
-    
+
     <script src="{{ asset('js/gerencial/cobranza/nuevo_cliente.js') }}?v=2"></script>
 @endsection

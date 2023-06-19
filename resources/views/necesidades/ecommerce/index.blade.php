@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_necesidades')
+@include('layouts.menu_necesidades')
 
 @section('option')
 @endsection

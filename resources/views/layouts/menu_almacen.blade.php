@@ -158,7 +158,8 @@
             <li><a href="{{route('almacen.variables.tipos-documento.index')}}"> Tipos de Documentos </a></li>
             {{-- @endif --}}
             {{-- @if(Auth::user()->tieneAplicacion(101)) --}}
-            <li><a href="{{route('almacen.variables.unidades-medida.index')}}"> Unidades de Medida </a></li>
+            {{-- <li><a href="{{route('almacen.variables.unidades-medida.index')}}"> Unidades de Medida </a></li> --}}
+            <li><a href="{{ route('almacen.variables.unidades-medida.index') }}"> Unidades de Medida </a></li>
             {{-- @endif --}}
         </ul>
     </li>

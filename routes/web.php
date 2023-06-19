@@ -1325,7 +1325,6 @@ Route::middleware(['auth'])->group(function () {
 		Route::group(['as' => 'cobranza.', 'prefix' => 'cobranza'], function () {
 			Route::get('index', [CobranzaController::class, 'index'])->name('index');
 			Route::post('listar', [CobranzaController::class, 'listar'])->name('listar');
-			// Route::post('listar-clientes', [CobranzaController::class, 'listarClientes'])->name('listar-clientes');
 			Route::post('buscar-registro', [CobranzaController::class, 'buscarRegistro'])->name('buscar-registro');
 			Route::get('seleccionar-registro/{id_requerimiento}', [CobranzaController::class, 'cargarDatosRequerimiento'])->name('seleccionar-registro');
 			Route::get('obtener-fases/{id}', [CobranzaController::class, 'obtenerFase'])->name('obtener-fases');
@@ -1349,29 +1348,21 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('crear-clientes', [CobranzaClienteController::class, 'crear'])->name('crear-clientes');
 			Route::post('buscar-cliente-documento', [CobranzaClienteController::class, 'buscarClienteDocumento'])->name('buscar-cliente-documento');
 
-			// Route::post('editar-cliente', [CobranzaClienteController::class, 'editar'])->name('editar-cliente');
-
 			Route::get('ver-cliente/{id_contribuyente}', [CobranzaClienteController::class, 'ver'])->name('ver-cliente');
 			Route::post('actualizar-cliente', [CobranzaClienteController::class, 'actualizar'])->name('actualizar-cliente');
 			Route::post('eliminar-cliente', [CobranzaClienteController::class, 'eliminar'])->name('eliminar-cliente');
             Route::get('get-distrito/{id_provincia}', [CobranzaClienteController::class, 'getDistrito'])->name('get-distrito');
-            // Route::get('cliente/get-distrito/{id_provincia}', [CobranzaClienteController::class, 'getDistrito']);
-
-			///////////////////////////////////////////
 
             Route::get('editar-contribuyente/{id_contribuyente}', [CobranzaClienteController::class, 'editarContribuyente'])->name('editar-contribuyente');
             Route::post('buscar-cliente-documento-editar', [CobranzaClienteController::class, 'buscarClienteDocumentoEditar'])->name('buscar-cliente-documento-editar');
 			Route::post('nuevo-cliente', [RegistroController::class, 'nuevoCliente'])->name('nuevo-cliente');
 
 			Route::get('get-provincia/{id_departamento}', [RegistroController::class, 'provincia'])->name('get-provincia');
-			// Route::get('cliente/provincia/{id_departamento}', [RegistroController::class, 'provincia']);
 			Route::get('get-distrito/{id_provincia}', [RegistroController::class, 'distrito'])->name('get-distrito');
-			// Route::get('cliente/distrito/{id_provincia}', [RegistroController::class, 'distrito']);
 
 			Route::get('get-cliente/{id_cliente}', [RegistroController::class, 'getCliente'])->name('get-cliente');
 			Route::get('buscar-factura/{factura}', [RegistroController::class, 'getFactura'])->name('buscar-factura');
 			Route::get('actualizar-ven-doc-req', [RegistroController::class, 'actualizarDocVentReq'])->name('ctualizar-ven-doc-req');
-			// Route::post('editar-cliente', [RegistroController::class, 'editarCliente']);
 			
 			Route::post('modificar-registro', [RegistroController::class, 'modificarRegistro']);
 			Route::post('buscar-vendedor', [RegistroController::class, 'buscarVendedor']);

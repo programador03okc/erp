@@ -14,8 +14,7 @@ $(document).on('change','[data-select="departamento-select"]',function () {
 function getProvincias(this_select,id_departamento) {
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'provincia/'+id_departamento,
+        url: route('gerencial.cobranza.get-provincia', {id_departamento: id_departamento}),
         data: {},
         dataType: 'JSON',
         success: function(response){
@@ -52,8 +51,7 @@ $(document).on('change','[data-select="provincia-select"]',function () {
 function distrito(this_select,id_provincia) {
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'distrito/'+id_provincia,
+        url: route('gerencial.cobranza.get-distrito', {id_provincia: id_provincia}),
         data: {},
         dataType: 'JSON',
         success: function(response){
@@ -110,8 +108,7 @@ $(document).on('click','.editar-establecimiento',function () {
     // console.log(route_get_distrito);
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'get-distrito/'+ubigeo,
+        url: route('gerencial.cobranza.get-distrito', {id_provincia: ubigeo}),
         data: {},
         dataType: 'JSON',
         success: function(response){

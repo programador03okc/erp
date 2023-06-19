@@ -110,8 +110,7 @@ $(document).on('click','.editar-establecimiento',function () {
     $('[data-form="editar-establecimiento"] [name="id_establecimiento"]').val($(this).attr('data-key'));
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'get-distrito/'+ubigeo,
+        url: route('gerencial.cobranza.get-distrito', {id_provincia: ubigeo}),
         data: {},
         dataType: 'JSON',
         success: function(response){

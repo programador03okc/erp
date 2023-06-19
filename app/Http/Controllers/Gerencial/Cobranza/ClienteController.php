@@ -367,13 +367,12 @@ class ClienteController extends Controller
     public function editarContribuyente($id_contribuyente)
     {
         $pais = Pais::get();
-        $departamento = Departamento::get();
+        $departamento = Departamento::orderBy('descripcion', 'asc')->get();
         $tipo_documentos = Identidad::where('estado',1)->get();
         $tipo_contribuyente = TipoContribuyente::where('estado',1)->get();
         $monedas = Moneda::where('estado',1)->get();
         $bancos = Banco::mostrar();
         $tipo_cuenta = TipoCuenta::mostrar();
-
 
         $contribuyente = Contribuyente::where('id_contribuyente',$id_contribuyente)->first();
 

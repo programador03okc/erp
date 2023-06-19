@@ -252,7 +252,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('anular_grupo/{id}', [AdministracionController::class, 'anular_grupo'])->name('anular_grupo');
 			Route::get('combo_sede_empresa/{value}', [AdministracionController::class, 'combo_sede_empresa'])->name('combo_sede_empresa');
 		});
-		
+
 		Route::name('areas.')->prefix('areas')->group(function () {
 			Route::get('index', [AdministracionController::class, 'view_area'])->name('index');
 			Route::get('listar_area', [AdministracionController::class, 'mostrar_area_table'])->name('listar_area');
@@ -1026,21 +1026,21 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'tipos-documento.', 'prefix' => 'tipos-documento'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_tipo_doc_almacen'])->name('index');
-				Route::get('listar_tp_docs', [AlmacenController::class, 'listar_tp_docs']);
-				Route::get('mostrar_tp_doc/{id}', [AlmacenController::class, 'mostrar_tp_doc']);
-				Route::post('guardar_tp_doc', [AlmacenController::class, 'guardar_tp_doc']);
-				Route::post('update_tp_doc', [AlmacenController::class, 'update_tp_doc']);
-				Route::get('anular_tp_doc/{id}', [AlmacenController::class, 'anular_tp_doc']);
+				Route::get('listar_tp_docs', [AlmacenController::class, 'listar_tp_docs'])->name('listar-tp-docs');
+				Route::get('mostrar_tp_doc/{id}', [AlmacenController::class, 'mostrar_tp_doc'])->name('mostrar-tp-doc');
+				Route::post('guardar_tp_doc', [AlmacenController::class, 'guardar_tp_doc'])->name('guardar-tp-doc');
+				Route::post('update_tp_doc', [AlmacenController::class, 'update_tp_doc'])->name('update-tp-doc');
+				Route::get('anular_tp_doc/{id}', [AlmacenController::class, 'anular_tp_doc'])->name('anular-tp-doc');
 			});
 
 			Route::group(['as' => 'unidades-medida.', 'prefix' => 'unidades-medida'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_unid_med'])->name('index');
-				Route::get('listar_unidmed', [AlmacenController::class, 'mostrar_unidades_med']);
-				Route::get('mostrar_unidmed/{id}', [AlmacenController::class, 'mostrar_unid_med']);
-				Route::post('guardar_unidmed', [AlmacenController::class, 'guardar_unid_med']);
-				Route::post('actualizar_unidmed', [AlmacenController::class, 'update_unid_med']);
-				Route::get('anular_unidmed/{id}', [AlmacenController::class, 'anular_unid_med']);
+				Route::get('listar_unidmed', [AlmacenController::class, 'mostrar_unidades_med'])->name('listar-unidmed');
+				Route::get('mostrar_unidmed/{id}', [AlmacenController::class, 'mostrar_unid_med'])->name('mostrar-unidmed');
+				Route::post('guardar_unidmed', [AlmacenController::class, 'guardar_unid_med'])->name('guardar-unidmed');
+				Route::post('actualizar_unidmed', [AlmacenController::class, 'update_unid_med'])->name('actualizar-unidmed');
+				Route::get('anular_unidmed/{id}', [AlmacenController::class, 'anular-unidmed'])->name('index');
 			});
 		});
 	});
@@ -1053,32 +1053,32 @@ Route::middleware(['auth'])->group(function () {
 		Route::group(['as' => 'customizacion.', 'prefix' => 'customizacion'], function () {
 			Route::group(['as' => 'tablero-transformaciones.', 'prefix' => 'tablero-transformaciones'], function () {
 				Route::get('index', [OrdenesTransformacionController::class, 'view_tablero_transformaciones'])->name('index');
-				Route::get('listarDespachosInternos/{fec}', [OrdenesDespachoInternoController::class, 'listarDespachosInternos']);
-				Route::get('subirPrioridad/{id}', [OrdenesDespachoInternoController::class, 'subirPrioridad']);
-				Route::get('bajarPrioridad/{id}', [OrdenesDespachoInternoController::class, 'bajarPrioridad']);
-				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class, 'pasarProgramadasAlDiaSiguiente']);
-				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class, 'listarPendientesAnteriores']);
-				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion']);
-				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class, 'cambiaEstado']);
+				Route::get('listarDespachosInternos/{fec}', [OrdenesDespachoInternoController::class, 'listarDespachosInternos'])->name('listar-despachos-internos');
+				Route::get('subirPrioridad/{id}', [OrdenesDespachoInternoController::class, 'subirPrioridad'])->name('subir-prioridad');
+				Route::get('bajarPrioridad/{id}', [OrdenesDespachoInternoController::class, 'bajarPrioridad'])->name('bajar-prioridad');
+				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class, 'pasarProgramadasAlDiaSiguiente'])->name('pasar-programadas-al-dia-siguiente');
+				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class, 'listarPendientesAnteriores'])->name('listar-pendientes-anteriores');
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
+				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class, 'cambiaEstado'])->name('cambia-estado');
 			});
 
 			Route::group(['as' => 'gestion-customizaciones.', 'prefix' => 'gestion-customizaciones'], function () {
 				//Transformaciones
 				Route::get('index', [TransformacionController::class, 'view_listar_transformaciones'])->name('index');
-				Route::get('listarTransformacionesProcesadas', [TransformacionController::class, 'listarTransformacionesProcesadas']);
-				Route::post('listar_transformaciones_pendientes', [TransformacionController::class, 'listar_transformaciones_pendientes']);
-				Route::post('listarCuadrosCostos', [TransformacionController::class, 'listarCuadrosCostos']);
-				Route::post('generarTransformacion', [TransformacionController::class, 'generarTransformacion']);
-				Route::get('obtenerCuadro/{id}/{tipo}', [TransformacionController::class, 'obtenerCuadro']);
-				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('id_ingreso_transformacion/{id}', [TransformacionController::class, 'id_ingreso_transformacion']);
-				Route::get('id_salida_transformacion/{id}', [TransformacionController::class, 'id_salida_transformacion']);
-				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso']);
-				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida']);
-				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion']);
-				Route::get('recibido_conforme_transformacion/{id}', [TransformacionController::class, 'recibido_conforme_transformacion']);
-				Route::get('no_conforme_transformacion/{id}', [TransformacionController::class, 'no_conforme_transformacion']);
-				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion']);
+				Route::get('listarTransformacionesProcesadas', [TransformacionController::class, 'listarTransformacionesProcesadas'])->name('listar-transformaciones-procesadas');
+				Route::post('listar_transformaciones_pendientes', [TransformacionController::class, 'listar_transformaciones_pendientes'])->name('listar-transformaciones-pendientes');;
+				Route::post('listarCuadrosCostos', [TransformacionController::class, 'listarCuadrosCostos'])->name('listar-cuadros-costos');
+				Route::post('generarTransformacion', [TransformacionController::class, 'generarTransformacion'])->name('generar-transformacion');
+				Route::get('obtenerCuadro/{id}/{tipo}', [TransformacionController::class, 'obtenerCuadro'])->name('obtener-cuadro');
+				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('id_ingreso_transformacion/{id}', [TransformacionController::class, 'id_ingreso_transformacion'])->name('id-ingreso-transformacion');
+				Route::get('id_salida_transformacion/{id}', [TransformacionController::class, 'id_salida_transformacion'])->name('id-salida-transformacion');
+				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
+				Route::get('recibido_conforme_transformacion/{id}', [TransformacionController::class, 'recibido_conforme_transformacion'])->name('recibido-conforme-transformacion');
+				Route::get('no_conforme_transformacion/{id}', [TransformacionController::class, 'no_conforme_transformacion'])->name('no-conforme-transformacion');
+				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion'])->name('iniciar-transformacion');
 				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class, 'obtenerArchivosOc'])->name('obtener-archivos-oc');
 			});
 
@@ -1339,9 +1339,9 @@ Route::middleware(['auth'])->group(function () {
 			Route::name('compras.')->prefix('compras')->group(function () {
 				Route::name('pendientes.')->prefix('pendientes')->group(function () {
 					Route::get('index', [ComprasPendientesController::class, 'viewComprasPendientes'])->name('index');
-					Route::post('requerimientos-pendientes', [ComprasPendientesController::class, 'listarRequerimientosPendientes'])->name('requerimientos-pendientes'); 
-					Route::post('requerimientos-atendidos', [ComprasPendientesController::class, 'listarRequerimientosAtendidos'])->name('requerimientos-atendidos'); 
-					Route::get('reporte-requerimientos-atendidos-excel/{Empresa}/{Sede}/{FechaDesde}/{FechaHasta}/{Reserva}/{Orden}', [ComprasPendientesController::class, 'reporteRequerimientosAtendidosExcel'])->name('reporte-requerimientos-atendidos-excel'); 
+					Route::post('requerimientos-pendientes', [ComprasPendientesController::class, 'listarRequerimientosPendientes'])->name('requerimientos-pendientes');
+					Route::post('requerimientos-atendidos', [ComprasPendientesController::class, 'listarRequerimientosAtendidos'])->name('requerimientos-atendidos');
+					Route::get('reporte-requerimientos-atendidos-excel/{Empresa}/{Sede}/{FechaDesde}/{FechaHasta}/{Reserva}/{Orden}', [ComprasPendientesController::class, 'reporteRequerimientosAtendidosExcel'])->name('reporte-requerimientos-atendidos-excel');
 					Route::get('solicitud-cotizacion-excel/{id}', [ComprasPendientesController::class, 'solicitudCotizacionExcel'])->name('solicitud-cotizacion-excel');
 					Route::get('exportar-lista-requerimientos-pendientes-excel', [ComprasPendientesController::class, 'exportListaRequerimientosPendientesExcel'])->name('exportar-lista-requerimientos-pendientes-excel');
 					Route::post('lista_items-cuadro-costos-por-requerimiento', [ComprasPendientesController::class, 'get_lista_items_cuadro_costos_por_id_requerimiento'])->name('lista_items-cuadro-costos-por-requerimiento');
@@ -1386,7 +1386,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('guardar-observacion-logistica', [ComprasPendientesController::class, 'guardarObservacionLogistica'])->name('guardar-observacion-logistica');
-					Route::get('retornar-requerimiento-atendido-a-lista-pedientes/{id}', [ComprasPendientesController::class, 'retornarRequerimientoAtendidoAListaPendientes'])->name('retornar-requerimiento-atendido-a-lista-pedientes');					
+					Route::get('retornar-requerimiento-atendido-a-lista-pedientes/{id}', [ComprasPendientesController::class, 'retornarRequerimientoAtendidoAListaPendientes'])->name('retornar-requerimiento-atendido-a-lista-pedientes');
 				});
 
 				Route::name('ordenes.')->prefix('ordenes')->group(function () {
@@ -1425,7 +1425,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::post('enviar-notificacion-finalizacion-cdp', [OrdenController::class, 'enviarNotificacionFinalizacionCDP'])->name('enviar-notificacion-finalizacion-cdp');
 						Route::post('validar-orden-agil-orden-softlink', [OrdenController::class, 'validarOrdenAgilOrdenSoftlink'])->name('validar-orden-agil-orden-softlink');
 						Route::post('vincular-oc-softlink', [OrdenController::class, 'vincularOcSoftlink'])->name('vincular-oc-softlink');
-						Route::get('imprimir_orden_servicio_o_transformacion/{idOportunidad}', [TransformacionController::class, 'imprimir_orden_servicio_o_transformacion'])->name('imprimir-orden-servicio-o-transformacion'); 
+						Route::get('imprimir_orden_servicio_o_transformacion/{idOportunidad}', [TransformacionController::class, 'imprimir_orden_servicio_o_transformacion'])->name('imprimir-orden-servicio-o-transformacion');
 					});
 					Route::name('listado.')->prefix('listado')->group(function () {
 
@@ -1445,7 +1445,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel/{filtro?}', [OrdenController::class, 'exportListaOrdenesNivelCabeceraExcel'])->name('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-detalle-excel', [OrdenController::class, 'exportListaOrdenesNivelDetalleExcel'])->name('facturas');
 
-						// nivel 
+						// nivel
 						Route::post('lista-items-ordenes-elaboradas', [OrdenController::class, 'listaItemsOrdenesElaboradas'])->name('lista-items-ordenes-elaboradas');
 						Route::post('actualizar-estado', [OrdenController::class, 'update_estado_orden'])->name('actualizar-estado');
 						Route::post('actualizar-estado-detalle', [OrdenController::class, 'update_estado_item_orden'])->name('actualizar-estado-detalle-orden');
@@ -1607,7 +1607,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('generarDespachoInterno/{id}', [OrdenesDespachoInternoController::class, 'generarDespachoInterno'])->name('generar-despacho-interno');
 				Route::get('anular_orden_despacho/{id}/{tp}', [SalidasPendientesController::class, 'anular_orden_despacho'])->name('anular-orden-despacho');
 				Route::post('enviarFacturacion', [OrdenesDespachoExternoController::class, 'enviarFacturacion'])->name('enviar-facturacion');
-				
+
 				Route::get('mostrarDocumentosByRequerimiento/{id}', [TrazabilidadRequerimientoController::class, 'mostrarDocumentosByRequerimiento'])->name('mostrar-documentos-by-requerimiento');
 				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
 				Route::get('imprimir_transferencia/{id}', [TransferenciaController::class, 'imprimir_transferencia'])->name('imprimir-transferencia');
@@ -1672,7 +1672,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('get-cliente/{id_cliente}', [RegistroController::class, 'getCliente'])->name('get-cliente');
 			Route::get('buscar-factura/{factura}', [RegistroController::class, 'getFactura'])->name('buscar-factura');
 			Route::get('actualizar-ven-doc-req', [RegistroController::class, 'actualizarDocVentReq'])->name('ctualizar-ven-doc-req');
-			
+
 			Route::post('modificar-registro', [RegistroController::class, 'modificarRegistro']);
 			Route::post('buscar-vendedor', [RegistroController::class, 'buscarVendedor']);
 			Route::get('buscar-cliente-seleccionado/{id}', [RegistroController::class, 'buscarClienteSeleccionado']);

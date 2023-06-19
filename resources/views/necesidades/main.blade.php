@@ -11,7 +11,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 
 <div class="row">
 </div>

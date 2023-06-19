@@ -1,5 +1,5 @@
-@extends('layout.main')
-@include('layout.menu_necesidades')
+@extends('themes.base')
+@include('layouts.menu_necesidades')
 
 @section('option')
 @endsection
@@ -19,7 +19,7 @@ Revisar/aprobar
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div id="lista_documentos_para_revisar_aprobar">
 
 @if (in_array(24,$array_accesos) || in_array(23,$array_accesos))
@@ -143,15 +143,11 @@ Revisar/aprobar
 @endsection
 
 @section('scripts')
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
 <script src="{{ asset('js/necesidades/RevisarAprobarDocumento.js')}}?v={{filemtime(public_path('js/necesidades/RevisarAprobarDocumento.js'))}}"></script>
 

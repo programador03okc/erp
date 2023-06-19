@@ -348,12 +348,7 @@ class RevisarAprobarController extends Controller{
 
         $documentosEnUnaLista = $documentoTipoRequerimientoBienesYServicios->merge($documentoTipoRequerimientoPago);
 
-
-        $todosLosDocumentos = array_reverse(array_sort($documentosEnUnaLista, function ($value) {
-            return $value['adm_documentos_aprob.id_doc_aprob'];
-        }));
-
-
+        $todosLosDocumentos = collect($documentosEnUnaLista)->sortBy('adm_documentos_aprob.id_doc_aprob')->reverse();
 
         $payload = [];
         $mensaje=[];

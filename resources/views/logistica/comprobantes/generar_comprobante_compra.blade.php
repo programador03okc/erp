@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_almacen')
 @section('option')
     @include('layout.option')
@@ -14,7 +14,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="doc_compra">
     <!-- <legend class="mylegend">
         <ol class="breadcrumb">

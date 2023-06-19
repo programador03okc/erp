@@ -1,10 +1,13 @@
-@extends('layout.main')
-@include('layout.menu_gerencial')
+@extends('themes.base')
+@include('layouts.menu_gerencial')
 
 @section('cabecera') Cobranzas de ventas @endsection
 
 @section('estilos')
-    <link href='{{ asset("template/plugins/bootstrap-select/dist/css/bootstrap-select.min.css") }}' rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
     <style>
         .group-okc-ini {
             display: flex;
@@ -43,7 +46,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 @if (in_array(307,$array_accesos))
 <div class="page-main" type="usuarios">
     <div class="box box-solid">
@@ -753,88 +756,81 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/moment/locale/es.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
-    <script src="{{ asset('js/util.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
+    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
 
     <script>
+        var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
 
-    var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
+        let carga_ini = 1;
+        let tempClienteSelected = {};
+        let tempoNombreCliente = '';
+        let userNickname = '';
 
-    // let csrf_token = '{{ csrf_token() }}';
+        const idioma = {
+            sProcessing: "<div class='spinner'></div>",
+            sLengthMenu: "Mostrar _MENU_ registros",
+            sZeroRecords: "No se encontraron resultados",
+            sEmptyTable: "Ningún dato disponible en esta tabla",
+            sInfo: "Del _START_ al _END_ de un total de _TOTAL_ registros",
+            sInfoEmpty: "Del 0 al 0 de un total de 0 registros",
+            sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
+            sInfoPostFix: "",
+            sSearch: "Buscar:",
+            sUrl: "",
+            sInfoThousands: ",",
+            sLoadingRecords: "Cargando...",
+            oPaginate: {
+                sFirst: "Primero",
+                sLast: "Último",
+                sNext: "Siguiente",
+                sPrevious: "Anterior"
+            },
+            oAria: {
+                sSortAscending:
+                    ": Actilet para ordenar la columna de manera ascendente",
+                sSortDescending:
+                    ": Activar para ordenar la columna de manera descendente"
+            }
+        };
 
-    let carga_ini = 1;
-    let tempClienteSelected = {};
-    let tempoNombreCliente = '';
-    let userNickname = '';
+        let periodoSelect = {!! $periodo !!};
+        let periodoActivo = {!! session('cobranzaPeriodo') !!};
+        let idCliente = 0;
+        let nombreCliente = '';
+        let idRequerimiento = 0;
+        let actualizar = false;
+        let spanFiltro = 0;
 
-    const idioma = {
-        sProcessing: "<div class='spinner'></div>",
-        sLengthMenu: "Mostrar _MENU_ registros",
-        sZeroRecords: "No se encontraron resultados",
-        sEmptyTable: "Ningún dato disponible en esta tabla",
-        sInfo: "Del _START_ al _END_ de un total de _TOTAL_ registros",
-        sInfoEmpty: "Del 0 al 0 de un total de 0 registros",
-        sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
-        sInfoPostFix: "",
-        sSearch: "Buscar:",
-        sUrl: "",
-        sInfoThousands: ",",
-        sLoadingRecords: "Cargando...",
-        oPaginate: {
-            sFirst: "Primero",
-            sLast: "Último",
-            sNext: "Siguiente",
-            sPrevious: "Anterior"
-        },
-        oAria: {
-            sSortAscending:
-                ": Actilet para ordenar la columna de manera ascendente",
-            sSortDescending:
-                ": Activar para ordenar la columna de manera descendente"
+        $(document).ready(function() {
+            $('.main-header nav.navbar.navbar-static-top').find('a.sidebar-toggle').click();
+            $('.numero').number(true, 2);
+        });
+
+        function formatRepo (repo) {
+            if (repo.id) {
+                return repo.text;
+            }
+            var state = $(
+                `<span>`+repo.text+`</span>`
+            );
+            return state;
+
         }
-    };
 
-    let periodoSelect = {!! $periodo !!};
-    let periodoActivo = {!! session('cobranzaPeriodo') !!};
-    let idCliente = 0;
-    let nombreCliente = '';
-    let idRequerimiento = 0;
-    let actualizar = false;
-    let spanFiltro = 0;
-
-    $(document).ready(function() {
-        $('.main-header nav.navbar.navbar-static-top').find('a.sidebar-toggle').click();
-        $('.numero').number(true, 2);
-    });
-
-    function formatRepo (repo) {
-        if (repo.id) {
-            return repo.text;
+        function formatRepoSelection (repo) {
+            return repo.nombre || repo.text;
         }
-        var state = $(
-            `<span>`+repo.text+`</span>`
-        );
-        return state;
-
-    }
-
-    function formatRepoSelection (repo) {
-        return repo.nombre || repo.text;
-    }
     </script>
-    {{--  <script src="{{ asset('js/gerencial/cobranza/registro.js') }}"></script>  --}}
     <script src="{{ asset('js/gerencial/cobranza/rc_ventas.js') }}"></script>
 @endsection

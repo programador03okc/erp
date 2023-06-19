@@ -8,14 +8,14 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar_area',
+        'ajax': route('administracion.areas.listar_area'),
         'columns': [
             {'data': 'id_area'},
             {'data': 'empresa'},
-            {'data': 'sede'},
+            {'data': 'sede', className: 'text-center'},
             {'data': 'grupo'},
             {'data': 'descripcion'},
-            {'data': 'codigo'}
+            {'data': 'codigo', className: 'text-center'}
         ],
         'order': [
             [1, 'asc'], [2, 'asc']
@@ -40,82 +40,8 @@ $(function(){
     resizeSide();
 });
 
-function buscarSede(value, type, seleccion){
-    $('[name=sede]').empty();
-    if (type == 'llenar'){
-        $('[name=sede]').append('<option value="" disabled>Elija una opción</option>');
-    }else{
-        $('[name=sede]').append('<option value="" disabled selected>Elija una opción</option>');
-    }
-    baseUrl = 'mostrar_combos_emp/' + value;
-    $.ajax({
-        type: 'GET',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: baseUrl,
-        dataType: 'JSON',
-        success: function(response){
-            if (type == 'llenar'){
-                Object.keys(response.sedes).forEach(function(key){
-                    if (response.sedes[key].id_sede == seleccion){
-                        var opt = '<option value="'+response.sedes[key].id_sede+'" selected>'+response.sedes[key].descripcion+'</option>';
-                    }else{
-                        var opt = '<option value="'+response.sedes[key].id_sede+'">'+response.sedes[key].descripcion+'</option>';
-                    }
-                    $('[name=sede]').append(opt);
-                });
-            }else{
-                Object.keys(response.sedes).forEach(function(key){
-                    var opt = '<option value="'+response.sedes[key].id_sede+'">'+response.sedes[key].descripcion+'</option>';
-                    $('[name=sede]').append(opt);
-                });
-            }
-        }
-    }).fail( function(jqXHR, textStatus, errorThrown){
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-    });
-}
-
-function buscarGrupo(value, type, seleccion){
-    $('[name=grupo]').empty();
-    if (type == 'llenar'){
-        $('[name=grupo]').append('<option value="" disabled>Elija una opción</option>');
-    }else{
-        $('[name=grupo]').append('<option value="" disabled selected>Elija una opción</option>');
-    }
-    baseUrl = 'mostrar_grupo_sede/' + value;
-    $.ajax({
-        type: 'GET',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: baseUrl,
-        dataType: 'JSON',
-        success: function(response){
-            if (type == 'llenar'){
-                Object.keys(response).forEach(function(key){
-                    if (response[key].id_grupo == seleccion){
-                        var opt = '<option value="'+response[key].id_grupo+'" selected>'+response[key].descripcion+'</option>';
-                    }else{
-                        var opt = '<option value="'+response[key].id_grupo+'">'+response[key].descripcion+'</option>';
-                    }
-                    $('[name=grupo]').append(opt);
-                });
-            }else{
-                Object.keys(response).forEach(function(key){
-                    var opt = '<option value="'+response[key].id_grupo+'">'+response[key].descripcion+'</option>';
-                    $('[name=grupo]').append(opt);
-                });
-            }
-        }
-    }).fail( function(jqXHR, textStatus, errorThrown){
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-    });
-}
-
 function mostrar_area(id){
-    baseUrl = 'cargar_area/'+id;
+    baseUrl = route('administracion.areas.cargar_area', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -125,9 +51,9 @@ function mostrar_area(id){
             console.log(response);
             $('[name=id_area]').val(response[0].id_area);
             $('[name=empresa]').val(response[0].id_empresa);
-            buscarSede(response[0].id_empresa, 'llenar', response[0].id_sede);
+            buscarSede(response[0].id_empresa, response[0].id_sede);
             $('[name=sede]').text(response[0].id_sede);
-            buscarGrupo(response[0].id_sede, 'llenar', response[0].id_grupo);
+            buscarGrupo(response[0].id_sede, response[0].id_grupo);
             $('[name=grupo]').text(response[0].id_grupo);
             $('[name=descripcion]').val(response[0].descripcion);
             $('[name=codigo]').val(response[0].codigo);
@@ -142,10 +68,10 @@ function mostrar_area(id){
 function save_area(data, action){
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar_area';
+        baseUrl = route('administracion.areas.guardar_area');
         msj = 'Area registrada con exito';
     }else if(action == 'edition'){
-        baseUrl = 'editar_area';
+        baseUrl = route('administracion.areas.editar_area');
         msj = 'Area editada con exito';
     }
     $.ajax({
@@ -174,7 +100,7 @@ function save_area(data, action){
 }
 
 function anular_area(ids){
-    baseUrl = 'anular_area/'+ids;
+    baseUrl = route('administracion.areas.anular_area', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -187,6 +113,54 @@ function anular_area(ids){
                 changeStateButton('anular');
                 clearForm('form-area');
             }
+        }
+    }).fail( function(jqXHR, textStatus, errorThrown){
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+}
+
+function buscarSede(value, seleccion){
+    $('[name=sede]').empty();
+    baseUrl = route('administracion.grupos.combo_sede_empresa', {value:value});
+    $.ajax({
+        type: 'GET',
+        url: baseUrl,
+        dataType: 'JSON',
+        success: function(response) {
+            response.forEach(element => {
+                if (element.id_sede == seleccion){
+                    opt = '<option value="'+element.id_sede+'" selected>'+element.descripcion+'</option>';
+                }else{
+                    opt = '<option value="'+element.id_sede+'">'+element.descripcion+'</option>';
+                }
+            });
+            $('[name=sede]').append(opt);
+        }
+    }).fail( function(jqXHR, textStatus, errorThrown){
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+}
+
+function buscarGrupo(value, seleccion){
+    $('[name=grupo]').empty();
+    baseUrl = route('administracion.areas.combo_grupo_sede', {value: value});
+    $.ajax({
+        type: 'GET',
+        url: baseUrl,
+        dataType: 'JSON',
+        success: function(response){
+            response.forEach(element => {
+                if (element.id_grupo == seleccion){
+                    opt = '<option value="'+element.id_grupo+'" selected>'+element.descripcion+'</option>';
+                }else{
+                    opt = '<option value="'+element.id_grupo+'">'+element.descripcion+'</option>';
+                }
+            });
+            $('[name=grupo]').append(opt);
         }
     }).fail( function(jqXHR, textStatus, errorThrown){
         console.log(jqXHR);

@@ -30,7 +30,7 @@
                     <ul class="dropdown-menu">
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Cambiar contraseña</a>
+                                <a href="javascript: void(0);" onclick="cambiarClave();" class="btn btn-default btn-flat">Cambiar contraseña</a>
                             </div>
                             <div class="pull-right">
                                 <a href="{{ route('cerrar-sesion') }}" class="btn btn-default btn-flat">Cerrar sesión</a>

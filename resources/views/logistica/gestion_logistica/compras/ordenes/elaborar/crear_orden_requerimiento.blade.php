@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @include('layout.option')
@@ -34,7 +34,7 @@ Orden de compra / servicio
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="crear-orden-requerimiento">
     <form id="form-crear-orden-requerimiento" type="register" form="formulario">
         <input type="hidden" name="id_orden" primary="ids">

@@ -1,9 +1,9 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_powerbi')
 
 @section('cabecera') PowerBi - Ventas @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="box box-solid">
     <div class="box-body">
         <div class="row">

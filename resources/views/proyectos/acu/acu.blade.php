@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Análisis de Costos Unitarios
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="acu">
     <div class="box box-solid">
         <div class="box-body">

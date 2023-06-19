@@ -256,6 +256,9 @@ function eventRegister(type, data, action, frm_active) {
         case "modulo":
             save_modulo(data, action);
             break;
+        case "rol":
+            save_rol(data, action);
+            break;
         case "aplicaciones":
             save_aplicaciones(data, action);
             break;
@@ -577,6 +580,9 @@ function anularRegister(type, ids, active) {
         case "modulo":
             anular_modulo(ids);
             break;
+        case "rol":
+            anular_rol(ids);
+            break;
         case "aplicaciones":
             anular_aplicaciones(ids);
             break;
@@ -751,72 +757,6 @@ function anularRegister(type, ids, active) {
             break;
         default:
             break;
-    }
-}
-
-function changePassword() {
-    $("#modal-settings").modal({
-        show: true,
-        backdrop: "static"
-    });
-    $("#modal-settings").on("shown.bs.modal", function () {
-        $("[name=pass_old]").focus();
-    });
-}
-
-function execSetting() {
-    var question = confirm("¿Desea actualizar su contraseña?");
-    if (question == true) {
-        var pass = $("[name=pass_new]").val();
-        var repass = $("[name=pass_renew]").val();
-        if (pass == repass) {
-            var data = $("#formSettingsPassword").serialize();
-            var baseUrl = "/update_password",
-            regularExpression = /^(?=^.{8,}$)((.)(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;;
-            if (regularExpression.test(pass)) {
-                $.ajax({
-                    type: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-                    },
-                    url: baseUrl,
-                    data: data,
-                    dataType: "JSON",
-                    success: function (response) {
-                        console.log(response);
-                        $(".loading").remove();
-                        if (response > 0) {
-                            alert("Contraseña correctamente actualizada.");
-                            $("#formSettingsPassword")[0].reset();
-                            $('#modal-settings').modal('hide');
-                        } else if (response == 0) {
-                            alert("La contraseña actual no es correcta.");
-                            $("[name=pass_old]").focus();
-                        } else {
-                            alert(
-                                "Problemas al actualizar la contraseña, intentelo mas tarde."
-                            );
-                        }
-                    }
-                });
-            } else {
-                success=false;
-                Swal.fire(
-                    'Información',
-                    'Su nueva contraseña debe tener al menos 8 caracteres alfanuméricos. Ejemplos: Inicio01., Inicio01.@, @"+*}-+',
-                    'warning',
-                );
-
-            }
-
-            return false;
-        } else {
-            alert("Las contraseñas no son iguales, confirme porfavor.");
-            $("[name=pass_renew]").focus();
-            return false;
-        }
-    } else {
-        return false;
     }
 }
 

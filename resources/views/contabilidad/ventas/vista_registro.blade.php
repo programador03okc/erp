@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_contabilidad')
 
 @section('option')
@@ -16,7 +16,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="lista_ventas">
     <fieldset class="group-table">
         <form id="form-listaVentas" type="register">

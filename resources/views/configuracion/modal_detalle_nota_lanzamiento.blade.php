@@ -6,7 +6,8 @@
                 <h3 class="modal-title" id="title-detalle_nota_lanzamiento">Detalle Nota de Lanzamiento</h3>
             </div>
             <div class="modal-body">
-                <input type="hidden" class="form-control icd-okc" name="id_detalle_nota_lanzamiento" />
+                <input type="hidden" name="id_nota">
+                <input type="hidden" name="id_detalle_nota_lanzamiento" />
                 <div class="row">
                     <div class="col-md-12">
                         <h5>Titutlo</h5>

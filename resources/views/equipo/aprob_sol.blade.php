@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('option')
@@ -8,7 +8,7 @@
     Listado de Solicitud de Equipos
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="aprob_sol">
     <legend class="mylegend">
         <h2>Listado de Solicitud de Equipos</h2>

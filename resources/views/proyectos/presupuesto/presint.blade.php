@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@ Presupuesto Interno
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="presint">
     <form id="form-presint" type="register" form="formulario">
         <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;">

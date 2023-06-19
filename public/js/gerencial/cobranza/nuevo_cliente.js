@@ -14,8 +14,7 @@ $(document).on('change','[data-select="departamento-select"]',function () {
 function getProvincias(this_select,id_departamento) {
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'provincia/'+id_departamento,
+        url: route('gerencial.cobranza.get-provincia', {id_departamento: id_departamento}),
         data: {},
         dataType: 'JSON',
         success: function(response){
@@ -52,8 +51,7 @@ $(document).on('change','[data-select="provincia-select"]',function () {
 function distrito(this_select,id_provincia) {
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'distrito/'+id_provincia,
+        url: route('gerencial.cobranza.get-distrito', {id_provincia: id_provincia}),
         data: {},
         dataType: 'JSON',
         success: function(response){
@@ -71,10 +69,12 @@ function distrito(this_select,id_provincia) {
         console.log(errorThrown);
     })
 }
+
 $(document).on('click','.agregar-establecimiento',function () {
     $('#nuevo-establecimiento').modal('show');
     $('[data-form="guardar-establecimiento"]')[0].reset();
 });
+
 $(document).on('submit','[data-form="guardar-establecimiento"]',function (e) {
     e.preventDefault();
     $('#nuevo-establecimiento').modal('hide');
@@ -97,6 +97,7 @@ $(document).on('submit','[data-form="guardar-establecimiento"]',function (e) {
     html +='';
     $('[data-table="tbody-establecimiento"]').append(html);
 });
+
 $(document).on('click','.editar-establecimiento',function () {
     $('#editar-establecimiento').modal('show');
     var data_key = $(this).attr('data-key');
@@ -109,8 +110,7 @@ $(document).on('click','.editar-establecimiento',function () {
     $('[data-form="editar-establecimiento"] [name="id_establecimiento"]').val($(this).attr('data-key'));
     $.ajax({
         type: 'get',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'get-distrito/'+ubigeo,
+        url: route('gerencial.cobranza.get-distrito', {id_provincia: ubigeo}),
         data: {},
         dataType: 'JSON',
         success: function(response){
@@ -135,6 +135,7 @@ $(document).on('click','.editar-establecimiento',function () {
     })
     console.log(ubigeo +' - '+ horario);
 });
+
 $(document).on('submit','[data-form="editar-establecimiento"]',function (e) {
     e.preventDefault();
     var id_establecimiento = $('[data-form="editar-establecimiento"] [name="id_establecimiento"]').val(),
@@ -157,6 +158,7 @@ $(document).on('submit','[data-form="editar-establecimiento"]',function (e) {
 
     $('#editar-establecimiento').modal('hide');
 });
+
 $(document).on('click','.anular-establecimiento',function () {
     var data_key = $(this).attr('data-key')
     $(this).closest('tr[key="'+data_key+'"]').remove();
@@ -166,6 +168,7 @@ $(document).on('click','.agregar-contactos',function () {
     $('#nuevo-contacto').modal('show');
     $('[data-form="guardar-contacto"]')[0].reset();
 });
+
 $(document).on('submit','[data-form="guardar-contacto"]',function (e) {
     e.preventDefault();
     var departamento = $('[data-form="guardar-contacto"] select[name="departamento"] option:selected').text(),
@@ -212,6 +215,7 @@ $(document).on('submit','[data-form="guardar-contacto"]',function (e) {
     $('[data-table="lista-contactos"]').append(html);
     $('#nuevo-contacto').modal('hide');
 });
+
 $(document).on('click','.editar-contacto',function () {
     $('#editar-contacto').modal('show');
     var data_key =$(this).attr('data-key'),
@@ -233,8 +237,7 @@ $(document).on('click','.editar-contacto',function () {
 
         $.ajax({
             type: 'get',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: 'get-distrito/'+ubigeo,
+            url: route('gerencial.cobranza.get-distrito', {ubigeo:ubigeo}),
             data: {},
             dataType: 'JSON',
             success: function(response){
@@ -489,7 +492,7 @@ $(document).on('change','[name="documento"]',function () {
     $.ajax({
         type: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'buscar-cliente-documento',
+        url: route('gerencial.cobranza.buscar-cliente-documento'),
         data: {
             documento:documento},
         dataType: 'JSON',

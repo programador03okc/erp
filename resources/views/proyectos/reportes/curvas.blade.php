@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Curvas S
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="curvas">
     <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;">
         <legend class="mylegend">

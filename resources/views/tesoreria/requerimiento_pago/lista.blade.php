@@ -1,5 +1,5 @@
-@extends('layout.main')
-@include('layout.menu_necesidades')
+@extends('themes.base')
+@include('layouts.menu_necesidades')
 
 @section('option')
 @endsection
@@ -10,7 +10,7 @@ Listado de requerimientos de pago
 
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
-<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
 
 @endsection
 
@@ -22,7 +22,7 @@ Listado de requerimientos de pago
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="lista_requerimiento_pago">
 
     @if (in_array(13,$array_accesos) || in_array(20,$array_accesos) || in_array(30,$array_accesos) || in_array(21,$array_accesos) || in_array(31,$array_accesos) || in_array(22,$array_accesos))
@@ -83,7 +83,7 @@ Listado de requerimientos de pago
 </div>
 
 @include('tesoreria.requerimiento_pago.modal_vista_rapida_requerimiento_pago')
-    @include('tesoreria.requerimiento_pago.modal_requerimiento_pago')
+@include('tesoreria.requerimiento_pago.modal_requerimiento_pago')
 @include('tesoreria.requerimiento_pago.modal_lista_cuadro_presupuesto')
 
 @include('logistica.requerimientos.modal_partidas')
@@ -109,16 +109,20 @@ Listado de requerimientos de pago
 @endsection
 
 @section('scripts')
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
 
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/tesoreria/requerimientoPago/ListarRequerimientoPagoView.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/ListarRequerimientoPagoView.js'))}}"></script>
 <script src="{{ asset('js/tesoreria/requerimientoPago/FacturaView.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/FacturaView.js'))}}"></script>

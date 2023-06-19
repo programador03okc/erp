@@ -87,7 +87,8 @@ class ConfiguracionController extends Controller{
     function view_docuemtos(){ return view('configuracion/flujo_aprobacion/documentos');}
     function view_gestionar_flujos(){
         $grupoFlujo = $this->grupoFlujo();
-        return view('configuracion/flujo_aprobacion/gestionar_flujos',compact('grupoFlujo'));}
+        return view('configuracion/flujo_aprobacion/gestionar_flujos',compact('grupoFlujo'));
+    }
     function view_historial_aprobaciones(){ return view('configuracion/flujo_aprobacion/historial_aprobaciones');}
 
     public function grupoFlujo(){
@@ -415,7 +416,7 @@ class ConfiguracionController extends Controller{
     }
     public function mostrar_modulos_edit($value){
         $html = '';
-        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('codigo', 'asc')->get();
+        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('descripcion', 'asc')->get();
 
         foreach ($data as $row){
             $id = $row->id_modulo;
@@ -430,7 +431,7 @@ class ConfiguracionController extends Controller{
     }
     public function mostrar_modulos_combo(){
         $html = '';
-        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('codigo', 'asc')->get();
+        $data = DB::table('configuracion.sis_modulo')->where([['id_padre', '=', 0], ['estado', '=', 1]])->orderBy('descripcion', 'asc')->get();
 
         foreach ($data as $row){
             $id = $row->id_modulo;
@@ -1000,6 +1001,30 @@ public function guardarNotaLanzamiento(Request $request){
     return  response()->json($status);
 }
 
+public function guardarDetalleNotaLanzamiento (Request $request) {
+    $detalle = $request->all();
+    $id_nota_lanzamiento = $detalle['id_nota'];
+    $titulo = $detalle['titulo'];
+    $descripcion = $detalle['descripcion'];
+    $fecha = $detalle['fecha_detalle_nota_lanzamiento'];
+    $status='';
+    $guardar = DB::table('configuracion.detalle_nota_lanzamiento')->insertGetId([
+        'id_nota_lanzamiento' => $id_nota_lanzamiento,
+        'titulo' => $titulo,
+        'descripcion' => $descripcion,
+        'fecha_detalle_nota_lanzamiento' => $fecha,
+        'estado' => 1
+    ],'id_detalle_nota_lanzamiento'
+    );
+
+    if($guardar >0){
+        $status='GUARDADO';
+    }else{
+        $status='NO_GUARDADO';
+    }
+    return  response()->json($status);
+}
+
 public function eliminarNotaLanzamiento($id){
     $status='';
     $eliminar = DB::table('configuracion.nota_lanzamiento')
@@ -1099,14 +1124,12 @@ public function mostrarVersionActual(){
             'adm_documentos_aprob.codigo_doc',
             'adm_aprobacion.id_vobo',
             'adm_aprobacion.id_usuario',
-            'adm_aprobacion.id_area',
             'adm_aprobacion.fecha_vobo',
             'adm_aprobacion.detalle_observacion',
             'adm_aprobacion.id_rol',
             'adm_flujo.nombre as nombre_flujo',
             'adm_vobo.descripcion as descripcion_vobo',
             DB::raw("CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno) as nombre_completo_usuario"),
-            'adm_area.descripcion as descripcion_area',
             'rrhh_rol_concepto.descripcion as descripcion_rol_concepto'
         )
         ->join('administracion.adm_flujo', 'adm_aprobacion.id_flujo', '=', 'adm_flujo.id_flujo')
@@ -1115,7 +1138,6 @@ public function mostrarVersionActual(){
         ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
         ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
         ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
-        ->join('administracion.adm_area', 'adm_aprobacion.id_area', '=', 'adm_area.id_area')
         ->join('rrhh.rrhh_rol', 'adm_aprobacion.id_rol', '=', 'rrhh_rol.id_rol')
         ->join('rrhh.rrhh_rol_concepto', 'rrhh_rol.id_rol_concepto', '=', 'rrhh_rol_concepto.id_rol_concepto')
         ->join('administracion.adm_documentos_aprob', 'adm_aprobacion.id_doc_aprob', '=', 'adm_documentos_aprob.id_doc_aprob')
@@ -1655,7 +1677,7 @@ public function updateGrupoCriterio(Request $request){
 
 // correo coorporativo
 
-public function mostrar_correo_coorporativo($id_smtp_authentication =null){
+public function mostrar_correo_coorporativo($id_smtp_authentication = 0){
     $option=[];
     if($id_smtp_authentication >0){
         $option[]=['smtp_authentication.id_smtp_authentication', '=', $id_smtp_authentication];
@@ -1668,7 +1690,7 @@ public function mostrar_correo_coorporativo($id_smtp_authentication =null){
     )
     ->leftJoin('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'smtp_authentication.id_empresa')
     ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
-    ->where($option)
+    ->where($option)->where('smtp_authentication.estado', 1)
     ->orderBy('smtp_authentication.id_smtp_authentication', 'asc')
     ->get();
     $output['data']=$data;
@@ -1684,6 +1706,7 @@ public function guardar_correo_coorporativo(Request $request){
         'email'         => $request->email,
         'password'      => $request->password,
         'fecha_registro'=> date('Y-m-d H:i:s'),
+        'id_empresa'    => $request->empresa,
         'estado'        => $request->estado
     ],
     'id_smtp_authentication'
@@ -1703,6 +1726,7 @@ public function actualizar_correo_coorporativo(Request $request){
         'encryption'    => $request->encryption,
         'email'         => $request->email,
         'password'      => $request->password,
+        'id_empresa'    => $request->empresa,
         'estado'        => $request->estado
     ]);
     return response()->json($data);
@@ -2571,6 +2595,51 @@ public function anular_configuracion_socket($id){
             "usuarios_faltantes"=>$usuarios_faltantes,
             "accesos"=>$accesos_modulos
         ]);
+    }
+
+    /**
+     * accesos
+     */
+    function view_roles() {
+        return view('configuracion/roles');
+    }
+
+    public function mostrar_roles_table(){
+        $data = DB::table('configuracion.sis_rol')->where('estado', 1)->orderBy('descripcion', 'asc')->get();
+        $output['data'] = $data;
+        return response()->json($output);
+    }
+
+    public function mostrar_roles_id($id){
+        $sql = DB::table('configuracion.sis_rol')->where('id_rol', $id)->get();
+        $data = [0 => $sql];
+        return response()->json($data);
+    }
+
+    public function guardar_rol(Request $request){
+        $id = DB::table('configuracion.sis_rol')->insertGetId(
+            [
+                'descripcion' => $request->descripcion,
+                'estado' => 1
+            ],
+            'id_rol'
+        );
+        return response()->json($id);
+    }
+
+    public function actualizar_rol(Request $request){
+        $data = DB::table('configuracion.sis_rol')->where('id_rol', $request->id_rol)
+        ->update([
+            'descripcion'   => $request->descripcion
+        ]);
+        return response()->json($data);
+    }
+    public function anular_rol($id){
+        $data = DB::table('configuracion.sis_rol')->where('id_rol', $id)
+        ->update([
+            'estado'    => 7
+        ]);
+        return response()->json($data);
     }
 }
 

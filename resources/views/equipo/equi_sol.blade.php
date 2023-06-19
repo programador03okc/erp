@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
     @include('layout.option')
@@ -8,7 +8,7 @@
     Solicitud de Equipo
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="equi_sol">
     <legend><h2>Solicitud de Equipo</h2></legend>
     <form id="form-equi_sol" type="register" form="formulario">

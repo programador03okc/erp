@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('option')
@@ -8,7 +8,7 @@
     Gestión de Cotizaciones
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="cotizacion">
     <legend>
         <h2>Gestionar Cotizaciones</h2>

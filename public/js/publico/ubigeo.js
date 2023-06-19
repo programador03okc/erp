@@ -3,7 +3,7 @@ function cargarDep(){
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'cargar_departamento',
+        url: route('cargar_departamento'),
         dataType: 'JSON',
         success: function(response){
             Object.keys(response).forEach(function(key){
@@ -19,7 +19,7 @@ function cargarDep(){
 }
 
 function cargarProv(value){
-    baseUrl = 'cargar_provincia/' + value;
+    baseUrl = route('cargar_provincia', {id:value});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -36,7 +36,7 @@ function cargarProv(value){
 }
 
 function cargarDist(value){
-    baseUrl = 'cargar_distrito/' + value;
+    baseUrl = route('cargar_distrito', {id:value});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

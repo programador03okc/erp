@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @include('layout.option')
@@ -8,7 +8,7 @@
     Categoría de Equipos
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="equi_cat">
     <legend><h2>Categoría de Equipos</h2></legend>
     <div class="row">

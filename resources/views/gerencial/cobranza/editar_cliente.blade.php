@@ -1,23 +1,23 @@
-@extends('layout.main')
-@include('layout.menu_gerencial')
+@extends('themes.base')
+@include('layouts.menu_gerencial')
 
-@section('cabecera')
-Cobranzas
-@endsection
+@section('cabecera') Editar Cliente @endsection
 
 @section('estilos')
-<!-- Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="{{asset('template/plugins/select2/select2.min.css')}}">
-<style>
-    .group-okc-ini {
-        display: flex;
-        justify-content: start;
-    }
-    .selecionar{
-        cursor: pointer;
-    }
-</style>
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    <style>
+        .group-okc-ini {
+            display: flex;
+            justify-content: start;
+        }
+        .selecionar{
+            cursor: pointer;
+        }
+    </style>
 @endsection
 
 @section('breadcrumb')
@@ -28,9 +28,9 @@ Cobranzas
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="usuarios">
-    <form action="{{route('gerencial.cobranza.clientes.actulizar')}}" data-form="guardar-cliente" type="POST" enctype="multipart/formdata">
+    <form action="{{route('gerencial.cobranza.actualizar-cliente')}}" data-form="guardar-cliente" type="POST" enctype="multipart/formdata">
         <input type="hidden" name="id_contribuyente" value="{{$contribuyente->id_contribuyente}}">
         <input type="hidden" name="id_cliente" value="{{$cliente?$cliente->id_cliente:''}}">
         <div class="box box-danger">
@@ -437,6 +437,7 @@ Cobranzas
 		</div>
 	</div>
 </div>
+
 <div class="modal fade" tabindex="-1" role="dialog" id="editar-establecimiento">
 	<div class="modal-dialog" style="width: 500px;">
 		<div class="modal-content">
@@ -846,28 +847,21 @@ Cobranzas
 </div>
 @endsection
 @section('scripts')
-<script>
-// $.widget.bridge('uibutton', $.ui.button);
-</script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
-<!-- Select2 -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{asset('template/plugins/select2/select2.min.js')}}"></script>
-{{-- <script src="{{ asset('js/gerencial/cobranza/clientes.js') }}?v=2"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
-<script src="{{ asset('js/gerencial/cobranza/editar_cliente.js') }}?v=2"></script>
-<script>
-    const route_cliente = "{{route('gerencial.cobranza.cliente')}}";
-</script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/i18n/es.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
+
+    <script src="{{ asset('js/gerencial/cobranza/editar_cliente.js') }}?v=2"></script>
+    <script>
+        const route_cliente = "{{route('gerencial.cobranza.cliente')}}";
+    </script>
 @endsection

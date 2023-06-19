@@ -10,7 +10,7 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar-documentos',
+        'ajax': route('configuracion.documentos.listar-documentos'),
         'columns': [
             {'data': 'id_estado_doc'},
             {'data': 'id_estado_doc'},
@@ -42,7 +42,7 @@ $(function(){
 });
 
 function mostrar_documento(id){
-    baseUrl = 'cargar-documento/'+id;
+    baseUrl = route('configuracion.documentos.cargar-documento', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -66,10 +66,10 @@ function save_documento(data, action){
     
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar-documento';
+        baseUrl = route('configuracion.documentos.guardar-documento');
         msj = 'Documento registrado con exito';
     }else if(action == 'edition'){
-        baseUrl = 'actualizar-documento';
+        baseUrl = route('configuracion.documentos.actualizar-documento');
         msj = 'Documento editado con exito';
     }
     $.ajax({
@@ -96,7 +96,7 @@ function save_documento(data, action){
 function anular_documento(id){
     var form = $('.page-main form[type=register]').attr('id');
 
-    baseUrl = 'anular-documento/'+id;
+    baseUrl = route('configuracion.documentos.anular-documento', {id: id});
     $.ajax({
         type: 'GET',
         // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

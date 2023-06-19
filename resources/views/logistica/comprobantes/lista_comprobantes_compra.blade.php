@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 
 @section('cabecera')
@@ -11,7 +11,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="lista_comprobantes_compra">
 
     <div class="box box-solid">

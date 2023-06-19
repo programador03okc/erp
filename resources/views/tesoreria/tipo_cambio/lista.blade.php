@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 
 @section('cabecera') Tipo de Cambio @endsection
@@ -10,7 +10,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="tipo_cambio">
     <div class="box box-solid">
         <div class="box-header with-border">

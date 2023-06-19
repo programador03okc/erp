@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_migracion')
 
 @section('cabecera') Migraciones SoftLink @endsection
@@ -15,7 +15,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="box box-solid">
     <div class="box-body">
         <div class="row">

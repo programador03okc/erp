@@ -8,7 +8,7 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar_aplicaciones',
+        'ajax': route('configuracion.aplicaciones.listar_aplicaciones'),
         'columns': [
             {'data': 'id_aplicacion'},
             {'data': 'modulo'},
@@ -44,7 +44,7 @@ alert(id);
 }
 
 function mostrar_aplicaciones(id){
-    baseUrl = 'cargar_aplicaciones/'+id;
+    baseUrl = route('configuracion.aplicaciones.cargar_aplicaciones', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -67,10 +67,10 @@ function mostrar_aplicaciones(id){
 function save_aplicaciones(data, action){
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar_aplicaciones';
+        baseUrl = route('configuracion.aplicaciones.guardar_aplicaciones');
         msj = 'Aplicación registrada con exito';
     }else if(action == 'edition'){
-        baseUrl = 'editar_aplicaciones';
+        baseUrl = route('configuracion.aplicaciones.editar_aplicaciones');
         msj = 'Aplicación editada con exito';
     }
     $.ajax({
@@ -94,7 +94,7 @@ function save_aplicaciones(data, action){
 }
 
 function anular_aplicaciones(ids){
-    baseUrl = 'anular_aplicaciones/'+ids;
+    baseUrl = route('configuracion.aplicaciones.anular_aplicaciones', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

@@ -1,5 +1,5 @@
 
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
     @include('layout.option')
@@ -9,7 +9,7 @@
     Tipo de Servicio
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="tipoServ">
     <legend><h2>Tipos de Servicio</h2></legend>
     <div class="row">

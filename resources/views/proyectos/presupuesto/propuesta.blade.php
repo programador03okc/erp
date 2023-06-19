@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@ Propuesta Cliente
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="propuesta">
     <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;">
     <legend class="mylegend">

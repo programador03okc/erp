@@ -6,7 +6,7 @@ $(function () {
         let data = $(this).serialize();
         $.ajax({
             type: 'POST',
-            url: 'guardar',
+            url: route('gerencial.fondos.guardar'),
             data: data,
             dataType: 'JSON',
             success: function(response) {
@@ -26,7 +26,7 @@ $(function () {
         let data = $(this).serialize();
         $.ajax({
             type: 'POST',
-            url: 'guardar-cobro',
+            url: route('gerencial.fondos.guardar-cobro'),
             data: data,
             dataType: 'JSON',
             success: function(response) {
@@ -55,7 +55,7 @@ $(function () {
 
         $.ajax({
             type: 'POST',
-            url: 'cargar-cobro',
+            url: route('gerencial.fondos.cargar-cobro'),
             data: {id: $(e.currentTarget).data('id')},
             dataType: 'JSON',
             success: function(response) {
@@ -100,7 +100,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'eliminar',
+                    url: route('gerencial.fondos.eliminar'),
                     data: {id: $(e.currentTarget).data('id')},
                     dataType: 'JSON',
                     success: function(response) {
@@ -171,9 +171,9 @@ function listar() {
         },
         order: [[0, 'asc']],
         ajax: {
-            url: 'listar',
+            url: route('gerencial.fondos.listar'),
             method: 'POST',
-            headers: {'X-CSRF-TOKEN': csrf_token}
+            headers: {'X-CSRF-TOKEN': token}
         },
         columns: [
             {data: 'fecha_solicitud', className: 'text-center'},
@@ -209,6 +209,6 @@ function listar() {
 }
 
 function exportarExcel() {
-    window.open('exportar-excel');
+    window.open(route('gerencial.fondos.exportar-excel'));
 }
 

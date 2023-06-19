@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gerencial\Cobranza;
 
+use App\Exports\CobranzaExport;
 use App\Exports\CobranzaPowerBIExport;
 use App\Exports\CobranzasExpor;
 use App\Gerencial\Cobranza as GerencialCobranza;
@@ -1657,7 +1658,7 @@ class RegistroController extends Controller
             $value->observacion = ($observacion?$observacion->descripcion:'---');
 
         }
-        return Excel::download(new CobranzasExpor($data), 'cobranza.xlsx');
+        return Excel::download(new CobranzaExport($data), 'cobranza.xlsx');
         // return response()->json($data);
     }
     public function exportarExcelPrueba(Request $request)

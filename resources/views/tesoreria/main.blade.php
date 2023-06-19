@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 @section('cabecera')
     Dashboard Tesoreria
@@ -9,7 +9,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 
 <div class="row">
     <div class="col-12 col-sm-6 col-md-3">

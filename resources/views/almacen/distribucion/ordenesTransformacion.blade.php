@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Envío de Transformaciones
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="listaOrdenesDespacho">
     <div class="box box-solid">
         <div class="box-body">

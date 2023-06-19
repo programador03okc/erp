@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -18,7 +18,7 @@ Gestión de ordenes
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="listar_ordenes" id="listar_ordenes">
     <legend class="mylegend">
     </legend>

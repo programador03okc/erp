@@ -58,14 +58,13 @@ function consultaSunat(){
         $('#panel_consulta_sunat').removeClass('invisible');
         $.ajax({
             type: 'POST',
-            url: 'consulta_sunat',
-            data: 'ruc='+ ruc,
+            url: route('consulta_sunat'),
+            data: {ruc: ruc, _token: token},
             dataType: 'JSON',
             beforeSend: function(){
                 $(document.body).append('<span class="loading"><div></div></span>');
             },
             success: function(response){
-                console.log(response);
                 $('.loading').remove();
                 $('[name=id_tipo_contribuyente]').val(response.id_tipo);
                 $('[name=razon_social]').val(response.razon_social);
@@ -102,7 +101,7 @@ function actualizarForm(form, id){
 
 /////////////////////////////
 function mostrar_informacion(val){
-    baseUrl = 'cargar_empresa/' + val;
+    baseUrl = route('administracion.empresas.cargar_empresa', {id: val});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -128,7 +127,7 @@ function mostrar_informacion(val){
 
 function mostrar_contacto(id){
     $('#empre-contact tr').empty();
-    baseUrl = 'listar_contacto_empresa/'+ id;
+    baseUrl = route('administracion.empresas.listar_contacto_empresa', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -147,14 +146,13 @@ function mostrar_contacto(id){
 
 function mostrar_cuentas(id){
     $('#empre-cta tr').empty();
-    baseUrl = 'listar_cuentas_empresa/'+ id;
+    baseUrl = route('administracion.empresas.listar_cuentas_empresa', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
             $('#empre-cta').append(response);
             resizeSide();
         }
@@ -188,7 +186,7 @@ function listarEmpresa() {
         'language' : vardataTables[0],
         'processing': true,
         'bDestroy': true,
-        'ajax': 'listar_empresa',
+        'ajax': route('administracion.empresas.listar_empresa'),
         'columns': [
             {'data': 'id_contribuyente'},
             {'data': 'nro_documento'},
@@ -206,29 +204,29 @@ function save_empresa(data, action, frm_active){
     var msj;
     if (frm_active == 'form-informacion'){
         if (action == 'register'){
-            baseUrl = 'guardar_empresa_contri';
+            baseUrl = route('administracion.empresas.guardar_empresa_contri');
             msj = 'Información de la Empresa registrada con exito';
         }else if(action == 'edition'){
-            baseUrl = 'editar_empresa_contri';
+            baseUrl = route('administracion.empresas.editar_empresa_contri');
             data = data + '&id_contribuyente=' + id_contri;
             msj = 'Información de la Empresa editada con exito';
         }
     }else if (frm_active == 'form-contacto'){
         data = data + '&id_contribuyente=' + id_contri;
         if (action == 'register'){
-            baseUrl = 'guardar_contacto_empresa';
+            baseUrl = route('administracion.empresas.guardar_contacto_empresa');
             msj = 'Datos de contacto registrado con exito';
         }else if(action == 'edition'){
-            baseUrl = 'editar_contacto_empresa';
+            baseUrl = route('administracion.empresas.editar_contacto_empresa');
             msj = 'Datos de contacto editado con exito';
         }
     }else if (frm_active == 'form-cuentas'){
         if (action == 'register'){
-            baseUrl = 'guardar_cuentas_empresa';
+            baseUrl = route('administracion.empresas.guardar_cuentas_empresa');
             data = data + '&id_contribuyente=' + id_contri;
             msj = 'Cuenta bancaria de la Empresa registrada con exito';
         }else if(action == 'edition'){
-            baseUrl = 'editar_cuentas_empresa';
+            baseUrl = route('administracion.empresas.editar_cuentas_empresa');
             data = data + '&id_contribuyente=' + id_contri;
             msj = 'Cuenta bancaria de la Empresa editada con exito';
         }
@@ -242,7 +240,6 @@ function save_empresa(data, action, frm_active){
             data: data,
             dataType: 'JSON',
             success: function(response){
-                console.log(response);
                 if (frm_active == 'form-informacion'){
                     alert(msj);
                 }else if (frm_active == 'form-contacto'){
@@ -271,7 +268,6 @@ function save_empresa(data, action, frm_active){
                 data: data,
                 dataType: 'JSON',
                 success: function(response){
-                    console.log(response);
                     alert(msj);
                 }
             }).fail( function( jqXHR, textStatus, errorThrown ){

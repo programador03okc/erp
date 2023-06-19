@@ -1,14 +1,13 @@
-@extends('layout.main')
-@include('layout.menu_gerencial')
+@extends('themes.base')
+@include('layouts.menu_gerencial')
 
-@section('cabecera')
-Cobranzas
-@endsection
+@section('cabecera') Clientes Gerencial @endsection
 
 @section('estilos')
-<!-- Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="{{asset('template/plugins/select2/select2.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 <style>
     .group-okc-ini {
         display: flex;
@@ -28,7 +27,7 @@ Cobranzas
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="usuarios">
     <div class="row">
         {{-- <div class="col-md-2"></div> --}}
@@ -38,9 +37,9 @@ Cobranzas
                     <h3 class="box-title">Lista de clientes</h3>
                     <div class="pull-right box-tools">
                         {{-- <button type="button" class="btn btn-success" title="Nuevo Usuario" data-action="nuevo-cliente"><i class="fa fa-save"></i> Nuevo cliente</button> --}}
-                        @if (in_array(315, $array_accesos, true))
-                        <a class="btn btn-success" title="Nuevo Usuario" href="{{ route('gerencial.cobranza.nuevo.cliente') }}"><i class="fa fa-save"></i> Nuevo cliente</a>
-                        @endif
+                        {{-- @if (in_array(315, $array_accesos, true)) --}}
+                        <a class="btn btn-success" title="Nuevo Usuario" href="{{ route('gerencial.cobranza.crear-cliente') }}"><i class="fa fa-save"></i> Nuevo cliente</a>
+                        {{-- @endif --}}
 
                         {{-- <button class="btn btn-primary" data-action="actualizar"><i class="fa fa-refresh"></i> Actualizar</button> --}}
                     </div>
@@ -90,6 +89,7 @@ Cobranzas
 		</div>
 	</div>
 </div>
+
 <div class="modal fade" tabindex="-1" role="dialog" id="nuevo-cliente">
 	<div class="modal-dialog" style="width: 900px;">
 		<div class="modal-content">
@@ -97,7 +97,7 @@ Cobranzas
                 <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
 				<h3 class="modal-title">Nuevo Cliente</h3>
 			</div>
-            <form action="{{route('gerencial.cobranza.clientes.crear')}}" data-form="guardar-cliente" type="POST" enctype="multipart/formdata">
+            <form action="{{route('gerencial.cobranza.crear-cliente')}}" data-form="guardar-cliente" type="POST" enctype="multipart/formdata">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
@@ -267,7 +267,7 @@ Cobranzas
                 <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
 				<h3 class="modal-title">Editar Cliente</h3>
 			</div>
-            <form action="{{route('gerencial.cobranza.clientes.actulizar')}}" data-form="editar-cliente" type="POST" enctype="multipart/formdata">
+            <form action="{{route('gerencial.cobranza.actualizar-cliente')}}" data-form="editar-cliente" type="POST" enctype="multipart/formdata">
                 <div class="modal-body">
                     <input type="hidden" name="id_contribuyente" value="">
                     <div class="row">
@@ -354,8 +354,6 @@ Cobranzas
 		</div>
 	</div>
 </div>
-
-
 
 <div class="modal fade" tabindex="-1" role="dialog" id="ver-cliente">
 	<div class="modal-dialog modal-lg" >
@@ -528,31 +526,25 @@ Cobranzas
 	</div>
 </div>
 @endsection
+
 @section('scripts')
-<script>
-// $.widget.bridge('uibutton', $.ui.button);
-</script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
 <!-- Select2 -->
-<script>
-    var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
-</script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{asset('template/plugins/select2/select2.min.js')}}"></script>
-<script src="{{ asset('js/gerencial/cobranza/clientes.js') }}?v=2"></script>
-<script>
-
-
-</script>
+    <script>
+        var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
+    </script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{asset('template/plugins/select2/select2.min.js')}}"></script> --}}
+    <script src="{{ asset('js/gerencial/cobranza/clientes.js') }}?v=2"></script>
+    <script>
 @endsection

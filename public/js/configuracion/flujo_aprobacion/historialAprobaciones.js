@@ -10,7 +10,7 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar-historial-aprobacion',
+        'ajax': route('configuracion.historial-aprobaciones.listar'),
         'columns': [
             {'data': 'id_aprobacion'},
             {'data': 'nombre_flujo'},
@@ -19,7 +19,6 @@ $(function(){
             {'data': 'detalle_observacion'},
             {'data': 'nombre_completo_usuario'},
             {'data': 'descripcion_rol_concepto'},
-            {'data': 'descripcion_area'},
             {'data': 'fecha_vobo'}
          ],
         'order': [

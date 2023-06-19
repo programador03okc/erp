@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_almacen')
 
 @section('option')
@@ -21,7 +21,7 @@ Guía de Venta - Salida
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="guia_venta">
     <input type="text" class="oculto" name="modo">
     <div class="col-md-12" id="tab-guia_venta" style="padding-left:0px;padding-right:0px;">

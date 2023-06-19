@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
     @include('layout.option')
@@ -8,7 +8,7 @@
     Servicio
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="servicio">
     <legend class="mylegend">
         <h2>Catálogo de Servicios</h2>

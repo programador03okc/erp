@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -7,7 +7,7 @@
     Registro de Bitácora
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="control">
     <legend class="mylegend">
         <h2>Registro de Bitácora</h2>

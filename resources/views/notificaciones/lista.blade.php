@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_notificacion')
 
 @section('cabecera') Lista de notificaciones @endsection
@@ -22,7 +22,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="box box-solid">
     <div class="box-body">
         <div class="row">

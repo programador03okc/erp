@@ -8,7 +8,7 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar_sede',
+        'ajax': route('administracion.sedes.listar_sede'),
         'columns': [
             {'data': 'id_sede'},
             {'data': 'razon_social'},
@@ -38,7 +38,7 @@ $(function(){
 });
 
 function buscarCodigo(value){
-    baseUrl = 'buscar_codigo_empresa/' + value + '/' + 'return';
+    baseUrl = route('administracion.sedes.buscar_codigo_empresa', {value: value, type: 'return'});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -55,7 +55,7 @@ function buscarCodigo(value){
 }
 
 function mostrar_sede(id){
-    baseUrl = 'cargar_sede/'+id;
+    baseUrl = route('administracion.sedes.cargar_sede', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -81,10 +81,10 @@ function mostrar_sede(id){
 function save_sede(data, action){
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar_sede';
+        baseUrl = route('administracion.sedes.guardar_sede');
         msj = 'Sede registrada con exito';
     }else if(action == 'edition'){
-        baseUrl = 'editar_sede';
+        baseUrl = route('administracion.sedes.editar_sede');
         msj = 'Sede editada con exito';
     }
     $.ajax({
@@ -113,7 +113,7 @@ function save_sede(data, action){
 }
 
 function anular_sede(ids){
-    baseUrl = 'anular_sede/'+ids;
+    baseUrl = route('administracion.sedes.anular_sede', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

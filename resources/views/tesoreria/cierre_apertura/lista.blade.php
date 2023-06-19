@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 
 @section('cabecera') Cierre / Apertura de Periodo @endsection
@@ -25,7 +25,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 @if (in_array(304,$array_accesos))
 <div class="box box-solid">
     <div class="box-body">

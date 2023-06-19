@@ -8,13 +8,13 @@ $(function(){
         'language' : vardataTables[0],
         "processing": true,
         "bDestroy": true,
-        'ajax': 'listar_grupo',
+        'ajax': route('administracion.grupos.listar_grupo'),
         'columns': [
             {'data': 'id_grupo'},
             {'data': 'empresa'},
             {'data': 'sede'},
             {'data': 'descripcion'},
-            {'data': 'codigo'}
+            {'data': 'cod_grupo', className: 'text-center'}
         ],
         'order': [
             [1, 'asc'], [2, 'asc']
@@ -39,58 +39,20 @@ $(function(){
     resizeSide();
 });
 
-function buscarSede(value, type, seleccion){
-    $('[name=sede]').empty();
-    if (type == 'llenar'){
-        $('[name=sede]').append('<option value="" disabled>Elija una opción</option>');
-    }else{
-        $('[name=sede]').append('<option value="" disabled selected>Elija una opción</option>');
-    }
-    baseUrl = 'mostrar_combos_emp/' + value;
-    $.ajax({
-        type: 'GET',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: baseUrl,
-        dataType: 'JSON',
-        success: function(response){
-            if (type == 'llenar'){
-                Object.keys(response.sedes).forEach(function(key){
-                    if (response.sedes[key].id_sede == seleccion){
-                        var opt = '<option value="'+response.sedes[key].id_sede+'" selected>'+response.sedes[key].descripcion+'</option>';
-                    }else{
-                        var opt = '<option value="'+response.sedes[key].id_sede+'">'+response.sedes[key].descripcion+'</option>';
-                    }
-                    $('[name=sede]').append(opt);
-                });
-            }else{
-                Object.keys(response.sedes).forEach(function(key){
-                    var opt = '<option value="'+response.sedes[key].id_sede+'">'+response.sedes[key].descripcion+'</option>';
-                    $('[name=sede]').append(opt);
-                });
-            }
-        }
-    }).fail( function(jqXHR, textStatus, errorThrown){
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-    });
-}
-
 function mostrar_grupo(id){
-    baseUrl = 'cargar_grupo/'+id;
+    baseUrl = route('administracion.grupos.cargar_grupo', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
             $('[name=id_grupo]').val(response[0].id_grupo);
             $('[name=empresa]').val(response[0].id_empresa);
-            buscarSede(response[0].id_empresa, 'llenar', response[0].id_sede);
+            buscarSede(response[0].id_empresa, response[0].id_sede);
             $('[name=sede]').text(response[0].id_sede);
             $('[name=descripcion]').val(response[0].descripcion);
-            $('[name=codigo]').val(response[0].codigo);
+            $('[name=codigo]').val(response[0].cod_grupo);
         }
     }).fail( function(jqXHR, textStatus, errorThrown){
         console.log(jqXHR);
@@ -102,10 +64,10 @@ function mostrar_grupo(id){
 function save_grupo(data, action){
     var msj;
     if (action == 'register'){
-        baseUrl = 'guardar_grupo';
+        baseUrl = route('administracion.grupos.guardar_grupo');
         msj = 'Grupo registrado con exito';
     }else if(action == 'edition'){
-        baseUrl = 'editar_grupo';
+        baseUrl = route('administracion.grupos.editar_grupo');
         msj = 'Grupo editado con exito';
     }
     $.ajax({
@@ -134,7 +96,7 @@ function save_grupo(data, action){
 }
 
 function anular_grupo(ids){
-    baseUrl = 'anular_grupo/'+ids;
+    baseUrl = route('administracion.grupos.anular_grupo', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -147,6 +109,30 @@ function anular_grupo(ids){
                 changeStateButton('anular');
                 clearForm('form-grupo');
             }
+        }
+    }).fail( function(jqXHR, textStatus, errorThrown){
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+}
+
+function buscarSede(value, seleccion){
+    $('[name=sede]').empty();
+    baseUrl = route('administracion.grupos.combo_sede_empresa', {value:value});
+    $.ajax({
+        type: 'GET',
+        url: baseUrl,
+        dataType: 'JSON',
+        success: function(response) {
+            response.forEach(element => {
+                if (element.id_sede == seleccion){
+                    opt = '<option value="'+element.id_sede+'" selected>'+element.descripcion+'</option>';
+                }else{
+                    opt = '<option value="'+element.id_sede+'">'+element.descripcion+'</option>';
+                }
+            });
+            $('[name=sede]').append(opt);
         }
     }).fail( function(jqXHR, textStatus, errorThrown){
         console.log(jqXHR);

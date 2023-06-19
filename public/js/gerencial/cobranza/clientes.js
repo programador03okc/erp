@@ -12,7 +12,7 @@ function listarRegistros() {
         dom: vardataTables[1],
         buttons:[],
         ajax: {
-            url: "clientes",
+            url: route('gerencial.cobranza.listar-clientes'),
             type: "POST",
             // data:filtros,
             beforeSend: data => {
@@ -30,12 +30,13 @@ function listarRegistros() {
             {
                 render: function (data, type, row) {
                     html='';
-                    (array_accesos.find(element => element === 316)?html+='<button type="button" class="btn btn-primary btn-flat botonList ver-registro" data-toggle="tooltip" title="Ver cliente" data-original-title="Ver cliente" data-id-contribuyente="'+row['id_contribuyente']+'"><i class="fas fa-eye"></i></button>':'');
-
-                    (array_accesos.find(element => element === 317)?html+='<a href="cliente/'+row['id_contribuyente']+'" class="btn btn-warning btn-flat botonList " data-toggle="tooltip" title="Editar" data-original-title="Editar" ><i class="fas fa-edit"></i></a>':'');
-
-                    (array_accesos.find(element => element === 318)?html+='<button type="button" class="btn btn-danger btn-flat botonList eliminar-registro" data-toggle="tooltip" title="Anular" data-original-title="Anular" data-id-contribuyente="'+row['id_contribuyente']+'"><i class="fas fa-trash"></i></button>':'');
-                    html+='';
+                    // (array_accesos.find(element => element === 1)?html+='<button type="button" class="btn btn-primary btn-flat botonList ver-registro" data-toggle="tooltip" title="Ver cliente" data-original-title="Ver cliente" data-id-contribuyente="'+row['id_contribuyente']+'"><i class="fas fa-eye"></i></button>':'');
+                    // (array_accesos.find(element => element === 1)?html+='<a href="cliente/'+row['id_contribuyente']+'" class="btn btn-warning btn-flat botonList " data-toggle="tooltip" title="Editar" data-original-title="Editar" ><i class="fas fa-edit"></i></a>':'');
+                    // (array_accesos.find(element => element === 1)?html+='<button type="button" class="btn btn-danger btn-flat botonList eliminar-registro" data-toggle="tooltip" title="Anular" data-original-title="Anular" data-id-contribuyente="'+row['id_contribuyente']+'"><i class="fas fa-trash"></i></button>':'');
+                    
+                    html+='<button type="button" class="btn btn-primary btn-flat botonList ver-registro" data-toggle="tooltip" title="Ver cliente" data-original-title="Ver cliente" data-id-contribuyente="'+row['id_contribuyente']+'"><i class="fas fa-eye"></i></button>';
+                    html+='<a href="editar-contribuyente/'+row['id_contribuyente']+'" class="btn btn-warning btn-flat botonList " data-toggle="tooltip" title="Editar" data-original-title="Editar" ><i class="fas fa-edit"></i></a>';
+                    html+='<button type="button" class="btn btn-danger btn-flat botonList eliminar-registro" data-toggle="tooltip" title="Anular" data-original-title="Anular" data-id-contribuyente="'+row['id_contribuyente']+'"><i class="fas fa-trash"></i></button>';
                     return html;
                 },
                 className: "text-center"
@@ -53,6 +54,7 @@ $(document).on('click','[data-action="nuevo-cliente"]',function () {
     $('#nuevo-cliente').modal('show');
     $('[data-form="guardar-cliente"]')[0].reset();
 });
+
 $(document).on('change','[data-select="departamento-select"]',function () {
     var id_departamento = $(this).val()
         this_select = $(this).closest('div.modal-body').find('div [name="provincia"]'),
@@ -61,8 +63,7 @@ $(document).on('change','[data-select="departamento-select"]',function () {
     if (id_departamento!==null && id_departamento!=='') {
         $.ajax({
             type: 'get',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: 'provincia/'+id_departamento,
+            url: route('gerencial.cobranza.get-provincia', {id_departamento: id_departamento}),
             data: {},
             dataType: 'JSON',
             success: function(response){
@@ -90,6 +91,7 @@ $(document).on('change','[data-select="departamento-select"]',function () {
     }
 
 });
+
 $(document).on('change','[data-select="provincia-select"]',function () {
     var id_provincia = $(this).val(),
         this_select = $(this).closest('div.modal-body').find('div [name="distrito"]'),
@@ -98,8 +100,7 @@ $(document).on('change','[data-select="provincia-select"]',function () {
     if (id_provincia!==null && id_provincia!=='') {
         $.ajax({
             type: 'get',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: 'distrito/'+id_provincia,
+            url: route('gerencial.cobranza.get-distrito', {id_provincia: id_provincia}),
             data: {},
             dataType: 'JSON',
             success: function(response){
@@ -121,6 +122,7 @@ $(document).on('change','[data-select="provincia-select"]',function () {
     }
 
 });
+
 $(document).on('submit','[data-form="guardar-cliente"]',function (e) {
     e.preventDefault();
     var data = new FormData($(this)[0]);
@@ -174,6 +176,7 @@ $(document).on('submit','[data-form="guardar-cliente"]',function (e) {
         }
     });
 });
+
 $(document).on('click','.editar-registro',function () {
     var id_contribuyente = $(this).attr('data-id-contribuyente');
     $('#editar-cliente .modal-body input[name="id_contribuyente"]').val(id_contribuyente)
@@ -181,7 +184,7 @@ $(document).on('click','.editar-registro',function () {
     $.ajax({
         type: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: 'clientes/editar',
+        url: route('gerencial.cobranza.editar-cliente'),
         data: {id_contribuyente:id_contribuyente},
         dataType: 'JSON',
         success: function(response){
@@ -234,6 +237,7 @@ $(document).on('click','.editar-registro',function () {
         console.log(errorThrown);
     })
 });
+
 $(document).on('submit','[data-form="editar-cliente"]',function (e) {
     e.preventDefault();
     var data = new FormData($(this)[0]);
@@ -286,6 +290,7 @@ $(document).on('submit','[data-form="editar-cliente"]',function (e) {
         }
     });
 });
+
 $(document).on('click','.eliminar-registro',function () {
     var id_contribuyente = $(this).attr('data-id-contribuyente');
     Swal.fire({
@@ -301,7 +306,7 @@ $(document).on('click','.eliminar-registro',function () {
         preConfirm: (login) => {
             return $.ajax({
                 type: 'POST',
-                url: 'clientes/eliminar',
+                url: route('gerencial.cobranza.eliminar-cliente'),
                 data: {id_contribuyente:id_contribuyente},
                 // processData: false,
                 // contentType: false,
@@ -341,12 +346,13 @@ $(document).on('click','.eliminar-registro',function () {
     });
 
 });
+
 $(document).on('click','.ver-registro',function () {
     var id_contribuyente = $(this).attr('data-id-contribuyente'),
         html='';
     $.ajax({
         type: 'GET',
-        url: 'cliente/ver/'+id_contribuyente,
+        url: route('gerencial.cobranza.ver-cliente', {id: id_contribuyente}),
         data: {},
         // processData: false,
         // contentType: false,

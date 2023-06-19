@@ -1,6 +1,7 @@
 <?php
 
 use App\Exports\CatalogoProductoExport;
+use App\Http\Controllers\AdministracionController;
 use App\Http\Controllers\Almacen\Catalogo\CategoriaController;
 use App\Http\Controllers\Almacen\Catalogo\ClasificacionController;
 use App\Http\Controllers\Almacen\Catalogo\MarcaController;
@@ -48,7 +49,14 @@ use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\Finanzas\Presupuesto\ScriptController;
 use App\Http\Controllers\Finanzas\Presupuesto\TituloController;
 use App\Http\Controllers\Finanzas\Reportes\ReporteGastoController;
+use App\Http\Controllers\Gerencial\Cobranza\ClienteController as CobranzaClienteController;
+use App\Http\Controllers\Gerencial\Cobranza\CobranzaController;
+use App\Http\Controllers\Gerencial\Cobranza\CobranzaFondoController;
+use App\Http\Controllers\Gerencial\Cobranza\DevolucionPenalidadController;
+use App\Http\Controllers\Gerencial\Cobranza\RegistroController;
+use App\Http\Controllers\Gerencial\GerencialController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HynoTechController;
 use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
@@ -99,12 +107,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inicio', [HomeController::class, 'index'])->name('inicio');
 	Route::get('validar-clave',  [UsuarioController::class, 'validarClave'])->name('validar-clave');
 	Route::post('actualizar-clave',  [UsuarioController::class, 'modificarClave'])->name('actualizar-clave');
+	Route::post('consulta_sunat', [HynoTechController::class, 'consulta_sunat'])->name('consulta_sunat');
 
+	Route::get('cargar_departamento', [ConfiguracionController::class, 'select_departamento'])->name('cargar_departamento');
+	Route::get('cargar_provincia/{id}', [ConfiguracionController::class, 'select_prov_dep'])->name('cargar_provincia');
+	Route::get('cargar_distrito/{id}', [ConfiguracionController::class, 'select_dist_prov'])->name('cargar_distrito');
+	Route::get('cargar_estructura_org/{id}', [ConfiguracionController::class, 'cargar_estructura_org'])->name('cargar_estructura_org');
 
 	/**
 	 * Configuración
 	 */
-	Route::group(['as' => 'configuracion.', 'prefix' => 'configuracion'], function () {
+	Route::name('configuracion.')->prefix('configuracion')->group(function () {
 		Route::get('dashboard', [ConfiguracionController::class, 'view_main_configuracion'])->name('dashboard');
 
 		Route::group(['as' => 'usuario.', 'prefix' => 'usuario'], function () {
@@ -188,6 +201,56 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('listar', [ConfiguracionController::class, 'mostrar_historial_aprobacion'])->name('listar');
 		});
 
+	});
+
+	Route::name('administracion.')->prefix('administracion')->group(function () {
+		Route::get('index', [AdministracionController::class, 'view_main_administracion'])->name('index');
+
+		Route::name('empresas.')->prefix('empresas')->group(function () {
+			Route::get('index', [AdministracionController::class, 'view_empresa'])->name('index');
+			Route::get('listar_empresa', [AdministracionController::class, 'mostrar_empresa_table'])->name('listar_empresa');
+			Route::get('cargar_empresa/{id}', [AdministracionController::class, 'mostrar_empresa_id'])->name('cargar_empresa');
+			Route::post('guardar_empresa_contri', [AdministracionController::class, 'guardar_empresas'])->name('guardar_empresa_contri');
+			Route::post('editar_empresa_contri', [AdministracionController::class, 'actualizar_empresas'])->name('editar_empresa_contri');
+
+			Route::get('listar_contacto_empresa/{id}', [AdministracionController::class, 'mostrar_contacto_empresa'])->name('listar_contacto_empresa');
+			Route::post('guardar_contacto_empresa', [AdministracionController::class, 'guardar_contacto_empresa'])->name('guardar_contacto_empresa');
+			Route::post('editar_contacto_empresa', [AdministracionController::class, 'actualizar_contacto_empresa'])->name('editar_contacto_empresa');
+
+			Route::get('listar_cuentas_empresa/{id}', [AdministracionController::class, 'mostrar_cuentas_empresa'])->name('listar_cuentas_empresa');
+			Route::post('guardar_cuentas_empresa', [AdministracionController::class, 'guardar_cuentas_empresa'])->name('guardar_cuentas_empresa');
+			Route::post('editar_cuentas_empresa', [AdministracionController::class, 'actualizar_cuentas_empresa'])->name('editar_cuentas_empresa');
+		});
+
+		Route::name('sedes.')->prefix('sedes')->group(function () {
+			Route::get('index', [AdministracionController::class, 'view_sede'])->name('index');
+			Route::get('listar_sede', [AdministracionController::class, 'mostrar_sede_table'])->name('listar_sede');
+			Route::get('buscar_codigo_empresa/{value}/{type}', [AdministracionController::class, 'codigoEmpresa'])->name('buscar_codigo_empresa');
+			Route::get('cargar_sede/{id}', [AdministracionController::class, 'mostrar_sede_id'])->name('cargar_sede');
+			Route::post('guardar_sede', [AdministracionController::class, 'guardar_sede'])->name('guardar_sede');
+			Route::post('editar_sede', [AdministracionController::class, 'actualizar_sede'])->name('editar_sede');
+			Route::get('anular_sede/{id}', [AdministracionController::class, 'anular_sede'])->name('anular_sede');
+		});
+
+		Route::name('grupos.')->prefix('grupos')->group(function () {
+			Route::get('index', [AdministracionController::class, 'view_grupo'])->name('index');
+			Route::get('listar_grupo', [AdministracionController::class, 'mostrar_grupo_table'])->name('listar_grupo');
+			Route::get('cargar_grupo/{id}', [AdministracionController::class, 'mostrar_grupo_id'])->name('cargar_grupo');
+			Route::post('guardar_grupo', [AdministracionController::class, 'guardar_grupo'])->name('guardar_grupo');
+			Route::post('editar_grupo', [AdministracionController::class, 'actualizar_grupo'])->name('editar_grupo');
+			Route::get('anular_grupo/{id}', [AdministracionController::class, 'anular_grupo'])->name('anular_grupo');
+			Route::get('combo_sede_empresa/{value}', [AdministracionController::class, 'combo_sede_empresa'])->name('combo_sede_empresa');
+		});
+		
+		Route::name('areas.')->prefix('areas')->group(function () {
+			Route::get('index', [AdministracionController::class, 'view_area'])->name('index');
+			Route::get('listar_area', [AdministracionController::class, 'mostrar_area_table'])->name('listar_area');
+			Route::get('cargar_area/{id}', [AdministracionController::class, 'mostrar_area_id'])->name('cargar_area');
+			Route::post('guardar_area', [AdministracionController::class, 'guardar_area'])->name('guardar_area');
+			Route::post('editar_area', [AdministracionController::class, 'actualizar_area'])->name('editar_area');
+			Route::get('anular_area/{id}', [AdministracionController::class, 'anular_area'])->name('anular_area');
+			Route::get('combo_grupo_sede/{value}', [AdministracionController::class, 'combo_grupo_sede'])->name('combo_grupo_sede');
+		});
 	});
 
     Route::name('notificaciones.')->prefix('notificaciones')->group(function () {
@@ -1249,6 +1312,97 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('exportar-cdp-excel', [ReporteGastoController::class,'listaGastoCDPExcel']);
 
 			});
+		});
+	});
+
+	/**
+	 * Gerencial
+	 */
+	Route::name('gerencial.')->prefix('gerencial')->group(function () {
+		Route::get('index', [GerencialController::class, 'index'])->name('index');
+
+		// cobranzas
+		Route::group(['as' => 'cobranza.', 'prefix' => 'cobranza'], function () {
+			Route::get('index', [CobranzaController::class, 'index'])->name('index');
+			Route::post('listar', [CobranzaController::class, 'listar'])->name('listar');
+			// Route::post('listar-clientes', [CobranzaController::class, 'listarClientes'])->name('listar-clientes');
+			Route::post('buscar-registro', [CobranzaController::class, 'buscarRegistro'])->name('buscar-registro');
+			Route::get('seleccionar-registro/{id_requerimiento}', [CobranzaController::class, 'cargarDatosRequerimiento'])->name('seleccionar-registro');
+			Route::get('obtener-fases/{id}', [CobranzaController::class, 'obtenerFase'])->name('obtener-fases');
+			Route::post('guardar-fase', [CobranzaController::class, 'guardarFase'])->name('guardar-fase');
+			Route::post('eliminar-fase', [CobranzaController::class, 'eliminarFase'])->name('eliminar-fase');
+			Route::get('obtener-observaciones/{id}', [CobranzaController::class, 'obtenerObservaciones'])->name('obtener-observaciones');
+			Route::post('guardar-observaciones', [CobranzaController::class, 'guardarObservaciones'])->name('guardar-observaciones');
+			Route::post('eliminar-observacion', [CobranzaController::class, 'eliminarObservaciones'])->name('eliminar-observacion');
+			Route::post('guardar-registro-cobranza', [CobranzaController::class, 'guardarRegistro'])->name('guardar-registro-cobranza');
+			Route::post('editar-registro', [CobranzaController::class, 'editarRegistro'])->name('editar-registro');
+			Route::post('eliminar-registro-cobranza', [CobranzaController::class, 'eliminarRegistro'])->name('eliminar-registro-cobranza');
+			Route::post('filtros-cobranzas', [CobranzaController::class, 'filtros'])->name('filtros-cobranzas');
+			Route::post('obtener-penalidades', [CobranzaController::class, 'obtenerPenalidades'])->name('obtener-penalidades');
+			Route::post('guardar-penalidad', [CobranzaController::class, 'guardarPenalidad'])->name('guardar-penalidad');
+			Route::post('cambio-estado-penalidad', [CobranzaController::class, 'cambioEstadoPenalidad'])->name('cambio-estado-penalidad');
+			Route::get('exportar-excel', [CobranzaController::class, 'exportarExcel'])->name('exportar-excel');
+
+			Route::get('cliente', [CobranzaClienteController::class, 'cliente'])->name('cliente');
+			Route::get('crear-cliente', [CobranzaClienteController::class, 'nuevoCliente'])->name('crear-cliente');
+			Route::post('listar-clientes', [CobranzaClienteController::class, 'listarCliente'])->name('listar-clientes');
+			Route::post('crear-clientes', [CobranzaClienteController::class, 'crear'])->name('crear-clientes');
+			Route::post('buscar-cliente-documento', [CobranzaClienteController::class, 'buscarClienteDocumento'])->name('buscar-cliente-documento');
+
+			// Route::post('editar-cliente', [CobranzaClienteController::class, 'editar'])->name('editar-cliente');
+
+			Route::get('ver-cliente/{id_contribuyente}', [CobranzaClienteController::class, 'ver'])->name('ver-cliente');
+			Route::post('actualizar-cliente', [CobranzaClienteController::class, 'actualizar'])->name('actualizar-cliente');
+			Route::post('eliminar-cliente', [CobranzaClienteController::class, 'eliminar'])->name('eliminar-cliente');
+            Route::get('get-distrito/{id_provincia}', [CobranzaClienteController::class, 'getDistrito'])->name('get-distrito');
+            // Route::get('cliente/get-distrito/{id_provincia}', [CobranzaClienteController::class, 'getDistrito']);
+
+			///////////////////////////////////////////
+
+            Route::get('editar-contribuyente/{id_contribuyente}', [CobranzaClienteController::class, 'editarContribuyente'])->name('editar-contribuyente');
+            Route::post('buscar-cliente-documento-editar', [CobranzaClienteController::class, 'buscarClienteDocumentoEditar'])->name('buscar-cliente-documento-editar');
+			Route::post('nuevo-cliente', [RegistroController::class, 'nuevoCliente'])->name('nuevo-cliente');
+
+			Route::get('get-provincia/{id_departamento}', [RegistroController::class, 'provincia'])->name('get-provincia');
+			// Route::get('cliente/provincia/{id_departamento}', [RegistroController::class, 'provincia']);
+			Route::get('get-distrito/{id_provincia}', [RegistroController::class, 'distrito'])->name('get-distrito');
+			// Route::get('cliente/distrito/{id_provincia}', [RegistroController::class, 'distrito']);
+
+			Route::get('get-cliente/{id_cliente}', [RegistroController::class, 'getCliente'])->name('get-cliente');
+			Route::get('buscar-factura/{factura}', [RegistroController::class, 'getFactura'])->name('buscar-factura');
+			Route::get('actualizar-ven-doc-req', [RegistroController::class, 'actualizarDocVentReq'])->name('ctualizar-ven-doc-req');
+			// Route::post('editar-cliente', [RegistroController::class, 'editarCliente']);
+			
+			Route::post('modificar-registro', [RegistroController::class, 'modificarRegistro']);
+			Route::post('buscar-vendedor', [RegistroController::class, 'buscarVendedor']);
+			Route::get('buscar-cliente-seleccionado/{id}', [RegistroController::class, 'buscarClienteSeleccionado']);
+			Route::post('exportar-excel-prueba', [RegistroController::class, 'exportarExcelPrueba']);
+			Route::get('editar-penalidad/{id}', [RegistroController::class, 'editarPenalidad']);
+			Route::post('eliminar-penalidad', [RegistroController::class, 'eliminarPenalidad']);
+
+            Route::get('exportar-excel-power-bi/{request}', [RegistroController::class, 'exportarExcelPowerBI']);
+		});
+
+		// Fondos, Auspicios y Rebates
+		Route::group(['as' => 'fondos.', 'prefix' => 'fondos'], function () {
+			Route::get('index', [CobranzaFondoController::class, 'index'])->name('index');
+			Route::post('listar', [CobranzaFondoController::class, 'lista'])->name('listar');
+			Route::post('guardar', [CobranzaFondoController::class, 'guardar'])->name('guardar');
+			Route::post('eliminar', [CobranzaFondoController::class, 'eliminar'])->name('eliminar');
+			Route::post('cargar-cobro', [CobranzaFondoController::class, 'cargarCobro'])->name('cargar-cobro');
+			Route::post('guardar-cobro', [CobranzaFondoController::class, 'guardarCobro'])->name('guardar-cobro');
+			Route::get('exportar-excel', [CobranzaFondoController::class, 'exportarExcel'])->name('exportar-excel');
+		});
+
+		// Devolución de penalidades
+		Route::group(['as' => 'devoluciones.', 'prefix' => 'devoluciones'], function () {
+			Route::get('index', [DevolucionPenalidadController::class, 'index'])->name('index');
+			Route::post('listar', [DevolucionPenalidadController::class, 'lista'])->name('listar');
+			Route::post('guardar', [DevolucionPenalidadController::class, 'guardar'])->name('guardar');
+			Route::post('guardar-pagador', [DevolucionPenalidadController::class, 'guardarPagador'])->name('guardar-pagador');
+			Route::post('cargar-cobro-dev', [DevolucionPenalidadController::class, 'cargarCobroDev'])->name('cargar-cobro-dev');
+			Route::post('eliminar', [DevolucionPenalidadController::class, 'eliminar'])->name('eliminar');
+			Route::get('exportar-excel', [DevolucionPenalidadController::class, 'exportarExcel'])->name('exportar-excel');
 		});
 	});
 });

@@ -12,13 +12,14 @@ use App\Models\administracion\sede;
 
 date_default_timezone_set('America/Lima');
 
-
- 
-
 class AdministracionController extends Controller{
 
-    function view_main_administracion(){
-        return view('administracion/main');
+    function view_main_administracion() {
+        $totalEmpresa = DB::table('administracion.adm_empresa')->where('estado', 1)->count();
+        $totalSede = DB::table('administracion.sis_sede')->where('estado', 1)->count();
+        $totalGrupo = DB::table('administracion.adm_grupo')->where('estado', 1)->count();
+        $totalArea = DB::table('administracion.adm_area')->where('estado', 1)->count();
+        return view('administracion.main', get_defined_vars());
     }
 
     function view_empresa(){
@@ -368,7 +369,7 @@ class AdministracionController extends Controller{
                     'descripcion'       => $nombre,
                     'estado'            => 1,
                     'fecha_registro'    => $fecha_registro,
-                    'codigo'            => $request->codigo,
+                    'cod_grupo'         => $request->codigo,
                     'id_sede'           => $request->sede
                 ],
                 'id_grupo'
@@ -397,7 +398,7 @@ class AdministracionController extends Controller{
                 'descripcion'       => $nombre,
                 'estado'            => 1,
                 'fecha_registro'    => $fecha_registro,
-                'codigo'            => $request->codigo,
+                'cod_grupo'         => $request->codigo,
                 'id_sede'           => $request->sede
             ]);
     
@@ -415,6 +416,13 @@ class AdministracionController extends Controller{
             'estado'    => 2
         ]);
         return response()->json($data);
+    }
+
+    public function combo_sede_empresa($id_empresa) {
+        // Si se actualiza la tabla de Sedes por empresa usar la query comentada
+        // $data = DB::table('administracion.sis_sede')->where('id_empresa', $id_empresa)->where('estado', 1)->get();
+        $data = DB::table('administracion.sis_sede')->where('estado', 1)->get();
+        return response()->json($data, 200);
     }
 
     /* AREAS */
@@ -502,4 +510,10 @@ class AdministracionController extends Controller{
         return response()->json($data);
     }
 
+    public function combo_grupo_sede($id_sede) {
+        // Si se actualiza la tabla de Grupos por sede usar la query comentada
+        // $data = DB::table('administracion.adm_grupo')->where('id_sede', $id_sede)->where('estado', 1)->get();
+        $data = DB::table('administracion.adm_grupo')->where('estado', 1)->get();
+        return response()->json($data, 200);
+    }
 }

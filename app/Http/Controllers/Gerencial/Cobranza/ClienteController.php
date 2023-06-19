@@ -338,7 +338,7 @@ class ClienteController extends Controller
     public function nuevoCliente()
     {
         $pais = Pais::get();
-        $departamento = Departamento::get();
+        $departamento = Departamento::orderBy('descripcion', 'asc')->get();
         $tipo_documentos = Identidad::where('estado',1)->get();
         $tipo_contribuyente = TipoContribuyente::where('estado',1)->get();
         $monedas = Moneda::where('estado',1)->get();

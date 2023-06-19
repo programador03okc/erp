@@ -36,7 +36,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'guardar-registro-cobranza',
+                    url: route('gerencial.cobranza.guardar-registro-cobranza'),
                     data: data,
                     dataType: 'JSON',
                     success: function(response) {
@@ -72,7 +72,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'guardar-fase',
+                    url: route('gerencial.cobranza.guardar-fase'),
                     data: data,
                     dataType: 'JSON',
                     success: function(response) {
@@ -107,7 +107,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'guardar-observaciones',
+                    url: route('gerencial.cobranza.guardar-observaciones'),
                     data: data,
                     dataType: 'JSON',
                     success: function(response) {
@@ -142,7 +142,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'guardar-penalidad',
+                    url: route('gerencial.cobranza.guardar-penalidad'),
                     data: data,
                     dataType: 'JSON',
                     success: function(response) {
@@ -168,7 +168,7 @@ $(function () {
 
         $.ajax({
             type: 'POST',
-            url: 'editar-registro',
+            url: route('gerencial.cobranza.editar-registro'),
             data: {id: $(e.currentTarget).data('id')},
             dataType: 'JSON',
             success: function(response) {
@@ -248,7 +248,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'eliminar-registro-cobranza',
+                    url: route('gerencial.cobranza.eliminar-registro-cobranza'),
                     data: {id: id},
                     dataType: 'JSON',
                     success: function(response) {
@@ -369,7 +369,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'eliminar-fase',
+                    url: route('gerencial.cobranza.eliminar-fase'),
                     data: {id: id},
                     dataType: 'JSON',
                     success: function(response) {
@@ -400,7 +400,7 @@ $(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url: 'eliminar-observacion',
+                    url: route('gerencial.cobranza.eliminar-observacion'),
                     data: {id: id, id_registro_cobranza: idCobranza},
                     dataType: 'JSON',
                     success: function(response) {
@@ -519,9 +519,9 @@ function listar() {
         },
         order: [[0, 'asc']],
         ajax: {
-            url: 'listar',
+            url: route('gerencial.cobranza.listar'),
             method: 'POST',
-            headers: {'X-CSRF-TOKEN': csrf_token},
+            headers: {'X-CSRF-TOKEN': token},
         },
         columns: [
             {data: 'empresa', className: "text-center"},
@@ -602,9 +602,9 @@ function listaClientes() {
         destroy: true,
         serverSide: true,
         ajax: {
-            url: "listar-clientes",
+            url: route('gerencial.cobranza.listar-clientes'),
             type: "POST",
-            headers: {'X-CSRF-TOKEN': csrf_token},
+            headers: {'X-CSRF-TOKEN': token},
         },
         order: [[3, "asc"]],
         columns: [
@@ -628,17 +628,17 @@ function listaClientes() {
 
 function buscarRegistro(tipo, valor) {
     $('#lista-procesadas').modal('show');
-    // console.log(csrf_token);
+    // console.log(token);
     const $tablaVenta = $("#tablaVentasProcesadas").DataTable({
         language: idioma,
         pageLength: 15,
         destroy: true,
         serverSide: true,
         ajax: {
-            url: "buscar-registro",
+            url: route('gerencial.cobranza.buscar-registro'),
             type: "POST",
             data: { valor: valor, tipo: tipo },
-            headers: {'X-CSRF-TOKEN': csrf_token},
+            headers: {'X-CSRF-TOKEN': token},
         },
         order: [[2, "asc"]],
         columns: [
@@ -669,7 +669,7 @@ function buscarRegistro(tipo, valor) {
 function cargarValores(idReq) {
     $.ajax({
         type: 'GET',
-        url: 'seleccionar-registro/'+idReq,
+        url: route('gerencial.cobranza.seleccionar-registro', {id: idReq}),
         dataType: 'JSON',
         success: function(response) {
             console.log(response);
@@ -740,7 +740,7 @@ function listarFases(id) {
     let resultado = '';
     $.ajax({
         type: 'GET',
-        url: 'obtener-fases/' + id,
+        url: route('gerencial.cobranza.obtener-fases', {id: id}),
         dataType: 'JSON',
         success: function(response) {
             let datos = response.fases;
@@ -773,7 +773,7 @@ function listarObservaciones(id) {
     let resultado = '';
     $.ajax({
         type: 'GET',
-        url: 'obtener-observaciones/' + id,
+        url: route('gerencial.cobranza.obtener-observaciones', {id: id}),
         dataType: 'JSON',
         success: function(response) {
             let datos = response.observaciones;
@@ -812,8 +812,8 @@ function listarAcciones(id, tipo) {
     let totalCol = (tipo == 'penalidad') ? 7 : 6;
     $.ajax({
         type: 'POST',
-        headers: {'X-CSRF-TOKEN': csrf_token},
-        url: 'obtener-penalidades',
+        headers: {'X-CSRF-TOKEN': token},
+        url: route('gerencial.cobranza.obtener-penalidades'),
         data: {tipo: tipo, id: id},
         dataType: 'JSON',
         success: function(response) {
@@ -882,8 +882,8 @@ function listarAcciones(id, tipo) {
 function estadoPenalidad(tipo, id, id_registro_cobranza, estado_penalidad, gestion = '') {
     $.ajax({
         type: 'POST',
-        headers: {'X-CSRF-TOKEN': csrf_token},
-        url: 'cambio-estado-penalidad',
+        headers: {'X-CSRF-TOKEN': token},
+        url: route('gerencial.cobranza.cambio-estado-penalidad'),
         data: {tipo: tipo, id: id, id_registro_cobranza: id_registro_cobranza, estado_penalidad: estado_penalidad, gestion: gestion},
         dataType: 'JSON',
         success: function(response) {
@@ -911,7 +911,7 @@ function generarFiltros() {
     data.push({ name: 'filterPeriodo', value: $('#nombrePeriodo').val() });
     $.ajax({
         type: 'POST',
-        url: 'filtros-cobranzas',
+        url: route('gerencial.cobranza.filtros-cobranzas'),
         data: data,
         dataType: 'JSON',
         success: function (response) {

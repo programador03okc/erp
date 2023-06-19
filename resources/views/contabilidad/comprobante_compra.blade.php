@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="facturacion_generar_factura">
     <legend><h2>Generar Comprobante de Compra</h2></legend>
         <div class="row">

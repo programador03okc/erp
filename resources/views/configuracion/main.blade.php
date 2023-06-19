@@ -10,5 +10,5 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 @endsection

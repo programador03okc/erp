@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_necesidades')
 
 @section('option')
@@ -19,7 +19,7 @@ Revisar/aprobar
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div id="lista_documentos_para_revisar_aprobar">
 
 @if (in_array(24,$array_accesos) || in_array(23,$array_accesos))

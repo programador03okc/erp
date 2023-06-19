@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('cabecera')
@@ -19,7 +19,7 @@ Importar Inicial
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="importar">
 
     <div class="col-md-12" id="tab-importar"  style="padding-left:0px;padding-right:0px;">

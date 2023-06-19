@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -7,7 +7,7 @@
     Documentos del Equipo
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="docs">
     <legend class="mylegend">
         <h2>Documentos del Equipo</h2>

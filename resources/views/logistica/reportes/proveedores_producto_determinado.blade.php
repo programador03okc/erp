@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -7,7 +7,7 @@
     Proveedores con Producto Determinado
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="reporte-proveedores_producto_determinado">
     <legend>
         <div class="row">

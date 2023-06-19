@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @include('layout.option')
 
@@ -14,7 +14,7 @@ Tipo de Insumos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="tipo_insumo">
     <div class="row">
         <div class="col-md-6">

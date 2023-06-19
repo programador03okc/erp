@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@ Categoría de Insumos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="cat_insumo">
     <div class="row">
         <div class="col-md-6">

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_finanzas')
 
 @section('cabecera')
@@ -23,7 +23,7 @@ Normalizar
     </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 
 
     <div class="row">

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Lista de Insumos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="insumo">
     <div class="box box-solid">
         <div class="box-body">

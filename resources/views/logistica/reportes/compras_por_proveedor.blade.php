@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 @section('option')
 @endsection
@@ -7,7 +7,7 @@
     Compras por Proveedor
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="reporte-compras_por_proveedor">
     <legend>
         <div class="row">

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_contabilidad')
 @section('cabecera')
     Dashboard Contabilidad
@@ -9,7 +9,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@section('content')
+@section('cuerpo')
 
 <div class="row">
 

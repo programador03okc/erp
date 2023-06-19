@@ -1,10 +1,10 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_config')
 
 @section('cabecera')
     Gestión de Usuarios
 @endsection
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="usuarios">
     <legend class="mylegend">
         <h2>Usuarios</h2>

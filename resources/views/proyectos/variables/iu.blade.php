@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 @section('option')
     @include('layout.option')
@@ -16,7 +16,7 @@ Indices Unificados
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="iu">
     <div class="row">
         <div class="col-md-6">

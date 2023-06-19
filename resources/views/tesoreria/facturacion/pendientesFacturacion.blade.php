@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 
 @section('cabecera')
@@ -19,7 +19,7 @@ Facturación
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="pendientesFacturacion">
 
     <div class="box box-solid">

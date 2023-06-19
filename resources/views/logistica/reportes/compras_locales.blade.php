@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_logistica')
 
 @section('option')
@@ -24,7 +24,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="reporte_compras">
     @if (in_array(276,$array_accesos)||in_array(277,$array_accesos))
     <div class="row">

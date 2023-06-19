@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_proyectos')
 
 @section('option')
@@ -21,7 +21,7 @@ Cronograma Propuesta
 <link rel="stylesheet" href="{{ asset('template/plugins/gantt/dhtmlxgantt.css') }}">
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="cronopro">
     <form id="form-cronopro" type="register" form="formulario">
         <!-- <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;"> -->

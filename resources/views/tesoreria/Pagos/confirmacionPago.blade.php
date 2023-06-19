@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_tesoreria')
 
 @section('cabecera')
@@ -13,7 +13,7 @@ Confirmación de Pagos
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="requerimientoPagos">
 
     <div class="box box-solid">

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('themes.base')
 @include('layout.menu_config')
 @section('option')
 @endsection
@@ -6,7 +6,7 @@
 Gestionar Flujos, prioridades
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="modulo">
     <legend><h2>Gestionar Flujos, prioridades</h2></legend>
     <div class="row">

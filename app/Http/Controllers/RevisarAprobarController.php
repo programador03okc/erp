@@ -348,7 +348,8 @@ class RevisarAprobarController extends Controller{
 
         $documentosEnUnaLista = $documentoTipoRequerimientoBienesYServicios->merge($documentoTipoRequerimientoPago);
 
-        $todosLosDocumentos = collect($documentosEnUnaLista)->sortBy('adm_documentos_aprob.id_doc_aprob')->reverse();
+        $todosLosDocumentos= collect($documentosEnUnaLista)->sortBy('id_doc_aprob', SORT_NATURAL)->reverse();
+        $todosLosDocumentos->values()->all();
 
         $payload = [];
         $mensaje=[];

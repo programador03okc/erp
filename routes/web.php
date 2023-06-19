@@ -77,6 +77,7 @@ use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\ReporteLogisticaController;
 use App\Http\Controllers\RequerimientoController as ControllersRequerimientoController;
+use App\Http\Controllers\RevisarAprobarController;
 use App\Http\Controllers\Tesoreria\Facturacion\PendientesFacturacionController;
 use App\Http\Controllers\Tesoreria\Facturacion\VentasInternasController;
 use App\Http\Controllers\Tesoreria\RequerimientoPagoController;

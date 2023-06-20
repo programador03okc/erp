@@ -35,7 +35,7 @@ Gestión de Despachos
                     @if (Auth::user()->id_usuario == 3)
                     <button id="btn_cerrar" class="btn btn-default" onClick="migrarDespachos();">Migrar</button>
                     @endif
-                    <form id="formFiltrosDespachoExterno" method="POST" target="_blank" action="{{route('logistica.distribucion.ordenes-despacho-externo.despachosExternosExcel')}}">
+                    <form id="formFiltrosDespachoExterno" method="POST" target="_blank" action="{{route('logistica.distribucion.ordenes-despacho-externo.despachos-externos-excel')}}">
                         @csrf()
                         <input type="hidden" name="select_mostrar" value="0">
                     </form>

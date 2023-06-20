@@ -145,7 +145,7 @@ Revisar y aprobar requerimientos
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}"></script>
 
-<script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
+<script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
 <script>
 
 var roles = JSON.parse('{!!$roles!!}');

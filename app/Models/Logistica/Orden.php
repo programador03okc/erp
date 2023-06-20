@@ -268,7 +268,7 @@ class Orden extends Model
             if ($cc) {
                 $oportunidadList[] = [
                     'codigo_oportunidad' => $cc->oportunidad->codigo_oportunidad,
-                    'responsable' => $cc->oportunidad->responsable->name,
+                    'responsable' => $cc->oportunidad->responsable !=null ?$cc->oportunidad->responsable->name:'',
                 ];
             }
         }

@@ -80,12 +80,12 @@ Reportes de ordenes compra
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
-<script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
+<script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
 <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
 
-<script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
+<script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
 <script src="{{('/js/logistica/reportes/ordenesCompra.js')}}?v={{filemtime(public_path('/js/logistica/reportes/ordenesCompra.js'))}}"></script>
 
 

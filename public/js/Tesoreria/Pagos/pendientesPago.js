@@ -22,7 +22,7 @@ class RequerimientoPago {
                 href:'#',
             },
             action: () => {
-                window.open('reistro-pagos-exportar-excel', '_blank');
+                window.open('registro-pagos-exportar-excel', '_blank');
             },
             className: 'btn-default btn-sm'
         };

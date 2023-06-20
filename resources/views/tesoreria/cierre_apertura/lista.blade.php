@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_tesoreria')
+@include('layouts.menu_tesoreria')
 
 @section('cabecera') Cierre / Apertura de Periodo @endsection
 

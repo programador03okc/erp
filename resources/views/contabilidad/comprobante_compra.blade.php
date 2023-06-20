@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_tesoreria')
+@include('layouts.menu_tesoreria')
 @section('option')
     @include('layouts.option')
 @endsection

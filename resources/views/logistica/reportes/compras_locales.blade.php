@@ -243,13 +243,11 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/util.js') }}"></script>
-    
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     
-    <script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
+    <script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
     <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
@@ -258,7 +256,7 @@
     <script src="{{ ('/js/logistica/reportes/compras.js') }}?v={{ filemtime(public_path('/js/logistica/reportes/compras.js')) }}"></script>
 
     <script>
-        //let csrf_token = '{{ csrf_token() }}';
+
         let array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         const idioma = {
             "sProcessing":     "Procesando...",
@@ -290,7 +288,7 @@
         $(document).ready(function() {
             Util.seleccionarMenu(window.location);
             $(".sidebar-mini").addClass("sidebar-collapse");
-            const compras = new Compras(csrf_token, array_accesos, idioma);
+            const compras = new Compras(token, array_accesos, idioma);
             compras.listar();
             compras.actualizarFiltros();
 

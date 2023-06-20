@@ -1,5 +1,5 @@
 @include('layout.head')
-@include('layout.menu_logistica')
+@include('layouts.menu_logistica')
 @include('layout.body_sin_option')
 <div class="page-main" type="equi_sol">
     <legend><h2>Asignación de Equipos</h2></legend>

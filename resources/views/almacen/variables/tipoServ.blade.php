@@ -1,6 +1,6 @@
 
 @extends('themes.base')
-@include('layout.menu_logistica')
+@include('layouts.menu_logistica')
 @section('option')
     @include('layout.option')
 @endsection

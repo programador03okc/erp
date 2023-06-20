@@ -1,5 +1,5 @@
 @include('layout.head')
-@include('layout.menu_tesoreria')
+@include('layouts.menu_tesoreria')
 <!-- BARRA OPCIONES CRUD -->
 @if ((isset($pagina['tiene_menu'])) && ($pagina['tiene_menu']))
 	{{--@include('tesoreria.partials.crud_btn')--}}

@@ -1,5 +1,4 @@
 @section('sidebar')
-<ul class="sidebar-menu" data-widget="tree">
     <li><a href="{{route('logistica.index')}}"><i class="fas fa-tachometer-alt"></i> <span>Logística</span></a></li>
     {{-- @if(Auth::user()->tieneSubModuloPadre(48)) --}}
     <li class=" treeview ">
@@ -213,5 +212,5 @@
     </ul>
 </li>
 {{-- @endif --}}
-</ul>
+
 @endsection

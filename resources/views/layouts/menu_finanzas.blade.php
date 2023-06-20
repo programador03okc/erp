@@ -1,5 +1,4 @@
 @section('sidebar')
-<ul class="sidebar-menu" data-widget="tree">
     <li><a href="{{route('finanzas.index')}}"><i class="fas fa-tachometer-alt"></i> <span>Finanzas</span></a></li>
 
     <li class=" treeview ">
@@ -39,5 +38,5 @@
         </ul>
     </li>
 
-</ul>
+
 @endsection

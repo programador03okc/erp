@@ -1,5 +1,5 @@
 @include('layout.head')
-@include('layout.menu_logistica')
+@include('layouts.menu_logistica')
 @include('layout.body')
 
 

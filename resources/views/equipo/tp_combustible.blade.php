@@ -1,5 +1,5 @@
 @include('layout.head')
-@include('layout.menu_logistica')
+@include('layouts.menu_logistica')
 @include('layout.body')
 <div class="page-main" type="tp_combustible">
     <legend><h2>Tipo de Combustible</h2></legend>

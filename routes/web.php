@@ -252,7 +252,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('anular_grupo/{id}', [AdministracionController::class, 'anular_grupo'])->name('anular_grupo');
 			Route::get('combo_sede_empresa/{value}', [AdministracionController::class, 'combo_sede_empresa'])->name('combo_sede_empresa');
 		});
-		
+
 		Route::name('areas.')->prefix('areas')->group(function () {
 			Route::get('index', [AdministracionController::class, 'view_area'])->name('index');
 			Route::get('listar_area', [AdministracionController::class, 'mostrar_area_table'])->name('listar_area');
@@ -465,60 +465,60 @@ Route::middleware(['auth'])->group(function () {
 	 */
 	Route::group(['as' => 'almacen.', 'prefix' => 'almacen'], function () {
 		#script 1
-		Route::get('script-categoria', [AlmacenController::class, 'scripCategoria']);
+		Route::get('script-categoria', [AlmacenController::class, 'scripCategoria'])->name('script-categoria');
 		#script 2
-		Route::get('script-actualizar-categoria-softlink', [AlmacenController::class, 'scripActualizarCategoriasSoftlink']);
+		Route::get('script-actualizar-categoria-softlink', [AlmacenController::class, 'scripActualizarCategoriasSoftlink'])->name('script-actualizar-categoria-softlink');
 
 		Route::get('index', [AlmacenController::class, 'view_main_almacen'])->name('index');
 
-		Route::get('getEstadosRequerimientos/{filtro}', [DistribucionController::class, 'getEstadosRequerimientos']);
-		Route::get('listarEstadosRequerimientos/{id}/{filtro}', [DistribucionController::class, 'listarEstadosRequerimientos']);
+		Route::get('getEstadosRequerimientos/{filtro}', [DistribucionController::class, 'getEstadosRequerimientos'])->name('get-estados-requerimiento');
+		Route::get('listarEstadosRequerimientos/{id}/{filtro}', [DistribucionController::class, 'listarEstadosRequerimientos'])->name('listar-estados-requerimientos');
 
 		Route::group(['as' => 'catalogos.', 'prefix' => 'catalogos'], function () {
 			Route::group(['as' => 'clasificaciones.', 'prefix' => 'clasificaciones'], function () {
 				//Clasificacion
 				Route::get('index', [ClasificacionController::class, 'view_clasificacion'])->name('index');
-				Route::get('listarClasificaciones', [ClasificacionController::class, 'listarClasificaciones']);
-				Route::get('mostrarClasificacion/{id}', [ClasificacionController::class, 'mostrarClasificacion']);
-				Route::post('guardarClasificacion', [ClasificacionController::class, 'guardarClasificacion']);
-				Route::post('actualizarClasificacion', [ClasificacionController::class, 'actualizarClasificacion']);
-				Route::get('anularClasificacion/{id}', [ClasificacionController::class, 'anularClasificacion']);
-				Route::get('revisarClasificacion/{id}', [ClasificacionController::class, 'revisarClasificacion']);
+				Route::get('listarClasificaciones', [ClasificacionController::class, 'listarClasificaciones'])->name('listarClasificaciones');
+				Route::get('mostrarClasificacion/{id}', [ClasificacionController::class, 'mostrarClasificacion'])->name('mostrar-clasifiaccion');
+				Route::post('guardarClasificacion', [ClasificacionController::class, 'guardarClasificacion'])->name('guardar-clasificacion');
+				Route::post('actualizarClasificacion', [ClasificacionController::class, 'actualizarClasificacion'])->name('actualizar-clasificacion');
+				Route::get('anularClasificacion/{id}', [ClasificacionController::class, 'anularClasificacion'])->name('anular-clasificacion');
+				Route::get('revisarClasificacion/{id}', [ClasificacionController::class, 'revisarClasificacion'])->name('revisar-clasificacion');
 			});
 
 			Route::group(['as' => 'categorias.', 'prefix' => 'categorias'], function () {
 				//Categoria
 				Route::get('index', [CategoriaController::class, 'view_categoria'])->name('index');
-				Route::get('listarCategorias', [CategoriaController::class, 'listarCategorias']);
-				Route::get('mostrarCategoria/{id}', [CategoriaController::class, 'mostrarCategoria']);
-				Route::post('guardarCategoria', [CategoriaController::class, 'guardarCategoria']);
-				Route::post('actualizarCategoria', [CategoriaController::class, 'actualizarCategoria']);
-				Route::get('anularCategoria/{id}', [CategoriaController::class, 'anularCategoria']);
-				Route::get('revisarCategoria/{id}', [CategoriaController::class, 'revisarCategoria']);
+				Route::get('listarCategorias', [CategoriaController::class, 'listarCategorias'])->name('listar-categorias');
+				Route::get('mostrarCategoria/{id}', [CategoriaController::class, 'mostrarCategoria'])->name('mostrar-categoria');
+				Route::post('guardarCategoria', [CategoriaController::class, 'guardarCategoria'])->name('guardar-categoria');
+				Route::post('actualizarCategoria', [CategoriaController::class, 'actualizarCategoria'])->name('actualizar-categria');
+				Route::get('anularCategoria/{id}', [CategoriaController::class, 'anularCategoria'])->name('anular-categoria');
+				Route::get('revisarCategoria/{id}', [CategoriaController::class, 'revisarCategoria'])->name('revisar-categoria');
 			});
 
 			Route::group(['as' => 'sub-categorias.', 'prefix' => 'sub-categorias'], function () {
 				//SubCategoria
 				Route::get('index', [SubCategoriaController::class, 'view_sub_categoria'])->name('index');
-				Route::get('listar_categorias', [SubCategoriaController::class, 'mostrar_categorias']);
-				Route::get('mostrar_categoria/{id}', [SubCategoriaController::class, 'mostrar_categoria']);
-				Route::post('guardar_categoria', [SubCategoriaController::class, 'guardar_categoria']);
-				Route::post('actualizar_categoria', [SubCategoriaController::class, 'update_categoria']);
-				Route::get('anular_categoria/{id}', [SubCategoriaController::class, 'anular_categoria']);
-				Route::get('revisarCat/{id}', [SubCategoriaController::class, 'cat_revisar']);
+				Route::get('listar_categorias', [SubCategoriaController::class, 'mostrar_categorias'])->name('listar-categorias');
+				Route::get('mostrar_categoria/{id}', [SubCategoriaController::class, 'mostrar_categoria'])->name('mostrar-categorias');
+				Route::post('guardar_categoria', [SubCategoriaController::class, 'guardar_categoria'])->name('guardar-categoria');
+				Route::post('actualizar_categoria', [SubCategoriaController::class, 'update_categoria'])->name('actualizar-categoria');
+				Route::get('anular_categoria/{id}', [SubCategoriaController::class, 'anular_categoria'])->name('anular-categoria');
+				Route::get('revisarCat/{id}', [SubCategoriaController::class, 'cat_revisar'])->name('revisar-cat');
 
-				Route::get('mostrar_tipos_clasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion']);
+				Route::get('mostrar_tipos_clasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar-tipos-clasificacion');
 			});
 
 			Route::group(['as' => 'marcas.', 'prefix' => 'marcas'], function () {
 				//Marca
 				Route::get('index', [MarcaController::class, 'viewMarca'])->name('index');
-				Route::get('listarMarcas', [MarcaController::class, 'listarMarcas']);
-				Route::get('mostrarMarca/{id}', [MarcaController::class, 'mostrarMarca']);
-				Route::post('guardarMarca', [MarcaController::class, 'guardarMarca']);
-				Route::post('actualizarMarca', [MarcaController::class, 'actualizarMarca']);
-				Route::get('anularMarca/{id}', [MarcaController::class, 'anularMarca']);
-				Route::get('revisarMarca/{id}', [MarcaController::class, 'revisarMarca']);
+				Route::get('listarMarcas', [MarcaController::class, 'listarMarcas'])->name('listar-marcas');
+				Route::get('mostrarMarca/{id}', [MarcaController::class, 'mostrarMarca'])->name('mostrar-marca');
+				Route::post('guardarMarca', [MarcaController::class, 'guardarMarca'])->name('guardar-marca');
+				Route::post('actualizarMarca', [MarcaController::class, 'actualizarMarca'])->name('actualizar-marca');
+				Route::get('anularMarca/{id}', [MarcaController::class, 'anularMarca'])->name('anular-marca');
+				Route::get('revisarMarca/{id}', [MarcaController::class, 'revisarMarca'])->name('revisar-marca');
 
 				//Route::post('guardar-marca', [MarcaController::class, '@guardar')->name('guardar-marca');
 			});
@@ -526,38 +526,38 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'productos.', 'prefix' => 'productos'], function () {
 				//Producto
 				Route::get('index', [ProductoController::class, 'view_producto'])->name('index');
-				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen']);
-				Route::get('mostrar_producto/{id}', [ProductoController::class, 'mostrar_producto']);
-				Route::get('mostrarCategoriasPorClasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion']);
-				Route::get('mostrarSubCategoriasPorCategoria/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria']);
-				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto']);
-				Route::post('actualizar_producto', [ProductoController::class, 'update_producto']);
-				Route::get('anular_producto/{id}', [ProductoController::class, 'anular_producto']);
-				Route::post('guardar_imagen', [ProductoController::class, 'guardar_imagen']);
+				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen'])->name('mostrar-prods-almacen');
+				Route::get('mostrar_producto/{id}', [ProductoController::class, 'mostrar_producto'])->name('mostrar-producto');
+				Route::get('mostrarCategoriasPorClasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar-categorias-por-clasificacion');
+				Route::get('mostrarSubCategoriasPorCategoria/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria'])->name('mostrar-sub-categorias-por-categoria');
+				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto'])->name('guardar-producto');
+				Route::post('actualizar_producto', [ProductoController::class, 'update_producto'])->name('actualizar-producto');
+				Route::get('anular_producto/{id}', [ProductoController::class, 'anular_producto'])->name('anular-producto');
+				Route::post('guardar_imagen', [ProductoController::class, 'guardar_imagen'])->name('guardar-imagen');
 
-				Route::get('listar_promociones/{id}', [ProductoController::class, 'listar_promociones']);
-				Route::post('crear_promocion', [ProductoController::class, 'crear_promocion']);
-				Route::get('anular_promocion/{id}', [ProductoController::class, 'anular_promocion']);
+				Route::get('listar_promociones/{id}', [ProductoController::class, 'listar_promociones'])->name('listar-promociones');
+				Route::post('crear_promocion', [ProductoController::class, 'crear_promocion'])->name('crear-promocion');
+				Route::get('anular_promocion/{id}', [ProductoController::class, 'anular_promocion'])->name('anular-promocion');
 
-				Route::get('listar_ubicaciones_producto/{id}', [ProductoController::class, 'listar_ubicaciones_producto']);
-				Route::get('mostrar_ubicacion/{id}', [ProductoController::class, 'mostrar_ubicacion']);
-				Route::post('guardar_ubicacion', [ProductoController::class, 'guardar_ubicacion']);
-				Route::post('actualizar_ubicacion', [ProductoController::class, 'update_ubicacion']);
-				Route::get('anular_ubicacion/{id}', [ProductoController::class, 'anular_ubicacion']);
+				Route::get('listar_ubicaciones_producto/{id}', [ProductoController::class, 'listar_ubicaciones_producto'])->name('listar-ubicaciones-producto');
+				Route::get('mostrar_ubicacion/{id}', [ProductoController::class, 'mostrar_ubicacion'])->name('mostrar-ubicacion');
+				Route::post('guardar_ubicacion', [ProductoController::class, 'guardar_ubicacion'])->name('guardar-ubicacion');
+				Route::post('actualizar_ubicacion', [ProductoController::class, 'update_ubicacion'])->name('actualizar-ubicacion');
+				Route::get('anular_ubicacion/{id}', [ProductoController::class, 'anular_ubicacion'])->name('anular-ubicacion');
 
-				Route::get('listar_series_producto/{id}', [ProductoController::class, 'listar_series_producto']);
-				Route::get('mostrar_serie/{id}', [ProductoController::class, 'mostrar_serie']);
-				Route::post('guardar_serie', [ProductoController::class, 'guardar_serie']);
-				Route::post('actualizar_serie', [ProductoController::class, 'update_serie']);
-				Route::get('anular_serie/{id}', [ProductoController::class, 'anular_serie']);
+				Route::get('listar_series_producto/{id}', [ProductoController::class, 'listar_series_producto'])->name('listar-series-producto');
+				Route::get('mostrar_serie/{id}', [ProductoController::class, 'mostrar_serie'])->name('mostrar-serie');
+				Route::post('guardar_serie', [ProductoController::class, 'guardar_serie'])->name('guardar-serie');
+				Route::post('actualizar_serie', [ProductoController::class, 'update_serie'])->name('actualizar-serie');
+				Route::get('anular_serie/{id}', [ProductoController::class, 'anular_serie'])->name('anular-serie');
 
-				Route::get('obtenerProductoSoftlink/{id}', [MigrateProductoSoftlinkController::class, 'obtenerProductoSoftlink']);
+				Route::get('obtenerProductoSoftlink/{id}', [MigrateProductoSoftlinkController::class, 'obtenerProductoSoftlink'])->name('obtener-producto-softlink');
 			});
 
 			Route::group(['as' => 'catalogo-productos.', 'prefix' => 'catalogo-productos'], function () {
 				Route::get('index', [ProductoController::class, 'view_prod_catalogo'])->name('index');
-				Route::get('listar_productos', [ProductoController::class, 'mostrar_productos']);
+				Route::get('listar_productos', [ProductoController::class, 'mostrar_productos'])->name('listar-productos');
 				// Route::post('productosExcel', [ProductoController::class, 'productosExcel')->name('productosExcel');
 				Route::post('catalogoProductosExcel', function () {
 					return Excel::download(new CatalogoProductoExport, 'Catalogo_Productos.xlsx');
@@ -569,56 +569,56 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'tipos-almacen.', 'prefix' => 'tipos-almacen'], function () {
 				//Tipos Almacen
 				Route::get('index', [TipoAlmacenController::class, 'view_tipo_almacen'])->name('index');
-				Route::get('listar_tipo_almacen', [TipoAlmacenController::class, 'mostrar_tipo_almacen']);
-				Route::get('cargar_tipo_almacen/{id}', [TipoAlmacenController::class, 'mostrar_tipo_almacenes']);
-				Route::post('guardar_tipo_almacen', [TipoAlmacenController::class, 'guardar_tipo_almacen']);
-				Route::post('editar_tipo_almacen', [TipoAlmacenController::class, 'update_tipo_almacen']);
-				Route::get('anular_tipo_almacen/{id}', [TipoAlmacenController::class, 'anular_tipo_almacen']);
+				Route::get('listar_tipo_almacen', [TipoAlmacenController::class, 'mostrar_tipo_almacen'])->name('listar-tipo-almacen');
+				Route::get('cargar_tipo_almacen/{id}', [TipoAlmacenController::class, 'mostrar_tipo_almacenes'])->name('cargar-tipo-almacen');
+				Route::post('guardar_tipo_almacen', [TipoAlmacenController::class, 'guardar_tipo_almacen'])->name('guardar-tipo-almacen');
+				Route::post('editar_tipo_almacen', [TipoAlmacenController::class, 'update_tipo_almacen'])->name('editar-tipo-almacen');
+				Route::get('anular_tipo_almacen/{id}', [TipoAlmacenController::class, 'anular_tipo_almacen'])->name('anular-tipo-almacen');
 			});
 
 			Route::group(['as' => 'almacenes.', 'prefix' => 'almacenes'], function () {
 				//Almacen
 				Route::get('index', [UbicacionAlmacenController::class, 'view_almacenes'])->name('index');
-				Route::get('listar_almacenes', [UbicacionAlmacenController::class, 'mostrar_almacenes']);
-				Route::get('mostrar_almacen/{id}', [UbicacionAlmacenController::class, 'mostrar_almacen']);
-				Route::post('guardar_almacen', [UbicacionAlmacenController::class, 'guardar_almacen']);
-				Route::post('editar_almacen', [UbicacionAlmacenController::class, 'update_almacen']);
-				Route::get('anular_almacen/{id}', [UbicacionAlmacenController::class, 'anular_almacen']);
-				Route::get('listar_ubigeos', [UbicacionAlmacenController::class, 'listar_ubigeos']);
+				Route::get('listar_almacenes', [UbicacionAlmacenController::class, 'mostrar_almacenes'])->name('listar-almacenes');
+				Route::get('mostrar_almacen/{id}', [UbicacionAlmacenController::class, 'mostrar_almacen'])->name('mostrar-almacen');
+				Route::post('guardar_almacen', [UbicacionAlmacenController::class, 'guardar_almacen'])->name('guardar-almacen');
+				Route::post('editar_almacen', [UbicacionAlmacenController::class, 'update_almacen'])->name('editar-almacen');
+				Route::get('anular_almacen/{id}', [UbicacionAlmacenController::class, 'anular_almacen'])->name('anular-almacen');
+				Route::get('listar_ubigeos', [UbicacionAlmacenController::class, 'listar_ubigeos'])->name('listar-ubigeos');
 
-				Route::get('almacen_posicion/{id}', [PosicionController::class, 'almacen_posicion']);
-				Route::get('listarUsuarios', [UbicacionAlmacenController::class, 'listarUsuarios']);
-				Route::post('guardarAlmacenUsuario', [UbicacionAlmacenController::class, 'guardarAlmacenUsuario']);
-				Route::get('listarAlmacenUsuarios/{id}', [UbicacionAlmacenController::class, 'listarAlmacenUsuarios']);
-				Route::get('anularAlmacenUsuario/{id}', [UbicacionAlmacenController::class, '@anularAlmacenUsuario']);
+				Route::get('almacen_posicion/{id}', [PosicionController::class, 'almacen_posicion'])->name('almacen-posicion');
+				Route::get('listarUsuarios', [UbicacionAlmacenController::class, 'listarUsuarios'])->name('listar-usuarios');
+				Route::post('guardarAlmacenUsuario', [UbicacionAlmacenController::class, 'guardarAlmacenUsuario'])->name('guardar-almacen-usuario');
+				Route::get('listarAlmacenUsuarios/{id}', [UbicacionAlmacenController::class, 'listarAlmacenUsuarios'])->name('listar-almacen-usuarios');
+				Route::get('anularAlmacenUsuario/{id}', [UbicacionAlmacenController::class, '@anularAlmacenUsuario'])->name('anular-almacen-usuario');
 			});
 
 			Route::group(['as' => 'posiciones.', 'prefix' => 'posiciones'], function () {
 				//Almacen
 				Route::get('index', [PosicionController::class, 'view_ubicacion'])->name('index');
-				Route::get('listar_estantes', [PosicionController::class, 'mostrar_estantes']);
-				Route::get('listar_estantes_almacen/{id}', [PosicionController::class, 'mostrar_estantes_almacen']);
-				Route::get('mostrar_estante/{id}', [PosicionController::class, 'mostrar_estante']);
-				Route::post('guardar_estante', [PosicionController::class, 'guardar_estante']);
-				Route::post('actualizar_estante', [PosicionController::class, 'update_estante']);
-				Route::get('anular_estante/{id}', [PosicionController::class, 'anular_estante']);
-				Route::get('revisar_estante/{id}', [PosicionController::class, 'revisar_estante']);
-				Route::post('guardar_estantes', [PosicionController::class, 'guardar_estantes']);
-				Route::get('listar_niveles', [PosicionController::class, 'mostrar_niveles']);
-				Route::get('listar_niveles_estante/{id}', [PosicionController::class, 'mostrar_niveles_estante']);
-				Route::get('mostrar_nivel/{id}', [PosicionController::class, 'mostrar_nivel']);
-				Route::post('guardar_nivel', [PosicionController::class, 'guardar_nivel']);
-				Route::post('actualizar_nivel', [PosicionController::class, 'update_nivel']);
-				Route::get('anular_nivel/{id}', [PosicionController::class, 'anular_nivel']);
-				Route::get('revisar_nivel/{id}', [PosicionController::class, 'revisar_nivel']);
-				Route::post('guardar_niveles', [PosicionController::class, 'guardar_niveles']);
-				Route::get('listar_posiciones', [PosicionController::class, 'mostrar_posiciones']);
-				Route::get('listar_posiciones_nivel/{id}', [PosicionController::class, 'mostrar_posiciones_nivel']);
-				Route::get('mostrar_posicion/{id}', [PosicionController::class, 'mostrar_posicion']);
-				Route::post('guardar_posiciones', [PosicionController::class, 'guardar_posiciones']);
-				Route::get('anular_posicion/{id}', [PosicionController::class, 'anular_posicion']);
-				Route::get('select_posiciones_almacen/{id}', [PosicionController::class, 'select_posiciones_almacen']);
-				Route::get('listar_almacenes', [UbicacionAlmacenController::class, 'mostrar_almacenes']);
+				Route::get('listar_estantes', [PosicionController::class, 'mostrar_estantes'])->name('listar-estantes');
+				Route::get('listar_estantes_almacen/{id}', [PosicionController::class, 'mostrar_estantes_almacen'])->name('listar-estantes-almacen');
+				Route::get('mostrar_estante/{id}', [PosicionController::class, 'mostrar_estante'])->name('mostrar-estante');
+				Route::post('guardar_estante', [PosicionController::class, 'guardar_estante'])->name('guardar-estante');
+				Route::post('actualizar_estante', [PosicionController::class, 'update_estante'])->name('guardar-estante');
+				Route::get('anular_estante/{id}', [PosicionController::class, 'anular_estante'])->name('anular-estante');
+				Route::get('revisar_estante/{id}', [PosicionController::class, 'revisar_estante'])->name('revisar-estante');
+				Route::post('guardar_estantes', [PosicionController::class, 'guardar_estantes'])->name('guardar-estantes');
+				Route::get('listar_niveles', [PosicionController::class, 'mostrar_niveles'])->name('listar-niveles');
+				Route::get('listar_niveles_estante/{id}', [PosicionController::class, 'mostrar_niveles_estante'])->name('listar-niveles-estante');
+				Route::get('mostrar_nivel/{id}', [PosicionController::class, 'mostrar_nivel'])->name('mostrar-nivel');
+				Route::post('guardar_nivel', [PosicionController::class, 'guardar_nivel'])->name('guardar-nivel');
+				Route::post('actualizar_nivel', [PosicionController::class, 'update_nivel'])->name('actualizar-nivel');
+				Route::get('anular_nivel/{id}', [PosicionController::class, 'anular_nivel'])->name('anular-nivel');
+				Route::get('revisar_nivel/{id}', [PosicionController::class, 'revisar_nivel'])->name('revisar-nivel');
+				Route::post('guardar_niveles', [PosicionController::class, 'guardar_niveles'])->name('guardar-niveles');
+				Route::get('listar_posiciones', [PosicionController::class, 'mostrar_posiciones'])->name('listar-posiciones');
+				Route::get('listar_posiciones_nivel/{id}', [PosicionController::class, 'mostrar_posiciones_nivel'])->name('listar-posiciones-nivel');
+				Route::get('mostrar_posicion/{id}', [PosicionController::class, 'mostrar_posicion'])->name('mostrar-posicion');
+				Route::post('guardar_posiciones', [PosicionController::class, 'guardar_posiciones'])->name('guardar-posiciones');
+				Route::get('anular_posicion/{id}', [PosicionController::class, 'anular_posicion'])->name('anular-posicion');
+				Route::get('select_posiciones_almacen/{id}', [PosicionController::class, 'select_posiciones_almacen'])->name('select-posiciones-almacen');
+				Route::get('listar_almacenes', [UbicacionAlmacenController::class, 'mostrar_almacenes'])->name('listar-almacenes');
 			});
 		});
 
@@ -636,197 +636,197 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'pendientes-ingreso.', 'prefix' => 'pendientes-ingreso'], function () {
 				//Pendientes de Ingreso
 				Route::get('index', [OrdenesPendientesController::class, 'view_ordenesPendientes'])->name('index');
-				Route::post('listarOrdenesPendientes', [OrdenesPendientesController::class, 'listarOrdenesPendientes']);
-				Route::post('listarIngresos', [OrdenesPendientesController::class, 'listarIngresos']);
-				Route::get('detalleOrden/{id}/{soloProductos}', [OrdenesPendientesController::class, 'detalleOrden']);
-				Route::post('guardar_guia_com_oc', [OrdenesPendientesController::class, 'guardar_guia_com_oc']);
-				Route::get('verGuiasOrden/{id}', [OrdenesPendientesController::class, 'verGuiasOrden']);
+				Route::post('listarOrdenesPendientes', [OrdenesPendientesController::class, 'listarOrdenesPendientes'])->name('listar-ordenes-pendientes');
+				Route::post('listarIngresos', [OrdenesPendientesController::class, 'listarIngresos'])->name('listar-ingresos');
+				Route::get('detalleOrden/{id}/{soloProductos}', [OrdenesPendientesController::class, 'detalleOrden'])->name('detalle-orden');
+				Route::post('guardar_guia_com_oc', [OrdenesPendientesController::class, 'guardar_guia_com_oc'])->name('guardar-guia-com-oc');
+				Route::get('verGuiasOrden/{id}', [OrdenesPendientesController::class, 'verGuiasOrden'])->name('ver-guias-orden');
 				// Route::post('guardar_guia_transferencia', [OrdenesPendientesController::class, 'guardar_guia_transferencia');
-				Route::post('anular_ingreso', [OrdenesPendientesController::class, 'anular_ingreso']);
-				Route::get('cargar_almacenes/{id}', [UbicacionAlmacenController::class, 'cargar_almacenes']);
-				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso']);
+				Route::post('anular_ingreso', [OrdenesPendientesController::class, 'anular_ingreso'])->name('anular-ingreso');
+				Route::get('cargar_almacenes/{id}', [UbicacionAlmacenController::class, 'cargar_almacenes'])->name('cargar-almacenes');
+				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
 
-				Route::post('detalleOrdenesSeleccionadas', [OrdenesPendientesController::class, 'detalleOrdenesSeleccionadas']);
-				Route::get('detalleMovimiento/{id}', [OrdenesPendientesController::class, 'detalleMovimiento']);
-				Route::post('listarTransformacionesFinalizadas', [TransformacionController::class, 'listarTransformacionesFinalizadas']);
-				Route::get('listarDetalleTransformacion/{id}', [TransformacionController::class, 'listarDetalleTransformacion']);
+				Route::post('detalleOrdenesSeleccionadas', [OrdenesPendientesController::class, 'detalleOrdenesSeleccionadas'])->name('detalle-ordenes-seleccionadas');
+				Route::get('detalleMovimiento/{id}', [OrdenesPendientesController::class, 'detalleMovimiento'])->name('detalle-movimiento');
+				Route::post('listarTransformacionesFinalizadas', [TransformacionController::class, 'listarTransformacionesFinalizadas'])->name('listar-transformaciones-finalizadas');
+				Route::get('listarDetalleTransformacion/{id}', [TransformacionController::class, 'listarDetalleTransformacion'])->name('listar-detalle-transformacion');
 				// Route::get('transferencia/{id}', [OrdenesPendientesController::class, 'transferencia');
-				Route::get('obtenerGuia/{id}', [OrdenesPendientesController::class, 'obtenerGuia']);
-				Route::post('guardar_doc_compra', [OrdenesPendientesController::class, 'guardar_doc_compra']);
-				Route::get('documentos_ver/{id}', [OrdenesPendientesController::class, 'documentos_ver']);
+				Route::get('obtenerGuia/{id}', [OrdenesPendientesController::class, 'obtenerGuia'])->name('obtener-guia');
+				Route::post('guardar_doc_compra', [OrdenesPendientesController::class, 'guardar_doc_compra'])->name('guardar-doc-compra');
+				Route::get('documentos_ver/{id}', [OrdenesPendientesController::class, 'documentos_ver'])->name('documentos-ver');
 
-				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
+				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
 				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto'])->name('guardar-producto');
 
-				Route::get('mostrar_series/{id}', [OrdenesPendientesController::class, 'mostrar_series']);
+				Route::get('mostrar_series/{id}', [OrdenesPendientesController::class, 'mostrar_series'])->name('mostrar-series');
 				Route::post('guardar_series', [OrdenesPendientesController::class, 'guardar_series'])->name('guardar-series');
 				Route::post('actualizar_series', [OrdenesPendientesController::class, 'actualizar_series'])->name('actualizar-series');
 				Route::post('cambio_serie_numero', [OrdenesPendientesController::class, 'cambio_serie_numero'])->name('cambio-series');
 
-				Route::get('verGuiaCompraTransferencia/{id}', [TransferenciaController::class, 'verGuiaCompraTransferencia']);
-				Route::get('transferencia/{id}', [OrdenesPendientesController::class, 'transferencia']);
-				Route::post('obtenerGuiaSeleccionadas', [OrdenesPendientesController::class, 'obtenerGuiaSeleccionadas']);
-				Route::get('anular_doc_com/{id}', [OrdenesPendientesController::class, 'anular_doc_com']);
+				Route::get('verGuiaCompraTransferencia/{id}', [TransferenciaController::class, 'verGuiaCompraTransferencia'])->name('ver-guia-compra-transferencia');
+				Route::get('transferencia/{id}', [OrdenesPendientesController::class, 'transferencia'])->name('transferencia');
+				Route::post('obtenerGuiaSeleccionadas', [OrdenesPendientesController::class, 'obtenerGuiaSeleccionadas'])->name('obtener-guia-seleccionadas');
+				Route::get('anular_doc_com/{id}', [OrdenesPendientesController::class, 'anular_doc_com'])->name('anular-doc-com');
 
 				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class, 'obtenerArchivosOc'])->name('obtener-archivos-oc');
 
-				Route::post('listarProductosSugeridos', [ProductoController::class, 'listarProductosSugeridos']);
-				Route::get('mostrar_prods_sugeridos/{part}/{desc}', [ProductoController::class, 'mostrar_prods_sugeridos']);
-				Route::get('mostrar_categorias_tipo/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria']);
-				Route::get('mostrar_tipos_clasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion']);
+				Route::post('listarProductosSugeridos', [ProductoController::class, 'listarProductosSugeridos'])->name('listar-productos-sugeridos');
+				Route::get('mostrar_prods_sugeridos/{part}/{desc}', [ProductoController::class, 'mostrar_prods_sugeridos'])->name('mostrar-prods-sugeridos');
+				Route::get('mostrar_categorias_tipo/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria'])->name('mostrar-categorias-tipo');
+				Route::get('mostrar_tipos_clasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar-tipos-clasificacion');
 
-				Route::get('sedesPorUsuario', [OrdenesPendientesController::class, 'sedesPorUsuario']);
-				Route::post('actualizarFiltrosPendientes', [OrdenesPendientesController::class, 'actualizarFiltrosPendientes']);
+				Route::get('sedesPorUsuario', [OrdenesPendientesController::class, 'sedesPorUsuario'])->name('sedes-por-usuario');
+				Route::post('actualizarFiltrosPendientes', [OrdenesPendientesController::class, 'actualizarFiltrosPendientes'])->name('actualizar-filtros-pendientes');
 
 				Route::post('ordenesPendientesExcel', [OrdenesPendientesController::class, 'ordenesPendientesExcel'])->name('ordenesPendientesExcel');
 				Route::post('ingresosProcesadosExcel', [OrdenesPendientesController::class, 'ingresosProcesadosExcel'])->name('ingresosProcesadosExcel');
-				Route::get('seriesExcel/{id}', [OrdenesPendientesController::class, 'seriesExcel']);
-				Route::post('actualizarIngreso', [OrdenesPendientesController::class, 'actualizarIngreso']);
+				Route::get('seriesExcel/{id}', [OrdenesPendientesController::class, 'seriesExcel'])->name('series-excel');
+				Route::post('actualizarIngreso', [OrdenesPendientesController::class, 'actualizarIngreso'])->name('actualizar-ingreso');
 
-				Route::get('sedesPorUsuarioArray', [OrdenesPendientesController::class, 'sedesPorUsuarioArray']);
-				Route::get('getTipoCambioVenta/{fec}', [TransformacionController::class, 'getTipoCambioVenta']);
-				Route::get('pruebaOrdenesPendientesLista', [OrdenesPendientesController::class, 'pruebaOrdenesPendientesLista']);
+				Route::get('sedesPorUsuarioArray', [OrdenesPendientesController::class, 'sedesPorUsuarioArray'])->name('sedes-por-usuario-array');
+				Route::get('getTipoCambioVenta/{fec}', [TransformacionController::class, 'getTipoCambioVenta'])->name('get-tipo-cambio-venta');
+				Route::get('pruebaOrdenesPendientesLista', [OrdenesPendientesController::class, 'pruebaOrdenesPendientesLista'])->name('prueba-ordenes-pendientes-lista');
 
-				Route::get('listarDevolucionesRevisadas', [DevolucionController::class, 'listarDevolucionesRevisadas']);
-				Route::get('listarDetalleDevolucion/{id}', [DevolucionController::class, 'listarDetalleDevolucion']);
+				Route::get('listarDevolucionesRevisadas', [DevolucionController::class, 'listarDevolucionesRevisadas'])->name('listar-devoluciones-revisadas');
+				Route::get('listarDetalleDevolucion/{id}', [DevolucionController::class, 'listarDetalleDevolucion'])->name('listar-detalle-devolucion');
 				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class, 'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
 			});
 
 			Route::group(['as' => 'pendientes-salida.', 'prefix' => 'pendientes-salida'], function () {
 				//Pendientes de Salida
 				Route::get('index', [SalidasPendientesController::class, 'view_despachosPendientes'])->name('index');
-				Route::post('listarOrdenesDespachoPendientes', [SalidasPendientesController::class, 'listarOrdenesDespachoPendientes']);
-				Route::post('guardarSalidaGuiaDespacho', [SalidasPendientesController::class, 'guardarSalidaGuiaDespacho']);
-				Route::post('listarSalidasDespacho', [SalidasPendientesController::class, 'listarSalidasDespacho']);
-				Route::post('anular_salida', [SalidasPendientesController::class, 'anular_salida']);
-				Route::post('cambio_serie_numero', [SalidasPendientesController::class, 'cambio_serie_numero']);
-				Route::get('verDetalleDespacho/{id}/{od}/{ac}/{tra}', [SalidasPendientesController::class, 'verDetalleDespacho']);
-				Route::get('marcar_despachado/{id}/{tra}', [SalidasPendientesController::class, 'marcar_despachado']);
-				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida']);
+				Route::post('listarOrdenesDespachoPendientes', [SalidasPendientesController::class, 'listarOrdenesDespachoPendientes'])->name('listar-ordenes-despacho-pendientes');
+				Route::post('guardarSalidaGuiaDespacho', [SalidasPendientesController::class, 'guardarSalidaGuiaDespacho'])->name('guardar-salida-guia-despacho');
+				Route::post('listarSalidasDespacho', [SalidasPendientesController::class, 'listarSalidasDespacho'])->name('listar-salidas-despacho');
+				Route::post('anular_salida', [SalidasPendientesController::class, 'anular_salida'])->name('anular-salida');
+				Route::post('cambio_serie_numero', [SalidasPendientesController::class, 'cambio_serie_numero'])->name('cambio-serie-numero');
+				Route::get('verDetalleDespacho/{id}/{od}/{ac}/{tra}', [SalidasPendientesController::class, 'verDetalleDespacho'])->name('ver-detalle-despacho');
+				Route::get('marcar_despachado/{id}/{tra}', [SalidasPendientesController::class, 'marcar_despachado'])->name('marcar-despachado');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
 				// Route::get('anular_orden_despacho/{id}', [SalidasPendientesController::class, 'anular_orden_despacho');
-				Route::get('listarSeriesGuiaVen/{id}/{alm}', [SalidasPendientesController::class, 'listarSeriesGuiaVen']);
-				Route::get('verDetalleRequerimientoDI/{id}', [OrdenesTransformacionController::class, 'verDetalleRequerimientoDI']);
+				Route::get('listarSeriesGuiaVen/{id}/{alm}', [SalidasPendientesController::class, 'listarSeriesGuiaVen'])->name('listar-series-guia-ven');
+				Route::get('verDetalleRequerimientoDI/{id}', [OrdenesTransformacionController::class, 'verDetalleRequerimientoDI'])->name('ver-detalle-requerimientoDI');
 				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class, 'obtenerArchivosOc'])->name('obtener-archivos-oc');
 
 				Route::post('actualizarSalida', [SalidasPendientesController::class, 'actualizarSalida'])->name('actualizar-salida');
-				Route::get('detalleMovimientoSalida/{id}', [SalidasPendientesController::class, 'detalleMovimientoSalida']);
-				Route::get('guia-salida-excel/{idGuia}', [SalidasPendientesController::class, 'guiaSalidaExcel']);
-				Route::get('guia-salida-excel-formato-okc', [GuiaSalidaExcelFormatoOKCController::class, 'construirExcel']);
-				Route::get('guia-salida-excel-formato-svs', [GuiaSalidaExcelFormatoSVSController::class, 'construirExcel']);
+				Route::get('detalleMovimientoSalida/{id}', [SalidasPendientesController::class, 'detalleMovimientoSalida'])->name('detalle-movimiento-salida');
+				Route::get('guia-salida-excel/{idGuia}', [SalidasPendientesController::class, 'guiaSalidaExcel'])->name('guia-salida-excel');
+				Route::get('guia-salida-excel-formato-okc', [GuiaSalidaExcelFormatoOKCController::class, 'construirExcel'])->name('guia-salida-excel-formato-okc');
+				Route::get('guia-salida-excel-formato-svs', [GuiaSalidaExcelFormatoSVSController::class, 'construirExcel'])->name('guia-salida-excel-formato-svs');
 
-				Route::get('validaStockDisponible/{id}/{alm}', [SalidasPendientesController::class, 'validaStockDisponible']);
+				Route::get('validaStockDisponible/{id}/{alm}', [SalidasPendientesController::class, 'validaStockDisponible'])->name('valida-stock-disponible');
 
-				Route::get('seriesVentaExcel/{id}', [SalidasPendientesController::class, 'seriesVentaExcel']);
+				Route::get('seriesVentaExcel/{id}', [SalidasPendientesController::class, 'seriesVentaExcel'])->name('series-venta-excel');
 				Route::post('salidasPendientesExcel', [SalidasPendientesController::class, 'salidasPendientesExcel'])->name('salidasPendientesExcel');
 				Route::post('salidasProcesadasExcel', [SalidasPendientesController::class, 'salidasProcesadasExcel'])->name('salidasProcesadasExcel');
 
-				Route::get('actualizaItemsODE/{id}', [SalidasPendientesController::class, 'actualizaItemsODE']);
-				Route::get('actualizaItemsODI/{id}', [SalidasPendientesController::class, 'actualizaItemsODI']);
-				Route::get('atencion-ver-adjuntos', [SalidasPendientesController::class, 'verAdjuntos']);
+				Route::get('actualizaItemsODE/{id}', [SalidasPendientesController::class, 'actualizaItemsODE'])->name('actualiza-itemsODE');
+				Route::get('actualizaItemsODI/{id}', [SalidasPendientesController::class, 'actualizaItemsODI'])->name('actualiza-itemsODI');
+				Route::get('atencion-ver-adjuntos', [SalidasPendientesController::class, 'verAdjuntos'])->name('atencion-ver-adjuntos');
 				Route::get('mostrarClientes', [SalidasPendientesController::class, 'mostrarClientes'])->name('mostrarClientes');
 				Route::post('guardarCliente', [SalidasPendientesController::class, 'guardarCliente'])->name('guardarCliente');
 
-				Route::get('listarDevolucionesSalidas', [DevolucionController::class, 'listarDevolucionesSalidas']);
-				Route::get('verDetalleDevolucion/{id}', [SalidasPendientesController::class, 'verDetalleDevolucion']);
+				Route::get('listarDevolucionesSalidas', [DevolucionController::class, 'listarDevolucionesSalidas'])->name('listar-devoluciones-salidas');
+				Route::get('verDetalleDevolucion/{id}', [SalidasPendientesController::class, 'verDetalleDevolucion'])->name('ver-detalle-devolucion');
 			});
 
 			Route::group(['as' => 'customizacion.', 'prefix' => 'customizacion'], function () {
 				//Pendientes de Salida
 				Route::get('index', [CustomizacionController::class, 'viewCustomizacion'])->name('index');
-				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::post('listarProductosAlmacen', [SaldoProductoController::class, 'listarProductosAlmacen']);
-				Route::post('guardar_materia', [TransformacionController::class, 'guardar_materia']);
-				Route::post('guardarCustomizacion', [CustomizacionController::class, 'guardarCustomizacion']);
-				Route::post('actualizarCustomizacion', [CustomizacionController::class, 'actualizarCustomizacion']);
-				Route::get('anularCustomizacion/{id}', [CustomizacionController::class, 'anularCustomizacion']);
-				Route::get('listar_transformaciones/{tp}', [TransformacionController::class, 'listar_transformaciones']);
-				Route::get('mostrarCustomizacion/{id}', [CustomizacionController::class, 'mostrarCustomizacion']);
-				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion']);
-				Route::post('actualizarCostosBase', [CustomizacionController::class, 'actualizarCostosBase']);
-				Route::get('procesarCustomizacion/{id}', [CustomizacionController::class, 'procesarCustomizacion']);
-				Route::get('obtenerTipoCambio/{fec}/{mon}', [CustomizacionController::class, 'obtenerTipoCambio']);
-				Route::get('listarSeriesGuiaVen/{id}/{alm}', [SalidasPendientesController::class, 'listarSeriesGuiaVen']);
-				Route::get('validarEdicion/{id}', [CustomizacionController::class, 'validarEdicion']);
-				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso']);
-				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida']);
+				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::post('listarProductosAlmacen', [SaldoProductoController::class, 'listarProductosAlmacen'])->name('listar-productos-almacen');
+				Route::post('guardar_materia', [TransformacionController::class, 'guardar_materia'])->name('guardar-materia');
+				Route::post('guardarCustomizacion', [CustomizacionController::class, 'guardarCustomizacion'])->name('guardar-customizacion');
+				Route::post('actualizarCustomizacion', [CustomizacionController::class, 'actualizarCustomizacion'])->name('actualizar-customizacion');
+				Route::get('anularCustomizacion/{id}', [CustomizacionController::class, 'anularCustomizacion'])->name('anular-customizacion');
+				Route::get('listar_transformaciones/{tp}', [TransformacionController::class, 'listar_transformaciones'])->name('listar-transformaciones');
+				Route::get('mostrarCustomizacion/{id}', [CustomizacionController::class, 'mostrarCustomizacion'])->name('mostrar-customizacion');
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
+				Route::post('actualizarCostosBase', [CustomizacionController::class, 'actualizarCostosBase'])->name('actualizar-costos-base');
+				Route::get('procesarCustomizacion/{id}', [CustomizacionController::class, 'procesarCustomizacion'])->name('procesar-customizacion');
+				Route::get('obtenerTipoCambio/{fec}/{mon}', [CustomizacionController::class, 'obtenerTipoCambio'])->name('obtener-tipo-cambio');
+				Route::get('listarSeriesGuiaVen/{id}/{alm}', [SalidasPendientesController::class, 'listarSeriesGuiaVen'])->name('listar-series-guia-ven');
+				Route::get('validarEdicion/{id}', [CustomizacionController::class, 'validarEdicion'])->name('validar-edicion');
+				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
 			});
 
 			Route::group(['as' => 'devolucion.', 'prefix' => 'devolucion'], function () {
 				//Devoluciones
 				Route::get('index', [DevolucionController::class, 'viewDevolucion'])->name('index');
-				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones']);
-				Route::post('mostrarContribuyentes', [DevolucionController::class, 'mostrarContribuyentes']);
-				Route::get('mostrarDevolucion/{id}', [DevolucionController::class, 'mostrarDevolucion']);
-				Route::post('guardarDevolucion', [DevolucionController::class, 'guardarDevolucion']);
-				Route::post('actualizarDevolucion', [DevolucionController::class, 'actualizarDevolucion']);
-				Route::get('validarEdicion/{id}', [DevolucionController::class, 'validarEdicion']);
-				Route::get('anularDevolucion/{id}', [DevolucionController::class, 'anularDevolucion']);
-				Route::get('listarSalidasVenta/{alm}/{id}', [DevolucionController::class, 'listarSalidasVenta']);
-				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class, 'listarIngresos']);
-				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class, 'obtenerMovimientoDetalle']);
-				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias']);
+				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones'])->name('listar-devoluciones');
+				Route::post('mostrarContribuyentes', [DevolucionController::class, 'mostrarContribuyentes'])->name('mostrar-contribuyentes');
+				Route::get('mostrarDevolucion/{id}', [DevolucionController::class, 'mostrarDevolucion'])->name('mostrar-devolucion');
+				Route::post('guardarDevolucion', [DevolucionController::class, 'guardarDevolucion'])->name('guardar-devolucion');
+				Route::post('actualizarDevolucion', [DevolucionController::class, 'actualizarDevolucion'])->name('actualizar-devolucion');
+				Route::get('validarEdicion/{id}', [DevolucionController::class, 'validarEdicion'])->name('validar-edicion');
+				Route::get('anularDevolucion/{id}', [DevolucionController::class, 'anularDevolucion'])->name('anular-devolucion');
+				Route::get('listarSalidasVenta/{alm}/{id}', [DevolucionController::class, 'listarSalidasVenta'])->name('listar-salidas-venta');
+				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class, 'listarIngresos'])->name('listar-ingresos');
+				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class, 'obtenerMovimientoDetalle'])->name('obtener-movimiento-detalle');
+				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
 			});
 
 			Route::group(['as' => 'prorrateo.', 'prefix' => 'prorrateo'], function () {
 				//Pendientes de Salida
 				Route::get('index', [ProrrateoCostosController::class, 'view_prorrateo_costos'])->name('index');
-				Route::get('mostrar_prorrateos', [ProrrateoCostosController::class, 'mostrar_prorrateos']);
-				Route::get('mostrar_prorrateo/{id}', [ProrrateoCostosController::class, 'mostrar_prorrateo']);
-				Route::get('mostrar_proveedores', [LogisticaController::class, 'mostrar_proveedores']);
-				Route::get('guardar_tipo_prorrateo/{nombre}', [ProrrateoCostosController::class, 'guardar_tipo_prorrateo']);
-				Route::get('obtenerTipoCambio/{fec}/{mon}', [CustomizacionController::class, 'obtenerTipoCambio']);
-				Route::get('listar_guias_compra', [ProrrateoCostosController::class, 'listar_guias_compra']);
-				Route::get('listar_docs_prorrateo/{id}', [ProrrateoCostosController::class, 'listar_docs_prorrateo']);
-				Route::get('listar_guia_detalle/{id}', [ProrrateoCostosController::class, 'listar_guia_detalle']);
-				Route::post('guardarProrrateo', [ProrrateoCostosController::class, 'guardarProrrateo']);
-				Route::post('updateProrrateo', [ProrrateoCostosController::class, 'updateProrrateo']);
-				Route::get('anular_prorrateo/{id}', [ProrrateoCostosController::class, 'anular_prorrateo']);
-				Route::post('guardarProveedor', [ProrrateoCostosController::class, 'guardarProveedor']);
+				Route::get('mostrar_prorrateos', [ProrrateoCostosController::class, 'mostrar_prorrateos'])->name('mostrar-prorrateos');
+				Route::get('mostrar_prorrateo/{id}', [ProrrateoCostosController::class, 'mostrar_prorrateo'])->name('mostrar-prorrateo');
+				Route::get('mostrar_proveedores', [LogisticaController::class, 'mostrar_proveedores'])->name('mostrar-proveedores');
+				Route::get('guardar_tipo_prorrateo/{nombre}', [ProrrateoCostosController::class, 'guardar_tipo_prorrateo'])->name('guardar-tipo-prorrateo');
+				Route::get('obtenerTipoCambio/{fec}/{mon}', [CustomizacionController::class, 'obtenerTipoCambio'])->name('obtener-tipo-cambio');
+				Route::get('listar_guias_compra', [ProrrateoCostosController::class, 'listar_guias_compra'])->name('listar-guias-compra');
+				Route::get('listar_docs_prorrateo/{id}', [ProrrateoCostosController::class, 'listar_docs_prorrateo'])->name('listar-docs-prorrateo');
+				Route::get('listar_guia_detalle/{id}', [ProrrateoCostosController::class, 'listar_guia_detalle'])->name('listar-guia-detalle');
+				Route::post('guardarProrrateo', [ProrrateoCostosController::class, 'guardarProrrateo'])->name('guardar-prorrateo');
+				Route::post('updateProrrateo', [ProrrateoCostosController::class, 'updateProrrateo'])->name('update-prorrateo');
+				Route::get('anular_prorrateo/{id}', [ProrrateoCostosController::class, 'anular_prorrateo'])->name('anular-prorrateo');
+				Route::post('guardarProveedor', [ProrrateoCostosController::class, 'guardarProveedor'])->name('guardar-proveedor');
 			});
 
 			Route::group(['as' => 'reservas.', 'prefix' => 'reservas'], function () {
 				//Pendientes de Salida
 				Route::get('index', [ReservasAlmacenController::class, 'viewReservasAlmacen'])->name('index');
 				Route::post('listarReservasAlmacen', [ReservasAlmacenController::class, 'listarReservasAlmacen'])->name('listarReservasAlmacen');
-				Route::post('anularReserva', [ReservasAlmacenController::class, 'anularReserva']);
-				Route::post('actualizarReserva', [ReservasAlmacenController::class, 'actualizarReserva']);
-				Route::get('actualizarReservas', [ReservasAlmacenController::class, 'actualizarReservas']);
-				Route::post('actualizarEstadoReserva', [ReservasAlmacenController::class, 'actualizarEstadoReserva']);
+				Route::post('anularReserva', [ReservasAlmacenController::class, 'anularReserva'])->name('anular-reserva');
+				Route::post('actualizarReserva', [ReservasAlmacenController::class, 'actualizarReserva'])->name('actualizar-reserva');
+				Route::get('actualizarReservas', [ReservasAlmacenController::class, 'actualizarReservas'])->name('actualizar-reservas');
+				Route::post('actualizarEstadoReserva', [ReservasAlmacenController::class, 'actualizarEstadoReserva'])->name('actualizar-estado-reserva');
 			});
 
 			Route::group(['as' => 'requerimientos-almacen.', 'prefix' => 'requerimientos-almacen'], function () {
 				//Pendientes de Salida
 				Route::get('index', [ListaRequerimientosAlmacenController::class, 'viewRequerimientosAlmacen'])->name('index');
 				Route::post('listarRequerimientosAlmacen', [ListaRequerimientosAlmacenController::class, 'listarRequerimientosAlmacen'])->name('listarRequerimientosAlmacen');
-				Route::get('verDetalleRequerimientoDI/{id}', [OrdenesTransformacionController::class, 'verDetalleRequerimientoDI']);
-				Route::get('listarDetalleTransferencias/{id}', [TransferenciaController::class, 'listarDetalleTransferencias']);
-				Route::post('cambioAlmacen', [ListaRequerimientosAlmacenController::class, 'cambioAlmacen']);
-				Route::get('listarDetalleRequerimiento/{id}', [ListaRequerimientosAlmacenController::class, 'listarDetalleRequerimiento']);
+				Route::get('verDetalleRequerimientoDI/{id}', [OrdenesTransformacionController::class, 'verDetalleRequerimientoDI'])->name('ver-detalle-requerimientoDI');
+				Route::get('listarDetalleTransferencias/{id}', [TransferenciaController::class, 'listarDetalleTransferencias'])->name('listar-detalle-transferencias');
+				Route::post('cambioAlmacen', [ListaRequerimientosAlmacenController::class, 'cambioAlmacen'])->name('cambio-almacen');
+				Route::get('listarDetalleRequerimiento/{id}', [ListaRequerimientosAlmacenController::class, 'listarDetalleRequerimiento'])->name('listar-detalle-requerimiento');
 				Route::post('anularDespachoInterno', [OrdenesDespachoInternoController::class, 'anularDespachoInterno'])->name('anularDespachoInterno');
 				Route::post('guardar-ajuste-transformacion-requerimiento', [ComprasPendientesController::class, 'guardarAjusteTransformacionRequerimiento'])->name('guardar-ajuste-transformacion-requerimiento');
-				Route::get('mostrar-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'requerimiento']);
+				Route::get('mostrar-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'requerimiento'])->name('mostrar-requerimiento');
 				Route::get('detalle-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'detalleRequerimiento'])->name('detalle-requerimientos');
 			});
 		});
 
 		Route::group(['as' => 'comprobantes.', 'prefix' => 'comprobantes'], function () {
 			Route::get('mostrar_proveedores', [LogisticaController::class, 'mostrar_proveedores']);
-			Route::get('listar_guias_proveedor/{id?}', [AlmacenController::class, 'listar_guias_proveedor']);
-			Route::get('listar_detalle_guia_compra/{id?}', [ComprobanteCompraController::class, 'listar_detalle_guia_compra']);
-			Route::get('tipo_cambio_compra/{fecha}', [AlmacenController::class, 'tipo_cambio_compra']);
-			Route::post('guardar_doc_compra', [ComprobanteCompraController::class, 'guardar_doc_compra']);
+			Route::get('listar_guias_proveedor/{id?}', [AlmacenController::class, 'listar_guias_proveedor'])->name('listar-guias-proveedor');
+			Route::get('listar_detalle_guia_compra/{id?}', [ComprobanteCompraController::class, 'listar_detalle_guia_compra'])->name('listar-detalle-guia-compra');
+			Route::get('tipo_cambio_compra/{fecha}', [AlmacenController::class, 'tipo_cambio_compra'])->name('tipo-cambio-compra');
+			Route::post('guardar_doc_compra', [ComprobanteCompraController::class, 'guardar_doc_compra'])->name('guardar-doc-compra');
 			// Route::get('listar_guias_prov/{id?}', [ComprobanteCompraController::class, 'listar_guias_prov');
-			Route::post('listar_docs_compra', [ComprobanteCompraController::class, 'listar_docs_compra']);
+			Route::post('listar_docs_compra', [ComprobanteCompraController::class, 'listar_docs_compra'])->name('listar-docs-compra');
 
 			Route::get('lista_comprobante_compra', [ComprobanteCompraController::class, 'view_lista_comprobantes_compra'])->name('lista_comprobante_compra');
-			Route::get('documentoAPago/{id}', [ComprobanteCompraController::class, 'documentoAPago']);
-			Route::get('enviarComprobanteSoftlink/{id}', [MigrateFacturasSoftlinkController::class, 'enviarComprobanteSoftlink']);
-			Route::get('documentos_ver/{id}', [OrdenesPendientesController::class, 'documentos_ver']);
-			Route::get('actualizarSedesFaltantes', [MigrateFacturasSoftlinkController::class, 'actualizarSedesFaltantes']);
-			Route::get('actualizarProveedorComprobantes', [MigrateFacturasSoftlinkController::class, 'actualizarProveedorComprobantes']);
-			Route::get('migrarComprobantesSoftlink', [MigrateFacturasSoftlinkController::class, 'migrarComprobantesSoftlink']);
-			Route::get('migrarItemsComprobantesSoftlink', [MigrateFacturasSoftlinkController::class, 'migrarItemsComprobantesSoftlink']);
+			Route::get('documentoAPago/{id}', [ComprobanteCompraController::class, 'documentoAPago'])->name('documento-a-pago');
+			Route::get('enviarComprobanteSoftlink/{id}', [MigrateFacturasSoftlinkController::class, 'enviarComprobanteSoftlink'])->name('enviar-comprobante-softlink');
+			Route::get('documentos_ver/{id}', [OrdenesPendientesController::class, 'documentos_ver'])->name('documentos-ver');
+			Route::get('actualizarSedesFaltantes', [MigrateFacturasSoftlinkController::class, 'actualizarSedesFaltantes'])->name('actualizar-sedes-faltantes');
+			Route::get('actualizarProveedorComprobantes', [MigrateFacturasSoftlinkController::class, 'actualizarProveedorComprobantes'])->name('actualizar-proveedor-comprobantes');
+			Route::get('migrarComprobantesSoftlink', [MigrateFacturasSoftlinkController::class, 'migrarComprobantesSoftlink'])->name('migrar-comprobantes-softlink');
+			Route::get('migrarItemsComprobantesSoftlink', [MigrateFacturasSoftlinkController::class, 'migrarItemsComprobantesSoftlink'])->name('migrar-items-comprobantes-softlink');
 
 			Route::get('lista-comprobantes-pago-export-excel', [ComprobanteCompraController::class, 'exportListaComprobantesPagos'])->name('lista.comprobante.pago.export.excel');
 		});
@@ -836,50 +836,50 @@ Route::middleware(['auth'])->group(function () {
 				//Transferencias
 				Route::get('index', [TransferenciaController::class, 'view_listar_transferencias'])->name('index');
 				Route::post('listarRequerimientos', [TransferenciaController::class, 'listarRequerimientos']);
-				Route::get('listarTransferenciaDetalle/{id}', [TransferenciaController::class, 'listarTransferenciaDetalle']);
-				Route::post('guardarIngresoTransferencia', [TransferenciaController::class, 'guardarIngresoTransferencia']);
-				Route::post('guardarSalidaTransferencia', [TransferenciaController::class, 'guardarSalidaTransferencia']);
-				Route::post('anularTransferenciaIngreso', [TransferenciaController::class, 'anularTransferenciaIngreso']);
-				Route::get('ingreso_transferencia/{id}', [TransferenciaController::class, 'ingreso_transferencia']);
+				Route::get('listarTransferenciaDetalle/{id}', [TransferenciaController::class, 'listarTransferenciaDetalle'])->name('listar-transferencia-detalle');
+				Route::post('guardarIngresoTransferencia', [TransferenciaController::class, 'guardarIngresoTransferencia'])->name('guardar-ingreso-transferencia');
+				Route::post('guardarSalidaTransferencia', [TransferenciaController::class, 'guardarSalidaTransferencia'])->name('guardar-salida-transferencia');
+				Route::post('anularTransferenciaIngreso', [TransferenciaController::class, 'anularTransferenciaIngreso'])->name('anular-transferencia-ingreso');
+				Route::get('ingreso_transferencia/{id}', [TransferenciaController::class, 'ingreso_transferencia'])->name('ingreso-transferencia');
 				// Route::get('transferencia_nextId/{id}', [TransferenciaController::class, 'transferencia_nextId');
-				Route::post('anularTransferenciaSalida', [TransferenciaController::class, 'anularTransferenciaSalida']);
-				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso']);
-				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida']);
-				Route::post('listarTransferenciasPorEnviar', [TransferenciaController::class, 'listarTransferenciasPorEnviar']);
-				Route::post('listarTransferenciasPorRecibir', [TransferenciaController::class, 'listarTransferenciasPorRecibir']);
-				Route::post('listarTransferenciasRecibidas', [TransferenciaController::class, 'listarTransferenciasRecibidas']);
+				Route::post('anularTransferenciaSalida', [TransferenciaController::class, 'anularTransferenciaSalida'])->name('anular-transferencia-salida');
+				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
+				Route::post('listarTransferenciasPorEnviar', [TransferenciaController::class, 'listarTransferenciasPorEnviar'])->name('listar-transferencias-por-enviar');
+				Route::post('listarTransferenciasPorRecibir', [TransferenciaController::class, 'listarTransferenciasPorRecibir'])->name('listar-transferencias-por-recibir');
+				Route::post('listarTransferenciasRecibidas', [TransferenciaController::class, 'listarTransferenciasRecibidas'])->name('listar-transferencias-recibidas');
 				// Route::get('cargar_almacenes/{id}', [UbicacionAlmacenController::class, '@cargar_almacenes');
-				Route::post('listarDetalleTransferencia', [TransferenciaController::class, 'listarDetalleTransferencia']);
+				Route::post('listarDetalleTransferencia', [TransferenciaController::class, 'listarDetalleTransferencia'])->name('listar-detalle-transferencia');
 				// Route::get('listarDetalleTransferencia/{id}', [TransferenciaController::class, 'listarDetalleTransferencia');
 				// Route::post('listarDetalleTransferenciasSeleccionadas', [TransferenciaController::class, 'listarDetalleTransferenciasSeleccionadas');
-				Route::get('listarGuiaTransferenciaDetalle/{id}', [TransferenciaController::class, 'listarGuiaTransferenciaDetalle']);
-				Route::get('listarSeries/{id}', [TransferenciaController::class, 'listarSeries']);
-				Route::get('listarSeriesVen/{id}', [TransferenciaController::class, 'listarSeriesVen']);
-				Route::get('anular_transferencia/{id}', [TransferenciaController::class, 'anular_transferencia']);
+				Route::get('listarGuiaTransferenciaDetalle/{id}', [TransferenciaController::class, 'listarGuiaTransferenciaDetalle'])->name('listar-guia-transferencia-detalle');
+				Route::get('listarSeries/{id}', [TransferenciaController::class, 'listarSeries'])->name('listar-series');
+				Route::get('listarSeriesVen/{id}', [TransferenciaController::class, 'listarSeriesVen'])->name('listar-series-ven');
+				Route::get('anular_transferencia/{id}', [TransferenciaController::class, 'anular_transferencia'])->name('anular-transferencia');
 				// Route::get('listar_guias_compra', [TransferenciaController::class, 'listar_guias_compra');
-				Route::get('transferencia/{id}', [OrdenesPendientesController::class, 'transferencia']);
-				Route::get('verGuiaCompraTransferencia/{id}', [TransferenciaController::class, 'verGuiaCompraTransferencia']);
+				Route::get('transferencia/{id}', [OrdenesPendientesController::class, 'transferencia'])->name('transferencia');
+				Route::get('verGuiaCompraTransferencia/{id}', [TransferenciaController::class, 'verGuiaCompraTransferencia'])->name('ver-guia-compra-transferencia');
 
-				Route::get('verRequerimiento/{id}', [TransferenciaController::class, 'verRequerimiento']);
-				Route::post('generarTransferenciaRequerimiento', [TransferenciaController::class, 'generarTransferenciaRequerimiento']);
-				Route::get('listarSeriesGuiaVen/{id}/{alm}', [SalidasPendientesController::class, 'listarSeriesGuiaVen']);
+				Route::get('verRequerimiento/{id}', [TransferenciaController::class, 'verRequerimiento'])->name('ver-requerimiento');
+				Route::post('generarTransferenciaRequerimiento', [TransferenciaController::class, 'generarTransferenciaRequerimiento'])->name('generar-transferencia-requerimiento');
+				Route::get('listarSeriesGuiaVen/{id}/{alm}', [SalidasPendientesController::class, 'listarSeriesGuiaVen'])->name('listar-series-guia-ven');
 				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class, 'obtenerArchivosOc'])->name('obtener-archivos-oc');
-				Route::get('mostrarTransportistas', [DistribucionController::class, 'mostrarTransportistas']);
+				Route::get('mostrarTransportistas', [DistribucionController::class, 'mostrarTransportistas'])->name('mostrar-transportistas');
 
 				Route::get('autogenerarDocumentosCompra/{id}/{tr}', [VentasInternasController::class, 'autogenerarDocumentosCompra'])->name('autogenerarDocumentosCompra');
-				Route::get('verDocumentosAutogenerados/{id}', [VentasInternasController::class, 'verDocumentosAutogenerados']);
-				Route::get('verDetalleRequerimientoDI/{id}', [OrdenesTransformacionController::class, 'verDetalleRequerimientoDI']);
-				Route::get('almacenesPorUsuario', [TransferenciaController::class, 'almacenesPorUsuario']);
+				Route::get('verDocumentosAutogenerados/{id}', [VentasInternasController::class, 'verDocumentosAutogenerados'])->name('ver-documentos-autogenerados');
+				Route::get('verDetalleRequerimientoDI/{id}', [OrdenesTransformacionController::class, 'verDetalleRequerimientoDI'])->name('ver-detalle-requerimientoDI');
+				Route::get('almacenesPorUsuario', [TransferenciaController::class, 'almacenesPorUsuario'])->name('almacenes-por-usuario');
 
-				Route::post('listarProductosAlmacen', [SaldoProductoController::class, 'listarProductosAlmacen']);
-				Route::post('nuevaTransferencia', [TransferenciaController::class, 'nuevaTransferencia']);
-				Route::get('pruebaSaldos', [SaldoProductoController::class, 'pruebaSaldos']);
+				Route::post('listarProductosAlmacen', [SaldoProductoController::class, 'listarProductosAlmacen'])->name('listar-productos-almacen');
+				Route::post('nuevaTransferencia', [TransferenciaController::class, 'nuevaTransferencia'])->name('nueva-transferencia');
+				Route::get('pruebaSaldos', [SaldoProductoController::class, 'pruebaSaldos'])->name('prueba-saldos');
 
-				Route::get('getAlmacenesPorEmpresa/{id}', [TransferenciaController::class, 'getAlmacenesPorEmpresa']);
-				Route::get('imprimir_transferencia/{id}', [TransferenciaController::class, 'imprimir_transferencia']);
+				Route::get('getAlmacenesPorEmpresa/{id}', [TransferenciaController::class, 'getAlmacenesPorEmpresa'])->name('get-almacenes-por-empresa');
+				Route::get('imprimir_transferencia/{id}', [TransferenciaController::class, 'imprimir_transferencia'])->name('imprimir-transferencia');
 
-				Route::post('actualizarCostosVentasInternas', [VentasInternasController::class, 'actualizarCostosVentasInternas']);
-				Route::post('actualizarValorizacionesIngresos', [VentasInternasController::class, 'actualizarValorizacionesIngresos']);
+				Route::post('actualizarCostosVentasInternas', [VentasInternasController::class, 'actualizarCostosVentasInternas'])->name('actualizar-costos-ventas-internas');
+				Route::post('actualizarValorizacionesIngresos', [VentasInternasController::class, 'actualizarValorizacionesIngresos'])->name('actualizar-valorizaciones-ingresos');
 			});
 		});
 
@@ -892,7 +892,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('index', [SaldosController::class, 'view_saldos'])->name('index');
 				Route::post('filtrar', [SaldosController::class, 'filtrar'])->name('filtrar');
 				Route::post('listar', [SaldosController::class, 'listar'])->name('listar');
-				Route::get('verRequerimientosReservados/{id}/{alm}', [SaldosController::class, 'verRequerimientosReservados']);
+				Route::get('verRequerimientosReservados/{id}/{alm}', [SaldosController::class, 'verRequerimientosReservados'])->name('ver-requerimientos-reservados');
 				Route::get('exportar', [SaldosController::class, 'exportar'])->name('exportar');
 				Route::get('exportarSeries', [SaldosController::class, 'exportarSeries'])->name('exportarSeries');
 				Route::get('exportarAntiguedades', [SaldosController::class, 'exportarAntiguedades'])->name('exportarAntiguedades');
@@ -904,99 +904,99 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'lista-ingresos.', 'prefix' => 'lista-ingresos'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_ingresos'])->name('index');
-				Route::get('listar_ingresos/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}/{tra}', [AlmacenController::class, 'listar_ingresos_lista']);
-				Route::get('update_revisado/{id}/{rev}/{obs}', [AlmacenController::class, 'update_revisado']);
+				Route::get('listar_ingresos/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}/{tra}', [AlmacenController::class, 'listar_ingresos_lista'])->name('listar-ingresos-get');
+				Route::get('update_revisado/{id}/{rev}/{obs}', [AlmacenController::class, 'update_revisado'])->name('update-revisado');
 
-				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa']);
-				Route::get('mostrar_proveedores', [LogisticaController::class, 'mostrar_proveedores']);
-				Route::get('listar_transportistas_com', [AlmacenController::class, 'listar_transportistas_com']);
-				Route::get('listar_transportistas_ven', [AlmacenController::class, 'listar_transportistas_ven']);
+				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
+				Route::get('mostrar_proveedores', [LogisticaController::class, 'mostrar_proveedores'])->name('mostrar-proveedores');
+				Route::get('listar_transportistas_com', [AlmacenController::class, 'listar_transportistas_com'])->name('listar-transportistas-com');
+				Route::get('listar_transportistas_ven', [AlmacenController::class, 'listar_transportistas_ven'])->name('listar-transportistas-ven');
 
-				Route::get('listar-ingresos-excel/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}/{tra}', [AlmacenController::class, 'ExportarExcelListaIngresos']);
+				Route::get('listar-ingresos-excel/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}/{tra}', [AlmacenController::class, 'ExportarExcelListaIngresos'])->name('listar-ingresos-excel');
 				// reportes con modelos
 				Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
 				// Route::post('listar-ingresos', 'Almacen\Reporte\ListaIngresosController@listarIngresos');
-				Route::post('listar-ingresos', [ListaIngresosController::class,'listarIngresos']);
+				Route::post('listar-ingresos', [ListaIngresosController::class,'listarIngresos'])->name('listar-ingresos-post');
 			});
 
 			Route::group(['as' => 'lista-salidas.', 'prefix' => 'lista-salidas'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_salidas'])->name('index');
-				Route::get('listar_salidas/{alm}/{docs}/{cond}/{fini}/{ffin}/{cli}/{usu}/{mon}/{ref}', [AlmacenController::class, 'listar_salidas']);
-				Route::get('update_revisado/{id}/{rev}/{obs}', [AlmacenController::class, 'update_revisado']);
+				Route::get('listar_salidas/{alm}/{docs}/{cond}/{fini}/{ffin}/{cli}/{usu}/{mon}/{ref}', [AlmacenController::class, 'listar_salidas'])->name('listar-salidas');
+				Route::get('update_revisado/{id}/{rev}/{obs}', [AlmacenController::class, 'update_revisado'])->name('update-revisado');
 
-				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa']);
-				Route::get('mostrar_clientes', [ClienteController::class, 'mostrar_clientes']);
-				Route::get('mostrar_clientes_empresa', [ClienteController::class, 'mostrar_clientes_empresa']);
-				Route::get('listar_transportistas_com', [AlmacenController::class, 'listar_transportistas_com']);
-				Route::get('listar_transportistas_ven', [AlmacenController::class, 'listar_transportistas_ven']);
+				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
+				Route::get('mostrar_clientes', [ClienteController::class, 'mostrar_clientes'])->name('mostrar-clientes');
+				Route::get('mostrar_clientes_empresa', [ClienteController::class, 'mostrar_clientes_empresa'])->name('mostrar-clientes-empresa');
+				Route::get('listar_transportistas_com', [AlmacenController::class, 'listar_transportistas_com'])->name('listar-transportistas-com');
+				Route::get('listar_transportistas_ven', [AlmacenController::class, 'listar_transportistas_ven'])->name('listar-transportistas-ven');
 
-				Route::get('listar-salidas-excel/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}', [AlmacenController::class, 'ExportarExcelListaSalidas']);
+				Route::get('listar-salidas-excel/{empresa}/{sede}/{alm}/{cond}/{fini}/{ffin}/{prov}/{usu}/{mon}', [AlmacenController::class, 'ExportarExcelListaSalidas'])->name('listar-salidas-excel');
 				// reportes con modelos
 				Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
-				Route::post('listar-salidas', [ListaSalidasController::class, 'listarSalidas']);
+				Route::post('listar-salidas', [ListaSalidasController::class, 'listarSalidas'])->name('listar-salidas');
 			});
 
 			Route::group(['as' => 'detalle-ingresos.', 'prefix' => 'detalle-ingresos'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_busqueda_ingresos'])->name('index');
-				Route::get('listar_busqueda_ingresos/{alm}/{tp}/{des}/{doc}/{fini}/{ffin}', [AlmacenController::class, 'listar_busqueda_ingresos']);
-				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa']);
-				Route::get('imprimir_ingreso/{id}', [OrdenesPendientesController::class, 'imprimir_ingreso']);
-				Route::get('imprimir_guia_ingreso/{id}', [AlmacenController::class, 'imprimir_guia_ingreso']);
+				Route::get('listar_busqueda_ingresos/{alm}/{tp}/{des}/{doc}/{fini}/{ffin}', [AlmacenController::class, 'listar_busqueda_ingresos'])->name('listar-busqueda-ingresos');
+				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
+				Route::get('imprimir_ingreso/{id}', [OrdenesPendientesController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
+				Route::get('imprimir_guia_ingreso/{id}', [AlmacenController::class, 'imprimir_guia_ingreso'])->name('imprimir-guia-ingreso');
 			});
 
 			Route::group(['as' => 'detalle-salidas.', 'prefix' => 'detalle-salidas'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_busqueda_salidas'])->name('index');
-				Route::get('listar_busqueda_salidas/{alm}/{tp}/{des}/{doc}/{fini}/{ffin}', [AlmacenController::class, 'listar_busqueda_salidas']);
-				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa']);
-				Route::get('imprimir_salida/{id}', [AlmacenController::class, 'imprimir_salida']);
+				Route::get('listar_busqueda_salidas/{alm}/{tp}/{des}/{doc}/{fini}/{ffin}', [AlmacenController::class, 'listar_busqueda_salidas'])->name('listar-busqueda-salidas');
+				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
+				Route::get('imprimir_salida/{id}', [AlmacenController::class, 'imprimir_salida'])->name('imprimir-salida');
 			});
 
 			Route::group(['as' => 'kardex-general.', 'prefix' => 'kardex-general'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_kardex_general'])->name('index');
-				Route::get('kardex_general/{id}/{fini}/{ffin}', [AlmacenController::class, 'kardex_general']);
-				Route::get('kardex_sunat/{id}/{fini}/{ffin}', [AlmacenController::class, 'download_kardex_sunat']);
+				Route::get('kardex_general/{id}/{fini}/{ffin}', [AlmacenController::class, 'kardex_general'])->name('kardex-general');
+				Route::get('kardex_sunat/{id}/{fini}/{ffin}', [AlmacenController::class, 'download_kardex_sunat'])->name('kardex-sunat');
 				// Route::get('kardex_sunatx/{id}', [AlmacenController::class, 'kardex_sunat');
-				Route::get('exportar_kardex_general/{id}/{fini}/{ffin}', [ReportesController::class, 'exportarKardex']);
+				Route::get('exportar_kardex_general/{id}/{fini}/{ffin}', [ReportesController::class, 'exportarKardex'])->name('exportar-kardex-general');
 			});
 
 			Route::group(['as' => 'kardex-productos.', 'prefix' => 'kardex-productos'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_kardex_detallado'])->name('index');
-				Route::get('kardex_producto/{id}/{alm}/{fini}/{ffin}', [AlmacenController::class, 'kardex_producto']);
-				Route::get('listar_kardex_producto/{id}/{alm}/{fini}/{ffin}', [AlmacenController::class, 'kardex_producto']);
-				Route::get('kardex_detallado/{id}/{alm}/{fini}/{ffin}', [AlmacenController::class, 'download_kardex_producto']);
-				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa']);
-				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto']);
-				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen']);
+				Route::get('kardex_producto/{id}/{alm}/{fini}/{ffin}', [AlmacenController::class, 'kardex_producto'])->name('kardex-producto');
+				Route::get('listar_kardex_producto/{id}/{alm}/{fini}/{ffin}', [AlmacenController::class, 'kardex_producto'])->name('listar-kardex-producto');
+				Route::get('kardex_detallado/{id}/{alm}/{fini}/{ffin}', [AlmacenController::class, 'download_kardex_producto'])->name('kardex-detallado');
+				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
+				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto'])->name('datos-producto');
+				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen'])->name('mostrar-prods-almacen');
 			});
 
 			Route::group(['as' => 'kardex-series.', 'prefix' => 'kardex-series'], function () {
 
 				Route::get('index', [KardexSerieController::class, 'view_kardex_series'])->name('index');
-				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos']);
-				Route::get('listar_kardex_serie/{serie}/{id_prod}', [KardexSerieController::class, 'listar_kardex_serie']);
-				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto']);
-				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen']);
+				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-erie-productos');
+				Route::get('listar_kardex_serie/{serie}/{id_prod}', [KardexSerieController::class, 'listar_kardex_serie'])->name('listar-kardex-serie');
+				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto'])->name('datos-producto');
+				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen'])->name('mostrar-prods-almacen');
 			});
 
 			Route::group(['as' => 'documentos-prorrateo.', 'prefix' => 'documentos-prorrateo'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_docs_prorrateo'])->name('index');
-				Route::get('listar_documentos_prorrateo', [AlmacenController::class, 'listar_documentos_prorrateo']);
+				Route::get('listar_documentos_prorrateo', [AlmacenController::class, 'listar_documentos_prorrateo'])->name('listar-documentos-prorrateo');
 			});
 
 			Route::group(['as' => 'stock-series.', 'prefix' => 'stock-serie'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_stock_series'])->name('index');
-				Route::post('listar_stock_series', [AlmacenController::class, 'listar_stock_series']);
-				Route::get('prueba_exportar_excel', [AlmacenController::class, 'obtener_data_stock_series']);
-				Route::get('exportar_excel', [AlmacenController::class, 'exportar_stock_series_excel']);
+				Route::post('listar_stock_series', [AlmacenController::class, 'listar_stock_series'])->name('listar-stock-series');
+				Route::get('prueba_exportar_excel', [AlmacenController::class, 'obtener_data_stock_series'])->name('prueba-exportar-excel');
+				Route::get('exportar_excel', [AlmacenController::class, 'exportar_stock_series_excel'])->name('exportar-excel');
 			});
 		});
 
@@ -1005,12 +1005,12 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'series-numeros.', 'prefix' => 'series-numeros'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_serie_numero'])->name('index');
-				Route::get('listar_series_numeros', [AlmacenController::class, 'listar_series_numeros']);
-				Route::get('mostrar_serie_numero/{id}', [AlmacenController::class, 'mostrar_serie_numero']);
-				Route::post('guardar_serie_numero', [AlmacenController::class, 'guardar_serie_numero']);
-				Route::post('actualizar_serie_numero', [AlmacenController::class, 'update_serie_numero']);
-				Route::get('anular_serie_numero/{id}', [AlmacenController::class, 'anular_serie_numero']);
-				Route::get('series_numeros/{desde}/{hasta}/{num}/{serie}', [AlmacenController::class, 'series_numeros']);
+				Route::get('listar_series_numeros', [AlmacenController::class, 'listar_series_numeros'])->name('listar-series-numeros');
+				Route::get('mostrar_serie_numero/{id}', [AlmacenController::class, 'mostrar_serie_numero'])->name('mostrar-serie-numero');
+				Route::post('guardar_serie_numero', [AlmacenController::class, 'guardar_serie_numero'])->name('guardar-serie-numero');
+				Route::post('actualizar_serie_numero', [AlmacenController::class, 'update_serie_numero'])->name('actualizar-serie-numero');
+				Route::get('anular_serie_numero/{id}', [AlmacenController::class, 'anular_serie_numero'])->name('anular-serie-numero');
+				Route::get('series_numeros/{desde}/{hasta}/{num}/{serie}', [AlmacenController::class, 'series_numeros'])->name('series-numeros');
 			});
 
 			Route::group(['as' => 'tipos-movimiento.', 'prefix' => 'tipos-movimiento'], function () {
@@ -1026,21 +1026,21 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'tipos-documento.', 'prefix' => 'tipos-documento'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_tipo_doc_almacen'])->name('index');
-				Route::get('listar_tp_docs', [AlmacenController::class, 'listar_tp_docs']);
-				Route::get('mostrar_tp_doc/{id}', [AlmacenController::class, 'mostrar_tp_doc']);
-				Route::post('guardar_tp_doc', [AlmacenController::class, 'guardar_tp_doc']);
-				Route::post('update_tp_doc', [AlmacenController::class, 'update_tp_doc']);
-				Route::get('anular_tp_doc/{id}', [AlmacenController::class, 'anular_tp_doc']);
+				Route::get('listar_tp_docs', [AlmacenController::class, 'listar_tp_docs'])->name('listar-tp-docs');
+				Route::get('mostrar_tp_doc/{id}', [AlmacenController::class, 'mostrar_tp_doc'])->name('mostrar-tp-doc');
+				Route::post('guardar_tp_doc', [AlmacenController::class, 'guardar_tp_doc'])->name('guardar-tp-doc');
+				Route::post('update_tp_doc', [AlmacenController::class, 'update_tp_doc'])->name('update-tp-doc');
+				Route::get('anular_tp_doc/{id}', [AlmacenController::class, 'anular_tp_doc'])->name('anular-tp-doc');
 			});
 
 			Route::group(['as' => 'unidades-medida.', 'prefix' => 'unidades-medida'], function () {
 
 				Route::get('index', [AlmacenController::class, 'view_unid_med'])->name('index');
-				Route::get('listar_unidmed', [AlmacenController::class, 'mostrar_unidades_med']);
-				Route::get('mostrar_unidmed/{id}', [AlmacenController::class, 'mostrar_unid_med']);
-				Route::post('guardar_unidmed', [AlmacenController::class, 'guardar_unid_med']);
-				Route::post('actualizar_unidmed', [AlmacenController::class, 'update_unid_med']);
-				Route::get('anular_unidmed/{id}', [AlmacenController::class, 'anular_unid_med']);
+				Route::get('listar_unidmed', [AlmacenController::class, 'mostrar_unidades_med'])->name('listar-unidmed');
+				Route::get('mostrar_unidmed/{id}', [AlmacenController::class, 'mostrar_unid_med'])->name('mostrar-unidmed');
+				Route::post('guardar_unidmed', [AlmacenController::class, 'guardar_unid_med'])->name('guardar-unidmed');
+				Route::post('actualizar_unidmed', [AlmacenController::class, 'update_unid_med'])->name('actualizar-unidmed');
+				Route::get('anular_unidmed/{id}', [AlmacenController::class, 'anular-unidmed'])->name('anular-unidmed');
 			});
 		});
 	});
@@ -1053,130 +1053,128 @@ Route::middleware(['auth'])->group(function () {
 		Route::group(['as' => 'customizacion.', 'prefix' => 'customizacion'], function () {
 			Route::group(['as' => 'tablero-transformaciones.', 'prefix' => 'tablero-transformaciones'], function () {
 				Route::get('index', [OrdenesTransformacionController::class, 'view_tablero_transformaciones'])->name('index');
-				Route::get('listarDespachosInternos/{fec}', [OrdenesDespachoInternoController::class, 'listarDespachosInternos']);
-				Route::get('subirPrioridad/{id}', [OrdenesDespachoInternoController::class, 'subirPrioridad']);
-				Route::get('bajarPrioridad/{id}', [OrdenesDespachoInternoController::class, 'bajarPrioridad']);
-				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class, 'pasarProgramadasAlDiaSiguiente']);
-				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class, 'listarPendientesAnteriores']);
-				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion']);
-				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class, 'cambiaEstado']);
+				Route::get('listarDespachosInternos/{fec}', [OrdenesDespachoInternoController::class, 'listarDespachosInternos'])->name('listar-despachos-internos');
+				Route::get('subirPrioridad/{id}', [OrdenesDespachoInternoController::class, 'subirPrioridad'])->name('subir-prioridad');
+				Route::get('bajarPrioridad/{id}', [OrdenesDespachoInternoController::class, 'bajarPrioridad'])->name('bajar-prioridad');
+				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class, 'pasarProgramadasAlDiaSiguiente'])->name('pasar-programadas-al-dia-siguiente');
+				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class, 'listarPendientesAnteriores'])->name('listar-pendientes-anteriores');
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
+				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class, 'cambiaEstado'])->name('cambia-estado');
 			});
 
 			Route::group(['as' => 'gestion-customizaciones.', 'prefix' => 'gestion-customizaciones'], function () {
 				//Transformaciones
 				Route::get('index', [TransformacionController::class, 'view_listar_transformaciones'])->name('index');
-				Route::get('listarTransformacionesProcesadas', [TransformacionController::class, 'listarTransformacionesProcesadas']);
-				Route::post('listar_transformaciones_pendientes', [TransformacionController::class, 'listar_transformaciones_pendientes']);
-				Route::post('listarCuadrosCostos', [TransformacionController::class, 'listarCuadrosCostos']);
-				Route::post('generarTransformacion', [TransformacionController::class, 'generarTransformacion']);
-				Route::get('obtenerCuadro/{id}/{tipo}', [TransformacionController::class, 'obtenerCuadro']);
-				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('id_ingreso_transformacion/{id}', [TransformacionController::class, 'id_ingreso_transformacion']);
-				Route::get('id_salida_transformacion/{id}', [TransformacionController::class, 'id_salida_transformacion']);
-				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso']);
-				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida']);
-				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion']);
-				Route::get('recibido_conforme_transformacion/{id}', [TransformacionController::class, 'recibido_conforme_transformacion']);
-				Route::get('no_conforme_transformacion/{id}', [TransformacionController::class, 'no_conforme_transformacion']);
-				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion']);
+				Route::get('listarTransformacionesProcesadas', [TransformacionController::class, 'listarTransformacionesProcesadas'])->name('listar-transformaciones-procesadas');
+				Route::post('listar_transformaciones_pendientes', [TransformacionController::class, 'listar_transformaciones_pendientes'])->name('listar-transformaciones-pendientes');;
+				Route::post('listarCuadrosCostos', [TransformacionController::class, 'listarCuadrosCostos'])->name('listar-cuadros-costos');
+				Route::post('generarTransformacion', [TransformacionController::class, 'generarTransformacion'])->name('generar-transformacion');
+				Route::get('obtenerCuadro/{id}/{tipo}', [TransformacionController::class, 'obtenerCuadro'])->name('obtener-cuadro');
+				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('id_ingreso_transformacion/{id}', [TransformacionController::class, 'id_ingreso_transformacion'])->name('id-ingreso-transformacion');
+				Route::get('id_salida_transformacion/{id}', [TransformacionController::class, 'id_salida_transformacion'])->name('id-salida-transformacion');
+				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
+				Route::get('recibido_conforme_transformacion/{id}', [TransformacionController::class, 'recibido_conforme_transformacion'])->name('recibido-conforme-transformacion');
+				Route::get('no_conforme_transformacion/{id}', [TransformacionController::class, 'no_conforme_transformacion'])->name('no-conforme-transformacion');
+				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion'])->name('iniciar-transformacion');
 				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class, 'obtenerArchivosOc'])->name('obtener-archivos-oc');
 			});
 
 			Route::group(['as' => 'hoja-transformacion.', 'prefix' => 'hoja-transformacion'], function () {
 				//Transformaciones
 				Route::get('index', [TransformacionController::class, 'view_transformacion'])->name('index');
-				Route::post('guardar_transformacion', [TransformacionController::class, 'guardar_transformacion']);
-				Route::post('update_transformacion', [TransformacionController::class, 'update_transformacion']);
-				Route::get('listar_transformaciones/{tp}', [TransformacionController::class, 'listar_transformaciones']);
-				Route::get('mostrar_transformacion/{id}', [TransformacionController::class, 'mostrar_transformacion']);
-				Route::get('anular_transformacion/{id}', [TransformacionController::class, 'anular_transformacion']);
-				Route::get('listar_materias/{id}', [TransformacionController::class, 'listar_materias']);
-				Route::get('listar_directos/{id}', [TransformacionController::class, 'listar_directos']);
-				Route::get('listar_indirectos/{id}', [TransformacionController::class, 'listar_indirectos']);
-				Route::get('listar_sobrantes/{id}', [TransformacionController::class, 'listar_sobrantes']);
-				Route::get('listar_transformados/{id}', [TransformacionController::class, 'listar_transformados']);
-				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion']);
-				Route::post('procesar_transformacion', [TransformacionController::class, 'procesar_transformacion']);
-				Route::post('guardar_materia', [TransformacionController::class, 'guardar_materia']);
-				Route::post('guardar_directo', [TransformacionController::class, 'guardar_directo']);
-				Route::post('guardar_indirecto', [TransformacionController::class, 'guardar_indirecto']);
-				Route::post('guardar_sobrante', [TransformacionController::class, 'guardar_sobrante']);
-				Route::post('guardar_transformado', [TransformacionController::class, 'guardar_transformado']);
-				Route::get('anular_materia/{id}', [TransformacionController::class, 'anular_materia']);
-				Route::get('anular_directo/{id}', [TransformacionController::class, 'anular_directo']);
-				Route::get('anular_indirecto/{id}', [TransformacionController::class, 'anular_indirecto']);
-				Route::get('anular_sobrante/{id}', [TransformacionController::class, 'anular_sobrante']);
-				Route::get('anular_transformado/{id}', [TransformacionController::class, 'anular_transformado']);
-				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto']);
-				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion']);
+				Route::post('guardar_transformacion', [TransformacionController::class, 'guardar_transformacion'])->name('guardar-transformacion');
+				Route::post('update_transformacion', [TransformacionController::class, 'update_transformacion'])->name('update-transformacion');
+				Route::get('listar_transformaciones/{tp}', [TransformacionController::class, 'listar_transformaciones'])->name('listar-transformaciones');
+				Route::get('mostrar_transformacion/{id}', [TransformacionController::class, 'mostrar_transformacion'])->name('mostrar-transformacion');
+				Route::get('anular_transformacion/{id}', [TransformacionController::class, 'anular_transformacion'])->name('anular-transformacion');
+				Route::get('listar_materias/{id}', [TransformacionController::class, 'listar_materias'])->name('listar-materias');
+				Route::get('listar_directos/{id}', [TransformacionController::class, 'listar_directos'])->name('listar-directos');
+				Route::get('listar_indirectos/{id}', [TransformacionController::class, 'listar_indirectos'])->name('listar-indirectos');
+				Route::get('listar_sobrantes/{id}', [TransformacionController::class, 'listar_sobrantes'])->name('listar-sobrantes');
+				Route::get('listar_transformados/{id}', [TransformacionController::class, 'listar_transformados'])->name('listar-transformados');
+				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion'])->name('iniciar-transformacion');
+				Route::post('procesar_transformacion', [TransformacionController::class, 'procesar_transformacion'])->name('procesar-transformacion');
+				Route::post('guardar_materia', [TransformacionController::class, 'guardar_materia'])->name('guardar-materia');
+				Route::post('guardar_directo', [TransformacionController::class, 'guardar_directo'])->name('guardar-directo');
+				Route::post('guardar_indirecto', [TransformacionController::class, 'guardar_indirecto'])->name('guardar-indirecto');
+				Route::post('guardar_sobrante', [TransformacionController::class, 'guardar_sobrante'])->name('guardar-sobrante');
+				Route::post('guardar_transformado', [TransformacionController::class, 'guardar_transformado'])->name('guardar-transformado');
+				Route::get('anular_materia/{id}', [TransformacionController::class, 'anular_materia'])->name('anular-materia');
+				Route::get('anular_directo/{id}', [TransformacionController::class, 'anular_directo'])->name('anular-directo');
+				Route::get('anular_indirecto/{id}', [TransformacionController::class, 'anular_indirecto'])->name('anular-indirecto');
+				Route::get('anular_sobrante/{id}', [TransformacionController::class, 'anular_sobrante'])->name('anular-sobrante');
+				Route::get('anular_transformado/{id}', [TransformacionController::class, 'anular_transformado'])->name('anular-transformado');
+				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto'])->name('guardar-producto');
+				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
 			});
 		});
 
 		Route::group(['as' => 'garantias.', 'prefix' => 'garantias'], function () {
 			Route::group(['as' => 'incidencias.', 'prefix' => 'incidencias'], function () {
 				Route::get('index', [IncidenciaController::class, 'view_incidencia'])->name('index');
-				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias']);
-				Route::get('mostrarIncidencia/{id}', [IncidenciaController::class, 'mostrarIncidencia']);
-				Route::get('listarSalidasVenta', [IncidenciaController::class, 'listarSalidasVenta']);
+				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
+				Route::get('mostrarIncidencia/{id}', [IncidenciaController::class, 'mostrarIncidencia'])->name('mostrar-incidencia');
+				Route::get('listarSalidasVenta', [IncidenciaController::class, 'listarSalidasVenta'])->name('listar-salidas-venta');
 
-				Route::post('verDatosContacto', [OrdenesDespachoExternoController::class, 'verDatosContacto']);
-				Route::get('listarContactos/{id}', [OrdenesDespachoExternoController::class, 'listarContactos']);
-				Route::post('actualizaDatosContacto', [OrdenesDespachoExternoController::class, 'actualizaDatosContacto']);
-				Route::get('seleccionarContacto/{id}/{req}', [OrdenesDespachoExternoController::class, 'seleccionarContacto']);
-				Route::get('mostrarContacto/{id}', [OrdenesDespachoExternoController::class, 'mostrarContacto']);
-				Route::get('anularContacto/{id}', [OrdenesDespachoExternoController::class, 'anularContacto']);
-				Route::get('listar_ubigeos', [AlmacenController::class, 'listar_ubigeos']);
+				Route::post('verDatosContacto', [OrdenesDespachoExternoController::class, 'verDatosContacto'])->name('ver-datos-contacto');
+				Route::get('listarContactos/{id}', [OrdenesDespachoExternoController::class, 'listarContactos'])->name('listar-contactos');
+				Route::post('actualizaDatosContacto', [OrdenesDespachoExternoController::class, 'actualizaDatosContacto'])->name('actualiza-datos-contacto');
+				Route::get('seleccionarContacto/{id}/{req}', [OrdenesDespachoExternoController::class, 'seleccionarContacto'])->name('seleccionar-contacto');
+				Route::get('mostrarContacto/{id}', [OrdenesDespachoExternoController::class, 'mostrarContacto'])->name('mostrar-contacto');
+				Route::get('anularContacto/{id}', [OrdenesDespachoExternoController::class, 'anularContacto'])->name('anular-contacto');
+				Route::get('listar_ubigeos', [AlmacenController::class, 'listar_ubigeos'])->name('listar-ubigeos');
 
-				Route::get('listarSeriesProductos/{id}', [IncidenciaController::class, 'listarSeriesProductos']);
-				Route::post('guardarIncidencia', [IncidenciaController::class, 'guardarIncidencia']);
-				Route::post('actualizarIncidencia', [IncidenciaController::class, 'actualizarIncidencia']);
-				Route::get('anularIncidencia/{id}', [IncidenciaController::class, 'anularIncidencia']);
+				Route::get('listarSeriesProductos/{id}', [IncidenciaController::class, 'listarSeriesProductos'])->name('listar-series-productos');
+				Route::post('guardarIncidencia', [IncidenciaController::class, 'guardarIncidencia'])->name('guardar-incidencia');
+				Route::post('actualizarIncidencia', [IncidenciaController::class, 'actualizarIncidencia'])->name('actualizar-incidencia');
+				Route::get('anularIncidencia/{id}', [IncidenciaController::class, 'anularIncidencia'])->name('anular-incidencia');
 
-				Route::get('imprimirIncidencia/{id}', [IncidenciaController::class, 'imprimirIncidencia']);
-				Route::get('imprimirFichaAtencionBlanco/{id}', [IncidenciaController::class, 'imprimirFichaAtencionBlanco']);
+				Route::get('imprimirIncidencia/{id}', [IncidenciaController::class, 'imprimirIncidencia'])->name('imprimir-incidencia');
+				Route::get('imprimirFichaAtencionBlanco/{id}', [IncidenciaController::class, 'imprimirFichaAtencionBlanco'])->name('imprimir-ficha-atencion-blanco');
 			});
 
 			Route::group(['as' => 'devolucionCas.', 'prefix' => 'devolucionCas'], function () {
 				//Devoluciones
 				Route::get('index', [DevolucionController::class, 'viewDevolucionCas'])->name('index');
-				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods']);
-				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones']);
-				Route::post('mostrarContribuyentes', [DevolucionController::class, 'mostrarContribuyentes']);
-				Route::get('mostrarDevolucion/{id}', [DevolucionController::class, 'mostrarDevolucion']);
-				Route::post('guardarDevolucion', [DevolucionController::class, 'guardarDevolucion']);
-				Route::post('actualizarDevolucion', [DevolucionController::class, 'actualizarDevolucion']);
-				Route::get('validarEdicion/{id}', [DevolucionController::class, 'validarEdicion']);
-				Route::get('anularDevolucion/{id}', [DevolucionController::class, 'anularDevolucion']);
-				Route::get('listarSalidasVenta/{alm}/{id}', [DevolucionController::class, 'listarSalidasVenta']);
-				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class, 'listarIngresos']);
-				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class, 'obtenerMovimientoDetalle']);
-				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias']);
+				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
+				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones'])->name('listar-devoluciones');
+				Route::post('mostrarContribuyentes', [DevolucionController::class, 'mostrarContribuyentes'])->name('mostrar-contribuyentes');
+				Route::get('mostrarDevolucion/{id}', [DevolucionController::class, 'mostrarDevolucion'])->name('mostrar-devolucion');
+				Route::post('guardarDevolucion', [DevolucionController::class, 'guardarDevolucion'])->name('guardar-devolucion');
+				Route::post('actualizarDevolucion', [DevolucionController::class, 'actualizarDevolucion'])->name('actualizar-devolucion');
+				Route::get('validarEdicion/{id}', [DevolucionController::class, 'validarEdicion'])->name('validar-edicion');
+				Route::get('anularDevolucion/{id}', [DevolucionController::class, 'anularDevolucion'])->name('anular-devolucion');
+				Route::get('listarSalidasVenta/{alm}/{id}', [DevolucionController::class, 'listarSalidasVenta'])->name('listar-salidas-venta');
+				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class, 'listarIngresos'])->name('listar-ingresos');
+				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class, 'obtenerMovimientoDetalle'])->name('obtener-movimiento-detalle');
+				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
 			});
 
 			Route::group(['as' => 'fichas.', 'prefix' => 'fichas'], function () {
 				Route::get('index', [FichaReporteController::class, 'view_ficha_reporte'])->name('index');
-				Route::post('listarIncidencias', [FichaReporteController::class, 'listarIncidencias']);
-				Route::post('guardarFichaReporte', [FichaReporteController::class, 'guardarFichaReporte']);
-				Route::post('actualizarFichaReporte', [FichaReporteController::class, 'actualizarFichaReporte']);
-				Route::get('anularFichaReporte/{id}', [FichaReporteController::class, 'anularFichaReporte']);
-				Route::get('listarFichasReporte/{id}', [FichaReporteController::class, 'listarFichasReporte']);
-				Route::post('cerrarIncidencia', [FichaReporteController::class, 'cerrarIncidencia']);
-				Route::post('cancelarIncidencia', [FichaReporteController::class, 'cancelarIncidencia']);
-
+				Route::post('listarIncidencias', [FichaReporteController::class, 'listarIncidencias'])->name('listar-incidencias');
+				Route::post('guardarFichaReporte', [FichaReporteController::class, 'guardarFichaReporte'])->name('guardar-ficha-reporte');
+				Route::post('actualizarFichaReporte', [FichaReporteController::class, 'actualizarFichaReporte'])->name('actualizar-ficha-reporte');
+				Route::get('anularFichaReporte/{id}', [FichaReporteController::class, 'anularFichaReporte'])->name('anular-ficha-reporte');
+				Route::get('listarFichasReporte/{id}', [FichaReporteController::class, 'listarFichasReporte'])->name('listar-fichas-reporte');
+				Route::post('cerrarIncidencia', [FichaReporteController::class, 'cerrarIncidencia'])->name('cerrar-incidencia');
+				Route::post('cancelarIncidencia', [FichaReporteController::class, 'cancelarIncidencia'])->name('cancelar-incidencia');
 				Route::get('verAdjuntosFicha/{id}', [FichaReporteController::class, 'verAdjuntosFicha'])->name('ver-adjuntos-ficha');
-
-				Route::get('imprimirFichaReporte/{id}', [FichaReporteController::class, 'imprimirFichaReporte']);
+				Route::get('imprimirFichaReporte/{id}', [FichaReporteController::class, 'imprimirFichaReporte'])->name('imprimir-ficha-reporte');
 				Route::get('incidenciasExcel', [FichaReporteController::class, 'incidenciasExcel'])->name('incidenciasExcel');
 				Route::get('incidenciasExcelConHistorial', [FichaReporteController::class, 'incidenciasExcelConHistorial'])->name('incidenciasExcelConHistorial');
 
-				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones']);
-				Route::post('guardarFichaTecnica', [DevolucionController::class, 'guardarFichaTecnica']);
+				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones'])->name('listar-devoluciones');
+				Route::post('guardarFichaTecnica', [DevolucionController::class, 'guardarFichaTecnica'])->name('guardar-ficha-tecnica');
 				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class, 'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
 				Route::post('conformidadDevolucion', [DevolucionController::class, 'conformidadDevolucion'])->name('conformidad-devolucion');
 				Route::get('revertirConformidad/{id}', [DevolucionController::class, 'revertirConformidad'])->name('revertir-devolucion');
 
-				Route::post('clonarIncidencia', [FichaReporteController::class, 'clonarIncidencia']);
+				Route::post('clonarIncidencia', [FichaReporteController::class, 'clonarIncidencia'])->name('clonar-incidencia');
 			});
 			Route::group(['as' => 'marca.', 'prefix' => 'marca'], function () {
 				Route::get('inicio', [CasMarcaController::class, 'inicio'])->name('inicio');
@@ -1255,33 +1253,33 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('actualizar', [PresupuestoInternoController::class, 'actualizar'])->name('actualizar');
 				Route::post('eliminar', [PresupuestoInternoController::class, 'eliminar'])->name('eliminar');
 
-				Route::get('get-area', [PresupuestoInternoController::class, 'getArea']);
+				Route::get('get-area', [PresupuestoInternoController::class, 'getArea'])->name('get-area');
 				// exportable de presupiesto interno
-				Route::post('get-presupuesto-interno', [PresupuestoInternoController::class, 'getPresupuestoInterno']);
+				Route::post('get-presupuesto-interno', [PresupuestoInternoController::class, 'getPresupuestoInterno'])->name('get-presupuesto-interno');
 
 				//exportable de excel total ejecutado
-				Route::post('presupuesto-ejecutado-excel', [PresupuestoInternoController::class, 'presupuestoEjecutadoExcel']);
+				Route::post('presupuesto-ejecutado-excel', [PresupuestoInternoController::class, 'presupuestoEjecutadoExcel'])->name('resupuesto-ejecutado-excel');
 
-				Route::post('aprobar', [PresupuestoInternoController::class, 'aprobar']);
-				Route::post('editar-monto-partida', [PresupuestoInternoController::class, 'editarMontoPartida']);
+				Route::post('aprobar', [PresupuestoInternoController::class, 'aprobar'])->name('aprobar');
+				Route::post('editar-monto-partida', [PresupuestoInternoController::class, 'editarMontoPartida'])->name('editar-monto-partida');
 				// buscar partidas
-				Route::post('buscar-partida-combo', [PresupuestoInternoController::class, 'buscarPartidaCombo']);
+				Route::post('buscar-partida-combo', [PresupuestoInternoController::class, 'buscarPartidaCombo'])->name('buscar-partida-combo');
 				// prueba de presupuestos
-				Route::get('cierre-mes', [PresupuestoInternoController::class, 'cierreMes']);
+				Route::get('cierre-mes', [PresupuestoInternoController::class, 'cierreMes'])->name('cierre-mes');
 
-				Route::get('listar-sedes-por-empresa/{id}', [PresupuestoInternoController::class, 'listarSedesPorEmpresa']);
+				Route::get('listar-sedes-por-empresa/{id}', [PresupuestoInternoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
 
 				Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
-					Route::get('generar-presupuesto-gastos', [ScriptController::class, 'generarPresupuestoGastos']);
-					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida']);
-					Route::get('total-presupuesto/{presup}/{tipo}', [ScriptController::class, 'totalPresupuesto']);
-					Route::get('total-consumido-mes/{presup}/{tipo}/{mes}', [ScriptController::class, 'totalConsumidoMes']);
-					Route::get('total-ejecutado', [ScriptController::class, 'totalEjecutado']);
-					Route::get('regularizar-montos', [ScriptController::class, 'montosRegular']);
+					Route::get('generar-presupuesto-gastos', [ScriptController::class, 'generarPresupuestoGastos'])->name('generar-presupuesto-gastos');
+					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida'])->name('homologacion-partidas');
+					Route::get('total-presupuesto/{presup}/{tipo}', [ScriptController::class, 'totalPresupuesto'])->name('total-presupuesto');
+					Route::get('total-consumido-mes/{presup}/{tipo}/{mes}', [ScriptController::class, 'totalConsumidoMes'])->name('total-consumido-mes');
+					Route::get('total-ejecutado', [ScriptController::class, 'totalEjecutado'])->name('total-ejecutado');
+					Route::get('regularizar-montos', [ScriptController::class, 'montosRegular'])->name('regularizar-montos');
 
-					Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class, 'totalPresupuestoAnualPartidasNiveles']);
+					Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class, 'totalPresupuestoAnualPartidasNiveles'])->name('total-presupuesto-anual-niveles');
 				});
-				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial']);
+				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {
@@ -1315,9 +1313,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('lista-requerimiento-pago', [ReporteGastoController::class, 'listaGastoDetalleRequerimientoPago'])->name('lista-requerimiento-pago');
 				Route::post('lista-cdp', [ReporteGastoController::class, 'listaGastoCDP'])->name('lista-cdp');
 
-				Route::get('exportar-requerimiento-logistico-excel', [ReporteGastoController::class, 'listaGastoDetalleRequerimientoLogisticoExcel']);
-				Route::get('exportar-requerimiento-pago-excel', [ReporteGastoController::class, 'listaGastoDetalleRequerimienoPagoExcel']);
-				Route::get('exportar-cdp-excel', [ReporteGastoController::class, 'listaGastoCDPExcel']);
+				Route::get('exportar-requerimiento-logistico-excel', [ReporteGastoController::class, 'listaGastoDetalleRequerimientoLogisticoExcel'])->name('exportar-requerimiento-logistico-excel');
+				Route::get('exportar-requerimiento-pago-excel', [ReporteGastoController::class, 'listaGastoDetalleRequerimienoPagoExcel'])->name('exportar-requerimiento-pago-excel');
+				Route::get('exportar-cdp-excel', [ReporteGastoController::class, 'listaGastoCDPExcel'])->name('exportar-cdp-excel');
 			});
 		});
 	});
@@ -1339,9 +1337,9 @@ Route::middleware(['auth'])->group(function () {
 			Route::name('compras.')->prefix('compras')->group(function () {
 				Route::name('pendientes.')->prefix('pendientes')->group(function () {
 					Route::get('index', [ComprasPendientesController::class, 'viewComprasPendientes'])->name('index');
-					Route::post('requerimientos-pendientes', [ComprasPendientesController::class, 'listarRequerimientosPendientes'])->name('requerimientos-pendientes'); 
-					Route::post('requerimientos-atendidos', [ComprasPendientesController::class, 'listarRequerimientosAtendidos'])->name('requerimientos-atendidos'); 
-					Route::get('reporte-requerimientos-atendidos-excel/{Empresa}/{Sede}/{FechaDesde}/{FechaHasta}/{Reserva}/{Orden}', [ComprasPendientesController::class, 'reporteRequerimientosAtendidosExcel'])->name('reporte-requerimientos-atendidos-excel'); 
+					Route::post('requerimientos-pendientes', [ComprasPendientesController::class, 'listarRequerimientosPendientes'])->name('requerimientos-pendientes');
+					Route::post('requerimientos-atendidos', [ComprasPendientesController::class, 'listarRequerimientosAtendidos'])->name('requerimientos-atendidos');
+					Route::get('reporte-requerimientos-atendidos-excel/{Empresa}/{Sede}/{FechaDesde}/{FechaHasta}/{Reserva}/{Orden}', [ComprasPendientesController::class, 'reporteRequerimientosAtendidosExcel'])->name('reporte-requerimientos-atendidos-excel');
 					Route::get('solicitud-cotizacion-excel/{id}', [ComprasPendientesController::class, 'solicitudCotizacionExcel'])->name('solicitud-cotizacion-excel');
 					Route::get('exportar-lista-requerimientos-pendientes-excel', [ComprasPendientesController::class, 'exportListaRequerimientosPendientesExcel'])->name('exportar-lista-requerimientos-pendientes-excel');
 					Route::post('lista_items-cuadro-costos-por-requerimiento', [ComprasPendientesController::class, 'get_lista_items_cuadro_costos_por_id_requerimiento'])->name('lista_items-cuadro-costos-por-requerimiento');
@@ -1386,7 +1384,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('guardar-observacion-logistica', [ComprasPendientesController::class, 'guardarObservacionLogistica'])->name('guardar-observacion-logistica');
-					Route::get('retornar-requerimiento-atendido-a-lista-pedientes/{id}', [ComprasPendientesController::class, 'retornarRequerimientoAtendidoAListaPendientes'])->name('retornar-requerimiento-atendido-a-lista-pedientes');					
+					Route::get('retornar-requerimiento-atendido-a-lista-pedientes/{id}', [ComprasPendientesController::class, 'retornarRequerimientoAtendidoAListaPendientes'])->name('retornar-requerimiento-atendido-a-lista-pedientes');
 				});
 
 				Route::name('ordenes.')->prefix('ordenes')->group(function () {
@@ -1425,7 +1423,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::post('enviar-notificacion-finalizacion-cdp', [OrdenController::class, 'enviarNotificacionFinalizacionCDP'])->name('enviar-notificacion-finalizacion-cdp');
 						Route::post('validar-orden-agil-orden-softlink', [OrdenController::class, 'validarOrdenAgilOrdenSoftlink'])->name('validar-orden-agil-orden-softlink');
 						Route::post('vincular-oc-softlink', [OrdenController::class, 'vincularOcSoftlink'])->name('vincular-oc-softlink');
-						Route::get('imprimir_orden_servicio_o_transformacion/{idOportunidad}', [TransformacionController::class, 'imprimir_orden_servicio_o_transformacion'])->name('imprimir-orden-servicio-o-transformacion'); 
+						Route::get('imprimir_orden_servicio_o_transformacion/{idOportunidad}', [TransformacionController::class, 'imprimir_orden_servicio_o_transformacion'])->name('imprimir-orden-servicio-o-transformacion');
 					});
 					Route::name('listado.')->prefix('listado')->group(function () {
 
@@ -1445,7 +1443,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel/{filtro?}', [OrdenController::class, 'exportListaOrdenesNivelCabeceraExcel'])->name('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-detalle-excel', [OrdenController::class, 'exportListaOrdenesNivelDetalleExcel'])->name('facturas');
 
-						// nivel 
+						// nivel
 						Route::post('lista-items-ordenes-elaboradas', [OrdenController::class, 'listaItemsOrdenesElaboradas'])->name('lista-items-ordenes-elaboradas');
 						Route::post('actualizar-estado', [OrdenController::class, 'update_estado_orden'])->name('actualizar-estado');
 						Route::post('actualizar-estado-detalle', [OrdenController::class, 'update_estado_item_orden'])->name('actualizar-estado-detalle-orden');
@@ -1607,7 +1605,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('generarDespachoInterno/{id}', [OrdenesDespachoInternoController::class, 'generarDespachoInterno'])->name('generar-despacho-interno');
 				Route::get('anular_orden_despacho/{id}/{tp}', [SalidasPendientesController::class, 'anular_orden_despacho'])->name('anular-orden-despacho');
 				Route::post('enviarFacturacion', [OrdenesDespachoExternoController::class, 'enviarFacturacion'])->name('enviar-facturacion');
-				
+
 				Route::get('mostrarDocumentosByRequerimiento/{id}', [TrazabilidadRequerimientoController::class, 'mostrarDocumentosByRequerimiento'])->name('mostrar-documentos-by-requerimiento');
 				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
 				Route::get('imprimir_transferencia/{id}', [TransferenciaController::class, 'imprimir_transferencia'])->name('imprimir-transferencia');
@@ -1672,7 +1670,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('get-cliente/{id_cliente}', [RegistroController::class, 'getCliente'])->name('get-cliente');
 			Route::get('buscar-factura/{factura}', [RegistroController::class, 'getFactura'])->name('buscar-factura');
 			Route::get('actualizar-ven-doc-req', [RegistroController::class, 'actualizarDocVentReq'])->name('ctualizar-ven-doc-req');
-			
+
 			Route::post('modificar-registro', [RegistroController::class, 'modificarRegistro']);
 			Route::post('buscar-vendedor', [RegistroController::class, 'buscarVendedor']);
 			Route::get('buscar-cliente-seleccionado/{id}', [RegistroController::class, 'buscarClienteSeleccionado']);

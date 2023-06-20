@@ -7,7 +7,7 @@
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <link rel="shortcut icon" href="{{ asset('images/icono.ico') }}" />
         <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/font-awesome/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/fontawesome/css/fontawesome.min.css') }}">
         <link rel="stylesheet" href="{{ asset('template/adminlte2-4/dist/css/AdminLTE.min.css') }}">
         <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/square/blue.css') }}">
         <link rel="stylesheet" href="{{ asset('css/basic.css') }}">

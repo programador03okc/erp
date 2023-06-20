@@ -4,7 +4,7 @@
 @section('cabecera') Orden de Transformación @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
-{{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}
+{{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script> --}}
 
     <style>
         .invisible{
@@ -213,7 +213,7 @@
     <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
     <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-    {{-- <script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script> --}}
     <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
     <script>
         $(document).ready(function () {

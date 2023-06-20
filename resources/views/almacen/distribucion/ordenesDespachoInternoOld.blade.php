@@ -6,12 +6,12 @@ Gestión de Despachos Internos
 @endsection
 
 @section('estilos')
-{{-- <link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}"> --}}
-{{-- <link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}"> --}}
-<link rel="stylesheet" href="{{ asset('template/plugins/iCheck/all.css') }}">
-<link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}">
-<link rel="stylesheet" href="{{ asset('datatables/Datatables/css/dataTables.bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('datatables/Buttons/css/buttons.dataTables.min.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}"> --}}
+{{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"> --}}
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
 @endsection
 
 @section('breadcrumb')
@@ -69,17 +69,16 @@ Gestión de Despachos Internos
 @endsection
 
 @section('scripts')
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script>
-<script src="{{ asset('template/plugins/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js') }}"></script>
-<script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
-<script src="{{ asset('template/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
-<script src="{{ asset('template/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/js/locales/bootstrap-datepicker.es.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/distribucion/ordenesDespachoInterno.js')}}"></script>
 <script src="{{ asset('js/almacen/distribucion/verDetalleRequerimiento.js')}}"></script>

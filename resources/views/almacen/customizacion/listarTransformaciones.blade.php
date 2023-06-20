@@ -4,7 +4,7 @@
 
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
-{{-- <link rel="stylesheet" href="{{ asset('template/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css') }}"> --}}
+{{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css')}}">
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
 <style>
@@ -121,9 +121,8 @@
     {{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
     {{-- <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
-    {{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
 
 
     <script src="{{ asset('js/almacen/customizacion/listarTransformaciones.js')}}"></script>

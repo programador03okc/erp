@@ -226,7 +226,7 @@
 
 
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
+    
 
     <script src="{{ asset('js/almacen/prorrateo/doc_prorrateo.js')}}?v={{filemtime(public_path('js/almacen/prorrateo/doc_prorrateo.js'))}}"></script>
     <script src="{{ asset('js/almacen/prorrateo/doc_prorrateo_create.js')}}?v={{filemtime(public_path('js/almacen/prorrateo/doc_prorrateo_create.js'))}}"></script>

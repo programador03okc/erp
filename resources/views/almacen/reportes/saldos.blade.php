@@ -155,7 +155,7 @@
 
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     {{-- <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+    {{--  --}}
 
     <script>
         // let csrf_token = '{{ csrf_token() }}';

@@ -36,7 +36,7 @@
 
 @endsection
 @section('scripts')
-<script src="{{ asset('template/plugins/chartjs/Chart.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/chartjs/Chart.min.js') }}"></script>
  <script>
     $(document).ready(function(){
         Util.seleccionarMenu(window.location);

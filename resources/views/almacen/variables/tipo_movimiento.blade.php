@@ -118,7 +118,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
     {{-- <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
-    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
+    
 
     <script src="{{ asset('js/almacen/variables/tipo_movimiento.js')}}"></script>
     <script>

@@ -7,14 +7,14 @@
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
 	<link rel="stylesheet" href="{{ asset('template/bootstrap/css/bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('datatables/DataTables/css/dataTables.bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('datatables/Buttons/css/buttons.dataTables.min.css') }}">
+	    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+	    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('fonts/awesome/css/all.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/dist/css/AdminLTE.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/dist/css/skins/_all-skins.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('template/plugins/iCheck/all.css') }}">
+	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-treeview/bootstrap-treeview.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2.css') }}">
+	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2-bootstrap.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/plugins/gantt/dhtmlxgantt.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/app_new_erp.css') }}">
@@ -113,10 +113,10 @@
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="{{ asset('template/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatables/DataTables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('datatables/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
 <script src="{{ asset('datatables/Buttons/js/buttons.print.min.js') }}"></script>
 <script src="{{ asset('datatables/Buttons/js/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
@@ -124,9 +124,9 @@
 <script src="{{ asset('datatables/JSZip/jszip.min.js') }}"></script>
 <script src="{{ asset('js/sorttable.js') }}"></script>
 <script src="{{ asset('template/dist/js/app.min.js') }}"></script>
-<script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script>
-<script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
-<script src="{{ asset('template/plugins/select2/select2.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 <script src="{{ asset('template/plugins/bootstrap-treeview/bootstrap-treeview.min.js') }}"></script>
 <script src="{{ asset('template/plugins/gantt/dhtmlxgantt.js') }}"></script>
 

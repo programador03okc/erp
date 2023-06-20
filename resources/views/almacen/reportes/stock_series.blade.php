@@ -70,7 +70,7 @@
 
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-{{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+{{--  --}}
 
 <script src="{{ asset('js/almacen/reporte/stock_series.js')}}"></script>
 <script>

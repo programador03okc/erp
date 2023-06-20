@@ -208,9 +208,8 @@
 {{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
 <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
 
-{{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script>
-<script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+{{-- <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
+ --}}
 <script src="{{ asset('template/adminlte2-3/plugins/select2/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/guia/despachosPendientes.js')}}?v={{filemtime(public_path('js/almacen/guia/despachosPendientes.js'))}}"></script>

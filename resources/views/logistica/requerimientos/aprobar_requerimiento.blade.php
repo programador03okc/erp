@@ -144,7 +144,7 @@ Revisar y aprobar requerimientos
 <!-- <script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}"></script> -->
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+
 <script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
 <script>
 

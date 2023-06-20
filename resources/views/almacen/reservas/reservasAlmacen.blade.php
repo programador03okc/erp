@@ -100,9 +100,9 @@
 {{-- <script src="{{ asset('datatables/pdfmake/pdfmake.min.js') }}"></script>
 <script src="{{ asset('datatables/pdfmake/vfs_fonts.js') }}"></script> --}}
 
-{{-- <script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+{{-- <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
+
+{{--  --}}
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/reservas/reservasAlmacen.js') }}?v={{filemtime(public_path('js/almacen/reservas/reservasAlmacen.js'))}}"></script>

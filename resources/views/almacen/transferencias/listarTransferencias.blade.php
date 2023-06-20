@@ -265,11 +265,11 @@
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
-{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
-{{-- <script src="{{ asset('template/plugins/iCheck/icheck.min.js') }}"></script> --}}
+
+{{-- <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script> --}}
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script>
-{{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+{{--  --}}
 
 <script>
     // let csrf_token = "{{ csrf_token() }}";

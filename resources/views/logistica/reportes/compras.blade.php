@@ -58,7 +58,7 @@
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         $(document).ready(function() {
-            Util.seleccionarMenu(window.location);
+            
             const comprasLocales = new ComprasLocales();
             comprasLocales.mostrar('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 3 , 'SIN_FILTRO', 6);
 

@@ -119,7 +119,7 @@ Curvas S
     <script src="{{ asset('js/proyectos/presupuesto/propuestaModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

@@ -264,7 +264,7 @@
         let array = [];
         // let csrf_token = "{{ csrf_token() }}";
         // $(document).ready(function () {
-        //     Util.seleccionarMenu(window.location);
+        //     
         // });
     </script>
 

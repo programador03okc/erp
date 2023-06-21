@@ -502,7 +502,7 @@ Guía de Compra - Ingreso
     <!-- <script src="{{ asset('js/logistica/ordenesModal.js')}}"></script> -->
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

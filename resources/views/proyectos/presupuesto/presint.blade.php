@@ -355,7 +355,7 @@ Presupuesto Interno
     <script src="{{ asset('js/proyectos/presupuesto/presLeccion.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

@@ -160,7 +160,7 @@ Revisar/aprobar
     var gruposUsuario = JSON.parse('{!!$gruposUsuario!!}');
 
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
 
         const revisarAprobarDocumentoView = new RevisarAprobarDocumentoView();
 

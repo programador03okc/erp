@@ -282,7 +282,7 @@
 
         $(document).ready(function() {
             $('.main-header nav.navbar.navbar-static-top').find('a.sidebar-toggle').click()
-            Util.seleccionarMenu(window.location);
+            
             $('.numero').number(true, 2);
         });
     </script>

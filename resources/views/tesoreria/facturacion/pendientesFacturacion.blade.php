@@ -229,7 +229,7 @@ Facturación
 <script src="{{ asset('js/almacen/documentos/doc_ven_ver.js')}}?v={{filemtime(public_path('js/almacen/documentos/doc_ven_ver.js'))}}"></script>
 <script>
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
         vista_extendida();
         $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
         // let facturacion = new Facturacion('{{Auth::user()->tieneAccion(78)}}');

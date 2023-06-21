@@ -129,7 +129,7 @@
     <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}"></script>
     <script>
         $(document).ready(function() {
-            Util.seleccionarMenu(window.location);
+            
             vista_extendida();
             let gestionCustomizacion = new GestionCustomizacion('{{Auth::user()->tieneAccion(125)}}');
 

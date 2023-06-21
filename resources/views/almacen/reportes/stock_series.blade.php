@@ -75,7 +75,7 @@
 <script src="{{ asset('js/almacen/reporte/stock_series.js')}}"></script>
 <script>
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
     });
 </script>
 @endsection

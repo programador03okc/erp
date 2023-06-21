@@ -131,7 +131,7 @@ Valorización
     <script src="{{ asset('js/proyectos/valorizacion/valorizacionModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

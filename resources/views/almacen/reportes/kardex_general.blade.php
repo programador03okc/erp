@@ -134,7 +134,7 @@
     <script src="{{ asset('js/almacen/reporte/kardex_general.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

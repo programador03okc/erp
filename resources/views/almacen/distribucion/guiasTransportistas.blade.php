@@ -73,7 +73,7 @@ Reporte de Despachos con Guías Transportista
 
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

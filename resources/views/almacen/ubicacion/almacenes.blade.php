@@ -160,7 +160,7 @@
     <script src="{{ asset('js/publico/usuarioModal.js')}}"></script>
     <script>
         $(document).ready(function() {
-            Util.seleccionarMenu(window.location);
+            
         });
     </script>
 

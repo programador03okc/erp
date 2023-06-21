@@ -478,7 +478,7 @@ Orden de compra / servicio
 
     <script>
         $(document).ready(function() {
-            Util.seleccionarMenu(window.location);
+            
             $(".sidebar-mini").addClass("sidebar-collapse");
             $('input[type="checkbox"].minimal').iCheck({ checkboxClass: 'icheckbox_minimal-blue' });
         });

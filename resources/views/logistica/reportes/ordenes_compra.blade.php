@@ -94,7 +94,7 @@ Reportes de ordenes compra
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
 
-        Util.seleccionarMenu(window.location);
+        
         const ordenesCompra = new OrdenesCompra();
         ordenesCompra.mostrar();
         ordenesCompra.initializeEventHandler();

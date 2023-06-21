@@ -95,7 +95,7 @@
 <script src="{{('/js/finanzas/centro_costos/centro_costos.js')}}"></script>
 <script>
     $(document).ready(function () {
-        Util.seleccionarMenu(window.location);
+        
         mostrarCentroCostos();
     });
 </script>

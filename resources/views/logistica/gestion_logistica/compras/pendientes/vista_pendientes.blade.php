@@ -195,7 +195,7 @@ Requerimientos pendientes
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm');
         $.fn.dataTable.moment('DD-MM-YYYY');
 
-        Util.seleccionarMenu(window.location);
+        
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             let tab = $(e.target).attr("href") // activated tab

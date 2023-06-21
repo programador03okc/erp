@@ -1,4 +1,5 @@
 $(function () {
+    
     actualizarCantidadFiltrosAplicados();
 
     $('#modal-filtros').find('input[type=checkbox]').change(function () {

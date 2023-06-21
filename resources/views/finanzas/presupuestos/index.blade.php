@@ -85,7 +85,7 @@
     <script>
         $(document).ready(function () {
 
-            Util.seleccionarMenu(window.location);
+            
 
             var vardataTables = funcDatatables();
 

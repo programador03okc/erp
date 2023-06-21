@@ -273,7 +273,7 @@
     <script src="{{ asset('js/almacen/ubicacion/nivelModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

@@ -44,7 +44,7 @@ En construcción
 
     <script>
     // $(document).ready(function(){
-    //     Util.seleccionarMenu(window.location);
+    //     
     //     iniciar('{{Auth::user()->tieneAccion(83)}}');
     // });
     </script>

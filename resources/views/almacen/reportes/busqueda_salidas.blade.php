@@ -188,7 +188,7 @@
     <script>
     $(document).ready(function(){
         vista_extendida();
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 

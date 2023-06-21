@@ -56,7 +56,7 @@
     var iTableCounter = 1;
     var oInnerTable;
     $(document).ready(function() {
-        Util.Util.seleccionarMenu(window.location);
+        Util.
 
         const $tabla = $('#tablaNotificacion').DataTable({
             pageLength: 20,

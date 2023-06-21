@@ -86,7 +86,7 @@ Sistemas de contrato
     <script src="{{ asset('js/proyectos/variables/sis_contrato.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
         inicializar("{{route('proyectos.variables-entorno.sistemas-contrato.listar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.mostrar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.guardar')}}");
         listar();
 

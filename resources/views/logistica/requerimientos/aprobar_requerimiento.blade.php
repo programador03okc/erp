@@ -153,7 +153,7 @@ var grupos = JSON.parse('{!!$gruposUsuario!!}');
 
 
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
 
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm');
         $.fn.dataTable.moment('DD-MM-YYYY');

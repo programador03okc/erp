@@ -70,7 +70,7 @@ Categoría de Insumos
     <script src="{{ asset('js/proyectos/variables/cat_insumo.js') }}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

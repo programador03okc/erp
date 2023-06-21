@@ -71,7 +71,7 @@
 
 <script>
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
         usuarioSession = '{{Auth::user()->id_usuario}}';
         usuarioNombreSession = '{{Auth::user()->nombre_corto}}';
     });

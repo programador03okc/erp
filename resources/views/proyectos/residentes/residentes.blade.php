@@ -68,7 +68,7 @@ Residentes
     <script src="{{ asset('js/proyectos/proyecto/proyectoModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

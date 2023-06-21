@@ -97,7 +97,7 @@
     <script src="{{ asset('js/almacen/producto/clasificacion_producto.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

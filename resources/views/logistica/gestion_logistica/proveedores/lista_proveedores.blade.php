@@ -90,7 +90,7 @@ Lista de proveedores
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
 
         const proveedorModel = new ProveedorModel();
         const proveedorController = new ProveedorCtrl(proveedorModel);

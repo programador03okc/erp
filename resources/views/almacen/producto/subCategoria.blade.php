@@ -116,7 +116,7 @@
 <script src="{{ asset('js/almacen/producto/subCategoria.js')}}"></script>
 <script>
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
     });
 </script>
 @endsection

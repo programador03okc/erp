@@ -85,7 +85,7 @@ Reportes de ordenes servicio
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
         const ordenesServicio = new OrdenesServicio();
         ordenesServicio.mostrar();
         ordenesServicio.initializeEventHandler();

@@ -151,7 +151,7 @@ Gestión de Despachos Internos
 
 <script>
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
         vista_extendida();
         // $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
         $('#fecha_programacion').val(fecha_actual());

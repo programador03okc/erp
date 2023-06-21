@@ -114,7 +114,7 @@ Cronograma Valorizado de Ejecución
     <script src="{{ asset('js/proyectos/presupuesto/presejeModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

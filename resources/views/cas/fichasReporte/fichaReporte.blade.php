@@ -130,7 +130,7 @@
 
     <script>
         $(document).ready(function() {
-            Util.seleccionarMenu(window.location);
+            
             $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
             vista_extendida();
             listarIncidencias();

@@ -85,7 +85,7 @@ Reportes de transito de ordenes de compra
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
         const transitoOrdenesCompra = new TransitoOrdenesCompra();
         transitoOrdenesCompra.mostrar();
         transitoOrdenesCompra.initializeEventHandler();

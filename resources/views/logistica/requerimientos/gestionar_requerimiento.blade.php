@@ -782,7 +782,7 @@ Crear / editar requerimiento
         autoSelectTipoRequerimientoPorDefecto();
 
         window.onload = function() {
-            Util.seleccionarMenu(window.location);
+            
             var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
             var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
             document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form

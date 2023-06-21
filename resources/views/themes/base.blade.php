@@ -65,6 +65,7 @@
     @routes
     <script>
         $(document).ready(function() {
+            Util.seleccionarMenu(window.location);
             validarClave();
 			notificacionesNoLeidas();
         });

@@ -143,7 +143,7 @@
     const route_eliminar = "{{ route('cas.garantias.modelo.eliminar') }}";
     $(document).ready(function() {
 
-        Util.seleccionarMenu(window.location);
+        
         $(".select2").select2({
             tags: true
         });

@@ -202,7 +202,7 @@ Propuesta Cliente
     <script src="{{ asset('js/proyectos/presupuesto/pardetModal.js')}}"></script>
     <script>
     $(document).ready(function(){
-        Util.seleccionarMenu(window.location);
+        
     });
     </script>
 @endsection

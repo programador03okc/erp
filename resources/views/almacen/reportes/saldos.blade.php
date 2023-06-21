@@ -161,7 +161,7 @@
         // let csrf_token = '{{ csrf_token() }}';
         let vardataTables = funcDatatables();
         $(document).ready(function() {
-            Util.seleccionarMenu(window.location);
+            
             vista_extendida();
             listar(1);
 

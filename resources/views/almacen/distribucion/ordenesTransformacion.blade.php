@@ -66,7 +66,7 @@ Envío de Transformaciones
 
 <script>
     $(document).ready(function() {
-        Util.seleccionarMenu(window.location);
+        
         listarRequerimientosPendientes();
     });
 </script>

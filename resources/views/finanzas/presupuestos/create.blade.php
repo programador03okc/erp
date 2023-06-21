@@ -217,7 +217,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
     <script>
         $(document).ready(function () {
-            Util.seleccionarMenu(window.location);
+            
         });
     </script>
 

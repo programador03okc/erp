@@ -34,7 +34,6 @@ $(function(){
                         total += parseFloat(colum[7].innerText);
                     }
                 });
-                console.log('total'+total);
                 $('[name=precio_unitario_cu]').val(total);
             } else {
                 $('[name=precio_unitario_cu]').val(prec);
@@ -67,7 +66,7 @@ function listarInsumos(){
         ],
         'language' : vardataTables[0],
         'bDestroy': true,
-        'ajax': 'listar_insumos',
+        'ajax': route('proyectos.catalogos.insumos.listar_insumos'),
         'columns': [
             {'data': 'id_insumo'},
             {'data': 'codigo'},

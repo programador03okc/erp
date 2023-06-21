@@ -30,6 +30,10 @@ class ProyectosController extends Controller
         // session_start();
     }
 
+    public function index() {
+        return view('proyectos/main');
+    }
+
     function view_opciones_todo(){
         return view('proyectos/reportes/opciones_todo');
     }
@@ -40,7 +44,6 @@ class ProyectosController extends Controller
         $cargos = $this->select_cargos();
         return view('proyectos/residentes/residentes', compact('cargos'));
     }
-
 
     function view_propuesta(){
         $monedas = GenericoController::mostrar_monedas_cbo();

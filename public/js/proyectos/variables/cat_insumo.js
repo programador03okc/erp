@@ -6,7 +6,7 @@ $(function(){
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
         'language' : vardataTables[0],
-        'ajax': 'listar_cat_insumos',
+        'ajax': route('proyectos.variables-entorno.categorias-insumo.listar_cat_insumos'),
         'columns': [
             {'data': 'id_categoria'},
             {'data': 'descripcion'},
@@ -36,7 +36,7 @@ $(function(){
 });
 
 function mostrar_cat_insumo(id){
-    baseUrl = 'mostrar_cat_insumo/'+id;
+    baseUrl = route('proyectos.variables-entorno.categorias-insumo.mostrar_cat_insumo', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': token},
@@ -59,20 +59,21 @@ function save_cat_insumo(data, action){
     console.log(data);
     console.log(action);
     if (action == 'register'){
-        baseUrl = 'guardar_cat_insumo';
+        baseUrl = route('proyectos.variables-entorno.categorias-insumo.guardar_cat_insumo');
+        mensaje = 'Categoría de insumo registrada con éxito';
     } else if (action == 'edition'){
-        baseUrl = 'update_cat_insumo';
+        baseUrl = route('proyectos.variables-entorno.categorias-insumo.update_cat_insumo');
+        mensaje = 'Categoría de insumo actualizada con éxito';
     }
     $.ajax({
         type: 'POST',
-        // headers: {'X-CSRF-TOKEN': token},
+        headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         data: data,
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
             if (response > 0){
-                alert('Categoría registrada con éxito');
+                alert(mensaje);
                 $('#listaCategoriaInsumo').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -85,7 +86,7 @@ function save_cat_insumo(data, action){
 }
 
 function anular_cat_insumo(ids){
-    baseUrl = 'anular_cat_insumo/'+ids;
+    baseUrl = route('proyectos.variables-entorno.categorias-insumo.anular_cat_insumo', {id: ids});
     $.ajax({
         type: 'GET',
         // headers: {'X-CSRF-TOKEN': token},
@@ -94,7 +95,7 @@ function anular_cat_insumo(ids){
         success: function(response){
             console.log(response);
             if (response > 0){
-                alert('Categoría anulada con éxito');
+                alert('Categoría de insumo anulada con éxito');
                 $('#listaCategoriaInsumo').DataTable().ajax.reload();
                 changeStateButton('anular');
                 clearForm('form-cat_insumo');

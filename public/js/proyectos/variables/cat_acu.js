@@ -6,7 +6,7 @@ $(function(){
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
         'language' : vardataTables[0],
-        'ajax': 'listar_cat_acus',
+        'ajax': route('proyectos.variables-entorno.categorias-acu.listar_cat_acus'),
         'columns': [
             {'data': 'id_categoria'},
             {'data': 'descripcion'},
@@ -36,10 +36,9 @@ $(function(){
 });
 
 function mostrar_cat_acu(id){
-    baseUrl = 'mostrar_cat_acu/'+id;
+    baseUrl = route('proyectos.variables-entorno.categorias-acu.mostrar_cat_acu', {id: id});
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
@@ -56,23 +55,22 @@ function mostrar_cat_acu(id){
 }
 
 function save_cat_acu(data, action){
-    console.log(data);
-    console.log(action);
     if (action == 'register'){
-        baseUrl = 'guardar_cat_acu';
+        baseUrl = route('proyectos.variables-entorno.categorias-acu.guardar_cat_acu');
+        mensaje = 'Categoría A.C.U. registrada con éxito';
     } else if (action == 'edition'){
-        baseUrl = 'update_cat_acu';
+        baseUrl = route('proyectos.variables-entorno.categorias-acu.update_cat_acu');
+        mensaje = 'Categoría A.C.U. actualizada con éxito';
     }
     $.ajax({
         type: 'POST',
-        // headers: {'X-CSRF-TOKEN': token},
+        headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         data: data,
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
+            alert(mensaje);
             if (response > 0){
-                alert('Categoría registrada con éxito');
                 $('#listaCategoriaAcu').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -85,10 +83,9 @@ function save_cat_acu(data, action){
 }
 
 function anular_cat_acu(ids){
-    baseUrl = 'anular_cat_acu/'+ids;
+    baseUrl = route('proyectos.variables-entorno.categorias-acu.anular_cat_acu', {id: ids});
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
@@ -105,6 +102,4 @@ function anular_cat_acu(ids){
         console.log(textStatus);
         console.log(errorThrown);
     });
-            
-    
 }

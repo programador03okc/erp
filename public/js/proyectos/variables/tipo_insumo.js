@@ -6,7 +6,7 @@ $(function(){
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
         'language' : vardataTables[0],
-        'ajax': 'listar_tipo_insumos',
+        'ajax': route('proyectos.variables-entorno.tipos-insumo.listar_tipo_insumos'),
         'columns': [
             {'data': 'id_tp_insumo'},
             {'data': 'codigo'},
@@ -42,7 +42,7 @@ $(function(){
 });
 
 function mostrar_tipo_insumo(id){
-    baseUrl = 'mostrar_tipo_insumo/'+id;
+    baseUrl = route('proyectos.variables-entorno.tipos-insumo.mostrar_tipo_insumo', {id: id});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': token},
@@ -64,12 +64,12 @@ function mostrar_tipo_insumo(id){
 }
 
 function save_tipo_insumo(data, action){
-    console.log(data);
-    console.log(action);
     if (action == 'register'){
-        baseUrl = 'guardar_tipo_insumo';
+        baseUrl = route('proyectos.variables-entorno.tipos-insumo.guardar_tipo_insumo');
+        mensaje = "Tipo de Insumo registrado con exito";
     } else if (action == 'edition'){
-        baseUrl = 'actualizar_tipo_insumo';
+        baseUrl = route('proyectos.variables-entorno.tipos-insumo.actualizar_tipo_insumo');
+        mensaje = "Tipo de Insumo actualizado con exito";
     }
     $.ajax({
         type: 'POST',
@@ -78,9 +78,8 @@ function save_tipo_insumo(data, action){
         data: data,
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
+            alert(mensaje);
             if (response > 0){
-                alert('Tipo de Insumo registrado con exito');
                 $('#listaTipoInsumo').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -93,11 +92,11 @@ function save_tipo_insumo(data, action){
 }
 
 function anular_tipo_insumo(ids){
-    baseUrl = 'anular_tipo_insumo/'+ids;
+    baseUrl = route('proyectos.variables-entorno.tipos-insumo.anular_tipo_insumo', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': token},
-        url: 'revisar_tipo_insumo/'+ids,
+        url: route('proyectos.variables-entorno.tipos-insumo.revisar_tipo_insumo', {id: ids}),
         dataType: 'JSON',
         success: function(response){
             console.log(response);

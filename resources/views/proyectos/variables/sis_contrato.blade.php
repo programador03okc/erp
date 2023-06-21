@@ -1,22 +1,25 @@
 @extends('themes.base')
-@include('layout.menu_proyectos')
+@include('layouts.menu_proyectos')
 @include('layouts.option')
 
-@section('cabecera')
-Sistemas de contrato
+@section('cabecera') Sistemas de contrato @endsection
+
+@section('estilos')
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
-  <li>Variables de Entorno</li>
-  <li class="active">Sistemas de Contrato</li>
+    <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
+    <li>Variables de Entorno</li>
+    <li class="active">Sistemas de Contrato</li>
 </ol>
 @endsection
 
 @section('cuerpo')
 <div class="page-main" type="sis_contrato">
-
     <div class="row">
         <div class="col-md-6">
             <fieldset class="group-table">
@@ -36,36 +39,29 @@ Sistemas de contrato
             </fieldset>
         </div>
         <div class="col-md-6">
-            <form id="form-sis_contrato" type="register" form="formulario">
-                <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Codigo</h5>
-                        <input type="hidden" name="id_sis_contrato" primary="ids">
-                        <input type="text" class="form-control activation" name="codigo">
-                    </div>
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="form-sis_contrato" type="register" form="formulario">
+                        <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Codigo</h5>
+                                <input type="hidden" name="id_sis_contrato" primary="ids">
+                                <input type="text" class="form-control activation" name="codigo">
+                            </div>
+                            <div class="col-md-8">
+                                <h5>Descripción</h5>
+                                <input type="text" class="form-control activation" name="descripcion">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                            <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h5>Descripción</h5>
-                        <input type="text" class="form-control activation" name="descripcion">
-                    </div>
-                </div>
-                {{-- <div class="row">
-                    <div class="col-md-6">
-                    <h5>Estado</h5>
-                    <select class="form-control activation" name="estado" readonly>
-                        <option value="1" selected>Activo</option>
-                        <option value="2">Inactivo</option>
-                    </select>
-                    </div>
-                </div> --}}
-                <div class="row">
-                    <div class="col-md-12">
-                    <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -74,28 +70,21 @@ Sistemas de contrato
 @section('scripts')
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-    <!-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> -->
-    
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
     <script src="{{ asset('js/proyectos/variables/sis_contrato.js')}}"></script>
     <script>
-    $(document).ready(function(){
-        
-        inicializar("{{route('proyectos.variables-entorno.sistemas-contrato.listar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.mostrar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.guardar')}}");
-        listar();
+        $(document).ready(function(){
+            listar();
 
-        const tieneNuevo='{{Auth::user()->tieneAccion(10)}}';
-        if (tieneNuevo!='1')
-        {
-            $('#btnNuevo').prop('disabled',true);
-        }
-
-    });
+            const tieneNuevo = '{{Auth::user()->tieneAccion(10)}}';
+            if (tieneNuevo != '1') {
+                $('#btnNuevo').prop('disabled', true);
+            }
+        });
     </script>
 @endsection

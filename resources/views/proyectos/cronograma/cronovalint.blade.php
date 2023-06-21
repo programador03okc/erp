@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_proyectos')
+@include('layouts.menu_proyectos')
 @section('option')
     @include('layouts.option')
 @endsection

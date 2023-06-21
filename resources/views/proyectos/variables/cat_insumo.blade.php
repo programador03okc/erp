@@ -1,18 +1,22 @@
 @extends('themes.base')
-@include('layout.menu_proyectos')
+@include('layouts.menu_proyectos')
 @section('option')
     @include('layouts.option')
 @endsection
 
-@section('cabecera')
-Categoría de Insumos
+@section('cabecera') Categoría de Insumos @endsection
+
+@section('estilos')
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
-  <li>Variables de Entorno</li>
-  <li class="active">@yield('cabecera')</li>
+    <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
+    <li>Variables de Entorno</li>
+    <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
 
@@ -35,21 +39,25 @@ Categoría de Insumos
             </fieldset>
         </div>
         <div class="col-md-6">
-            <form id="form-cat_insumo" type="register" form="formulario">
-                <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
-                <input type="hidden" name="id_categoria" primary="ids">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h5>Descripción</h5>
-                        <input type="text" class="form-control activation" name="descripcion">
-                    </div>
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="form-cat_insumo" type="register" form="formulario">
+                        <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
+                        <input type="hidden" name="id_categoria" primary="ids">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>Descripción</h5>
+                                <input type="text" class="form-control activation" name="descripcion">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                            <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -58,19 +66,11 @@ Categoría de Insumos
 @section('scripts')
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-    <!-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> -->
-    
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
     <script src="{{ asset('js/proyectos/variables/cat_insumo.js') }}"></script>
-    <script>
-    $(document).ready(function(){
-        
-    });
-    </script>
 @endsection

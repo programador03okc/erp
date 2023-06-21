@@ -4,9 +4,10 @@ $(function(){
 
     $('#listaIu').dataTable({
         'dom': vardataTables[1],
+        'pageLength': 20,
         'buttons': vardataTables[2],
         'language' : vardataTables[0],
-        'ajax': 'listar_ius',
+        'ajax': route('proyectos.variables-entorno.iu.listar_ius'),
         'columns': [
             {'data': 'id_iu'},
             {'data': 'codigo'},
@@ -41,10 +42,9 @@ $(function(){
 });
 
 function mostrar_iu(id){
-    baseUrl = 'mostrar_iu/'+id;
+    baseUrl = route('proyectos.variables-entorno.iu.mostrar_iu', {id: id});
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
@@ -64,9 +64,11 @@ function mostrar_iu(id){
 
 function save_iu(data, action){
     if (action == 'register'){
-        baseUrl = 'guardar_iu';
+        baseUrl = route('proyectos.variables-entorno.iu.guardar_iu');
+        mensaje = "Indice Unificado registrado con exito";
     } else if (action == 'edition'){
-        baseUrl = 'actualizar_iu';
+        baseUrl = route('proyectos.variables-entorno.iu.actualizar_iu');
+        mensaje = "Indice Unificado actualizado con exito";
     }
     $.ajax({
         type: 'POST',
@@ -75,9 +77,8 @@ function save_iu(data, action){
         data: data,
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
+            alert(mensaje);
             if (response > 0){
-                alert('Indice Unificado registrado con exito');
                 $('#listaIu').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -90,11 +91,11 @@ function save_iu(data, action){
 }
 
 function anular_iu(ids){
-    baseUrl = 'anular_iu/'+ids;
+    baseUrl = route('proyectos.variables-entorno.iu.anular_iu', {id: ids});
     $.ajax({
         type: 'GET',
         headers: {'X-CSRF-TOKEN': token},
-        url: 'revisar_iu/'+ids,
+        url: route('proyectos.variables-entorno.iu.revisar_iu', {id: ids}),
         dataType: 'JSON',
         success: function(response){
             console.log(response);

@@ -1,15 +1,19 @@
 @extends('themes.base')
-@include('layout.menu_proyectos')
+@include('layouts.menu_proyectos')
 
-@section('cabecera')
-Lista de Insumos
+@section('cabecera') Lista de Insumos @endsection
+
+@section('estilos')
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
-  <li>Catálogos</li>
-  <li class="active">@yield('cabecera')</li>
+    <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
+    <li>Catálogos</li>
+    <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
 
@@ -24,7 +28,8 @@ Lista de Insumos
                         <div style="text-align: right;">
                             <button type="submit" class="btn btn-success" data-toggle="tooltip"
                                 data-placement="bottom" title="Crear un Insumo Base"
-                                onClick="open_insumo_create();">Crear Insumo</button>
+                                onClick="open_insumo_create();">Crear Insumo
+                            </button>
                         </div>
                         <table class="mytable table table-condensed table-bordered table-okc-view"
                         id="listaInsumo">
@@ -52,30 +57,23 @@ Lista de Insumos
         </div>
     </div>
 </div>
+
 @include('proyectos.insumo.insumoCreate')
 @include('proyectos.variables.add_unid_med')
 @include('proyectos.insumo.insumoPrecioModal')
 @endsection
 
 @section('scripts')
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> -->
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
-
-<script src="{{ asset('js/proyectos/insumos/insumo.js')}}"></script>
-<script src="{{ asset('js/proyectos/insumos/insumoCreate.js')}}"></script>
-<script src="{{ asset('js/proyectos/variables/add_unid_med.js')}}"></script>
-<script src="{{ asset('js/proyectos/insumos/insumoPrecioModal.js')}}"></script>
-<script>
-    $(document).ready(function(){
-        
-    });
-    </script>
+    <script src="{{ asset('js/proyectos/insumos/insumo.js')}}"></script>
+    <script src="{{ asset('js/proyectos/insumos/insumoCreate.js')}}"></script>
+    <script src="{{ asset('js/proyectos/variables/add_unid_med.js')}}"></script>
+    <script src="{{ asset('js/proyectos/insumos/insumoPrecioModal.js')}}"></script>
 @endsection

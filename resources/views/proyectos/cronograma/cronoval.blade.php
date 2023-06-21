@@ -1,5 +1,5 @@
 @include('layout.head')
-@include('layout.menu_proyectos')
+@include('layouts.menu_proyectos')
 @include('layout.body')
 <div class="page-main" type="cronoval">
     <form id="form-cronoval" type="register" form="formulario">

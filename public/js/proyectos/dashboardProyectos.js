@@ -6,21 +6,12 @@ $(function(){
     mostrar_tabla();
 });
 
-let dataLabel = [];
-let dataImportes = [];
-let backgroundColor = [ //Color del segmento
-    "#8BC34A",
-    "#03A9F4",
-    "#FFCE56"
-];
-
 function mostrar_tabla(){
     $.ajax({
         type: 'GET',
-        url: 'getProyectosActivos',
+        url: route('proyectos.getProyectosActivos'),
         dataType: 'JSON',
         success: function(response){
-            console.log(response);
             var html = '';
             var i = 1;
             var porc_actual = 0;

@@ -8,7 +8,7 @@ function listarInsumos(){
         'buttons': vardataTables[2],
         'language' : vardataTables[0],
         // 'processing': true,
-        'ajax': 'listar_insumos',
+        'ajax': route('proyectos.catalogos.insumos.listar_insumos'),
         'columns': [
             {'data': 'id_insumo'},
             {'data': 'cat_descripcion'},
@@ -29,23 +29,26 @@ function listarInsumos(){
             {'data': 'flete'},
             {'data': 'peso_unitario'},
             {'data': 'iu_descripcion'},
-            {'defaultContent': 
-            '<button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Editar" >'+
-                '<i class="fas fa-edit"></i></button>'+
-            '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Anular" >'+
-                '<i class="fas fa-trash"></i></button>'+
-            '<button type="button" class="precios btn btn-warning boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Ver precios" >'+
-                '<i class="fas fa-coins"></i></button>'}
+            {'render': 
+                function (data, type, row) {
+                    return `
+                    <button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" data-placement="bottom" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" data-placement="bottom" title="Anular" >
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button type="button" class="precios btn btn-warning boton" data-toggle="tooltip" data-placement="bottom" title="Ver precios" >
+                        <i class="fas fa-coins"></i>
+                    </button>`;
+                }, className: 'text-center', searcheable: false, orderable: false
+            }
         ],
         'columnDefs': [{ 'aTargets': [0], 'sClass': 'invisible'}],
     });
     botones('#listaInsumo tbody',tabla)
 }
 function botones(tbody, tabla){
-    console.log("editar");
     $(tbody).on("click","button.editar", function(){
         var data = tabla.row($(this).parents("tr")).data();
         open_insumo_create(data);
@@ -60,13 +63,11 @@ function botones(tbody, tabla){
     });
 }
 function anular_insumo(id){
-    console.log(id);
     var anula = confirm('¿Esta seguro que desea Anular éste Insumo?');
-    
     if (anula){
         $.ajax({
             type: 'GET',
-            url: 'anular_insumo/'+id,
+            url: route('proyectos.catalogos.insumos.anular_insumo', {id: id}),
             dataType: 'JSON',
             success: function(response){
                 console.log(response);

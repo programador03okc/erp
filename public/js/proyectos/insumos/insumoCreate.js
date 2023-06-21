@@ -53,12 +53,13 @@ function guardar_insumo(){
     
     var baseUrl;
     if (id !== ''){
-        baseUrl = 'actualizar_insumo';
+        baseUrl = route('proyectos.catalogos.insumos.actualizar_insumo');
+        mensaje = 'Insumo registrado con exito';
     } else {
-        baseUrl = 'guardar_insumo';
+        baseUrl = route('proyectos.catalogos.insumos.guardar_insumo');
+        mensaje = 'Insumo actualizado con exito';
     }
     var msj = verificaInsumo();
-    console.log(data);
 
     if (msj.length > 0){
         alert(msj);
@@ -70,9 +71,8 @@ function guardar_insumo(){
             data: data,
             dataType: 'JSON',
             success: function(response){
-                console.log(response);
+                alert(mensaje);
                 if (response > 0){
-                    alert('Insumo registrado con exito');
                     $('#listaInsumo').DataTable().ajax.reload();
                     limpiarCampos();
                     $('#modal-insumo_create').modal('hide');

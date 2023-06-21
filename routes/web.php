@@ -218,6 +218,9 @@ Route::middleware(['auth'])->group(function () {
 		});
 	});
 
+	/**
+	 * Administración
+	 */
 	Route::name('administracion.')->prefix('administracion')->group(function () {
 		Route::get('index', [AdministracionController::class, 'view_main_administracion'])->name('index');
 
@@ -268,6 +271,9 @@ Route::middleware(['auth'])->group(function () {
 		});
 	});
 
+	/**
+	 * Notificaciones
+	 */
 	Route::name('notificaciones.')->prefix('notificaciones')->group(function () {
 		Route::get('index', [NotificacionController::class, 'index'])->name('index');
 		Route::get('ver/{id}', [NotificacionController::class, 'ver'])->name('ver');

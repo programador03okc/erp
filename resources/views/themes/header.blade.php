@@ -11,11 +11,14 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="{{ route('configuracion.dashboard') }}">Configuración</a>
+                    <a href="{{ route('inicio') }}">Módulos</a>
                 </li>
                 <li>
-                    <a href="#">Sobre Agile</a>
+                    <a href="{{ route('configuracion.dashboard') }}">Configuración</a>
                 </li>
+                {{-- <li>
+                    <a href="#">Sobre Agile</a>
+                </li> --}}
                 <li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle">
                         <i class="fa fa-bell"></i>

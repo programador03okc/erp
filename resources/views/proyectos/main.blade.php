@@ -1,8 +1,8 @@
 @extends('themes.base')
-@include('layout.menu_proyectos')
-@section('cabecera')
-    Dashboard Proyectos
-@endsection
+@include('layouts.menu_proyectos')
+
+@section('cabecera') Dashboard Proyectos @endsection
+
 @section('cuerpo')
 <div class="page-main" type="curvas">
     <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;">

@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_powerbi')
+@include('layouts.menu_powerbi')
 
 @section('cabecera') PowerBi - Cobranzas @endsection
 

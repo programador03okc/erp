@@ -44,7 +44,7 @@ function listarAcus(){
         'language' : vardataTables[0],
         'destroy': true,
         'retrieve': true,
-        'ajax': 'listar_cus',
+        'ajax': route('proyectos.catalogos.acus.listar_cus'),
         'columns': [
             {'data': 'id_cu'},
             {'data': 'codigo'},
@@ -62,8 +62,6 @@ function acuModal(){
     $('#modal-acu').modal({
         show: true
     });
-    // $('.dataTable tbody tr').removeClass('eventClick');
-    // $('.modal-footer label').text('');
     $('#listaAcus').dataTable().fnDestroy();
     listarAcus();
 }

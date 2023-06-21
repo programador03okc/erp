@@ -42,3 +42,6 @@ body .login-box {
 .dataTables_wrapper .dataTables_filter {
     text-align: right;
 }
+.input-group-addon.btn {
+    color: #fff;
+}

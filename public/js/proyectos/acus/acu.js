@@ -9,7 +9,7 @@ function listar_acus(){
         'language' : vardataTables[0],
         'bDestroy': true,
         'retrieve': true,
-        'ajax': 'listar_acus',
+        'ajax': route('proyectos.catalogos.acus.listar_acus'),
         'columns': [
             {'data': 'id_cu_partida'},
             {'data': 'cat_descripcion'},
@@ -33,22 +33,26 @@ function listar_acus(){
                     return ('<span class="label label-'+row['bootstrap_color']+'">'+row['estado_doc']+'</span>');
                 }
             },
-            {'defaultContent': 
-            '<button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Editar" >'+
-                '<i class="fas fa-edit"></i></button>'+
-            '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Anular" >'+
-                '<i class="fas fa-trash"></i></button>'+
-            '<button type="button" class="ver btn btn-info boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Ver" >'+
-                '<i class="fas fa-list-alt"></i></button>'+
-            '<button type="button" class="presupuestos btn btn-warning boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Ver presupuestos enlazados" >'+
-                '<i class="fas fa-file-alt"></i></button>'+
-            '<button type="button" class="duplicar btn btn-success boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Duplicar A.C.U." >'+
-                '<i class="fas fa-copy"></i></button>'}
+            {'render': 
+                function (data, type, row) {
+                    return `
+                    <button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" data-placement="bottom" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" data-placement="bottom" title="Anular">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button type="button" class="ver btn btn-info boton" data-toggle="tooltip" data-placement="bottom" title="Ver">
+                        <i class="fas fa-list-alt"></i>
+                    </button>
+                    <button type="button" class="presupuestos btn btn-warning boton" data-toggle="tooltip" data-placement="bottom" title="Ver presupuestos enlazados">
+                        <i class="fas fa-file-alt"></i>
+                    </button>
+                    <button type="button" class="duplicar btn btn-success boton" data-toggle="tooltip" data-placement="bottom" title="Duplicar A.C.U.">
+                        <i class="fas fa-copy"></i>
+                    </button>`;
+                }, className: 'text-center', searcheable: false, orderable: false
+            }
         ],
         'columnDefs': [ { 'aTargets': [0], 'sClass': 'invisible'} ],
         'order': [[ 2, "asc" ]],
@@ -113,7 +117,7 @@ function duplicar_acu(data){
 
         $.ajax({
             type: 'GET',
-            url: 'listar_acu_detalle/'+data.id_cu_partida,
+            url: route('proyectos.catalogos.acus.listar_acu_detalle', {id: data.id_cu_partida}),
             dataType: 'JSON',
             success: function(response){
                 console.log(response);
@@ -152,7 +156,7 @@ function anular_acu(ids){
     if (ids !== ''){
         var rspta = confirm("¿Está seguro que desea anular éste A.C.U?")
         if (rspta){
-            baseUrl = 'anular_acu/'+ids;
+            baseUrl = route('proyectos.catalogos.acus.anular_acu', {id:ids});
             $.ajax({
                 type: 'GET',
                 // headers: {'X-CSRF-TOKEN': token},
@@ -186,7 +190,7 @@ function open_acuPresupuesto(id){
 function listar_presupuestos(id_cu){
     $.ajax({
         type: 'GET',
-        url: 'mostrar_presupuestos_acu/'+id_cu,
+        url: route('proyectos.catalogos.acus.mostrar_presupuestos_acu', {id: id_cu}),
         dataType: 'JSON',
         success: function(response){
             console.log(response);

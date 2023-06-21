@@ -1,15 +1,19 @@
 @extends('themes.base')
 @include('layouts.menu_proyectos')
 
-@section('cabecera')
-Análisis de Costos Unitarios
+@section('cabecera') Análisis de Costos Unitarios @endsection
+
+@section('estilos')
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 @endsection
 
 @section('breadcrumb')
 <ol class="breadcrumb">
-  <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
-  <li>Catálogos</li>
-  <li class="active">@yield('cabecera')</li>
+    <li><a href="{{route('proyectos.index')}}"><i class="fas fa-tachometer-alt"></i> Proyectos</a></li>
+    <li>Catálogos</li>
+    <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
 
@@ -50,6 +54,7 @@ Análisis de Costos Unitarios
         </div>
     </div>
 </div>
+
 @include('proyectos.acu.acuPartidaCreate')
 @include('proyectos.acu.acuCreate')
 @include('proyectos.acu.acuModal')
@@ -59,41 +64,25 @@ Análisis de Costos Unitarios
 @include('proyectos.insumo.insumoPrecioModal')
 @include('proyectos.variables.add_unid_med')
 @include('proyectos.presupuesto.verAcu')
+
 @endsection
 
 @section('scripts')
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-<!-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> -->
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
-
-<script src="{{ asset('js/proyectos/acus/acu.js') }}"></script>
-<script src="{{ asset('js/proyectos/acus/acuPartidaCreate.js') }}"></script>
-<script src="{{ asset('js/proyectos/acus/acuCreate.js') }}"></script>
-<script src="{{ asset('js/proyectos/acus/acuModal.js') }}"></script>
-<script src="{{ asset('js/proyectos/insumos/insumoModal.js') }}"></script>
-<script src="{{ asset('js/proyectos/insumos/insumoPrecioModal.js') }}"></script>
-<script src="{{ asset('js/proyectos/insumos/insumoCreate.js') }}"></script>
-<script src="{{ asset('js/proyectos/variables/add_unid_med.js') }}"></script>
-<script src="{{ asset('js/proyectos/presupuesto/verAcu.js') }}"></script>
-<script>
-    $(document).ready(function(){
-        
-        // inicializar("{{route('proyectos.variables-entorno.sistemas-contrato.listar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.mostrar')}}","{{route('proyectos.variables-entorno.sistemas-contrato.guardar')}}");
-        // listar();
-
-        // const tieneNuevo='{{Auth::user()->tieneAccion(10)}}';
-        // if (tieneNuevo!='1')
-        // {
-        //     $('#btnNuevo').prop('disabled',true);
-        // }
-
-    });
-    </script>
+    <script src="{{ asset('js/proyectos/acus/acu.js') }}"></script>
+    <script src="{{ asset('js/proyectos/acus/acuPartidaCreate.js') }}"></script>
+    <script src="{{ asset('js/proyectos/acus/acuCreate.js') }}"></script>
+    <script src="{{ asset('js/proyectos/acus/acuModal.js') }}"></script>
+    <script src="{{ asset('js/proyectos/insumos/insumoModal.js') }}"></script>
+    <script src="{{ asset('js/proyectos/insumos/insumoPrecioModal.js') }}"></script>
+    <script src="{{ asset('js/proyectos/insumos/insumoCreate.js') }}"></script>
+    <script src="{{ asset('js/proyectos/variables/add_unid_med.js') }}"></script>
+    <script src="{{ asset('js/proyectos/presupuesto/verAcu.js') }}"></script>
 @endsection

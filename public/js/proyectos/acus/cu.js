@@ -9,7 +9,7 @@ function listar_cus(){
         'language' : vardataTables[0],
         'destroy': true,
         'retrieve': true,
-        'ajax': 'listar_cus',
+        'ajax': route('proyectos.catalogos.nombres-cu.listar_cus'),
         'columns': [
             {'data': 'id_cu'},
             {'data': 'cat_descripcion'},
@@ -21,16 +21,20 @@ function listar_cus(){
                     return ('<span class="label label-'+row['bootstrap_color']+'">'+row['estado_doc']+'</span>');
                 }
             },
-            {'defaultContent': 
-            '<button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Editar" >'+
-                '<i class="fas fa-edit"></i></button>'+
-            '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Anular" >'+
-                '<i class="fas fa-trash"></i></button>'+
-            '<button type="button" class="partidas btn btn-warning boton" data-toggle="tooltip" '+
-                'data-placement="bottom" title="Ver partidas enlazadas" >'+
-                '<i class="fas fa-file-alt"></i></button>'}
+            {'render': 
+                function (data, type, row) {
+                    return `
+                    <button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" data-placement="bottom" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" data-placement="bottom" title="Anular" >
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button type="button" class="partidas btn btn-warning boton" data-toggle="tooltip" data-placement="bottom" title="Ver partidas enlazadas" >
+                        <i class="fas fa-file-alt"></i>
+                    </button>`;
+                }, className: 'text-center', searcheable: false, orderable: false
+            }
         ],
         'columnDefs': [ { 'aTargets': [0], 'sClass': 'invisible'} ],
         'order': [[ 2, "asc" ]],
@@ -44,7 +48,6 @@ function listar_cus(){
 function botones(tbody, tabla){
     $(tbody).on("click","button.editar", function(){
         var data = tabla.row($(this).parents("tr")).data();
-        console.log(data);
         if (data !== undefined){
             edit_acu_create(data);
         }
@@ -68,7 +71,7 @@ function anular_cu(ids){
         if (rspta){
             $.ajax({
                 type: 'GET',
-                url: 'anular_cu/'+ids,
+                url: route('proyectos.catalogos.nombres-cu.anular_cu', {id: ids}),
                 dataType: 'JSON',
                 success: function(response){
                     console.log(response);
@@ -100,7 +103,7 @@ function open_acuPartidas(data){
 function listar_partidas(id_cu){
     $.ajax({
         type: 'GET',
-        url: 'listar_partidas_cu/'+id_cu,
+        url: route('proyectos.catalogos.nombres-cu.listar_partidas_cu', {id: id_cu}),
         dataType: 'JSON',
         success: function(response){
             console.log(response);

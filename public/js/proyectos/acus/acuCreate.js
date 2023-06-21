@@ -24,10 +24,10 @@ $(function(){
         var url = '';
         var msj = '';
         if (id !== ''){
-            url = 'update_cu';
+            url = route('proyectos.catalogos.nombres-cu.update_cu');
             msj = 'Nombre del Costo Unitario actualizado con éxito!';
         } else {
-            url = 'guardar_cu';
+            url = route('proyectos.catalogos.nombres-cu.guardar_cu');
             msj = 'Nombre del Costo Unitario creado con éxito!';
         }
         $.ajax({

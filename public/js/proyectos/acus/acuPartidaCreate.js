@@ -28,7 +28,6 @@ function editar_acu_partida(data) {
     $('#modal-acu_partida_create').modal({
         show: true
     });
-    console.log(data);
     insumos = [];
     id_partida_temporal = null;
     $('[name=id_cu_partida_cd]').val(data.id_cu_partida);
@@ -46,7 +45,7 @@ function editar_acu_partida(data) {
 function listar_acu_detalle(id) {
     $.ajax({
         type: 'GET',
-        url: 'listar_acu_detalle/' + id,
+        url: route('proyectos.catalogos.acus.listar_acu_detalle', {id: id}),
         dataType: 'JSON',
         success: function (response) {
             console.log(response);
@@ -120,9 +119,11 @@ function guardar_acu() {
     console.log(datax);
     var baseUrl;
     if (id !== '') {
-        baseUrl = 'actualizar_acu';
+        baseUrl = route('proyectos.catalogos.acus.actualizar_acu');
+        mensaje = 'Costo Unitario registrado con éxito';
     } else {
-        baseUrl = 'guardar_acu';
+        baseUrl = route('proyectos.catalogos.acus.guardar_acu');
+        mensaje = 'Costo Unitario actualizado con éxito';
     }
     console.log(baseUrl);
     var msj = verificaAcu();
@@ -136,10 +137,8 @@ function guardar_acu() {
             data: datax,
             dataType: 'JSON',
             success: function (response) {
-                console.log(response);
-
                 if (response['id_cu_partida'] > 0) {
-                    alert('Costo Unitario registrado con éxito');
+                    alert(mensaje);
                     let formName = document.getElementsByClassName('page-main')[0].getAttribute('type');
 
                     if (formName == 'presint' || formName == 'preseje') {
@@ -376,8 +375,6 @@ function anular(id) {
             if (!inc) {
                 anulados.push(id);
             }
-            console.log('anulados: ');
-            console.log(anulados);
             var index = insumos.findIndex(function (item, i) {
                 return item.id_cu_detalle == id;
             });

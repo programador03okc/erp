@@ -76,6 +76,7 @@ use App\Http\Controllers\NecesidadesController;
 use App\Http\Controllers\Notificaciones\NotificacionController;
 use App\Http\Controllers\OCAMController;
 use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\Proyectos\Catalogos\AcuController;
 use App\Http\Controllers\Proyectos\Catalogos\InsumoController;
 use App\Http\Controllers\Proyectos\Catalogos\NombresAcuController;
 use App\Http\Controllers\Proyectos\Variables\CategoriaAcuController;
@@ -1956,26 +1957,26 @@ Route::middleware(['auth'])->group(function () {
 			});
 
 			Route::group(['as' => 'acus.', 'prefix' => 'acus'], function () {
-				Route::get('index', 'Proyectos\Catalogos\AcuController@view_acu')->name('index');
-				Route::get('listar_acus', 'Proyectos\Catalogos\AcuController@listar_acus');
-				Route::get('listar_acus_sin_presup', 'Proyectos\Catalogos\AcuController@listar_acus_sin_presup');
-				Route::get('mostrar_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_acu');
-				Route::get('listar_acu_detalle/{id}', 'Proyectos\Catalogos\AcuController@listar_acu_detalle');
-				Route::get('listar_insumo_precios/{id}', 'Proyectos\Catalogos\InsumoController@listar_insumo_precios');
+				Route::get('index', [AcuController::class, 'view_acu'])->name('index');
+				Route::get('listar_acus', [AcuController::class, 'listar_acus'])->name('listar_acus');
+				Route::get('listar_acus_sin_presup', [AcuController::class, 'listar_acus_sin_presup'])->name('listar_acus_sin_presup');
+				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu'])->name('mostrar_acu');
+				Route::get('listar_acu_detalle/{id}', [AcuController::class, 'listar_acu_detalle'])->name('listar_acu_detalle');
+				Route::get('listar_insumo_precios/{id}', [InsumoController::class, 'listar_insumo_precios'])->name('listar_insumo_precios');
 
-				Route::post('guardar_acu', 'Proyectos\Catalogos\AcuController@guardar_acu');
-				Route::post('actualizar_acu', 'Proyectos\Catalogos\AcuController@update_acu');
-				Route::get('anular_acu/{id}', 'Proyectos\Catalogos\AcuController@anular_acu');
-				Route::get('valida_acu_editar/{id}', 'Proyectos\Catalogos\AcuController@valida_acu_editar');
+				Route::post('guardar_acu', [AcuController::class, 'guardar_acu'])->name('guardar_acu');
+				Route::post('actualizar_acu', [AcuController::class, 'update_acu'])->name('actualizar_acu');
+				Route::get('anular_acu/{id}', [AcuController::class, 'anular_acu'])->name('anular_acu');
+				Route::get('valida_acu_editar/{id}', [AcuController::class, 'valida_acu_editar'])->name('valida_acu_editar');
 				
-				Route::get('partida_insumos_precio/{id}/{ins}', 'Proyectos\Catalogos\AcuController@partida_insumos_precio');
-				Route::post('guardar_insumo', 'Proyectos\Catalogos\InsumoController@guardar_insumo');
-				Route::get('listar_insumos', 'Proyectos\Catalogos\InsumoController@listar_insumos');
+				Route::get('partida_insumos_precio/{id}/{ins}', [AcuController::class, 'partida_insumos_precio'])->name('partida_insumos_precio');
+				Route::post('guardar_insumo', [InsumoController::class, 'guardar_insumo'])->name('guardar_insumo');
+				Route::get('listar_insumos', [InsumoController::class, 'listar_insumos'])->name('listar_insumos');
 
-				Route::post('guardar_cu', 'Proyectos\Catalogos\AcuController@guardar_cu');
-				Route::post('update_cu', 'Proyectos\Catalogos\AcuController@update_cu');
-				Route::get('listar_cus', 'Proyectos\Catalogos\NombresAcuController@listar_nombres_cus');
-				Route::get('mostrar_presupuestos_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_presupuestos_acu');
+				Route::post('guardar_cu', [AcuController::class, 'guardar_cu'])->name('guardar_cu');
+				Route::post('update_cu', [AcuController::class, 'update_cu'])->name('update_cu');
+				Route::get('listar_cus', [NombresAcuController::class, 'listar_nombres_cus'])->name('listar_cus');
+				Route::get('mostrar_presupuestos_acu/{id}', [AcuController::class, 'mostrar_presupuestos_acu'])->name('mostrar_presupuestos_acu');
 			});
 		});
 
@@ -2045,17 +2046,17 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::post('add_unid_med', 'Proyectos\Catalogos\InsumoController@add_unid_med');
 				Route::post('update_unitario_partida_cd', 'Proyectos\Opciones\PresupuestoInternoController@update_unitario_partida_cd');
-				Route::get('listar_acus_sin_presup', 'Proyectos\Catalogos\AcuController@listar_acus_sin_presup');
+				Route::get('listar_acus_sin_presup', [AcuController::class, 'listar_acus_sin_presup']);
 
-				Route::get('mostrar_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_acu');
-				Route::get('partida_insumos_precio/{id}/{ins}', 'Proyectos\Catalogos\AcuController@partida_insumos_precio');
-				Route::get('listar_acu_detalle/{id}', 'Proyectos\Catalogos\AcuController@listar_acu_detalle');
-				Route::post('guardar_acu', 'Proyectos\Catalogos\AcuController@guardar_acu');
-				Route::post('actualizar_acu', 'Proyectos\Catalogos\AcuController@update_acu');
+				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
+				Route::get('partida_insumos_precio/{id}/{ins}', [AcuController::class, 'partida_insumos_precio']);
+				Route::get('listar_acu_detalle/{id}', [AcuController::class, 'listar_acu_detalle']);
+				Route::post('guardar_acu', [AcuController::class, 'guardar_acu']);
+				Route::post('actualizar_acu', [AcuController::class, 'update_acu']);
 
-				Route::post('guardar_cu', 'Proyectos\Catalogos\AcuController@guardar_cu');
-				Route::post('update_cu', 'Proyectos\Catalogos\AcuController@update_cu');
-				// Route::get('listar_cus', 'Proyectos\Catalogos\AcuController@listar_cus');
+				Route::post('guardar_cu', [AcuController::class, 'guardar_cu']);
+				Route::post('update_cu', [AcuController::class, 'update_cu']);
+				// Route::get('listar_cus', [AcuController::class, 'listar_cus']);
 				Route::get('listar_cus', 'Proyectos\Catalogos\NombresAcuController@listar_nombres_cus');
 
 				Route::get('listar_insumos', 'Proyectos\Catalogos\InsumoController@listar_insumos');
@@ -2084,7 +2085,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar_pres_crono/{tc}/{tp}', 'Proyectos\Opciones\CronogramaInternoController@listar_pres_crono');
 				Route::get('actualizar_partidas_cronograma/{id}', 'Proyectos\Opciones\CronogramaInternoController@actualizar_partidas_cronograma');
 
-				Route::get('mostrar_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_acu');
+				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
 				Route::get('listar_obs_cd/{id}', 'Proyectos\Opciones\PartidasController@listar_obs_cd');
 				Route::get('listar_obs_ci/{id}', 'Proyectos\Opciones\PartidasController@listar_obs_ci');
 				Route::get('listar_obs_gg/{id}', 'Proyectos\Opciones\PartidasController@listar_obs_gg');
@@ -2149,7 +2150,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('guardar_crono_propuesta', [ProyectosController::class, 'guardar_crono_propuesta']);
 				Route::get('listar_propuesta_crono/{id}', [ProyectosController::class, 'listar_propuesta_crono']);
 				Route::get('ver_gant_propuesta/{id}', [ProyectosController::class, 'ver_gant_propuesta']);
-				Route::get('mostrar_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_acu');
+				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
 
 				Route::get('listar_obs_cd/{id}', [ProyectosController::class, 'listar_obs_cd']);
 				Route::get('listar_obs_ci/{id}', [ProyectosController::class, 'listar_obs_ci']);
@@ -2270,7 +2271,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('update_unitario_partida_cd', [ProyectoController::class, 'update_unitario_partida_cd']);
 				Route::get('listar_acus_sin_presup', [ProyectoController::class, 'listar_acus_sin_presup']);
 
-				Route::get('mostrar_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_acu');
+				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
 				Route::get('partida_insumos_precio/{id}/{ins}', [ProyectoController::class, 'partida_insumos_precio']);
 				Route::get('listar_acu_detalle/{id}', [ProyectoController::class, 'listar_acu_detalle']);
 				Route::post('guardar_acu', [ProyectoController::class, 'guardar_acu']);
@@ -2307,7 +2308,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('anular_crono/{id}', 'Proyectos\Opciones\CronogramaInternoController@anular_crono');
 				Route::get('ver_gant/{id}', 'Proyectos\Opciones\CronogramaInternoController@ver_gant');
 				Route::get('listar_cronograma/{id}', 'Proyectos\Opciones\CronogramaInternoController@listar_cronograma');
-				Route::get('mostrar_acu/{id}', 'Proyectos\Catalogos\AcuController@mostrar_acu');
+				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
 				Route::get('listar_obs_cd/{id}', 'Proyectos\Opciones\PartidasController@listar_obs_cd');
 			});
 

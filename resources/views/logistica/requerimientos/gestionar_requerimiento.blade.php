@@ -39,7 +39,11 @@ Crear / editar requerimiento
         <input type="text" class="oculto" name="id_requerimiento" primary="ids">
         <input type="text" class="oculto" name="cantidad_aprobaciones">
         <input type="text" class="oculto" name="confirmacion_pago">
+        <input type="text" class="oculto" name="fecha_creacion_cc">
+        <input type="text" class="oculto" name="tipo_cuadro">
+        <input type="text" class="oculto" name="tiene_transformacion" value=false>
         <input type="text" class="oculto" name="justificacion_generar_requerimiento">
+        <input type="hidden" class="" name="id_grupo">
         <input type="text" class="oculto" name="estado">
         <input type="text" class="oculto" name="monto_subtotal">
         <input type="text" class="oculto" name="monto_igv">

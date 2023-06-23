@@ -95,7 +95,7 @@ Orden de compra / servicio
                             <h5>Código orden softlink</h5>
                             <input class="form-control activation" name="codigo_orden" type="text" placeholder="" readonly>
                         </div>
-
+                        
                         <div class="col-md-1" id="group-periodo_orden">
                             <h5>Periodo</h5>
                             <select class="form-control activation handleChangePeriodo" name="id_periodo">
@@ -198,6 +198,7 @@ Orden de compra / servicio
                             <h5>Cuenta bancaria</h5>
                             <div style="display:flex;">
                                 <input class="oculto" name="id_cuenta_principal_proveedor">
+                                <input type="text" class="form-control" name="moneda_cuenta_principal_proveedor" style="width:50px;" readOnly>
                                 <input type="text" class="form-control" name="nro_cuenta_principal_proveedor" readOnly>
                                 <button type="button" class="group-text" onClick="cuentasBancariasModal();">
                                     <i class="fa fa-search"></i>
@@ -473,8 +474,13 @@ Orden de compra / servicio
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
+
 
     <script>
         $(document).ready(function() {

@@ -145,6 +145,9 @@
     </div>
     @endif
 </div>
+@include('almacen.ubicacion.almacenUsuario')
+@include('publico.ubigeoModal')
+@include('publico.usuarioModal')
 @endsection
 
 @section('scripts')
@@ -160,7 +163,7 @@
     <script src="{{ asset('js/publico/usuarioModal.js')}}"></script>
     <script>
         $(document).ready(function() {
-            
+
         });
     </script>
 

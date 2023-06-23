@@ -1,7 +1,7 @@
 /*!
- * Bootstrap-select v1.13.2 (https://developer.snapappointments.com/bootstrap-select)
+ * Bootstrap-select v1.13.14 (https://developer.snapappointments.com/bootstrap-select)
  *
- * Copyright 2012-2018 SnapAppointments, LLC
+ * Copyright 2012-2020 SnapAppointments, LLC
  * Licensed under MIT (https://github.com/snapappointments/bootstrap-select/blob/master/LICENSE)
  */
 
@@ -29,10 +29,11 @@
     countSelectedText: 'Seleccionados {0} de {1}',
     maxOptionsText: ['Límite alcanzado ({n} {var} max)', 'Límite del grupo alcanzado({n} {var} max)', ['elementos', 'element']],
     multipleSeparator: ', ',
-    selectAllText: 'Selec. todos',
-    deselectAllText: 'Desmarcar'
+    selectAllText: 'Seleccionar Todos',
+    deselectAllText: 'Desmarcar Todos'
   };
 })(jQuery);
 
 
 }));
+//# sourceMappingURL=defaults-es_ES.js.map

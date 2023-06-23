@@ -364,7 +364,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('lista-cuadro-presupuesto', [RequerimientoPagoController::class, 'listaCuadroPresupuesto'])->name('lista-cuadro-presupuesto');
 				Route::post('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
-				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'PresupuestoInternoController'])->name('obtener-detalle-presupuesto-interno');
+				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 			});
 

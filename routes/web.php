@@ -415,7 +415,7 @@ Route::middleware(['auth'])->group(function () {
 		Route::name('pago.')->prefix('pago')->group(function () {
 			Route::name('listado.')->prefix('listado')->group(function () {
 				Route::get('index', [RequerimientoPagoController::class, 'viewListaRequerimientoPago'])->name('index');
-				Route::get('listado-requerimientos-pagos-export-excel/{meOrAll}/{Empresa}/{Sede}/{Grupo}/{Division}/{FechaDesde}/{FechaHasta}/{Estado}', [RequerimientoPagoController::class, 'viewlistadoRequerimientoPagoExportExcelListaRequerimientoPago'])->name('listado-requerimientos-pagos-export-excel');
+				Route::get('listado-requerimientos-pagos-export-excel/{meOrAll}/{Empresa}/{Sede}/{Grupo}/{Division}/{FechaDesde}/{FechaHasta}/{Estado}', [RequerimientoPagoController::class, 'listadoRequerimientoPagoExportExcel'])->name('listado-requerimientos-pagos-export-excel');
 				Route::get('listado-items-requerimientos-pagos-export-excel/{meOrAll}/{Empresa}/{Sede}/{Grupo}/{Division}/{FechaDesde}/{FechaHasta}/{Estado}', [RequerimientoPagoController::class, 'listadoItemsRequerimientoPagoExportExcel'])->name('listado-items-requerimientos-pagos-export-excel');
 				Route::post('lista-requerimiento-pago', [RequerimientoPagoController::class, 'listarRequerimientoPago'])->name('lista-requerimiento-pago');
 				Route::get('lista-adjuntos-pago/{idRequerimientoPago}', [RegistroPagoController::class, 'listarAdjuntosPago'])->name('lista-adjuntos-pago');

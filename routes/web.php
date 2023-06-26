@@ -1310,6 +1310,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('obtener-presupuesto', [NormalizarController::class, 'obtenerPresupuesto'])->name('obtener-presupuesto');
 				Route::post('vincular-partida', [NormalizarController::class, 'vincularPartida'])->name('vincular-partida');
 				Route::get('detalle-requerimiento-pago/{id}', [NormalizarController::class, 'detalleRequerimientoPago'])->name('detalle-requerimiento-pago');
+
+
 			});
 		});
 
@@ -1320,6 +1322,8 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardarCentroCosto', [CentroCostoController::class, 'guardarCentroCosto'])->name('guardar-centro-costo');
 			Route::post('actualizar-centro-costo', [CentroCostoController::class, 'actualizarCentroCosto'])->name('actualizar-centro-costo');
 			Route::get('anular-centro-costo/{id}', [CentroCostoController::class, 'anularCentroCosto'])->name('anular-centro-costo');
+            Route::get('listar-centro-costos', [CentroCostoController::class, 'listarCentroCostos'])->name('listar-centro-costos');
+
 		});
 
 

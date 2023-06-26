@@ -14,12 +14,12 @@ function mostrarCentroCostos() {
                 <td>${element.grupo_descripcion !== null ? element.grupo_descripcion : ''}</td>
                 <td>${element.periodo}</td>
                 <td width="15%" style="padding:0px;">
-                    <button type="button" class="btn btn-xs btn-info editar" data-toggle="tooltip" data-placement="bottom" 
+                    <button type="button" class="btn btn-xs btn-info editar" data-toggle="tooltip" data-placement="bottom"
                         title="Editar" data-id="${element.id_centro_costo}" data-codigo="${element.codigo}" data-descripcion="${element.descripcion}"
                         data-grupo="${element.id_grupo}" data-periodo="${element.periodo}" data-codpadre="" data-despadre="">
                         <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i></button>
 
-                    <button type="button" class="btn btn-xs btn-danger anular" data-toggle="tooltip" data-placement="bottom" 
+                    <button type="button" class="btn btn-xs btn-danger anular" data-toggle="tooltip" data-placement="bottom"
                         title="Anular" data-id="${element.id_centro_costo}">
                         <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
                 </td>`;
@@ -117,5 +117,65 @@ function anular_cc(id) {
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
+    });
+}
+function listarCentroCostos() {
+    var vardataTables = funcDatatables();
+    var listarCentroCostos = $("#listaCentroCostos").DataTable({
+        language: vardataTables[0],
+        destroy: true,
+        pageLength: 10,
+        serverSide: true,
+        lengthChange: false,
+        dom: vardataTables[1],
+        buttons:[],
+        ajax: {
+            url: route("finanzas.centro-costos.listar-centro-costos"),
+            type: "GET",
+            data:{
+                // filtros
+                _token:token
+            },
+            beforeSend: data => {
+                $("#listaCentroCostos").LoadingOverlay("show", {
+                    imageAutoResize: true,
+                    progress: true,
+                    imageColor: "#3c8dbc"
+                });
+            }
+        },
+        columns: [
+            // {data: 'codigo' },
+            {data: 'codigo' },
+            {data: 'descripcion', class:"text-center"},
+            {data: 'grupo_descripcion' , class:"text-center"},
+            {data: 'periodo' , class:"text-center"},
+            {
+                render: function (data, type, row) {
+                    html='';
+                        html+='<button type="button" class="btn btn-xs btn-info editar" data-toggle="tooltip" data-placement="bottom" title="Editar" data-id="'+row['id_centro_costo']+'" data-codigo="'+row['codigo']+'" data-descripcion="'+row['descripcion']+'" data-grupo="'+row['id_grupo']+'" data-periodo="'+row['periodo']+'" data-codpadre="" data-despadre=""><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i></button>';
+
+                        html+='<button type="button" class="btn btn-xs btn-danger anular" data-toggle="tooltip" data-placement="bottom" title="Anular" data-id="'+row['id_centro_costo']+'"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>';
+
+
+                    html+='';
+                    return html;
+                },
+                className: "text-center"
+            }
+        ],
+        createdRow: function (row, data, dataIndex) {
+            if (data.id_padre == null) {
+                $(row).css('background', 'LightCyan');
+            }
+        },
+
+        order: [[0, "asc"]],
+        // columnDefs: [{ aTargets: [0], sClass: "invisible" }],
+        "drawCallback": function (settings) {
+
+            $("#listaCentroCostos").LoadingOverlay("hide", true);
+        },
+
     });
 }

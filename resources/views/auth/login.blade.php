@@ -57,6 +57,11 @@
             </div>
         </div>
 
+        <br>
+        <div class="row text-center">
+            <p class="text-muted"><span>{{config('global.version')}}</span></p>
+        </div>
+
         <script src="{{ asset('template/adminlte2-4/plugins/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>

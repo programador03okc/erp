@@ -23,13 +23,14 @@
 
                 <form action="{{ route('login') }}" method="post">
                     @csrf
-                    <h5>Usuario o Correo electrónico</h5>
+                    <h5>Usuario ó Correo electrónico</h5>
                     <div class="form-group has-feedback">
-                        <input type="text" name="usuario" class="form-control {{ $errors->has('usuario') ? ' is-invalid' : '' }}" placeholder="Ingrese su usuario">
+                        <input type="text" name="usuario" class="form-control {{ $errors->has('usuario') ? ' is-invalid' : '' }}" 
+                            value="{{ old('usuario') }}" placeholder="Ingrese su usuario">
                         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                         @if ($errors->has('usuario'))
-                            <span class="invalid-feedback text-danger" role="alert">
-                                <strong>{{ $errors->first('usuario') }}</strong>
+                            <span class="form-group has-error">
+                                <span class="help-block">{{ $errors->first('usuario') }}</span>
                             </span>
                         @endif
                     </div>
@@ -38,8 +39,8 @@
                         <input type="password" name="password" class="form-control {{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="Ingrese su contraseña">
                         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                         @if ($errors->has('password'))
-                            <span class="invalid-feedback text-danger" role="alert">
-                                <strong>{{ $errors->first('password') }}</strong>
+                            <span class="form-group has-error">
+                                <span class="help-block">{{ $errors->first('password') }}</span>
                             </span>
                         @endif
                     </div>

@@ -282,7 +282,7 @@
                                     <label class="col-sm-4 control-label">Marca</label>
                                     <div class="col-sm-8">
                                         <input type="text" class="form-control edition limpiarIncidencia d-none" name="marca"/>
-                                        <select class="form-control edition limpiarIncidencia" name="marca" required>
+                                        <select class="form-control edition limpiarIncidencia select2" name="marca" required>
                                             <option value="" disabled>Elija una opción</option>
                                             @foreach ($cas_marca as $item)
                                             <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
@@ -298,7 +298,7 @@
                                     <label class="col-sm-2 control-label">Producto</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control edition limpiarIncidencia d-none" name="producto" />
-                                        <select class="form-control edition limpiarIncidencia" name="producto" required>
+                                        <select class="form-control edition limpiarIncidencia select2" name="producto" required>
                                             <option value="" disabled>Elija una opción</option>
                                             @foreach ($cas_producto as $item)
                                             <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
@@ -325,7 +325,7 @@
                                     <label class="col-sm-3 control-label">Modelo</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control edition limpiarIncidencia d-none" name="modelo"/>
-                                        <select class="form-control edition limpiarIncidencia" name="modelo" required>
+                                        <select class="form-control edition limpiarIncidencia select2" name="modelo" required>
                                             <option value="" disabled>Elija una opción</option>
                                             @foreach ($cas_modelo as $item)
                                             <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
@@ -562,10 +562,8 @@
 
     <script>
         $(document).ready(function() {
-            
-            $(".select2").select2({
-                tags: true
-            });
+
+            $(".select2").select2();
         });
     </script>
 @endsection

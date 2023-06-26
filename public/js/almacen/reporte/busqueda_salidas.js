@@ -50,6 +50,7 @@ function actualizarLista() {
             { 'data': 'cantidad' },
             { 'data': 'estado_doc' },
             { 'data': 'alm_descripcion' },
+            { 'data': 'codigo_requerimiento', 'name':'alm_req.codigo_requerimiento' },
             { 'data': 'cdp' },
             { 'data': 'responsable' },
             // {'data': 'des_condicion'},

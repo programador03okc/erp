@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Debugbar;
+//use Debugbar;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductosExport;
 
@@ -111,7 +111,7 @@ class ProductoController extends Controller
             $data = $data->where('alm_prod.descripcion', trim($request->descripcion))->get();
         }
         // $output['data'] = $data;
-        // Debugbar::info($data);
+        // //Debugbar::info($data);
 
         return response()->json($data);
     }

@@ -7,7 +7,7 @@ namespace App\Models\Logistica;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Debugbar;
+//use Debugbar;
 
 class PagoCuotaDetalle extends Model
 {

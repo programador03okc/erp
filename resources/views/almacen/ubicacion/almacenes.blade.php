@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Orden de Transformación @endsection
+@section('cabecera') Almacenes @endsection
 @include('layouts.menu_almacen')
 @if(Auth::user()->tieneAccion(74))
 @section('option')
@@ -13,7 +13,11 @@
 @endsection
 @endif
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         .invisible{
             display: none;

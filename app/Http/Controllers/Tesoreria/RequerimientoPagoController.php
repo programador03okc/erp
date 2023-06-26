@@ -51,7 +51,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Yajra\DataTables\Facades\DataTables;
-use Debugbar;
+//use Debugbar;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -433,7 +433,7 @@ class RequerimientoPagoController extends Controller
                         }
                     }
 
-                    // Debugbar::info($ObjectoAdjuntoDetalle);
+                    // //Debugbar::info($ObjectoAdjuntoDetalle);
 
                     $idAdjuntoDetalle[] = $this->guardarAdjuntoRequerimientoPagoDetalle($ObjectoAdjuntoDetalle);
                 }
@@ -560,7 +560,7 @@ class RequerimientoPagoController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Debugbar::info($ObjectoAdjuntoDetalle);
+            // //Debugbar::info($ObjectoAdjuntoDetalle);
             $estado_accion = '';
             $idAdjunto = [];
 
@@ -679,7 +679,7 @@ class RequerimientoPagoController extends Controller
 
     function guardarAdjuntoRequerimientoPagoDetalle($ObjectoAdjuntoDetalle)
     {
-        // Debugbar::info($ObjectoAdjuntoDetalle);
+        // //Debugbar::info($ObjectoAdjuntoDetalle);
 
         $idList = [];
 
@@ -901,7 +901,7 @@ class RequerimientoPagoController extends Controller
                             } elseif ($subtotalOrigen > $subtotalNuevo) {
                                 $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
                                 $tipoOperacionItemParaPresupuesto = 'suma';
-                                // Debugbar::info($importeItemParaPresupuesto);
+                                // //Debugbar::info($importeItemParaPresupuesto);
                             }
                         }
                         $detalle->precio_unitario = floatval($request->precioUnitario[$i]);
@@ -953,7 +953,7 @@ class RequerimientoPagoController extends Controller
             //adjuntos detalle
             if (isset($request->archivo_adjunto_detalle_list)) {
 
-                // Debugbar::info(count($request->archivo_adjunto_detalle_list) );
+                // //Debugbar::info(count($request->archivo_adjunto_detalle_list) );
                 $ObjectoAdjuntoDetalle = json_decode($request->archivoAdjuntoRequerimientoPagoDetalleObject);
                 $adjuntoOtrosAdjuntosDetalleLength = $request->archivo_adjunto_detalle_list != null ? count($request->archivo_adjunto_detalle_list) : 0;
                 $archivoAdjuntoDetalleList = $request->archivo_adjunto_detalle_list;

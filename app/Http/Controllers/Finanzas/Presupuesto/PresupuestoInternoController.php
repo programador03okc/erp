@@ -35,7 +35,7 @@ use App\Models\Finanzas\PresupuestoInternoDetalleHistorial;
 use App\Models\Logistica\OrdenCompraDetalle;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use Illuminate\Support\Facades\Auth;
-use Debugbar;
+//use Debugbar;
 
 class PresupuestoInternoController extends Controller
 {
@@ -1669,7 +1669,7 @@ class PresupuestoInternoController extends Controller
                                     $operacion = 'S';
                                 }
 
-                                // Debugbar::info($requerimientoPago->id_presupuesto_interno, 3, $item->id_partida_pi, $nombreMes);
+                                // //Debugbar::info($requerimientoPago->id_presupuesto_interno, 3, $item->id_partida_pi, $nombreMes);
 
                                 $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_requerimiento_pago_detalle',$item->id_requerimiento_pago_detalle)->where('id_requerimiento_pago',$requerimientoPago->id_requerimiento_pago)->first();
 

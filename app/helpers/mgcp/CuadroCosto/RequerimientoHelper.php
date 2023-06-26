@@ -43,7 +43,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
-use Debugbar;
+//use Debugbar;
 
 
 class RequerimientoHelper
@@ -325,7 +325,7 @@ class RequerimientoHelper
 
         if($documento && $documento->id_doc_aprob >0){
 
-            // Debugbar::info($this->obtenerIdUsuario($idUsuario));
+            // //Debugbar::info($this->obtenerIdUsuario($idUsuario));
             $aprobacion = new Aprobacion();
             $aprobacion->id_flujo=null;
             $aprobacion->id_doc_aprob=$documento->id_doc_aprob;

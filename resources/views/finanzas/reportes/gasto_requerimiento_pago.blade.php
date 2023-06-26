@@ -5,6 +5,9 @@
 @include('layouts.menu_finanzas')
 @section('estilos')
 <link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/select2/css/select2.min.css')}}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
     <style>
         .invisible{
             display: none;
@@ -123,7 +126,9 @@
 <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
 
 <script src="{{ asset('js/finanzas/reportes/gasto_requerimiento_pago.js') }}"></script>
-
+<script>
+    vista_extendida();
+</script>
 @endsection
 
 {{-- ------------------------- --}}

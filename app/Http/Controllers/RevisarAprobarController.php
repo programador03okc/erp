@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Debugbar;
+//use Debugbar;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
@@ -243,7 +243,7 @@ class RevisarAprobarController extends Controller{
         foreach ($usuarioDivisionAcceso as $value) {
             $idDivisionUsuarioList[] = $value->id_division;
         }
-        // Debugbar::info($idDivisionUsuarioList);
+        // //Debugbar::info($idDivisionUsuarioList);
 
 
         // $idEmpresa = $request->idEmpresa;
@@ -383,8 +383,8 @@ class RevisarAprobarController extends Controller{
                 }
 
                 $operaciones = Operacion::getOperacion($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago,$idRolUsuarioDocList);
-                // Debugbar::info($operaciones);
-                // Debugbar::info($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago,$idRolUsuarioDocList);
+                // //Debugbar::info($operaciones);
+                // //Debugbar::info($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago,$idRolUsuarioDocList);
                 if(count($operaciones)>1){
                     $mensaje[]= "Se detecto que los criterios del requerimiento dan como resultado multibles operaciones :".$operaciones;
 
@@ -421,7 +421,7 @@ class RevisarAprobarController extends Controller{
                             $idRolAprobanteEnCualquierOrdenList[]= $flujo->id_rol;
                         }
                     }
-                // Debugbar::info($flujo->aprobar_sin_respetar_orden);
+                // //Debugbar::info($flujo->aprobar_sin_respetar_orden);
 
                     if(count(array_intersect($idRolAprobanteEnCualquierOrdenList,$idRolUsuarioList))>0){
                         $aprobarSinImportarOrden = true;
@@ -516,8 +516,8 @@ class RevisarAprobarController extends Controller{
                     }
 
 
-                    // Debugbar::info($idRolUsuarioList);
-                    // Debugbar::info(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList));
+                    // //Debugbar::info($idRolUsuarioList);
+                    // //Debugbar::info(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList));
 
                     if ( in_array(6,$idRolUsuarioList) || ((count(array_intersect($nextIdRolAprobanteList, $idRolUsuarioList))) > 0) == true || (count(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList))) > 0) {
 
@@ -733,7 +733,7 @@ class RevisarAprobarController extends Controller{
         $correoUsuarioList[] = Usuario::find($requerimiento->id_usuario)->email; // notificar a usuario
         $usuariosList = Usuario::getAllIdUsuariosPorRol(4); // notificar al usuario  con rol = 'logistico compras'
 
-        // Debugbar::info($usuariosList);
+        // //Debugbar::info($usuariosList);
         if (count($usuariosList) > 0) {
             if (config('app.debug')) {
                 $correoUsuarioList[] = config('global.correoDebug1');
@@ -757,7 +757,7 @@ class RevisarAprobarController extends Controller{
                     'mensaje' => $mensaje
                 ];
 
-                // Debugbar::info($payload);
+                // //Debugbar::info($payload);
 
                 if (count($destinatarios) > 0) {
                     NotificacionHelper::enviarEmail($payload);
@@ -1031,7 +1031,7 @@ class RevisarAprobarController extends Controller{
 
                 }
 
-                // Debugbar::info($codigoRequerimiento);
+                // //Debugbar::info($codigoRequerimiento);
 
                 $mensajeNotificacion = $codigoRequerimiento.' '.$nombreAccion.' por '.$nombreCompletoUsuarioRevisaAprueba.($request->sustento !=null?(', observación: '.$request->sustento):'');
                 NotificacionHelper::notificacionRequerimiento($idUsuarioDestinatario,$mensajeNotificacion,$documentoInternoId,$documentoId);

@@ -12,7 +12,7 @@ use Swift_Mailer;
 use Swift_Message;
 use Swift_Preferences;
 use Swift_SmtpTransport;
-use Debugbar;
+//use Debugbar;
 
 class NotificacionHelper
 {
@@ -56,7 +56,7 @@ class NotificacionHelper
 
     static public function notificacionFinalizacionCuadro($oportunidades, $usuarios, $payload)
     {
-            //  Debugbar::info($usuarios);
+            //  //Debugbar::info($usuarios);
             try {
 
             if(count($usuarios)>0){

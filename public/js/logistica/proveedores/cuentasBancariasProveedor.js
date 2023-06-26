@@ -212,6 +212,9 @@ function ConstruirTablalistaCuentasBancariasProveedor(data) {
         text: 'Nueva cuenta',
         action: function () {
             agregar_cuenta_proveedor();
+        },
+        init: function(api, node, config) {
+            $(node).removeClass('btn-default')
         }, className: 'btn-primary'
     });
 

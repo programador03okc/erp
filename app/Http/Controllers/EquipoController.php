@@ -14,7 +14,7 @@ use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 date_default_timezone_set('America/Lima');
-use Debugbar;
+//use Debugbar;
 
 class EquipoController extends Controller
 {
@@ -2312,7 +2312,7 @@ class EquipoController extends Controller
                     ])
             ->get();
         }
-        // Debugbar::info($presup);
+        // //Debugbar::info($presup);
 
         $html = '';
         $userSession=$this->userSession()['roles'];

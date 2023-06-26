@@ -58,6 +58,7 @@ use App\Models\Tesoreria\RegistroPago;
 use App\Models\Tesoreria\RegistroPagoAdjuntos;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\TipoCambio;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
@@ -67,7 +68,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
-use Debugbar;
+//use Debugbar;
 use Mockery\Undefined;
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\TreasuryBill;
 use PhpParser\Node\Stmt\TryCatch;
@@ -733,7 +734,7 @@ class RequerimientoController extends Controller
                 ->get();
 
 
-            // Debugbar::info($alm_det_req);
+            // //Debugbar::info($alm_det_req);
 
             if (isset($alm_det_req)) {
                 $lastId = "";
@@ -871,7 +872,7 @@ class RequerimientoController extends Controller
 
         
         $flujoDeAprobacion = (new RevisarAprobarController)->mostrarTodoFlujoAprobacionDeDocumento($num_doc);
-        // Debugbar::info($flujoDeAprobacion);
+        // //Debugbar::info($flujoDeAprobacion);
 
 
         $data = [
@@ -1125,7 +1126,7 @@ class RequerimientoController extends Controller
         $correoUsuarioList[] = Usuario::find($requerimiento->id_usuario)->email; // notificar a usuario
         $usuariosList = Usuario::getAllIdUsuariosPorRol(4); // notificar al usuario  con rol = 'logistico compras'
 
-        // Debugbar::info($usuariosList);
+        // //Debugbar::info($usuariosList);
         if (count($usuariosList) > 0) {
             if (config('app.debug')) {
                 $correoUsuarioList[] = config('global.correoDebug1');
@@ -1149,7 +1150,7 @@ class RequerimientoController extends Controller
                     'mensaje' => $mensaje
                 ];
 
-                // Debugbar::info($payload);
+                // //Debugbar::info($payload);
 
                 if (count($destinatarios) > 0) {
                     NotificacionHelper::enviarEmail($payload);
@@ -1889,7 +1890,7 @@ class RequerimientoController extends Controller
         $fechaRegistroDesde = $request->fechaRegistroDesde;
         $fechaRegistroHasta = $request->fechaRegistroHasta;
         $idEstado = $request->idEstado;
-        // Debugbar::info($division);
+        // //Debugbar::info($division);
         $GrupoDeUsuarioEnSesionList = Auth::user()->getAllGrupo();
         $idGrupoDeUsuarioEnSesionList = [];
         foreach ($GrupoDeUsuarioEnSesionList as $grupo) {
@@ -2243,7 +2244,7 @@ class RequerimientoController extends Controller
     //     foreach ($requerimientos as $element) {
 
     //         if (in_array($element->id_grupo, $idGrupoList) == true) {
-    //             // Debugbar::info($element->id_grupo);
+    //             // //Debugbar::info($element->id_grupo);
     //             $idDocumento = $element->id_doc_aprob;
     //             $id_grupo_req = $element->id_grupo;
     //             $id_tipo_requerimiento_req = $element->id_tipo_requerimiento;
@@ -2253,7 +2254,7 @@ class RequerimientoController extends Controller
 
 
     //             $operaciones = Operacion::getOperacion(1, $id_tipo_requerimiento_req, $id_grupo_req, $division_id, $id_prioridad_req);
-    //             // Debugbar::info($operaciones[0]->id_operacion);
+    //             // //Debugbar::info($operaciones[0]->id_operacion);
     //             if($operaciones ==[]){
     //                 $mensaje[]= "El requerimiento ".$element->codigo." no coincide con una operación valida, es omitido en la lista. Parametros para obtener operacion: tipoDocumento= 1, tipoRequerimiento= ".$id_tipo_requerimiento_req.",Grupo= ".$id_grupo_req.", Division= ".$division_id.", Prioridad= ".$id_prioridad_req;
     //             }else{
@@ -2264,7 +2265,7 @@ class RequerimientoController extends Controller
     //                 $voboList = Aprobacion::getVoBo($idDocumento); // todas las vobo del documento
     //                 $cantidadAprobacionesRealizadas = Aprobacion::getCantidadAprobacionesRealizadas($idDocumento);
     //                 $ultimoVoBo = Aprobacion::getUltimoVoBo($idDocumento);
-    //                 // Debugbar::info($cantidadAprobacionesRealizadas);
+    //                 // //Debugbar::info($cantidadAprobacionesRealizadas);
 
     //                 $nextFlujo = [];
     //                 $nextIdRolAprobante = 0;
@@ -2304,7 +2305,7 @@ class RequerimientoController extends Controller
     //                     if ($ultimoVoBo->id_vobo == 3 && $ultimoVoBo->id_sustentacion != null) { //observado con sustentacion
     //                         foreach ($flujoTotal as $flujo) {
     //                             if ($flujo->orden == 1) {
-    //                                 // Debugbar::info($flujo);
+    //                                 // //Debugbar::info($flujo);
     //                                 $nextFlujo = $flujo;
     //                                 $nextNroOrden = $flujo->orden;
     //                                 $nextIdOperacion = $flujo->id_operacion;
@@ -2321,7 +2322,7 @@ class RequerimientoController extends Controller
     //                     //obtener rol del flujo de aprobacion con orden #1 y comprar con el rol del usuario en sesion
     //                     foreach ($flujoTotal as $flujo) {
     //                         if ($flujo->orden == 1) {
-    //                             // Debugbar::info($flujo);
+    //                             // //Debugbar::info($flujo);
     //                             $nextFlujo = $flujo;
     //                             $nextNroOrden = $flujo->orden;
     //                             $nextIdOperacion = $flujo->id_operacion;
@@ -3697,7 +3698,7 @@ class RequerimientoController extends Controller
         }
 
         // eliminar flujo con numero de orden aprobado
-        // Debugbar::info($aprobacionPendienteList);
+        // //Debugbar::info($aprobacionPendienteList);
 
 
         // si el id_rol usuario le corresponde aprobar la primera aprobacion pendiente y evaluar si le toca la siguiente
@@ -3762,7 +3763,7 @@ class RequerimientoController extends Controller
         //         $status = 200; // No Content
         //         $message = 'Ok';
         //         $aprobaciones = Aprobacion::getVoBo($id_doc_aprob);
-        //         // Debugbar::info($aprobaciones);
+        //         // //Debugbar::info($aprobaciones);
         //         $aprobacionList = $aprobaciones['data'];
         //         $cantidad_aprobaciones = count($aprobacionList);
 
@@ -4443,7 +4444,7 @@ class RequerimientoController extends Controller
             $adjuntoComprobanteContableLength = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar3 != null ? count($request->archivoAdjuntoRequerimientoCabeceraFileGuardar3) : 0;
             $adjuntoComprobanteBancarioLength = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar4 != null ? count($request->archivoAdjuntoRequerimientoCabeceraFileGuardar4) : 0;
             $adjuntoCotizacionLength = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar5 != null ? count($request->archivoAdjuntoRequerimientoCabeceraFileGuardar5) : 0;
-            // Debugbar::info($requerimiento->id_requerimiento, $request->archivoAdjuntoRequerimientoCabeceraFileGuardar4, $requerimiento->codigo, 5);
+            // //Debugbar::info($requerimiento->id_requerimiento, $request->archivoAdjuntoRequerimientoCabeceraFileGuardar4, $requerimiento->codigo, 5);
 
             $idAdjunto = [];
             if ($adjuntoOtrosAdjuntosLength > 0) {

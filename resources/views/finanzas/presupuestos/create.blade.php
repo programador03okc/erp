@@ -1,7 +1,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Orden de Transformación @endsection
+@section('cabecera') Presupuestos @endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script> --}}

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\File;
 
 date_default_timezone_set('America/Lima');
 
-use Debugbar;
+//use Debugbar;
 use PDO;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ListOrdenesHeadExport;
@@ -467,7 +467,7 @@ class OrdenController extends Controller
     //         ->get();
 
     //     // $orden_list = collect($orden_obj)->map(function($x){ return (array) $x; })->toArray();
-    //     // Debugbar::info($orden_obj);
+    //     // //Debugbar::info($orden_obj);
 
     //     $output['data'] = $orden_obj;
     //     return $output;
@@ -1279,7 +1279,7 @@ class OrdenController extends Controller
     //     }
 
 
-    //     // Debugbar::info($data_detalle_orden);
+    //     // //Debugbar::info($data_detalle_orden);
 
     //     foreach ($data_orden as $ordenKey => $ordenValue) {
     //         foreach ($data_detalle_orden as $detalleOrdnKey => $detalleOrdenValue) {
@@ -3034,14 +3034,14 @@ class OrdenController extends Controller
 
     function obtenerNuevoEstadoCabeceraRequerimiento($idRequerimientoList, $nuevoEstadoDetalleRequerimiento)
     {
-        // Debugbar::info($idRequerimientoList);
-        // Debugbar::info($nuevoEstadoDetalleRequerimiento);
+        // //Debugbar::info($idRequerimientoList);
+        // //Debugbar::info($nuevoEstadoDetalleRequerimiento);
 
         $estadoRequerimiento = [];
         foreach ($nuevoEstadoDetalleRequerimiento as $itemBase) {
             $estadoRequerimiento[$itemBase['id_requerimiento']][] = $itemBase['estado'];
         }
-        // Debugbar::info($estadoRequerimiento);
+        // //Debugbar::info($estadoRequerimiento);
 
         $nuevoEstadoCabeceraRequerimiento = [];
 
@@ -3078,19 +3078,19 @@ class OrdenController extends Controller
         $detalleOrdenGeneradaList = $this->obtenerDetalleOrdenGenerada($idOrden);
         $itemAtendidoParcialOSinAtender = $this->obtenerItemAtendidoParcialOSinAtender($itemBaseList);
         // if(config('app.debug')){
-        // Debugbar::info($idRequerimientoList);
-        // Debugbar::info($detalleRequerimiento);
-        // Debugbar::info($itemBaseList);
-        // Debugbar::info($itemBaseEnOtrasOrdenesGeneradasList);
-        // Debugbar::info($detalleOrdenGeneradaList);
-        //     Debugbar::info($itemAtendidoParcialOSinAtender);
+        // //Debugbar::info($idRequerimientoList);
+        // //Debugbar::info($detalleRequerimiento);
+        // //Debugbar::info($itemBaseList);
+        // //Debugbar::info($itemBaseEnOtrasOrdenesGeneradasList);
+        // //Debugbar::info($detalleOrdenGeneradaList);
+        //     //Debugbar::info($itemAtendidoParcialOSinAtender);
         // }
 
 
         $nuevoEstadoDetalleRequerimiento = $this->obtenerNuevoEstadoDetalleRequerimiento($itemBaseList, $itemBaseEnOtrasOrdenesGeneradasList, $detalleOrdenGeneradaList, $itemAtendidoParcialOSinAtender);
-        // Debugbar::info($nuevoEstadoDetalleRequerimiento);
+        // //Debugbar::info($nuevoEstadoDetalleRequerimiento);
         $nuevoEstadoCabeceraRequerimiento = $this->obtenerNuevoEstadoCabeceraRequerimiento($idRequerimientoList, $nuevoEstadoDetalleRequerimiento);
-        // Debugbar::info($nuevoEstadoCabeceraRequerimiento);
+        // //Debugbar::info($nuevoEstadoCabeceraRequerimiento);
 
 
         // actualizar cabecera requerimiento
@@ -3269,7 +3269,7 @@ class OrdenController extends Controller
                                     }elseif($subtotalOrigen > $subtotalNuevo){
                                         $importeItemParaPresupuesto=$subtotalOrigen - $subtotalNuevo;
                                         $tipoOperacionItemParaPresupuesto= 'suma';
-                                        // Debugbar::info($importeItemParaPresupuesto);
+                                        // //Debugbar::info($importeItemParaPresupuesto);
                                     }
                                 }
 
@@ -3297,7 +3297,7 @@ class OrdenController extends Controller
 
                 $detalleParaPresupuestoSumaArray=[];
                 $detalleParaPresupuestoRestaArray=[];
-                // Debugbar::info($detalleArray);
+                // //Debugbar::info($detalleArray);
                 foreach ($detalleArray as $key => $det) {
                     if(isset($det->operacion_item_para_presupuesto) && $det->operacion_item_para_presupuesto =='suma'){
                         $detalleParaPresupuestoSumaArray[]=$det;
@@ -3306,8 +3306,8 @@ class OrdenController extends Controller
                         $detalleParaPresupuestoRestaArray[]=$det;
                     }
                 }
-                // Debugbar::info($detalleParaPresupuestoSumaArray);
-                // Debugbar::info($detalleParaPresupuestoRestaArray);
+                // //Debugbar::info($detalleParaPresupuestoSumaArray);
+                // //Debugbar::info($detalleParaPresupuestoRestaArray);
 
                 $afectaPresupuestoInternoSuma = (new PresupuestoInternoController)->afectarPresupuestoInterno('suma','orden',$orden->id_orden_compra, $detalleParaPresupuestoSumaArray);
                 $afectaPresupuestoInternoResta = (new PresupuestoInternoController)->afectarPresupuestoInterno('resta','orden',$orden->id_orden_compra, $detalleParaPresupuestoRestaArray);
@@ -4032,7 +4032,7 @@ class OrdenController extends Controller
                                 ]);
                         }
                     }
-                    // Debugbar::info($status);
+                    // //Debugbar::info($status);
 
                     $output = [
                         'id_orden_compra' => $idOrden,
@@ -4451,7 +4451,7 @@ class OrdenController extends Controller
 
             if (!empty($orden)) {
                 //ya fue autorizado?
-                // Debugbar::info(isset($request->pagoEnCuotasCheckbox));
+                // //Debugbar::info(isset($request->pagoEnCuotasCheckbox));
                 if (intval($orden->estado_pago) !== 5) {
                     //ya fue pagado?
                     if (intval($orden->estado_pago) !== 6) {
@@ -4852,9 +4852,9 @@ class OrdenController extends Controller
                     }
                 }
             }
-            // Debugbar::info($ObjectoAdjunto);
+            // //Debugbar::info($ObjectoAdjunto);
 
-            // Debugbar::info($idOrden,$codigoOrden,$idAdjuntoList,$archivoAdjuntoList,$fechaEmisionAdjuntoList,$nroComprobanteAdjuntoList,$idCategoriaAdjuntoList,$accionAdjunto);
+            // //Debugbar::info($idOrden,$codigoOrden,$idAdjuntoList,$archivoAdjuntoList,$fechaEmisionAdjuntoList,$nroComprobanteAdjuntoList,$idCategoriaAdjuntoList,$accionAdjunto);
 
             $idAdjunto = [];
             if ($adjuntoOtrosAdjuntosLength > 0) {

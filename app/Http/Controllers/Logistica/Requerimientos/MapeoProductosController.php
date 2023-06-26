@@ -14,7 +14,7 @@ use Dotenv\Regex\Success;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Exception;
-use Debugbar;
+//use Debugbar;
 
 class MapeoProductosController extends Controller
 {
@@ -290,7 +290,7 @@ class MapeoProductosController extends Controller
                     }
                 }
             }
-            Debugbar::info($idDetalleRequerimientoOrigenList);
+            //Debugbar::info($idDetalleRequerimientoOrigenList);
 
             if(count($idDetalleRequerimientoOrigenList)>0){
                 foreach ($request->detalle as $det) {

@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
-use Debugbar;
+//use Debugbar;
 use Exception;
 
 class RegistroPagoController extends Controller
@@ -593,8 +593,8 @@ class RegistroPagoController extends Controller
                     $sumaPagos+=$detCuota->monto_cuota;
                     }
 
-                    // Debugbar::info($ord->monto_total);
-                    // Debugbar::info($sumaPagos);
+                    // //Debugbar::info($ord->monto_total);
+                    // //Debugbar::info($sumaPagos);
 
                     if(floatval($ord->monto_total) > floatval($sumaPagos)){
                     DB::table('logistica.log_ord_compra')

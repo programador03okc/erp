@@ -1250,6 +1250,7 @@ class ListaOrdenView {
                         $('#modal-enviar-solicitud-pago').modal('hide');
 
                         this.tipoVistaPorCabecera();
+                        // $("#listaOrdenes").DataTable().ajax.reload(null, false);
 
                     } else {
                         Swal.fire(

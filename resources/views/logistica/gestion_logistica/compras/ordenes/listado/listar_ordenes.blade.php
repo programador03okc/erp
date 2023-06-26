@@ -20,8 +20,6 @@ Gestión de ordenes
 
 @section('cuerpo')
 <div class="page-main" type="listar_ordenes" id="listar_ordenes">
-    <legend class="mylegend">
-    </legend>
     {{-- @if (in_array(33,$array_accesos) || in_array(19,$array_accesos) || in_array(36,$array_accesos) || in_array(35,$array_accesos) || in_array(34,$array_accesos) || in_array(18,$array_accesos)) --}}
     @if (in_array(243,$array_accesos) || in_array(250,$array_accesos))
         <fieldset class="group-table">

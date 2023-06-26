@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
-use Debugbar;
+//use Debugbar;
 
 
 class ProveedoresController extends Controller
@@ -261,7 +261,7 @@ class ProveedoresController extends Controller
                     } elseif ($request->estadoEstablecimiento[$i] == 7 && $request->idEstablecimiento[$i] > 0) {
                         $establecimientoSeleccionado = EstablecimientoProveedor::where("id_establecimiento", $request->idEstablecimiento[$i])->first();
                         if ($establecimientoSeleccionado) {
-                            // Debugbar::info($establecimientoSeleccionado->id_establecimiento);
+                            // //Debugbar::info($establecimientoSeleccionado->id_establecimiento);
                             $establecimientoSeleccionado->estado = 7;
                             $establecimientoSeleccionado->save();
                         }

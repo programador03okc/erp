@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
-use Debugbar;
+//use Debugbar;
 
 class OrdenesDespachoExternoController extends Controller
 {

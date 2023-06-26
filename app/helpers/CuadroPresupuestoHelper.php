@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Helpers\NotificacionHelper;
 
-use Debugbar;
+//use Debugbar;
 
 
 class CuadroPresupuestoHelper
@@ -164,7 +164,7 @@ class CuadroPresupuestoHelper
                 $codigoTransformacion=empty($transformacion->codigo)?null:$transformacion->codigo;
                 // Mail::to($correosOrdenServicioTransformacion)->send(new EmailOrdenServicioOrdenTransformacion($pl['oportunidad'],$logoEmpresa,$codigoTransformacion));
             }
-            // Debugbar::info('debe guardar notificacion');
+            // //Debugbar::info('debe guardar notificacion');
             
             // $notificacionOrdenServicioTransformacion = NotificacionHelper::notificacionOrdenServicioTransformacion($codigoTransformacion,$idUsuarioOrdenServicioTransformacion,$pl['oportunidad']);
             $notificacionOrdenServicioTransformacion['mensaje']='';

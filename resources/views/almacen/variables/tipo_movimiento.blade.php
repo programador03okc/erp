@@ -13,6 +13,10 @@
 @endif
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         .invisible{
@@ -55,40 +59,44 @@
             </fieldset>
         </div>
         <div class="col-md-6">
-            <form id="form-tipo_movimiento" type="register" form="formulario">
-                <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
-                <input type="text" class="oculto"  name="id_operacion">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Tipo</h5>
-                        <select class="form-control activation" name="tipo" disabled="true">
-                            <option value="0" selected>Elija una opción</option>
-                            <option value="1">Ingreso</option>
-                            <option value="2">Salida</option>
-                            <option value="3">Ingreso/Salida</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <h5>Cod.Sunat</h5>
-                        <input type="text" class="form-control activation"  name="cod_sunat" disabled="true">
-                    </div>
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="form-tipo_movimiento" type="register" form="formulario">
+                        <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
+                        <input type="text" class="oculto"  name="id_operacion">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Tipo</h5>
+                                <select class="form-control activation" name="tipo" disabled="true">
+                                    <option value="0" selected>Elija una opción</option>
+                                    <option value="1">Ingreso</option>
+                                    <option value="2">Salida</option>
+                                    <option value="3">Ingreso/Salida</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Cod.Sunat</h5>
+                                <input type="text" class="form-control activation"  name="cod_sunat" disabled="true">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>Descripción</h5>
+                                <input type="text" class="form-control activation" name="descripcion" disabled="true">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                            <h5>Estado</h5>
+                            <select class="form-control activation" name="estado" readonly>
+                                <option value="1" selected>Activo</option>
+                                <option value="2">Inactivo</option>
+                            </select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h5>Descripción</h5>
-                        <input type="text" class="form-control activation" name="descripcion" disabled="true">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                    <h5>Estado</h5>
-                    <select class="form-control activation" name="estado" readonly>
-                        <option value="1" selected>Activo</option>
-                        <option value="2">Inactivo</option>
-                    </select>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
     @else

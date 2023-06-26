@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models\Administracion;
-use Debugbar;
+//use Debugbar;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;

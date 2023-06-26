@@ -13,7 +13,7 @@ use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Debugbar;
+//use Debugbar;
 use Illuminate\Validation\Rules\Unique;
 
 class Orden extends Model

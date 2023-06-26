@@ -12,7 +12,7 @@ use App\models\Configuracion\AccesosUsuarios;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Debugbar;
+//use Debugbar;
 use Exception;
 
 class ReservasAlmacenController extends Controller
@@ -90,7 +90,7 @@ class ReservasAlmacenController extends Controller
         if( $request->id>0){
             $reservaHelper = new ReservaHelper();
             $reserva=$reservaHelper->anularReservaDeProducto($request->id,null,$request->motivo_de_anulacion);
-            Debugbar::info('$reserva');
+            //Debugbar::info('$reserva');
 
             return response()->json(['respuesta' =>  $reserva['id_reserva'] , 'data' => $reserva['data'], 'tipo_estado' => $reserva['tipo_estado'], 'mensaje' => $reserva['mensaje'], 'estado_requerimiento' => $reserva['estado_requerimiento'], 'lista_finalizados' => $reserva['lista_finalizados'], 'lista_restablecidos' => $reserva['lista_restablecidos']]);
         } else {

@@ -16,7 +16,7 @@ use App\Models\almacen\Transformado;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Debugbar;
+//use Debugbar;
 
 class ReservaHelper
 {

@@ -13,7 +13,11 @@
     @endsection
 @endif
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         .invisible{
             display: none;
@@ -51,32 +55,30 @@
             </fieldset>
         </div>
         <div class="col-md-6">
-            <form id="form-marca" type="register" form="formulario">
-                <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
-                <input type="hidden" class="form-control" name="id_subcategoria" primary="ids">
-                <!-- <div class="row">
-                    <div class="col-md-6">
-                        <h5>Codigo</h5>
-                        <input type="text" class="form-control" readonly name="codigo">
-                    </div>
-                </div> -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <h5>Descripción</h5>
-                        <input type="text" class="form-control activation" name="descripcion">
-                    </div>
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="form-marca" type="register" form="formulario">
+                        <input type="hidden" name="_token" value="{{csrf_token()}}" id="token">
+                        <input type="hidden" class="form-control" name="id_subcategoria" primary="ids">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>Descripción</h5>
+                                <input type="text" class="form-control activation" name="descripcion">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                            <h5 id="nombre_corto">Registrado por: <label></label></h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                            <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <h5 id="nombre_corto">Registrado por: <label></label></h5>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <h5 id="fecha_registro">Fecha Registro: <label></label></h5>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
     @else

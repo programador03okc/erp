@@ -21,6 +21,9 @@ function lista() {
                 window.location.href='crear';
                 // window.open('crear');
             },
+            init: function(api, node, config) {
+                $(node).removeClass('btn-default')
+            },
             className: 'btn-primary btn-sm'
         }:
         []
@@ -36,6 +39,9 @@ function lista() {
                 // vistaCrear();
                 cierreMesual();
                 // window.open('crear');
+            },
+            init: function(api, node, config) {
+                $(node).removeClass('btn-default')
             },
             className: 'btn-danger btn-sm'
         }:
@@ -80,23 +86,6 @@ function lista() {
                     return '<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'">'+row['total_ejecutado']+'</a>';
                 }
             },
-            // {data: 'total_ejecutado', name:"total_ejecutado" , class:"text-center"},
-            // {
-            //     render: function (data, type, row) {
-            //         var estado = row['estado'],
-            //             descripcion_estado='';
-            //         switch (estado) {
-            //             case 1:
-            //                 descripcion_estado='Elaborado'
-            //             break;
-            //             case 2:
-            //                 descripcion_estado='Aprobado'
-            //             break;
-            //         }
-            //         return descripcion_estado
-            //     },
-            //     className: "text-center"
-            // },
             {
                 render: function (data, type, row) {
                     html='';
@@ -108,7 +97,7 @@ function lista() {
                         :'');
                         if (row['estado']==2) {
                             (array_accesos.find(element => element === 302)?
-                            html+='<button type="button" class="btn btn-danger btn-flat botonList editar-registro-aprobado" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar Presupuesto Interno Aprobado" data-original-title="Editar"><i class="fa fa-edit"></i></button>'
+                            html+='<button type="button" class="btn btn-danger btn-flat botonList editar-registro-aprobado" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar Presupuesto Interno Aprobado" data-original-title="Editar"><i class="fa fa-pencil-alt"></i></button>'
                             :'');
                         }
                         // html+='<button type="button" class="btn btn-info btn-flat botonList editar-monto-partida" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar monto por partida" data-original-title="Editar"><i class="fas fa-pencil-alt"></i></button>';

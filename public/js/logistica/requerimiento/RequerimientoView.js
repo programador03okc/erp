@@ -10,7 +10,7 @@ var objBotonAdjuntoRequerimientoDetalleSeleccionado = '';
 class RequerimientoView {
     constructor(requerimientoCtrl) {
         this.requerimientoCtrl = requerimientoCtrl;
-        const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));
+        const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel(token));
         this.presupuestoInternoView = presupuestoInternoView;
     }
     init() {

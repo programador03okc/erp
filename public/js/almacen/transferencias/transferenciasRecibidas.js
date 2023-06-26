@@ -483,7 +483,7 @@ function abrirRequerimiento(id_requerimiento) {
 
 function exportarVentasInternasActualizadas() {
     var form = $(`<form action="actualizarCostosVentasInternas" method="post" target="_blank">
-        <input type="hidden" name="_token" value="${csrf_token}"/>
+        <input type="hidden" name="_token" value="${token}"/>
         </form>`);
     $('body').append(form);
     form.trigger('submit');
@@ -491,7 +491,7 @@ function exportarVentasInternasActualizadas() {
 
 function exportarValorizacionesIngresos() {
     var form = $(`<form action="actualizarValorizacionesIngresos" method="post" target="_blank">
-        <input type="hidden" name="_token" value="${csrf_token}"/>
+        <input type="hidden" name="_token" value="${token}"/>
         </form>`);
     $('body').append(form);
     form.trigger('submit');

@@ -20,7 +20,7 @@ $("#listaPartidas tbody").on('click', ".ver-detalle", function () {
 function mostrarRequerimientosDetalle(id) {
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: "mostrarRequerimientosDetalle/" + id,
         dataType: 'JSON',
         success: function (response) {

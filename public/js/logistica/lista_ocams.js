@@ -39,7 +39,7 @@ function listar_ordenes_propias(tabla,id_empresa= null,year_publicacion =null, c
             // url:'/logistica/requerimiento/lista/'+id_empresa+'/'+id_sede+'/'+id_grupo,
             url:rutaListaOrdenesPropias+'/'+id_empresa+'/'+year_publicacion+'/'+condicion,
             type:'GET'
-            // data: {_token: "{{csrf_token()}}"}
+            // data: {_token:token}
         },
         'columns':[
             {'render': function (data, type, row,meta){

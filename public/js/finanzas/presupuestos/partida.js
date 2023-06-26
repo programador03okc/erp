@@ -52,7 +52,7 @@ function guardar_partida(data, url){
     console.log(data);
     $.ajax({
         type: 'POST',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: url,
         data: data,
         dataType: 'JSON',
@@ -101,7 +101,7 @@ $("#listaPartidas tbody").on('click', ".anular-partida", function(){
 function anular_partida(id){
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: "anular-partida/"+id,
         dataType: 'JSON',
         success: function(response){

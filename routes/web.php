@@ -1380,7 +1380,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('detalle-requeriento-para-reserva/{idDetalleRequerimiento?}', [RequerimientoController::class, 'detalleRequerimientoParaReserva'])->name('detalle-requerimiento-para-reserva');
 					Route::get('almacen-requeriento/{idRequerimiento?}', [RequerimientoController::class, 'obtenerAlmacenRequerimiento'])->name('almacen-requeriento');
 					Route::get('historial-reserva-producto/{idDetalleRequerimiento?}', [RequerimientoController::class, 'historialReservaProducto'])->name('historial-reserva-producto');
-					Route::get('todo-detalle-requeriento/{idRequerimiento?}/{transformadosONoTransformados?}', [CategoriaController::class, 'todoDetalleRequerimiento'])->name('todo-detalle-requerimiento');
+					Route::get('todo-detalle-requeriento/{idRequerimiento?}/{transformadosONoTransformados?}', [RequerimientoController::class, 'todoDetalleRequerimiento'])->name('todo-detalle-requerimiento');
 					Route::get('mostrar_tipos_clasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar_tipos_clasificacion');
 					Route::get('por-regularizar-cabecera/{id}', [ComprasPendientesController::class, 'listarPorRegularizarCabecera'])->name('por-regularizar-cabecera');
 					Route::get('por-regularizar-detalle/{id}', [ComprasPendientesController::class, 'listarPorRegularizarDetalle'])->name('por-regularizar-detalle');
@@ -1578,7 +1578,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar_ubigeos', [AlmacenController::class, 'listar_ubigeos'])->name('listar-ubigeos');
 				Route::post('guardarOrdenDespachoExterno', [OrdenesDespachoExternoController::class, 'guardarOrdenDespachoExterno'])->name('guardar-orden-despacho-externo');
 				Route::get('adjuntos-despacho', [OrdenesDespachoExternoController::class, 'adjuntosDespacho'])->name('adjuntos-despacho');
-				Route::post('generarDespachoInterno', [OrdenesDespachoExternoController::class, 'generarDespachoInterno'])->name('generar-despacho-interno');
+				Route::post('generarDespachoInterno', [OrdenesDespachoInternoController::class, 'generarDespachoInterno'])->name('generar-despacho-interno');
 				Route::post('actualizarOrdenDespachoExterno', [OrdenesDespachoExternoController::class, 'actualizarOrdenDespachoExterno'])->name('actualizar-orden-despacho-externo');
 				Route::get('anular_orden_despacho/{id}/{tp}', [SalidasPendientesController::class, 'anular_orden_despacho'])->name('anular-orden-despacho');
 				Route::post('enviarFacturacion', [OrdenesDespachoExternoController::class, 'enviarFacturacion'])->name('enviar-facturacion');

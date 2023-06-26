@@ -27,7 +27,7 @@ function listar_requerimientos_pendientes_aprobar(){
         'ajax': {
             url:rutaListaPendienteAprobacion,
             type:'GET',
-            data: {_token: "{{csrf_token()}}"}
+            data: {_token:token}
         },
         'columns':[
             {'render':

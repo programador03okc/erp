@@ -201,7 +201,7 @@ function listarTablaReq(id_empresa = null, id_sede = null, id_grupo = null, id_p
             // url:'/logistica/requerimiento/lista/'+id_empresa+'/'+id_sede+'/'+id_grupo,
             url: rutaListaElaborados,
             type: 'POST',
-            // data: {_token: "{{csrf_token()}}"}
+            // data: {_token: token}
             data: { id_empresa, id_sede, id_grupo, id_prioridad }
         },
         'columns': [

@@ -79,7 +79,7 @@ $("#form-presupuestoCreate").on("submit", function (e) {
 function guardar_presupuesto(data, url) {
     $.ajax({
         type: 'POST',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: url,
         data: data,
         dataType: 'JSON',
@@ -101,7 +101,7 @@ let presupuesto = null;
 function mostrarPartidas(id) {
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: 'mostrarPartidas/' + id,
         dataType: 'JSON',
         success: function (response) {

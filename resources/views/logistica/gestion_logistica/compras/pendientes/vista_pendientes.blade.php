@@ -175,6 +175,7 @@ Requerimientos pendientes
 <script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
 
 <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
 
 

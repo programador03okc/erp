@@ -46,7 +46,7 @@ class RequerimientoPago {
             },
             action: () => {
                 let form = $('<form action="exportar-requerimientos-pagos" method="POST" target="_blank">'+
-                    '<input type="hidden" name="_token" value="'+csrf_token+'" >'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
                     '<input type="hidden" name="prioridad" value="'+$data.prioridad+'" >'+
                     '<input type="hidden" name="empresa" value="'+$data.empresa+'" >'+
                     '<input type="hidden" name="estado" value="'+$data.estado+'" >'+
@@ -259,7 +259,7 @@ class RequerimientoPago {
             },
             action: () => {
                 let form = $('<form action="exportar-ordeners-compras-servicios" method="POST" target="_blank">'+
-                    '<input type="hidden" name="_token" value="'+csrf_token+'" >'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
                     '<input type="hidden" name="prioridad" value="'+$data_orden.prioridad+'" >'+
                     '<input type="hidden" name="empresa" value="'+$data_orden.empresa+'" >'+
                     '<input type="hidden" name="estado" value="'+$data_orden.estado+'" >'+

@@ -73,7 +73,7 @@ $("#form-tituloCreate").on("submit", function (e) {
 function guardar_titulo(data, url) {
     $.ajax({
         type: 'POST',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: url,
         data: data,
         dataType: 'JSON',
@@ -126,7 +126,7 @@ $("#listaPartidas tbody").on('click', ".anular-titulo", function () {
 function anular_titulo(id) {
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: "anular-titulo/" + id,
         dataType: 'JSON',
         success: function (response) {

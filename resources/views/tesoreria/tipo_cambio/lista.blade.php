@@ -80,19 +80,18 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
     
 
     <script>
-        // let csrf_token = '{{ csrf_token() }}';
         let vardataTables = funcDatatables();
         $(document).ready(function() {
             listar();
 
             $("#formulario").on("submit", function() {
                 var data = $(this).serializeArray();
-                data.push({_token: csrf_token});
+                data.push({_token: token});
 
                 $.ajax({
                     type: "POST",
@@ -144,7 +143,7 @@
                 ajax: {
                     url: "{{ route('tesoreria.tipo-cambio.listar') }}",
                     method: 'POST',
-                    headers: {'X-CSRF-TOKEN': csrf_token}
+                    headers: {'X-CSRF-TOKEN': token}
                 },
                 columns: [
                     {data: 'fecha', className: 'text-center'},
@@ -175,7 +174,7 @@
                 type: 'POST',
                 url: "{{ route('tesoreria.tipo-cambio.editar') }}",
                 data: {
-                    _token: csrf_token,
+                    _token: token,
                     id: id,
                 },
                 dataType: 'JSON',

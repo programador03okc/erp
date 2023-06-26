@@ -1,7 +1,7 @@
 function mostrarCentroCostos() {
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: 'mostrar-centro-costos',
         dataType: 'JSON',
         success: function (response) {
@@ -53,7 +53,7 @@ $("#form-centro-costos").on("submit", function (e) {
 function guardar_cc(data, url) {
     $.ajax({
         type: 'POST',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: url,
         data: data,
         dataType: 'JSON',
@@ -106,7 +106,7 @@ $("#listaCentroCostos tbody").on('click', ".anular", function () {
 function anular_cc(id) {
     $.ajax({
         type: 'GET',
-        // headers: {'X-CSRF-TOKEN': csrf_token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: "anular-centro-costo/" + id,
         dataType: 'JSON',
         success: function (response) {

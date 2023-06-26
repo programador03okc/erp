@@ -667,7 +667,7 @@ class RevisarAprobarController extends Controller{
                 break;
             case '3':
                 $requerimientoPago->id_estado = 3;
-                if($requerimientoPago->estado !=3){
+                if($requerimientoPago->id_estado !=3){
                     $requerimientoPago->estado_anterior = $requerimientoPago->id_estado;
                 }
                 break;
@@ -870,7 +870,7 @@ class RevisarAprobarController extends Controller{
                 $montoTotal=$obtenerMontoTotal['monto'];
 
             }else{
-                return response()->json(['id_aprobacion' => 0, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
+                return response()->json(['id_aprobacion' => -1, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
 
             }
 
@@ -887,7 +887,7 @@ class RevisarAprobarController extends Controller{
                     if($obtenerId['estado']=='success'){
                         $requerimiento = Requerimiento::find($obtenerId['id']);
                     }else{
-                        return response()->json(['id_aprobacion' => 0, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
+                        return response()->json(['id_aprobacion' => -2, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
                     }
                 }
 
@@ -908,7 +908,7 @@ class RevisarAprobarController extends Controller{
                     if($obtenerId['estado']=='success'){
                         $requerimientoPago = RequerimientoPago::find($obtenerId['id']);
                     }else{
-                        return response()->json(['id_aprobacion' => 0, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
+                        return response()->json(['id_aprobacion' => -3, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
                     }
                 }
 
@@ -1054,7 +1054,7 @@ class RevisarAprobarController extends Controller{
 
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['id_aprobacion' => 0, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+            return response()->json(['id_aprobacion' => -4, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
     }
 }

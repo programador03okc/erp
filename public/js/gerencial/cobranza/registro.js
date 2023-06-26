@@ -1043,7 +1043,7 @@ function listarRegistros(filtros) {
         ajax: {
             url: 'listar-registros',
             method: 'POST',
-            headers: {'X-CSRF-TOKEN': csrf_token},
+            headers: {'X-CSRF-TOKEN': token},
             // data: {
             //     empresa: meOrAll,
             //     estado: idEmpresa,

@@ -24,15 +24,13 @@
 @section('cuerpo')
 
     @if (in_array(303,$array_accesos))
-        <div class="box box-solid">
-            <div class="box-header with-border">
+        <div class="box">
+            <div class="box-header">
                 <h3 class="box-title">Datos Generales</h3>
-                <div class="box-tools pull-right">
-                </div>
             </div>
             <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12">
+                {{-- <div class="row"> --}}
+                    {{-- <div class="col-md-12"> --}}
                         <table class="mytable table table-condensed table-bordered table-okc-view"
                             id="lista-presupuesto-interno">
                             <thead>
@@ -53,8 +51,8 @@
 
                             </tbody>
                         </table>
-                    </div>
-                </div>
+                    {{-- </div>
+                </div> --}}
             </div>
         </div>
         {{-- // ver el presupuesto  --}}

@@ -2350,8 +2350,8 @@ Route::middleware(['auth'])->group(function () {
 				//Opciones y Relaciones
 				Route::get('index', [ProyectosController::class, 'view_cuadro_gastos'])->name('index');
 				Route::get('listar', [ProyectosController::class, 'listar_cuadro_gastos']);
-				Route::post('cuadroGastosExcel', 'Finanzas\Presupuesto\PresupuestoController@cuadroGastosExcel')->name('cuadroGastosExcel');
-				Route::get('mostrarGastosPorPresupuesto/{id}', 'Finanzas\Presupuesto\PresupuestoController@mostrarGastosPorPresupuesto')->name('mostrar-gastos-presupuesto');
+				Route::post('cuadroGastosExcel', [PresupuestoController::class, 'cuadroGastosExcel'])->name('cuadro-gastos-excel');
+				Route::get('mostrarGastosPorPresupuesto/{id}', [PresupuestoController::class, 'mostrarGastosPorPresupuesto'])->name('mostrar-gastos-presupuesto');
 
 			});
 		});

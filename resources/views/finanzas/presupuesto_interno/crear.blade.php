@@ -76,51 +76,54 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sede_id">Sedes :</label>
-                                        <select class="form-control" name="sede_id" id="sede_id" required>
-                                            <option value="">Seleccione...</option>
-                                        </select>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="sede_id">Sedes :</label>
+                                                <select class="form-control" name="sede_id" id="sede_id" required>
+                                                    <option value="">Seleccione...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {{-- <input type="hidden" name="id_tipo_presupuesto"value=""> --}}
+                                                <input type="hidden" name="tipo_ingresos"value="">
+                                                <input type="hidden" name="tipo_gastos"value="">
+                                                <label for="id_grupo">Grupo :</label>
+                                                <select class="form-control" name="id_grupo" id="id_grupo" required>
+                                                    <option value="">Seleccione...</option>
+                                                    @foreach ($grupos as $item)
+                                                        <option value="{{ $item->id_grupo }}">{{ $item->descripcion }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="id_area">Area :</label>
+                                                <select class="form-control" name="id_area" id="id_area" required>
+                                                    <option value="">Seleccione...</option>
+                                                    {{-- @foreach ($area as $item)
+                                                        <option value="{{ $item->id_area }}">{{ $item->descripcion }}</option>
+                                                    @endforeach --}}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="id_moneda">Moneda :</label>
+                                                <select class="form-control" name="id_moneda" id="id_moneda" required>
+                                                    <option value="">Seleccione...</option>
+                                                    @foreach ($moneda as $item)
+                                                    <option value="{{ $item->id_moneda }}">{{ $item->descripcion }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        {{-- <input type="hidden" name="id_tipo_presupuesto"value=""> --}}
-                                        <input type="hidden" name="tipo_ingresos"value="">
-                                        <input type="hidden" name="tipo_gastos"value="">
-                                        <label for="id_grupo">Grupo :</label>
-                                        <select class="form-control" name="id_grupo" id="id_grupo" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($grupos as $item)
-                                                <option value="{{ $item->id_grupo }}">{{ $item->descripcion }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="id_area">Area :</label>
-                                        <select class="form-control" name="id_area" id="id_area" required>
-                                            <option value="">Seleccione...</option>
-                                            {{-- @foreach ($area as $item)
-                                                <option value="{{ $item->id_area }}">{{ $item->descripcion }}</option>
-                                            @endforeach --}}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="id_moneda">Moneda :</label>
-                                        <select class="form-control" name="id_moneda" id="id_moneda" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($moneda as $item)
-                                            <option value="{{ $item->id_moneda }}">{{ $item->descripcion }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

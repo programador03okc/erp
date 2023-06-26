@@ -619,8 +619,8 @@ class RequerimientoPendienteView {
                 }},
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
                 { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-center' },
-                { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center','render': function (data, type, row) {
-                    return '<span class="label label-' + row.bootstrap_color + ' estadoRequerimiento" title="' + (row['estado_doc'] == 'En pausa' ? 'Retiro de aprobación por actualización de CDP' : '') + '">' + row['estado_doc'] + '</span>';
+                { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
+                    return row['estado_doc'];
                 }},
                 { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false,'render': function (data, type, row) {
                     // if(permisoCrearOrdenPorRequerimiento == '1') {
@@ -820,32 +820,32 @@ class RequerimientoPendienteView {
             },
             "createdRow": function (row, data, dataIndex) {
 
-                let color = '#ffffff';
+                let color = '#f2f2f2';
                 switch (data.bootstrap_color) {
                     case 'default':
-                        color = '#777777';
+                        color = '#d7d7d7';
                         break;
                     case 'primary':
-                        color = '#3c8dbc';
+                        color = '#5caad9';
                         break;
                     case 'success':
-                        color = '#5cb85c';
+                        color = '#a2c9a2';
                         break;
                     case 'secundary':
-                        color = '#ffffff';
+                        color = '#cbc0d6';
                         break;
                     case 'warning':
-                        color = '#f39c12';
+                        color = '#e8e9bc';
                         break;
                     case 'info':
                         color = '#72bcd4';
                         break;
                     case 'danger':
-                        color = '#d9534f';
+                        color = '#98beca';
                         break;
 
                     default:
-                        color = '#ffffff';
+                        color = '#f2f2f2';
                         break;
                 }
                 $(row.childNodes[12]).css('background-color', color);

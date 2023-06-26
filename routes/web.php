@@ -708,6 +708,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listarDevolucionesRevisadas', [DevolucionController::class, 'listarDevolucionesRevisadas'])->name('listar-devoluciones-revisadas');
 				Route::get('listarDetalleDevolucion/{id}', [DevolucionController::class, 'listarDetalleDevolucion'])->name('listar-detalle-devolucion');
 				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class, 'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
+
+                Route::get('listar-actualizacion/{id}', [DevolucionController::class, 'listarActualizacion'])->name('listar-actualizacion');
 			});
 
 			Route::group(['as' => 'pendientes-salida.', 'prefix' => 'pendientes-salida'], function () {
@@ -1968,7 +1970,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('actualizar_acu', [AcuController::class, 'update_acu'])->name('actualizar_acu');
 				Route::get('anular_acu/{id}', [AcuController::class, 'anular_acu'])->name('anular_acu');
 				Route::get('valida_acu_editar/{id}', [AcuController::class, 'valida_acu_editar'])->name('valida_acu_editar');
-				
+
 				Route::get('partida_insumos_precio/{id}/{ins}', [AcuController::class, 'partida_insumos_precio'])->name('partida_insumos_precio');
 				Route::post('guardar_insumo', [InsumoController::class, 'guardar_insumo'])->name('guardar_insumo');
 				Route::get('listar_insumos', [InsumoController::class, 'listar_insumos'])->name('listar_insumos');

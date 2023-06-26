@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Undefined;
+use Yajra\DataTables\Facades\DataTables;
 
 class DevolucionController extends Controller
 {
@@ -964,5 +965,26 @@ class DevolucionController extends Controller
             ->where('mov_alm_det.id_mov_alm', $id_movimiento)
             ->get();
         return response()->json($lista);
+    }
+    function listarActualizacion($id) {
+        $data = DB::table('almacen.guia_com_obs')
+        ->select(
+            'guia_com_obs.*',
+            'motivo_anu.descripcion as anulacion',
+            'sis_usua.nombre_corto as usuario',
+        )
+        ->join('almacen.motivo_anu', 'motivo_anu.id_motivo', '=', 'guia_com_obs.id_motivo_anu')
+        ->join('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'guia_com_obs.registrado_por')
+        ->where('guia_com_obs.id_guia_com', $id)
+        ->get();
+        return DataTables::of($data)
+        // ->addColumn('anulacion', function ($data){
+        //     $resultado = DB::table('almacen.motivo_anu')->select(
+        //         'motivo_anu.*',
+        //     )->where('id_motivo',$data->id_motivo_anu)->first();
+        //     return $resultado->descripcion;
+        // })
+        // ->toJson();
+        ->make(true);
     }
 }

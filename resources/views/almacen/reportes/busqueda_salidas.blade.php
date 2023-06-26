@@ -45,6 +45,23 @@
                         id="listaBusquedaSalidas">
                         <thead>
                             <tr>
+                                {{-- <th hidden></th>
+                                <th>Tp</th>
+                                <th>Serie-Número</th>
+                                <th>Fecha Emisión</th>
+                                <th>RUC</th>
+                                <th>Razon Social</th>
+                                <th>Condición</th>
+                                <th>Código</th>
+                                <th>Cod.Anexo</th>
+                                <th width="30%">Descripción</th>
+                                <th>Cant.</th>
+                                <th>Estado</th>
+                                <th>Almacén</th>
+                                <th>CDP</th>
+                                <th>Responsable</th>
+                                <th>Fecha Registro</th>
+                                <th></th> --}}
                                 <th hidden></th>
                                 <th>Tp</th>
                                 <th>Serie-Número</th>
@@ -58,6 +75,7 @@
                                 <th>Cant.</th>
                                 <th>Estado</th>
                                 <th>Almacén</th>
+                                <th>Cod. Req.</th>
                                 <th>CDP</th>
                                 <th>Responsable</th>
                                 <th>Fecha Registro</th>
@@ -181,14 +199,14 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
-    {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('js/almacen/reporte/busqueda_salidas.js')}}"></script>
     <script>
     $(document).ready(function(){
         vista_extendida();
-        
+
     });
     </script>
 

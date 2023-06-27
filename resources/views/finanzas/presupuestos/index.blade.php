@@ -49,6 +49,7 @@
                                 <th scope="col">Código</th>
                                 <th scope="col">Descripción</th>
                                 <th scope="col">Fecha Emisión</th>
+                                <th scope="col">Activo</th>
                                 <th scope="col">Empresa</th>
                             </tr>
                         </thead>
@@ -59,6 +60,7 @@
                                 <td><label class="lbl-codigo" title="Abrir Presupuesto" onClick="abrirPresupuesto('{{ $presup->id_presup }}')">{{ $presup->codigo }}</label></td>
                                 <td>{{ $presup->descripcion }}</td>
                                 <td>{{ $presup->fecha_emision }}</td>
+                                <td> <span class="pull-right badge bg-{{ ($presup->activo=='t'?'green':'red') }}">{{ ($presup->activo=='t'?'activo':'inactivo') }}</span></td>
                                 <td>{{ $presup->empresa->contribuyente->razon_social }}</td>
                             </tr>
                             @empty
@@ -85,7 +87,7 @@
     <script>
         $(document).ready(function () {
 
-            
+
 
             var vardataTables = funcDatatables();
 

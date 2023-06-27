@@ -11,6 +11,7 @@ use App\Models\Configuracion\Grupo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class CentroCostoController extends Controller
 {
@@ -57,7 +58,7 @@ class CentroCostoController extends Controller
             ->where('estado', 1)
             ->whereIn('id_grupo', $idGrupoList)
             ->whereRaw('centro_costo.periodo = (select max("periodo") from finanzas.centro_costo)')
-            ->select(['*', DB::raw("CASE WHEN (SELECT cc.codigo FROM finanzas.centro_costo AS cc WHERE centro_costo.codigo!=cc.codigo AND cc.codigo LIKE centro_costo.codigo || '.%' 
+            ->select(['*', DB::raw("CASE WHEN (SELECT cc.codigo FROM finanzas.centro_costo AS cc WHERE centro_costo.codigo!=cc.codigo AND cc.codigo LIKE centro_costo.codigo || '.%'
         AND cc.version=centro_costo.version LIMIT 1) IS NULL THEN true ELSE false END AS seleccionable")])->get();
 
         return response()->json($centroCostos);
@@ -153,4 +154,15 @@ class CentroCostoController extends Controller
         return substr_count($texto, ".") + 1;
     }
 
+    function listarCentroCostos()  {
+        $centro_costos = CentroCosto::leftJoin('configuracion.sis_grupo', 'sis_grupo.id_grupo', '=', 'centro_costo.id_grupo')
+            ->select('centro_costo.*', 'sis_grupo.descripcion as grupo_descripcion')
+            // ->where([['estado', '=', 1], ['periodo', '=', $anio]])
+            ->where('estado', '=', 1)
+            ->orderBy('codigo')
+            ->get();
+        return DataTables::of($centro_costos)
+        // ->toJson();
+        ->make(true);
+    }
 }

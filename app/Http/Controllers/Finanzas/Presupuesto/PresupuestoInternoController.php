@@ -87,7 +87,8 @@ class PresupuestoInternoController extends Controller
     }
     public function crear()
     {
-        $empresas = Empresa::all();
+        // $empresas = Empresa::all();
+        $empresas = Empresa::mostrar();
         $grupos = AdmGrupo::get();
         $area = FinanzasArea::where('estado',1)->get();
         $moneda = Moneda::where('estado',1)->get();
@@ -95,6 +96,7 @@ class PresupuestoInternoController extends Controller
         $presupuesto_interno = PresupuestoInterno::count();
         $array_accesos=[];
         $accesos_usuario = AccesosUsuarios::where('estado',1)->where('id_usuario',Auth::user()->id_usuario)->get();
+        // return [$empresas,$empresas2];exit;
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
@@ -621,7 +623,8 @@ class PresupuestoInternoController extends Controller
     }
     public function editar(Request $request)
     {
-        $empresas = Empresa::all();
+        // $empresas = Empresa::all();
+        $empresas = Empresa::mostrar();
         $grupos = Grupo::get();
         // $area = Area::where('estado',1)->get();
         $area = Division::where('estado',1)->get();
@@ -653,7 +656,8 @@ class PresupuestoInternoController extends Controller
     }
     public function editarPresupuestoAprobado(Request $request)
     {
-        $empresas = Empresa::all();
+        // $empresas = Empresa::all();
+        $empresas = Empresa::mostrar();
         $grupos = Grupo::get();
         // $area = Area::where('estado',1)->get();
         $area = Division::where('estado',1)->get();

@@ -1,74 +1,77 @@
 @extends('themes.base')
 
-@section('cabecera') Lista de Presupuestos Interno @endsection
+@section('cabecera')
+    Lista de Presupuestos Interno
+@endsection
 @include('layouts.menu_finanzas')
 @section('estilos')
-<link rel="stylesheet" href="{{asset('template/adminlte2-4/plugins/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
-        .invisible{
+        .invisible {
             display: none;
         }
-	.d-none{
-	    display: none;
-    	}
+
+        .d-none {
+            display: none;
+        }
     </style>
 @endsection
 @section('breadcrumb')
-<ol class="breadcrumb">
-    <li><a href="{{route('finanzas.index')}}"><i class="fa fa-usd"></i> Finanzas</a></li>
-    <li class="active"> @yield('cabecera')</li>
-</ol>
+    <ol class="breadcrumb">
+        <li><a href="{{ route('finanzas.index') }}"><i class="fa fa-usd"></i> Finanzas</a></li>
+        <li class="active"> @yield('cabecera')</li>
+    </ol>
 @endsection
 
 @section('cuerpo')
-
-    @if (in_array(303,$array_accesos))
-        <div class="box box-solid">
-            <div class="box-header with-border">
+    @if (in_array(303, $array_accesos))
+        <div class="box">
+            <div class="box-header">
                 <h3 class="box-title">Datos Generales</h3>
-                <div class="box-tools pull-right">
-                </div>
             </div>
             <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <table class="mytable table table-condensed table-bordered table-okc-view"
-                            id="lista-presupuesto-interno">
-                            <thead>
-                                <tr>
-                                    <th hidden></th>
-                                    <th scope="col">Código</th>
-                                    <th scope="col">Descripción</th>
-                                    <th scope="col">Fecha Emisión</th>
-                                    <th scope="col">Grupo</th>
-                                    <th scope="col">Estado</th>
-                                    <th scope="col">Sede</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Total Ejecutado</th>
-                                    <th scope="col">-</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                {{-- <div class="row"> --}}
+                {{-- <div class="col-md-12"> --}}
+                <table class="mytable table table-condensed table-bordered table-okc-view" id="lista-presupuesto-interno">
+                    <thead>
+                        <tr>
+                            <th hidden></th>
+                            <th scope="col">Código</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Fecha Emisión</th>
+                            <th scope="col">Grupo</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Sede</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Total Ejecutado</th>
+                            <th scope="col">-</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                    </tbody>
+                </table>
+                {{-- </div>
+                </div> --}}
             </div>
         </div>
         {{-- // ver el presupuesto  --}}
-        <div id="modal-presupuesto" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+        <div id="modal-presupuesto" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="my-modal-title"
+            aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h3 class="modal-title" id="my-modal-title">Presupuesto Interno <span class="codigo text-primary"></span> </h3>
+                        <h3 class="modal-title" id="my-modal-title">Presupuesto Interno <span
+                                class="codigo text-primary"></span> </h3>
                     </div>
                     <div class="modal-body">
                         <div class="row" data-presupuesto="table">
@@ -76,13 +79,15 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-light" data-dismiss="modal" type="button"><i class="fa fa-times"></i> CERRAR</button>
+                        <button class="btn btn-light" data-dismiss="modal" type="button"><i class="fa fa-times"></i>
+                            CERRAR</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="modal-editar-monto-partida" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+        <div id="modal-editar-monto-partida" class="modal fade " tabindex="-1" role="dialog"
+            aria-labelledby="my-modal-title" aria-hidden="true">
             <div class="modal-dialog modal-sm" role="document">
                 <form action="" data-form="editar-monto-partida">
                     <div class="modal-content">
@@ -90,7 +95,8 @@
                             <button class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <h3 class="modal-title" id="my-modal-title">Editar monto de Presupuesto Interno <span class="codigo text-primary"></span> </h3>
+                            <h3 class="modal-title" id="my-modal-title">Editar monto de Presupuesto Interno <span
+                                    class="codigo text-primary"></span> </h3>
                         </div>
                         <input class="form-control" type="hidden" name="id">
                         <div class="modal-body">
@@ -124,7 +130,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-light" data-dismiss="modal" type="button"><i class="fa fa-times"></i> Cerrar</button>
+                            <button class="btn btn-light" data-dismiss="modal" type="button"><i
+                                    class="fa fa-times"></i> Cerrar</button>
                             <button class="btn btn-success" type="submit"><i class="fa fa-save"></i> Guardar</button>
                         </div>
                     </div>
@@ -142,19 +149,17 @@
             </div>
         </div>
     @endif
-
 @endsection
 
 @section('scripts')
-
-
-
-
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}">
+    </script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}">
+    </script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}">
+    </script>
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
 
 
@@ -165,15 +170,16 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('template/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('template/plugins/bootstrap-select/dist/js/i18n/defaults-es_ES.min.js') }}"></script> --}}
-    <script src="{{asset('template/adminlte2-4/plugins/select2/js/select2.min.js')}}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
     <script src="{{ asset('js/finanzas/presupuesto_interno/lista.js') }}"></script>
 
     <script>
-        const route_editar = "{{route('finanzas.presupuesto.presupuesto-interno.editar')}}";
-        const route_editar_presupuesto_aprobado = "{{route('finanzas.presupuesto.presupuesto-interno.editar-presupuesto-aprobado')}}";
-        const array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
-        $(document).ready(function () {
+        const route_editar = "{{ route('finanzas.presupuesto.presupuesto-interno.editar') }}";
+        const route_editar_presupuesto_aprobado =
+            "{{ route('finanzas.presupuesto.presupuesto-interno.editar-presupuesto-aprobado') }}";
+        const array_accesos = JSON.parse('{!! json_encode($array_accesos) !!}');
+        $(document).ready(function() {
 
         });
         $('.search-partidas').select2({
@@ -186,55 +192,56 @@
                 type: "post",
                 dataType: 'json',
                 delay: 250,
-                data: function (params) {
+                data: function(params) {
                     return {
                         searchTerm: params.term, // search term
                         page: params.page,
-                        id_presupuesto_interno:$('[data-form="editar-monto-partida"]').find('[name="id"]').val()
+                        id_presupuesto_interno: $('[data-form="editar-monto-partida"]').find('[name="id"]')
+                        .val()
                     };
                     // return query;
-            },
-            processResults: function (data, params) {
-                // params.page = params.page || 1;
-                return {
-                    // results: data.items,
-                    // pagination: {
-                    //     more: (params.page * 30) < data.total_count
-                    // }
-                    results: $.map(data, function (item) {
-                        return{
-                            text:item.partida+'('+item.descripcion+')',
-                            // descripcion:item.descripcion,
-                            id:item.partida
-                        }
-                     })
+                },
+                processResults: function(data, params) {
+                    // params.page = params.page || 1;
+                    return {
+                        // results: data.items,
+                        // pagination: {
+                        //     more: (params.page * 30) < data.total_count
+                        // }
+                        results: $.map(data, function(item) {
+                            return {
+                                text: item.partida + '(' + item.descripcion + ')',
+                                // descripcion:item.descripcion,
+                                id: item.partida
+                            }
+                        })
 
-                };
-            },
-            cache: true,
+                    };
+                },
+                cache: true,
             },
             minimumInputLength: 1,
             templateResult: formatRepo,
             templateSelection: formatRepoSelection
         });
-        function formatRepo (repo) {
+
+        function formatRepo(repo) {
             if (!repo.id) {
 
                 return repo.text;
             }
             var state = $(
-                `<span>`+repo.text+`</span>`
+                `<span>` + repo.text + `</span>`
             );
             console.log(state);
             return state;
 
         }
 
-        function formatRepoSelection (repo) {
+        function formatRepoSelection(repo) {
             return repo.partida || repo.text;
         }
     </script>
-
 @endsection
 
 

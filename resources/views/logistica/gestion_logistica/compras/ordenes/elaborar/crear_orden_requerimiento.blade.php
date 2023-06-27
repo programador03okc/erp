@@ -93,7 +93,7 @@
                             <h5>Código orden softlink</h5>
                             <input class="form-control activation" name="codigo_orden" type="text" placeholder="" readonly>
                         </div>
-                        
+
                         <div class="col-md-1" id="group-periodo_orden">
                             <h5>Periodo</h5>
                             <select class="form-control activation handleChangePeriodo" name="id_periodo">
@@ -468,7 +468,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            
+
             $(".sidebar-mini").addClass("sidebar-collapse");
             $('input[type="checkbox"].minimal').iCheck({ checkboxClass: 'icheckbox_minimal-blue' });
         });

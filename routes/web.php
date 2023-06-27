@@ -714,6 +714,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listarDevolucionesRevisadas', [DevolucionController::class, 'listarDevolucionesRevisadas'])->name('listar-devoluciones-revisadas');
 				Route::get('listarDetalleDevolucion/{id}', [DevolucionController::class, 'listarDetalleDevolucion'])->name('listar-detalle-devolucion');
 				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class, 'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
+
+                Route::get('listar-actualizacion/{id}', [DevolucionController::class, 'listarActualizacion'])->name('listar-actualizacion');
 			});
 
 			Route::group(['as' => 'pendientes-salida.', 'prefix' => 'pendientes-salida'], function () {
@@ -1314,6 +1316,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('obtener-presupuesto', [NormalizarController::class, 'obtenerPresupuesto'])->name('obtener-presupuesto');
 				Route::post('vincular-partida', [NormalizarController::class, 'vincularPartida'])->name('vincular-partida');
 				Route::get('detalle-requerimiento-pago/{id}', [NormalizarController::class, 'detalleRequerimientoPago'])->name('detalle-requerimiento-pago');
+
+
 			});
 		});
 
@@ -1324,6 +1328,8 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardarCentroCosto', [CentroCostoController::class, 'guardarCentroCosto'])->name('guardar-centro-costo');
 			Route::post('actualizar-centro-costo', [CentroCostoController::class, 'actualizarCentroCosto'])->name('actualizar-centro-costo');
 			Route::get('anular-centro-costo/{id}', [CentroCostoController::class, 'anularCentroCosto'])->name('anular-centro-costo');
+            Route::get('listar-centro-costos', [CentroCostoController::class, 'listarCentroCostos'])->name('listar-centro-costos');
+
 		});
 
 
@@ -1974,7 +1980,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('actualizar_acu', [AcuController::class, 'update_acu'])->name('actualizar_acu');
 				Route::get('anular_acu/{id}', [AcuController::class, 'anular_acu'])->name('anular_acu');
 				Route::get('valida_acu_editar/{id}', [AcuController::class, 'valida_acu_editar'])->name('valida_acu_editar');
-				
+
 				Route::get('partida_insumos_precio/{id}/{ins}', [AcuController::class, 'partida_insumos_precio'])->name('partida_insumos_precio');
 				Route::post('guardar_insumo', [InsumoController::class, 'guardar_insumo'])->name('guardar_insumo');
 				Route::get('listar_insumos', [InsumoController::class, 'listar_insumos'])->name('listar_insumos');

@@ -264,7 +264,7 @@ class ProveedoresController extends Controller
                     } elseif ($request->estadoEstablecimiento[$i] == 7 && $request->idEstablecimiento[$i] > 0) {
                         $establecimientoSeleccionado = EstablecimientoProveedor::where("id_establecimiento", $request->idEstablecimiento[$i])->first();
                         if ($establecimientoSeleccionado) {
-                            // //Debugbar::info($establecimientoSeleccionado->id_establecimiento);
+                            // Debugbar::info($establecimientoSeleccionado->id_establecimiento);
                             $establecimientoSeleccionado->estado = 7;
                             $establecimientoSeleccionado->save();
                         }
@@ -320,12 +320,14 @@ class ProveedoresController extends Controller
                     }
                 }
             }
-
+            
+            $accionEnRegistroCuenta='';
             if (isset($request->idCuenta)) {
                 $countCuenta = count($request->idCuenta);
                 for ($i = 0; $i < $countCuenta; $i++) {
                     if ($request->estadoCuenta[$i] == 1 && $request->idCuenta[$i] > 0) {
                         $cuentaSeleccionada = CuentaContribuyente::where("id_cuenta_contribuyente", $request->idCuenta[$i])->first();
+                        $cuentaSeleccionadaAnterior =$cuentaSeleccionada ;
                         if ($cuentaSeleccionada) {
                             $cuentaSeleccionada->id_banco  = $request->idBanco[$i];
                             $cuentaSeleccionada->id_tipo_cuenta  = $request->idTipoCuenta[$i] > 0 ? $request->idTipoCuenta[$i] : null;
@@ -335,46 +337,43 @@ class ProveedoresController extends Controller
                             $cuentaSeleccionada->swift  = $request->swift[$i];
                             $cuentaSeleccionada->updated_at = new Carbon();
                             $cuentaSeleccionada->id_usuario = Auth::user()->id_usuario;
-
                             $cuentaSeleccionada->save();
-
-                            $comentario = 'Cuenta: '.($cuentaSeleccionada->nro_cuenta ?? '').', CCI: '.($cuentaSeleccionada->nro_cuenta_interbancaria??'').', Actualizado por: '.Auth::user()->nombre_corto;
-
-                            LogActividad::registrar(Auth::user(), $this->nombreFormulario, 3, $cuentaSeleccionada->getTable(), ($cuentaSeleccionadaAnterior??null), $cuentaSeleccionada,$comentario);
+                            $accionEnRegistroCuenta='Actualizado por: '.Auth::user()->nombre_corto;
 
                         }
                     } elseif ($request->estadoCuenta[$i] == 7 && $request->idCuenta[$i] > 0) {
                         $cuentaSeleccionada = CuentaContribuyente::where("id_cuenta_contribuyente", $request->idCuenta[$i])->first();
+                        $cuentaSeleccionadaAnterior =$cuentaSeleccionada ;
+
                         if ($cuentaSeleccionada) {
                             $cuentaSeleccionada->estado  = 7;
                             $cuentaSeleccionada->updated_at = new Carbon();
                             $cuentaSeleccionada->id_usuario = Auth::user()->id_usuario;
                             $cuentaSeleccionada->save();
-
-                            $comentario = 'Cuenta: '.($cuentaSeleccionada->nro_cuenta ?? '').', CCI: '.($cuentaSeleccionada->nro_cuenta_interbancaria??'').', Anulado por: '.Auth::user()->nombre_corto;
-                            LogActividad::registrar(Auth::user(), $this->nombreFormulario, 4, $cuentaBancariaProveedor->getTable(), $cuentaSeleccionadaAnterior??null, $cuentaSeleccionada,$comentario);
-
+                            $accionEnRegistroCuenta='Anulado por: '.Auth::user()->nombre_corto;
                         }
                     } elseif ($request->estadoCuenta[$i] == 1 && ($request->idCuenta[$i] == '' || $request->idCuenta[$i] == null || $request->idCuenta[$i] == 0)) {
-                        $cuentaBancariaProveedor = new CuentaContribuyente();
-                        $cuentaBancariaProveedor->id_contribuyente  = $contribuyente->id_contribuyente;
-                        $cuentaBancariaProveedor->id_banco  = $request->idBanco[$i];
-                        $cuentaBancariaProveedor->id_tipo_cuenta  = $request->idTipoCuenta[$i] > 0 ? $request->idTipoCuenta[$i] : null;
-                        $cuentaBancariaProveedor->id_moneda  = $request->idMoneda[$i] > 0 ? $request->idMoneda[$i] : null;
-                        $cuentaBancariaProveedor->nro_cuenta  =  $request->nroCuenta[$i] ?? null;
-                        $cuentaBancariaProveedor->nro_cuenta_interbancaria  = $request->nroCuentaInterbancaria[$i] ?? null;
-                        $cuentaBancariaProveedor->swift  = $request->swift[$i] ?? null;
-                        $cuentaBancariaProveedor->estado  = 1;
-                        $cuentaBancariaProveedor->fecha_registro  = new Carbon();
-                        $cuentaBancariaProveedor->id_usuario = Auth::user()->id_usuario;
+                        $cuentaSeleccionada = new CuentaContribuyente();
+                        $cuentaSeleccionada->id_contribuyente  = $contribuyente->id_contribuyente;
+                        $cuentaSeleccionada->id_banco  = $request->idBanco[$i];
+                        $cuentaSeleccionada->id_tipo_cuenta  = $request->idTipoCuenta[$i] > 0 ? $request->idTipoCuenta[$i] : null;
+                        $cuentaSeleccionada->id_moneda  = $request->idMoneda[$i] > 0 ? $request->idMoneda[$i] : null;
+                        $cuentaSeleccionada->nro_cuenta  =  $request->nroCuenta[$i] ?? null;
+                        $cuentaSeleccionada->nro_cuenta_interbancaria  = $request->nroCuentaInterbancaria[$i] ?? null;
+                        $cuentaSeleccionada->swift  = $request->swift[$i] ?? null;
+                        $cuentaSeleccionada->estado  = 1;
+                        $cuentaSeleccionada->fecha_registro  = new Carbon();
+                        $cuentaSeleccionada->id_usuario = Auth::user()->id_usuario;
 
-                        $cuentaBancariaProveedor->save();
-                        
-                        $comentario = 'Cuenta: '.($request->nroCuenta[$i] ?? '').', CCI: '.($request->nroCuentaInterbancaria[$i]??'').', Agregado por: '.Auth::user()->nombre_corto;
-                        LogActividad::registrar(Auth::user(), $this->nombreFormulario, 2, $cuentaBancariaProveedor->getTable(), null, $cuentaBancariaProveedor,$comentario);
+                        $cuentaSeleccionada->save();
+                        $accionEnRegistroCuenta='Agregado por: '.Auth::user()->nombre_corto;
 
                     }
                 }
+
+                $comentario = 'Cuenta: '.($cuentaSeleccionada->nro_cuenta ?? '').', CCI: '.($cuentaSeleccionada->nro_cuenta_interbancaria??'').', '.$accionEnRegistroCuenta;
+                LogActividad::registrar(Auth::user(), $this->nombreFormulario, 3, $cuentaSeleccionada->getTable(), ($cuentaSeleccionadaAnterior??null), $cuentaSeleccionada,$comentario);
+
             }
 
             $dataProveedor = Proveedor::mostrar($proveedor->id_proveedor);

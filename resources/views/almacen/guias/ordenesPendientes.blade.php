@@ -230,6 +230,7 @@
 
     <script src="{{ asset('js/almacen/guia/guia_com_det_series.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_com_det_series.js'))}}"></script>
     <script src="{{ asset('js/almacen/guia/guia_com_det_series_edit.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_com_det_series_edit.js'))}}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
 
     <script src="{{ asset('js/almacen/documentos/doc_com_create.js')}}?v={{filemtime(public_path('js/almacen/documentos/doc_com_create.js'))}}"></script>
     <script src="{{ asset('js/almacen/documentos/doc_com_ver.js')}}?v={{filemtime(public_path('js/almacen/documentos/doc_com_ver.js'))}}"></script>

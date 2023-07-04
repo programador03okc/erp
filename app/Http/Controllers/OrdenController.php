@@ -2027,9 +2027,9 @@ class OrdenController extends Controller
                 .textBold{
                     font-weight:bold;
                 }
-                footer{
-                    position:relative;
-                }
+                // footer{
+                //     position:relative;
+                // }
                 .pie_de_pagina{
                     position: absolute;
                     bottom:0px;

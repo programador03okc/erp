@@ -30,4 +30,11 @@ class TestController extends Controller
         }
         return $str;
     }
+
+    public function encriptar() {
+        $clave1 = Hash::make('Inicio');
+        $clave2 = bcrypt('Inicio');
+        $clave3 = password_hash('Inicio', PASSWORD_DEFAULT);
+        return response()->json(array('hash' => $clave1, 'bcrypt' => $clave2, 'php' => $clave3), 200);
+    }
 }

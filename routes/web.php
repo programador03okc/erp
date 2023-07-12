@@ -125,6 +125,7 @@ Route::view('/', 'auth.login');
 
 Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('modulos');
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
+Route::get('test-encrypt', [TestController::class, 'encriptar'])->name('test-encrypt');
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('cerrar-sesion', [LoginController::class, 'logout'])->name('cerrar-sesion');

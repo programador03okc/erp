@@ -43,6 +43,30 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
+        'soft'  => [
+            'driver'     => 'mysql',
+            'host'       => env('SOFT_HOST', '127.0.0.1'),
+            // 'host'       => env('SOFT_HOST', '192.168.11.3'),
+            'port'       => env('SOFT_PORT', '3306'),
+            'database'   => env('SOFT_DATABASE', 'okcomputer'),
+            'username'   => env('SOFT_USERNAME', 'root'),
+            'password'   => env('SOFT_PASSWORD', 'Inicio01'),
+            'charset'    => 'utf8',
+            'collation'  => 'utf8_unicode_ci',
+            'prefix'     => '',
+            'strict'     => false,
+        ],
+
+        'pgsql_rrhh' => [
+            'driver'    => env('DB_CONNECTION_RRHH'),
+            'host'      => env('DB_HOST_RRHH'),
+            'port'      => env('DB_PORT_RRHH'),
+            'database'  => env('DB_DATABASE_RRHH'),
+            'username'  => env('DB_USERNAME_RRHH'),
+            'password'  => env('DB_PASSWORD_RRHH'),
+        ],
+
+        
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),

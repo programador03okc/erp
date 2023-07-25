@@ -92,10 +92,14 @@ function mostrarIncidencia(id) {
             $('select[name="modelo"] option').prop("selected", false);
             $('select[name="producto"] option').prop("selected", false);
 
-            $(`select[name="marca"] option[value='`+response.incidencia.marca +`']`).prop("selected", true);
-            $(`select[name="modelo"] option[value='`+response.incidencia.modelo+`']`).prop("selected", true);
-            $(`select[name="producto"] option[value='`+response.incidencia.producto +`']`).prop("selected", true);
+            // $(`select[name="marca"] option[value='`+response.incidencia.marca +`']`).prop("selected", true);
+            // $(`select[name="modelo"] option[value='`+response.incidencia.modelo+`']`).prop("selected", true);
+            // $(`select[name="producto"] option[value='`+response.incidencia.producto +`']`).prop("selected", true);
 
+
+            $(`select[name="marca"]`).val(response.incidencia.marca).trigger('change.select2');
+            $(`select[name="modelo"]`).val(response.incidencia.modelo).trigger('change.select2');
+            $(`select[name="producto"]`).val(response.incidencia.producto).trigger('change.select2');
             if (response.incidencia.cdp) {
                 $("[name=cdp]").val(response.incidencia.cdp);
             } else {

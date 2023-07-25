@@ -16,6 +16,7 @@ use App\Models\Configuracion\Provincia;
 use App\Models\Contabilidad\Banco;
 use App\Models\Contabilidad\ContactoContribuyente;
 use App\Models\Contabilidad\Contribuyente;
+use App\Models\contabilidad\ContribuyenteView;
 use App\Models\Contabilidad\CuentaContribuyente;
 use App\Models\Contabilidad\Identidad;
 use App\Models\Contabilidad\TipoContribuyente;
@@ -47,16 +48,8 @@ class ClienteController extends Controller
     }
     public function listarCliente()
     {
-        $data = Contribuyente::where('adm_contri.estado',1)
-        ->select(
-            'adm_contri.*'
-        )
-        ->join('comercial.com_cliente', 'com_cliente.id_contribuyente', '=', 'adm_contri.id_contribuyente');
-        // $data = Contribuyente::all();
-        return DataTables::of($data)
-        // return datatables($data)
-        // ->toJson();
-        ->make(true);
+        $data = ContribuyenteView::where('tipo', 'CLIENTE')->get();
+        return DataTables::of($data)->make(true);
     }
     public function crear(Request $request)
     {

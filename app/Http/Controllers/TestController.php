@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comercial\Cliente;
+use App\Models\contabilidad\ContribuyenteView;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class TestController extends Controller
 {
+
+    public function clientes() {
+        $data = ContribuyenteView::all();
+        return response()->json($data, 200);
+    }
+    
     public function actualizarClaves()
     {
         $lista = User::all();

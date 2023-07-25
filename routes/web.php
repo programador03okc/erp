@@ -2022,7 +2022,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('mostrar_presupuestos/{id}', [OpcionesPresupuestoInternoController::class, 'mostrar_presupuestos']);
 				Route::get('listar_presupuestos_copia/{tp}/{id}', [OpcionesPresupuestoInternoController::class, 'listar_presupuestos_copia']);
 				Route::get('generar_partidas_presupuesto/{id}/{ida}', [OpcionesPresupuestoInternoController::class, 'generar_partidas_presupuesto']);
-				
+
 				Route::get('listar_acus_cd/{id}', [ComponentesController::class, 'listar_acus_cd']);
 				Route::get('listar_cd/{id}', [ComponentesController::class, 'listar_cd']);
 				Route::get('listar_ci/{id}', [ComponentesController::class, 'listar_ci']);
@@ -2054,7 +2054,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('bajar_partida_gg/{id}', [PartidasController::class, 'bajar_partida_gg']);
 				Route::get('crear_titulos_ci/{id}', [PartidasController::class, 'crear_titulos_ci']);
 				Route::get('crear_titulos_gg/{id}', [PartidasController::class, 'crear_titulos_gg']);
-				
+
 				Route::post('add_unid_med', [InsumoController::class, 'add_unid_med']);
 				Route::post('update_unitario_partida_cd', [OpcionesPresupuestoInternoController::class, 'update_unitario_partida_cd']);
 				Route::get('listar_acus_sin_presup', [AcuController::class, 'listar_acus_sin_presup']);
@@ -2069,7 +2069,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('update_cu', [AcuController::class, 'update_cu']);
 				// Route::get('listar_cus', [AcuController::class, 'listar_cus']);
 				Route::get('listar_cus', [NombresAcuController::class, 'listar_nombres_cus']);
-				
+
 				Route::get('listar_insumos', [InsumoController::class, 'listar_insumos']);
 				Route::get('mostrar_insumo/{id}', [InsumoController::class, 'mostrar_insumo']);
 				Route::post('guardar_insumo', [InsumoController::class, 'guardar_insumo']);
@@ -2077,7 +2077,7 @@ Route::middleware(['auth'])->group(function () {
 				// Route::post('guardar_precio', [ProyectosController::class, 'guardar_precio']);
 				Route::post('actualizar_insumo', [InsumoController::class, 'update_insumo']);
 				Route::get('listar_opciones_sin_presint', [OpcionesController::class, 'listar_opciones_sin_presint']);
-				
+
 				Route::get('listar_obs_cd/{id}', [PartidasController::class, 'listar_obs_cd']);
 				Route::get('listar_obs_ci/{id}', [PartidasController::class, 'listar_obs_ci']);
 				Route::get('listar_obs_gg/{id}', [PartidasController::class, 'listar_obs_gg']);
@@ -2277,7 +2277,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('bajar_partida_gg/{id}', [PartidasController::class, 'bajar_partida_gg']);
 				Route::get('crear_titulos_ci/{id}', [ProyectoController::class, 'crear_titulos_ci']);
 				Route::get('crear_titulos_gg/{id}', [ProyectoController::class, 'crear_titulos_gg']);
-				
+
 				Route::post('add_unid_med', [InsumoController::class, 'add_unid_med']);
 				Route::post('update_unitario_partida_cd', [ProyectoController::class, 'update_unitario_partida_cd']);
 				Route::get('listar_acus_sin_presup', [ProyectoController::class, 'listar_acus_sin_presup']);
@@ -2291,7 +2291,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('guardar_cu', [ProyectoController::class, 'guardar_cu']);
 				Route::post('update_cu', [ProyectoController::class, 'update_cu']);
 				Route::get('listar_cus', [NombresAcuController::class, 'listar_nombres_cus']);
- 
+
 				Route::get('listar_insumos', [ProyectoController::class, 'listar_insumos']);
 				Route::get('mostrar_insumo/{id}', [ProyectoController::class, 'mostrar_insumo']);
 				Route::post('guardar_insumo', [ProyectoController::class, 'guardar_insumo']);
@@ -2312,7 +2312,7 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('index', [ProyectoController::class, 'view_cronoeje'])->name('index');
 				Route::get('nuevo_cronograma/{id}', [CronogramaInternoController::class, 'nuevo_cronograma']);
-				
+
 				Route::get('listar_acus_cronograma/{id}', [ProyectoController::class, 'listar_acus_cronograma']); // ! no existe método
 				Route::get('listar_pres_crono/{tc}/{tp}', [CronogramaInternoController::class, 'listar_pres_crono']);
 				Route::get('listar_pres_cronoval/{tc}/{tp}', [CronogramaValorizadoInternoController::class, 'listar_pres_cronoval']);
@@ -2321,7 +2321,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('ver_gant/{id}', [CronogramaInternoController::class, 'ver_gant']);
 				Route::get('listar_cronograma/{id}', [CronogramaInternoController::class, 'listar_cronograma']);
 				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
-				Route::get('listar_obs_cd/{id}', [PartidasController::class, 'listar_obs_cd']); 
+				Route::get('listar_obs_cd/{id}', [PartidasController::class, 'listar_obs_cd']);
 			});
 
 			Route::group(['as' => 'cronogramas-valorizados-ejecucion.', 'prefix' => 'cronogramas-valorizados-ejecucion'], function () {

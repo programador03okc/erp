@@ -30,7 +30,8 @@
 
 <div class="box box-solid">
     <div class="box-header with-border">
-        <h3 class="box-title">Datos Generales</h3>
+        {{-- <h3 class="box-title">Datos Generales</h3> --}}
+        <h3 class="box-title">Nuevo Presupuesto</h3>
         <div class="box-tools pull-right">
             <div class="btn-group" role="group">
                 <button data-toggle="modal" title="Nuevo Presupuesto"
@@ -217,7 +218,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
     <script>
         $(document).ready(function () {
-            
+
         });
     </script>
 

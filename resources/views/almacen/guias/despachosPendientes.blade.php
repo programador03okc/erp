@@ -2,7 +2,7 @@
 
 @extends('themes.base')
 
-@section('cabecera') Orden de Transformación @endsection
+@section('cabecera') Atención de Salidas @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
@@ -226,7 +226,7 @@
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        
+
         $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
         iniciar('{{Auth::user()->tieneAccion(85)}}');
     });

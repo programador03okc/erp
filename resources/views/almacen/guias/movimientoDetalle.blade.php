@@ -12,10 +12,10 @@
                         <div class="col-md-12">
                             <input type="text" name="id_guia_com" class="oculto" />
                             <input type="text" name="id_mov_alm" class="oculto" />
-                            
+
                             <fieldset class="group-table" id="fieldsetDatosCabecera">
                                 <h5 style="display:flex;justify-content: space-between;"><strong>Datos del documento</strong></h5>
-                                        
+
                                 <div class="row">
                                     <div class="col-md-3">
                                         <h5>Serie-Número</h5>
@@ -99,24 +99,44 @@
                             </fieldset>
                             <br>
                             <fieldset class="group-table" id="fieldsetDatosAuditoria">
-                                <h5 style="display:flex;justify-content: space-between;"><strong>Datos de Auditoría</strong></h5>
-
                                 <div class="row">
-                                    <div class="col-md-3">
-                                        <h5>Motivo de la actualización:</h5>
-                                        <select class="form-control activation js-example-basic-single" name="id_motivo_cambio" required>
-                                            <option value="">Elija una opción</option>
-                                            @foreach ($motivos_anu as $mot)
-                                            <option value="{{$mot->id_motivo}}">{{$mot->descripcion}}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5>Motivo de la actualización:</h5>
+                                                <select class="form-control activation js-example-basic-single" name="id_motivo_cambio" required>
+                                                    <option value="">Elija una opción</option>
+                                                    @foreach ($motivos_anu as $mot)
+                                                    <option value="{{$mot->id_motivo}}">{{$mot->descripcion}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5>Observación:</h5>
+                                                <input type="text" class="form-control" name="observacion"  required>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Observación:</h5>
-                                        <input type="text" class="form-control" name="observacion"  required>
+                                        <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" id="tabla-anulacion" style="margin-top:10px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Registrado por</th>
+                                                    <th>Motivo de Anulación</th>
+                                                    <th>Observación</th>
+                                                    <th>Fecha de Registro</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot></tfoot>
+                                        </table>
                                     </div>
                                 </div>
-                                
+                                <h5 style="display:flex;justify-content: space-between;"><strong>Datos de Auditoría</strong></h5>
+
+
+
                             </fieldset>
                         </div>
                     </div>

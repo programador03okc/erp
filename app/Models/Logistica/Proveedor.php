@@ -32,6 +32,7 @@ class Proveedor extends Model
         'contribuyente.pais',
         'contribuyente.distrito',
         'establecimientoProveedor',
+        'cuentaContribuyente.usuario',
         // 'contribuyente.distrito.provincia',
         // 'contribuyente.distrito.provincia.departamento',
         'estadoProveedor')->whereHas('contribuyente', function($q){

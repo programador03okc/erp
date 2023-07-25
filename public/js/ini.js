@@ -196,6 +196,7 @@ $(document).ready(function () {
 						editar_doc_compra();
 					}
 					else if (page == 'crear-orden-requerimiento') {
+						changeReadInputDetails(frm_active, false);
 						editarOrden();
 
 					}
@@ -292,6 +293,13 @@ function changeStateInput(element, state) {
 	var evalu = $("#" + element).attr('type');
 	if (evalu == 'register' || 'edition') {
 		$("#" + element + " .activation").attr('disabled', state);
+	}
+}
+
+function changeReadInputDetails(element, state) {
+	var evalu = $("#" + element).attr('type');
+	if (evalu == 'register' || 'edition') {
+		$("#" + element + " .activation").attr('readOnly', state);
 	}
 }
 

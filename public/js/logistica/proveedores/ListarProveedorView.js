@@ -920,6 +920,9 @@ class ListarProveedorView {
                     <td><input type="hidden" name="nroCuenta[]" value="${(element.nroCuenta != null && element.nroCuenta != '') ? element.nroCuenta : ''}"><span name="nroCuenta">${(element.nroCuenta != null && element.nroCuenta != '') ? element.nroCuenta : ''}</span></td>
                     <td><input type="hidden" name="nroCuentaInterbancaria[]" value="${(element.nroCuentaInterbancaria != null && element.nroCuentaInterbancaria != '') ? element.nroCuentaInterbancaria : ''}"><span name="nroCuentaInterbancaria">${(element.nroCuentaInterbancaria != null && element.nroCuentaInterbancaria != '') ? element.nroCuentaInterbancaria : ''}</span></td>
                     <td><input type="hidden" name="swift[]" value="${(element.swift != null && element.swift != '') ? element.swift : ''}"><span name="swift">${(element.swift != null && element.swift != '') ? element.swift : ''}</span></td>
+                    <td></td>  
+                    <td></td>  
+                    <td></td>  
                     <td>
                         <input type="hidden" class="estadoCuenta" name="estadoCuenta[]" value="1">
                         <div id="contenedorBotoneraAccionCuentaBancaria">
@@ -1310,6 +1313,9 @@ class ListarProveedorView {
                     <td><input type="hidden" name="nroCuenta[]" value="${(element.nro_cuenta != null && element.nro_cuenta != '') ? element.nro_cuenta : ''}"><span name="nroCuenta">${(element.nro_cuenta != null && element.nro_cuenta != '') ? element.nro_cuenta : ''}</span></td>
                     <td><input type="hidden" name="nroCuentaInterbancaria[]" value="${(element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != '') ? element.nro_cuenta_interbancaria : ''}"><span name="nroCuentaInterbancaria">${(element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != '') ? element.nro_cuenta_interbancaria : ''}</span></td>
                     <td><input type="hidden" name="swift[]" value="${(element.swift != null && element.swift != '') ? element.swift : ''}"><span name="swift">${(element.swift != null && element.swift != '') ? element.swift : ''}</span></td>
+                    <td>${(element.fecha_registro != null && element.fecha_registro != '') ? element.fecha_registro : ''}</td>
+                    <td>${(element.updated_at != null && element.updated_at != '') ? element.updated_at : ''}</td>
+                    <td>${(element.usuario != null && element.usuario.nombre_corto != '') ? element.usuario.nombre_corto : ''}</td>
                     <td>
                         <input type="hidden" class="estadoCuenta" name="estadoCuenta[]" value="1">
                         <div id="contenedorBotoneraAccionCuentaBancaria">
@@ -1516,6 +1522,9 @@ class ListarProveedorView {
                     <td><input type="hidden" name="nroCuenta[]" value="${(element.nro_cuenta != null && element.nro_cuenta != '') ? element.nro_cuenta : ''}">${(element.nro_cuenta != null && element.nro_cuenta != '') ? element.nro_cuenta : ''}</td>
                     <td><input type="hidden" name="nroCuentaInterbancaria[]" value="${(element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != '') ? element.nro_cuenta_interbancaria : ''}">${(element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != '') ? element.nro_cuenta_interbancaria : ''}</td>
                     <td><input type="hidden" name="swift[]" value="${(element.swift != null && element.swift != '') ? element.swift : ''}">${(element.swift != null && element.swift != '') ? element.swift : ''}</td>
+                    <td>${(element.fecha_registro != null && element.fecha_registro != '') ? element.fecha_registro : ''}</td>
+                    <td>${(element.updated_at != null && element.updated_at != '') ? element.updated_at : ''}</td>
+                    <td>${(element.usuario != null && element.usuario.nombre_corto != '') ? element.usuario.nombre_corto : ''}</td>
 
                     </tr>`);
             });

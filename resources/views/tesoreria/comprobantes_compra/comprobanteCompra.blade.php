@@ -259,7 +259,7 @@ Crear Comprobante Compra
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> -->
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
-<script src="{{ asset('template/plugins/js-xlsx/xlsx.full.min.js')}}?v={{filemtime(public_path('template/plugins/js-xlsx/xlsx.full.min.js'))}}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/customizacion/customizacion.js')}}?v={{filemtime(public_path('js/almacen/customizacion/customizacion.js'))}}"></script>
 <script src="{{ asset('js/almacen/customizacion/transformacionModal.js')}}?v={{filemtime(public_path('js/almacen/customizacion/transformacionModal.js'))}}"></script>

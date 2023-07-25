@@ -26,19 +26,6 @@
 </li>
 <li class="treeview">
     <a href="#">
-        <i class="fas fa-chart-bar"></i> <span>Resportes</span> <i class="fa fa-angle-left pull-right"></i>
-    </a>
-    <ul class="treeview-menu">
-        <!-- <li><a href="{{ route('proyectos.reportes.curvas.index') }}"><i class="far fa-circle fa-xs"></i> Curvas S del Proyecto </a></li>
-        <li><a href="{{ route('proyectos.reportes.saldos.index') }}"><i class="far fa-circle fa-xs"></i> Saldos por Presupuesto </a></li>
-        <li><a href="{{ route('proyectos.reportes.opciones-relaciones.index') }}"><i class="far fa-circle fa-xs"></i> Opciones y sus Relaciones </a></li> -->
-        <li><a href="{{ route('logistica.gestion-logistica.reportes.compras-locales') }}"><i class="far fa-circle fa-xs"></i> Compras locales</a></li>
-        <li><a href="{{ route('proyectos.reportes.cuadro-gastos.index') }}"><i class="far fa-circle fa-xs"></i>Cuadro de gastos</a></li>
-
-    </ul>
-</li>
-{{-- <li class="treeview">
-    <a href="#">
         <i class="fab fa-opera"></i> <span>Opcion Comercial</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
@@ -79,5 +66,19 @@
     <ul class="treeview-menu">
         <li><a href="{{ route('proyectos.configuraciones.estructuras.index') }}"><i class="far fa-circle fa-xs"></i> Estructura Presupuesto </a></li>
     </ul>
-</li> --}}
+</li>
+
+<li class="treeview">
+    <a href="#">
+        <i class="fas fa-chart-bar"></i> <span>Resportes</span> <i class="fa fa-angle-left pull-right"></i>
+    </a>
+    <ul class="treeview-menu">
+        <li><a href="{{ route('proyectos.reportes.curvas.index') }}"><i class="far fa-circle fa-xs"></i> Curvas S del Proyecto </a></li>
+        <li><a href="{{ route('proyectos.reportes.saldos.index') }}"><i class="far fa-circle fa-xs"></i> Saldos por Presupuesto </a></li>
+        <li><a href="{{ route('proyectos.reportes.opciones-relaciones.index') }}"><i class="far fa-circle fa-xs"></i> Opciones y sus Relaciones </a></li>
+        <li><a href="{{ route('logistica.gestion-logistica.reportes.compras-locales') }}"><i class="far fa-circle fa-xs"></i> Compras locales</a></li>
+        <li><a href="{{ route('proyectos.reportes.cuadro-gastos.index') }}"><i class="far fa-circle fa-xs"></i>Cuadro de gastos</a></li>
+
+    </ul>
+</li>
 @endsection

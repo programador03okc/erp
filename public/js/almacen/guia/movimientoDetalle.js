@@ -26,6 +26,7 @@ function open_detalle_movimiento(data) {
     // $('#ordenes_soft_link').text(data.ordenes_soft_link);
     $("#submit_ingreso").removeAttr("disabled");
     listar_detalle_movimiento(data.id_guia_com);
+    listarActualizacion(data.id_guia_com);
 }
 
 function abrirIngreso() {
@@ -70,16 +71,16 @@ function listar_detalle_movimiento(id_guia_com_detalle) {
                 <td>${element.codigo_req !== null ? element.codigo_req : ''}</td>
                 <td><strong>${element.sede_req !== null ? element.sede_req : ''}</strong></td>
                 <td>${html_ser == '' ? '(no aplica)'
-                        : `<i class="fas fa-edit icon-tabla boton blue" data-toggle="tooltip" data-placement="bottom" 
+                        : `<i class="fas fa-edit icon-tabla boton blue" data-toggle="tooltip" data-placement="bottom"
                     title="Editar Series" onClick="open_guia_series_edit(${element.id_guia_com_det});"></i>
-                    <i class="fas fa-file-excel icon-tabla boton green" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-file-excel icon-tabla boton green" data-toggle="tooltip" data-placement="bottom"
                     title="Exportar a Excel Series" onClick="exportarSeries(${element.id_guia_com_det});"></i>`}
                 </td>
                 </tr>`;
                 i++;
             });
             $('#detalleMovimientoIngreso tbody').html(html);
-            // <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom" 
+            // <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom"
             // title="Agregar Series" onClick="agrega_series_guia(${element.id_guia_com_det},${element.cantidad},${element.id_producto},${element.id_almacen});"></i>
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -156,4 +157,45 @@ function ingreso_ceros_numero(numero) {
         var num = $("[name=ingreso_serie]").val();
         $("[name=ingreso_serie]").val(leftZero(4, num));
     }
+}
+
+function listarActualizacion(id) {
+    var vardataTables = funcDatatables();
+    var tableRequerimientos = $("#tabla-anulacion").DataTable({
+        language: vardataTables[0],
+        destroy: true,
+        pageLength: 5,
+        serverSide: true,
+        lengthChange: false,
+        dom: vardataTables[1],
+        buttons:[],
+        ajax: {
+            url: route('almacen.movimientos.pendientes-ingreso.listar-actualizacion',{id:id}),
+            type: "GET",
+            data:{
+                // filtros
+                _token:token
+            },
+            beforeSend: data => {
+                $("#tabla-anulacion").LoadingOverlay("show", {
+                    imageAutoResize: true,
+                    progress: true,
+                    imageColor: "#3c8dbc"
+                });
+            }
+        },
+        columns: [
+            {data: 'id_obs', name:"id_obs" },
+            {data: 'usuario', name:"usuario" },
+            {data: 'anulacion', class:"text-center"},
+            {data: 'observacion', name:"observacion" , class:"text-center"},
+            {data: 'fecha_registro', name:"fecha_registro" , class:"text-center"},
+        ],
+        order: [[1, "desc"]],
+        columnDefs: [{ aTargets: [0], sClass: "invisible" }],
+        "drawCallback": function (settings) {
+
+            $("#tabla-anulacion").LoadingOverlay("hide", true);
+        }
+    });
 }

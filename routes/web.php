@@ -131,6 +131,8 @@ Route::view('/', 'auth.login');
 
 Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('modulos');
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
+Route::get('test-encrypt', [TestController::class, 'encriptar'])->name('test-encrypt');
+Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('test-lista-cliente');
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('cerrar-sesion', [LoginController::class, 'logout'])->name('cerrar-sesion');
@@ -1370,7 +1372,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::post('requerimientos-pendientes', [ComprasPendientesController::class, 'listarRequerimientosPendientes'])->name('requerimientos-pendientes');
 					Route::post('requerimientos-atendidos', [ComprasPendientesController::class, 'listarRequerimientosAtendidos'])->name('requerimientos-atendidos');
 					Route::get('reporte-requerimientos-atendidos-excel/{Empresa}/{Sede}/{FechaDesde}/{FechaHasta}/{Reserva}/{Orden}', [ComprasPendientesController::class, 'reporteRequerimientosAtendidosExcel'])->name('reporte-requerimientos-atendidos-excel');
-					Route::get('solicitud-cotizacion-excel/{id}', [ComprasPendientesController::class, 'solicitudCotizacionExcel'])->name('solicitud-cotizacion-excel');
+					Route::post('solicitud-cotizacion-excel', [ComprasPendientesController::class, 'solicitudCotizacionExcel'])->name('solicitud-cotizacion-excel');
 					Route::get('exportar-lista-requerimientos-pendientes-excel', [ComprasPendientesController::class, 'exportListaRequerimientosPendientesExcel'])->name('exportar-lista-requerimientos-pendientes-excel');
 					Route::post('lista_items-cuadro-costos-por-requerimiento', [ComprasPendientesController::class, 'get_lista_items_cuadro_costos_por_id_requerimiento'])->name('lista_items-cuadro-costos-por-requerimiento');
 					Route::get('grupo-select-item-para-compra', [ComprasPendientesController::class, 'getGrupoSelectItemParaCompra'])->name('grupo-select-item-para-compra');

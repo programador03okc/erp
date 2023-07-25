@@ -389,12 +389,13 @@ class ConfiguracionController extends Controller{
     function cambiar_clave(Request $request){
         $p1 = StringHelper::encode5t(addslashes($request->pass_old));
         $p2 = StringHelper::encode5t(addslashes($request->pass_new));
+        $p3 = Hash::make($request->pass_new);
         $user = Auth::user()->id_usuario;
 
         $sql = DB::table('configuracion.sis_usua')->where([['clave', '=', $p1], ['id_usuario', '=', $user], ['estado', '=', 1]])->first();
 
         if ($sql !== null) {
-            $data = DB::table('configuracion.sis_usua')->where('id_usuario', $sql->id_usuario)->update(['clave'  => $p2]);
+            $data = DB::table('configuracion.sis_usua')->where('id_usuario', $sql->id_usuario)->update(['clave' => $p2, 'password' => $p3]);
             $rpta = $data;
         }else{
             $rpta = 0;
@@ -2165,20 +2166,11 @@ public function anular_configuracion_socket($id){
     }
     public function cambiarClave(Request $request)
     {
-        $usuario = SisUsua::where('estado', 1)
-          ->where('id_usuario', $request->id_usuario)
-          ->update(['clave' => StringHelper::encode5t($request->nueva_clave)]);
-        if ($usuario) {
-            return response()->json([
-                "status"=>200,
-                "success"=>true
-            ]);
-        }else{
-            return response()->json([
-                "status"=>404,
-                "success"=>false
-            ]);
-        }
+        $usuario = SisUsua::find($request->id_usuario);
+            $usuario->clave = StringHelper::encode5t($request->nueva_clave);
+            $usuario->password = Hash::make($request->nueva_clave);
+        $usuario->save();
+        return response()->json(["status" => 200, "success" => true, "usuario" => $usuario]);
 
     }
     public function viewAccesos($id)

@@ -3293,7 +3293,13 @@ class RequerimientoPendienteView {
     }
 
     solicitudCotizacionExcel(obj) {
-        window.open(`solicitud-cotizacion-excel/${obj.dataset.idRequerimiento}`);
+        // window.open(`solicitud-cotizacion-excel/${obj.dataset.idRequerimiento}`);
+        let form = $('<form action="' + route('logistica.gestion-logistica.compras.pendientes.solicitud-cotizacion-excel') + '" method="post" target="_blank">' +
+            '<input type="hidden" name="_token" value="' + token + '" />' +
+            '<input type="hidden" name="id" value="' + obj.dataset.idRequerimiento + '" />' +
+        '</form>');
+        $('body').append(form);
+        form.submit();
 
     }
 

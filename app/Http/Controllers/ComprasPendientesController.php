@@ -729,9 +729,9 @@ class ComprasPendientesController extends Controller
         return $alm_req;
     }
 
-    public function solicitudCotizacionExcel($idRequerimiento)
+    public function solicitudCotizacionExcel(Request $request)
     {
-        return Excel::download(new solicitudCotizacionExcel($idRequerimiento), 'solicitud_cotización.xlsx');
+        return Excel::download(new solicitudCotizacionExcel($request->id), 'solicitud_cotización.xlsx');
     }
     public function reporteRequerimientosAtendidosExcel($idEmpresa, $idSede, $fechaRegistroDesde, $fechaRegistroHasta, $reserva, $orden)
     {

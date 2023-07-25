@@ -191,29 +191,29 @@ function mostrar_ordenes_seleccionadas() {
             html_ser += (html_ser == '' ? '' : ', ') + serie;
         });
         html += `<tr>
-            <td><input type="checkbox" data-tipo="${element.id_oc_det !== null ? 'orden' : 'producto'}" 
+            <td><input type="checkbox" data-tipo="${element.id_oc_det !== null ? 'orden' : 'producto'}"
                 value="${element.id_oc_det !== null ? element.id_oc_det : element.id_producto}" checked/></td>
             <td>${element.codigo_oc !== null ? element.codigo_oc : ''}</td>
             <td><a href="#" class="verProducto" data-id="${element.id_producto}" >${element.codigo}</a></td>
             <td>${element.part_number !== null ? element.part_number : ''}</td>
             <td>${(element.id_categoria == 117 ?
-                `<i class="fas fa-exclamation-triangle orange" style="cursor:pointer;" onClick="abrirProducto(${element.id_producto});" 
+                `<i class="fas fa-exclamation-triangle orange" style="cursor:pointer;" onClick="abrirProducto(${element.id_producto});"
                 title="El producto fue creado con Categoría = Por definir"></i>`: '')
             + element.descripcion + ' <br><strong>' + html_ser + '</strong>'}
             </td>
-            <td><input class="right" type="number" id="${element.id_oc_det !== null ? element.id_oc_det : 'p' + element.id_producto}cantidad" step="0.01" value="${element.cantidad}" 
+            <td><input class="right" type="number" id="${element.id_oc_det !== null ? element.id_oc_det : 'p' + element.id_producto}cantidad" step="0.01" value="${element.cantidad}"
                 min="0.01" ${element.id_oc_det !== null ? `max="${element.cantidad}"` : ''} style="width:80px;"/></td>
             <td>${element.abreviatura}</td>
             <td class="text-right">${formatNumber.decimal(element.precio, element.simbolo, -4)}</td>
             <td class="text-right">${formatNumber.decimal((element.cantidad * element.precio), element.simbolo, -4)}</td>
             <td>
-                <input type="text" class="oculto" id="series" value="${element.series}" 
+                <input type="text" class="oculto" id="series" value="${element.series}"
                 data-partnumber="${element.part_number !== null ? element.part_number : element.codigo}"/>
                 ${element.control_series ?
-                `<i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom" title="Agregar Series" 
+                `<i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom" title="Agregar Series"
                     onClick="${element.id_oc_det !== null ? `agrega_series(${element.id_oc_det});` : `agrega_series_producto(${element.id_producto});`}"></i>`
                 : ''}
-                
+
             </td>
         </tr>`;
         i++;
@@ -484,7 +484,7 @@ function guardar_guia_create(data) {
 }
 /*
 function agregarProducto(producto) {
-    // oc_det_seleccionadas.push({ 
+    // oc_det_seleccionadas.push({
     //     'id_oc_det'    : null,
     //     'id_producto'  : parseInt(producto.id_producto),
     //     'codigo_oc'    : null,

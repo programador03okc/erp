@@ -26,7 +26,7 @@ use App\Models\Logistica\Empresa;
 use App\Models\Tesoreria\Usuario;
 use App\Models\Tesoreria\Grupo;
 use DataTables;
-//use Debugbar;
+// use Debugbar;
 use App\Http\Controllers\AlmacenController as GenericoAlmacenController;
 
 date_default_timezone_set('America/Lima');

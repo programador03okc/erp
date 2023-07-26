@@ -46,7 +46,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 //date_default_timezone_set('America/Lima');
 
-//use Debugbar;
+// use Debugbar;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
@@ -233,8 +233,9 @@ class ComprasPendientesController extends Controller
                 'alm_req.fecha_entrega',
                 'alm_tp_req.descripcion AS tipo_req_desc',
                 'division.descripcion as descripcion_division',
-                DB::raw("UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno))  AS solicitado_por"),
-                DB::raw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) as nombre_usuario"),
+                DB::raw("CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN sis_usua.nombre_largo 
+                ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END AS nombre_solicitado_por"),
+                'sis_usua.nombre_largo as nombre_usuario',
                 'alm_req.observacion',
                 'adm_estado_doc.estado_doc'
             )
@@ -348,7 +349,7 @@ class ComprasPendientesController extends Controller
                 WHERE det.id_requerimiento = alm_req.id_requerimiento AND alm_reserva.estado = 1
                 AND det.estado != 7) AS count_stock_comprometido")
             )
-            ->when(($empresa > 0 and $empresa != 'SIN_FILTRO'), function ($query) use ($empresa) {
+            ->when(($empresa > 0), function ($query) use ($empresa) {
                 return $query->where('alm_req.id_empresa', '=', $empresa);
             })
             // ->when(($sede > 0), function ($query) use ($sede) {
@@ -380,7 +381,7 @@ class ComprasPendientesController extends Controller
                 $query->Join('almacen.alm_det_req', 'alm_det_req.id_requerimiento', '=', 'alm_req.id_requerimiento');
                 return $query->rightJoin('logistica.log_det_ord_compra', 'log_det_ord_compra.id_detalle_requerimiento', '=', 'alm_det_req.id_detalle_requerimiento');
             })
-            ->when(($estado > 0 and $estado  != 'SIN_FILTRO'), function ($query) use ($estado) {
+            ->when(($estado > 0), function ($query) use ($estado) {
                 return $query->where('alm_req.estado', '=', $estado);
             })
 
@@ -472,6 +473,7 @@ class ComprasPendientesController extends Controller
             ->leftJoin('rrhh.rrhh_perso as perso_solicitado_por', 'perso_solicitado_por.id_persona', '=', 'postu_solicitado_por.id_persona')
             ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
 
+
             ->select(
                 'alm_req.id_requerimiento',
                 'alm_req.codigo',
@@ -532,10 +534,10 @@ class ComprasPendientesController extends Controller
                 WHERE det.id_requerimiento = alm_req.id_requerimiento AND alm_reserva.estado = 1
                 AND det.estado != 7) AS count_stock_comprometido")
             )
-            ->when(($empresa > 0 and $empresa != 'SIN_FILTRO'), function ($query) use ($empresa) {
+            ->when(($empresa > 0), function ($query) use ($empresa) {
                 return $query->where('alm_req.id_empresa', '=', $empresa);
             })
-            ->when(($sede > 0 and $sede != 'SIN_FILTRO'), function ($query) use ($sede) {
+            ->when(($sede > 0), function ($query) use ($sede) {
                 return $query->where('alm_req.id_sede', '=', $sede);
             })
             ->when(($reserva == 'SIN_RESERVA'), function ($query) {
@@ -645,7 +647,7 @@ class ComprasPendientesController extends Controller
                 'alm_req.tipo_cliente',
                 'tipo_cliente.descripcion AS tipo_cliente_desc',
                 'sis_usua.usuario',
-                DB::raw("CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno) as nombre_usuario"),
+                'sis_usua.nombre_largo as nombre_usuario',
                 'rrhh_rol.id_area',
                 'adm_area.descripcion AS area_desc',
                 'rrhh_rol.id_rol',
@@ -663,7 +665,9 @@ class ComprasPendientesController extends Controller
                 'alm_req.id_prioridad',
                 'alm_req.fecha_registro',
                 'alm_req.trabajador_id',
-                DB::raw("CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)  AS solicitado_por"),
+                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN  sis_usua.nombre_largo
+                ELSE CONCAT(perso_solicitado_por.nombres,' ',perso_solicitado_por.apellido_paterno,' ',perso_solicitado_por.apellido_materno)
+                END AS nombre_solicitado_por"),
                 'cc_view.name as cc_solicitado_por',
                 'alm_req.estado',
                 'alm_req.id_empresa',
@@ -729,9 +733,9 @@ class ComprasPendientesController extends Controller
         return $alm_req;
     }
 
-    public function solicitudCotizacionExcel(Request $request)
+    public function solicitudCotizacionExcel($idRequerimiento)
     {
-        return Excel::download(new solicitudCotizacionExcel($request->id), 'solicitud_cotización.xlsx');
+        return Excel::download(new solicitudCotizacionExcel($idRequerimiento), 'solicitud_cotización.xlsx');
     }
     public function reporteRequerimientosAtendidosExcel($idEmpresa, $idSede, $fechaRegistroDesde, $fechaRegistroHasta, $reserva, $orden)
     {
@@ -1317,8 +1321,8 @@ class ComprasPendientesController extends Controller
                         'id_detalle_requerimiento' => $re->id_detalle_requerimiento
                     ];
                 }
-                // //Debugbar::info($detalleOrdenesAfectadas);
-                // //Debugbar::info($reservasAfectadas);
+                // Debugbar::info($detalleOrdenesAfectadas);
+                // Debugbar::info($reservasAfectadas);
 
                 if (count($detalleOrdenesAfectadas) > 0) {
                     $trazabilidad = new Trazabilidad();

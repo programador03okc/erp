@@ -18,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Tesoreria\Usuario;
 use App\Models\Tesoreria\Grupo;
 use DataTables;
-//use Debugbar;
+// use Debugbar;
 use Carbon\Carbon;
 
 date_default_timezone_set('America/Lima');
@@ -1309,7 +1309,7 @@ class LogisticaController extends Controller
         $array_items = [];
         $array_items_sin_transferencia = [];
         $array_almacen = [];
-        // //Debugbar::info('generarTransferenciaRequerimiento');
+        // Debugbar::info('generarTransferenciaRequerimiento');
 
         foreach ($detalle_req as $det) {
         
@@ -1332,7 +1332,7 @@ class LogisticaController extends Controller
                         array_push($array_items_sin_transferencia, $det);
                         
                         $this->actualizarEstadoDetalleRequerimientoSinTransferencia($array_items_sin_transferencia);
-                        // //Debugbar::info('actualizarEstadoDetalleRequerimientoSinTransferencia sede =');
+                        // Debugbar::info('actualizarEstadoDetalleRequerimientoSinTransferencia sede =');
                 }
             }
         }
@@ -1387,7 +1387,7 @@ class LogisticaController extends Controller
    
 
         if(count($id_trans_detalle_list) >0){
-            // //Debugbar::info('actualizarEstadoDetalleRequerimientoPostTransferencia');
+            // Debugbar::info('actualizarEstadoDetalleRequerimientoPostTransferencia');
             $this->actualizarEstadoDetalleRequerimientoPostTransferencia($id_trans_detalle_list);
             $this->actualizarEstadoRequerimientoAtendido([$id_requerimiento]);
         }
@@ -1504,11 +1504,11 @@ class LogisticaController extends Controller
         $cantidad_atentidos_total=0;
         $id_requerimiento_list=[];
 
-        // //Debugbar::info('dentro de actualizarEstadoDetalleRequerimientoSinTransferencia');
-        // //Debugbar::info($item_list);
+        // Debugbar::info('dentro de actualizarEstadoDetalleRequerimientoSinTransferencia');
+        // Debugbar::info($item_list);
 
         foreach($item_list as $item){
-        // //Debugbar::info($item['cantidad']);
+        // Debugbar::info($item['cantidad']);
         $id_requerimiento_list[]= $item['id_requerimiento'];
             if($item['cantidad'] == $item['cantidad_a_atender'] ){
                 DB::table('almacen.alm_det_req')
@@ -1549,7 +1549,7 @@ class LogisticaController extends Controller
         ->where('trans_detalle.estado','!=',7)
         ->whereIn('trans_detalle.id_trans_detalle',$id_trans_detalle_list)
         ->get();
-        // //Debugbar::info($trans_detalle);
+        // Debugbar::info($trans_detalle);
 
         foreach($trans_detalle as $data){
             $id_detalle_requerimiento_list[] = $data->id_requerimiento_detalle;

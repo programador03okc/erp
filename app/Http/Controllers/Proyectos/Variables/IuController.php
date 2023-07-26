@@ -59,7 +59,8 @@ class IuController extends Controller
             ->where('id_iu',$request->id_iu)
             ->update([
                 'codigo' => $request->codigo,
-                'descripcion' => $request->descripcion
+                'descripcion' => $request->descripcion,
+                'estado' => $request->estado
             ]);
         return response()->json($iu);
     }

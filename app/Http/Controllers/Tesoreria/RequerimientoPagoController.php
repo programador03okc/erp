@@ -6,6 +6,7 @@ use App\Exports\ListadoItemsRequerimientoPagoExport;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Exports\ListadoRequerimientoPagoExport;
+use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
 use App\Http\Controllers\ContabilidadController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
@@ -52,7 +53,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Yajra\DataTables\Facades\DataTables;
-//use Debugbar;
+// use Debugbar;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -311,6 +312,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_estado = 1;
             $requerimientoPago->id_trabajador = $request->id_trabajador > 0 ? $request->id_trabajador : null;
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
             $requerimientoPago->save();
 
@@ -368,7 +370,7 @@ class RequerimientoPagoController extends Controller
             $documento->id_doc = $requerimientoPago->id_requerimiento_pago;
             $documento->save();
 
-            // guardar factura solo si existe vinculo 
+            // guardar factura solo si existe vinculo
             // $documentoCompraArray=[];
             $documentoCompraArray = $this->VincularFacturaRequerimientoPago($request, $count, $detalleArray, $codigo);
 
@@ -434,7 +436,7 @@ class RequerimientoPagoController extends Controller
                         }
                     }
 
-                    // //Debugbar::info($ObjectoAdjuntoDetalle);
+                    // Debugbar::info($ObjectoAdjuntoDetalle);
 
                     $idAdjuntoDetalle[] = $this->guardarAdjuntoRequerimientoPagoDetalle($ObjectoAdjuntoDetalle);
                 }
@@ -561,7 +563,7 @@ class RequerimientoPagoController extends Controller
     {
         DB::beginTransaction();
         try {
-            // //Debugbar::info($ObjectoAdjuntoDetalle);
+            // Debugbar::info($ObjectoAdjuntoDetalle);
             $estado_accion = '';
             $idAdjunto = [];
 
@@ -680,7 +682,7 @@ class RequerimientoPagoController extends Controller
 
     function guardarAdjuntoRequerimientoPagoDetalle($ObjectoAdjuntoDetalle)
     {
-        // //Debugbar::info($ObjectoAdjuntoDetalle);
+        // Debugbar::info($ObjectoAdjuntoDetalle);
 
         $idList = [];
 
@@ -831,6 +833,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_cc = $request->id_cc > 0 ? $request->id_cc : null;
             $requerimientoPago->id_trabajador = $request->id_trabajador > 0 ? $request->id_trabajador : null;
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $requerimientoPago->save();
 
             $count = count($request->descripcion);
@@ -902,7 +905,7 @@ class RequerimientoPagoController extends Controller
                             } elseif ($subtotalOrigen > $subtotalNuevo) {
                                 $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
                                 $tipoOperacionItemParaPresupuesto = 'suma';
-                                // //Debugbar::info($importeItemParaPresupuesto);
+                                // Debugbar::info($importeItemParaPresupuesto);
                             }
                         }
                         $detalle->precio_unitario = floatval($request->precioUnitario[$i]);
@@ -954,7 +957,7 @@ class RequerimientoPagoController extends Controller
             //adjuntos detalle
             if (isset($request->archivo_adjunto_detalle_list)) {
 
-                // //Debugbar::info(count($request->archivo_adjunto_detalle_list) );
+                // Debugbar::info(count($request->archivo_adjunto_detalle_list) );
                 $ObjectoAdjuntoDetalle = json_decode($request->archivoAdjuntoRequerimientoPagoDetalleObject);
                 $adjuntoOtrosAdjuntosDetalleLength = $request->archivo_adjunto_detalle_list != null ? count($request->archivo_adjunto_detalle_list) : 0;
                 $archivoAdjuntoDetalleList = $request->archivo_adjunto_detalle_list;
@@ -1072,7 +1075,6 @@ class RequerimientoPagoController extends Controller
                     'mensaje' => 'No se pudo anular el requerimiento de pago, el id no es valido',
                 ];
             }
-
 
             DB::commit();
 
@@ -1368,11 +1370,10 @@ class RequerimientoPagoController extends Controller
                 $cuentaPersona->estado = 1;
                 $cuentaPersona->save();
 
+                $idCuenta = $cuentaPersona->id_cuenta_bancaria;
                 $comentario = 'Cuenta: '.($request->nro_cuenta??'').', CCI: '.$request->nro_cuenta_interbancaria??''.', Agregado por: '.Auth::user()->nombre_corto;
                 LogActividad::registrar(Auth::user(), 'Agregar cuenta bancaria', 2, $cuentaPersona->getTable(), null, $cuentaPersona);
 
-
-                $idCuenta = $cuentaPersona->id_cuenta_bancaria;
             } elseif ($request->id_tipo_destinatario == 2) { //tipo contribuyente
 
                 $cuentaContribuyente = new CuentaContribuyente();
@@ -1952,5 +1953,14 @@ class RequerimientoPagoController extends Controller
             "data" => $adjuntos_pagos_complementarios,
             "data_pagos" => $adjuntos_pagos
         ]);
+    }
+    public function requerimientoSustentado(Request $request)  {
+        $requerimiento = RequerimientoPago::find($request->id);
+        $requerimiento->requerimiento_sustentado = $request->requerimiento_sustentado;
+        $requerimiento->save();
+        $respuesta = array(
+            "status"=>'success'
+        );
+        return response()->json($respuesta,200);
     }
 }

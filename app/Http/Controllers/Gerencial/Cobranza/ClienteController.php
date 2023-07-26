@@ -48,8 +48,16 @@ class ClienteController extends Controller
     }
     public function listarCliente()
     {
-        $data = ContribuyenteView::where('tipo', 'CLIENTE')->get();
-        return DataTables::of($data)->make(true);
+        $data = Contribuyente::where('adm_contri.estado',1)
+        ->select(
+            'adm_contri.*'
+        )
+        ->join('comercial.com_cliente', 'com_cliente.id_contribuyente', '=', 'adm_contri.id_contribuyente');
+        // $data = Contribuyente::all();
+        return DataTables::of($data)
+        // return datatables($data)
+        // ->toJson();
+        ->make(true);
     }
     public function crear(Request $request)
     {
@@ -331,7 +339,7 @@ class ClienteController extends Controller
     public function nuevoCliente()
     {
         $pais = Pais::get();
-        $departamento = Departamento::orderBy('descripcion', 'asc')->get();
+        $departamento = Departamento::get();
         $tipo_documentos = Identidad::where('estado',1)->get();
         $tipo_contribuyente = TipoContribuyente::where('estado',1)->get();
         $monedas = Moneda::where('estado',1)->get();
@@ -360,12 +368,13 @@ class ClienteController extends Controller
     public function editarContribuyente($id_contribuyente)
     {
         $pais = Pais::get();
-        $departamento = Departamento::orderBy('descripcion', 'asc')->get();
+        $departamento = Departamento::get();
         $tipo_documentos = Identidad::where('estado',1)->get();
         $tipo_contribuyente = TipoContribuyente::where('estado',1)->get();
         $monedas = Moneda::where('estado',1)->get();
         $bancos = Banco::mostrar();
         $tipo_cuenta = TipoCuenta::mostrar();
+
 
         $contribuyente = Contribuyente::where('id_contribuyente',$id_contribuyente)->first();
 

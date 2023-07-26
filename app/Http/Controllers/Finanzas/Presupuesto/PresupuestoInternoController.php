@@ -31,11 +31,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 use App\models\Configuracion\AccesosUsuarios;
 use App\models\Configuracion\UsuarioGrupo;
+use App\Models\Contabilidad\Contribuyente;
 use App\Models\Finanzas\PresupuestoInternoDetalleHistorial;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Logistica\Proveedor;
+use App\Models\Rrhh\Persona;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use Illuminate\Support\Facades\Auth;
-//use Debugbar;
+// use Debugbar;
 
 class PresupuestoInternoController extends Controller
 {
@@ -69,6 +72,8 @@ class PresupuestoInternoController extends Controller
         return DataTables::of($data)
         ->addColumn('total', function ($data){
             $total = ($data->gastos=='3'?PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno,3):0);
+            // $total = PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno,3);
+            // $total = ($total>0?$total:0);
             // return floatval(str_replace(",", "", $total));
             return round($total,2);
         })
@@ -80,15 +85,14 @@ class PresupuestoInternoController extends Controller
                 $meses_numero = date('m');
                 $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
             }
-            return round($total_ejecutado, 2);
+            return number_format(($total_ejecutado), 2, '.', ',');
         })
         // ->toJson();
         ->make(true);
     }
     public function crear()
     {
-        // $empresas = Empresa::all();
-        $empresas = Empresa::mostrar();
+        $empresas = Empresa::all();
         $grupos = AdmGrupo::get();
         $area = FinanzasArea::where('estado',1)->get();
         $moneda = Moneda::where('estado',1)->get();
@@ -96,7 +100,6 @@ class PresupuestoInternoController extends Controller
         $presupuesto_interno = PresupuestoInterno::count();
         $array_accesos=[];
         $accesos_usuario = AccesosUsuarios::where('estado',1)->where('id_usuario',Auth::user()->id_usuario)->get();
-        // return [$empresas,$empresas2];exit;
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
@@ -623,8 +626,7 @@ class PresupuestoInternoController extends Controller
     }
     public function editar(Request $request)
     {
-        // $empresas = Empresa::all();
-        $empresas = Empresa::mostrar();
+        $empresas = Empresa::all();
         $grupos = Grupo::get();
         // $area = Area::where('estado',1)->get();
         $area = Division::where('estado',1)->get();
@@ -656,8 +658,7 @@ class PresupuestoInternoController extends Controller
     }
     public function editarPresupuestoAprobado(Request $request)
     {
-        // $empresas = Empresa::all();
-        $empresas = Empresa::mostrar();
+        $empresas = Empresa::all();
         $grupos = Grupo::get();
         // $area = Area::where('estado',1)->get();
         $area = Division::where('estado',1)->get();
@@ -682,13 +683,40 @@ class PresupuestoInternoController extends Controller
         }
         // return 'ss';exit;
         $sedes = Sede::listarSedesPorEmpresa($presupuesto_interno->empresa_id);
-        return view('finanzas.presupuesto_interno.editar_presupuesto_aprobado', compact('grupos','area','moneda','id','presupuesto_interno','ingresos','costos','gastos','array_accesos','empresas','sedes'));
+        $total_presupuesto = PresupuestoInterno::calcularTotalPresupuestoAnual($id,3);
+        return view('finanzas.presupuesto_interno.editar_presupuesto_aprobado', compact('grupos','area','moneda','id','presupuesto_interno','ingresos','costos','gastos','array_accesos','empresas','sedes','total_presupuesto'));
     }
     public function actualizar(Request $request)
     {
         // set_time_limit(0);
-        ini_set('max_input_vars', 800000);
 
+        ini_set('max_input_vars', 800000);
+        $array_accesos=[];
+        $accesos_usuario = AccesosUsuarios::where('estado',1)->where('id_usuario',Auth::user()->id_usuario)->get();
+        foreach ($accesos_usuario as $key => $value) {
+            array_push($array_accesos,$value->id_acceso);
+        }
+
+        if ($request->tipo_gastos==='3' && in_array(329,$array_accesos) === false) {
+            // return floatval(str_replace(",", "", $request->gastos[0]['enero']));exit;
+            foreach($request->gastos as $key=>$value){
+                $array_partida = explode('.',$value['partida']);
+                if(sizeof($array_partida)===1){
+                    $total = floatval(str_replace(",", "", $value['enero'])) + floatval(str_replace(",", "", $value['febrero'])) + floatval(str_replace(",", "", $value['marzo'])) + floatval(str_replace(",", "", $value['abril'])) + floatval(str_replace(",", "", $value['mayo'])) + floatval(str_replace(",", "", $value['junio'])) + floatval(str_replace(",", "", $value['julio'])) + floatval(str_replace(",", "", $value['agosto'])) + floatval(str_replace(",", "", $value['setiembre'])) + floatval(str_replace(",", "", $value['octubre'])) + floatval(str_replace(",", "", $value['noviembre'])) + floatval(str_replace(",", "", $value['diciembre']));
+
+                    if(round($total,2) > (float)$request->total_presupuesto){
+                        return response()->json([
+                            "titulo"=>"Error",
+                            "texto"=>"Esta sobre pasando los limites del presupueto ya aprobado.",
+                            "icono"=>"error"
+                        ],200);exit;
+                    }
+
+                }
+
+            }
+
+        }
         $array_descripcion = explode('-',$request->descripcion);
 
         // return $request->descripcion ;exit;
@@ -1572,145 +1600,177 @@ class PresupuestoInternoController extends Controller
         return $nombre_mes;
     }
 
-    public function afectarPresupuestoInterno($sumaResta, $tipoDocumento, $id, $detalle)
-    {
-        $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
-        $TipoHistorial = '';
-        $operacion = '';
-        $importe = 0;
-        $historial = [];
+    // public static function afectarPresupuestoPorFila($idPresupuestoInterno,$idPartida,$importe,$fechaRegistro,$operacion){
+
+
+    //     $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
+    //     $mes = intval(date('m', strtotime($fechaRegistro)));
+    //     $nombreMes = $mesLista[$mes];
+    //     $nombreMesAux = $nombreMes . '_aux';
+
+    //     if ($idPresupuestoInterno > 0) {
+    //         $presupuestoInternoDetalle = PresupuestoInternoDetalle::where([
+    //             ['id_presupuesto_interno', $idPresupuestoInterno],
+    //             ['estado', 1], ['id_presupuesto_interno_detalle', $idPartida]
+    //         ])->first();
+
+    //         if($presupuestoInternoDetalle){
+
+    //             if($operacion == 'R'){
+    //                 $nuevoImporte = floatval($presupuestoInternoDetalle->$nombreMesAux) - (isset($importe)?floatval($importe):0);
+    //                 $presupuestoInternoDetalle->$nombreMesAux = $nuevoImporte;
+    //                 $presupuestoInternoDetalle->save();
+
+    //             }elseif($operacion == 'S'){
+    //                 $nuevoImporte = floatval($presupuestoInternoDetalle->$nombreMesAux) + (isset($importe)?floatval($importe):0);
+    //                 $presupuestoInternoDetalle->$nombreMesAux = $nuevoImporte;
+    //                 $presupuestoInternoDetalle->save();
+    //             }
+    //         }
+    //     }
+
+
+    // }
+
+    // public function afectarPresupuestoInterno($sumaResta, $tipoDocumento, $id, $detalle)
+    // {
+    //     $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
+    //     $TipoHistorial = '';
+    //     $operacion = '';
+    //     $importe = 0;
+    //     $historial = [];
 
 
 
-        switch ($tipoDocumento) {
-            case 'orden':
-                foreach ($detalle as $item) {
-                    if ($item->id_detalle_requerimiento > 0) {
-                        $detalleRequerimiento = DetalleRequerimiento::find($item->id_detalle_requerimiento);
-                        $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
+    //     switch ($tipoDocumento) {
+    //         case 'orden':
+    //             foreach ($detalle as $item) {
+    //                 if ($item->id_detalle_requerimiento > 0) {
+    //                     $detalleRequerimiento = DetalleRequerimiento::find($item->id_detalle_requerimiento);
+    //                     $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
 
-                        $mes = intval(date('m', strtotime($requerimiento->fecha_registro)));
-                        $nombreMes = $mesLista[$mes];
-                        $nombreMesAux = $nombreMes . '_aux';
-                        $mesEnDosDigitos =str_pad($mes, 2, "0", STR_PAD_LEFT);
+    //                     $mes = intval(date('m', strtotime($requerimiento->fecha_registro)));
+    //                     $nombreMes = $mesLista[$mes];
+    //                     $nombreMesAux = $nombreMes . '_aux';
+    //                     $mesEnDosDigitos =str_pad($mes, 2, "0", STR_PAD_LEFT);
 
-                        if ($requerimiento->id_presupuesto_interno > 0) {
-                            $presupuestoInternoDetalle = PresupuestoInternoDetalle::where([
-                                ['id_presupuesto_interno', $requerimiento->id_presupuesto_interno],
-                                ['estado', 1], ['id_presupuesto_interno_detalle', $detalleRequerimiento->id_partida_pi]
-                            ])->first();
-                            if ($presupuestoInternoDetalle) {
-                                if ($sumaResta == 'resta') {
-                                    $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) - (isset($item->importe_item_para_presupuesto)?floatval($item->importe_item_para_presupuesto):0);
-                                    $presupuestoInternoDetalle->$nombreMesAux = $importe;
-                                    $presupuestoInternoDetalle->save();
-                                    $TipoHistorial = 'SALIDA';
-                                    $operacion = 'R';
-                                } elseif ($sumaResta == 'suma') {
-                                    $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) + (isset($item->importe_item_para_presupuesto)?floatval($item->importe_item_para_presupuesto):0);
-                                    $presupuestoInternoDetalle->$nombreMesAux = $importe;
-                                    $presupuestoInternoDetalle->save();
-                                    $TipoHistorial = 'RETORNO';
-                                    $operacion = 'S';
-                                }
-                                // PresupuestoInterno::calcularColumnaAuxMensual($requerimiento->id_presupuesto_interno, 3, $detalleRequerimiento->partida, $nombreMes);
-                                $historialPresupuestoInternoSaldo = new HistorialPresupuestoInternoSaldo();
-                                $historialPresupuestoInternoSaldo->id_presupuesto_interno = $requerimiento->id_presupuesto_interno;
-                                $historialPresupuestoInternoSaldo->id_partida = $detalleRequerimiento->id_partida_pi;
-                                $historialPresupuestoInternoSaldo->tipo = $TipoHistorial;
-                                $historialPresupuestoInternoSaldo->importe = $item->importe_item_para_presupuesto??0;
-                                $historialPresupuestoInternoSaldo->mes = $mesEnDosDigitos;
-                                $historialPresupuestoInternoSaldo->id_requerimiento = $requerimiento->id_requerimiento;
-                                $historialPresupuestoInternoSaldo->id_requerimiento_detalle = $detalleRequerimiento->id_detalle_requerimiento;
-                                $historialPresupuestoInternoSaldo->id_orden = $id;
-                                $historialPresupuestoInternoSaldo->id_orden_detalle = $item->id_detalle_orden;
-                                $historialPresupuestoInternoSaldo->operacion = $operacion;
-                                $historialPresupuestoInternoSaldo->estado = 1;
-                                $historialPresupuestoInternoSaldo->fecha_registro = new Carbon();
-                                $historial = $historialPresupuestoInternoSaldo;
-                                $historialPresupuestoInternoSaldo->save();
-                            }
-                        }
-                    }
-                }
+    //                     if ($requerimiento->id_presupuesto_interno > 0) {
+    //                         $presupuestoInternoDetalle = PresupuestoInternoDetalle::where([
+    //                             ['id_presupuesto_interno', $requerimiento->id_presupuesto_interno],
+    //                             ['estado', 1], ['id_presupuesto_interno_detalle', $detalleRequerimiento->id_partida_pi]
+    //                         ])->first();
+    //                         if ($presupuestoInternoDetalle) {
+    //                             if ($sumaResta == 'resta') {
+    //                                 $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) - (isset($item->importe_item_para_presupuesto)?floatval($item->importe_item_para_presupuesto):0);
+    //                                 $presupuestoInternoDetalle->$nombreMesAux = $importe;
+    //                                 $presupuestoInternoDetalle->save();
+    //                                 $TipoHistorial = 'SALIDA';
+    //                                 $operacion = 'R';
+    //                             } elseif ($sumaResta == 'suma') {
+    //                                 $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) + (isset($item->importe_item_para_presupuesto)?floatval($item->importe_item_para_presupuesto):0);
+    //                                 $presupuestoInternoDetalle->$nombreMesAux = $importe;
+    //                                 $presupuestoInternoDetalle->save();
+    //                                 $TipoHistorial = 'RETORNO';
+    //                                 $operacion = 'S';
+    //                             }
+    //                             // PresupuestoInterno::calcularColumnaAuxMensual($requerimiento->id_presupuesto_interno, 3, $detalleRequerimiento->partida, $nombreMes);
+    //                             $historialPresupuestoInternoSaldo = new HistorialPresupuestoInternoSaldo();
+    //                             $historialPresupuestoInternoSaldo->id_presupuesto_interno = $requerimiento->id_presupuesto_interno;
+    //                             $historialPresupuestoInternoSaldo->id_partida = $detalleRequerimiento->id_partida_pi;
+    //                             $historialPresupuestoInternoSaldo->tipo = $TipoHistorial;
+    //                             $historialPresupuestoInternoSaldo->importe = $item->importe_item_para_presupuesto??0;
+    //                             $historialPresupuestoInternoSaldo->mes = $mesEnDosDigitos;
+    //                             $historialPresupuestoInternoSaldo->id_requerimiento = $requerimiento->id_requerimiento;
+    //                             $historialPresupuestoInternoSaldo->id_requerimiento_detalle = $detalleRequerimiento->id_detalle_requerimiento;
+    //                             $historialPresupuestoInternoSaldo->id_orden = $id;
+    //                             $historialPresupuestoInternoSaldo->id_orden_detalle = $item->id_detalle_orden;
+    //                             $historialPresupuestoInternoSaldo->operacion = $operacion;
+    //                             $historialPresupuestoInternoSaldo->estado = 1;
+    //                             $historialPresupuestoInternoSaldo->fecha_registro = new Carbon();
+    //                             $historial = $historialPresupuestoInternoSaldo;
+    //                             $historialPresupuestoInternoSaldo->save();
+    //                         }
+    //                     }
+    //                 }
+    //             }
 
-                if ($operacion == 'R' || $operacion == 'S') {
-                    $ordenAfectaPresupuestoInterno = Orden::find($id);
-                    $ordenAfectaPresupuestoInterno->afectado_presupuesto_interno = true;
-                    $ordenAfectaPresupuestoInterno->save();
-                }
-                break;
+    //             if ($operacion == 'R' || $operacion == 'S') {
+    //                 $ordenAfectaPresupuestoInterno = Orden::find($id);
+    //                 $ordenAfectaPresupuestoInterno->afectado_presupuesto_interno = true;
+    //                 $ordenAfectaPresupuestoInterno->save();
+    //             }
+    //             break;
 
-            case 'requerimiento de pago':
+    //         case 'requerimiento de pago':
 
-                $requerimientoPago=RequerimientoPago::find($id);
-                $mes = intval(date('m', strtotime($requerimientoPago->fecha_registro)));
-                $nombreMes = $mesLista[$mes];
-                $nombreMesAux = $nombreMes . '_aux';
-                $mesEnDosDigitos =str_pad($mes, 2, "0", STR_PAD_LEFT);
+    //             $requerimientoPago=RequerimientoPago::find($id);
+    //             $mes = intval(date('m', strtotime($requerimientoPago->fecha_registro)));
+    //             $nombreMes = $mesLista[$mes];
+    //             $nombreMesAux = $nombreMes . '_aux';
+    //             $mesEnDosDigitos =str_pad($mes, 2, "0", STR_PAD_LEFT);
 
-                if($requerimientoPago->id_presupuesto_interno >0){
-                    foreach ($detalle as $item) {
-                        if ($item->id_partida_pi > 0) {
+    //             if($requerimientoPago->id_presupuesto_interno >0){
+    //                 foreach ($detalle as $item) {
+    //                     if ($item->id_partida_pi > 0) {
 
-                            $presupuestoInternoDetalle = PresupuestoInternoDetalle::where([
-                                ['id_presupuesto_interno', $requerimientoPago->id_presupuesto_interno],
-                                ['estado', 1], ['id_presupuesto_interno_detalle', $item->id_partida_pi]
-                            ])->first();
+    //                         $presupuestoInternoDetalle = PresupuestoInternoDetalle::where([
+    //                             ['id_presupuesto_interno', $requerimientoPago->id_presupuesto_interno],
+    //                             ['estado', 1], ['id_presupuesto_interno_detalle', $item->id_partida_pi]
+    //                         ])->first();
 
-                            if ($presupuestoInternoDetalle) {
-                                if ($sumaResta == 'resta') {
-                                    $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) -  (isset($item->importe_item_para_presupuesto) && ($item->importe_item_para_presupuesto>0)?floatval($item->importe_item_para_presupuesto):0) ;
-                                    $presupuestoInternoDetalle->$nombreMesAux = $importe;
-                                    $presupuestoInternoDetalle->save();
-                                    $TipoHistorial = 'SALIDA';
-                                    $operacion = 'R';
-                                } elseif ($sumaResta == 'suma') {
-                                    $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) +  (isset($item->importe_item_para_presupuesto) && ($item->importe_item_para_presupuesto>0)?floatval($item->importe_item_para_presupuesto):0);
-                                    $presupuestoInternoDetalle->$nombreMesAux = $importe;
-                                    $presupuestoInternoDetalle->save();
-                                    $TipoHistorial = 'RETORNO';
-                                    $operacion = 'S';
-                                }
+    //                         if ($presupuestoInternoDetalle) {
+    //                             if ($sumaResta == 'resta') {
+    //                                 $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) -  (isset($item->importe_item_para_presupuesto) && ($item->importe_item_para_presupuesto>0)?floatval($item->importe_item_para_presupuesto):0) ;
+    //                                 $presupuestoInternoDetalle->$nombreMesAux = $importe;
+    //                                 $presupuestoInternoDetalle->save();
+    //                                 $TipoHistorial = 'SALIDA';
+    //                                 $operacion = 'R';
+    //                             } elseif ($sumaResta == 'suma') {
+    //                                 $importe = floatval($presupuestoInternoDetalle->$nombreMesAux) +  (isset($item->importe_item_para_presupuesto) && ($item->importe_item_para_presupuesto>0)?floatval($item->importe_item_para_presupuesto):0);
+    //                                 $presupuestoInternoDetalle->$nombreMesAux = $importe;
+    //                                 $presupuestoInternoDetalle->save();
+    //                                 $TipoHistorial = 'RETORNO';
+    //                                 $operacion = 'S';
+    //                             }
 
-                                // //Debugbar::info($requerimientoPago->id_presupuesto_interno, 3, $item->id_partida_pi, $nombreMes);
+    //                             // Debugbar::info($requerimientoPago->id_presupuesto_interno, 3, $item->id_partida_pi, $nombreMes);
 
-                                $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_requerimiento_pago_detalle',$item->id_requerimiento_pago_detalle)->where('id_requerimiento_pago',$requerimientoPago->id_requerimiento_pago)->first();
+    //                             $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_requerimiento_pago_detalle',$item->id_requerimiento_pago_detalle)->where('id_requerimiento_pago',$requerimientoPago->id_requerimiento_pago)->first();
 
-                                if(!$historial_saldo) {
-                                    PresupuestoInterno::calcularColumnaAuxMensual($requerimientoPago->id_presupuesto_interno, 3, $item->id_partida_pi, $nombreMes);
-                                    $historialPresupuestoInternoSaldo = new HistorialPresupuestoInternoSaldo();
-                                    $historialPresupuestoInternoSaldo->id_presupuesto_interno = $requerimientoPago->id_presupuesto_interno;
-                                    $historialPresupuestoInternoSaldo->id_partida = $item->id_partida_pi;
-                                    $historialPresupuestoInternoSaldo->tipo = $TipoHistorial;
-                                    $historialPresupuestoInternoSaldo->importe = $item->importe_item_para_presupuesto??0;
-                                    $historialPresupuestoInternoSaldo->mes = $mesEnDosDigitos;
-                                    $historialPresupuestoInternoSaldo->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
-                                    $historialPresupuestoInternoSaldo->id_requerimiento_pago_detalle = $item->id_requerimiento_pago_detalle;
-                                    $historialPresupuestoInternoSaldo->operacion = $operacion;
-                                    $historialPresupuestoInternoSaldo->estado = 1;
-                                    $historialPresupuestoInternoSaldo->fecha_registro = new Carbon();
-                                    $historial = $historialPresupuestoInternoSaldo;
-                                    $historialPresupuestoInternoSaldo->save();
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
+    //                             if(!$historial_saldo) {
+    //                                 PresupuestoInterno::calcularColumnaAuxMensual($requerimientoPago->id_presupuesto_interno, 3, $item->id_partida_pi, $nombreMes);
+    //                                 $historialPresupuestoInternoSaldo = new HistorialPresupuestoInternoSaldo();
+    //                                 $historialPresupuestoInternoSaldo->id_presupuesto_interno = $requerimientoPago->id_presupuesto_interno;
+    //                                 $historialPresupuestoInternoSaldo->id_partida = $item->id_partida_pi;
+    //                                 $historialPresupuestoInternoSaldo->tipo = $TipoHistorial;
+    //                                 $historialPresupuestoInternoSaldo->importe = $item->importe_item_para_presupuesto??0;
+    //                                 $historialPresupuestoInternoSaldo->mes = $mesEnDosDigitos;
+    //                                 $historialPresupuestoInternoSaldo->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
+    //                                 $historialPresupuestoInternoSaldo->id_requerimiento_pago_detalle = $item->id_requerimiento_pago_detalle;
+    //                                 $historialPresupuestoInternoSaldo->operacion = $operacion;
+    //                                 $historialPresupuestoInternoSaldo->estado = 1;
+    //                                 $historialPresupuestoInternoSaldo->fecha_registro = new Carbon();
+    //                                 $historial = $historialPresupuestoInternoSaldo;
+    //                                 $historialPresupuestoInternoSaldo->save();
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //             break;
 
-            default:
+    //         default:
 
-                break;
-        }
+    //             break;
+    //     }
 
-        return $historial;
-    }
+    //     return $historial;
+    // }
 
-    public function actualizaEstadoHistorial($idDetalleRequerimiento,$estado){
-        $historial = PresupuestoInternoHistorialHelper::actualizaReqLogisticoEstadoHistorial($idDetalleRequerimiento,$estado);
-        return $historial;
-    }
+    // public function actualizaEstadoHistorial($idDetalleRequerimiento,$estado){
+    //     $historial = PresupuestoInternoHistorialHelper::actualizaReqLogisticoEstadoHistorial($idDetalleRequerimiento,$estado);
+    //     return $historial;
+    // }
 
     public function presupuestoEjecutadoExcel(Request $request){
 
@@ -1721,59 +1781,97 @@ class PresupuestoInternoController extends Controller
 
         $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$request->id)
         ->where('tipo','SALIDA')
+        // ->where('estado',3)
         ->whereIn('mes',$mesEnFormatoFechaList)
         ->orderBy('id','ASC')->get();
 
+
+        $orden_detalle = array();
+        $requerimiento_detalle = array();
         foreach($historial_saldo as $key => $value) {
-            $requerimiento = array();
-            $requerimiento = Orden::find($value->id_orden);
-            $requerimiento_detalle = OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->get();
-            $value->cuadro = 1;
-            if (!$requerimiento) {
 
+            $presupuesto = PresupuestoInterno::find($value->id_presupuesto_interno);
+            $presupuesto_detalle = PresupuestoInternoDetalle::find($value->id_partida);
+
+            if(!empty($value->id_orden)){
+                $orden = Orden::find($value->id_orden);
+                $proveedor = Proveedor::where('id_proveedor',$orden->id_proveedor)->first();
+                $contribuyente = Contribuyente::find($proveedor->id_contribuyente);
+                $proveedor = ($contribuyente ? $contribuyente->razon_social: '-');
+                // return $contribuyente;exit;
+                $orden_array = OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->get();
+                if(sizeof($orden_array)>0){
+                    foreach($orden_array as $key => $value_orden) {
+                        $value_orden->codigo_orden = $orden->codigo;
+
+                        $value_orden->presupuesto_codigo = $presupuesto->codigo;
+                        $value_orden->presupuesto_descripcion = $presupuesto->descripcion;
+                        $value_orden->codigo_partida = $presupuesto_detalle->partida;
+                        $value_orden->codigo_descripcion = $presupuesto_detalle->descripcion;
+                        $value_orden->tipo = 'GASTO';
+
+                        $req_detalle = DetalleRequerimiento::find($value_orden->id_detalle_requerimiento);
+                        $requerimiento = Requerimiento::find($req_detalle->id_requerimiento);
+
+                        $value_orden->codigo_req = $requerimiento->codigo;
+                        $value_orden->fecha_autorizacion = $orden->fecha_autorizacion;
+                        $value_orden->importe_historial = $value->importe;
+
+                        $value_orden->codigo_softlink = $orden->codigo_softlink;
+                        $value_orden->proveedor = $proveedor;
+
+                        array_push($orden_detalle,$value_orden);
+                    }
+                }
+            }
+
+            if(!empty($value->id_requerimiento_pago)){
                 $requerimiento = RequerimientoPago::find($value->id_requerimiento_pago);
-                $requerimiento_detalle = RequerimientoPagoDetalle::where('id_requerimiento_pago_detalle',$value->id_requerimiento_pago_detalle)->get();
-                $value->cuadro = 2;
+
+                $requerimiento_array = RequerimientoPagoDetalle::where('id_requerimiento_pago_detalle',$value->id_requerimiento_pago_detalle)->get();
+
+                if(!empty($requerimiento->id_persona)){
+                    $rrhh_persona = Persona::find($requerimiento->id_persona);
+                    $persona = ($rrhh_persona ? $rrhh_persona->nombres.' '.$rrhh_persona->apellido_paterno.' '.$rrhh_persona->apellido_materno:'-');
+                }else{
+
+                    $contibuyente = Contribuyente::find($requerimiento->id_contribuyente);
+                    // return [$contibuyente];exit ;
+                    $persona = ($contibuyente ? $contibuyente->razon_social : '-');
+                }
+
+
+
+                // return [$presupuesto,$presupuesto_detalle];exit;
+                if(sizeof($requerimiento_array)>0){
+                    foreach($requerimiento_array as $key => $value_requerimiento) {
+                        $value_requerimiento->codigo_req                = $requerimiento->codigo;
+                        $value_requerimiento->fecha_registro_req        = $requerimiento->fecha_registro;
+
+                        $value_requerimiento->presupuesto_codigo        = $presupuesto->codigo;
+                        $value_requerimiento->presupuesto_descripcion   = $presupuesto->descripcion;
+                        $value_requerimiento->codigo_partida            = $presupuesto_detalle->partida;
+                        $value_requerimiento->codigo_descripcion        = $presupuesto_detalle->descripcion;
+                        $value_requerimiento->tipo                      = 'GASTO';
+                        $value_requerimiento->importe_historial = $value->importe;
+
+                        $value_requerimiento->persona = $persona;
+                        array_push($requerimiento_detalle, $value_requerimiento);
+                    }
+                }
+
             }
-            $value->cabecera = $requerimiento;
-            $value->detalle = $requerimiento_detalle;
-
-            $partida_detalle = PresupuestoInternoDetalle::find($value->id_partida);
-            $value->partida = $partida_detalle->partida;
-            $value->partida_descripcion = $partida_detalle->descripcion;
-
-            $tipo='';
-            switch ($partida_detalle->id_tipo_presupuesto) {
-                case 1:
-                    $tipo='INGRESOS';
-                break;
-
-                case 2:
-                    $tipo='COSTOS';
-                break;
-                case 3:
-                    $tipo='GASTOS';
-                break;
-            }
-            $value->tipo = $tipo;
-
-            $presupuesto_interno = PresupuestoInterno::find($value->id_presupuesto_interno);
-            $value->codigo_ppt = $presupuesto_interno->codigo;
-            $value->codigo_nombre = $presupuesto_interno->descripcion;
-
-            $partid_padre = PresupuestoInternoDetalle::where('id_hijo',$partida_detalle->id_padre)->where('id_presupuesto_interno',$value->id_presupuesto_interno)->first();
-            $value->partida_padre = $partid_padre->partida;
-            $value->partida_padre_descripcion = $partid_padre->descripcion;
         }
+        $detalle_array = array(
+            "orden"=>$orden_detalle,
+            "requerimiento"=>$requerimiento_detalle
+        );
+        // return [$historial_saldo->orden_detalle , $historial_saldo->requerimiento_detalle];exit;
+
+        // return response()->json($detalle_array,200);exit;
+        return Excel::download(new PresupuestoInternoEjecutadoExport($detalle_array), 'presupuesto_interno_monto_ejecutado.xlsx');
 
         // return response()->json($historial_saldo,200);
-        return Excel::download(new PresupuestoInternoEjecutadoExport($historial_saldo), 'presupuesto_interno_monto_ejecutado.xlsx');
-
-        // return response()->json($historial_saldo,200);
-    }
-    public function listarSedesPorEmpresa($idEmpresa)
-    {
-        return Sede::listarSedesPorEmpresa($idEmpresa);
     }
 
 }

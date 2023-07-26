@@ -13,7 +13,7 @@ use App\Models\mgcp\Oportunidad\Oportunidad;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-//use Debugbar;
+// use Debugbar;
 
 class OrdenesDespachoInternoController extends Controller
 {
@@ -381,7 +381,7 @@ class OrdenesDespachoInternoController extends Controller
                 }
                 //$orden_despacho = OrdenDespacho::where('id_requerimiento', $request->id_requerimiento)->first();
                 $idOd= isset($id_od) && $id_od>0?$id_od:(isset($req->id_od) && $req->id_od > 0? $req->id_od:0);
-               // //Debugbar::info($idOd);
+               // Debugbar::info($idOd);
                 if($idOd>0){
                     $orden_despacho = OrdenDespacho::find($idOd);
                     if(intval($req->id_oportunidad)>0){

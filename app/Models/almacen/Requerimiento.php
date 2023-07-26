@@ -13,7 +13,7 @@ use App\Models\Logistica\OrdenCompraDetalle;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-//use Debugbar;
+// use Debugbar;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Auth;
 
@@ -152,7 +152,7 @@ class Requerimiento extends Model
     //         // ['alm_det_req.tiene_transformacion',false]
     //     ])
     //     ->first();
-    //             //Debugbar::info($division->detalle);
+    //             Debugbar::info($division->detalle);
     //     return '';
     //     // return json_decode($division,true);
     // }

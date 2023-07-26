@@ -13,7 +13,7 @@ use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-//use Debugbar;
+// use Debugbar;
 use Illuminate\Validation\Rules\Unique;
 
 class Orden extends Model
@@ -268,7 +268,7 @@ class Orden extends Model
             if ($cc) {
                 $oportunidadList[] = [
                     'codigo_oportunidad' => $cc->oportunidad->codigo_oportunidad,
-                    'responsable' => $cc->oportunidad->responsable !=null ?$cc->oportunidad->responsable->name:'',
+                    'responsable' => $cc->oportunidad->responsable->name,
                 ];
             }
         }

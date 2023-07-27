@@ -1,11 +1,11 @@
-var rutaListaPendienteAprobacion, 
-rutaListaAprobarDocumento, 
+var rutaListaPendienteAprobacion,
+rutaListaAprobarDocumento,
 rutaObservarDocumento,
 rutaListaAnularDocumento;
 
 
 function inicializarRutasPendienteAprobacion(_rutaListaPendienteAprobacion,_rutaListaAprobarDocumento,_rutaObservarDocumento,_rutaListaAnularDocumento) {
-    
+
     rutaListaPendienteAprobacion = _rutaListaPendienteAprobacion;
     rutaListaAprobarDocumento = _rutaListaAprobarDocumento;
     rutaObservarDocumento = _rutaObservarDocumento;
@@ -47,18 +47,18 @@ function listar_requerimientos_pendientes_aprobar(){
                     }else if(row.id_prioridad ==3){
                         prioridad = thermometerCritica
                     }
-                return prioridad; 
+                return prioridad;
                 }
-            },  
+            },
             {'data':'codigo', 'name':'codigo'},
             {'data':'concepto', 'name':'concepto'},
             {'data':'fecha_requerimiento', 'name':'fecha_requerimiento'},
-            {'data':'tipo_requerimiento', 'name':'tipo_requerimiento'},          
+            {'data':'tipo_requerimiento', 'name':'tipo_requerimiento'},
             {'data':'razon_social_empresa', 'name':'razon_social_empresa'},
             {'render': function (data, type, row){
-                return row['descripcion_op_com']?row['descripcion_op_com']:row['descripcion_grupo']; 
+                return row['descripcion_op_com']?row['descripcion_op_com']:row['descripcion_grupo'];
                 }
-            },  
+            },
             {'data':'usuario', 'name':'usuario'},
             {'data':'estado_doc', 'name':'estado_doc'},
             {'data':'cantidad_aprobados_total_flujo', 'name':'cantidad_aprobados_total_flujo'},
@@ -79,7 +79,7 @@ function listar_requerimientos_pendientes_aprobar(){
                         if(list_id_rol_aprob.includes(element.id_rol)==true){
                             hasAprobacion+=1;
                         }
-                        
+
                     });
                 }
                 if(row.observaciones.length>0){
@@ -110,7 +110,7 @@ function listar_requerimientos_pendientes_aprobar(){
                         first_aprob = row.pendiente_aprobacion.reduce(function(prev, curr) {
                         return prev.orden < curr.orden ? prev : curr;
                     });
- 
+
                 }
                 // buscar si la primera aprobación su numero de orden se repite en otro pendiente_aprobacion
                 let aprobRolList=[];
@@ -126,7 +126,7 @@ function listar_requerimientos_pendientes_aprobar(){
                 // console.log(row.rol_aprobante_id);
                 // console.log(aprobRolList);
 
-                // si existe varios con mismo orden 
+                // si existe varios con mismo orden
                     if(aprobRolList.length >1){
 
                         // si existe un rol aprobante ya definido en el requerimiento
@@ -137,9 +137,9 @@ function listar_requerimientos_pendientes_aprobar(){
                                     disabledBtn='';
                                 }else{
                                     disabledBtn= 'disabled';
-            
+
                                 }
-                                
+
                             });
                         }else{
                             roles.forEach(element => {
@@ -147,9 +147,9 @@ function listar_requerimientos_pendientes_aprobar(){
                                     disabledBtn='';
                                 }else{
                                     disabledBtn= 'disabled';
-            
+
                                 }
-                                
+
                             });
                         }
 
@@ -159,13 +159,13 @@ function listar_requerimientos_pendientes_aprobar(){
                                 disabledBtn='';
                             }else{
                                 disabledBtn= 'disabled';
-        
+
                             }
-                            
+
                         });
                     }
 
-                
+
 
 
 
@@ -178,7 +178,7 @@ function listar_requerimientos_pendientes_aprobar(){
                 let btnAnular='<button type="button" class="btn btn-xs bg-maroon" title="Anular Requerimiento" onClick="anularRequerimiento(' +row['id_doc_aprob']+ ');" '+disabledBtn+'><i class="fas fa-ban fa-xs"></i></button>';
                 return containerOpenBrackets+btnDetalleRapido+btnTracking+btnAprobar+btnObservar+btnAnular+containerCloseBrackets;
                 }
-            },        
+            },
         ],
         "createdRow": function( row, data, dataIndex){
             if( data.estado == 2  ){
@@ -190,7 +190,7 @@ function listar_requerimientos_pendientes_aprobar(){
              if( data.estado == 7  ){
                 $(row).css('color', '#d92b60');
              }
-          
+
 
         }
     });
@@ -250,7 +250,7 @@ function GrabarAnular(){
         console.log(textStatus);
         console.log(errorThrown);
     });
-    
+
 }
 function GrabarAprobacion(){
     let id_doc_aprob = document.querySelector("form[id='form-aprobacion'] input[name='id_doc_aprob']").value;
@@ -278,7 +278,7 @@ function GrabarAprobacion(){
         console.log(textStatus);
         console.log(errorThrown);
     });
-    
+
 }
 
 function GrabarObservacion(){

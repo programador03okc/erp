@@ -38,7 +38,7 @@ $(function(){
         changeStateButton('historial');
     });
 
-    
+
 });
 
 function mostrar_tipo_insumo(id){
@@ -64,6 +64,8 @@ function mostrar_tipo_insumo(id){
 }
 
 function save_tipo_insumo(data, action){
+    console.log(data);
+    console.log(action);
     if (action == 'register'){
         baseUrl = route('proyectos.variables-entorno.tipos-insumo.guardar_tipo_insumo');
         mensaje = "Tipo de Insumo registrado con exito";
@@ -78,8 +80,9 @@ function save_tipo_insumo(data, action){
         data: data,
         dataType: 'JSON',
         success: function(response){
-            alert(mensaje);
+            console.log(response);
             if (response > 0){
+                alert('Tipo de Insumo registrado con exito');
                 $('#listaTipoInsumo').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -131,5 +134,5 @@ function anular_tipo_insumo(ids){
         console.log(textStatus);
         console.log(errorThrown);
     });
-    
+
 }

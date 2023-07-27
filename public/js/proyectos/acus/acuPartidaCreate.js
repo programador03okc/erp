@@ -28,6 +28,7 @@ function editar_acu_partida(data) {
     $('#modal-acu_partida_create').modal({
         show: true
     });
+    console.log(data);
     insumos = [];
     id_partida_temporal = null;
     $('[name=id_cu_partida_cd]').val(data.id_cu_partida);
@@ -137,8 +138,10 @@ function guardar_acu() {
             data: datax,
             dataType: 'JSON',
             success: function (response) {
+                console.log(response);
+
                 if (response['id_cu_partida'] > 0) {
-                    alert(mensaje);
+                    alert('Costo Unitario registrado con éxito');
                     let formName = document.getElementsByClassName('page-main')[0].getAttribute('type');
 
                     if (formName == 'presint' || formName == 'preseje') {
@@ -375,6 +378,8 @@ function anular(id) {
             if (!inc) {
                 anulados.push(id);
             }
+            console.log('anulados: ');
+            console.log(anulados);
             var index = insumos.findIndex(function (item, i) {
                 return item.id_cu_detalle == id;
             });

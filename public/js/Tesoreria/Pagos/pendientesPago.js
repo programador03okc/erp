@@ -124,7 +124,7 @@ class RequerimientoPago {
                             }
                         }else{
                             return '0.00';
-                        }                            
+                        }
                     }, 'className': 'text-right'
                 },
                 {
@@ -195,9 +195,10 @@ class RequerimientoPago {
                                         data-cci="${row['nro_cuenta_interbancaria'] !== null ? row['nro_cuenta_interbancaria'] : row['nro_cci_persona']}"
                                         data-tpcta="${row['tipo_cuenta'] !== null ? row['tipo_cuenta'] : row['tipo_cuenta_persona']}"
                                         data-banco="${row['banco_persona'] !== null ? row['banco_persona'] : row['banco_contribuyente']}"
-                                        data-empresa="${row['razon_social_empresa']}" data-idempresa="${row['id_empresa']}"
+                                        data-empresa="${row['razon_social_empresa']}" data-id-empresa="${row['id_empresa']}"
                                         data-motivo="${encodeURIComponent(row['concepto'])}"
                                         data-observacion-requerimiento="${row['comentario']}"
+                                        data-tipo-impuesto="${row['tipo_impuesto']}"
                                         title="Registrar Pago">
                                     <i class="fas fa-hand-holding-usd"></i> </button>`
                                         : ''}`
@@ -454,7 +455,7 @@ class RequerimientoPago {
                                     data-motivo="${encodeURIComponent(row['condicion_pago'])}"
                                     data-comentario-pago-logistica="${row['comentario_pago']}"
                                     data-tiene-pago-en-cuotas="${row['tiene_pago_en_cuotas']}"
-
+                                    data-tipo-impuesto="${row['tipo_impuesto']}"
                                     data-observacion-requerimiento="${observacionRequerimiento}"
                                     title="Registrar Pago"><i class="fas fa-hand-holding-usd"></i></button>`: ''}`
                                     : ''}
@@ -1540,8 +1541,10 @@ function llenarDataJson(key, this_click) {
 
 
 $('#modal-filtros').on('hidden.bs.modal', () => {
-    let clase = new RequerimientoPago();
+    let clase = new RequerimientoPago(auth_137,auth_138,auth_139);
     clase.listarRequerimientos();
+    // $('#listaRequerimientos').DataTable().ajax.reload(null, false);
+    // tableRequerimientos.ajax.reload(null, false);
     $('#btn-filtro').find('span.numero-filtros-pagos').text($('input[data-action="click"]:checked').length);
 });
 // ----------------------------------------------------
@@ -1606,7 +1609,7 @@ function llenarDataJsonOrdenes(key, this_click) {
 }
 
 $('#modal-filtros-ordenes-compra-servicio').on('hidden.bs.modal', () => {
-    let clase = new RequerimientoPago();
+    let clase = new RequerimientoPago(auth_137,auth_138,auth_139);
     clase.listarOrdenes();
     $('#btn-filtro-ordenes').find('span.numero-filtros-ordenes').text($('input[data-action="click-ordenes"]:checked').length);
 });

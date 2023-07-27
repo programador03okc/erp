@@ -9,8 +9,8 @@ $(function(){
         var myId = $(this)[0].firstChild.innerHTML;
         var cod = $(this)[0].childNodes[1].innerHTML;
         var des = $(this)[0].childNodes[2].innerHTML;
-        
-        let formName = document.getElementsByClassName('page-main')[0].getAttribute('type');    
+
+        let formName = document.getElementsByClassName('page-main')[0].getAttribute('type');
         if (formName =='presint' || formName =='preseje'){
             var msj = '';
             document.querySelectorAll('#listaAcusCD tbody tr').forEach(function(e){
@@ -26,7 +26,7 @@ $(function(){
                 $('[name=id_cu]').val(myId);
                 $('[name=cod_acu]').val(cod);
                 $('[name=des_acu]').val(des);
-                $('#modal-acu').modal('hide');    
+                $('#modal-acu').modal('hide');
             }
         } else {
             $('[name=id_cu]').val(myId);
@@ -62,6 +62,8 @@ function acuModal(){
     $('#modal-acu').modal({
         show: true
     });
+    // $('.dataTable tbody tr').removeClass('eventClick');
+    // $('.modal-footer label').text('');
     $('#listaAcus').dataTable().fnDestroy();
     listarAcus();
 }

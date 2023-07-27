@@ -147,17 +147,11 @@ class RequerimientoView {
         });
 
         $('body').on("change", "select.handleChangePresupuestoInterno", (e) => {
-            this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp 
+            this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
         });
 
         $('#form-requerimiento').on("change", "select.handleChangeProyecto", (e) => {
-            let codigoProyecto = document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.codigo;
-            if(e.currentTarget.value >0){
-                document.querySelector("div[id='input-group-proyecto'] input[name='codigo_proyecto']").value = codigoProyecto;
-            }else{
-                document.querySelector("div[id='input-group-proyecto'] input[name='codigo_proyecto']").value = '';
-            }
-            this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp 
+            this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
         });
 
         $('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
@@ -531,7 +525,6 @@ class RequerimientoView {
         document.querySelector("input[name='monto']").value = data.monto_total;
         document.querySelector("select[name='id_almacen']").value = data.id_almacen;
         // document.querySelector("input[name='descripcion_grupo']").value =data.
-        document.querySelector("input[name='codigo_proyecto']").value = data.codigo_proyecto;
         document.querySelector("select[name='tipo_cliente']").value = data.tipo_cliente;
         document.querySelector("input[name='id_cliente']").value = data.id_cliente;
         document.querySelector("input[name='cliente_ruc']").value = data.cliente_ruc;
@@ -544,6 +537,7 @@ class RequerimientoView {
         document.querySelector("input[name='telefono_cliente']").value = data.telefono;
         document.querySelector("input[name='email_cliente']").value = data.email;
         document.querySelector("input[name='direccion_entrega']").value = data.direccion_entrega;
+        document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto!=null?data.tipo_impuesto:0;
         // document.querySelector("input[name='nombre_contacto']").value =data.
         // document.querySelector("input[name='cargo_contacto']").value =data.
         // document.querySelector("input[name='email_contacto']").value =data.
@@ -575,7 +569,7 @@ class RequerimientoView {
             });
         }
 
-        this.llenarComboProyectos(data.id_grupo,data.id_proyecto); 
+        this.llenarComboProyectos(data.id_grupo,data.id_proyecto);
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.division_id, data.id_presupuesto_interno);
 
     }
@@ -965,11 +959,6 @@ class RequerimientoView {
                 }
             }
         }
-
-
-        let codigoProyecto = event.target.options[event.target.selectedIndex].getAttribute('data-codigo');
-
-        document.querySelector("form[id='form-requerimiento'] input[name='codigo_proyecto']").value = codigoProyecto;
     }
 
     updateConcepto(obj) {
@@ -1040,7 +1029,7 @@ class RequerimientoView {
 
         this.presupuestoInternoView.llenarComboPresupuestoInterno(currentIdGrupo, obj.target.value,null);
 
-        this.llenarComboProyectos(currentIdGrupo); 
+        this.llenarComboProyectos(currentIdGrupo);
 
         // mostrar sección segun el grupo de la división seleccionada y el grupo al que pertenece el usuario
 
@@ -1085,13 +1074,12 @@ class RequerimientoView {
         })
     }
 
-    
+
     construirListaProyecto(data,idProyecto=null){
         // console.log(data);
 
         let selectElement = document.querySelector("div[id='input-group-proyecto'] select[name='id_proyecto']");
         selectElement.innerHTML='';
-        document.querySelector("div[id='input-group-proyecto'] input[name='codigo_proyecto']").value = '';
         let option = document.createElement("option");
         option.text = "Seleccionar un proyecto";
         option.value = '';
@@ -1099,7 +1087,7 @@ class RequerimientoView {
 
         data.forEach(element => {
             let option = document.createElement("option");
-            option.text = element.descripcion;
+            option.text = element.codigo+' - '+element.descripcion;
             option.value = element.id_proyecto;
             option.setAttribute('data-codigo', element.codigo);
             option.setAttribute('data-id-centro-costo', element.id_centro_costo);
@@ -1107,8 +1095,6 @@ class RequerimientoView {
             option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo);
             if (element.id_proyecto == idProyecto) {
                 option.selected = true;
-                document.querySelector("div[id='input-group-proyecto'] input[name='codigo_proyecto']").value = element.codigo;
-
             }
             selectElement.add(option);
         });
@@ -2393,7 +2379,7 @@ class RequerimientoView {
                         tbodyChildren[index].querySelector("input[class~='partida']").closest('td').appendChild(newSpanInfo);
                         tbodyChildren[index].querySelector("input[class~='partida']").closest('td').querySelector("div[class~='form-group']").classList.add('has-error');
                     }
-    
+
                 }
             }
                 if (tbodyChildren[index].querySelector("input[class~='centroCosto']").value == '') {

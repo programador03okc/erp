@@ -38,13 +38,14 @@ $(function(){
         mostrar_iu(id);
         changeStateButton('historial');
     });
-    
+
 });
 
 function mostrar_iu(id){
     baseUrl = route('proyectos.variables-entorno.iu.mostrar_iu', {id: id});
     $.ajax({
         type: 'GET',
+        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
@@ -77,8 +78,9 @@ function save_iu(data, action){
         data: data,
         dataType: 'JSON',
         success: function(response){
-            alert(mensaje);
+            console.log(response);
             if (response > 0){
+                alert('Indice Unificado registrado con exito');
                 $('#listaIu').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -130,5 +132,5 @@ function anular_iu(ids){
         console.log(textStatus);
         console.log(errorThrown);
     });
-    
+
 }

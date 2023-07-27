@@ -365,6 +365,10 @@ class ListarRequerimientoView {
                         imageColor: "#3c8dbc"
                     });
                 },
+                // data: function (params) {
+                //     return Object.assign(params, Util.objectifyForm($('#form-requerimientosElaborados').serializeArray()))
+                // }
+
             },
             'columns': [
                 { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'visible': false },
@@ -389,6 +393,7 @@ class ListarRequerimientoView {
                     return (row['simbolo_moneda']) + ($.number(row.monto_total, 2,'.',','));
                 }},
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
+                { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc','render': function (data, type, row) {
                     switch (row['estado']) {
                         case 1:
@@ -418,7 +423,7 @@ class ListarRequerimientoView {
                     let btnEditar = '';
                     let btnAnular = '';
                     // let btnMandarAPago = '';
-                    let btnVerAdjuntosModal = (array_accesos.find(element => element === 34)?'<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAgregarAdjuntosRequerimiento" data-id-requerimiento="' + row['id_requerimiento'] + '" data-codigo-requerimiento="' + row['codigo'] + '" title="Ver archivos adjuntos"><i class="fas fa-paperclip fa-xs"></i></button>':'');
+                    let btnVerAdjuntosModal = (array_accesos.find(element => element === 34)?'<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAgregarAdjuntosRequerimiento" data-id-requerimiento="' + row['id_requerimiento'] + '" data-codigo-requerimiento="' + row['codigo'] + '" title="Ver archivos adjuntos" data-sustento="'+row['requerimiento_sustentado']+'"><i class="fas fa-paperclip fa-xs"></i></button>':'');
                     let btnDetalleRapido = (array_accesos.find(element => element === 33)?'<button type="button" class="btn btn-xs btn-primary btnVerDetalle handleClickVerDetalleRequerimientoSoloLectura" data-id-requerimiento="' + row['id_requerimiento'] + '" title="Ver detalle" ><i class="fas fa-eye fa-xs"></i></button>':'');
                     let btnImprimirEnPdf = (array_accesos.find(element => element === 36)?'<button type="button" class="btn btn-xs btn-default handleClickImprimirRequerimientoPdf" data-id-requerimiento="' + row['id_requerimiento'] + '" title="Imprimir en PDF" ><i class="fas fa-print fa-xs"></i></button>':'');
                     let btnTrazabilidad = (array_accesos.find(element => element === 35)?'<button type="button" class="btn btn-xs btn-default btnVerTrazabilidad handleClickVerTrazabilidadRequerimiento" title="Trazabilidad"><i class="fas fa-route fa-xs"></i></button>':'');
@@ -462,6 +467,14 @@ class ListarRequerimientoView {
                 // },
 
             ],
+            "createdRow": function (row, data, dataIndex) {
+
+                let color = '#f2f2f2';
+                if (data.requerimiento_sustentado == true) {
+                    $(row).css('background-color', '#ffe270');
+                }
+
+            },
             'initComplete': function () {
                 that.updateContadorFiltroRequerimientosElaborados();
 
@@ -526,7 +539,8 @@ class ListarRequerimientoView {
                 $('#ListaRequerimientosElaborados_filter input').trigger('focus');
                 //fin botón búsqueda
                 $("#ListaRequerimientosElaborados").LoadingOverlay("hide", true);
-            }
+            },
+
         });
         //Desactiva el buscador del DataTable al realizar una busqueda
         $tablaListaRequerimientosElaborados.on('search.dt', function () {
@@ -553,6 +567,7 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='creado_por']").textContent = '';
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='observacion']").textContent = '';
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='incidencia']").textContent = '';
+        document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='tipo_impuesto']").textContent = '';
 
         document.querySelector("div[id='modal-requerimiento'] td[id='adjuntosRequerimiento']").innerHTML = '';
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = '';
@@ -616,6 +631,7 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='periodo']").textContent = data.periodo;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='creado_por']").textContent = data.persona;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='observacion']").textContent = data.observacion;
+        document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='tipo_impuesto']").textContent = data.tipo_impuesto==1?'Detracción':data.tipo_impuesto ==2?'Renta':'No aplica';
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = data.simbolo_moneda;
 
         if (data.id_incidencia > 0) {
@@ -786,7 +802,7 @@ class ListarRequerimientoView {
                     }
                     document.querySelector("tbody[id='body_item_requerimiento']").insertAdjacentHTML('beforeend', `<tr>
 
-                    
+
                 <td>${i + 1}</td>
                 <td title="${data[i].id_partida >0 ?data[i].descripcion_partida.toUpperCase() :(data[i].id_partida_pi >0?data[i].descripcion_partida_presupuesto_interno.toUpperCase() : '')}" >${data[i].id_partida >0 ?data[i].codigo_partida :(data[i].id_partida_pi >0?data[i].codigo_partida_presupuesto_interno : '')}</td>
                 <td title="${data[i].id_centro_costo>0?data[i].descripcion_centro_costo.toUpperCase():''}">${data[i].codigo_centro_costo ? data[i].codigo_centro_costo : ''}</td>

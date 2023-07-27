@@ -11,26 +11,26 @@ $(function(){
         'columns': [
             {'data': 'id_usuario'},
             {'render':
-                function (data, type, row, meta){
+            function (data, type, row, meta){
                     return (row['nombre_largo']);
-                }
+            }
             },
             {'data': 'usuario'},
             {'render':
-                function (data, type, row, meta){
+            function (data, type, row, meta){
                     return row['clave'] ? '<p></span><i class="fas fa-eye-slash" onmousedown="showPasswordUser(this,'+row['id_usuario']+');" onmouseup="hiddenPasswordUser(this); "style="cursor:pointer;"></i> <span name="password">**********</p>':'';
-                }
+            }
             },
             {'data': 'email'},
             {'data': 'fecha_registro'},
             {'render':
                 function (data, type, row, meta){
                     return (`<div class="d-flex text-center">
-                            <button type="button" class="btn bg-primary btn-flat btn-xs" data-toggle="tooltip" 
+                            <button type="button" class="btn bg-primary btn-flat btn-xs" data-toggle="tooltip"
                                 data-placement="bottom" title="Editar clave" data-clave="change-clave" data-id="${row['id_usuario']}">
                                 <i class="fas fa-key"></i>
                             </button>
-                            <button type="button" class="btn btn-default btn-flat btn-xs" data-toggle="tooltip" 
+                            <button type="button" class="btn btn-default btn-flat btn-xs" data-toggle="tooltip"
                                 data-placement="bottom" title="Accesos" onclick="verAccesoUsuario(${row['id_usuario']});">
                                 <i class="fas fa-user-cog"></i>
                             </button>
@@ -42,7 +42,7 @@ $(function(){
                                 data-placement="bottom" title="Anular" onclick="anularUsuario(${row['id_usuario']});">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
-                        </div>`
+                            </div>`
                     );
                 }
             }
@@ -185,18 +185,18 @@ $(document).on('submit','[data-form="actualizar-usuario"]',function (e) {
 
 function getPerfilUsuario(id){
     return new Promise(function(resolve, reject) {
-    $.ajax({
-        type: 'GET',
+        $.ajax({
+            type: 'GET',
         url: route('configuracion.usuario.perfil', {id: id}),
-        dataType: 'JSON',
-        success(response) {
-            resolve(response) // Resolve promise and go to then()
-        },
-        error: function(err) {
-        reject(err) // Reject the promise and go to catch()
-        }
+            dataType: 'JSON',
+            success(response) {
+                resolve(response) // Resolve promise and go to then()
+            },
+            error: function(err) {
+            reject(err) // Reject the promise and go to catch()
+            }
+            });
         });
-    });
 }
 function loadPerfilUsuario(id){
     getPerfilUsuario(id).then(function(res) {

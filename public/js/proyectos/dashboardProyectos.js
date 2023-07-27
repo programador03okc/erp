@@ -6,12 +6,21 @@ $(function(){
     mostrar_tabla();
 });
 
+let dataLabel = [];
+let dataImportes = [];
+let backgroundColor = [ //Color del segmento
+    "#8BC34A",
+    "#03A9F4",
+    "#FFCE56"
+];
+
 function mostrar_tabla(){
     $.ajax({
         type: 'GET',
         url: route('proyectos.getProyectosActivos'),
         dataType: 'JSON',
         success: function(response){
+            console.log(response);
             var html = '';
             var i = 1;
             var porc_actual = 0;
@@ -64,7 +73,7 @@ function mostrar_tabla(){
             $('#proyectos_generados').text(proy);
             $('#total_valorizado').text(formatNumber.decimal(total_valorizado,'',-2));
             $('#total_saldo').text(formatNumber.decimal(total_saldo,'',-2));
-            
+
             $('#Proyectos tbody').html(html);
             $('#Proyectos tfoot').html(html_foot);
             mostrar_grafico();

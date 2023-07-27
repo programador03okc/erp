@@ -8,22 +8,18 @@ use Carbon\Carbon;
 
 class ConfiguracionHelper
 {
-    public static function encode5t($str)
-    {
-        for ($i = 0; $i < 5; $i++) {
-            $str = strrev(base64_encode($str));
-        }
-        return $str;
-    }
-
-    public static function decode5t($str)
-    {
-        for ($i = 0; $i < 5; $i++) {
-            $str = base64_decode(strrev($str));
-        }
-        return $str;
-    }
-
+	/*
+	 * Función para generar el correlativo de los documentos y/o códigos para identificar un registro
+	 * serie = texto inicial definido
+	 * separador = caracter que separa el texto inicial del correlativo
+	 * cantidad = cantidad de numeros para el correlativo
+	 * modulo = nombre del módulo del cual se obtendrá el total de registros actual
+	 * periodo = valor que define si necesita el valor del periodo/año dentro del código (SI/NO)
+	 * valorPeriodo = cuando se necesite del periodo se deberá colocar PERIODO = SI, seguido de un valor referente al anño (2023) en caso que sea 0 el año se considerará al año en curso
+	 * tipo =  valor que definirá el tipo de texto inicial cuando sea autogenerado por otra función
+	 * id_empresa = ID necesario para identificar una empresa en particular
+	 * id_grupo = ID necesario para identificar un grupo en particular
+	 */
     public static function generarCodigo($serie = '', $separador = '', $cantidad = 0, $modulo, $periodo = 'NO', $valorPeriodo = 0, $tipo = 1, $id_empresa = 0, $id_grupo = 0)
     {
 		$numero = ConfiguracionHelper::contadorModular($modulo);

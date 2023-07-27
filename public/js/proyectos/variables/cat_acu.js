@@ -32,13 +32,14 @@ $(function(){
         changeStateButton('historial');
     });
 
-    
+
 });
 
 function mostrar_cat_acu(id){
     baseUrl = route('proyectos.variables-entorno.categorias-acu.mostrar_cat_acu', {id: id});
     $.ajax({
         type: 'GET',
+        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
@@ -55,6 +56,8 @@ function mostrar_cat_acu(id){
 }
 
 function save_cat_acu(data, action){
+    console.log(data);
+    console.log(action);
     if (action == 'register'){
         baseUrl = route('proyectos.variables-entorno.categorias-acu.guardar_cat_acu');
         mensaje = 'Categoría A.C.U. registrada con éxito';
@@ -64,13 +67,14 @@ function save_cat_acu(data, action){
     }
     $.ajax({
         type: 'POST',
-        headers: {'X-CSRF-TOKEN': token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         data: data,
         dataType: 'JSON',
         success: function(response){
-            alert(mensaje);
+            console.log(response);
             if (response > 0){
+                alert('Categoría registrada con éxito');
                 $('#listaCategoriaAcu').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -86,6 +90,7 @@ function anular_cat_acu(ids){
     baseUrl = route('proyectos.variables-entorno.categorias-acu.anular_cat_acu', {id: ids});
     $.ajax({
         type: 'GET',
+        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
@@ -102,4 +107,6 @@ function anular_cat_acu(ids){
         console.log(textStatus);
         console.log(errorThrown);
     });
+
+
 }

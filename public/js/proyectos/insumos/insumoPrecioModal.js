@@ -24,6 +24,15 @@ function listarInsumoPrecios(id_insumo){
     var table = $('#listaInsumoPrecios').DataTable({
         'dom': vardataTables[1],
         'buttons': [],
+        // 'buttons': [
+        //     {
+        //         text: "Crear Precio",
+        //         className: 'btn btn-warning',
+        //         action: function(){
+        //             open_precio_create();
+        //         }
+        //     }
+        // ],
         'language' : vardataTables[0],
         'bDestroy': true,
         'ajax': route('proyectos.catalogos.insumos.listar_insumo_precios', {id: id_insumo}),
@@ -75,6 +84,7 @@ function open_precio_modal(id_insumo){
 
 function open_precio_create(){
     var precio = prompt('Ingrese el precio:');
+    console.log(Number.isInteger(parseInt(precio)));
 
     if (Number.isInteger(parseInt(precio))){
         var id_insumo = $('[name=id_insumo]').val();

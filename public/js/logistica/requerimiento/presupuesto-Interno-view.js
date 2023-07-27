@@ -50,7 +50,7 @@ class PresupuestoInternoView{
         let idPresupuestoInternoDetalle= obj.dataset.idPresupuestoInternoDetalle;
         let partida= obj.dataset.partida;
         let descripcion= obj.dataset.descripcion;
-        let montoTotal= obj.dataset.montoTotal;
+        let montoTotal= obj.dataset.totalPresupuestoAño;
 
         tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']").value = idPresupuestoInternoDetalle;
         tempObjectBtnPartida.textContent = 'Cambiar';
@@ -272,7 +272,6 @@ class PresupuestoInternoView{
 
         this.model.comboPresupuestoInterno(idGrupo, idArea).then((res) => {
             // console.log(res);
-            $("input[name='codigo_presupuesto_interno']").val("");
 
 
             if (selectElement.options.length > 0) {
@@ -293,14 +292,13 @@ class PresupuestoInternoView{
 
             res.forEach(element => {                
                 let option = document.createElement("option");
-                option.text = element.descripcion+(element.estado !=2?'(NO APROBADO)':'');
+                option.text = element.codigo+' - '+element.descripcion+(element.estado !=2?'(NO APROBADO)':'');
                 option.value = element.id_presupuesto_interno;
                 option.setAttribute('data-codigo', element.codigo);
                 option.setAttribute('data-id-grupo', element.id_grupo);
                 option.setAttribute('data-id-area', element.id_area);
                 if (element.id_presupuesto_interno == idPresupuestoInterno) {
                     option.selected = true;
-                    document.querySelector("input[name='codigo_presupuesto_interno']").value=element.codigo;
                 }
                 selectElement.add(option);
             });

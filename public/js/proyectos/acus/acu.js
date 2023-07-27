@@ -33,26 +33,22 @@ function listar_acus(){
                     return ('<span class="label label-'+row['bootstrap_color']+'">'+row['estado_doc']+'</span>');
                 }
             },
-            {'render': 
-                function (data, type, row) {
-                    return `
-                    <button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" data-placement="bottom" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" data-placement="bottom" title="Anular">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="ver btn btn-info boton" data-toggle="tooltip" data-placement="bottom" title="Ver">
-                        <i class="fas fa-list-alt"></i>
-                    </button>
-                    <button type="button" class="presupuestos btn btn-warning boton" data-toggle="tooltip" data-placement="bottom" title="Ver presupuestos enlazados">
-                        <i class="fas fa-file-alt"></i>
-                    </button>
-                    <button type="button" class="duplicar btn btn-success boton" data-toggle="tooltip" data-placement="bottom" title="Duplicar A.C.U.">
-                        <i class="fas fa-copy"></i>
-                    </button>`;
-                }, className: 'text-center', searcheable: false, orderable: false
-            }
+            {'defaultContent':
+            '<button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Editar" >'+
+                '<i class="fas fa-edit"></i></button>'+
+            '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Anular" >'+
+                '<i class="fas fa-trash"></i></button>'+
+            '<button type="button" class="ver btn btn-info boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Ver" >'+
+                '<i class="fas fa-list-alt"></i></button>'+
+            '<button type="button" class="presupuestos btn btn-warning boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Ver presupuestos enlazados" >'+
+                '<i class="fas fa-file-alt"></i></button>'+
+            '<button type="button" class="duplicar btn btn-success boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Duplicar A.C.U." >'+
+                '<i class="fas fa-copy"></i></button>'}
         ],
         'columnDefs': [ { 'aTargets': [0], 'sClass': 'invisible'} ],
         'order': [[ 2, "asc" ]],
@@ -173,7 +169,7 @@ function anular_acu(ids){
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
-            });        
+            });
         }
     }
 }

@@ -9,7 +9,7 @@ $(function(){
 
         var activeTab = $(this).attr('type');
         var activeForm = "form-"+activeTab.substring(1);
-        
+
         $("#"+activeForm).attr('type', 'register');
         $("#"+activeForm).attr('form', 'formulario');
         changeStateInput(activeForm, true);
@@ -69,7 +69,7 @@ function consultaSunat(){
                 $('[name=id_tipo_contribuyente]').val(response.id_tipo);
                 $('[name=razon_social]').val(response.razon_social);
                 $('[name=direccion]').val(response.direccion);
-            }     
+            }
         });
     }else{
         alert('Ingrese el número de RUC');
@@ -153,6 +153,7 @@ function mostrar_cuentas(id){
         url: baseUrl,
         dataType: 'JSON',
         success: function(response){
+            console.log(response);
             $('#empre-cta').append(response);
             resizeSide();
         }
@@ -240,6 +241,7 @@ function save_empresa(data, action, frm_active){
             data: data,
             dataType: 'JSON',
             success: function(response){
+                console.log(response);
                 if (frm_active == 'form-informacion'){
                     alert(msj);
                 }else if (frm_active == 'form-contacto'){

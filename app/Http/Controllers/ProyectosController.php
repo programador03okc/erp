@@ -30,10 +30,6 @@ class ProyectosController extends Controller
         // session_start();
     }
 
-    public function index() {
-        return view('proyectos/main');
-    }
-
     function view_opciones_todo(){
         return view('proyectos/reportes/opciones_todo');
     }
@@ -44,6 +40,7 @@ class ProyectosController extends Controller
         $cargos = $this->select_cargos();
         return view('proyectos/residentes/residentes', compact('cargos'));
     }
+
 
     function view_propuesta(){
         $monedas = GenericoController::mostrar_monedas_cbo();
@@ -4310,8 +4307,8 @@ class ProyectosController extends Controller
 
     public function getProgramadoValorizado($id_presup, $id_presupuesto)
     {
-        // //Debugbar::info($id_presup);
-        // //Debugbar::info($id_presupuesto);
+        // Debugbar::info($id_presup);
+        // Debugbar::info($id_presupuesto);
         $pro_programado = DB::table('proyectos.presup_periodos')
         ->where([['id_presup','=',$id_presup],['estado','!=',7]])
         ->orderBy('numero','asc')

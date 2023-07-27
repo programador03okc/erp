@@ -83,6 +83,9 @@ class ListaOrdenView {
         $('#modal-enviar-solicitud-pago').on("click", "button.handleClickInfoAdicionalCuentaSeleccionada", (e) => {
             this.mostrarInfoAdicionalCuentaSeleccionada(e.currentTarget);
         });
+        $('#modal-enviar-solicitud-pago').on("click", "button.handleClickInfoAdicionalTipoImpuesto", (e) => {
+            this.mostrarInfoAdicionalTipoImpuesto(e.currentTarget);
+        });
 
         $('#modal-enviar-solicitud-pago').on("blur", "input.handleBlurBuscarDestinatarioPorNumeroDocumento", (e) => {
             this.buscarDestinatarioPorNumeroDeDocumento(e.currentTarget);
@@ -801,6 +804,7 @@ class ListaOrdenView {
     }
 
     modalEnviarOrdenAPago(obj) {
+
             document.querySelector("select[name='numero_de_cuotas']").removeAttribute("disabled");
             document.querySelector("input[name='pagoEnCuotasCheckbox']").removeAttribute("disabled");
         tempArchivoAdjuntoRequerimientoCabeceraList=[];
@@ -819,6 +823,23 @@ class ListaOrdenView {
         document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='codigo_orden']").textContent = obj.dataset.codigoOrden;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_prioridad']").value = obj.dataset.idPrioridadPago>0?obj.dataset.idPrioridadPago:1;
 
+        $.ajax({
+            type: 'GET',
+            url: `calcular-prioridad/${obj.dataset.idOrdenCompra}`,
+            dataType: 'JSON',
+            beforeSend: (data) => {
+        },
+            success(response) {
+                document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_prioridad']").value = response.prioridad_id;
+            },
+            error: function (err) {
+                reject(err)
+            }
+        });
+
+
+
+
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_orden_compra']").value = obj.dataset.idOrdenCompra;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").setAttribute("data-monto-total-orden",obj.dataset.montoTotalOrden);
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").value = $.number(obj.dataset.montoTotalOrden,2,".",",");
@@ -833,6 +854,10 @@ class ListaOrdenView {
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_proveedor']").value = obj.dataset.idProveedor;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_cuenta_contribuyente']").value = obj.dataset.idCuentaPrincipal;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] textarea[name='comentario']").value = obj.dataset.comentarioPago != null ? obj.dataset.comentarioPago : '';
+
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='tipo_impuesto']").value = "";
+        document.querySelector("div[id='modal-info-adicional-tipo-impuesto'] ul[id='listaRequerimientosSeleccionadosConImpuesto']").innerHTML = "";
+
 
         // this.updateLabelModalEnviarSolicitudPago((obj.dataset.tienePagoEnCuotas === "true"));
         this.updateLabelModalEnviarSolicitudPago(JSON.parse((obj.dataset.tienePagoEnCuotas).toLowerCase()));
@@ -856,12 +881,13 @@ class ListaOrdenView {
                 document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_persona']").value = '';
                 document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_cuenta_persona']").value = '';
 
+                console.log(obj.dataset);
                 obtenerContribuyente(obj.dataset.idContribuyentePago);
 
                 obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyentePago, (parseInt(obj.dataset.idCuentaContribuyentePago)>0?obj.dataset.idCuentaContribuyentePago:null ));
             }
         } else {
-            this.obtenerContribuyentePorIdProveedor(obj.dataset.idProveedor)
+            this.obtenerContribuyentePorIdProveedor(obj.dataset.idProveedor,  obj.dataset.idCuentaContribuyentePago);
         }
 
         // this.obtenerMontosParaPago(obj.dataset.idOrdenCompra);
@@ -903,7 +929,7 @@ class ListaOrdenView {
                             htmlAdjunto+='<td>'
                                 htmlAdjunto+=''+element.descripcion_categoria_adjunto+''
                             htmlAdjunto+='</td>'
-                        
+
                             htmlAdjunto+='<td>'
                             htmlAdjunto+=''+(element.simbolo_moneda!=null ? element.simbolo_moneda:'') + (element.monto_total !=null ? element.monto_total:'')
                             htmlAdjunto+='</td>'
@@ -965,8 +991,8 @@ class ListaOrdenView {
                                         enlaceAdjunto.push( `<a data-toggle="collapse" href="#collapse${adjunto.id_adjunto}" aria-expanded="false" aria-controls="collapse${adjunto.id_adjunto}">
                                         ${adjunto.archivo}</a>
                                         <i class="fas fa-caret-left"></i>
-                                        <div class="collapse" id="collapse${adjunto.id_adjunto}">            
-                                        
+                                        <div class="collapse" id="collapse${adjunto.id_adjunto}">
+
                                         <dl>
                                         <dt>Archivo</dt>
                                         <dd><a href="/files/logistica/comporbantes_proveedor/${adjunto.archivo}" target="_blank">Descargar</a></dd>
@@ -1016,6 +1042,9 @@ class ListaOrdenView {
 
         this.updateMontoAPagarEnCuotas();
 
+
+        this.obtenerRequerimientosConImpuesto(obj.dataset.idOrdenCompra);
+
         $('#modal-enviar-solicitud-pago').modal({
             show: true,
             backdrop: 'static'
@@ -1058,6 +1087,77 @@ class ListaOrdenView {
         }
     }
 
+
+    obtenerRequerimientosConImpuesto(idOrden) {
+        let liList = ``;
+        if (idOrden > 0) {
+            $.ajax({
+                type: 'GET',
+                url: 'obtener-requerimientos-con-impuesto/' + idOrden,
+                dataType: 'JSON',
+            }).done(function (response) {
+                console.log(response);
+                if (response.estado == 'success') {
+
+                    if (response.data.lista_requerimientos.length > 0) {
+
+                        document.querySelector(nombreModalPadre+" select[name='tipo_impuesto']").value= response.data.tipo_impuesto;
+
+                        (response.data.lista_requerimientos).forEach(requerimiento => {
+                            liList += `<li><h5><span class="label label-default"><a href="/necesidades/requerimiento/listado/imprimir-requerimiento-pdf/${requerimiento.id_requerimiento}/0" target="blank_" style="color:#fff">${requerimiento.codigo}</a></span></h5></li>`;
+                        });
+
+                        document.querySelector("div[id='modal-info-adicional-tipo-impuesto'] ul[id='listaRequerimientosSeleccionadosConImpuesto']").insertAdjacentHTML('beforeend', liList);
+
+                    } else {
+                        Lobibox.notify('error', {
+                            size: "mini",
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: 'Hubo un problema. no se encontró un id cuenta valido'
+                        });
+                    }
+
+                } else {
+                    document.querySelector(nombreModalPadre+" select[name='tipo_impuesto']").value = "";
+                    Lobibox.notify(response.tipo_estado, {
+                        size: "mini",
+                        rounded: true,
+                        sound: false,
+                        delayIndicator: false,
+                        msg: response.mensaje
+                    });
+                }
+
+            }).always(function () {
+
+            }).fail(function (jqXHR) {
+                $("select[name='tipo_impuesto']").LoadingOverlay("hide", true);
+
+                Lobibox.notify('error', {
+                    size: "mini",
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
+                });
+                console.log('Error devuelto: ' + jqXHR.responseText);
+            });
+        } else {
+            $("select[name='tipo_impuesto']").LoadingOverlay("hide", true);
+
+            Lobibox.notify('error', {
+                size: "mini",
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: 'Hubo un problema. al intentar buscar los requerimientos con impuesto'
+            });
+        }
+
+    }
+
     getContribuyentePorIdProveedor(id) {
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -1084,12 +1184,12 @@ class ListaOrdenView {
     }
 
 
-    obtenerContribuyentePorIdProveedor(idProveedor) {
+    obtenerContribuyentePorIdProveedor(idProveedor, idCuenta=null) {
         this.getContribuyentePorIdProveedor(idProveedor).then((res) => {
             // console.log(res);
             if (res.tipo_estado == 'success') {
                 tempDataProveedorParaPago = res.data;
-                this.llenarInputsDeDestinatario(res.data);
+                this.llenarInputsDeDestinatario(res.data,idCuenta);
             } else {
                 Lobibox.notify(res.tipo_estado, {
                     title: false,
@@ -1106,7 +1206,7 @@ class ListaOrdenView {
     }
 
 
-    llenarInputsDeDestinatario(data) {
+    llenarInputsDeDestinatario(data,idCuenta=null) {
         // console.log(data);
         document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_tipo_destinatario']").value = 2;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_contribuyente']").value = data.id_contribuyente != '' && data.id_contribuyente != null ? data.id_contribuyente : '';
@@ -1125,9 +1225,8 @@ class ListaOrdenView {
         }
 
 
-        let idCuentaEnvioPago = parseInt(document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_cuenta']").value);
         if (data.id_contribuyente > 0) {
-            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (idCuentaEnvioPago > 0? idCuentaEnvioPago:null));
+            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (idCuenta > 0? idCuenta:null));
         }
     }
 
@@ -1173,10 +1272,10 @@ class ListaOrdenView {
             continuar = false;
 
         }
-        if (( document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value ==1) 
+        if (( document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value ==1)
         && (
             parseFloat((document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value).replace(',','')) +
-            parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] span[name='sumaMontoTotalPagado']").textContent) 
+            parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] span[name='sumaMontoTotalPagado']").textContent)
             > parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden))){
             menseje.push('El "monto a enviar" más(+) "la suma de las cutas" supera el monto total de la orden');
             continuar = false;
@@ -1196,93 +1295,105 @@ class ListaOrdenView {
     registrarSolicitudDePago() {
         // console.log('enviar a pago');
 
-        if (this.validarFormularioEnvioOrdenAPago()) {
+        let selec_cuenta = $('#form-enviar_solicitud_pago').find('select[name="id_cuenta"]').val();
 
-            let formData = new FormData($('#form-enviar_solicitud_pago')[0]);
-            if(tempArchivoAdjuntoRequerimientoCabeceraList.length>0){
-                formData.append(`archivoAdjuntoRequerimientoObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoCabeceraList));
-                formData.append(`pagoEnCuotasCheckbox`, document.querySelector("input[name='pagoEnCuotasCheckbox']").checked);
-                tempArchivoAdjuntoRequerimientoCabeceraList.forEach(element => {
-                    formData.append(`archivo_adjunto_list[]`, element.file);
-            });
-            }
-            $.ajax({
-                type: 'POST',
-                url: 'registrar-solicitud-de-pago',
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: 'JSON',
-                beforeSend: (data) => {
+        if (parseInt(selec_cuenta)>0) {
 
-                    var customElement = $("<div>", {
-                        "css": {
-                            "font-size": "20px",
-                            "text-align": "center",
-                            "position": "absolute",
-                            "overflow": "auto",
-                            "top": "50%"
-                        },
-                        "class": "your-custom-class",
-                        "text": "Enviando Solicitud de pago"
-                    });
+            if (this.validarFormularioEnvioOrdenAPago() && selec_cuenta) {
 
-                    $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("show", {
-                        imageAutoResize: true,
-                        progress: true,
-                        custom: customElement,
-                        imageColor: "#3c8dbc"
-                    });
-                },
-                success: (response) => {
-                    $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("hide", true);
-                    console.log(response);
-                    if (response.tipo_estado == 'success') {
+                let formData = new FormData($('#form-enviar_solicitud_pago')[0]);
+                if(tempArchivoAdjuntoRequerimientoCabeceraList.length>0){
+                    formData.append(`archivoAdjuntoRequerimientoObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoCabeceraList));
+                    formData.append(`pagoEnCuotasCheckbox`, document.querySelector("input[name='pagoEnCuotasCheckbox']").checked);
+                    tempArchivoAdjuntoRequerimientoCabeceraList.forEach(element => {
+                        formData.append(`archivo_adjunto_list[]`, element.file);
+                });
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: 'registrar-solicitud-de-pago',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'JSON',
+                    beforeSend: (data) => {
 
-                        Lobibox.notify('success', {
-                            title: false,
-                            size: 'mini',
-                            rounded: true,
-                            sound: false,
-                            delayIndicator: false,
-                            msg: response.mensaje
+                        var customElement = $("<div>", {
+                            "css": {
+                                "font-size": "20px",
+                                "text-align": "center",
+                                "position": "absolute",
+                                "overflow": "auto",
+                                "top": "50%"
+                            },
+                            "class": "your-custom-class",
+                            "text": "Enviando Solicitud de pago"
                         });
-                        $('#modal-enviar-solicitud-pago').modal('hide');
 
-                        this.tipoVistaPorCabecera();
-                        // $("#listaOrdenes").DataTable().ajax.reload(null, false);
+                        $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("show", {
+                            imageAutoResize: true,
+                            progress: true,
+                            custom: customElement,
+                            imageColor: "#3c8dbc"
+                        });
+                    },
+                    success: (response) => {
+                        $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("hide", true);
+                        console.log(response);
+                        if (response.tipo_estado == 'success') {
 
-                    } else {
+                            Lobibox.notify('success', {
+                                title: false,
+                                size: 'mini',
+                                rounded: true,
+                                sound: false,
+                                delayIndicator: false,
+                                msg: response.mensaje
+                            });
+                            $('#modal-enviar-solicitud-pago').modal('hide');
+
+                            this.tipoVistaPorCabecera();
+
+                        } else {
+                            Swal.fire(
+                                '',
+                                response.mensaje,
+                                'error'
+                            );
+                        }
+                    },
+                    // statusCode: {
+                    //     404: function () {
+                    //         $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("hide", true);
+                    //         Swal.fire(
+                    //             'Error 404',
+                    //             'Lo sentimos hubo un problema con el servidor, la ruta a la que se quiere acceder para guardar no esta disponible, por favor vuelva a intentarlo más tarde.',
+                    //             'error'
+                    //         );
+                    //     }
+                    // },
+                    fail: (jqXHR, textStatus, errorThrown) => {
+                        $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("hide", true);
                         Swal.fire(
                             '',
-                            response.mensaje,
+                            'Lo sentimos hubo un error en el servidor al intentar enviar la orden a pago, por favor vuelva a intentarlo',
                             'error'
                         );
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
                     }
-                },
-                // statusCode: {
-                //     404: function () {
-                //         $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("hide", true);
-                //         Swal.fire(
-                //             'Error 404',
-                //             'Lo sentimos hubo un problema con el servidor, la ruta a la que se quiere acceder para guardar no esta disponible, por favor vuelva a intentarlo más tarde.',
-                //             'error'
-                //         );
-                //     }
-                // },
-                fail: (jqXHR, textStatus, errorThrown) => {
-                    $('#modal-enviar-solicitud-pago .modal-content').LoadingOverlay("hide", true);
-                    Swal.fire(
-                        '',
-                        'Lo sentimos hubo un error en el servidor al intentar enviar la orden a pago, por favor vuelva a intentarlo',
-                        'error'
-                    );
-                    console.log(jqXHR);
-                    console.log(textStatus);
-                    console.log(errorThrown);
-                }
-            });
+                });
+            }
+
+        }else{
+            Swal.fire(
+                'Informativo',
+                'Debe seleccionar una cuanta bancaria',
+                'warning'
+            )
         }
+
     }
 
     mostrarInfoAdicionalCuentaSeleccionada() {
@@ -1314,6 +1425,12 @@ class ListaOrdenView {
                 'info'
             );
         }
+    }
+
+    mostrarInfoAdicionalTipoImpuesto() {
+            $('#modal-info-adicional-tipo-impuesto').modal({
+                show: true
+            });
     }
 
     buscarDestinatarioPorNumeroDeDocumento(obj) {
@@ -1652,6 +1769,10 @@ class ListaOrdenView {
     mostrarListaOrdenesElaboradas(filtro = 'SIN_FILTRO') {
 
         let that = this;
+        let fecha_actual = new Date();
+        let fecha_inicio = "01-01-"+fecha_actual.getFullYear();
+        fecha_actual = moment().format("DD-MM-YYYY");
+
         vista_extendida();
         var vardataTables = funcDatatables();
         // const button_filtro = (array_accesos.find(element => element === 287)?{
@@ -1690,7 +1811,11 @@ class ListaOrdenView {
             'ajax': {
                 'url': 'lista-ordenes-elaboradas',
                 'type': 'POST',
-                'data': { 'filtro': filtro},
+                'data': {
+                    'filtro': filtro,
+                    'fecha_inicio':fecha_inicio,
+                    'fecha_actual':fecha_actual,
+                },
                 beforeSend: data => {
                     $("#listaOrdenes").LoadingOverlay("show", {
                         imageAutoResize: true,
@@ -1818,10 +1943,11 @@ class ListaOrdenView {
                                 data-tiene-pago-en-cuotas="${JSON.parse((row.tiene_pago_en_cuotas)) ?? false}"
                                 data-numero-de-cuotas="${(row.numero_de_cuotas) ?? 0}"
                                 data-numero-envios-a-pago="${(row.numero_envios_a_pago) ?? 0}"
-
                                 data-id-persona-pago="${row.id_persona_pago ?? ''}"
                                 data-id-cuenta-persona-pago="${row.id_cuenta_persona_pago ?? ''}"
-                                data-comentario-pago="${row.comentario_pago ?? ''}" >
+                                data-comentario-pago="${row.comentario_pago ?? ''}"
+                                data-lista-requerimientos-con-tipo-impuesto="${row.lista_requerimientos_con_tipo_impuesto ?? ''}"
+                                >
                                     <i class="fas fa-money-check-alt fa-xs"></i>
                                 </button>`:'');
 
@@ -1843,11 +1969,11 @@ class ListaOrdenView {
                 //Boton de busqueda
                 const $filter = $('#listaOrdenes_filter');
                 const $input = $filter.find('input');
-                
-                const selectFiltro= `<select class="form-control input-sm ml-4 handleChangeFiltroListaOrdenes" id="selectFiltroListaOrden" style="margin-left: 1rem;"> 
+
+                const selectFiltro= `<select class="form-control input-sm ml-4 handleChangeFiltroListaOrdenes" id="selectFiltroListaOrden" style="margin-left: 1rem;">
                     <option value="SIN_FILTRO" >Todo</option>
-                    <option value="ORDENES_SIN_ENVIAR_A_PAGO">Ordenes sin envío a pago</option> 
-                    <option value="ORDENES_AUTORIZADAS_PARA_PAGO">Ordenes autorizadas para pago</option> 
+                    <option value="ORDENES_SIN_ENVIAR_A_PAGO">Ordenes sin envío a pago</option>
+                    <option value="ORDENES_AUTORIZADAS_PARA_PAGO">Ordenes autorizadas para pago</option>
                     </select>`;
                 document.querySelector("div[id='listaOrdenes_wrapper'] div[class='dt-buttons btn-group']").insertAdjacentHTML('afterbegin', selectFiltro);
                 document.querySelector("select[id='selectFiltroListaOrden']").value=that.filtro;
@@ -1866,6 +1992,19 @@ class ListaOrdenView {
                 })
                 //Fin boton de busqueda
 
+                let html_fechas = `
+
+                <input type="text" class="form-control date-picker input-sm" size="10" id="fecha-inicio"
+                value="`+fecha_inicio+`"/> <input type="text" class="form-control date-picker input-sm" size="10" id="txtOrdenPendienteFechaFin"
+                    value="`+fecha_actual+`"/> `;
+                $('#listaOrdenes_wrapper .dt-buttons').append(html_fechas);
+
+                $('input.date-picker').datepicker({
+                    language: "es",
+                    orientation: "bottom auto",
+                    format: 'dd-mm-yyyy',
+                    autoclose: true
+                });
             },
             "drawCallback": function (settings) {
 
@@ -2274,7 +2413,7 @@ class ListaOrdenView {
         this.getcategoriaAdjunto().then((categoriaAdjuntoList) => {
             // console.log(payload);
             let html = '';
-            html = `    
+            html = `
             <tr id="${payload.id}" style="text-align:center">
             <td style="text-align:left;">${payload.nameFile}</td>
             <td style="text-align:left;"><input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" placeholder="Fecha emisión"  value="${moment().format("YYYY-MM-DD")}"></td>

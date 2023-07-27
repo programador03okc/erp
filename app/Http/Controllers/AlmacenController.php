@@ -202,7 +202,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen.variables.unid_med',compact('array_accesos','array_accesos_botonera','modulo'));
+        return view('almacen/variables/unid_med',compact('array_accesos','array_accesos_botonera','modulo'));
     }
 
     function view_guia_compra()
@@ -256,7 +256,7 @@ class AlmacenController extends Controller
         // $usuarios = $this->select_usuarios_almacen();
         $usuarios = $this->select_usuarios();
         $motivos_anu = AlmacenController::select_motivo_anu();
-        return view('almacen/guias/guia_venta', compact('almacenes', 'posiciones', 'clasificaciones', 'sedes', 'proveedores', 'tp_doc_almacen', 'tp_operacion', 'tp_contribuyente', 'sis_identidad', 'usuarios', 'motivos_anu'));
+        return view('almacen.guias.guia_venta', compact('almacenes', 'posiciones', 'clasificaciones', 'sedes', 'proveedores', 'tp_doc_almacen', 'tp_operacion', 'tp_contribuyente', 'sis_identidad', 'usuarios', 'motivos_anu'));
     }
     function view_doc_venta()
     {
@@ -267,7 +267,7 @@ class AlmacenController extends Controller
         $tp_doc = $this->mostrar_tp_doc_cbo();
         $moneda = AlmacenController::mostrar_moneda_cbo();
         $usuarios = $this->select_usuarios();
-        return view('almacen/documentos/doc_venta', compact('sedes', 'clasificaciones', 'condiciones', 'tp_doc', 'moneda', 'usuarios'));
+        return view('almacen.documentos.doc_venta', compact('sedes', 'clasificaciones', 'condiciones', 'tp_doc', 'moneda', 'usuarios'));
     }
     function view_kardex_general()
     {
@@ -395,7 +395,7 @@ class AlmacenController extends Controller
     function view_docs_prorrateo()
     {
         // $tp_doc = $this->mostrar_tp_doc_cbo();
-        return view('almacen/reportes/docs_prorrateo');
+        return view('almacen.reportes.docs_prorrateo');
     }
 
     /* Combos */
@@ -5346,15 +5346,15 @@ class AlmacenController extends Controller
                     'adm_estado_doc.estado_doc',
                     // 'alm_req.codigo as codigo_requerimiento',
                     // 'oportunidades.codigo_oportunidad',
-                    DB::raw("(CASE WHEN alm_req.id_requerimiento >0  THEN alm_req.codigo
+                    DB::raw("(CASE WHEN alm_req.id_requerimiento >0  THEN alm_req.codigo 
                     WHEN alm_req_t.id_requerimiento > 0  THEN alm_req_t.codigo
                     WHEN alm_req_ts.id_requerimiento > 0  THEN alm_req_ts.codigo
                     ELSE '' END) AS codigo_requerimiento"),
-                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad
+                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad 
                     WHEN oportunidades_t.id > 0  THEN oportunidades_t.codigo_oportunidad
                     WHEN oportunidades_ts.id > 0  THEN oportunidades_ts.codigo_oportunidad
                     ELSE '' END) AS codigo_oportunidad")
-                    // DB::raw("(SELECT
+                    // DB::raw("(SELECT 
                     // FROM almacen.guia_com
                     // WHERE   guia_com.id_guia = mov_alm_det.id_guia_com_det AND
                     // mov_alm_det.estado != 7) AS gg")
@@ -5415,11 +5415,11 @@ class AlmacenController extends Controller
                     'adm_estado_doc.estado_doc',
                     // 'alm_req.codigo as codigo_requerimiento',
                     // 'oportunidades.codigo_oportunidad',
-                    DB::raw("(CASE WHEN alm_req.id_requerimiento > 0 THEN alm_req.codigo
+                    DB::raw("(CASE WHEN alm_req.id_requerimiento > 0 THEN alm_req.codigo 
                     WHEN alm_req_t.id_requerimiento > 0 THEN alm_req_t.codigo
                     WHEN alm_req_ts.id_requerimiento > 0 THEN alm_req_ts.codigo
                     ELSE '' END) AS codigo_requerimiento"),
-                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad
+                    DB::raw("(CASE WHEN oportunidades.id > 0  THEN oportunidades.codigo_oportunidad 
                     WHEN oportunidades_t.id > 0 THEN oportunidades_t.codigo_oportunidad
                     WHEN oportunidades_ts.id > 0 THEN oportunidades_ts.codigo_oportunidad
                     ELSE '' END) AS codigo_oportunidad")

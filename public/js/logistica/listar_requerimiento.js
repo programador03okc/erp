@@ -46,7 +46,7 @@ $(function () {
         type: 'GET',
         url: '/session-rol-aprob',
         success: function (response) {
-            // console.log(response); 
+            // console.log(response);
             userSession = response;
             userSession.roles.forEach(element => {
                 // console.log(element.nombre_area);

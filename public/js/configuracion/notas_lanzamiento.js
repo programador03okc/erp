@@ -18,7 +18,7 @@ function mostrar_nota_lanzamiento_select(){
     $.ajax({
         type: 'GET',
         url: route('configuracion.notas-lanzamiento.mostrar'),
-        success: function(response) {   
+        success: function(response) {
             fill_select_nota_lanzamiento(response);
         },
     })
@@ -27,7 +27,7 @@ function mostrar_nota_lanzamiento_select(){
 function fill_select_nota_lanzamiento(data){
      let selectNotaLanzamiento=document.getElementsByName('nota_lanzamiento')[0];
     let html ='';
-    data.forEach(element => {        
+    data.forEach(element => {
         html+= '<option data-selected='+JSON.stringify(element)+'  value='+element.id_nota_lanzamiento+'>'+element.version+'</option>';
     });
    selectNotaLanzamiento.innerHTML = html;
@@ -46,7 +46,7 @@ function fill_detail_nota_lanzamiento(){
     llenar_tabla_nota_lanzamiento(dataSelected);
 }
 
-function llenar_tabla_nota_lanzamiento(payload){  
+function llenar_tabla_nota_lanzamiento(payload){
         let data = [];
         data.push(payload);
         limpiarTabla('listarNotasLanzamiento');
@@ -54,7 +54,7 @@ function llenar_tabla_nota_lanzamiento(payload){
         $('#listarNotasLanzamiento tbody').html(htmls);
         var table = document.getElementById("listarNotasLanzamiento");
         // console.log(data.length);
-        
+
         if(data.length > 0){
             for(var a=0;a < data.length;a++){
                 let option ='<center><div class="btn-group btn-group-sm" role="group" aria-label="Second group">';
@@ -73,7 +73,7 @@ function llenar_tabla_nota_lanzamiento(payload){
 
 
 function cambiarNotaLanzamiento(id_nota){
-    mostrar_detalle_notas_lanzamiento(id_nota);    
+    mostrar_detalle_notas_lanzamiento(id_nota);
     fill_detail_nota_lanzamiento();
 }
 
@@ -94,18 +94,18 @@ function mostrar_detalle_notas_lanzamiento(id){
             {'data': 'descripcion'},
             {'data': 'fecha_detalle_nota_lanzamiento', className: 'text-center'},
             {'render':
-                function ( data, type, row ) {
-                    let html ='<div class="btn-group btn-group-sm" role="group" aria-label="Second group">';
-                            html +='<button type="button" class="btn btn-sm btn-log btn-primary" name="btnEditarDetalleNotaLanzamiento" title="Editar Detalle Nota de Lanzamiento" onClick="editarDetalleNotaLanzamiento('+row.id_detalle_nota_lanzamiento+');"><i class="fas fa-edit fa-xs"></i></button>';
-                            html +='<button type="button" class="btn btn-sm btn-log btn-danger" name="btnEliminarDetalleNotaLanzamiento" title="Eliminar Detalle Nota de Lanzamiento" onClick="eliminarDetalleNotaLanzamiento('+row.id_detalle_nota_lanzamiento+');"><i class="fas fa-trash fa-xs"></i></button>';
-                        html +='</div>';
-                    return (html);
+            function ( data, type, row ) {
+                let html ='<div class="btn-group btn-group-sm" role="group" aria-label="Second group">';
+                        html +='<button type="button" class="btn btn-sm btn-log btn-primary" name="btnEditarDetalleNotaLanzamiento" title="Editar Detalle Nota de Lanzamiento" onClick="editarDetalleNotaLanzamiento('+row.id_detalle_nota_lanzamiento+');"><i class="fas fa-edit fa-xs"></i></button>';
+                        html +='<button type="button" class="btn btn-sm btn-log btn-danger" name="btnEliminarDetalleNotaLanzamiento" title="Eliminar Detalle Nota de Lanzamiento" onClick="eliminarDetalleNotaLanzamiento('+row.id_detalle_nota_lanzamiento+');"><i class="fas fa-trash fa-xs"></i></button>';
+                    html +='</div>';
+                return (html);
                 }, className: 'text-center'
             }
         ],
         'columnDefs': [{ 'aTargets': [0], 'sClass': 'invisible'}],
     });
-    
+
 }
 
 
@@ -120,7 +120,7 @@ function agregarNotaLanzamiento(){
     document.getElementsByName('version')[0].value ='';
     document.getElementsByName('version_actual')[0].value ='';
     document.getElementsByName('fecha_nota_lanzamiento')[0].value = '';
-    
+
 }
 function agregarDetalleNotaLanzamiento(){
     let $idNota = $("[name=nota_lanzamiento]").val();
@@ -137,7 +137,7 @@ function agregarDetalleNotaLanzamiento(){
     document.getElementsByName('titulo')[0].value ='';
     document.getElementsByName('descripcion')[0].value ='';
     document.getElementsByName('fecha_detalle_nota_lanzamiento')[0].value = '';
-    
+
 }
 
 function guardarNotaLanzamiento(){
@@ -150,8 +150,8 @@ function guardarNotaLanzamiento(){
         data: data,
         success: function(response){
             if(response == 'GUARDADO'){
-                alert('Datos guardados!');   
-                mostrar_nota_lanzamiento_select();  
+                alert('Datos guardados!');
+                mostrar_nota_lanzamiento_select();
             }else if(response == 'NO_GUARDADO'){
                 alert('NO se puedo guardar');
             }else{
@@ -160,7 +160,7 @@ function guardarNotaLanzamiento(){
             }
         }
     });
-    
+
 }
 
 function guardarDetalleNotaLanzamiento(){
@@ -173,8 +173,8 @@ function guardarDetalleNotaLanzamiento(){
         data: data,
         success: function(response){
             if(response == 'GUARDADO'){
-                alert('Datos guardados!');   
-                mostrar_nota_lanzamiento_select();  
+                alert('Datos guardados!');
+                mostrar_nota_lanzamiento_select();
             }else if(response == 'NO_GUARDADO'){
                 alert('NO se puedo guardar');
             }else{
@@ -183,7 +183,7 @@ function guardarDetalleNotaLanzamiento(){
             }
         }
     });
-    
+
 }
 
 function editarNotaLanzamiento(id){
@@ -191,14 +191,14 @@ function editarNotaLanzamiento(id){
     document.getElementsByName('btnActualizarNota')[0].classList.remove('invisible');
     document.getElementById('title-nota_lanzamiento').innerText = 'Editar Nota de Lanzamiento';
 
-    
+
     $('#modal-modal_nota_lanzamiento').modal({
         show: true
     });
     $.ajax({
         type: 'GET',
         url: route('configuracion.notas-lanzamiento.mostrar_nota_lanzamiento', {id: id}),
-        success: function(response) {                        
+        success: function(response) {
             document.getElementsByName('id_nota_lanzamiento')[0].value = response.id_nota_lanzamiento?response.id_nota_lanzamiento:'';
             document.getElementsByName('version')[0].value = response.version?response.version:'';
             document.getElementsByName('version_actual')[0].value = response.version_actual?response.version_actual:'';
@@ -208,19 +208,19 @@ function editarNotaLanzamiento(id){
 }
 
 function editarDetalleNotaLanzamiento(id){
-    
+
     document.getElementsByName('btnAgregarDetalleNota')[0].classList.add('invisible');
     document.getElementsByName('btnActualizarDetalleNota')[0].classList.remove('invisible');
     document.getElementById('title-detalle_nota_lanzamiento').innerText = 'Editar Detalle de Nota de Lanzamiento';
 
-    
+
     $('#modal-modal_detalle_nota_lanzamiento').modal({
         show: true
     });
     $.ajax({
         type: 'GET',
         url: route('configuracion.notas-lanzamiento.mostrar_detalle_nota_lanzamiento', {id: id}),
-        success: function(response) {                                    
+        success: function(response) {
             document.getElementsByName('id_detalle_nota_lanzamiento')[0].value = response.id_detalle_nota_lanzamiento?response.id_detalle_nota_lanzamiento:'';
             document.getElementsByName('titulo')[0].value = response.titulo?response.titulo:'';
             document.getElementsByName('descripcion')[0].value = response.descripcion?response.descripcion:'';
@@ -252,7 +252,7 @@ function getDataFormularioDetalleNotaLanzamiento(){
 
 function actualizarNotaLanzamiento(){
     let data =  getDataFormularioNotaLanzamiento();
-    
+
 
     $.ajax({
         type: 'PUT',
@@ -260,10 +260,10 @@ function actualizarNotaLanzamiento(){
         datatype: "JSON",
         data: data,
         success: function(response){
-            
+
             if(response == 'ACTUALIZADO'){
-                alert('Datos Actualizado!');   
-                mostrar_nota_lanzamiento_select();  
+                alert('Datos Actualizado!');
+                mostrar_nota_lanzamiento_select();
             }else if(response == 'NO_ACTUALIZADO'){
                 alert('NO se puedo actualizar');
             }else{
@@ -275,7 +275,7 @@ function actualizarNotaLanzamiento(){
 }
 function actualizarDetalleNotaLanzamiento(){
     let data =  getDataFormularioDetalleNotaLanzamiento();
-    
+
 
     $.ajax({
         type: 'PUT',
@@ -283,10 +283,10 @@ function actualizarDetalleNotaLanzamiento(){
         datatype: "JSON",
         data: data,
         success: function(response){
-            
+
             if(response == 'ACTUALIZADO'){
-                alert('Datos Actualizado!');   
-                mostrar_nota_lanzamiento_select();  
+                alert('Datos Actualizado!');
+                mostrar_nota_lanzamiento_select();
             }else if(response == 'NO_ACTUALIZADO'){
                 alert('NO se puedo actualizar');
             }else{
@@ -302,35 +302,35 @@ function eliminarNotaLanzamiento(id){
      $.ajax({
         type: 'PUT',
         url: route('configuracion.notas-lanzamiento.eliminar_nota_lanzamiento', {id: id}),
-        success: function(response) {   
+        success: function(response) {
             if(response == 'ELIMINADO'){
-                alert('Registro eliminado!');   
-                mostrar_nota_lanzamiento_select();  
+                alert('Registro eliminado!');
+                mostrar_nota_lanzamiento_select();
             }else if(response == 'NO_ELIMINADO'){
                 alert('NO se puedo eliminar');
             }else{
                 alert('ERROR al intentar eliminar');
 
-            }        
+            }
         },
-    }) 
-} 
+    })
+}
 
 function eliminarDetalleNotaLanzamiento(id){
      $.ajax({
         type: 'PUT',
         url: route('configuracion.notas-lanzamiento.eliminar_detalle_nota_lanzamiento', {id: id}),
-        success: function(response) {   
+        success: function(response) {
             if(response == 'ELIMINADO'){
-                alert('Registro eliminado!');   
-                mostrar_nota_lanzamiento_select();  
+                alert('Registro eliminado!');
+                mostrar_nota_lanzamiento_select();
             }else if(response == 'NO_ELIMINADO'){
                 alert('NO se puedo eliminar');
             }else{
                 alert('ERROR al intentar eliminar');
 
-            }        
+            }
         },
-    }) 
-} 
+    })
+}
 

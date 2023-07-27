@@ -1,4 +1,4 @@
- 
+
 
 function listar_proveedores(){
     var vardataTables = funcDatatables();
@@ -34,7 +34,7 @@ function listar_proveedores(){
                 // console.log(row.contribuyente);
                 let action = `
                     <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-success btn-sm" name="btnSeleccionarProveedor" title="Seleccionar proveedor" 
+                        <button type="button" class="btn btn-success btn-sm" name="btnSeleccionarProveedor" title="Seleccionar proveedor"
                         data-id-proveedor="${row.id_proveedor}"
                         data-id-contribuyente="${row.id_contribuyente}"
                         data-tipo-documento-identidad="${row.contribuyente && row.contribuyente.tipo_documento_identidad !=null && row.contribuyente.tipo_documento_identidad.descripcion !=null ?row.contribuyente.tipo_documento_identidad.descripcion:''}"
@@ -45,6 +45,7 @@ function listar_proveedores(){
                         data-ubigeo-descripcion="${row.contribuyente && row.contribuyente.ubigeo_completo!=null?row.contribuyente.ubigeo_completo:''}"
                         data-ubigeo="${row.contribuyente && row.contribuyente.ubigeo!=null?row.contribuyente.ubigeo:''}"
                         data-id-moneda-cuenta-principal="${row.cuenta_contribuyente.length>0?row.cuenta_contribuyente[0].id_moneda:''}"
+                        data-cantidad-cuentas-con-misma-moneda="${row.cuenta_contribuyente.length}"
                         data-id-cuenta-principal="${row.cuenta_contribuyente.length>0?row.cuenta_contribuyente[0].id_cuenta_contribuyente:''}"
                         data-cuenta-principal="${row.cuenta_contribuyente.length>0?row.cuenta_contribuyente[0].nro_cuenta:''}"
                         onclick="selectProveedor(this);">
@@ -52,9 +53,9 @@ function listar_proveedores(){
                         </button>
                     </div>
                     `;
-        
+
                 return action;
-            },targets: 2 
+            },targets: 2
         }
     ],
     });
@@ -101,7 +102,7 @@ function proveedorModal(){
 }
 
 function selectProveedor(obj){
-    // console.log(obj);
+    console.log(obj.dataset.cantidadCuentasConMismaMoneda);
     let idProveedor= obj.dataset.idProveedor? obj.dataset.idProveedor: "";
     let idContribuyente= obj.dataset.idContribuyente !=null ?obj.dataset.idContribuyente: "";
     let tipoDocumentoIdentidad= obj.dataset.tipoDocumentoIdentidad !=null ? obj.dataset.tipoDocumentoIdentidad:"";
@@ -116,6 +117,18 @@ function selectProveedor(obj){
     let idCuentaPrincipal= obj.dataset.idCuentaPrincipal !=null?obj.dataset.idCuentaPrincipal:"";
     let idMonedaCuentaPrincipal= obj.dataset.idMonedaCuentaPrincipal !=null?obj.dataset.idMonedaCuentaPrincipal:"";
 
+    if(obj.dataset.cantidadCuentasConMismaMoneda >1){
+        Lobibox.notify('warning', {
+            title:false,
+            size: 'mini',
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: `Proveedor seleccionado tiene mas de una cuenta en ${obj.dataset.idMonedaCuentaPrincipal==1?'soles':'moneda extranjera'}.`,
+        });
+
+    }
+
     document.querySelector("input[name='id_proveedor']").value =idProveedor;
     document.querySelector("input[name='id_contrib']").value =idContribuyente;
     if( document.querySelector("input[name='tipo_documento_identidad']")!=null){
@@ -128,7 +141,7 @@ function selectProveedor(obj){
     document.querySelector("input[name='moneda_cuenta_principal_proveedor']").value =idMonedaCuentaPrincipal ==1?'S/':(idMonedaCuentaPrincipal ==2?'$':'');
     document.querySelector("input[name='id_cuenta_principal_proveedor']").value =idCuentaPrincipal;
     document.querySelector("input[name='nro_cuenta_principal_proveedor']").value =cuentaPrincipal;
-    
+
     if(document.querySelector("form[id='form-crear-orden-requerimiento']")){
         document.querySelector("input[name='direccion_proveedor']").value =direccionFiscal;
         document.querySelector("input[name='ubigeo_proveedor']").value =ubigeo;
@@ -151,7 +164,7 @@ function obtenerContactoPorDefecto(idProveedor){
         url: 'contacto-proveedor/'+idProveedor,
         dataType: 'JSON',
         success: function(response){
-            if(response.length >0){                    
+            if(response.length >0){
                 document.querySelector("input[name='id_contacto_proveedor']").value =response[0].id_datos_contacto;
                 document.querySelector("input[name='contacto_proveedor_nombre']").value =response[0].nombre;
                 document.querySelector("input[name='contacto_proveedor_telefono']").value =response[0].telefono;
@@ -205,7 +218,7 @@ function onChangeProveedorSave(){
                 document.querySelector('form[id="form-editar-cotizacion"] select[name="id_contacto"]').parentNode.setAttribute('class','form-group has-warning');
             }else{
                 alert(response.message);
-            }                        
+            }
         }
     }).fail( function( jqXHR, textStatus, errorThrown ){
         console.log(jqXHR);

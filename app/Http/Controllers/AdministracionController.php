@@ -12,13 +12,12 @@ use App\Models\administracion\sede;
 
 date_default_timezone_set('America/Lima');
 
-
- 
-
 class AdministracionController extends Controller{
 
     function view_main_administracion(){
-        return view('administracion.main');
+        $totalEmpresa = empresa::where('estado', 1)->count();
+        $totalSede = sede::where('estado', 1)->count();
+        return view('administracion.main', get_defined_vars());
     }
 
     function view_empresa(){

@@ -32,7 +32,7 @@ $(function(){
         changeStateButton('historial');
     });
 
-    
+
 });
 
 function mostrar_cat_insumo(id){
@@ -67,13 +67,14 @@ function save_cat_insumo(data, action){
     }
     $.ajax({
         type: 'POST',
-        headers: {'X-CSRF-TOKEN': token},
+        // headers: {'X-CSRF-TOKEN': token},
         url: baseUrl,
         data: data,
         dataType: 'JSON',
         success: function(response){
+            console.log(response);
             if (response > 0){
-                alert(mensaje);
+                alert('Categoría registrada con éxito');
                 $('#listaCategoriaInsumo').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
@@ -95,7 +96,7 @@ function anular_cat_insumo(ids){
         success: function(response){
             console.log(response);
             if (response > 0){
-                alert('Categoría de insumo anulada con éxito');
+                alert('Categoría anulada con éxito');
                 $('#listaCategoriaInsumo').DataTable().ajax.reload();
                 changeStateButton('anular');
                 clearForm('form-cat_insumo');
@@ -106,6 +107,6 @@ function anular_cat_insumo(ids){
         console.log(textStatus);
         console.log(errorThrown);
     });
-            
-    
+
+
 }

@@ -16,6 +16,7 @@ function agregar_unidad(tp){
 
 function guardar_unid_med(){
     var formData = new FormData($('#form-unid_med')[0]);
+    console.log('data:'+formData);
     $.ajax({
         type: 'POST',
         url: route('proyectos.catalogos.insumos.add_unid_med'),
@@ -25,6 +26,7 @@ function guardar_unid_med(){
         processData: false,
         dataType: 'JSON',
         success: function(response){
+            console.log(response);
             var tp = $('[name=tipo]').val();
             console.log('tp:'+tp);
             $('[name=unid_medida_'+tp+']').html('');

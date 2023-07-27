@@ -43,14 +43,14 @@ class ConfiguracionController extends Controller{
     }
 
     function view_main_configuracion(){
-        return view('configuracion/main');
+        return view('configuracion.main');
 
     }
 /* VISTAS */
-    function view_modulos(){ return view('configuracion/modulo');}
+    function view_modulos(){ return view('configuracion.modulo');}
     function view_aplicaciones(){
         $modulos = $this->select_modulos();
-        return view('configuracion/aplicaciones', compact('modulos'));
+        return view('configuracion.aplicaciones', compact('modulos'));
     }
     function view_usuario(){
         // return response()->json(Auth::);
@@ -73,24 +73,24 @@ class ConfiguracionController extends Controller{
     }
 
     function view_notas_lanzamiento(){
-        return view('configuracion/notas_lanzamiento');
+        return view('configuracion.notas_lanzamiento');
     }
     function view_correo_coorporativo(){
         $empresas = $this->mostrarEmpresa();
-        return view('configuracion/correo_coorporativo', compact('empresas'));
+        return view('configuracion.correo_coorporativo', compact('empresas'));
     }
 
     function view_configuracion_socket(){
-        return view('configuracion/configuracion_socket');
+        return view('configuracion.configuracion_socket');
     }
 
 
 
-    function view_docuemtos(){ return view('configuracion/flujo_aprobacion/documentos');}
+    function view_docuemtos(){ return view('configuracion.flujo_aprobacion.documentos');}
     function view_gestionar_flujos(){
         $grupoFlujo = $this->grupoFlujo();
-        return view('configuracion/flujo_aprobacion/gestionar_flujos',compact('grupoFlujo'));}
-    function view_historial_aprobaciones(){ return view('configuracion/flujo_aprobacion/historial_aprobaciones');}
+        return view('configuracion.flujo_aprobacion.gestionar_flujos',compact('grupoFlujo'));}
+    function view_historial_aprobaciones(){ return view('configuracion.flujo_aprobacion.historial_aprobaciones');}
 
     public function grupoFlujo(){
         $data = DB::table('administracion.grupo_flujo')->select('id_grupo_flujo', 'descripcion')->where('estado', '=', 1)
@@ -2046,13 +2046,13 @@ public function anular_configuracion_socket($id){
     }
     public function usuarioAsignar()
     {
-        return view('configuracion/notas_lanzamiento');
+        return view('configuracion.notas_lanzamiento');
     }
     public function usuarioAcceso($id)
     {
         # code...
         // return $id;
-        return view('configuracion/usuario_accesos',compact('id'));
+        return view('configuracion.usuario_accesos',compact('id'));
     }
     public function getUsuario($id)
     {

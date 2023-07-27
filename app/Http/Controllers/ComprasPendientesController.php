@@ -90,7 +90,7 @@ class ComprasPendientesController extends Controller
         }
 
         return view(
-            'logistica/gestion_logistica/compras/pendientes/vista_pendientes',
+            'logistica.gestion_logistica.compras.pendientes.vista_pendientes',
             compact(
                 'sedes',
                 'empresas',

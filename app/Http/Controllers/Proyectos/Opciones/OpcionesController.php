@@ -20,7 +20,7 @@ class OpcionesController extends Controller
         $modalidades = GenericoController::mostrar_modalidad_cbo();
         $tp_contribuyente = GenericoController::tp_contribuyente_cbo();
         $sis_identidad = GenericoController::sis_identidad_cbo();
-        return view('proyectos/opcion/opcion', compact('clientes','unid_program',
+        return view('proyectos.opcion.opcion', compact('clientes','unid_program',
         'tipos','empresas','modalidades','tp_contribuyente','sis_identidad'));
     }
 

@@ -43,7 +43,7 @@ class RevisarAprobarController extends Controller{
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('necesidades/revisar_aprobar/lista',compact('gruposUsuario','array_accesos'));
+        return view('necesidades.revisar_aprobar.lista',compact('gruposUsuario','array_accesos'));
     }
 
 

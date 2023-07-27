@@ -17,7 +17,7 @@ class NotificacionController extends Controller
 
     public function index()
     {
-        return view('notificaciones/lista');
+        return view('notificaciones.lista');
     }
 
     public function listaPendientes(Request $request)

@@ -25,7 +25,7 @@ class OCAMController extends Controller
         $empresas_am =  $this->select_mostrar_empresas_am();
         $periodos = $this->mostrar_periodos();
 
-        return view('logistica/ocam/lista_ocams', compact('periodos','grupos','roles','empresas','empresas_am'));
+        return view('logistica.ocam.lista_ocams', compact('periodos','grupos','roles','empresas','empresas_am'));
     }
 
     public function userSession()

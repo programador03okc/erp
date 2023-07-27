@@ -11,7 +11,7 @@ class CronogramaInternoController extends Controller
 {
     function view_cronoint(){
         $unid_program = GenericoController::mostrar_unid_program_cbo();
-        return view('proyectos/cronograma/cronoint', compact('unid_program'));
+        return view('proyectos.cronograma.cronoint', compact('unid_program'));
     }
     
     public function nuevo_cronograma($id_presupuesto)

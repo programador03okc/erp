@@ -202,7 +202,7 @@ class AlmacenController extends Controller
             array_push($array_accesos_botonera,$value->accesos->accesos_grupo);
         }
         $modulo='almacen';
-        return view('almacen/variables/unid_med',compact('array_accesos','array_accesos_botonera','modulo'));
+        return view('almacen.variables.unid_med',compact('array_accesos','array_accesos_botonera','modulo'));
     }
 
     function view_guia_compra()
@@ -222,7 +222,7 @@ class AlmacenController extends Controller
         $motivos_anu = AlmacenController::select_motivo_anu();
         $sedes = AlmacenController::mostrar_sedes_cbo();
         $condiciones = AlmacenController::mostrar_condiciones_cbo();
-        return view('almacen/guias/guia_compra', compact(
+        return view('almacen.guias.guia_compra', compact(
             'proveedores',
             'almacenes',
             'posiciones',
@@ -4791,7 +4791,7 @@ class AlmacenController extends Controller
     public function download_kardex_sunat($almacenes, $finicio, $ffin)
     {
         $data = $this->kardex_sunat($almacenes, $finicio, $ffin);
-        return view('almacen/reportes/kardex_sunat_excel', compact('data'));
+        return view('almacen.reportes.kardex_sunat_excel', compact('data'));
     }
     public function direccion_almacen($id_almacen)
     {
@@ -5011,7 +5011,7 @@ class AlmacenController extends Controller
     {
         $data = $this->listar_kardex_producto($id_producto, $almacen, $finicio, $ffin);
         $html = $data['html'];
-        return view('almacen/reportes/kardex_detallado_excel', compact('html'));
+        return view('almacen.reportes.kardex_detallado_excel', compact('html'));
     }
     public function saldo_por_producto($id_producto)
     {

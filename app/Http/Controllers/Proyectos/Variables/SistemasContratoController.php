@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class SistemasContratoController extends Controller
 {
     function view_sis_contrato(){
-        return view('proyectos/variables/sis_contrato');
+        return view('proyectos.variables.sis_contrato');
     }
     //sistemas de contrato
     public function mostrar_sis_contratos()

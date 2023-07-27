@@ -10,6 +10,6 @@ class GerencialController extends Controller
     //
     public function index()
     {
-        return view('gerencial/main');
+        return view('gerencial.main');
     }
 }

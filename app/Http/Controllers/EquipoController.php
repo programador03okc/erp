@@ -22,16 +22,16 @@ class EquipoController extends Controller
         // session_start();
     }
     function view_equi_tipo(){
-        return view('equipo/equi_tipo');
+        return view('equipo.equi_tipo');
     }
     function view_equi_cat(){
         $tipos = $this->mostrar_equi_tipos_cbo();
-        return view('equipo/equi_cat', compact('tipos'));
+        return view('equipo.equi_cat', compact('tipos'));
     }
     function view_equipo(){
         $categorias = $this->mostrar_equi_cats_cbo();
         $propietarios = $this->mostrar_propietarios_cbo();
-        return view('equipo/equipo', compact('categorias','propietarios'));
+        return view('equipo.equipo', compact('categorias','propietarios'));
     }
     function view_equi_catalogo(){
         $categorias = $this->mostrar_equi_cats_cbo();
@@ -43,16 +43,16 @@ class EquipoController extends Controller
         $tp_contribuyente = $this->tp_contribuyente_cbo();
         $sis_identidad = $this->sis_identidad_cbo();
 
-        return view('equipo/equi_catalogo', compact('categorias','propietarios','tp_combustible','tp_seguro','proveedores','unid_program','tp_contribuyente','sis_identidad'));
+        return view('equipo.equi_catalogo', compact('categorias','propietarios','tp_combustible','tp_seguro','proveedores','unid_program','tp_contribuyente','sis_identidad'));
     }
     function view_tp_combustible(){
-        return view('equipo/tp_combustible');
+        return view('equipo.tp_combustible');
     }
     function view_mtto_pendientes(){
-        return view('equipo/mtto_pendientes');
+        return view('equipo.mtto_pendientes');
     }
     function view_docs(){
-        return view('equipo/docs');
+        return view('equipo.docs');
     }
     function view_mtto(){
         $proveedores = $this->mostrar_proveedores_cbo();
@@ -60,31 +60,31 @@ class EquipoController extends Controller
         $empresa = $this->select_empresa();
         $tp_contribuyente = $this->tp_contribuyente_cbo();
         $sis_identidad = $this->sis_identidad_cbo();
-        return view('equipo/mtto', compact('proveedores','equipos','empresa','tp_contribuyente','sis_identidad'));
+        return view('equipo.mtto', compact('proveedores','equipos','empresa','tp_contribuyente','sis_identidad'));
     }
     function view_equi_sol(){
         $trabajadores = $this->mostrar_trabajadores_cbo();
         $categorias = $this->mostrar_equi_cats_cbo();
         $proyectos = $this->mostrar_proyectos_cbo();
         $empresa = $this->select_empresa();
-        return view('equipo/equi_sol', compact('trabajadores','empresa','proyectos','categorias'));
+        return view('equipo.equi_sol', compact('trabajadores','empresa','proyectos','categorias'));
     }
     function view_sol_todas(){
-        return view('equipo/sol_todas');
+        return view('equipo.sol_todas');
     }
     function view_aprob_sol(){
-        return view('equipo/aprob_sol');
+        return view('equipo.aprob_sol');
     }
     function view_asignacion(){
-        return view('equipo/asignacion');
+        return view('equipo.asignacion');
     }
     function view_control(){
         $trabajadores = $this->mostrar_trabajadores_cbo();
-        return view('equipo/control', compact('trabajadores'));
+        return view('equipo.control', compact('trabajadores'));
     }
     function view_mtto_realizados(){
         $equipos = $this->mostrar_equipo_cbo();
-        return view('equipo/mtto_realizados', compact('equipos'));
+        return view('equipo.mtto_realizados', compact('equipos'));
     }
     /* Combos */
     public function tp_contribuyente_cbo(){
@@ -2581,7 +2581,7 @@ class EquipoController extends Controller
     }
     public function download_control_bitacora($id_solicitud,$fini,$ffin){
         $data = $this->imprimir_control_bitacora($id_solicitud,$fini,$ffin);
-        return view('almacen/reportes/control_bitacora_excel', compact('data'));
+        return view('almacen.reportes.control_bitacora_excel', compact('data'));
     }
 
     ////////////////////////////////////////

@@ -29,7 +29,7 @@ class RecursosHumanosController extends Controller{
         // $main = $this->rrhh_dashboard('return');
         // $dash = json_decode($main);
         // $dsb_1 = $main['dsb'];
-        return view('rrhh/main');
+        return view('rrhh.main');
         
     }
     // function rrhh_dashboard($type){
@@ -48,7 +48,7 @@ class RecursosHumanosController extends Controller{
     function view_persona(){
         $doc_identi = $this->select_doc_idendidad();
         $est_civil = $this->select_est_civil();
-        return view('rrhh/escalafon/persona', compact('doc_identi', 'est_civil'));
+        return view('rrhh.escalafon.persona', compact('doc_identi', 'est_civil'));
     }
     function view_postulante(){
         $pais = $this->select_pais();
@@ -56,7 +56,7 @@ class RecursosHumanosController extends Controller{
         $tipo_archivo = $this->select_tipo_archivo();
         $niv_est = $this->select_niv_est();
         $carrera = $this->select_carrera();
-        return view('rrhh/escalafon/postulante', compact('pais', 'pais_frm', 'niv_est', 'carrera', 'tipo_archivo'));
+        return view('rrhh.escalafon.postulante', compact('pais', 'pais_frm', 'niv_est', 'carrera', 'tipo_archivo'));
     }
     function view_trabajador(){
         $empresa = $this->select_empresa();
@@ -74,113 +74,113 @@ class RecursosHumanosController extends Controller{
         $tpcta = $this->select_tipo_cuenta();
         $moneda = $this->select_moneda();
         $rol_conc = $this->select_rol_concepto();
-        return view('rrhh/escalafon/trabajador', compact('empresa', 'cargo', 'plani', 'planil', 'tpemp', 'categ', 'pensi', 'contra', 'modali', 'horar', 'cc', 'banco', 'tpcta', 'moneda', 'rol_conc'));
+        return view('rrhh.escalafon.trabajador', compact('empresa', 'cargo', 'plani', 'planil', 'tpemp', 'categ', 'pensi', 'contra', 'modali', 'horar', 'cc', 'banco', 'tpcta', 'moneda', 'rol_conc'));
     }
     function view_cargo(){
-        return view('rrhh/escalafon/cargo');
+        return view('rrhh.escalafon.cargo');
     }
     function view_derecho_hab(){
         $condi = $this->select_condicion();
-        return view('rrhh/escalafon/derecho_hab', compact('condi'));
+        return view('rrhh.escalafon.derecho_hab', compact('condi'));
     }
     function view_tareo(){
         $empre = $this->select_empresa();
         $empresas = $this->select_empresa();
         $plani = $this->select_tipo_planilla();
-        return view('rrhh/control/tareo', compact('empre', 'plani', 'empresas'));
+        return view('rrhh.control.tareo', compact('empre', 'plani', 'empresas'));
     }
     function view_asistencia(){
         $empre = $this->select_empresa();
         $empresas = $this->select_empresa();
         $plani = $this->select_tipo_planilla();
-        return view('rrhh/control/asistencia', compact('empre', 'plani', 'empresas'));
+        return view('rrhh.control.asistencia', compact('empre', 'plani', 'empresas'));
     }
     function view_planilla(){
         $plani = $this->select_tipo_planilla();
         $emp = $this->select_empresa();
         $trab = $this->select_personal();
         $peri = $this->select_periodo();
-        return view('rrhh/remuneraciones/planilla', compact('emp', 'plani', 'trab', 'peri'));
+        return view('rrhh.remuneraciones.planilla', compact('emp', 'plani', 'trab', 'peri'));
     }
     function view_merito(){
         $meri = $this->select_tipo_merito();
-        return view('rrhh/escalafon/merito', compact('meri'));
+        return view('rrhh.escalafon.merito', compact('meri'));
     }
     function view_sancion(){
         $sanci = $this->select_tipo_sancion();
-        return view('rrhh/escalafon/demerito', compact('sanci'));
+        return view('rrhh.escalafon.demerito', compact('sanci'));
     }
     function view_salidas(){
         $salidas = $this->select_tipo_salida();
         $usuario = $this->select_personal_usuario();
-        return view('rrhh/control/salidas', compact('salidas', 'usuario'));
+        return view('rrhh.control.salidas', compact('salidas', 'usuario'));
     }
     function view_prestamo(){
-        return view('rrhh/control/prestamo');
+        return view('rrhh.control.prestamo');
     }
     function view_vacaciones(){
-        return view('rrhh/control/vacaciones');
+        return view('rrhh.control.vacaciones');
     }
     function view_licencia(){
-        return view('rrhh/control/licencia');
+        return view('rrhh.control.licencia');
     }
     function view_horas_ext(){
         $usuario = $this->select_personal_usuario();
-        return view('rrhh/control/horas_ext', compact('usuario'));
+        return view('rrhh.control.horas_ext', compact('usuario'));
     }
     function view_cese(){
         $baja = $this->select_baja();
-        return view('rrhh/control/cese', compact('baja'));
+        return view('rrhh.control.cese', compact('baja'));
     }
 
     function view_bonificacion(){
         $bonif = $this->select_tipo_bonif();
-        return view('rrhh/remuneraciones/bonificacion', compact('bonif'));
+        return view('rrhh.remuneraciones.bonificacion', compact('bonif'));
     }
     function view_descuento(){
         $dsct = $this->select_tipo_dscto();
-        return view('rrhh/remuneraciones/descuento', compact('dsct'));
+        return view('rrhh.remuneraciones.descuento', compact('dsct'));
     }
     function view_retencion(){
         $reten = $this->select_tipo_retencion();
-        return view('rrhh/remuneraciones/retencion', compact('reten'));
+        return view('rrhh.remuneraciones.retencion', compact('reten'));
     }
     function view_aportacion(){
         $aport = $this->select_tipo_aportacion();
-        return view('rrhh/remuneraciones/aportacion', compact('aport'));
+        return view('rrhh.remuneraciones.aportacion', compact('aport'));
     }
-    function view_reintegro(){return view('rrhh/remuneraciones/reintegro');}
+    function view_reintegro(){return view('rrhh.remuneraciones.reintegro');}
     
-    function view_periodo(){return view('rrhh/control/periodo');}
-    function view_horario(){return view('rrhh/variables/horario');}
-    function view_tolerancia(){return view('rrhh/variables/tolerancia');}
-    function view_est_civil(){return view('rrhh/variables/est_civil');}
-    function view_cond_derecho_hab(){return view('rrhh/variables/cond_derecho_hab');}
-    function view_niv_estudio(){return view('rrhh/variables/niv_estudios');}
-    function view_carrera(){return view('rrhh/variables/carrera');}
-    function view_tipo_trabajador(){return view('rrhh/variables/tipo_trabajador');}
-    function view_tipo_contrato(){return view('rrhh/variables/tipo_contrato');}
-    function view_modalidad(){return view('rrhh/variables/modalidad');}
-    function view_concepto_rol(){return view('rrhh/variables/concepto_rol');}
-    function view_cat_ocupacional(){return view('rrhh/variables/cat_ocupacional');}
-    function view_tipo_planilla(){return view('rrhh/variables/tipo_planilla');}
-    function view_tipo_merito(){return view('rrhh/variables/tipo_merito');}
-    function view_tipo_demerito(){return view('rrhh/variables/tipo_demerito');}
-    function view_tipo_bonificacion(){return view('rrhh/variables/tipo_bonificacion');}
-    function view_tipo_descuento(){return view('rrhh/variables/tipo_descuento');}
-    function view_tipo_retencion(){return view('rrhh/variables/tipo_retencion');}
-    function view_tipo_aportes(){return view('rrhh/variables/tipo_aportes');}
-    function view_pension(){return view('rrhh/variables/pension');}
-    function view_cv(){return view('rrhh/reportes/datos_personal');}
-    function view_busq_postu(){return view('rrhh/reportes/busqueda_postulante');}
-    function view_cumple(){return view('rrhh/reportes/cumple');}
-    function view_datos_generales(){return view('rrhh/reportes/datos_rrhh');}
+    function view_periodo(){return view('rrhh.control.periodo');}
+    function view_horario(){return view('rrhh.variables.horario');}
+    function view_tolerancia(){return view('rrhh.variables.tolerancia');}
+    function view_est_civil(){return view('rrhh.variables.est_civil');}
+    function view_cond_derecho_hab(){return view('rrhh.variables.cond_derecho_hab');}
+    function view_niv_estudio(){return view('rrhh.variables.niv_estudios');}
+    function view_carrera(){return view('rrhh.variables.carrera');}
+    function view_tipo_trabajador(){return view('rrhh.variables.tipo_trabajador');}
+    function view_tipo_contrato(){return view('rrhh.variables.tipo_contrato');}
+    function view_modalidad(){return view('rrhh.variables.modalidad');}
+    function view_concepto_rol(){return view('rrhh.variables.concepto_rol');}
+    function view_cat_ocupacional(){return view('rrhh.variables.cat_ocupacional');}
+    function view_tipo_planilla(){return view('rrhh.variables.tipo_planilla');}
+    function view_tipo_merito(){return view('rrhh.variables.tipo_merito');}
+    function view_tipo_demerito(){return view('rrhh.variables.tipo_demerito');}
+    function view_tipo_bonificacion(){return view('rrhh.variables.tipo_bonificacion');}
+    function view_tipo_descuento(){return view('rrhh.variables.tipo_descuento');}
+    function view_tipo_retencion(){return view('rrhh.variables.tipo_retencion');}
+    function view_tipo_aportes(){return view('rrhh.variables.tipo_aportes');}
+    function view_pension(){return view('rrhh.variables.pension');}
+    function view_cv(){return view('rrhh.reportes.datos_personal');}
+    function view_busq_postu(){return view('rrhh.reportes.busqueda_postulante');}
+    function view_cumple(){return view('rrhh.reportes.cumple');}
+    function view_datos_generales(){return view('rrhh.reportes.datos_rrhh');}
     function view_reporte_afp(){
-        return view('rrhh/reportes/reporte_afp');
+        return view('rrhh.reportes.reporte_afp');
     }
     function view_grupo_trab(){
         $empresa = $this->select_empresa();
-        return view('rrhh/reportes/grupo_trabajador', compact('empresa'));
+        return view('rrhh.reportes.grupo_trabajador', compact('empresa'));
     }
 
     /* COMBOBOX - SELECT */
@@ -6478,7 +6478,7 @@ class RecursosHumanosController extends Controller{
             $html .= '</tbody></table>';
         }
         $export = $html;
-        return view('rrhh/reportes/Planilla_Gastos', compact('export'));
+        return view('rrhh.reportes.Planilla_Gastos', compact('export'));
     }
 
     public function reporte_planilla_grupal_xls($planiRem, $mesRem, $anio, $grupo){
@@ -6867,7 +6867,7 @@ class RecursosHumanosController extends Controller{
             $html.='</tbody></table>';
         }
         $export = $html;
-        return view('rrhh/reportes/Planilla_Grupal', compact('export'));
+        return view('rrhh.reportes.Planilla_Grupal', compact('export'));
     }
 
     public function reporte_planilla_xls($emp, $planiRem, $mesRem, $anio, $filter, $valueGroup){
@@ -7266,7 +7266,7 @@ class RecursosHumanosController extends Controller{
         $dataExport = $tbody;
         $perExport = 'PERIODO '.$mes.'-'.$anio;
         $companyExport = $codeEmp;
-        return view('rrhh/reportes/Planilla_Remuneracion', compact('headExport', 'dataExport', 'perExport', 'companyExport'));
+        return view('rrhh.reportes.Planilla_Remuneracion', compact('headExport', 'dataExport', 'perExport', 'companyExport'));
     }
 
     public function reporte_planilla_spcc_xls($emp, $planiRem, $mesRem, $anio){
@@ -7647,13 +7647,13 @@ class RecursosHumanosController extends Controller{
         $dataExport = $tbody;
         $perExport = 'PERIODO '.$mes.'-'.$anio;
         $companyExport = $codeEmp;
-        return view('rrhh/reportes/Planilla_Remuneracion', compact('headExport', 'dataExport', 'perExport', 'companyExport'));
+        return view('rrhh.reportes.Planilla_Remuneracion', compact('headExport', 'dataExport', 'perExport', 'companyExport'));
     }
 
     /* REPORTE */
     public function reporte_tardanza($from, $to, $empresa, $sede){
         $data = $this->tardanza_trabajador($from, $to, $empresa, $sede, 'tareo', 0);
-        return view('rrhh/reportes/downloadExcelAsis', compact('data'));
+        return view('rrhh.reportes.downloadExcelAsis', compact('data'));
     }
 
     public function cargar_asistencia($empresa, $sede, $tipo, $fecha_ini, $fecha_fin){
@@ -8269,7 +8269,7 @@ class RecursosHumanosController extends Controller{
         
         $headExport = $thead;
         $dataExport = $tbody;
-        return view('rrhh/reportes/trabajador_grupo', compact('headExport', 'dataExport'));
+        return view('rrhh.reportes.trabajador_grupo', compact('headExport', 'dataExport'));
     }
 
     public function reporte_afp(){
@@ -8346,7 +8346,7 @@ class RecursosHumanosController extends Controller{
 
         $html .= '</tbody></table>';
         $data = $html;
-        return view('rrhh/reportes/downloadExcelAfp', compact('data'));
+        return view('rrhh.reportes.downloadExcelAfp', compact('data'));
     }
 
     /* FUNCIONES */

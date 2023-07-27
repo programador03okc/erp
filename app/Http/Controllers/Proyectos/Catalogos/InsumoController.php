@@ -18,7 +18,7 @@ class InsumoController extends Controller
         $unidades = AlmacenController::mostrar_unidades_cbo();
         $ius = IuController::mostrar_ius_cbo();
         $categorias = CategoriaInsumoController::select_categorias_insumos();
-        return view('proyectos/insumo/insumo', compact('tipos','unidades','ius','categorias'));
+        return view('proyectos.insumo.insumo', compact('tipos','unidades','ius','categorias'));
     }
     
     //Insumos

@@ -29,13 +29,13 @@ class MigracionAlmacenSoftLinkController extends Controller
 
     public function index()
     {
-        return view('Migraciones/migrar-softlink');
+        return view('Migraciones.migrar-softlink');
     }
 
     public function view_migracion_series()
     {
         $almacenes = Almacen::orderBy('descripcion', 'asc')->get();
-        return view('Migraciones/migrar-serie-softlink', get_defined_vars());
+        return view('Migraciones.migrar-serie-softlink', get_defined_vars());
     }
 
     public function importar(Request $request)

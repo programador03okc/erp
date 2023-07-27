@@ -24,7 +24,7 @@ class OrdenesDespachoInternoController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen/distribucion/ordenesDespachoInterno',compact('array_accesos'));
+        return view('almacen.distribucion.ordenesDespachoInterno',compact('array_accesos'));
     }
 
     public function listarRequerimientosPendientesDespachoInterno(Request $request)

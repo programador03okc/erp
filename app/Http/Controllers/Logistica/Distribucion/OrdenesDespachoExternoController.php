@@ -55,7 +55,7 @@ class OrdenesDespachoExternoController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view('almacen/distribucion/ordenesDespachoExterno', compact('estados', 'array_accesos'));
+        return view('almacen.distribucion.ordenesDespachoExterno', compact('estados', 'array_accesos'));
     }
 
     public function listarDespachosExternos(Request $request)

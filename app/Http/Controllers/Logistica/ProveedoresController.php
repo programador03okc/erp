@@ -48,7 +48,7 @@ class ProveedoresController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('logistica/gestion_logistica/proveedores/lista_proveedores', compact('paises', 'tipoDocumentos', 'tipoContribuyentes', 'bancos', 'tipo_cuenta', 'monedas','array_accesos'));
+        return view('logistica.gestion_logistica.proveedores.lista_proveedores', compact('paises', 'tipoDocumentos', 'tipoContribuyentes', 'bancos', 'tipo_cuenta', 'monedas','array_accesos'));
     }
 
     public function obtenerDataListado()

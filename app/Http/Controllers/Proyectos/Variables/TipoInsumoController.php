@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 class TipoInsumoController extends Controller
 {
     function view_tipo_insumo(){
-        return view('proyectos/variables/tipo_insumo');
+        return view('proyectos.variables.tipo_insumo');
     }
     public static function mostrar_tipos_insumos_cbo(){
         $data = DB::table('proyectos.proy_tp_insumo')

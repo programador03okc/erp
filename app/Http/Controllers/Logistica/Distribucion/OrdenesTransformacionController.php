@@ -18,7 +18,7 @@ class OrdenesTransformacionController extends Controller
 
     function view_ordenes_transformacion()
     {
-        return view('almacen/distribucion/ordenesTransformacion');
+        return view('almacen.distribucion.ordenesTransformacion');
     }
 
     function view_tablero_transformaciones()

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class CategoriaInsumoController extends Controller
 {
     function view_cat_insumo(){
-        return view('proyectos/variables/cat_insumo');
+        return view('proyectos.variables.cat_insumo');
     }
     
     public static function select_categorias_insumos(){

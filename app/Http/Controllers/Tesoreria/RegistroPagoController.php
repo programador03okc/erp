@@ -59,7 +59,7 @@ class RegistroPagoController extends Controller
 
         $tipo_cambio = DB::table('contabilidad.cont_tp_cambio')->orderBy('fecha', 'desc')->first();
 
-        return view('tesoreria/main', get_defined_vars());
+        return view('tesoreria.main', get_defined_vars());
     }
 
     function view_pendientes_pago()

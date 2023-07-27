@@ -1994,8 +1994,8 @@ class ListaOrdenView {
 
                 let html_fechas = `
 
-                <input type="text" class="form-control date-picker input-sm" size="10" id="fecha-inicio"
-                value="`+fecha_inicio+`"/> <input type="text" class="form-control date-picker input-sm" size="10" id="txtOrdenPendienteFechaFin"
+                <input type="text" class="form-control date-picker input-sm text-center" size="10" id="fecha-inicio"
+                value="`+fecha_inicio+`"/> <input type="text" class="form-control date-picker input-sm text-center" size="10" id="txtOrdenPendienteFechaFin"
                     value="`+fecha_actual+`"/> `;
                 $('#listaOrdenes_wrapper .dt-buttons').append(html_fechas);
 

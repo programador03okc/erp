@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="-1" role="dialog" id="modal-ver-orden-de-requerimiento">
+<div class="modal fade"  role="dialog" id="modal-ver-orden-de-requerimiento">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">

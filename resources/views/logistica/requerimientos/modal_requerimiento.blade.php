@@ -62,6 +62,10 @@
                                             <td id="proyecto_presupuesto" style="width:5%;" colspan="7"></td>
                                         </tr>
                                         <tr>
+                                            <td style="width:5%; font-weight:bold; text-align:right;">Tipo Impuesto</td>
+                                            <td id="tipo_impuesto" style="width:10%;" colspan="2"></td>
+                                        </tr>
+                                        <tr>
                                             <td style="width:5%; font-weight:bold; text-align:right;">Observación</td>
                                             <td id="observacion" style="width:80%;" colspan="5"></td>
                                         </tr>

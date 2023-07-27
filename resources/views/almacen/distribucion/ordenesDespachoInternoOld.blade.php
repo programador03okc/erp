@@ -7,7 +7,7 @@ Gestión de Despachos Internos
 
 @section('estilos')
 {{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}"> --}}
-{{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"> --}}
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}">
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">

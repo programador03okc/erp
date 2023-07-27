@@ -136,6 +136,7 @@ Requerimientos pendientes
     </div>
 </div>
 
+@include('logistica.gestion_logistica.compras.pendientes.modal_gestionar_estado_requerimiento')
 @include('logistica.gestion_logistica.compras.pendientes.modal_por_regularizar')
 @include('logistica.requerimientos.mapeo.mapeoItemsRequerimiento')
 @include('logistica.requerimientos.mapeo.mapeoAsignarProducto')
@@ -147,17 +148,19 @@ Requerimientos pendientes
 @include('logistica.gestion_logistica.compras.pendientes.modal_filtro_requerimientos_atendidos')
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_cuadro_costos')
 @include('logistica.gestion_logistica.compras.pendientes.modal_agregar_items_requerimiento')
+
 @include('logistica.gestion_logistica.compras.pendientes.modal_atender_con_almacen')
-@include('logistica.gestion_logistica.compras.pendientes.modal_nueva_reserva')
 @include('logistica.gestion_logistica.compras.pendientes.modal_historial_reserva')
+@include('logistica.gestion_logistica.compras.pendientes.modal_nueva_reserva')
+
 @include('logistica.gestion_logistica.compras.pendientes.modal_agregar_items_para_compra')
 @include('logistica.gestion_logistica.compras.pendientes.modal_orden_requerimiento')
+
 @include('logistica.cotizaciones.proveedorModal')
 @include('logistica.cotizaciones.add_proveedor')
 @include('logistica.gestion_logistica.compras.pendientes.ordenesModal')
 @include('logistica.requerimientos.modal_vincular_item_requerimiento')
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
-@include('logistica.gestion_logistica.compras.pendientes.modal_gestionar_estado_requerimiento')
 
 
 @endsection

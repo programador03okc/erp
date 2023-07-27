@@ -22,7 +22,7 @@
 </ol>
 @endsection
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="tableroTransformaciones">
     <div class="box box-solid">
         <div class="box-body">

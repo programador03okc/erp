@@ -481,7 +481,6 @@
 
     <script>
         $(document).ready(function() {
-            seleccionarMenu(window.location);
             $(".sidebar-mini").addClass("sidebar-collapse");
             $('input[type="checkbox"].minimal').iCheck({ checkboxClass: 'icheckbox_minimal-blue' });
         });

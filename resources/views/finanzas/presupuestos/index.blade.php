@@ -86,7 +86,6 @@
 
     <script>
         $(document).ready(function () {
-            seleccionarMenu(window.location);
             var vardataTables = funcDatatables();
 
             $('#listaPresupuestos').DataTable({

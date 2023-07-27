@@ -198,7 +198,6 @@ Listado de requerimientos logísticos
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
 
     $(document).ready(function() {
-        seleccionarMenu(window.location);
         const requerimientoModel = new RequerimientoModel();
         const requerimientoController = new RequerimientoCtrl(requerimientoModel);
         const listarRequerimientoView = new ListarRequerimientoView(requerimientoController);

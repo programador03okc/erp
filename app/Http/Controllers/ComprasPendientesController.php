@@ -349,13 +349,13 @@ class ComprasPendientesController extends Controller
                 WHERE det.id_requerimiento = alm_req.id_requerimiento AND alm_reserva.estado = 1
                 AND det.estado != 7) AS count_stock_comprometido")
             )
-            ->when(($empresa > 0), function ($query) use ($empresa) {
+            ->when(($empresa != 'SIN_FILTRO'), function ($query) use ($empresa) {
                 return $query->where('alm_req.id_empresa', '=', $empresa);
             })
             // ->when(($sede > 0), function ($query) use ($sede) {
             //     return $query->where('alm_req.id_sede', '=', $sede);
             // })
-            ->when(( $sede != 'SIN_FILTRO' ), function ($query) use ($sede) {
+            ->when(( $sede != 'SIN_FILTRO'), function ($query) use ($sede) {
                 $sedeList=[];
                 $sedes=Sede::where('codigo',$sede)->get();
                 foreach ($sedes as $key => $value) {
@@ -381,7 +381,7 @@ class ComprasPendientesController extends Controller
                 $query->Join('almacen.alm_det_req', 'alm_det_req.id_requerimiento', '=', 'alm_req.id_requerimiento');
                 return $query->rightJoin('logistica.log_det_ord_compra', 'log_det_ord_compra.id_detalle_requerimiento', '=', 'alm_det_req.id_detalle_requerimiento');
             })
-            ->when(($estado > 0), function ($query) use ($estado) {
+            ->when(($estado != 'SIN_FILTRO'), function ($query) use ($estado) {
                 return $query->where('alm_req.estado', '=', $estado);
             })
 

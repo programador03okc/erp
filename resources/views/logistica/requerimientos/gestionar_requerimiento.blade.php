@@ -30,7 +30,7 @@ Crear / editar requerimiento
     }
 </style>
 
-@section('content')
+@section('cuerpo')
 <div class="page-main" type="requerimiento">
     <div class="box box-primary">
         <div class="box-body">
@@ -93,16 +93,6 @@ Crear / editar requerimiento
                         </h4>
                         <fieldset class="group-table">
                             <div class="row">
-                                <!-- <div class="col-md-2" id="group-tipo_requerimiento" hidden>
-                                    <h5>Tipo de requerimiento:</h5>
-                                    <select class="form-control input-sm activation" name="tipo_requerimiento" onChange="changeOptTipoReqSelect(event);">
-                                        <option value="">Elija una opción</option>
-                                        @foreach ($tipo_requerimiento as $tipo)
-                                        <option value="{{$tipo->id_tipo_requerimiento}}">{{$tipo->descripcion}}</option>
-                                        @endforeach
-                                    </select>
-                                </div> -->
-
                                 <div class="col-md-2" id="input-group-fecha" hidden>
                                     <h5>Fecha Creación</h5>
                                     <input type="text" class="form-control" name="fecha_requerimiento" disabled="true" min={{ date('Y-m-d H:i:s') }} value={{ date('Y-m-d H:i:s') }}>
@@ -207,7 +197,6 @@ Crear / editar requerimiento
                                             <option value="0">Elija una opción</option>
                                             @foreach ($tipo_requerimiento as $tipo)
                                             <option value="{{$tipo->id_tipo_requerimiento}}">{{$tipo->descripcion}}</option>
-                                            <!-- <option value="{{$tipo->id_tipo_requerimiento}}" {{$tipo->id_tipo_requerimiento==4 ? 'selected' : ''}}>{{$tipo->descripcion}}</option>                                 -->
                                             @endforeach
                                         </select>
                                     </div>
@@ -787,7 +776,7 @@ Crear / editar requerimiento
 <script src="{{ asset('js/logistica/crear_nueva_marca.js')}}"></script>
 <script src="{{ asset('js/almacen/producto/saldosModal.js')}}"></script>
 <script src="{{ asset('js/publico/consulta_sunat.js')}}"></script>
-<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+{{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
 
 <script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
@@ -817,8 +806,6 @@ Crear / editar requerimiento
 
 
     window.onload = function() {
-
-        seleccionarMenu(window.location);
         var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
         var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
         document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form

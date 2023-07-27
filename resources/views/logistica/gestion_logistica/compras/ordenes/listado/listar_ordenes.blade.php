@@ -201,10 +201,7 @@ Gestión de ordenes
     <script src="{{ asset('js/tesoreria/requerimientoPago/nuevaCuentaBancariaDestinatario.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/nuevaCuentaBancariaDestinatario.js'))}}"></script>
     <script src="{{ asset('js/tesoreria/requerimientoPago/nuevoDestinatario.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/nuevoDestinatario.js'))}}"></script>
 
-    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
-    <script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
-    {{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('template/plugins/jquery-number/jquery.number.min.js') }}"></script> --}}
+    <script src="{{ asset('template/adminlte2-4/plugins/moment/datetime-moment.js') }}"></script>
 
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');

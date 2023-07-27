@@ -210,7 +210,6 @@
     <script>
     $(document).ready(function(){
         vista_extendida();
-        seleccionarMenu(window.location);
     });
     </script>
 

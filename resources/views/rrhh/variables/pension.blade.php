@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="page-main" type="pension">
     <legend><h2>Fondos de Pensiones</h2></legend>
     <div class="row">
@@ -55,7 +55,7 @@
         </div>
     </div>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/rrhh/variables/pension.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

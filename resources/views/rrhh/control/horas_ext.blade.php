@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="page-main" type="horas_ext">
     <legend><h2>Horas Extras Autorizadas</h2></legend>
     <form id="form-horas_ext" type="register" form="formulario">
@@ -76,7 +76,7 @@
     </form>
 </div>
 
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/rrhh/control/horas_ext.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

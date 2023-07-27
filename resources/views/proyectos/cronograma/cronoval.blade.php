@@ -1,6 +1,6 @@
-@include('layout.head')
+@include('layouts.head')
 @include('layouts.menu_proyectos')
-@include('layout.body')
+@include('layouts.body')
 <div class="page-main" type="cronoval">
     <form id="form-cronoval" type="register" form="formulario">
         <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;">
@@ -74,8 +74,8 @@
     </form>
 </div>
 @include('proyectos.presupuesto.presejeModal')
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/proyectos/cronograma/cronoval.js')}}"></script>
 <script src="{{('/js/proyectos/presupuesto/presejeModal.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

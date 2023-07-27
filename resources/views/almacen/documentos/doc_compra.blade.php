@@ -1,6 +1,6 @@
-@include('layout.head')
+@include('layouts.head')
 @include('layouts.menu_logistica')
-@include('layout.body')
+@include('layouts.body')
 <div class="page-main" type="doc_compra">
     <legend class="mylegend">
         <h2>Comprobante de Compra</h2>
@@ -234,12 +234,12 @@
 @include('almacen.guias.guia_compraModal')
 @include('logistica.cotizaciones.proveedorModal')
 @include('logistica.cotizaciones.add_proveedor')
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/almacen/documentos/doc_compra.js')}}"></script>
 <script src="{{('/js/almacen/documentos/doc_compraModal.js')}}"></script>
 <script src="{{('/js/almacen/documentos/doc_com_detalle.js')}}"></script>
 <script src="{{('/js/almacen/guia/guia_compraModal.js')}}"></script>
 <script src="{{('/js/logistica/proveedorModal.js')}}"></script>
 <script src="{{('/js/logistica/add_proveedor.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

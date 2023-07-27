@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_finanzas')
+@include('layouts.menu_finanzas')
 
 @section('cabecera')
 Normalizar

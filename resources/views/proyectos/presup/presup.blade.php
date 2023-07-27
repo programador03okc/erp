@@ -1,6 +1,6 @@
-@include('layout.head')
+@include('layouts.head')
 @include('layouts.menu_proyectos')
-@include('layout.body')
+@include('layouts.body')
 <div class="page-main" type="presup">
     <legend class="mylegend">
         <h2>Presupuesto</h2>
@@ -82,10 +82,10 @@
 @include('proyectos.presEstructura.presEstructuraModal')
 @include('proyectos.presEstructura.partidaEstructura')
 @include('proyectos.presEstructura.pardetModal')
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/proyectos/presupuesto/presEstructura.js')}}"></script>
 <script src="{{('/js/proyectos/presupuesto/presEstructuraModal.js')}}"></script>
 <script src="{{('/js/proyectos/presupuesto/partidaEstructura.js')}}"></script>
 <script src="{{('/js/proyectos/presupuesto/pardetModal.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

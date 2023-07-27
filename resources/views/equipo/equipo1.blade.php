@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_equipo')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_equipo')
+@include('layouts.body')
 <div class="page-main" type="equipo">
     <legend class="mylegend">
         <h2>Maquinaria y Equipos</h2>
@@ -79,7 +79,7 @@
     </form>
 </div>
 @include('equipo.equipoModal')
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/equipo/equipo.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

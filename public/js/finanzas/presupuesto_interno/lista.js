@@ -320,9 +320,7 @@ function cierreMesual() {
             return $.ajax({
                 type: 'GET',
                 url: 'cierre-mes',
-                data: {
-                    _token:token
-                },
+                data: {},
                 // processData: false,
                 // contentType: false,
                 dataType: 'JSON',

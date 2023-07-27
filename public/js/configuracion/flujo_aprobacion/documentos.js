@@ -3,7 +3,7 @@ $(function(){
 
     var vardataTables = funcDatatables();
     var form = $('.page-main form[type=register]').attr('id');
-    
+
     $('#listarDocumentos').dataTable({
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
@@ -63,7 +63,7 @@ function mostrar_documento(id){
 function save_documento(data, action){
     // console.log(action);
     console.log(data);
-    
+
     var msj;
     if (action == 'register'){
         baseUrl = route('configuracion.documentos.guardar-documento');
@@ -90,7 +90,7 @@ function save_documento(data, action){
         console.log(textStatus);
         console.log(errorThrown);
     });
-    
+
 }
 
 function anular_documento(id){

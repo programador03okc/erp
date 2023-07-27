@@ -6,7 +6,7 @@ function limpiarTabla(idElement) {
                 element.removeChild(element.lastChild);
             }
         }
-        
+
     });
 }
 
@@ -28,13 +28,14 @@ function openRegistroPago(data) {
     var cci = data.data('cci');
     var banco = data.data('banco');
     var empresa = data.data('empresa');
-    var idempresa = data.data('idempresa');
+    var idempresa = data.data('idEmpresa');
     var motivo = data.data('motivo');
     var comentarioPagoLogistica = data.data('comentarioPagoLogistica');
     var observacionRequerimiento = data.data('observacionRequerimiento');
     var cantidadAdjuntosLogisticos = data.data('cantidadAdjuntosLogisticos');
     var tienePagoEnCuotas = data.data('tienePagoEnCuotas');
     var sumaCuotaConAutorizacion = data.data('sumaCuotaConAutorizacion');
+    var tipoImpuesto = data.data('tipoImpuesto');
 
     var total_pago = formatDecimal(parseFloat(total) - pago);
     console.log(data);
@@ -106,8 +107,7 @@ function openRegistroPago(data) {
     $('[name=motivo]').text(motivo !== undefined ? decodeURIComponent(motivo) : '');
     $('[name=comentario_pago_logistica]').text(comentarioPagoLogistica ?? '');
     $('[name=observacion_requerimiento]').text(observacionRequerimiento ?? '');
-    
-   
+    $('[name=tipo_impuesto]').text(tipoImpuesto ==1? 'Detracción':(tipoImpuesto==2?'Renta':''));
 
     if (comentarioPagoLogistica != undefined && comentarioPagoLogistica != '') {
         document.querySelector("div[id='modal-procesarPago'] div[id='contenedor_comentario_pago_logistica']").classList.remove("oculto");
@@ -496,7 +496,7 @@ function listarPagoEnCuotas(tipo,id){
                     (element.adjuntos).forEach(element => {
                         enlaceAdjunto.push('<a href="/files/logistica/comporbantes_proveedor/'+element.archivo+'" target="_blank">'+element.archivo+'</a>');
                     });
-                    
+
                     html += '<tr id="' + element.id_pago_cuota_detalle + '">' +
                         '<td style="border: none; text-align: center">' + i + '</td>' +
                         '<td style="border: none; text-align: center; color: #8b3447 !important;font-weight: bold;">' + (element.monto_cuota !== null ? element.monto_cuota : '') + '</td>' +
@@ -516,7 +516,7 @@ function listarPagoEnCuotas(tipo,id){
                     }
                 });
 
- 
+
             }
             else {
                 var html = `
@@ -526,7 +526,7 @@ function listarPagoEnCuotas(tipo,id){
             document.querySelector("select[name='vincularCuotaARegistroDePago[]']").insertAdjacentHTML('beforeend', htmlOptionVincularConPago );
             document.querySelector("table[id='tablaDatosPagoEnCuotas'] span[id='sumaMontoTotalPagado']").textContent= sumaMontoTotalMontoCuota;
 
-    
+
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);

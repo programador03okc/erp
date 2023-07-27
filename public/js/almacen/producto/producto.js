@@ -75,7 +75,7 @@ $(function () {
 });
 
 function mostrar_producto(id) {
-    // $(":file").filestyle('disabled', false);
+    $(":file").filestyle('disabled', false);
     baseUrl = 'mostrar_producto/' + id;
     console.log(baseUrl);
     $.ajax({

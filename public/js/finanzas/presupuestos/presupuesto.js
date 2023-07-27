@@ -142,28 +142,29 @@ function mostrarPartidas(id) {
             var desPadre = '';
             response.titulos.forEach(element => {
                 desPadre = response.titulos.find(titulo => titulo.codigo == element.cod_padre);
+                let montoTitulo = $.number(element.total, 2, '.', ',');
 
                 html += `<tr style="background: LightCyan;">
                     <td><a name="${element.id_titulo}"></a>${element.codigo}</td>
                     <td>${element.descripcion}</td>
-                    <td>${element.total}</td>
+                    <td align="right">${montoTitulo}</td>
                     <td style="padding:0px;">
                         <div class="btn-group" role="group">
 
-                            <button type="button" class="btn btn-box-tool btn-xs btn-success agregar-titulo" data-toggle="tooltip" data-placement="bottom" 
+                            <button type="button" class="btn btn-box-tool btn-xs btn-success agregar-titulo" data-toggle="tooltip" data-placement="bottom"
                                 title="Agregar SubTitulo" data-codigo="${element.codigo}" data-descripcion="${element.descripcion}">
                                 <i class="glyphicon glyphicon-plus" aria-hidden="true"></i></button>
 
-                            <button type="button" class="btn btn-box-tool btn-xs btn-primary agregar-partida" data-toggle="tooltip" data-placement="bottom" 
+                            <button type="button" class="btn btn-box-tool btn-xs btn-primary agregar-partida" data-toggle="tooltip" data-placement="bottom"
                                 title="Agregar Partida" data-codigo="${element.codigo}" data-descripcion="${element.descripcion}">
                                 <i class="glyphicon glyphicon-plus" aria-hidden="true"></i></button>
 
-                            <button type="button" class="btn btn-box-tool btn-xs btn-info editar-titulo" data-toggle="tooltip" data-placement="bottom" 
+                            <button type="button" class="btn btn-box-tool btn-xs btn-info editar-titulo" data-toggle="tooltip" data-placement="bottom"
                                 title="Editar SubTitulo" data-id="${element.id_titulo}" data-codigo="${element.codigo}" data-descripcion="${element.descripcion}"
                                 data-codpadre="${element.cod_padre}" data-despadre="${(desPadre !== undefined ? desPadre.descripcion : '')}">
                                 <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i></button>
 
-                            <button type="button" class="btn btn-box-tool btn-xs btn-danger anular-titulo" data-toggle="tooltip" data-placement="bottom" 
+                            <button type="button" class="btn btn-box-tool btn-xs btn-danger anular-titulo" data-toggle="tooltip" data-placement="bottom"
                                 title="Anular SubTitulo" data-id="${element.id_titulo}">
                                 <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
                         </div>
@@ -173,26 +174,26 @@ function mostrarPartidas(id) {
                 </tr>`;
 
                 response.partidas.forEach(partida => {
-
                     if (element.codigo == partida.cod_padre) {
+                        let monto = $.number(partida.importe_total, 2, '.', ',');
 
                         html += `<tr>
                             <td><a name="${partida.id_partida}"></a>${partida.codigo}</td>
                             <td>${partida.descripcion}</td>
-                            <td>${partida.importe_total}</td>
+                            <td align="right">${monto}</td>
                             <td style="padding:0px;">
                                 <div class="btn-group" role="group">
 
-                                    <button class="btn btn-box-tool btn-xs btn-default ver-detalle" data-toggle="tooltip" data-placement="bottom" 
+                                    <button class="btn btn-box-tool btn-xs btn-default ver-detalle" data-toggle="tooltip" data-placement="bottom"
                                         title="Ver Detalle" data-id="${partida.id_partida}">
                                         <i class="glyphicon glyphicon-chevron-down" aria-hidden="true"></i></button>
-                                    
-                                    <button class="btn btn-box-tool btn-xs btn-info editar-partida" data-toggle="tooltip" data-placement="bottom" 
-                                        title="Editar Partida" data-id="${partida.id_partida}" data-cod="${partida.codigo}" data-des="${partida.descripcion}" 
+
+                                    <button class="btn btn-box-tool btn-xs btn-info editar-partida" data-toggle="tooltip" data-placement="bottom"
+                                        title="Editar Partida" data-id="${partida.id_partida}" data-cod="${partida.codigo}" data-des="${partida.descripcion}"
                                         data-total="${partida.importe_total}" data-codpadre="${element.codigo}" data-despadre="${element.descripcion}">
                                         <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i></button>
 
-                                    <button class="btn btn-box-tool btn-xs btn-danger anular-partida" data-toggle="tooltip" data-placement="bottom" 
+                                    <button class="btn btn-box-tool btn-xs btn-danger anular-partida" data-toggle="tooltip" data-placement="bottom"
                                         title="Anular Partida" data-id="${partida.id_partida}" >
                                         <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
                                 </div>

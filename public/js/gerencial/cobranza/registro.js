@@ -1,5 +1,5 @@
 $(function () {
-    
+
     listarRegistros();
     actualizarDocVentReq();
 

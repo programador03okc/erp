@@ -16,7 +16,7 @@ function listarInsumos(){
             {'data': 'descripcion'},
             {'data': 'cod_tp_insumo'},
             {'data': 'abreviatura'},
-            {'render': 
+            {'render':
                 function (data, type, row){
                     if (row['precio_insumo'] !== null){
                         return row['precio_insumo'];
@@ -29,26 +29,23 @@ function listarInsumos(){
             {'data': 'flete'},
             {'data': 'peso_unitario'},
             {'data': 'iu_descripcion'},
-            {'render': 
-                function (data, type, row) {
-                    return `
-                    <button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" data-placement="bottom" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" data-placement="bottom" title="Anular" >
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="precios btn btn-warning boton" data-toggle="tooltip" data-placement="bottom" title="Ver precios" >
-                        <i class="fas fa-coins"></i>
-                    </button>`;
-                }, className: 'text-center', searcheable: false, orderable: false
-            }
+            {'defaultContent':
+            '<button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Editar" >'+
+                '<i class="fas fa-edit"></i></button>'+
+            '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Anular" >'+
+                '<i class="fas fa-trash"></i></button>'+
+            '<button type="button" class="precios btn btn-warning boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Ver precios" >'+
+                '<i class="fas fa-coins"></i></button>'}
         ],
         'columnDefs': [{ 'aTargets': [0], 'sClass': 'invisible'}],
     });
     botones('#listaInsumo tbody',tabla)
 }
 function botones(tbody, tabla){
+    console.log("editar");
     $(tbody).on("click","button.editar", function(){
         var data = tabla.row($(this).parents("tr")).data();
         open_insumo_create(data);
@@ -63,7 +60,9 @@ function botones(tbody, tabla){
     });
 }
 function anular_insumo(id){
+    console.log(id);
     var anula = confirm('¿Esta seguro que desea Anular éste Insumo?');
+
     if (anula){
         $.ajax({
             type: 'GET',

@@ -166,7 +166,7 @@ class GestionCustomizacion {
                                 (row['estado'] == 21 ? //entregado
                                     `<button type="button" class="iniciar btn btn-primary btn-flat boton" data-toggle="tooltip"
                                     data-placement="bottom" title="Iniciar Transformación" data-id="${row['id_transformacion']}"
-                                    data-estado="${row['estado']}">
+                                     data-estado="${row['estado']}">
                                     <i class="fa fa-step-forward"></i></button>`: '')
                             );
                         }

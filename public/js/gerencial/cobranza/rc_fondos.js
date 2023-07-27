@@ -1,5 +1,5 @@
 $(function () {
-    
+
     listar();
 
     $('#formulario').on('submit', function (e) {

@@ -75,7 +75,7 @@ function getCorreoCoorporativo(id){
 }
 
 function save_correo_coorporativo(data, action){
-     
+
     var msj;
     if (action == 'register'){
         baseUrl = route('configuracion.correos.guardar_correo_coorporativo');
@@ -129,3 +129,4 @@ $.ajax({
     console.log(errorThrown);
 });
 }
+

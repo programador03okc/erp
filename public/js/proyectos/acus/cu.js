@@ -21,20 +21,16 @@ function listar_cus(){
                     return ('<span class="label label-'+row['bootstrap_color']+'">'+row['estado_doc']+'</span>');
                 }
             },
-            {'render': 
-                function (data, type, row) {
-                    return `
-                    <button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" data-placement="bottom" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" data-placement="bottom" title="Anular" >
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="partidas btn btn-warning boton" data-toggle="tooltip" data-placement="bottom" title="Ver partidas enlazadas" >
-                        <i class="fas fa-file-alt"></i>
-                    </button>`;
-                }, className: 'text-center', searcheable: false, orderable: false
-            }
+            {'defaultContent':
+            '<button type="button" class="editar btn btn-primary boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Editar" >'+
+                '<i class="fas fa-edit"></i></button>'+
+            '<button type="button" class="anular btn btn-danger boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Anular" >'+
+                '<i class="fas fa-trash"></i></button>'+
+            '<button type="button" class="partidas btn btn-warning boton" data-toggle="tooltip" '+
+                'data-placement="bottom" title="Ver partidas enlazadas" >'+
+                '<i class="fas fa-file-alt"></i></button>'}
         ],
         'columnDefs': [ { 'aTargets': [0], 'sClass': 'invisible'} ],
         'order': [[ 2, "asc" ]],
@@ -48,6 +44,7 @@ function listar_cus(){
 function botones(tbody, tabla){
     $(tbody).on("click","button.editar", function(){
         var data = tabla.row($(this).parents("tr")).data();
+        console.log(data);
         if (data !== undefined){
             edit_acu_create(data);
         }
@@ -86,7 +83,7 @@ function anular_cu(ids){
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
-            });        
+            });
         }
     }
 }

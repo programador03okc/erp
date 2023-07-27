@@ -33,7 +33,7 @@ function listar() {
         ajax: {
             url: "listar",
             method: 'POST',
-            // headers: { 'X-CSRF-TOKEN': token }
+            // headers: { 'X-CSRF-TOKEN': csrf_token }
         },
         columns: [
             // {data: 'id_periodo', className: 'text-center'},

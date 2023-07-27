@@ -50,7 +50,7 @@ function guardar_insumo(){
             '&peso_unitario='+pes+
             '&iu='+iu;
     // var token = $('#token').val();
-    
+
     var baseUrl;
     if (id !== ''){
         baseUrl = route('proyectos.catalogos.insumos.actualizar_insumo');
@@ -60,10 +60,11 @@ function guardar_insumo(){
         mensaje = 'Insumo actualizado con exito';
     }
     var msj = verificaInsumo();
+    console.log(data);
 
     if (msj.length > 0){
         alert(msj);
-    } 
+    }
     else {
         $.ajax({
             type: 'POST',
@@ -71,8 +72,9 @@ function guardar_insumo(){
             data: data,
             dataType: 'JSON',
             success: function(response){
-                alert(mensaje);
+                console.log(response);
                 if (response > 0){
+                    alert('Insumo registrado con exito');
                     $('#listaInsumo').DataTable().ajax.reload();
                     limpiarCampos();
                     $('#modal-insumo_create').modal('hide');

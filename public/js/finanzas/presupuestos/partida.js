@@ -1,13 +1,13 @@
 $("#listaPartidas tbody").on('click', ".agregar-partida", function(){
     var cod = $(this).data('codigo');
     var des = $(this).data('descripcion');
-    
+
     var i = 1;
     var filas = document.querySelectorAll('#listaPartidas tbody tr');
     filas.forEach(function(e){
         var colum = e.querySelectorAll('td');
         console.log(colum.length);
-        
+
         if (colum.length > 5){
             var padre = colum[5].innerText;
             if (padre == cod){
@@ -37,7 +37,7 @@ $("#form-partidaCreate").on("submit", function(e){
     var id = $('[name=id_partida]').val();
     var url = '';
     $('#submit-partidaCreate').attr('disabled','true');
-    
+
     if (id == ''){
         url = 'guardar-partida';
     } else {

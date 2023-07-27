@@ -1,5 +1,5 @@
 $(function () {
-    
+
     listar();
 
     $('#tabla').on('click', 'button.cobrar', function (e) {

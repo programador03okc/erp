@@ -620,7 +620,7 @@ class RequerimientoPendienteView {
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
                 { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-center' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
-                    return row['estado_doc'];
+                    return '<span class="label label-' + row.bootstrap_color + ' estadoRequerimiento" title="' + (row['estado_doc'] == 'En pausa' ? 'Retiro de aprobación por actualización de CDP' : '') + '">' + row['estado_doc'] + '</span>';
                 }},
                 { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false,'render': function (data, type, row) {
                     // if(permisoCrearOrdenPorRequerimiento == '1') {
@@ -820,32 +820,32 @@ class RequerimientoPendienteView {
             },
             "createdRow": function (row, data, dataIndex) {
 
-                let color = '#f2f2f2';
+                let color = '#ffffff';
                 switch (data.bootstrap_color) {
                     case 'default':
-                        color = '#d7d7d7';
+                        color = '#777777';
                         break;
                     case 'primary':
-                        color = '#5caad9';
+                        color = '#3c8dbc';
                         break;
                     case 'success':
-                        color = '#a2c9a2';
+                        color = '#5cb85c';
                         break;
                     case 'secundary':
-                        color = '#cbc0d6';
+                        color = '#ffffff';
                         break;
                     case 'warning':
-                        color = '#e8e9bc';
+                        color = '#f39c12';
                         break;
                     case 'info':
                         color = '#72bcd4';
                         break;
                     case 'danger':
-                        color = '#98beca';
+                        color = '#d9534f';
                         break;
 
                     default:
-                        color = '#f2f2f2';
+                        color = '#ffffff';
                         break;
                 }
                 $(row.childNodes[12]).css('background-color', color);
@@ -3293,13 +3293,7 @@ class RequerimientoPendienteView {
     }
 
     solicitudCotizacionExcel(obj) {
-        // window.open(`solicitud-cotizacion-excel/${obj.dataset.idRequerimiento}`);
-        let form = $('<form action="' + route('logistica.gestion-logistica.compras.pendientes.solicitud-cotizacion-excel') + '" method="post" target="_blank">' +
-            '<input type="hidden" name="_token" value="' + token + '" />' +
-            '<input type="hidden" name="id" value="' + obj.dataset.idRequerimiento + '" />' +
-        '</form>');
-        $('body').append(form);
-        form.submit();
+        window.open(`solicitud-cotizacion-excel/${obj.dataset.idRequerimiento}`);
 
     }
 

@@ -1,3 +1,11 @@
+var rutaLista, rutaMostrar, rutaGuardar;
+
+function inicializar(_rutaLista, _rutaMostrar, _rutaGuardar) {
+    rutaLista = _rutaLista;
+    rutaMostrar = _rutaMostrar;
+    rutaGuardar = _rutaGuardar;
+}
+
 function listar() {
     var vardataTables = funcDatatables();
     var form = $('.page-main form[type=register]').attr('id');
@@ -5,7 +13,7 @@ function listar() {
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
         'language': vardataTables[0],
-        'ajax': route('proyectos.variables-entorno.sistemas-contrato.listar'),
+        'ajax': rutaLista,
         'columns': [
             { 'data': 'id_sis_contrato' },
             { 'data': 'codigo' },
@@ -43,7 +51,7 @@ function listar() {
 
 
 function mostrar_sis_contrato(id) {
-    baseUrl = route('proyectos.variables-entorno.sistemas-contrato.mostrar' , {id: id});
+    baseUrl = rutaMostrar + '/' + id;
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': token },
@@ -66,11 +74,9 @@ function mostrar_sis_contrato(id) {
 
 function save_sis_contrato(data, action) {
     if (action == 'register') {
-        baseUrl = route('proyectos.variables-entorno.sistemas-contrato.guardar');
-        mensaje = "Sistema de contrato registrado con exito";
+        baseUrl = rutaGuardar;
     } else if (action == 'edition') {
-        baseUrl = route('proyectos.variables-entorno.sistemas-contrato.actualizar');
-        mensaje = "Sistema de contrato actualizado con exito";
+        baseUrl = 'actualizar_sis_contrato';
     }
     $.ajax({
         type: 'POST',
@@ -79,11 +85,17 @@ function save_sis_contrato(data, action) {
         data: data,
         dataType: 'JSON',
         success: function (response) {
-            alert(mensaje);
-            if (response > 0) {
+            alert(response.mensaje);
+            if (response.id > 0) {
                 $('#listaSisContrato').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }
+            /*console.log(response);
+            if (response > 0){
+                alert('Sistema de Contrato registrado con exito');
+                $('#listaSisContrato').DataTable().ajax.reload();
+                changeStateButton('guardar');
+            }*/
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);

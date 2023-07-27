@@ -2,7 +2,7 @@ var rutaListaOrdenesPropias;
 function inicializarRutasListadoOrdenesPropias(
     _rutaListaOrdenesPropias
     ) {
-    
+
     rutaListaOrdenesPropias = _rutaListaOrdenesPropias;
     vista_extendida();
 
@@ -10,12 +10,12 @@ function inicializarRutasListadoOrdenesPropias(
 }
 
 function mostrar_ordenes_propias_pendientes(){
-    
+
     let año_publicacion = document.querySelector("div[id='ocams_pendientes'] select[id='descripcion_año_publicacion_op_pendientes']").value;
     listar_ordenes_propias('ListaOrdenesPropiasPendientes',null,año_publicacion,'PENDIENTES');
 }
 function mostrar_ordenes_propias_vinculadas(){
-    
+
     let año_publicacion = document.querySelector("div[id='ocams_vinculadas'] select[id='descripcion_año_publicacion_op_vinculadas']").value;
     listar_ordenes_propias('ListaOrdenesPropiasVinculadas',null,año_publicacion,'VINCULADAS');
 
@@ -140,7 +140,7 @@ function listar_ordenes_propias(tabla,id_empresa= null,year_publicacion =null, c
                     $(row.childNodes[0]).css('font-weight', 'bold');
                 }
                 else if( data.cantidad_producto_con_transformacion == 0  ){
-        
+
                     $(row.childNodes[0]).css('background-color', '#b498d0');
                     $(row.childNodes[0]).css('font-weight', 'bold');
                 }
@@ -154,12 +154,12 @@ function listar_ordenes_propias(tabla,id_empresa= null,year_publicacion =null, c
                 tabla+'_wrapper'
             )
             ListaOrdenesPropias_wrapper.childNodes[0].childNodes[0].hidden = true;
-        
+
             let ListaOrdenesPropias_filter = document.getElementById(
                 tabla+'_filter'
             )
-            ListaOrdenesPropias_filter.children[0].children[0].style.width = '95%'; 
-        
+            ListaOrdenesPropias_filter.children[0].children[0].style.width = '95%';
+
             document.querySelector("table[id='"+tabla+"']").tHead.style.fontSize = '11px',
             document.querySelector("table[id='"+tabla+"']").tBodies[0].style.fontSize = '11px';
 
@@ -187,7 +187,7 @@ function listar_ordenes_propias(tabla,id_empresa= null,year_publicacion =null, c
 
 
 
-// controle y acciones 
+// controle y acciones
 function handleChangeFilterEmpresaListOrdenesPropiasPendientesByEmpresa(e) {
     let año_publicacion = document.querySelector("div[id='ocams_pendientes'] select[id='descripcion_año_publicacion_op_pendientes']").value;
     listar_ordenes_propias('ListaOrdenesPropiasPendientes',e.target.value,año_publicacion,'PENDIENTES');
@@ -221,7 +221,7 @@ function generarRequerimientoByOrdenCompraPropia(tipo_cuadro,id_cc,id_estado_apr
         };
         // console.log(data);
         sessionStorage.setItem('ordenP_Cuadroc', JSON.stringify(data));
-        
+
     }else{
         let data = {
             'tipo_cuadro':tipo_cuadro,
@@ -267,7 +267,7 @@ function verTransformacion(idRequerimiento){
 }
 
 
-// producto transformado - modal 
+// producto transformado - modal
 function listarProductoTransformado(idRequerimiento,tieneTransformacion){
     getProductosBaseOTransformado(idRequerimiento,tieneTransformacion).then(function(res) {
         if(res.status ==200){

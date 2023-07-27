@@ -3,7 +3,7 @@ $(function(){
 
     var vardataTables = funcDatatables();
     var form = $('.page-main form[type=register]').attr('id');
-    
+
     $('#listaHistorialAprobación').dataTable({
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
@@ -19,6 +19,7 @@ $(function(){
             {'data': 'detalle_observacion'},
             {'data': 'nombre_completo_usuario'},
             {'data': 'descripcion_rol_concepto'},
+            {'data': 'descripcion_area'},
             {'data': 'fecha_vobo'}
          ],
         'order': [

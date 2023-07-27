@@ -34,6 +34,7 @@ $(function(){
                         total += parseFloat(colum[7].innerText);
                     }
                 });
+                console.log('total'+total);
                 $('[name=precio_unitario_cu]').val(total);
             } else {
                 $('[name=precio_unitario_cu]').val(prec);
@@ -73,7 +74,7 @@ function listarInsumos(){
             {'data': 'descripcion'},
             {'data': 'cod_tp_insumo'},
             {'data': 'abreviatura'},
-            {'render': 
+            {'render':
                 function (data, type, row){
                     if (row['precio_insumo'] !== null){
                         return row['precio_insumo'];

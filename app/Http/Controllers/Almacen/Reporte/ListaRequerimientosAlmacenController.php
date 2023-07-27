@@ -20,11 +20,21 @@ class ListaRequerimientosAlmacenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-        return view('almacen.reportes.requerimientosAlmacen', compact('almacenes','array_accesos'));
+        return view('almacen/reportes/requerimientosAlmacen', compact('almacenes','array_accesos'));
     }
 
     function listarRequerimientosAlmacen()
     {
+
+        $soloAutorizadoGarantias=false;
+        $allRol = Auth::user()->getAllRol();
+        foreach ($allRol as  $rol) {
+            if($rol->id_rol == 52) // autorizado garantias
+            {
+                $soloAutorizadoGarantias=true;
+            }
+        }
+
         $lista = DB::table('almacen.alm_req')
             ->select(
                 'alm_req.*',
@@ -63,6 +73,9 @@ class ListaRequerimientosAlmacenController extends Controller
             ->leftJoin('almacen.transformacion', 'transformacion.id_od', '=', 'despachoInterno.id_od')
             ->leftJoin('administracion.adm_estado_doc as estado_di', 'estado_di.id_estado_doc', '=', 'despachoInterno.estado')
             // ->where([['alm_req.estado', '!=', 7]])
+                       ->when((($soloAutorizadoGarantias) ==true), function ($query) {
+                return $query->whereRaw('alm_req.id_tipo_requerimiento = 6');  // autorizado solo ver comercial, tipo de requerimiento de garantias
+            })
             ->get();
 
         return datatables($lista)->toJson();

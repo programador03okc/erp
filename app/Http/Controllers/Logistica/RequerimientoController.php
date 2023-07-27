@@ -68,7 +68,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
-//use Debugbar;
+// use Debugbar;
 use Mockery\Undefined;
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\TreasuryBill;
 use PhpParser\Node\Stmt\TryCatch;
@@ -126,13 +126,13 @@ class RequerimientoController extends Controller
         $presupuestoInternoList = (new PresupuestoInternoController)->comboPresupuestoInterno(0, 0);
 
         return view('logistica/requerimientos/gestionar_requerimiento', compact('tipo_cambio', 'idTrabajador', 'nombreUsuario',
-            'categoria_adjunto', 'grupos', 'sis_identidad', 'tipo_requerimiento', 'monedas', 'prioridades', 'empresas', 'unidadesMedida', 
-            'roles', 'periodos', 'bancos', 'tipos_cuenta', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'fuentes', 
+            'categoria_adjunto', 'grupos', 'sis_identidad', 'tipo_requerimiento', 'monedas', 'prioridades', 'empresas', 'unidadesMedida',
+            'roles', 'periodos', 'bancos', 'tipos_cuenta', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'fuentes',
             'divisiones', 'array_accesos', 'array_accesos_botonera', 'modulo', 'presupuestoInternoList'));
     }
 
     public function obtenerListaProyectos($idGrupo){
-        
+
         $tipoProyecto= 'INTERNO';
         if($idGrupo==3){
             $tipoProyecto= 'EXTERNO';
@@ -247,6 +247,16 @@ class RequerimientoController extends Controller
 
     public function listaDetalleRequerimiento($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
     {
+
+        $soloAutorizadoGarantias=false;
+        $allRol = Auth::user()->getAllRol();
+        foreach ($allRol as  $rol) {
+            if($rol->id_rol == 52) // autorizado garantias
+            {
+                $soloAutorizadoGarantias=true;
+            }
+        }
+
         $detalleRequerimientoList = DB::table('almacen.alm_det_req')
             ->leftJoin('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
             ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
@@ -322,12 +332,12 @@ class RequerimientoController extends Controller
                 FROM finanzas.presupuesto_interno_detalle
                 inner join finanzas.presupuesto_interno_modelo on presupuesto_interno_modelo.id_modelo_presupuesto_interno = presupuesto_interno_detalle.id_padre
                 WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = alm_det_req.id_partida_pi and alm_req.id_presupuesto_interno > 0 limit 1) AS descripcion_partida_presupuesto_interno"),
-                
+
                 'alm_req.fecha_requerimiento',
-                DB::raw("(SELECT cont_tp_cambio.venta  
+                DB::raw("(SELECT cont_tp_cambio.venta
                 FROM contabilidad.cont_tp_cambio
                 WHERE TO_DATE(to_char(cont_tp_cambio.fecha,'YYYY-MM-DD'),'YYYY-MM-DD') = TO_DATE(to_char(alm_req.fecha_requerimiento,'YYYY-MM-DD'),'YYYY-MM-DD') limit 1) AS tipo_cambio"),
-                
+
             )
             ->when(($meOrAll === 'ME'), function ($query) {
                 $idUsuario = Auth::user()->id_usuario;
@@ -361,7 +371,10 @@ class RequerimientoController extends Controller
             ->when((intval($idEstado) > 0), function ($query)  use ($idEstado) {
                 return $query->whereRaw('alm_req.estado = ' . $idEstado);
             })
-            ->where([['alm_det_req.estado', '!=', 7], ['alm_req.estado', '!=', 7]])
+            ->where([['alm_req.flg_compras', '=', 0], ['alm_det_req.estado', '!=', 7], ['alm_req.estado', '!=', 7]])
+            ->when((($soloAutorizadoGarantias) ==true), function ($query) {
+                return $query->whereRaw('alm_req.id_tipo_requerimiento = 6');  // autorizado solo ver comercial divison CAS, tipo de requerimiento de garantias
+            })
             ->orderBy('alm_det_req.fecha_registro', 'desc')
             ->get();
 
@@ -482,6 +495,7 @@ class RequerimientoController extends Controller
                 'alm_req.trabajador_id',
                 'alm_req.id_incidencia',
                 'alm_req.id_presupuesto',
+                'alm_req.tipo_impuesto',
                 'presup.codigo as codigo_presupuesto_old',
                 'presup.descripcion as descripcion_presupuesto_old',
                 'alm_req.id_presupuesto_interno',
@@ -589,6 +603,7 @@ class RequerimientoController extends Controller
                     'id_presupuesto_interno' => $data->id_presupuesto_interno,
                     'codigo_presupuesto_interno' => $data->codigo_presupuesto_interno,
                     'descripcion_presupuesto_interno' => $data->descripcion_presupuesto_interno,
+                    'tipo_impuesto' => $data->tipo_impuesto >0?$data->tipo_impuesto:'',
                     'adjuntos' => []
 
                 ];
@@ -637,7 +652,7 @@ class RequerimientoController extends Controller
                 ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'log_prove.id_contribuyente')
                 ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'alm_det_req.partida')
                 ->leftJoin('finanzas.presupuesto_interno_detalle', 'presupuesto_interno_detalle.id_presupuesto_interno_detalle', '=', 'alm_det_req.id_partida_pi')
-                
+
                 ->select(
                     'alm_det_req.id_detalle_requerimiento',
                     'alm_req.id_requerimiento',
@@ -697,19 +712,19 @@ class RequerimientoController extends Controller
                     FROM almacen.trans_detalle
                     WHERE   trans_detalle.id_requerimiento_detalle = alm_det_req.id_detalle_requerimiento AND
                             trans_detalle.estado != 7) AS suma_transferencias"),
-                    
+
                     'presup_par.codigo as codigo_partida',
                     'presup_par.descripcion as descripcion_partida',
-                    // partida presupuesto interno 
+                    // partida presupuesto interno
                     'presupuesto_interno_detalle.partida as codigo_partida_presupuesto_interno',
                     'presupuesto_interno_detalle.descripcion as descripcion_partida_presupuesto_interno',
-                    // 
+                    //
 
                     DB::raw("(SELECT (presup_par.importe_total)
                     FROM finanzas.presup_par
                     WHERE  presup_par.id_partida = alm_det_req.partida ) AS presupuesto_old_total_partida"),
 
-                    DB::raw("(SELECT 
+                    DB::raw("(SELECT
                     (CAST (replace(presupuesto_interno_detalle.enero, ',', '') AS NUMERIC(10,2))
                     + CAST (replace(presupuesto_interno_detalle.febrero, ',', '') AS NUMERIC(10,2))
                     + CAST (replace(presupuesto_interno_detalle.marzo, ',', '') AS NUMERIC(10,2))
@@ -734,7 +749,7 @@ class RequerimientoController extends Controller
                 ->get();
 
 
-            // //Debugbar::info($alm_det_req);
+            // Debugbar::info($alm_det_req);
 
             if (isset($alm_det_req)) {
                 $lastId = "";
@@ -870,9 +885,9 @@ class RequerimientoController extends Controller
             $historialAprobacionList[] = $value;
         }
 
-        
+
         $flujoDeAprobacion = (new RevisarAprobarController)->mostrarTodoFlujoAprobacionDeDocumento($num_doc);
-        // //Debugbar::info($flujoDeAprobacion);
+        // Debugbar::info($flujoDeAprobacion);
 
 
         $data = [
@@ -979,6 +994,7 @@ class RequerimientoController extends Controller
             $requerimiento->id_incidencia = isset($request->id_incidencia) && $request->id_incidencia != null ? $request->id_incidencia : null;
             $requerimiento->id_tipo_detalle = $idTipoDetalle;
             $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $requerimiento->save();
             $requerimiento->adjuntoOtrosAdjuntos = $request->archivoAdjuntoRequerimiento1;
             $requerimiento->adjuntoOrdenes = $request->archivoAdjuntoRequerimiento2;
@@ -1126,7 +1142,7 @@ class RequerimientoController extends Controller
         $correoUsuarioList[] = Usuario::find($requerimiento->id_usuario)->email; // notificar a usuario
         $usuariosList = Usuario::getAllIdUsuariosPorRol(4); // notificar al usuario  con rol = 'logistico compras'
 
-        // //Debugbar::info($usuariosList);
+        // Debugbar::info($usuariosList);
         if (count($usuariosList) > 0) {
             if (config('app.debug')) {
                 $correoUsuarioList[] = config('global.correoDebug1');
@@ -1150,7 +1166,7 @@ class RequerimientoController extends Controller
                     'mensaje' => $mensaje
                 ];
 
-                // //Debugbar::info($payload);
+                // Debugbar::info($payload);
 
                 if (count($destinatarios) > 0) {
                     NotificacionHelper::enviarEmail($payload);
@@ -1446,6 +1462,8 @@ class RequerimientoController extends Controller
         $requerimiento->id_incidencia = $request->id_incidencia > 0 ? $request->id_incidencia : null;
         $requerimiento->id_tipo_detalle = $idTipoDetalle;
         $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+        $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
+
         $requerimiento->save();
         $requerimiento->adjuntoOtrosAdjuntos = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar1;
         $requerimiento->adjuntoOrdenes = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar2;
@@ -1762,7 +1780,18 @@ class RequerimientoController extends Controller
 
     public function obtenerRequerimientosElaborados($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
     {
-        $requerimientos = Requerimiento::with('detalle')->leftJoin('administracion.adm_documentos_aprob', 'alm_req.id_requerimiento', '=', 'adm_documentos_aprob.id_doc')
+
+        $soloAutorizadoGarantias=false;
+        $allRol = Auth::user()->getAllRol();
+        foreach ($allRol as  $rol) {
+            if($rol->id_rol == 52) // autorizado garantias
+            {
+                $soloAutorizadoGarantias=true;
+            }
+        }
+
+        $requerimientos = Requerimiento::with('detalle')
+            ->leftJoin('administracion.adm_documentos_aprob', 'alm_req.id_requerimiento', '=', 'adm_documentos_aprob.id_doc')
             ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
             ->leftJoin('almacen.alm_tp_req', 'alm_req.id_tipo_requerimiento', '=', 'alm_tp_req.id_tipo_requerimiento')
             ->leftJoin('administracion.adm_prioridad', 'alm_req.id_prioridad', '=', 'adm_prioridad.id_prioridad')
@@ -1775,11 +1804,12 @@ class RequerimientoController extends Controller
             ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
             ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
             ->leftJoin('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'alm_req.id_usuario')
-            ->leftJoin('rrhh.rrhh_trab as trab', 'trab.id_trabajador', '=', 'sis_usua.id_trabajador')
-            ->leftJoin('rrhh.rrhh_postu as post', 'post.id_postulante', '=', 'trab.id_postulante')
-            ->leftJoin('rrhh.rrhh_perso as pers', 'pers.id_persona', '=', 'post.id_persona')
+            ->leftJoin('rrhh.rrhh_trab as trab_solicitado_por', 'trab_solicitado_por.id_trabajador', '=', 'alm_req.trabajador_id')
+            ->leftJoin('rrhh.rrhh_postu as post_solicitado_por', 'post_solicitado_por.id_postulante', '=', 'trab_solicitado_por.id_postulante')
+            ->leftJoin('rrhh.rrhh_perso as pers_solicitado_por', 'pers_solicitado_por.id_persona', '=', 'post_solicitado_por.id_persona')
             ->leftJoin('administracion.division', 'division.id_division', '=', 'alm_req.division_id')
             ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
+            ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
             ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
             ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
 
@@ -1820,15 +1850,21 @@ class RequerimientoController extends Controller
                 'alm_req.fecha_registro',
                 'alm_req.division_id',
                 'division.descripcion as division',
-                DB::raw("CONCAT(pers.nombres,' ',pers.apellido_paterno,' ',pers.apellido_materno) as nombre_usuario"),
+                'sis_usua.nombre_largo as nombre_usuario',
+                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN  sis_usua.nombre_largo
+                ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)
+                END AS nombre_solicitado_por"),
+
                 DB::raw("(SELECT COUNT(adm_aprobacion.id_aprobacion)
                 FROM administracion.adm_aprobacion
                 WHERE   adm_aprobacion.id_vobo = 3 AND
                 adm_aprobacion.tiene_sustento = true AND adm_aprobacion.id_doc_aprob = adm_documentos_aprob.id_doc_aprob) AS cantidad_sustentos"),
+
                 DB::raw("(SELECT SUM(alm_det_req.cantidad * alm_det_req.precio_unitario)
                 FROM almacen.alm_det_req
                 WHERE   alm_det_req.id_requerimiento = alm_req.id_requerimiento AND
                 alm_det_req.estado != 7) AS monto_total"),
+
                 DB::raw("(SELECT sis_usua.nombre_corto
                 FROM administracion.adm_documentos_aprob
                      INNER JOIN administracion.adm_aprobacion ON adm_aprobacion.id_doc_aprob = adm_documentos_aprob.id_doc_aprob
@@ -1875,7 +1911,10 @@ class RequerimientoController extends Controller
             ->when((intval($idEstado) > 0), function ($query)  use ($idEstado) {
                 return $query->whereRaw('alm_req.estado = ' . $idEstado);
             })
-            ->where('alm_req.flg_compras', '=', 0);
+            ->where([['alm_req.flg_compras', '=', 0], ['adm_documentos_aprob.id_tp_documento', '=', 1]])
+            ->when((($soloAutorizadoGarantias) ==true), function ($query) {
+                return $query->whereRaw('alm_req.id_tipo_requerimiento = 6');  // autorizado solo ver comercial divison CAS, tipo de requerimiento de garantias
+            });
 
         return $requerimientos;
     }
@@ -1890,12 +1929,29 @@ class RequerimientoController extends Controller
         $fechaRegistroDesde = $request->fechaRegistroDesde;
         $fechaRegistroHasta = $request->fechaRegistroHasta;
         $idEstado = $request->idEstado;
-        // //Debugbar::info($division);
+        // Debugbar::info($division);
+
+        $idUsuarioEnSesion = Auth::user()->id_usuario;
         $GrupoDeUsuarioEnSesionList = Auth::user()->getAllGrupo();
         $idGrupoDeUsuarioEnSesionList = [];
+        $idTipoRequerimientoList=[1,2,3,4,5,6,7,8];
+        
         foreach ($GrupoDeUsuarioEnSesionList as $grupo) {
             $idGrupoDeUsuarioEnSesionList[] = $grupo->id_grupo; // lista de id_rol del usuario en sesion
         }
+
+        $soloAutorizadoGarantias=false;
+        $allRol = Auth::user()->getAllRol();
+        foreach ($allRol as  $rol) {
+            if($rol->id_rol == 52) // autorizado garantias
+            {
+                $soloAutorizadoGarantias=true;
+                $idGrupoDeUsuarioEnSesionList[]=2; // grupo comercial
+                $idTipoRequerimientoList=[6];
+            }
+        }
+
+        // $idTrabajadorEnSesion = Auth::user()->id_trabajador;
 
         $requerimientos = Requerimiento::with('detalle')
             ->leftJoin('administracion.adm_documentos_aprob', 'alm_req.id_requerimiento', '=', 'adm_documentos_aprob.id_doc')
@@ -1911,13 +1967,15 @@ class RequerimientoController extends Controller
             ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
             ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
             ->leftJoin('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'alm_req.id_usuario')
-            ->leftJoin('rrhh.rrhh_trab as trab', 'trab.id_trabajador', '=', 'sis_usua.id_trabajador')
-            ->leftJoin('rrhh.rrhh_postu as post', 'post.id_postulante', '=', 'trab.id_postulante')
-            ->leftJoin('rrhh.rrhh_perso as pers', 'pers.id_persona', '=', 'post.id_persona')
+
+            ->leftJoin('rrhh.rrhh_trab as trab_solicitado_por', 'trab_solicitado_por.id_trabajador', '=', 'alm_req.trabajador_id')
+            ->leftJoin('rrhh.rrhh_postu as post_solicitado_por', 'post_solicitado_por.id_postulante', '=', 'trab_solicitado_por.id_postulante')
+            ->leftJoin('rrhh.rrhh_perso as pers_solicitado_por', 'pers_solicitado_por.id_persona', '=', 'post_solicitado_por.id_persona')
             ->leftJoin('administracion.division', 'division.id_division', '=', 'alm_req.division_id')
-            // ->leftJoin('administracion.adm_aprobacion', 'adm_aprobacion.id_doc_aprob', '=', 'adm_documentos_aprob.id_doc_aprob')
             ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
             ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
+            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
+            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
 
             ->select(
                 'alm_req.id_requerimiento',
@@ -1958,11 +2016,13 @@ class RequerimientoController extends Controller
                 'alm_req.fecha_registro',
                 'alm_req.division_id',
                 'division.descripcion as division',
-                DB::raw("CONCAT(pers.nombres,' ',pers.apellido_paterno,' ',pers.apellido_materno) as nombre_usuario"),
+                'sis_usua.nombre_largo as nombre_usuario',
+                DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
                 DB::raw("(SELECT COUNT(adm_aprobacion.id_aprobacion)
                 FROM administracion.adm_aprobacion
                 WHERE   adm_aprobacion.id_vobo = 3 AND
-                adm_aprobacion.tiene_sustento = true AND adm_aprobacion.id_doc_aprob = adm_documentos_aprob.id_doc_aprob) AS cantidad_sustentos")
+                adm_aprobacion.tiene_sustento = true AND adm_aprobacion.id_doc_aprob = adm_documentos_aprob.id_doc_aprob) AS cantidad_sustentos"),
+
                 // DB::raw("(SELECT SUM(alm_det_req.cantidad * alm_det_req.precio_unitario)
                 // FROM almacen.alm_det_req
                 // WHERE   alm_det_req.id_requerimiento = alm_req.id_requerimiento AND
@@ -2007,13 +2067,15 @@ class RequerimientoController extends Controller
             ->when((intval($idEstado) > 0), function ($query)  use ($idEstado) {
                 return $query->whereRaw('alm_req.estado = ' . $idEstado);
             })
-            ->where([['alm_req.flg_compras', '=', 0], ['adm_documentos_aprob.id_tp_documento', '=', 1]])
-            ->whereIn('alm_req.id_grupo', $idGrupoDeUsuarioEnSesionList);
+            ->whereRaw("alm_req.id_grupo IN (".implode(",",$idGrupoDeUsuarioEnSesionList).") and  (alm_req.id_tipo_requerimiento IN (".implode(",",$idTipoRequerimientoList).") OR alm_req.id_usuario = ".Auth::user()->id_usuario."  ) and alm_req.flg_compras =0 and adm_documentos_aprob.id_tp_documento =1");
 
         return datatables($requerimientos)
+            ->addColumn('nombre_solicitado_por', function ($requerimientos) {
+                return ($requerimientos->id_tipo_requerimiento == 1) ? $requerimientos->nombre_usuario : $requerimientos->solicitado_por;
+            })
             ->filterColumn('nombre_usuario', function ($query, $keyword) {
                 $keywords = trim(strtoupper($keyword));
-                $query->whereRaw("UPPER(CONCAT(pers.nombres,' ',pers.apellido_paterno,' ',pers.apellido_materno)) LIKE ?", ["%{$keywords}%"]);
+                $query->whereRaw("UPPER(sis_usua.nombre_largo) LIKE ?", ["%{$keywords}%"]);
             })
             ->filterColumn('alm_req.fecha_entrega', function ($query, $keyword) {
                 try {
@@ -2244,7 +2306,7 @@ class RequerimientoController extends Controller
     //     foreach ($requerimientos as $element) {
 
     //         if (in_array($element->id_grupo, $idGrupoList) == true) {
-    //             // //Debugbar::info($element->id_grupo);
+    //             // Debugbar::info($element->id_grupo);
     //             $idDocumento = $element->id_doc_aprob;
     //             $id_grupo_req = $element->id_grupo;
     //             $id_tipo_requerimiento_req = $element->id_tipo_requerimiento;
@@ -2254,7 +2316,7 @@ class RequerimientoController extends Controller
 
 
     //             $operaciones = Operacion::getOperacion(1, $id_tipo_requerimiento_req, $id_grupo_req, $division_id, $id_prioridad_req);
-    //             // //Debugbar::info($operaciones[0]->id_operacion);
+    //             // Debugbar::info($operaciones[0]->id_operacion);
     //             if($operaciones ==[]){
     //                 $mensaje[]= "El requerimiento ".$element->codigo." no coincide con una operación valida, es omitido en la lista. Parametros para obtener operacion: tipoDocumento= 1, tipoRequerimiento= ".$id_tipo_requerimiento_req.",Grupo= ".$id_grupo_req.", Division= ".$division_id.", Prioridad= ".$id_prioridad_req;
     //             }else{
@@ -2265,7 +2327,7 @@ class RequerimientoController extends Controller
     //                 $voboList = Aprobacion::getVoBo($idDocumento); // todas las vobo del documento
     //                 $cantidadAprobacionesRealizadas = Aprobacion::getCantidadAprobacionesRealizadas($idDocumento);
     //                 $ultimoVoBo = Aprobacion::getUltimoVoBo($idDocumento);
-    //                 // //Debugbar::info($cantidadAprobacionesRealizadas);
+    //                 // Debugbar::info($cantidadAprobacionesRealizadas);
 
     //                 $nextFlujo = [];
     //                 $nextIdRolAprobante = 0;
@@ -2305,7 +2367,7 @@ class RequerimientoController extends Controller
     //                     if ($ultimoVoBo->id_vobo == 3 && $ultimoVoBo->id_sustentacion != null) { //observado con sustentacion
     //                         foreach ($flujoTotal as $flujo) {
     //                             if ($flujo->orden == 1) {
-    //                                 // //Debugbar::info($flujo);
+    //                                 // Debugbar::info($flujo);
     //                                 $nextFlujo = $flujo;
     //                                 $nextNroOrden = $flujo->orden;
     //                                 $nextIdOperacion = $flujo->id_operacion;
@@ -2322,7 +2384,7 @@ class RequerimientoController extends Controller
     //                     //obtener rol del flujo de aprobacion con orden #1 y comprar con el rol del usuario en sesion
     //                     foreach ($flujoTotal as $flujo) {
     //                         if ($flujo->orden == 1) {
-    //                             // //Debugbar::info($flujo);
+    //                             // Debugbar::info($flujo);
     //                             $nextFlujo = $flujo;
     //                             $nextNroOrden = $flujo->orden;
     //                             $nextIdOperacion = $flujo->id_operacion;
@@ -3698,7 +3760,7 @@ class RequerimientoController extends Controller
         }
 
         // eliminar flujo con numero de orden aprobado
-        // //Debugbar::info($aprobacionPendienteList);
+        // Debugbar::info($aprobacionPendienteList);
 
 
         // si el id_rol usuario le corresponde aprobar la primera aprobacion pendiente y evaluar si le toca la siguiente
@@ -3763,7 +3825,7 @@ class RequerimientoController extends Controller
         //         $status = 200; // No Content
         //         $message = 'Ok';
         //         $aprobaciones = Aprobacion::getVoBo($id_doc_aprob);
-        //         // //Debugbar::info($aprobaciones);
+        //         // Debugbar::info($aprobaciones);
         //         $aprobacionList = $aprobaciones['data'];
         //         $cantidad_aprobaciones = count($aprobacionList);
 
@@ -4017,6 +4079,9 @@ class RequerimientoController extends Controller
                     <td class="subtitle">Empresa</td>
                     <td class="subtitle verticalTop">:</td>
                     <td class="verticalTop">' . $requerimiento['requerimiento'][0]['razon_social_empresa'] . ' - ' . $requerimiento['requerimiento'][0]['codigo_sede_empresa'] . '</td>
+                    <td class="subtitle verticalTop">Tipo Impuesto</td>
+                    <td class="subtitle verticalTop">:</td>
+                    <td>' . ($requerimiento['requerimiento'][0]['tipo_impuesto']==1?'Detracción':($requerimiento['requerimiento'][0]['tipo_impuesto']==2?'Renta':'No Aplica')) . '</td>
                 </tr>
                 <tr>
                     <td class="subtitle">Gerencia</td>
@@ -4444,7 +4509,7 @@ class RequerimientoController extends Controller
             $adjuntoComprobanteContableLength = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar3 != null ? count($request->archivoAdjuntoRequerimientoCabeceraFileGuardar3) : 0;
             $adjuntoComprobanteBancarioLength = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar4 != null ? count($request->archivoAdjuntoRequerimientoCabeceraFileGuardar4) : 0;
             $adjuntoCotizacionLength = $request->archivoAdjuntoRequerimientoCabeceraFileGuardar5 != null ? count($request->archivoAdjuntoRequerimientoCabeceraFileGuardar5) : 0;
-            // //Debugbar::info($requerimiento->id_requerimiento, $request->archivoAdjuntoRequerimientoCabeceraFileGuardar4, $requerimiento->codigo, 5);
+            // Debugbar::info($requerimiento->id_requerimiento, $request->archivoAdjuntoRequerimientoCabeceraFileGuardar4, $requerimiento->codigo, 5);
 
             $idAdjunto = [];
             if ($adjuntoOtrosAdjuntosLength > 0) {
@@ -4580,5 +4645,14 @@ class RequerimientoController extends Controller
                 break;
         }
         return $nombre_mes;
+    }
+    public function requerimientoSustentado(Request $request)  {
+        $requerimiento = Requerimiento::find($request->id);
+        $requerimiento->requerimiento_sustentado = $request->requerimiento_sustentado;
+        $requerimiento->save();
+        $respuesta = array(
+            "status"=>'success'
+        );
+        return response()->json($respuesta,200);
     }
 }

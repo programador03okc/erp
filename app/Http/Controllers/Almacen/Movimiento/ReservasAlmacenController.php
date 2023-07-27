@@ -12,7 +12,7 @@ use App\models\Configuracion\AccesosUsuarios;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-//use Debugbar;
+// use Debugbar;
 use Exception;
 
 class ReservasAlmacenController extends Controller
@@ -86,7 +86,7 @@ class ReservasAlmacenController extends Controller
     // }
     function anularReserva(Request $request)
     {
-
+        
         if( $request->id>0){
             $reservaHelper = new ReservaHelper();
             $reserva=$reservaHelper->anularReservaDeProducto($request->id,null,$request->motivo_de_anulacion);
@@ -96,7 +96,7 @@ class ReservasAlmacenController extends Controller
         } else {
             return response()->json(['respuesta' => 0, 'data' => [],'tipo_estado' => 'warning', 'mensaje' => 'Hubo un error en el servidor. El id de la reserva no es valida']);
         }
-
+    
         // $rspta = DB::table('almacen.alm_reserva')->where('id_reserva', $request->id)->update([
         //     'usuario_anulacion' => Auth::user()->id_usuario,
         //     'motivo_anulacion' => isset($request->motivo_de_anulacion)?$request->motivo_de_anulacion:'',
@@ -114,7 +114,7 @@ class ReservasAlmacenController extends Controller
         // }
 
         // return response()->json(array('respuesta' => $rspta, 'id_req' => $Requerimiento->id_requerimiento, 'estado' => $nuevoEstado));
-
+ 
     }
 
     function actualizarReserva(Request $request)

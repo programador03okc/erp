@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-//use Debugbar;
+// use Debugbar;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
@@ -243,7 +243,7 @@ class RevisarAprobarController extends Controller{
         foreach ($usuarioDivisionAcceso as $value) {
             $idDivisionUsuarioList[] = $value->id_division;
         }
-        // //Debugbar::info($idDivisionUsuarioList);
+        // Debugbar::info($idDivisionUsuarioList);
 
 
         // $idEmpresa = $request->idEmpresa;
@@ -285,7 +285,7 @@ class RevisarAprobarController extends Controller{
             // WHERE   alm_det_req.id_requerimiento = alm_req.id_requerimiento AND
             // alm_det_req.estado != 7) AS monto_total")
         )
-        ->where([['adm_documentos_aprob.id_tp_documento',1],['flg_compras',0]]) //documento => requerimiento de B/S
+        ->where([['adm_documentos_aprob.id_tp_documento',1],['flg_compras',0],['alm_req.id_tipo_requerimiento','!=',1]]) //documento => requerimiento de B/S
         ->whereIn('alm_req.estado',[1,12]) // elaborado, pendiente aprobación
         // ->when((intval($idEmpresa) > 0), function ($query)  use ($idEmpresa) {
         //     return $query->whereRaw('requerimiento_pago.id_empresa = ' . $idEmpresa);
@@ -348,8 +348,11 @@ class RevisarAprobarController extends Controller{
 
         $documentosEnUnaLista = $documentoTipoRequerimientoBienesYServicios->merge($documentoTipoRequerimientoPago);
 
+
         $todosLosDocumentos= collect($documentosEnUnaLista)->sortBy('id_doc_aprob', SORT_NATURAL)->reverse();
         $todosLosDocumentos->values()->all();
+
+
 
         $payload = [];
         $mensaje=[];
@@ -421,7 +424,7 @@ class RevisarAprobarController extends Controller{
                             $idRolAprobanteEnCualquierOrdenList[]= $flujo->id_rol;
                         }
                     }
-                // //Debugbar::info($flujo->aprobar_sin_respetar_orden);
+                // Debugbar::info($flujo->aprobar_sin_respetar_orden);
 
                     if(count(array_intersect($idRolAprobanteEnCualquierOrdenList,$idRolUsuarioList))>0){
                         $aprobarSinImportarOrden = true;
@@ -516,8 +519,8 @@ class RevisarAprobarController extends Controller{
                     }
 
 
-                    // //Debugbar::info($idRolUsuarioList);
-                    // //Debugbar::info(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList));
+                    // Debugbar::info($idRolUsuarioList);
+                    // Debugbar::info(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList));
 
                     if ( in_array(6,$idRolUsuarioList) || ((count(array_intersect($nextIdRolAprobanteList, $idRolUsuarioList))) > 0) == true || (count(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList))) > 0) {
 
@@ -733,7 +736,7 @@ class RevisarAprobarController extends Controller{
         $correoUsuarioList[] = Usuario::find($requerimiento->id_usuario)->email; // notificar a usuario
         $usuariosList = Usuario::getAllIdUsuariosPorRol(4); // notificar al usuario  con rol = 'logistico compras'
 
-        // //Debugbar::info($usuariosList);
+        // Debugbar::info($usuariosList);
         if (count($usuariosList) > 0) {
             if (config('app.debug')) {
                 $correoUsuarioList[] = config('global.correoDebug1');
@@ -757,7 +760,7 @@ class RevisarAprobarController extends Controller{
                     'mensaje' => $mensaje
                 ];
 
-                // //Debugbar::info($payload);
+                // Debugbar::info($payload);
 
                 if (count($destinatarios) > 0) {
                     NotificacionHelper::enviarEmail($payload);
@@ -783,15 +786,23 @@ class RevisarAprobarController extends Controller{
         if($accion ==1){
             $mensaje='Documento aprobado';
 
-            // if($idTipoDocumento == 1){
-            // PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento,$idTipoDocumento);
-            // }else if($idTipoDocumento == 11){
-            //     PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimientoPago,$idTipoDocumento);
-            // }
+            if($idTipoDocumento == 1){
+            PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento,$idTipoDocumento);
+            }else if($idTipoDocumento == 11){
+                PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimientoPago,$idTipoDocumento);
+            }
 
         }elseif($accion ==2){
             $mensaje='Documento rechazado';
             $this->limpiarMapeoDeDocumento($idDocumento);
+
+            // actualizar a true el campo de "documento_anulado" en la tabla historial_presupuesto_interno_saldo para determinar que registros ya no se atenderán
+            if($idTipoDocumento == 11){
+                PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null,null,$idRequerimientoPago);
+            }elseif($idTipoDocumento == 1){
+                PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo($idRequerimiento,null,null);
+            }
+
         }elseif($accion ==3){
             $mensaje='Documento observado';
             $this->limpiarMapeoDeDocumento($idDocumento);
@@ -1031,7 +1042,7 @@ class RevisarAprobarController extends Controller{
 
                 }
 
-                // //Debugbar::info($codigoRequerimiento);
+                // Debugbar::info($codigoRequerimiento);
 
                 $mensajeNotificacion = $codigoRequerimiento.' '.$nombreAccion.' por '.$nombreCompletoUsuarioRevisaAprueba.($request->sustento !=null?(', observación: '.$request->sustento):'');
                 NotificacionHelper::notificacionRequerimiento($idUsuarioDestinatario,$mensajeNotificacion,$documentoInternoId,$documentoId);

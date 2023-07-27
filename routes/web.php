@@ -406,6 +406,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar-categoria-adjunto', [RequerimientoController::class, 'mostrarCategoriaAdjunto'])->name('listar-categoria-adjunto');
 				Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
 				Route::get('listar-flujo/{idDocumento}', [RevisarAprobarController::class, 'mostrarTodoFlujoAprobacionDeDocumento'])->name('listar-flujo');
+				Route::post('requerimiento-sustentado', [RequerimientoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
 			});
 
 			Route::name('mapeo.')->prefix('mapeo')->group(function () {
@@ -459,6 +460,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
 				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
+				Route::post('requerimiento-sustentado', [RequerimientoPagoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
 			});
 		});
 
@@ -717,7 +719,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listarDetalleDevolucion/{id}', [DevolucionController::class, 'listarDetalleDevolucion'])->name('listar-detalle-devolucion');
 				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class, 'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
 
-                Route::get('listar-actualizacion/{id}', [DevolucionController::class, 'listarActualizacion'])->name('listar-actualizacion');
+				Route::get('listar-actualizacion/{id}', [DevolucionController::class, 'listarActualizacion'])->name('listar-actualizacion');
 			});
 
 			Route::group(['as' => 'pendientes-salida.', 'prefix' => 'pendientes-salida'], function () {
@@ -846,6 +848,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardar_doc_compra', [ComprobanteCompraController::class, 'guardar_doc_compra'])->name('guardar-doc-compra');
 			// Route::get('listar_guias_prov/{id?}', [ComprobanteCompraController::class, 'listar_guias_prov');
 			Route::post('listar_docs_compra', [ComprobanteCompraController::class, 'listar_docs_compra'])->name('listar-docs-compra');
+			Route::get('anular_doc_com/{id}', [OrdenesPendientesController::class, 'anular_doc_com'])->name('anular-doc-com');
 
 			Route::get('lista_comprobante_compra', [ComprobanteCompraController::class, 'view_lista_comprobantes_compra'])->name('lista_comprobante_compra');
 			Route::get('documentoAPago/{id}', [ComprobanteCompraController::class, 'documentoAPago'])->name('documento-a-pago');
@@ -1318,8 +1321,6 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('obtener-presupuesto', [NormalizarController::class, 'obtenerPresupuesto'])->name('obtener-presupuesto');
 				Route::post('vincular-partida', [NormalizarController::class, 'vincularPartida'])->name('vincular-partida');
 				Route::get('detalle-requerimiento-pago/{id}', [NormalizarController::class, 'detalleRequerimientoPago'])->name('detalle-requerimiento-pago');
-
-
 			});
 		});
 
@@ -1330,8 +1331,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardarCentroCosto', [CentroCostoController::class, 'guardarCentroCosto'])->name('guardar-centro-costo');
 			Route::post('actualizar-centro-costo', [CentroCostoController::class, 'actualizarCentroCosto'])->name('actualizar-centro-costo');
 			Route::get('anular-centro-costo/{id}', [CentroCostoController::class, 'anularCentroCosto'])->name('anular-centro-costo');
-            Route::get('listar-centro-costos', [CentroCostoController::class, 'listarCentroCostos'])->name('listar-centro-costos');
-
+			Route::get('listar-centro-costos', [CentroCostoController::class, 'listarCentroCostos'])->name('listar-centro-costos');
 		});
 
 
@@ -1493,6 +1493,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::post('obtener-destinatario-por-nombre', [RequerimientoPagoController::class, 'obtenerDestinatarioPorNombre'])->name('obtener-destinatario-por-nombre');
 						Route::get('listar-archivos-adjuntos-pago-requerimiento/{idOrden}', [OrdenController::class, 'listarArchivoAdjuntoPagoRequerimiento'])->name('listar-archivos-adjuntos-pago-requerimiento');
 						Route::get('calcular-prioridad/{id?}', [OrdenController::class, 'calcularPrioridad'])->name('calcular-prioridad');
+						Route::get('obtener-requerimientos-con-impuesto/{idOrden}', [OrdenController::class, 'obtenerRequerimientosConImpuesto'])->name('obtener-requerimientos-con-impuesto');
 					});
 				});
 			});
@@ -1680,6 +1681,22 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardar-penalidad', [CobranzaController::class, 'guardarPenalidad'])->name('guardar-penalidad');
 			Route::post('cambio-estado-penalidad', [CobranzaController::class, 'cambioEstadoPenalidad'])->name('cambio-estado-penalidad');
 			Route::get('exportar-excel', [CobranzaController::class, 'exportarExcel'])->name('exportar-excel');
+
+			/**
+			 * Script para recuperar la info de Gerencia e Iniciar en las nuevas tablas
+			 */
+			Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
+				Route::get('script-periodo', 'Gerencial\Cobranza\CobranzaController@scriptPeriodos')->name('script-periodo');
+				Route::get('script-fases-inicial', 'Gerencial\Cobranza\CobranzaController@scriptRegistroFase')->name('script-fases-inicial');
+				Route::get('script-cobranza-fase', 'Gerencial\Cobranza\CobranzaController@scriptFases')->name('script-cobranza-fase');
+                #pasa los contribuyentes a clientes
+                Route::get('script-contribuyentes-clientes', 'Gerencial\Cobranza\CobranzaController@scriptContribuyenteCliente')->name('script-contribuyente-cliente');
+                #generar codigo para los clientes
+                Route::get('script-generar-codigo-clientes', 'Gerencial\Cobranza\CobranzaController@scriptGenerarCodigoCliente')->name('script-generar-codigo-clientes');
+                #generar codigo para los clientes
+                Route::get('script-generar-codigo-proveedores', 'Gerencial\Cobranza\CobranzaController@scriptGenerarCodigoProveedores')->name('script-generar-codigo-proveedores');
+				Route::get('carga-manual', 'Gerencial\Cobranza\CobranzaController@cargaManual')->name('carga-manual');
+			});
 
 			Route::get('cliente', [CobranzaClienteController::class, 'cliente'])->name('cliente');
 			Route::get('crear-cliente', [CobranzaClienteController::class, 'nuevoCliente'])->name('crear-cliente');
@@ -1883,13 +1900,19 @@ Route::middleware(['auth'])->group(function () {
 	 */
 	Route::group(['as' => 'power-bi.', 'prefix' => 'power-bi'], function () {
 		Route::group(['as' => 'ventas.', 'prefix' => 'ventas'], function () {
-			Route::get('index', function () { return view('power-bi/ventas'); })->name('index');
+			Route::get('index', function () {
+				return view('power-bi/ventas');
+			})->name('index');
 		});
 		Route::group(['as' => 'cobranzas.', 'prefix' => 'cobranzas'], function () {
-			Route::get('index', function () { return view('power-bi/cobranzas'); })->name('index');
+			Route::get('index', function () {
+				return view('power-bi/cobranzas');
+			})->name('index');
 		});
 		Route::group(['as' => 'inventario.', 'prefix' => 'inventario'], function () {
-			Route::get('index', function () { return view('power-bi/inventario'); })->name('index');
+			Route::get('index', function () {
+				return view('power-bi/inventario');
+			})->name('index');
 		});
 	});
 
@@ -2366,7 +2389,6 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar', [ProyectosController::class, 'listar_cuadro_gastos']);
 				Route::post('cuadroGastosExcel', [PresupuestoController::class, 'cuadroGastosExcel'])->name('cuadro-gastos-excel');
 				Route::get('mostrarGastosPorPresupuesto/{id}', [PresupuestoController::class, 'mostrarGastosPorPresupuesto'])->name('mostrar-gastos-presupuesto');
-
 			});
 		});
 

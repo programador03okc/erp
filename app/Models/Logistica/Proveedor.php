@@ -32,7 +32,6 @@ class Proveedor extends Model
         'contribuyente.pais',
         'contribuyente.distrito',
         'establecimientoProveedor',
-        'cuentaContribuyente.usuario',
         // 'contribuyente.distrito.provincia',
         // 'contribuyente.distrito.provincia.departamento',
         'estadoProveedor')->whereHas('contribuyente', function($q){
@@ -80,6 +79,7 @@ class Proveedor extends Model
         'cuentaContribuyente.banco.contribuyente',
         'cuentaContribuyente.tipoCuenta',
         'cuentaContribuyente.moneda',
+        'cuentaContribuyente.usuario',
         'pais',
         'distrito',
         'contactoContribuyente' => function($q){

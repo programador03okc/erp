@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\administracion\empresa;
 use App\Models\administracion\area;
 use App\Models\administracion\sede;
+use App\Models\Configuracion\Grupo;
 
 date_default_timezone_set('America/Lima');
 
@@ -17,6 +18,8 @@ class AdministracionController extends Controller{
     function view_main_administracion(){
         $totalEmpresa = empresa::where('estado', 1)->count();
         $totalSede = sede::where('estado', 1)->count();
+        $totalGrupo = Grupo::where('id_estado', 1)->count();
+        $totalArea = area::where('estado', 1)->count();
         return view('administracion.main', get_defined_vars());
     }
 

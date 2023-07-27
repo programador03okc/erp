@@ -991,7 +991,7 @@ class RequerimientoPendienteView {
                 },
                 {
                     'render': function (data, type, row) {
-                        return '<span class="label label-' + row.bootstrap_color + ' estadoRequerimiento" title="' + (row['estado_doc'] == 'En pausa' ? 'Retiro de aprobación por actualización de CDP' : '') + '">' + row['estado_doc'] + '</span>';
+                        return  row['estado_doc'];
                     }, targets: 9
                 },
                 {
@@ -1118,29 +1118,29 @@ class RequerimientoPendienteView {
                 let color = '#ffffff';
                 switch (data.bootstrap_color) {
                     case 'default':
-                        color = '#777777';
+                        color = '#d7d7d7';
                         break;
                     case 'primary':
-                        color = '#3c8dbc';
+                        color = '#5caad9';
                         break;
                     case 'success':
-                        color = '#5cb85c';
+                        color = '#a2c9a2';
                         break;
                     case 'secundary':
-                        color = '#ffffff';
+                        color = '#cbc0d6';
                         break;
                     case 'warning':
-                        color = '#f39c12';
+                        color = '#e8e9bc';
                         break;
                     case 'info':
                         color = '#72bcd4';
                         break;
                     case 'danger':
-                        color = '#d9534f';
+                        color = '#98beca';
                         break;
 
                     default:
-                        color = '#ffffff';
+                        color = '#f2f2f2';
                         break;
                 }
                 $(row.childNodes[9]).css('background-color', color);

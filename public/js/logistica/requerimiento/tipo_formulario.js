@@ -88,7 +88,7 @@ function changeOptTipoReqSelect(e){
 }
 
 function autoSelectTipoRequerimientoPorDefecto(){
-    // document.querySelector("div[type='requerimiento'] select[name='tipo_requerimiento']").value =4;
+    document.querySelector("div[type='requerimiento'] select[name='tipo_requerimiento']").value =4;
     if(id_grupo_usuario_sesion_list.includes(3)){ //proyectos
         cambiarTipoFormulario('BIENES_SERVICIOS_PROYECTOS');
 

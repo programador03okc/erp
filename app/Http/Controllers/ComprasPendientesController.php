@@ -534,10 +534,10 @@ class ComprasPendientesController extends Controller
                 WHERE det.id_requerimiento = alm_req.id_requerimiento AND alm_reserva.estado = 1
                 AND det.estado != 7) AS count_stock_comprometido")
             )
-            ->when(($empresa > 0), function ($query) use ($empresa) {
+            ->when(($empresa != 'SIN_FILTRO'), function ($query) use ($empresa) {
                 return $query->where('alm_req.id_empresa', '=', $empresa);
             })
-            ->when(($sede > 0), function ($query) use ($sede) {
+            ->when(($sede != 'SIN_FILTRO'), function ($query) use ($sede) {
                 return $query->where('alm_req.id_sede', '=', $sede);
             })
             ->when(($reserva == 'SIN_RESERVA'), function ($query) {

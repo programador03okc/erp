@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_migracion')
+@include('layouts.menu_migracion')
 
 @section('cabecera') Migraciones de productos por serie @endsection
 

@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="container">
     <fieldset>
         <legend><h2>Datos del Personal</h2></legend>
@@ -9,7 +9,7 @@
         </div>
     </fieldset>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <!-- <script src="{{('/js/rrhh/trabajador.js')}}"></script> -->
-@include('layout.fin_html')
+@include('layouts.fin_html')

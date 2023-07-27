@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="page-main" type="aportacion">
     <legend><h2>Aportaciones del Empleador</h2></legend>
     <div class="row">
@@ -47,7 +47,7 @@
         </div>
     </div>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/rrhh/remuneraciones/aportacion.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

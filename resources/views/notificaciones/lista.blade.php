@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_notificacion')
+@include('layouts.menu_notificacion')
 
 @section('cabecera') Lista de notificaciones @endsection
 

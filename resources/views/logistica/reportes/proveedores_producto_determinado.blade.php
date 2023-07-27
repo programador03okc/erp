@@ -145,8 +145,8 @@
 </div>
 
 
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 @include('logistica.reportes.modal_catalogo_productos')
 @endsection
 

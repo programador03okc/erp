@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_contabilidad')
+@include('layouts.menu_contabilidad')
 @section('cabecera')
     Dashboard Contabilidad
 @endsection

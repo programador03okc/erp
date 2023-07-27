@@ -27,38 +27,38 @@ Crear Comprobante Compra
 
                 <h3 class="box-title">Comprobante N° <span class="badge badge-secondary" id="codigo">0000-0000000</span></h3>
                 <div class="box-tools pull-right">
-
+                    
                     <button type="button" class="btn btn-sm btn-warning nueva-comprobante" data-toggle="tooltip" data-placement="bottom"
                         title="Nuevo Comprobante Compra">
                         <i class="fas fa-copy"></i> Nuevo
                     </button>
-
+                    
                     <input id="submit_comprobante" class="btn btn-sm btn-success guardar-comprobante" type="submit" style="display: none;"
                         data-toggle="tooltip" data-placement="bottom" title="Actualizar comprobante" value="Guardar">
-
+                    
                     <button type="button" class="btn btn-sm btn-primary edit-comprobante"
                         data-toggle="tooltip" data-placement="bottom" title="Editar comprobante">
                         <i class="fas fa-pencil-alt"></i> Editar
                     </button>
-
+                    
                     <button type="button" class="btn btn-sm btn-danger anular-comprobante" data-toggle="tooltip" data-placement="bottom"
                         title="Anular comprobante" onClick="anularComprobante();">
                         <i class="fas fa-trash"></i> Anular
                     </button>
-
+                    
                     <button type="button" class="btn btn-sm btn-info buscar-customizacion" data-toggle="tooltip" data-placement="bottom"
                         title="Buscar historial de registros" onClick="comprobantesModal();">
                         <i class="fas fa-search"></i> Buscar</button>
-
+                    
                     <button type="button" class="btn btn-sm btn-secondary cancelar" data-toggle="tooltip" data-placement="bottom"
                         title="Cancelar" style="display: none;">
                             Cancelar</button>
-{{--
+{{--                     
                     <button type="button" class="btn btn-sm btn-success procesar-comprobante" data-toggle="tooltip" data-placement="bottom"
                         title="Procesar comprobante" onClick="procesarComprobante();">
                         <i class="fas fa-share"></i> Procesar
                     </button> --}}
-
+                    
                 </div>
             </div>
             <div class="box-body">
@@ -185,7 +185,7 @@ Crear Comprobante Compra
                     </div>
                 </div>
             </div>
-
+            
             <div class="row">
                 <div class="col-md-12">
                     <table id="totalSobrantesTransformados" width="100%">
@@ -273,7 +273,7 @@ Crear Comprobante Compra
 
 <script>
     $(document).ready(function() {
-        
+        seleccionarMenu(window.location);
         usuarioSession = '{{Auth::user()->id_usuario}}';
         usuarioNombreSession = '{{Auth::user()->nombre_corto}}';
     });

@@ -93,7 +93,7 @@
                             <h5>Código orden softlink</h5>
                             <input class="form-control activation" name="codigo_orden" type="text" placeholder="" readonly>
                         </div>
-
+                        
                         <div class="col-md-1" id="group-periodo_orden">
                             <h5>Periodo</h5>
                             <select class="form-control activation handleChangePeriodo" name="id_periodo">
@@ -412,46 +412,58 @@
                 </div>
             </div>
         </div>
-    </form>
-
-    <div class="hidden" id="divOculto">
-        <select id="selectUnidadMedida">
-            @foreach ($unidades_medida as $unidad)
-                <option value="{{$unidad->id_unidad_medida}}" {{$unidad->id_unidad_medida=='1' ? 'selected' : ''}}>{{$unidad->abreviatura}}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="hidden">
-        <h5>Empresa - Sede</h5>
-        <select name="selectEmpresa">
-            @foreach ($empresas as $empresa)
-                @if($empresa->id_empresa ==1)
-                    <option value="{{$empresa->id_empresa}}" data-codigo-empresa="{{$empresa->codigo}}" selected>{{$empresa->razon_social}}</option>
-                @else
-                    <option value="{{$empresa->id_empresa}}" data-codigo-empresa="{{$empresa->codigo}}">{{$empresa->razon_social}}</option>
-                @endif
-            @endforeach
-        </select>
-    </div>
-
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_lista_oc_softlink')
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_estado_cuadro_presupuesto')
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.vincularRequerimientoConOrdenModal')
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.listaItemsRequerimientoParaVincularModal')
-    @include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_catalogo_items')
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_ordenes_elaboradas')
-    @include('logistica.gestion_logistica.proveedores.modal_cuentas_bancarias_proveedor')
-    @include('logistica.gestion_logistica.proveedores.modal_agregar_cuenta_bancaria_proveedor')
-    @include('logistica.gestion_logistica.proveedores.modal_lista_proveedores')
-    @include('logistica.cotizaciones.add_proveedor')
-    @include('publico.ubigeoModal')
-    @include('logistica.gestion_logistica.proveedores.modal_contacto_proveedor')
-    @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_trabajadores')
-
-    @include('logistica.gestion_logistica.compras.pendientes.modal_ver_cuadro_costos')
-    @include('logistica.requerimientos.modal_vincular_item_requerimiento')
 </div>
+<br>
+
+
+<div class="form-inline">
+    <div class="checkbox" id="check-guarda_en_requerimiento" style="display:none">
+        <label>
+            <input type="checkbox" name="guardarEnRequerimiento"> Guardar nuevos items en requerimiento?
+        </label>
+    </div>
+</div>
+
+
+</form>
+</div>
+
+<div class="hidden" id="divOculto">
+    <select id="selectUnidadMedida">
+        @foreach ($unidades_medida as $unidad)
+        <option value="{{$unidad->id_unidad_medida}}" {{$unidad->id_unidad_medida=='1' ? 'selected' : ''}}>{{$unidad->abreviatura}}</option>
+        @endforeach
+    </select>
+</div>
+<div class="hidden">
+    <h5>Empresa - Sede</h5>
+    <select name="selectEmpresa">
+        @foreach ($empresas as $empresa)
+        @if($empresa->id_empresa ==1)
+        <option value="{{$empresa->id_empresa}}" data-codigo-empresa="{{$empresa->codigo}}" selected>{{$empresa->razon_social}}</option>
+        @else
+        <option value="{{$empresa->id_empresa}}" data-codigo-empresa="{{$empresa->codigo}}">{{$empresa->razon_social}}</option>
+        @endif
+        @endforeach
+    </select>
+</div>
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_lista_oc_softlink')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_estado_cuadro_presupuesto')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.vincularRequerimientoConOrdenModal')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.listaItemsRequerimientoParaVincularModal')
+@include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_catalogo_items')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_ordenes_elaboradas')
+@include('logistica.gestion_logistica.proveedores.modal_cuentas_bancarias_proveedor')
+@include('logistica.gestion_logistica.proveedores.modal_agregar_cuenta_bancaria_proveedor')
+@include('logistica.gestion_logistica.proveedores.modal_lista_proveedores')
+@include('logistica.cotizaciones.add_proveedor')
+@include('publico.ubigeoModal')
+@include('logistica.gestion_logistica.proveedores.modal_contacto_proveedor')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_trabajadores')
+
+@include('logistica.gestion_logistica.compras.pendientes.modal_ver_cuadro_costos')
+@include('logistica.requerimientos.modal_vincular_item_requerimiento') <!--revisar uso -->
 @endsection
 
 @section('scripts')
@@ -466,9 +478,10 @@
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
+
     <script>
         $(document).ready(function() {
-
+            seleccionarMenu(window.location);
             $(".sidebar-mini").addClass("sidebar-collapse");
             $('input[type="checkbox"].minimal').iCheck({ checkboxClass: 'icheckbox_minimal-blue' });
         });

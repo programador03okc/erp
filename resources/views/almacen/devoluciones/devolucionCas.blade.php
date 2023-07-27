@@ -12,16 +12,17 @@
         }
     </style>
 @endsection
+
 @section('breadcrumb')
 <ol class="breadcrumb">
-    <li><a href="#"><i class="fas fa-tachometer-alt"></i> Servicios CAS</a></li>
+    <li><a href="{{route('cas.index')}}"><i class="fas fa-tachometer-alt"></i> Servicios CAS</a></li>
     <li>Movimientos</li>
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
 
 @section('cuerpo')
-@if (in_array(Auth::user()->id_usuario,[1,3,27,17,77,93,64,8,71,76]))
+@if (in_array(Auth::user()->id_usuario,[1,3,27,17,77,93,64,8,71,76,141]))
     @include('almacen.devoluciones.devolucionContenido')
 @else
 <div class="row">
@@ -34,12 +35,12 @@
     </div>
 </div>
 @endif
+
 @include('almacen.devoluciones.devolucionModal')
 @include('almacen.customizacion.productoCatalogoModal')
 @include('almacen.devoluciones.contribuyenteModal')
 @include('almacen.devoluciones.salidasModal')
 @include('cas.incidencias.incidenciaModal')
-
 @endsection
 
 @section('scripts')
@@ -60,7 +61,6 @@
     <script src="{{ asset('js/almacen/customizacion/productoCatalogoModal.js')}}?v={{filemtime(public_path('js/almacen/customizacion/productoCatalogoModal.js'))}}"></script>
 
     <script>
-        console.log('{{Auth::user()->id_usuario}}');
         $(document).ready(function() {
             
             usuarioSession = '{{Auth::user()->id_usuario}}';
@@ -69,7 +69,3 @@
     </script>
 
 @endsection
-
-
-
-{{-- -------------------------- --}}

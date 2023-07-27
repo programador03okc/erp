@@ -30,7 +30,7 @@ Crear / editar requerimiento
     }
 </style>
 
-@section('cuerpo')
+@section('content')
 <div class="page-main" type="requerimiento">
     <div class="box box-primary">
         <div class="box-body">
@@ -50,7 +50,10 @@ Crear / editar requerimiento
                 <input type="text" class="oculto" name="monto_subtotal">
                 <input type="text" class="oculto" name="monto_igv">
                 <input type="text" class="oculto" name="monto_total">
-        
+
+
+
+
                 <div class="group-table" id="group-historial-revisiones" hidden>
                     <div class="row">
                         <div class="col-sm-12">
@@ -72,7 +75,7 @@ Crear / editar requerimiento
                         </div>
                     </div>
                 </div>
-        
+
                 <div class="row">
                     <div class="col-md-12">
                         <h4 style="display:flex;justify-content: space-between;">General
@@ -99,19 +102,19 @@ Crear / editar requerimiento
                                         @endforeach
                                     </select>
                                 </div> -->
-        
+
                                 <div class="col-md-2" id="input-group-fecha" hidden>
                                     <h5>Fecha Creación</h5>
                                     <input type="text" class="form-control" name="fecha_requerimiento" disabled="true" min={{ date('Y-m-d H:i:s') }} value={{ date('Y-m-d H:i:s') }}>
                                 </div>
-        
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <h5>Concepto/Motivo *</h5>
                                         <input type="text" class="form-control activation handleChangeUpdateConcepto" name="concepto">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-moneda">
                                     <div class="form-group">
                                         <h5>Moneda</h5>
@@ -122,7 +125,7 @@ Crear / editar requerimiento
                                         </select>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <h5>Periodo</h5>
@@ -143,10 +146,10 @@ Crear / editar requerimiento
                                         </select>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-rol-usuario" hidden>
                                     <div class="form-group">
-        
+
                                         <h5>Roles del usuario</h5>
                                         <div class="input-group-okc">
                                             <select class="form-control input-sm activation" name="rol_usuario">
@@ -157,7 +160,7 @@ Crear / editar requerimiento
                                         </div>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-empresa">
                                     <div class="form-group">
                                         <h5>Empresa *</h5>
@@ -169,7 +172,7 @@ Crear / editar requerimiento
                                         </select>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-sede">
                                     <div class="form-group">
                                         <h5>Sede *</h5>
@@ -178,14 +181,14 @@ Crear / editar requerimiento
                                         </select>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-fecha_entrega">
                                     <div class="form-group">
                                         <h5>Fecha límite entrega</h5>
                                         <input type="date" class="form-control input-sm activation handleChangeFechaLimite" name="fecha_entrega">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-aprobante">
                                     <div class="form-group">
                                         <h5>División *</h5>
@@ -209,8 +212,8 @@ Crear / editar requerimiento
                                         </select>
                                     </div>
                                 </div>
-        
-        
+
+
                                 <div class="col-md-2" id="input-group-asignar_trabajador">
                                     <div class="form-group">
                                         <h5>Solicitado por</h5>
@@ -223,7 +226,7 @@ Crear / editar requerimiento
                                         </div>
                                     </div>
                                 </div>
-        
+
                                 <div id="input-group-fuente">
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -254,11 +257,11 @@ Crear / editar requerimiento
                                         </div>
                                     </div>
                                 </div>
-        
-        
+
+
                                 <div class="col-md-2" id="input-group-monto">
                                     <div class="form-group">
-        
+
                                         <h5>Monto total</h5>
                                         <div class="input-group-okc">
                                             <div class="input-group-addon" name="montoMoneda" style="width: auto;">S/.</div>
@@ -266,24 +269,36 @@ Crear / editar requerimiento
                                         </div>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-12" id="input-group-observacion">
+                                        <div class="col-md-10" id="input-group-observacion">
                                             <h5>Observación:</h5>
                                             <textarea class="form-control activation" name="observacion" cols="100" rows="100" style="height:50px;" disabled></textarea>
                                         </div>
+
+                                        <div class="col-md-2" id="input-group-tipo-impuesto">
+                                            <div class="form-group">
+                                            <h5>Tipo de Impuesto</h5>
+                                                <select class="form-control activation " name="tipo_impuesto">
+                                                    <option value="0">No aplica</option>
+                                                    <option value="1">Detracción</option>
+                                                    <option value="2">Renta</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-        
+
                             </div>
-        
+
                         </fieldset>
                     </div>
                 </div>
-        
-        
-        
+
+
+
                 <div class="row" hidden>
                     <div class="col-md-12">
                         <h4 style="display:flex;justify-content: space-between;">Almacén</h4>
@@ -298,7 +313,7 @@ Crear / editar requerimiento
                         </fieldset>
                     </div>
                 </div>
-        
+
                 <div class="row">
                     <div id="input-group-cdp">
                         <div class="col-md-6">
@@ -310,11 +325,11 @@ Crear / editar requerimiento
                                     <div style="display:flex;">
                                         <input type="text" class="form-control oculto" name="id_cc">
                                         <input type="text" class="form-control" name="codigo_oportunidad" readonly>
-        
+
                                         <button type="button" class="btn-primary handleClickModalListaCuadroDePresupuesto activation" title="Buscar cuadro de presupuesto" name="btnSearchCDP" disabled>
                                             <i class=" fas fa-search"></i>
                                         </button>
-        
+
                                         <button type="button" class="btn-primary handleClickLimpiarSeleccionCuadroDePresupuesto activation" title="Limpiar selección" name="btnCleanCDP" disabled>
                                             <i class="fas fa-broom"></i>
                                         </button>
@@ -324,7 +339,7 @@ Crear / editar requerimiento
                             </fieldset>
                         </div>
                     </div>
-        
+
                     <div id="input-group-incidencia" hidden>
                     <div class="col-md-6">
                         <h4 style="display:flex;justify-content: space-between;">Inicidencia</h4>
@@ -345,9 +360,9 @@ Crear / editar requerimiento
                         </fieldset>
                     </div>
                 </div>
-        
+
                 </div>
-        
+
                 <div class="row" id="input-group-presupuesto-interno">
                     <div class="col-md-12">
                         <h4 style="display:flex;justify-content: space-between;">Presupuesto Interno</h4>
@@ -360,7 +375,7 @@ Crear / editar requerimiento
                                         <div class="input-group-okc">
                                             <select class="form-control activation handleChangePresupuestoInterno" name="id_presupuesto_interno">
                                                 @foreach ($presupuestoInternoList as $presupuestoInterno)
-                                                <option value="{{$presupuestoInterno->id_presupuesto_interno}}" data-codigo="{{$presupuestoInterno->codigo}}">{{$presupuestoInterno->descripcion}}</option>
+                                                <option value="{{$presupuestoInterno->id_presupuesto_interno}}" data-codigo="{{$presupuestoInterno->codigo}}">{{$presupuestoInterno->codigo}} - {{$presupuestoInterno->descripcion}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -370,7 +385,7 @@ Crear / editar requerimiento
                         </fieldset>
                     </div>
                 </div>
-        
+
                 <div class="row" id="input-group-proyecto">
                     <div class="col-md-12">
                         <h4 style="display:flex;justify-content: space-between;">Proyecto</h4>
@@ -392,7 +407,7 @@ Crear / editar requerimiento
                         </fieldset>
                     </div>
                 </div>
-        
+
                 <div class="row" id="seccion-cliente">
                     <div class="col-md-12">
                         <h4 style="display:flex;justify-content: space-between;">Cliente</h4>
@@ -408,18 +423,18 @@ Crear / editar requerimiento
                                         </select>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-4" id="input-group-cliente">
                                     <h5>Cliente</h5>
                                     <div style="display:flex;">
                                         <input type="text" class="oculto" name="id_cliente">
                                         <input type="text" class="form-control activation" name="cliente_ruc" style="width: 120px; display: none;">
                                         <input type="text" class="form-control activation" name="cliente_razon_social" style="display: none;">
-        
+
                                         <input type="text" class="oculto" name="id_persona">
                                         <input type="text" class="form-control activation" name="dni_persona" style="width: 120px;">
                                         <input type="text" class="form-control activation" name="nombre_persona">
-        
+
                                         <!-- <div class="input-group-append">         -->
                                         <button type="button" class="btn-primary" title="Seleccionar Cliente" name="btnCliente" onClick="openCliente();"><i class="fas fa-user-tie"></i></button>
                                         <!-- </div>
@@ -428,7 +443,7 @@ Crear / editar requerimiento
                                         <!-- </div> -->
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-2" id="input-group-ubigeo-entrega">
                                     <h5>Ubigeo entrega</h5>
                                     <div style="display:flex;">
@@ -464,12 +479,12 @@ Crear / editar requerimiento
                                         </button>
                                     </div>
                                 </div>
-        
+
                             </div>
                         </fieldset>
                     </div>
                 </div>
-        
+
                 <div class="row" id="seccion-contacto-cliente">
                     <div class="col-md-12">
                         <h4 style="display:flex;justify-content: space-between;">Contacto cliente</h4>
@@ -509,8 +524,8 @@ Crear / editar requerimiento
                         </fieldset>
                     </div>
                 </div>
-        
-        
+
+
                 <br>
                 <div class="row">
                     <div class="col-sm-12">
@@ -542,13 +557,13 @@ Crear / editar requerimiento
                                                 </tr>
                                             </thead>
                                             <tbody id="body_detalle_requerimiento">
-        
+
                                             </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="8" class="text-right"><strong>Monto neto:</strong></td>
                                                     <td class="text-right"><span name="simboloMoneda">S/</span><label name="monto_subtotal"> 0.00</label></td>
-        
+
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
@@ -558,7 +573,7 @@ Crear / editar requerimiento
                                                         <strong>IGV 18% </strong><input class="activation handleClickIncluyeIGV" type="checkbox" name="incluye_igv" checked>
                                                     </td>
                                                     <td class="text-right"><span name="simboloMoneda">S/</span><label name="monto_igv"> 0.00</label></td>
-        
+
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
@@ -630,7 +645,7 @@ Crear / editar requerimiento
                         </div>
                     </div>
                 </fieldset>
-        
+
                 <div class="row">
                     <div class="col-md-6">
                         <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
@@ -668,7 +683,7 @@ Crear / editar requerimiento
                         </fieldset>
                     </div>
                 </div>
-        
+
                 <div class="row">
                     <div class="col-md-12">
                         <button type="button" onclick="scrollToTheTopOfDocument()" id="btnVolverArriba" title="Volver Arriba"><i class="fas fa-arrow-circle-up"></i></button>
@@ -680,7 +695,6 @@ Crear / editar requerimiento
             </form>
         </div>
     </div>
-
 </div>
 
 <div class="hidden" id="divOculto">
@@ -727,11 +741,12 @@ Crear / editar requerimiento
 @include('logistica.requerimientos.modal_detalle_requerimiento')
 @include('almacen.verRequerimientoEstado')
 @include('logistica.requerimientos.modal_promocion_item')
+
+
 @endsection
 
 @section('scripts')
-
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
@@ -741,68 +756,83 @@ Crear / editar requerimiento
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
+    
+<!-- <script src="{{ asset('js/logistica/requerimiento/modal_buscar_stock_almacenes.js') }}"></script> -->
+<script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>
+<script src="{{ asset('js/logistica/requerimiento/cuadro_costos.js') }}"></script>
+<script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
+
+<script src="{{ asset('js/logistica/requerimiento/scrollToTheTopOfDocument.js') }}"></script>
+<script src="{{ asset('js/logistica/requerimiento/duplicar_requerimiento.js') }}"></script>
+<script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
+<script src="{{ asset('js/logistica/requerimiento/modal_detalle_requerimiento.js') }}"></script>
+<script src="{{ asset('js/logistica/requerimiento/mostrar.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/mostrar.js'))}}"></script>
+
+<script src="{{ asset('js/logistica/requerimiento/tipo_formulario.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/tipo_formulario.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/cabecera_detalle.js') }}"></script>
+<!-- <script src="{{ asset('js/logistica/requerimiento/inicializar.js') }}"></script> -->
+<script src="{{ asset('js/logistica/requerimiento/modal_almacen_reserva.js')}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/modal_motivo_detalle_requerimiento.js')}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/modal_seleccionar_crear_proveedor.js')}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/public.js') }}"></script>
+<script src="{{ asset('js/logistica/adjuntar_archivos_req.js') }}"></script>
+<script src="{{ asset('js/publico/modal_area.js')}}?v={{filemtime(public_path('js/publico/modal_area.js'))}}"></script>
+<!-- <script src="{{ asset('js/proyectos/opcion/opcionModal.js')}}"></script> -->
+<script src="{{ asset('js/publico/ubigeoModal.js')}}"></script>
+<script src="{{ asset('js/publico/personaModal.js')}}"></script>
+<script src="{{ asset('js/publico/hiddenElement.js')}}"></script>
+<script src="{{ asset('js/logistica/clienteModal.js')}}"></script>
+<script src="{{ asset('js/logistica/add_cliente.js')}}"></script>
+<script src="{{ asset('js/logistica/crear_nuevo_producto.js')}}"></script>
+<script src="{{ asset('js/logistica/crear_nueva_marca.js')}}"></script>
+<script src="{{ asset('js/almacen/producto/saldosModal.js')}}"></script>
+<script src="{{ asset('js/publico/consulta_sunat.js')}}"></script>
+<script src="{{ asset('template/plugins/moment.min.js') }}"></script>
+
+<script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoController.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/incidenciasModal.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/incidenciasModal.js'))}}"></script>
+
+<script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
+
+<script>
+    var grupos = JSON.parse('{!!$grupos!!}');
+    var id_grupo_usuario_sesion_list = [];
+
+    autoSelectTipoRequerimientoPorDefecto();
+    // grupos.forEach(element => {
+    //     if(element.id_grupo ==3){ // proyectos
+    //         cambiarTipoFormulario(4)
+    //     }else if(element.id_grupo ==2){ // comercial
+    //         cambiarTipoFormulario(5)
+
+    //     }else if(element.id_grupo ==1){ //administración
+    //         cambiarTipoFormulario(6)
+    //     }
+    // });
 
 
-    <script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/cuadro_costos.js') }}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
+    window.onload = function() {
 
-    <script src="{{ asset('js/logistica/requerimiento/scrollToTheTopOfDocument.js') }}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/duplicar_requerimiento.js') }}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/historial.js') }}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/modal_detalle_requerimiento.js') }}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/mostrar.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/mostrar.js'))}}"></script>
+        seleccionarMenu(window.location);
+        var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
+        var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
+        document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form
 
-    <script src="{{ asset('js/logistica/requerimiento/tipo_formulario.js') }}?v={{filemtime(public_path('js/logistica/requerimiento/tipo_formulario.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/cabecera_detalle.js') }}"></script>
-    <!-- <script src="{{ asset('js/logistica/requerimiento/inicializar.js') }}"></script> -->
-    <script src="{{ asset('js/logistica/requerimiento/modal_almacen_reserva.js')}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/modal_motivo_detalle_requerimiento.js')}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/modal_seleccionar_crear_proveedor.js')}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/public.js') }}"></script>
-    <script src="{{ asset('js/logistica/adjuntar_archivos_req.js') }}"></script>
-    <script src="{{ asset('js/publico/modal_area.js')}}?v={{filemtime(public_path('js/publico/modal_area.js'))}}"></script>
-    <!-- <script src="{{ asset('js/proyectos/opcion/opcionModal.js')}}"></script> -->
-    <script src="{{ asset('js/publico/ubigeoModal.js')}}"></script>
-    <script src="{{ asset('js/publico/personaModal.js')}}"></script>
-    <script src="{{ asset('js/publico/hiddenElement.js')}}"></script>
-    <script src="{{ asset('js/logistica/clienteModal.js')}}"></script>
-    <script src="{{ asset('js/logistica/add_cliente.js')}}"></script>
-    <script src="{{ asset('js/logistica/crear_nuevo_producto.js')}}"></script>
-    <script src="{{ asset('js/logistica/crear_nueva_marca.js')}}"></script>
-    <script src="{{ asset('js/almacen/producto/saldosModal.js')}}"></script>
-    <script src="{{ asset('js/publico/consulta_sunat.js')}}"></script>
+        const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));
+        presupuestoInternoView.eventos();
 
-    <script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoController.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/incidenciasModal.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/incidenciasModal.js'))}}"></script>
+        const requerimientoModel = new RequerimientoModel();
+        const requerimientoController = new RequerimientoCtrl(requerimientoModel);
+        const requerimientoView = new RequerimientoView(requerimientoController);
+        requerimientoView.init();
 
-    <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
+        
 
-    <script>
-        var grupos = JSON.parse('{!!$grupos!!}');
-        var id_grupo_usuario_sesion_list = [];
-
-        autoSelectTipoRequerimientoPorDefecto();
-
-        window.onload = function() {
-            
-            var descripcion_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->descripcion:null}}';
-            var id_grupo = '{{Auth::user()->getGrupo()?Auth::user()->getGrupo()->id_grupo:null}}';
-            document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value = id_grupo; // no borrar al limpiar con reset el form
-
-            const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));
-            presupuestoInternoView.eventos();
-
-            const requerimientoModel = new RequerimientoModel();
-            const requerimientoController = new RequerimientoCtrl(requerimientoModel);
-            const requerimientoView = new RequerimientoView(requerimientoController);
-            requerimientoView.init();
-
-        };
-    </script>
+    };
+</script>
 @endsection

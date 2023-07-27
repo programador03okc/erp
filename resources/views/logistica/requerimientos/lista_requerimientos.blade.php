@@ -110,6 +110,7 @@ Listado de requerimientos logísticos
                                         <th class="text-center">Monto Subtotal</th>
                                         <th class="text-center">Monto Total</th>
                                         <th class="text-center">Creado por</th>
+                                        <th class="text-center">Solicitado por</th>
                                         <th class="text-center" style="width:5%;">Estado</th>
                                         <th class="text-center" style="width:15%">Acción</th>
                                     </tr>
@@ -174,38 +175,43 @@ Listado de requerimientos logísticos
 @endsection
 
 @section('scripts')
-
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
-    <!-- <script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script> -->
-    <!-- <script src="{{ asset('js/logistica/requerimiento/AprobarRequerimientoView.js')}}"></script> -->
-    <script src="{{ asset('js/logistica/requerimiento/ListarRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/ListarRequerimientoView.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoController.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/trazabilidad.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/trazabilidad.js'))}}"></script>
-    <script src="{{ asset('js/logistica/requerimiento/verTodoAdjuntosYAdicionalesRequerimientoCompra.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verTodoAdjuntosYAdicionalesRequerimientoCompra.js'))}}"></script>
+<!-- <script src="{{ asset('js/logistica/requerimiento/TrazabilidadRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/TrazabilidadRequerimientoView.js'))}}"></script> -->
+<!-- <script src="{{ asset('js/logistica/requerimiento/AprobarRequerimientoView.js')}}"></script> -->
+<script src="{{ asset('js/logistica/requerimiento/ListarRequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/ListarRequerimientoView.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/RequerimientoView.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoView.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/RequerimientoController.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoController.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/trazabilidad.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/trazabilidad.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/verTodoAdjuntosYAdicionalesRequerimientoCompra.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verTodoAdjuntosYAdicionalesRequerimientoCompra.js'))}}"></script>
 
-    <script>
-        var roles = JSON.parse('{!!$roles!!}');
-        var grupos = JSON.parse('{!!$gruposUsuario!!}');
 
-        var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
+<script>
+    var roles = JSON.parse('{!!$roles!!}');
+    var grupos = JSON.parse('{!!$gruposUsuario!!}');
 
-        $(document).ready(function() {
-            //  &// TODO
-            const requerimientoModel = new RequerimientoModel();
-            const requerimientoController = new RequerimientoCtrl(requerimientoModel);
-            const listarRequerimientoView = new ListarRequerimientoView(requerimientoController);
-            listarRequerimientoView.mostrar('ALL');
-            listarRequerimientoView.initializeEventHandler();
-        });
-        // window.onload = function() {
-        //     listarRequerimientoView.mostrar('ALL');
-        // };
-    </script>
+    var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
+
+    $(document).ready(function() {
+        seleccionarMenu(window.location);
+        const requerimientoModel = new RequerimientoModel();
+        const requerimientoController = new RequerimientoCtrl(requerimientoModel);
+        const listarRequerimientoView = new ListarRequerimientoView(requerimientoController);
+
+        listarRequerimientoView.mostrar('ALL');
+
+        listarRequerimientoView.initializeEventHandler();
+
+    });
+
+
+    // window.onload = function() {
+    //     listarRequerimientoView.mostrar('ALL');
+    // };
+</script>
 @endsection

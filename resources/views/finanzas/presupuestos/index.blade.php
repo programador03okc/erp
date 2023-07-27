@@ -60,7 +60,7 @@
                                 <td><label class="lbl-codigo" title="Abrir Presupuesto" onClick="abrirPresupuesto('{{ $presup->id_presup }}')">{{ $presup->codigo }}</label></td>
                                 <td>{{ $presup->descripcion }}</td>
                                 <td>{{ $presup->fecha_emision }}</td>
-                                <td> <span class="pull-right badge bg-{{ ($presup->activo=='t'?'green':'red') }}">{{ ($presup->activo=='t'?'activo':'inactivo') }}</span></td>
+                                <td class="text-center"> <span class="pull-right badge bg-{{ ($presup->activo=='t'?'green':'red') }}">{{ ($presup->activo=='t'?'activo':'inactivo') }}</span></td>
                                 <td>{{ $presup->empresa->contribuyente->razon_social }}</td>
                             </tr>
                             @empty
@@ -86,9 +86,7 @@
 
     <script>
         $(document).ready(function () {
-
-
-
+            seleccionarMenu(window.location);
             var vardataTables = funcDatatables();
 
             $('#listaPresupuestos').DataTable({
@@ -100,7 +98,6 @@
         });
 
         function abrirPresupuesto(id){
-            console.log('abrirPresupuesto()');
             localStorage.setItem("id_presup",id);
             location.assign("/finanzas/presupuesto/create");
         }
@@ -112,7 +109,6 @@
                 url: 'actualizarPartidas',
                 dataType: 'JSON',
                 success: function(response){
-                    console.log(response);
                     alert("Se actualizaron correctamente las descripciones");
                 }
             }).fail( function( jqXHR, textStatus, errorThrown ){

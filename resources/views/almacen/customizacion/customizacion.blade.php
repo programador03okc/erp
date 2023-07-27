@@ -299,9 +299,4 @@
         usuarioNombreSession = '{{Auth::user()->nombre_corto}}';
     });
 </script>
-
-
 @endsection
-
-{{-- ------------------------------------------------------- --}}
-

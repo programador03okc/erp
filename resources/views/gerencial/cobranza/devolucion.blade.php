@@ -169,6 +169,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
     <script>
+        // let csrf_token = '{{ csrf_token() }}';
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         const idioma = {
             sProcessing: "<div class='spinner'></div>",
@@ -199,7 +200,7 @@
 
         $(document).ready(function() {
             $('.main-header nav.navbar.navbar-static-top').find('a.sidebar-toggle').click()
-            
+            seleccionarMenu(window.location);
             $('.numero').number(true, 2);
         });
     </script>

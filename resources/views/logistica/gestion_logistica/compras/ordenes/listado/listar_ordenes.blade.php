@@ -20,6 +20,8 @@ Gestión de ordenes
 
 @section('cuerpo')
 <div class="page-main" type="listar_ordenes" id="listar_ordenes">
+    <legend class="mylegend">
+    </legend>
     {{-- @if (in_array(33,$array_accesos) || in_array(19,$array_accesos) || in_array(36,$array_accesos) || in_array(35,$array_accesos) || in_array(34,$array_accesos) || in_array(18,$array_accesos)) --}}
     @if (in_array(243,$array_accesos) || in_array(250,$array_accesos))
         <fieldset class="group-table">
@@ -162,18 +164,34 @@ Gestión de ordenes
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="modal-info-adicional-tipo-impuesto" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Lista de requerimientos con tipo impuesto</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-inline" id="listaRequerimientosSeleccionadosConImpuesto">
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
 @section('scripts')
-
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
-
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
     <!-- <script src="{{('/js/logistica/orden/listar_ordenes.js')}}"></script> -->
     <!-- <script src="{{('/js/logistica/orden/orden_ver_detalle.js')}}"></script> -->
     <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}?v={{filemtime(public_path('js/tesoreria/facturacion/archivosMgcp.js'))}}"></script>
@@ -183,8 +201,10 @@ Gestión de ordenes
     <script src="{{ asset('js/tesoreria/requerimientoPago/nuevaCuentaBancariaDestinatario.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/nuevaCuentaBancariaDestinatario.js'))}}"></script>
     <script src="{{ asset('js/tesoreria/requerimientoPago/nuevoDestinatario.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/nuevoDestinatario.js'))}}"></script>
 
-    <script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
-	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/moment.min.js') }}"></script> --}}
+    <script src="{{ asset('template/plugins/datetime-moment.js') }}"></script>
+    {{-- <script src="{{ asset('template/plugins/loadingoverlay.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('template/plugins/jquery-number/jquery.number.min.js') }}"></script> --}}
 
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');

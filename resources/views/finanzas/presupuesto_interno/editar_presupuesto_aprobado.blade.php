@@ -1546,7 +1546,6 @@
 @endsection
 
 @section('scripts')
-
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -1560,19 +1559,15 @@
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script> --}}
 <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
-@if (in_array(302,$array_accesos))
-<script>
-    let array = {!! json_encode($array_porcentajes) !!};
-    // $elemento_array
-    $(document).ready(function () {
-        $('select[name="mes"] option[value="'+"{{$presupuesto_interno->mes}}"+'"]').attr('selected',true);
-    });
-</script>
+    @if (in_array(302,$array_accesos))
+    <script>
+        let array = {!! json_encode($array_porcentajes) !!};
+        // $elemento_array
+        $(document).ready(function () {
+            $('select[name="mes"] option[value="'+"{{$presupuesto_interno->mes}}"+'"]').attr('selected',true);
+        });
+    </script>
 
-<script src="{{asset('js/finanzas/presupuesto_interno/crear.js') }}""></script>
-@endif
-
+    <script src="{{asset('js/finanzas/presupuesto_interno/crear.js') }}""></script>
+    @endif
 @endsection
-
-
-{{-- ------------------- --}}

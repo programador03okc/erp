@@ -1,22 +1,24 @@
 @extends('themes.base')
+@include('layouts.menu_cas')
 
 @section('cabecera') Gestión de Transformaciones @endsection
 
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
-{{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}"> --}}
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css')}}">
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
-<style>
-    #listaTransformacionesPendientes_filter,
-    #listaTransformacionesPendientes_filter{
-        margin-top:10px;
-    }
-    .invisible{
-        display: none;
-    }
-</style>
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/dataTables.checkboxes.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <style>
+        #listaTransformacionesPendientes_filter,
+        #listaTransformacionesPendientes_filter{
+            margin-top:10px;
+        }
+        .invisible{
+            display: none;
+        }
+    </style>
 @endsection
+
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('cas.index')}}"><i class="fas fa-tachometer-alt"></i> Servicios CAS</a></li>
@@ -24,7 +26,7 @@
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
-@include('layouts.menu_cas')
+
 @section('cuerpo')
 <div class="page-main" type="transformaciones">
 
@@ -108,6 +110,7 @@
         </div>
     </div>
 </div>
+@include('tesoreria.facturacion.archivos_oc_mgcp')
 @endsection
 
 @section('scripts')

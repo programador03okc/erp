@@ -37,9 +37,9 @@
                     <h3 class="box-title">Lista de clientes</h3>
                     <div class="pull-right box-tools">
                         {{-- <button type="button" class="btn btn-success" title="Nuevo Usuario" data-action="nuevo-cliente"><i class="fa fa-save"></i> Nuevo cliente</button> --}}
-                        {{-- @if (in_array(315, $array_accesos, true)) --}}
-                        <a class="btn btn-success" title="Nuevo Usuario" href="{{ route('gerencial.cobranza.crear-cliente') }}"><i class="fa fa-save"></i> Nuevo cliente</a>
-                        {{-- @endif --}}
+                        @if (in_array(315, $array_accesos, true))
+                        <a class="btn btn-success" title="Nuevo Usuario" href="{{ route('gerencial.cobranza.nuevo.cliente') }}"><i class="fa fa-save"></i> Nuevo cliente</a>
+                        @endif
 
                         {{-- <button class="btn btn-primary" data-action="actualizar"><i class="fa fa-refresh"></i> Actualizar</button> --}}
                     </div>
@@ -89,7 +89,6 @@
 		</div>
 	</div>
 </div>
-
 <div class="modal fade" tabindex="-1" role="dialog" id="nuevo-cliente">
 	<div class="modal-dialog" style="width: 900px;">
 		<div class="modal-content">
@@ -355,6 +354,8 @@
 	</div>
 </div>
 
+
+
 <div class="modal fade" tabindex="-1" role="dialog" id="ver-cliente">
 	<div class="modal-dialog modal-lg" >
 		<div class="modal-content">
@@ -526,7 +527,6 @@
 	</div>
 </div>
 @endsection
-
 @section('scripts')
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
@@ -539,12 +539,9 @@
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>
-<!-- Select2 -->
+
     <script>
         var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     </script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{asset('template/plugins/select2/select2.min.js')}}"></script> --}}
     <script src="{{ asset('js/gerencial/cobranza/clientes.js') }}?v=2"></script>
-    <script>
 @endsection

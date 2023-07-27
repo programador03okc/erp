@@ -13,15 +13,16 @@
     }
 </style>
 @endsection
+
 @section('breadcrumb')
 <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-tachometer"></i> Servicios CAS</a></li>
+    <li><a href="{{route('logistica.index')}}"><i class="fas fa-tachometer-alt"></i> Servicios CAS</a></li>
     <li>Transformaciones</li>
     <li class="active">@yield('cabecera')</li>
 </ol>
 @endsection
 
-@section('cuerpo')
+@section('content')
 <div class="page-main" type="tableroTransformaciones">
     <div class="box box-solid">
         <div class="box-body">
@@ -36,14 +37,14 @@
                     </div>
                     <div class="col-md-2">
                     <div style="display:flex;">
-                        <button class="btn btn-default btn-flat" onClick="listarDespachosInternos()"><i class="fa fa-sync"></i> Actualizar</button>
-                        <button class="btn btn-default btn-flat" onClick="pasarProgramadasAlDiaSiguiente()"><i class="fa fa-undo"></i> Pasar programadas para mañana</button>
-                        <button class="btn btn-default btn-flat" onClick="listarPendientesAnteriores()"><i class="fa fa-tasks"></i> Pendientes anteriores</button>
+                        <button class="btn btn-default btn-flat" onClick="listarDespachosInternos()"><i class="fas fa-sync-alt"></i> Actualizar</button>
+                        <button class="btn btn-default btn-flat" onClick="pasarProgramadasAlDiaSiguiente()"><i class="fas fa-undo-alt"></i> Pasar programadas para mañana</button>
+                        <button class="btn btn-default btn-flat" onClick="listarPendientesAnteriores()"><i class="fas fa-tasks"></i> Pendientes anteriores</button>
                     </div>
                     </div>
                 </div>
-                <br>
-
+                
+                    
                 <div class="row">
 
                     <div class="col-md-3">
@@ -56,7 +57,7 @@
                             <div class="card-body" id="listaProgramados"></div>
                         </div>
                     </div>
-
+    
                     <div class="col-md-3">
                         <div class="card">
                             <div class="card-header" style="margin-bottom: 15px;">
@@ -65,6 +66,15 @@
                                 </div>
                             </div>
                             <div class="card-body" id="listaPendientes">
+                                {{-- <div class="small-box bg-blue">
+                                    <div class="inner">
+                                        <h5>OKC2110040 - BANCO DE LA NACION</h5>
+                                    </div>
+                                    <a href="#" class="small-box-footer"> 
+                                        <i class="fa fa-arrow-circle-left"></i>
+                                        <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -79,7 +89,7 @@
                             <div class="card-body" id="listaProceso"></div>
                         </div>
                     </div>
-
+                    
                     <div class="col-md-3">
                         <div class="card">
                             <div class="card-header" style="margin-bottom: 15px;">
@@ -101,7 +111,6 @@
 @endsection
 
 @section('scripts')
-
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>

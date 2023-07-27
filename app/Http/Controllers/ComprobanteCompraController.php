@@ -159,7 +159,7 @@ class ComprobanteCompraController extends Controller
         $igv = $this->get_igv();
         $bancos = Banco::mostrar();
         $tipo_cuenta = TipoCuenta::mostrar();
-        return view('logistica/comprobantes/generar_comprobante_compra', compact('bancos', 'tipo_cuenta', 'igv', 'proveedores', 'clasificaciones', 'condiciones', 'tp_doc', 'moneda', 'detracciones', 'impuestos', 'usuarios', 'tp_contribuyente', 'sis_identidad'));
+        return view('logistica.comprobantes.generar_comprobante_compra', get_defined_vars());
     }
 
     function view_crear_comprobante_compra()
@@ -177,8 +177,7 @@ class ComprobanteCompraController extends Controller
         $tipo_cuenta = TipoCuenta::mostrar();
         $sedes = GenericoAlmacenController::mostrar_sedes_cbo();
 
-        return view('tesoreria/comprobantes_compra/comprobanteCompra', 
-        compact('bancos', 'tipo_cuenta', 'igv', 'proveedores', 'condiciones', 'tp_doc', 'monedas', 'usuarios', 'tp_contribuyente', 'sis_identidad','sedes'));
+        return view('tesoreria.comprobantes_compra.comprobanteCompra', get_defined_vars());
     }
 
     // public function getListaComprobantesCompra(){
@@ -1076,7 +1075,7 @@ class ComprobanteCompraController extends Controller
         $usuarios = $this->select_usuarios();
         $tp_contribuyente = $this->tp_contribuyente_cbo();
         $sis_identidad = $this->sis_identidad_cbo();
-        return view('logistica/comprobantes/lista_comprobantes_compra', compact('proveedores', 'clasificaciones', 'condiciones', 'tp_doc', 'moneda', 'detracciones', 'impuestos', 'usuarios', 'tp_contribuyente', 'sis_identidad'));
+        return view('logistica.comprobantes.lista_comprobantes_compra', get_defined_vars());
     }
 
     public function documentoAPago($id)

@@ -12,7 +12,7 @@ class NombresAcuController extends Controller
 {
     function view_nombres_cu(){
         $categorias = CategoriaAcuController::select_categorias_acus();
-        return view('proyectos/acu/cu', compact('categorias'));
+        return view('proyectos.acu.cu', compact('categorias'));
     }
 
     //Nombre de Analisis de Costos Unitarios

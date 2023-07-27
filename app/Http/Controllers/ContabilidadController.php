@@ -20,23 +20,23 @@ class ContabilidadController extends Controller
         $pagos_pendientes = DB::table('almacen.alm_req')
         ->where('estado',8)->count();
 
-        return view('contabilidad/main', compact('pagos_pendientes'));
+        return view('contabilidad.main', compact('pagos_pendientes'));
     }
     
     function view_requerimiento_pagos(){
-        return view('contabilidad/pagos/requerimientoPagos');
+        return view('contabilidad.pagos.requerimientoPagos');
     }
 
     function view_listar_ventas(){
-        return view('contabilidad/ventas/vista_listar');
+        return view('contabilidad.ventas.vista_listar');
     }
     
     function view_registro_ventas(){
-        return view('contabilidad/ventas/vista_registro');
+        return view('contabilidad.ventas.vista_registro');
     }
     
     function view_cta_contable(){
-        return view('contabilidad/cta_contable');
+        return view('contabilidad.cta_contable');
     }
 
 
@@ -851,7 +851,7 @@ class ContabilidadController extends Controller
         $empresas = $this->select_mostrar_empresas();
         $monedas = $this->mostrar_moneda();
 
-        return view('contabilidad/comprobante_compra', compact('empresas', 'monedas'));
+        return view('contabilidad.comprobante_compra', compact('empresas', 'monedas'));
     }
 
     function mostrar_moneda()

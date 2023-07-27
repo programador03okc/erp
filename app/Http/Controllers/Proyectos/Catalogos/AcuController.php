@@ -18,7 +18,7 @@ class AcuController extends Controller
         $tipos = TipoInsumoController::mostrar_tipos_insumos_cbo();
         $ius = IuController::mostrar_ius_cbo();
         $categorias = CategoriaAcuController::select_categorias_acus();
-        return view('proyectos/acu/acu', compact('unidades','tipos','ius','categorias'));
+        return view('proyectos.acu.acu', compact('unidades','tipos','ius','categorias'));
     }
     public function listar_acus()
     {

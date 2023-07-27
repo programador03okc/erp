@@ -34,7 +34,7 @@ class ReporteLogisticaController extends Controller{
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-		return view('logistica/reportes/ordenes_compra',compact('empresas','grupos','array_accesos'));
+		return view('logistica.reportes.ordenes_compra',compact('empresas','grupos','array_accesos'));
 	}
     public function viewReporteOrdenesServicio(){
 		$empresas = Empresa::mostrar();
@@ -44,7 +44,7 @@ class ReporteLogisticaController extends Controller{
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-		return view('logistica/reportes/ordenes_servicio',compact('empresas','grupos','array_accesos'));
+		return view('logistica.reportes.ordenes_servicio',compact('empresas','grupos','array_accesos'));
 	}
 
     public function viewReporteTransitoOrdenesCompra(){
@@ -56,7 +56,7 @@ class ReporteLogisticaController extends Controller{
             array_push($array_accesos,$value->id_acceso);
         }
 
-		return view('logistica/reportes/transito_ordenes_compra',compact('empresas','grupos','array_accesos'));
+		return view('logistica.reportes.transito_ordenes_compra',compact('empresas','grupos','array_accesos'));
 	}
 
 
@@ -234,7 +234,7 @@ class ReporteLogisticaController extends Controller{
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-		return view('logistica/reportes/compras_locales', get_defined_vars());
+		return view('logistica.reportes.compras_locales', get_defined_vars());
 	}
 
     public function obtenerFiltrosCompras(Request $request)

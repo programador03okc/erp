@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class CategoriaAcuController extends Controller
 {
     function view_cat_acu(){
-        return view('proyectos/variables/cat_acu');
+        return view('proyectos.variables.cat_acu');
     }
     public static function select_categorias_acus(){
         $data = DB::table('proyectos.proy_cu_cat')

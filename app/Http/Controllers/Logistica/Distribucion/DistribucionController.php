@@ -31,21 +31,21 @@ class DistribucionController extends Controller
         $subcategorias = AlmacenController::mostrar_subcategorias_cbo();
         $categorias = AlmacenController::mostrar_categorias_cbo();
         $unidades = AlmacenController::mostrar_unidades_cbo();
-        return view('almacen/distribucion/ordenesDespacho', compact('usuarios', 'sis_identidad', 'clasificaciones', 'subcategorias', 'categorias', 'unidades'));
+        return view('almacen.distribucion.ordenesDespacho', compact('usuarios', 'sis_identidad', 'clasificaciones', 'subcategorias', 'categorias', 'unidades'));
     }
 
     function view_confirmacionPago()
     {
         // $usuarios = AlmacenController::select_usuarios();
-        return view('tesoreria/pagos/confirmacionPago');
+        return view('tesoreria.pagos.confirmacionPago');
     }
     function view_trazabilidad_requerimientos()
     {
-        return view('almacen/distribucion/trazabilidadRequerimientos');
+        return view('almacen.distribucion.trazabilidadRequerimientos');
     }
     function view_guias_transportistas()
     {
-        return view('almacen/distribucion/guiasTransportistas');
+        return view('almacen.distribucion.guiasTransportistas');
     }
 
     public function actualizaCantidadDespachosTabs()

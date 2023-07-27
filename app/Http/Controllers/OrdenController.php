@@ -116,7 +116,7 @@ class OrdenController extends Controller
         // $sedes = Auth::user()->sedesAcceso();
         $periodos = Periodo::mostrar();
 
-        return view('logistica/ordenes/generar_orden_requerimiento', compact('sedes', 'empresas', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas','periodos'));
+        return view('logistica.ordenes.generar_orden_requerimiento', compact('sedes', 'empresas', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas','periodos'));
     }
     function view_crear_orden_requerimiento()
     {
@@ -163,7 +163,7 @@ class OrdenController extends Controller
         }
         $periodos = Periodo::mostrar();
 
-        return view('logistica/gestion_logistica/compras/ordenes/elaborar/crear_orden_requerimiento', compact('empresas', 'rubros', 'bancos', 'tipo_cuenta', 'sedes', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'condiciones_softlink', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas', 'modulo', 'array_accesos_botonera', 'array_accesos','periodos'));
+        return view('logistica.gestion_logistica.compras.ordenes.elaborar.crear_orden_requerimiento', compact('empresas', 'rubros', 'bancos', 'tipo_cuenta', 'sedes', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'condiciones_softlink', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas', 'modulo', 'array_accesos_botonera', 'array_accesos','periodos'));
     }
 
     function lista_contactos_proveedor($id_proveedor)
@@ -999,7 +999,7 @@ class OrdenController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view('logistica/gestion_logistica/compras/ordenes/listado/listar_ordenes', compact('prioridades', 'empresas', 'grupos', 'estados', 'tiposDestinatario', 'bancos', 'tipo_cuenta', 'monedas', 'tipos_documentos', 'array_accesos'));
+        return view('logistica.gestion_logistica.compras.ordenes.listado.listar_ordenes', compact('prioridades', 'empresas', 'grupos', 'estados', 'tiposDestinatario', 'bancos', 'tipo_cuenta', 'monedas', 'tipos_documentos', 'array_accesos'));
     }
 
     function consult_doc_aprob($id_doc, $tp_doc)

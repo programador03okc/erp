@@ -35,7 +35,7 @@ class DevolucionController extends Controller
             array_push($array_accesos, $value->id_acceso);
         }
         // return $array_accesos;exit;
-        return view('almacen/devoluciones/devolucion', compact(
+        return view('almacen.devoluciones.devolucion', compact(
             'almacenes',
             'empresas',
             'usuarios',

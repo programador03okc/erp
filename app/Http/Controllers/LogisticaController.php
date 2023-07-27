@@ -34,7 +34,7 @@ class LogisticaController extends Controller
         $empresas = $this->select_mostrar_empresas();
         $bancos = Banco::mostrar();
         $tipo_cuenta = TipoCuenta::mostrar();
-        return view('logistica/cotizaciones/gestionar_cotizaciones', compact('bancos','tipo_cuenta','empresas', 'tp_contribuyente', 'sis_identidad'));
+        return view('logistica.cotizaciones.gestionar_cotizaciones', compact('bancos','tipo_cuenta','empresas', 'tp_contribuyente', 'sis_identidad'));
     }
 
     // function view_valoriacion()
@@ -81,11 +81,11 @@ class LogisticaController extends Controller
         // $tipo_cuenta_banco = $this->select_tipos_cuenta();
         // $contactos = $this->contacto_list();
 
-        return view('logistica/proveedores/listar_proveedores',compact('paises'));
+        return view('logistica.proveedores.listar_proveedores',compact('paises'));
     }
     function view_listar_ordenes()
     {
-        return view('logistica/ordenes/listar_ordenes');
+        return view('logistica.ordenes.listar_ordenes');
     }
 
 
@@ -9841,7 +9841,7 @@ function get_id_usuario_usuario_por_rol($descripcion_rol, $id_sede, $id_empresa)
     public function solicitud_cuadro_comparativo_excel($id_grupo)
     {
         $data = $this->exportar_cuadro_comparativo_excel($id_grupo);
-        return view('logistica/reportes/downloadExcelFormatoCuadroComparativo', compact('data'));
+        return view('logistica.reportes.downloadExcelFormatoCuadroComparativo', compact('data'));
     }
 
 
@@ -10535,7 +10535,7 @@ function get_id_usuario_usuario_por_rol($descripcion_rol, $id_sede, $id_empresa)
         // $cantidad_pagos_pendientes = $cantidades['pagos'];
         $cantidad_transformaciones_pendientes = $cantidades['transformaciones_pend'];
 
-        return view('logistica/main', compact(
+        return view('logistica.main', compact(
             'cantidad_requerimientos_elaborados',
             'cantidad_ordenes_pendientes',
             'cantidad_despachos_pendientes',
@@ -10999,7 +10999,7 @@ function get_id_usuario_usuario_por_rol($descripcion_rol, $id_sede, $id_empresa)
     {
         $proveedores = $this->select_proveedor();
         $empresas = $this->select_mostrar_empresas();
-        return view('logistica/reportes/productos_comprados',compact('proveedores','empresas'));
+        return view('logistica.reportes.productos_comprados',compact('proveedores','empresas'));
     }
 
     function productos_comprados(Request $request){
@@ -11342,7 +11342,7 @@ function get_id_usuario_usuario_por_rol($descripcion_rol, $id_sede, $id_empresa)
     {
         $proveedores = $this->select_proveedor();
         $empresas = $this->select_mostrar_empresas();
-        return view('logistica/reportes/compras_por_proveedor',compact('proveedores','empresas'));
+        return view('logistica.reportes.compras_por_proveedor',compact('proveedores','empresas'));
     }
 
     function get_compras_por_proveedor(Request $request=null, $data=null)
@@ -11638,7 +11638,7 @@ function get_id_usuario_usuario_por_rol($descripcion_rol, $id_sede, $id_empresa)
     function view_reporte_compras_por_producto()
     {
         $empresas = $this->select_mostrar_empresas();
-        return view('logistica/reportes/compras_por_producto',compact('empresas'));
+        return view('logistica.reportes.compras_por_producto',compact('empresas'));
     }
 
     function listar_productos(){
@@ -11975,7 +11975,7 @@ function get_id_usuario_usuario_por_rol($descripcion_rol, $id_sede, $id_empresa)
 function view_reporte_mejores_proveedores()
 {
     $empresas = $this->select_mostrar_empresas();
-    return view('logistica/reportes/mejores_proveedores',compact('empresas'));
+    return view('logistica.reportes.mejores_proveedores',compact('empresas'));
 }
 
 function get_operador($condicion){
@@ -12463,7 +12463,7 @@ function mejores_proveedores_excel(Request $request){
 function view_reporte_proveedores_producto_determinado()
 {
     $empresas = $this->select_mostrar_empresas();
-    return view('logistica/reportes/proveedores_producto_determinado',compact('empresas'));
+    return view('logistica.reportes.proveedores_producto_determinado',compact('empresas'));
 }
 
 function get_proveedores_producto_determinado(Request $request=null, $data=null){
@@ -12782,7 +12782,7 @@ function proveedores_producto_determinado_excel(Request $request){
 function view_reporte_frecuencia_compras()
 {
     $empresas = $this->select_mostrar_empresas();
-    return view('logistica/reportes/frecuencia_compra_por_producto',compact('empresas'));
+    return view('logistica.reportes.frecuencia_compra_por_producto',compact('empresas'));
 }
 
 function get_frecuencia_compras(Request $request=null, $data=null){
@@ -13123,7 +13123,7 @@ function frecuencia_compras_excel(Request $request){
 function view_reporte_historial_precios()
 {
     $empresas = $this->select_mostrar_empresas();
-    return view('logistica/reportes/historial_precios',compact('empresas'));
+    return view('logistica.reportes.historial_precios',compact('empresas'));
 }
 
 function get_historial_precios(Request $request=null, $data=null){

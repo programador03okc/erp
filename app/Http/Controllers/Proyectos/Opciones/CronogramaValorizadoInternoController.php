@@ -12,7 +12,7 @@ class CronogramaValorizadoInternoController extends Controller
 {
     function view_cronovalint(){
         $unid_program = GenericoController::mostrar_unid_program_cbo();
-        return view('proyectos/cronograma/cronovalint', compact('unid_program'));
+        return view('proyectos.cronograma.cronovalint', compact('unid_program'));
     }
 
     

@@ -22,7 +22,7 @@ class PresupuestoInternoController extends Controller
         $tipos = TipoInsumoController::mostrar_tipos_insumos_cbo();
         $ius = IuController::mostrar_ius_cbo();
         $categorias = CategoriaAcuController::select_categorias_acus();
-        return view('proyectos/presupuesto/presint', compact('monedas','sistemas','unidades','tipos','ius','categorias'));
+        return view('proyectos.presupuesto.presint', compact('monedas','sistemas','unidades','tipos','ius','categorias'));
     }
 
     
@@ -622,7 +622,7 @@ class PresupuestoInternoController extends Controller
         </html>
         ';
         // return $data;  //class="table table-condensed table-bordered table-hover sortable" 
-        return view('proyectos/reportes/presupuesto_excel', compact('data'));
+        return view('proyectos.reportes.presupuesto_excel', compact('data'));
     }
 
     public function mostrar_presupuestos($tp)

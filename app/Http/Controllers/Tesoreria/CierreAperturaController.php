@@ -44,7 +44,7 @@ class CierreAperturaController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos,$value->id_acceso);
         }
-		return view('tesoreria/cierre_apertura/lista', compact('empresas','almacenes','anios','acciones','array_accesos'));
+		return view('tesoreria.cierre_apertura.lista', compact('empresas','almacenes','anios','acciones','array_accesos'));
 	}
 
     public function cargarMeses($anio)

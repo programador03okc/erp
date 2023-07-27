@@ -26,7 +26,7 @@ class MapeoProductosController extends Controller
         $categorias = AlmacenController::mostrar_categorias_cbo();
         $unidades = AlmacenController::mostrar_unidades_cbo();
 
-        return view('logistica/requerimientos/mapeo/index', 
+        return view('logistica.requerimientos.mapeo.index', 
         compact('tipos','clasificaciones','subcategorias','categorias','unidades'));
     }
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class IuController extends Controller
 {
     function view_iu(){
-        return view('proyectos/variables/iu');
+        return view('proyectos.variables.iu');
     }
     public static function mostrar_ius_cbo(){
         $data = DB::table('proyectos.proy_iu')

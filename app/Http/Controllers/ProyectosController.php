@@ -31,14 +31,14 @@ class ProyectosController extends Controller
     }
 
     function view_opciones_todo(){
-        return view('proyectos/reportes/opciones_todo');
+        return view('proyectos.reportes.opciones_todo');
     }
     function view_saldos_pres(){
-        return view('proyectos/reportes/saldos_pres');
+        return view('proyectos.reportes.saldos_pres');
     }
     function view_residentes(){
         $cargos = $this->select_cargos();
-        return view('proyectos/residentes/residentes', compact('cargos'));
+        return view('proyectos.residentes.residentes', compact('cargos'));
     }
 
 
@@ -48,7 +48,7 @@ class ProyectosController extends Controller
         $unidades = AlmacenController::mostrar_unidades_cbo();
         $unid_program = GenericoController::mostrar_unid_program_cbo();
         $usuarios = $this->select_usuarios();
-        return view('proyectos/presupuesto/propuesta', compact('monedas','sistemas','unidades','unid_program','usuarios'));
+        return view('proyectos.presupuesto.propuesta', compact('monedas','sistemas','unidades','unid_program','usuarios'));
     }
     function view_preseje(){
         $monedas = GenericoController::mostrar_monedas_cbo();
@@ -57,29 +57,29 @@ class ProyectosController extends Controller
         $tipos = TipoInsumoController::mostrar_tipos_insumos_cbo();
         $ius = IuController::mostrar_ius_cbo();
         $categorias = CategoriaAcuController::select_categorias_acus();
-        return view('proyectos/presupuesto/preseje', compact('monedas','sistemas','unidades','tipos','ius','categorias'));
+        return view('proyectos.presupuesto.preseje', compact('monedas','sistemas','unidades','tipos','ius','categorias'));
     }
     function view_cronoeje(){
         $unid_program = GenericoController::mostrar_unid_program_cbo();
-        return view('proyectos/cronograma/cronoeje', compact('unid_program'));
+        return view('proyectos.cronograma.cronoeje', compact('unid_program'));
     }
     function view_cronopro(){
         $unid_program = GenericoController::mostrar_unid_program_cbo();
-        return view('proyectos/cronograma/cronopro', compact('unid_program'));
+        return view('proyectos.cronograma.cronopro', compact('unid_program'));
     }
     function view_cronovaleje(){
         $unid_program = GenericoController::mostrar_unid_program_cbo();
-        return view('proyectos/cronograma/cronovaleje', compact('unid_program'));
+        return view('proyectos.cronograma.cronovaleje', compact('unid_program'));
     }
     function view_cronovalpro(){
         $unid_program = GenericoController::mostrar_unid_program_cbo();
-        return view('proyectos/cronograma/cronovalpro', compact('unid_program'));
+        return view('proyectos.cronograma.cronovalpro', compact('unid_program'));
     }
     function view_valorizacion(){
-        return view('proyectos/valorizacion/valorizacion');
+        return view('proyectos.valorizacion.valorizacion');
     }
     function view_curvas(){
-        return view('proyectos/reportes/curvas');
+        return view('proyectos.reportes.curvas');
     }
     function view_proyecto(){
         $clientes = ClienteController::mostrar_clientes_cbo();
@@ -90,12 +90,12 @@ class ProyectosController extends Controller
         $unid_program = GenericoController::mostrar_unid_program_cbo();
         $tipo_contrato = GenericoController::mostrar_tipo_contrato_cbo();
         $empresas = GenericoController::mostrar_empresas_cbo();
-        return view('proyectos/proyecto/proyecto', compact('clientes','monedas','tipos','sistemas','modalidades','unid_program','tipo_contrato','empresas'));
+        return view('proyectos.proyecto.proyecto', compact('clientes','monedas','tipos','sistemas','modalidades','unid_program','tipo_contrato','empresas'));
     }
 
     function view_presEstructura(){
         $sedes = $this->mostrar_sedes_cbo();
-        return view('proyectos/presEstructura/presEstructura', compact('sedes'));
+        return view('proyectos.presEstructura.presEstructura', compact('sedes'));
     }
 
     function view_cuadro_gastos(){
@@ -104,7 +104,7 @@ class ProyectosController extends Controller
         ->where('tp_presup',4) //presupuestos ejecucion proyectos
         ->whereNotNull('id_proyecto')
         ->get();
-        return view('proyectos/reportes/cuadro_gastos', compact('presupuestos'));
+        return view('proyectos.reportes.cuadro_gastos', compact('presupuestos'));
     }
 
     public function select_cargos(){
@@ -3043,7 +3043,7 @@ class ProyectosController extends Controller
             </body>
         </html>
         ';
-        return view('proyectos/reportes/propuesta_excel', compact('data'));
+        return view('proyectos.reportes.propuesta_excel', compact('data'));
     }
 
     public function suma_titulos($id_presup)

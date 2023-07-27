@@ -439,7 +439,7 @@ class ClienteController extends Controller
 
 
         // return $cuenta_bancaria;exit;
-        return view('gerencial/cobranza/editar_cliente',compact('pais','departamento','tipo_documentos','tipo_contribuyente','monedas','bancos','tipo_cuenta','distrito_first','provincia_first','departamento_first','provincia_get','distrito_get','contribuyente','cliente','establecimiento_cliente','contacto','cuenta_bancaria'));
+        return view('gerencial.cobranza.editar_cliente',compact('pais','departamento','tipo_documentos','tipo_contribuyente','monedas','bancos','tipo_cuenta','distrito_first','provincia_first','departamento_first','provincia_get','distrito_get','contribuyente','cliente','establecimiento_cliente','contacto','cuenta_bancaria'));
     }
     public function ver($id_contribuyente)
     {

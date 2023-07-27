@@ -97,7 +97,7 @@ class RequerimientoPagoController extends Controller
         $presupuestoInternoList = (new PresupuestoInternoController)->comboPresupuestoInterno(0, 0);
 
         return view(
-            'tesoreria/requerimiento_pago/lista',
+            'tesoreria.requerimiento_pago.lista',
             compact(
                 'prioridades',
                 'empresas',

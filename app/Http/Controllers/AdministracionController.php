@@ -18,7 +18,7 @@ date_default_timezone_set('America/Lima');
 class AdministracionController extends Controller{
 
     function view_main_administracion(){
-        return view('administracion/main');
+        return view('administracion.main');
     }
 
     function view_empresa(){
@@ -26,19 +26,19 @@ class AdministracionController extends Controller{
         $tp_contri = $this->select_tipo_contribuyente();
         $banco = $this->select_banco();
         $tpcta = $this->select_tipo_cuenta();
-        return view('administracion/empresa', compact('pais', 'tp_contri', 'banco', 'tpcta'));
+        return view('administracion.empresa', compact('pais', 'tp_contri', 'banco', 'tpcta'));
     }
     function view_sede(){
         $emp = $this->select_empresa();
-        return view('administracion/sede', compact('emp'));
+        return view('administracion.sede', compact('emp'));
     }
     function view_grupo(){
         $emp = $this->select_empresa();
-        return view('administracion/grupo', compact('emp'));
+        return view('administracion.grupo', compact('emp'));
     }
     function view_area(){
         $emp = $this->select_empresa();
-        return view('administracion/area', compact('emp'));
+        return view('administracion.area', compact('emp'));
     }
 
     public function select_pais(){

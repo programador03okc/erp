@@ -82,7 +82,7 @@ class ReporteLogisticaController extends Controller{
 			WHERE log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra )  as cuadro_costo"))
 		// ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'log_ord_compra.id_sede')
 
-		->when(($idEmpresa > 0), function ($query) use($idEmpresa) {
+		->when(($idEmpresa != 'SIN_FILTRO'), function ($query) use($idEmpresa) {
 			$sedes= Sede::where('id_empresa',$idEmpresa)->get();
 			$idSedeList=[];
 			foreach($sedes as $sede){
@@ -90,7 +90,7 @@ class ReporteLogisticaController extends Controller{
 			}
             return $query->whereIn('id_sede', $idSedeList);
         })
-        ->when(($idSede > 0), function ($query) use($idSede) {
+        ->when(($idSede != 'SIN_FILTRO'), function ($query) use($idSede) {
             return $query->where('id_sede',$idSede);
         })
 
@@ -115,7 +115,7 @@ class ReporteLogisticaController extends Controller{
 			},
 			'estado'
 		])
-		->when(($idEmpresa > 0), function ($query) use($idEmpresa) {
+		->when(($idEmpresa  != 'SIN_FILTRO' && $idEmpresa  >0), function ($query) use($idEmpresa) {
 			$sedes= Sede::where('id_empresa',$idEmpresa)->get();
 			$idSedeList=[];
 			foreach($sedes as $sede){
@@ -123,7 +123,7 @@ class ReporteLogisticaController extends Controller{
 			}
             return $query->whereIn('id_sede', $idSedeList);
         })
-        ->when(($idSede > 0), function ($query) use($idSede) {
+        ->when(($idSede != 'SIN_FILTRO' && $idSede >0), function ($query) use($idSede) {
             return $query->where('id_sede',$idSede);
         })
 
@@ -169,7 +169,7 @@ class ReporteLogisticaController extends Controller{
 		$data = $this->obtenerDataOrdenesServicio($idEmpresa,$idSede,$fechaRegistroDesde,$fechaRegistroHasta);
 
 		return datatables($data)
-		->rawColumns(['requerimientos','cuadro_costo'])->toJson();
+		->rawColumns(['requerimientos'])->toJson();
 
 	}
 
@@ -185,7 +185,7 @@ class ReporteLogisticaController extends Controller{
 
 		// ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'log_ord_compra.id_sede')
 
-		->when(($idEmpresa > 0), function ($query) use($idEmpresa) {
+		->when(($idEmpresa != 'SIN_FILTRO' && $idEmpresa > 0), function ($query) use($idEmpresa) {
 			$sedes= Sede::where('id_empresa',$idEmpresa)->get();
 			$idSedeList=[];
 			foreach($sedes as $sede){
@@ -193,7 +193,7 @@ class ReporteLogisticaController extends Controller{
 			}
             return $query->whereIn('id_sede', $idSedeList);
         })
-        ->when(($idSede > 0), function ($query) use($idSede) {
+        ->when(($idSede != 'SIN_FILTRO' && $idSede > 0 ), function ($query) use($idSede) {
             return $query->where('id_sede',$idSede);
         })
 

@@ -4,7 +4,7 @@
 @section('cabecera') Orden Devolución @endsection
 @include('layouts.menu_almacen')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/adminlte2-3/plugins/select2/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         .invisible{

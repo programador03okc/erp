@@ -1567,7 +1567,7 @@
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> --}}
 <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-3/plugins/select2/select2.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script> --}}
 <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
 @if (in_array(298,$array_accesos))

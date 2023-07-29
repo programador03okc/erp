@@ -1,6 +1,6 @@
-@include('layout.head')
+@include('layouts.head')
 @include('layouts.menu_logistica')
-@include('layout.body')
+@include('layouts.body')
 <div class="page-main" type="doc_venta">
     <legend class="mylegend">
         <h2>Comprobante de Venta</h2>
@@ -298,12 +298,12 @@
 @include('almacen.producto.productoModal')
 @include('logistica.cotizaciones.clienteModal')
 @include('logistica.ordenes.occModal')
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/almacen/doc_venta.js')}}"></script>
 <script src="{{('/js/almacen/doc_ventaModal.js')}}"></script>
 <script src="{{('/js/almacen/doc_ven_detalle.js')}}"></script>
 <script src="{{('/js/almacen/productoModal.js')}}"></script>
 <script src="{{('/js/logistica/clienteModal.js')}}"></script>
 <script src="{{('/js/logistica/occModal.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

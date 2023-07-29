@@ -210,7 +210,7 @@
 
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
  --}}
-<script src="{{ asset('template/adminlte2-3/plugins/select2/select2.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('js/almacen/guia/despachosPendientes.js')}}?v={{filemtime(public_path('js/almacen/guia/despachosPendientes.js'))}}"></script>
 <script src="{{ asset('js/almacen/guia/guia_ven_create.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_ven_create.js'))}}"></script>

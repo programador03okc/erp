@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
         <div class="info-box">
@@ -43,6 +43,6 @@
         </div>
     </div>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
-@include('layout.fin_html')
+@include('layouts.footer')
+@include('layouts.scripts')
+@include('layouts.fin_html')

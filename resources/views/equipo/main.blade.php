@@ -1,7 +1,7 @@
-@include('layout.head')
-@include('layout.menu_equipo')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_equipo')
+@include('layouts.body')
     <div>Hola...</div>
-@include('layout.footer')
-@include('layout.scripts')
-@include('layout.fin_html')
+@include('layouts.footer')
+@include('layouts.scripts')
+@include('layouts.fin_html')

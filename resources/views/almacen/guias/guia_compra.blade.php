@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_almacen')
+@include('layouts.menu_almacen')
 
 @section('option')
     @include('layouts.option')

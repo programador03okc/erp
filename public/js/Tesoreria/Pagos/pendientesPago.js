@@ -451,7 +451,7 @@ class RequerimientoPago {
                                     data-cci="${cuentaCCIDestinatario}"
                                     data-tpcta="${tipoCuentaDestinatario}"
                                     data-banco="${bancoDestinatario}"
-                                    data-empresa="${row['razon_social_empresa']}" data-idempresa="${row['id_empresa']}"
+                                    data-empresa="${row['razon_social_empresa']}" data-id-empresa="${row['id_empresa']}"
                                     data-motivo="${encodeURIComponent(row['condicion_pago'])}"
                                     data-comentario-pago-logistica="${row['comentario_pago']}"
                                     data-tiene-pago-en-cuotas="${row['tiene_pago_en_cuotas']}"

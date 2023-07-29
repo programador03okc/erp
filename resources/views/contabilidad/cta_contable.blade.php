@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_contabilidad')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_contabilidad')
+@include('layouts.body')
 <div class="page-main" type="cta_contable">
     <legend class="mylegend">
         <h2>Plan de Cuentas Contables</h2>
@@ -10,7 +10,7 @@
         <div id="tree"></div>
     </form>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/contabilidad/cta_contable.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

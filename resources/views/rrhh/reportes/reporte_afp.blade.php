@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="page-main" type="datos_afp">
     <fieldset>
         <legend><h2>Reporte de AFP</h2></legend>
@@ -14,7 +14,7 @@
         <br>
     </fieldset>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/rrhh/reportes/reporte_rrhh.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

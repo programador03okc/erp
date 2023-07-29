@@ -8,6 +8,8 @@ Gestión de ordenes
 @endsection
 @section('estilos')
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}">
+
 @endsection
 @section('breadcrumb')
 <ol class="breadcrumb">
@@ -192,6 +194,9 @@ Gestión de ordenes
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/js/locales/bootstrap-datepicker.es.min.js') }}"></script>
+
     <!-- <script src="{{('/js/logistica/orden/listar_ordenes.js')}}"></script> -->
     <!-- <script src="{{('/js/logistica/orden/orden_ver_detalle.js')}}"></script> -->
     <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}?v={{filemtime(public_path('js/tesoreria/facturacion/archivosMgcp.js'))}}"></script>

@@ -1,6 +1,6 @@
-@include('layout.head')
+@include('layouts.head')
 @include('layouts.menu_logistica')
-@include('layout.body')
+@include('layouts.body')
 
 
 <div class="row">
@@ -53,9 +53,9 @@
 </div><!-- /.col -->
 </div><!-- /.row -->
 
-@include('layout.footer')
-@include('layout.scripts')
-@include('layout.fin_html')
+@include('layouts.footer')
+@include('layouts.scripts')
+@include('layouts.fin_html')
 
 
 <script src="{{ asset('js/configuracion/correo.js')}}"></script>

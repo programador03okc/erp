@@ -25,7 +25,7 @@ Dashboard Servicios CAS
 
 
 {{-- @extends('themes.base')
-@include('layout.menu_cas')
+@include('layouts.menu_cas')
 @section('cabecera')
 Dashboard Servicios CAS
 @endsection

@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_config')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_config')
+@include('layouts.body')
 <div class="page-main" type="configuracion_socket">
     <legend><h2>Configuración de Socket</h2></legend>
     <div class="row">
@@ -49,7 +49,7 @@
         </div>
     </div>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/configuracion/configuracion_socket.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

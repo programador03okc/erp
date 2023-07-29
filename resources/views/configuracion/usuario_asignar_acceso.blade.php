@@ -1,5 +1,5 @@
 @extends('themes.base')
-@include('layout.menu_config')
+@include('layouts.menu_config')
 
 @section('cabecera')
     Gestión de Usuarios

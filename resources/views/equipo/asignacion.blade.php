@@ -1,6 +1,6 @@
-@include('layout.head')
+@include('layouts.head')
 @include('layouts.menu_logistica')
-@include('layout.body_sin_option')
+@include('layouts.body_sin_option')
 <div class="page-main" type="equi_sol">
     <legend><h2>Asignación de Equipos</h2></legend>
     <form id="form-equi_sol" type="register" form="formulario">
@@ -38,9 +38,9 @@
 </div>
 @include('equipo.asignacionCreate')
 @include('equipo.asignacion_equipos')
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/equipo/asignacion.js')}}"></script>
 <script src="{{('/js/equipo/asignacionCreate.js')}}"></script>
 <script src="{{('/js/equipo/asignacion_equipos.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

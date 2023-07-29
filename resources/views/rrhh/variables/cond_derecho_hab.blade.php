@@ -1,6 +1,6 @@
-@include('layout.head')
-@include('layout.menu_rrhh')
-@include('layout.body')
+@include('layouts.head')
+@include('layouts.menu_rrhh')
+@include('layouts.body')
 <div class="page-main" type="con_derecho_hab">
     <legend><h2>Condición Derecho Habiente</h2></legend>
     <div class="row">
@@ -33,7 +33,7 @@
         </div>
     </div>
 </div>
-@include('layout.footer')
-@include('layout.scripts')
+@include('layouts.footer')
+@include('layouts.scripts')
 <script src="{{('/js/rrhh/variables/condicion_derecho_hab.js')}}"></script>
-@include('layout.fin_html')
+@include('layouts.fin_html')

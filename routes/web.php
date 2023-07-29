@@ -1800,6 +1800,9 @@ Route::middleware(['auth'])->group(function () {
 
 				// lista adjuntos pago
 				// Route::get('adjuntos-pago/{id}', 'OrdenController@listarArchivosOrder');
+
+                Route::get('cuadro-comparativo-pagos', [RegistroPagoController::class, 'cuadroComparativoPagos'])->name('cuadro-comparativo-pagos');
+                Route::get('cuadro-comparativo-ordenes', [RegistroPagoController::class, 'cuadroComparativoOrdenes'])->name('cuadro-comparativo-ordenes');
 			});
 
 			Route::name('confirmacion-pagos.')->prefix('confirmacion-pagos')->group(function () {

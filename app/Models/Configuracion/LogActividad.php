@@ -23,7 +23,7 @@ class LogActividad extends Model {
         return $this->belongsTo(LogTipoAccion::class);
     }
 
-    public static function registrar(Usuario $usuario, $formulario, $idAccion, $tabla = null, $valorAnterior = null, $nuevoValor = null, $comentarios = null)
+    public static function registrar($usuario, $formulario, $idAccion, $tabla = null, $valorAnterior = null, $nuevoValor = null, $comentarios = null)
     {
         $log = new LogActividad();
             $log->fecha = new Carbon();

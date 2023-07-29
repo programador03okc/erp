@@ -651,7 +651,7 @@ class RequerimientoView {
             if (dataDetalleRequerimiento[i].id_tipo_item == 1) { // producto
                 document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr data-estado="${dataDetalleRequerimiento[i].estado}" style="text-align:center; background-color:${dataDetalleRequerimiento[i].estado == 7 ? '#f5e4e4' : ''}; ">
                 <td></td>
-                <td><p class="descripcion-partida" data-id-partida="${idPartida}" data-presupuesto-total="${totalPartida}" title="${descripcionPartida}" >${codigoPartida}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
+                <td><p class="descripcion-partida" data-id-partida="${idPartida}" data-presupuesto-total="${totalPartida}" title="${descripcionPartida ?? '(NO SELECCIONADO)'}" >${codigoPartida ?? '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
                     <div class="form-group">
                         <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
                     </div>

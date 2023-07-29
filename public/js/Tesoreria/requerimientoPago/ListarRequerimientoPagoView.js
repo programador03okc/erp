@@ -1154,7 +1154,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("tbody[id='body_detalle_requerimiento_pago']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data != null && data.id_estado == '7' ? '#f1d7d7' : ''}; text-align:center">
         <td>
             <input type="hidden"  class="idEstado" name="idEstado[]" value="${data != null && data.id_estado}">
-            <p class="descripcion-partida" title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${(codigoPartida != null  ? codigoPartida : '(NO SELECCIONADO)')}</p>
+            <p class="descripcion-partida" title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}</p>
             <button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
             <div class="form-group">
                 <h5></h5>

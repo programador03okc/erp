@@ -169,7 +169,7 @@ class ReporteLogisticaController extends Controller{
 		$data = $this->obtenerDataOrdenesServicio($idEmpresa,$idSede,$fechaRegistroDesde,$fechaRegistroHasta);
 
 		return datatables($data)
-		->rawColumns(['requerimientos'])->toJson();
+		->rawColumns(['requerimientos','cuadro_costo'])->toJson();
 
 	}
 
@@ -300,7 +300,7 @@ class ReporteLogisticaController extends Controller{
 
 	}
 
-    public function obtenerReporteCompras()
+        public function obtenerReporteCompras()
     {
         $data = ComprasLocalesView::orderBy('fecha_emision', 'desc');
 

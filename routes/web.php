@@ -133,8 +133,9 @@ Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('mod
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
 Route::get('test-encrypt', [TestController::class, 'encriptar'])->name('test-encrypt');
 Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('test-lista-cliente');
-Route::get('test-ordenes-compra', [ReporteLogisticaController::class, 'listaOrdenesCompra'])->name('test-ordenes-compra');
-Route::get('test-ordenes-servicio', [ReporteLogisticaController::class, 'listaOrdenesServicio'])->name('test-ordenes-servicio');
+// Route::get('test-ordenes-compra', [ReporteLogisticaController::class, 'listaOrdenesCompra'])->name('test-ordenes-compra');
+// Route::get('test-ordenes-servicio', [ReporteLogisticaController::class, 'listaOrdenesServicio'])->name('test-ordenes-servicio');
+Route::get('test-inicial-clave', [TestController::class, 'cargarClaves'])->name('test-lista-cliente');
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('cerrar-sesion', [LoginController::class, 'logout'])->name('cerrar-sesion');

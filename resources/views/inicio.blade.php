@@ -3,7 +3,7 @@
 @section('cabecera') Inicio @endsection
 
 @section('estilos')
-    
+
 @endsection
 
 @section('cuerpo')

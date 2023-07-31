@@ -29,7 +29,9 @@ class ProyectosController extends Controller
     public function __construct(){
         // session_start();
     }
-
+    function index(){
+        return view('proyectos.main');
+    }
     function view_opciones_todo(){
         return view('proyectos.reportes.opciones_todo');
     }

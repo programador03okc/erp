@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comercial\Cliente;
 use App\Models\contabilidad\ContribuyenteView;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,6 +14,25 @@ class TestController extends Controller
 
     public function clientes() {
         $data = ContribuyenteView::all();
+        return response()->json($data, 200);
+    }
+
+    public function cargarClaves()
+    {
+        $lista = User::all();
+        $data = [];
+
+        foreach ($lista as $key) {
+            $nuevaClave = '@Inicio2023';
+            $actualizar = User::find($key->id_usuario);
+                $actualizar->clave = $this->decode5t($nuevaClave);
+                $actualizar->password = Hash::make($nuevaClave);
+                if ($key->renovar) {
+                    $actualizar->fecha_renovacion = date("Y-m-d", strtotime($key->fecha_registro."+ 45 days"));
+                }
+            $actualizar->save();
+            $data[] = ['nombre' => $key->nombre_corto, 'clave' => $key->clave, 'decode' => $nuevaClave];
+        }
         return response()->json($data, 200);
     }
     

@@ -608,22 +608,31 @@ $(document).on('click', 'button[data-click="seleccionar-partida"]', function (e)
         //     response.tipo
         // )
 
-        Swal.fire({
-            title: response.titulo,
-            text: response.mensaje,
-            icon: response.tipo,
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Aceptar',
-            allowOutsideClick: false
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('#normalizar-partida').modal('hide');
-                listarRequerimientosPagos();
-                listarOrdenes();
-            }
-        })
+        if (response.success==true) {
+            Swal.fire({
+                title: response.titulo,
+                text: response.mensaje,
+                icon: response.tipo,
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#normalizar-partida').modal('hide');
+                    listarRequerimientosPagos();
+                    listarOrdenes();
+                }
+            })
+        }else{
+            Swal.fire(
+                response.titulo,
+                response.mensaje,
+                response.tipo
+            )
+        }
+
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);
         console.log(textStatus);

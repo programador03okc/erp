@@ -186,6 +186,7 @@ class NormalizarController extends Controller
             $tipo='success';
             $mensaje='Se asigno a la partida con exito';
             $titulo='Éxito';
+            $success=false;
             $montoTotalRegistroDePago=0;
             switch ($variable) {
                 case 'orden':
@@ -199,14 +200,14 @@ class NormalizarController extends Controller
                     ->first();
 
                     if (!$historial_saldo || $historial_saldo->estado!==3) {
-                    
+
                         foreach ($registro_pago as $rp) {
                             $montoTotalRegistroDePago=+$rp->total_pago;
                         }
-                        
+
                         // * caso #1: cuando el monto total de registro de pagos es igual al monto total de la orden
                         if($montoTotalRegistroDePago == $orden->monto_total){
-                            
+
                         $requerimiento = Requerimiento::find($request->requerimiento_id);
                         $requerimiento->id_presupuesto_interno = $request->presupuesto_interno_id;
                         $requerimiento->save();
@@ -217,6 +218,7 @@ class NormalizarController extends Controller
                         $tipo='info';
                         $mensaje = PresupuestoInternoHistorialHelper::normalizarOrden($request->orden_id,$request->requerimiento_detalle_id);
                         $titulo='Información';
+                        $success=true;
 
                         }else{
                             // TODO : crear método para caso #2
@@ -268,11 +270,12 @@ class NormalizarController extends Controller
                             $tipo='info';
                             $mensaje = PresupuestoInternoHistorialHelper::normalizarRequerimientoDePago($request->requerimiento_pago_id,$request->requerimiento_pago_detalle_id);
                             $titulo='Información';
+                            $success=true;
 
                         }else{
                             $tipo='warning';
                             $mensaje='El saldo del mes de '.$mes_string.' es menor que el monto del Requerimiento de Pago.';
-                            $titulo='Éxito';
+                            $titulo='Información';
                         }
 
                     }else{
@@ -291,7 +294,7 @@ class NormalizarController extends Controller
 
         DB::commit();
 
-        return response()->json(["tipo"=>$tipo,"mensaje"=>$mensaje,"titulo"=>$titulo],200);
+        return response()->json(["tipo"=>$tipo,"mensaje"=>$mensaje,"titulo"=>$titulo,"success"=>$success],200);
     }
 
     // public function getFechaAprobacionRequerimientoDePago($idRequerimientoPago) {

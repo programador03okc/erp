@@ -311,7 +311,7 @@ class ReporteLogisticaController extends Controller{
 
 	}
 
-    public function obtenerReporteCompras()
+        public function obtenerReporteCompras()
     {
         $data = ComprasLocalesView::orderBy('fecha_emision', 'desc');
 

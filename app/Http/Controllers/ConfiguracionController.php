@@ -778,12 +778,19 @@ class ConfiguracionController extends Controller{
         ->where('id_usuario',$id)
         ->first();
         // $data->usuarioGrupo;
-        if (sizeof($data->usuarioGrupo)>0) {
-            $data->usuarioGrupo;
-        }else{$data->usuarioGrupo=[];}
-        $data->usuarioRol = (sizeof($data->usuarioRol)>0) ? $data->usuarioRol : [] ;
-        // $grupo = Grupo::get();
-        // $rol = Rol::where("estado",1)->get();
+        if ($data) {
+            if (sizeof($data->usuarioGrupo)>0) {
+                $data->usuarioGrupo;
+            }else{
+                $data->usuarioGrupo=[];
+            }
+            $data->usuarioRol = (sizeof($data->usuarioRol)>0) ? $data->usuarioRol : [] ;
+            // $grupo = Grupo::get();
+            // $rol = Rol::where("estado",1)->get();
+
+        }else{
+            $data = [];
+        }
         return response()->json([
             "status"=>200,
             "data"=>$data
@@ -796,6 +803,7 @@ class ConfiguracionController extends Controller{
         ->select(
             'sis_usua.id_usuario',
             'sis_usua.nombre_corto',
+            'sis_usua.nombre_largo',
             'sis_usua.usuario',
             'sis_usua.clave',
             'sis_usua.fecha_registro',

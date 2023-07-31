@@ -59,31 +59,27 @@ class ReporteLogisticaController extends Controller{
 		return view('logistica.reportes.transito_ordenes_compra',compact('empresas','grupos','array_accesos'));
 	}
 
-
 	public function obtenerDataOrdenesCompra($idEmpresa,$idSede,$fechaRegistroDesde,$fechaRegistroHasta){
-		$data = Orden::with([
-			'sede'=> function($q){
+		$data = Orden::with(['sede'=> function($q) {
 				$q->where([['sis_sede.estado', '!=', 7]]);
-			},
-			'estado'
+			}, 'estado'
 		])
 		->select('log_ord_compra.*',  DB::raw("(SELECT  array_to_json(array_agg(json_build_object(
-            'codigo_oportunidad',cc_view.codigo_oportunidad ,
+            'codigo_oportunidad',cc_view.codigo_oportunidad,
 			'fecha_creacion',cc_view.fecha_creacion,
 			'fecha_limite',cc_view.fecha_limite,
 			'estado_aprobacion_cuadro',oc_propias_view.estado_aprobacion_cuadro,
 			'fecha_estado',oc_propias_view.fecha_estado
-
       		))) FROM logistica.log_det_ord_compra
 			INNER JOIN almacen.alm_det_req ON log_det_ord_compra.id_detalle_requerimiento = alm_det_req.id_detalle_requerimiento
 			INNER JOIN almacen.alm_req ON alm_req.id_requerimiento = alm_det_req.id_requerimiento
 			INNER JOIN mgcp_cuadro_costos.cc_view ON alm_req.id_cc = cc_view.id
 			INNER JOIN mgcp_ordenes_compra.oc_propias_view ON oc_propias_view.id_oportunidad = cc_view.id_oportunidad
-			WHERE log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra )  as cuadro_costo"))
+			WHERE log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra ) as cuadro_costo"))
 		// ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'log_ord_compra.id_sede')
 
 		->when(($idEmpresa != 'SIN_FILTRO'), function ($query) use($idEmpresa) {
-			$sedes= Sede::where('id_empresa',$idEmpresa)->get();
+			$sedes= Sede::where('id_empresa', $idEmpresa)->get();
 			$idSedeList=[];
 			foreach($sedes as $sede){
 				$idSedeList[]=$sede->id_sede;
@@ -112,64 +108,79 @@ class ReporteLogisticaController extends Controller{
 		$data = Orden::with([
 			'sede'=> function($q){
 				$q->where([['sis_sede.estado', '!=', 7]]);
-			},
-			'estado'
-		])
-		->when(($idEmpresa  != 'SIN_FILTRO' && $idEmpresa  >0), function ($query) use($idEmpresa) {
-			$sedes= Sede::where('id_empresa',$idEmpresa)->get();
-			$idSedeList=[];
+			}, 'estado'
+		]);
+
+        $idSedeList = [];
+        if ($idEmpresa != 'SIN_FILTRO' && $idEmpresa > 0) {
+            $sedes= Sede::where('id_empresa', $idEmpresa)->get();
 			foreach($sedes as $sede){
 				$idSedeList[]=$sede->id_sede;
 			}
-            return $query->whereIn('id_sede', $idSedeList);
-        })
-        ->when(($idSede != 'SIN_FILTRO' && $idSede >0), function ($query) use($idSede) {
-            return $query->where('id_sede',$idSede);
-        })
+            $data = $data->whereIn('id_sede', $idSedeList);
+        }
 
-        ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta == 'SIN_FILTRO')), function ($query) use($fechaRegistroDesde) {
-            return $query->where('log_ord_compra.fecha' ,'>=',$fechaRegistroDesde);
-        })
-        ->when((($fechaRegistroDesde == 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use($fechaRegistroHasta) {
-            return $query->where('log_ord_compra.fecha' ,'<=',$fechaRegistroHasta);
-        })
-        ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use($fechaRegistroDesde,$fechaRegistroHasta) {
-            return $query->whereBetween('log_ord_compra.fecha' ,[$fechaRegistroDesde,$fechaRegistroHasta]);
-        })
-		->where([['log_ord_compra.id_tp_documento', '=', 3],['log_ord_compra.estado', '!=', 7]]);
+        if ($idSede != 'SIN_FILTRO' && $idSede > 0) {
+            $data = $data->where('id_sede', $idSede);
+        }
+
+        if (($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')) {
+            $data = $data->whereBetween('log_ord_compra.fecha' ,[$fechaRegistroDesde, $fechaRegistroHasta]);
+        }
+
+        $data = $data->where([['log_ord_compra.id_tp_documento', '=', 3],['log_ord_compra.estado', '!=', 7]]);
+
+
+
+		// ->when(($idEmpresa != 'SIN_FILTRO' && $idEmpresa > 0), function ($query) use($idEmpresa) {
+		// 	$sedes= Sede::where('id_empresa', $idEmpresa)->get();
+		// 	$idSedeList=[];
+		// 	foreach($sedes as $sede){
+		// 		$idSedeList[]=$sede->id_sede;
+		// 	}
+        //     return $query->whereIn('id_sede', $idSedeList);
+        // })
+        // ->when(($idSede != 'SIN_FILTRO' && $idSede > 0), function ($query) use($idSede) {
+        //     return $query->where('id_sede',$idSede);
+        // })
+
+        // ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta == 'SIN_FILTRO')), function ($query) use($fechaRegistroDesde) {
+        //     return $query->where('log_ord_compra.fecha' ,'>=',$fechaRegistroDesde);
+        // })
+        // ->when((($fechaRegistroDesde == 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use($fechaRegistroHasta) {
+        //     return $query->where('log_ord_compra.fecha' ,'<=',$fechaRegistroHasta);
+        // })
+        // ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use($fechaRegistroDesde,$fechaRegistroHasta) {
+        //     return $query->whereBetween('log_ord_compra.fecha' ,[$fechaRegistroDesde,$fechaRegistroHasta]);
+        // })
+		// ->where([['log_ord_compra.id_tp_documento', '=', 3],['log_ord_compra.estado', '!=', 7]]);
 
 		return $data;
 	}
 
 
-	public function listaOrdenesCompra(Request $request){
-
+	public function listaOrdenesCompra(Request $request)
+    {
 		$idEmpresa = $request->idEmpresa;
         $idSede = $request->idSede;
 		$fechaRegistroDesde = $request->fechaRegistroDesde;
         $fechaRegistroHasta = $request->fechaRegistroHasta;
 
 		$data = $this->obtenerDataOrdenesCompra($idEmpresa,$idSede,$fechaRegistroDesde,$fechaRegistroHasta);
-
-
-		return datatables($data)
-		// ->filterColumn('codigo_requerimiento', function ($query, $keyword) {
-		// 	$query->where('alm_req.codigo', $keyword);
-		// })
-		->rawColumns(['requerimientos','cuadro_costo'])->toJson();
+        return DataTables::of($data)
+		->rawColumns(['requerimientos','cuadro_costo'])->make(true);
 
 	}
-	public function listaOrdenesServicio(Request $request){
-
+	public function listaOrdenesServicio(Request $request)
+    {
 		$idEmpresa = $request->idEmpresa;
         $idSede = $request->idSede;
 		$fechaRegistroDesde = $request->fechaRegistroDesde;
         $fechaRegistroHasta = $request->fechaRegistroHasta;
 
 		$data = $this->obtenerDataOrdenesServicio($idEmpresa,$idSede,$fechaRegistroDesde,$fechaRegistroHasta);
-
-		return datatables($data)
-		->rawColumns(['requerimientos'])->toJson();
+        return DataTables::of($data)
+		->rawColumns(['requerimientos'])->make(true);
 
 	}
 
@@ -186,7 +197,7 @@ class ReporteLogisticaController extends Controller{
 		// ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'log_ord_compra.id_sede')
 
 		->when(($idEmpresa != 'SIN_FILTRO' && $idEmpresa > 0), function ($query) use($idEmpresa) {
-			$sedes= Sede::where('id_empresa',$idEmpresa)->get();
+			$sedes= Sede::where('id_empresa', $idEmpresa)->get();
 			$idSedeList=[];
 			foreach($sedes as $sede){
 				$idSedeList[]=$sede->id_sede;

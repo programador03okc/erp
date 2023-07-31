@@ -9,8 +9,11 @@ Reportes de transito de ordenes de compra
 @endsection
 
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
-<link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
 @endsection
 
 @section('breadcrumb')
@@ -59,29 +62,23 @@ Reportes de transito de ordenes de compra
     </div>
     @endif
 </div>
-
-
-
 @include('logistica.reportes.modal_filtro_reporte_transito_ordenes_compra')
-
-
 @endsection
 
 @section('scripts')
-
-
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-
-<script src='{{ asset("template/adminlte2-4/plugins/moment/datetime-moment.js?v=1") }}'></script>
-<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+
+<script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
+<script src="{{ asset('emplate/adminlte2-4/plugins/moment/datetime-moment.js?v=1') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 
 <script src="{{('/js/logistica/reportes/transitoOrdenesCompra.js')}}?v={{filemtime(public_path('/js/logistica/reportes/transitoOrdenesCompra.js'))}}"></script>
-
-
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
@@ -91,5 +88,4 @@ Reportes de transito de ordenes de compra
         transitoOrdenesCompra.initializeEventHandler();
     });
 </script>
-
 @endsection

@@ -42,6 +42,7 @@ class OrdenesServicio {
         $tablaListaOrdenesServicio= $('#listaOrdenesServicio').DataTable({
             'dom': vardataTables[1],
             'buttons': [button_descargar_excel],
+            'pageLength': 20,
             'language': vardataTables[0],
             'order': [[0, 'desc']],
             'bLengthChange': false,

@@ -7,6 +7,7 @@ var tempCentroCostoSelected;
 var tempArchivoAdjuntoRequerimientoCabeceraList = [];
 var tempArchivoAdjuntoRequerimientoDetalleList = [];
 var objBotonAdjuntoRequerimientoDetalleSeleccionado = '';
+var tempPartidasActivas=[];
 class RequerimientoView {
     constructor(requerimientoCtrl) {
         this.requerimientoCtrl = requerimientoCtrl;
@@ -636,6 +637,7 @@ class RequerimientoView {
             let codigoPartida='';
             let descripcionPartida='';
             let totalPartida=0;
+            let totalPartidaMes=0;
             if(dataDetalleRequerimiento[i].id_partida > 0){
                 idPartida= dataDetalleRequerimiento[i].id_partida;
                 codigoPartida= dataDetalleRequerimiento[i].codigo_partida;
@@ -646,12 +648,17 @@ class RequerimientoView {
                 codigoPartida= dataDetalleRequerimiento[i].codigo_partida_presupuesto_interno;
                 descripcionPartida= dataDetalleRequerimiento[i].descripcion_partida_presupuesto_interno;
                 totalPartida= dataDetalleRequerimiento[i].presupuesto_interno_total_partida;
+                totalPartidaMes= dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
             }
 
             if (dataDetalleRequerimiento[i].id_tipo_item == 1) { // producto
                 document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr data-estado="${dataDetalleRequerimiento[i].estado}" style="text-align:center; background-color:${dataDetalleRequerimiento[i].estado == 7 ? '#f5e4e4' : ''}; ">
                 <td></td>
-                <td><p class="descripcion-partida" data-id-partida="${idPartida}" data-presupuesto-total="${totalPartida}" title="${descripcionPartida ?? '(NO SELECCIONADO)'}" >${codigoPartida ?? '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
+                <td><p class="descripcion-partida" 
+                    data-id-partida="${idPartida}" 
+                    data-presupuesto-total="${totalPartida}" 
+                    data-presupuesto-mes="${totalPartidaMes}" 
+                    title="${descripcionPartida ?? '(NO SELECCIONADO)'}" >${codigoPartida ?? '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
                     <div class="form-group">
                         <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
                     </div>
@@ -1536,6 +1543,7 @@ class RequerimientoView {
         let codigo = $("#par-" + idPartida + " ").find("td[name=codigo]")[0].innerHTML;
         let descripcion = $("#par-" + idPartida + " ").find("td[name=descripcion]")[0].innerHTML;
         let presupuestoTotal = $("#par-" + idPartida + " ").find("td[name=importe_total]")[0].dataset.presupuestoTotal;
+        let presupuestoMes = $("#par-" + idPartida + " ").find("td[name=importe_mes]")[0].dataset.presupuestoMes;
 
         tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']").value = idPartida;
         tempObjectBtnPartida.textContent = 'Cambiar';
@@ -1544,6 +1552,7 @@ class RequerimientoView {
         tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = idPartida;
         tr.querySelector("p[class='descripcion-partida']").textContent = codigo
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = presupuestoTotal;
+        tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = presupuestoMes;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', descripcion);
 
         this.updatePartidaItem(tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']"));
@@ -1554,7 +1563,7 @@ class RequerimientoView {
     }
 
     calcularPresupuestoUtilizadoYSaldoPorPartida() {
-        let tempPartidasActivas = [];
+        tempPartidasActivas = [];
         let partidaAgregadas = [];
         let subtotalItemList = [];
         let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento']").children;
@@ -1573,12 +1582,14 @@ class RequerimientoView {
                         'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
                         'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
                         'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
+                        'presupuesto_mes': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes,
                         'presupuesto_total': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal,
                         'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
                         'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
                         'presupuesto_utilizado_al_cambio': 0,
                         'presupuesto_utilizado': 0,
-                        'saldo': 0
+                        'saldo_total': 0,
+                        'saldo_mes': 0
                     });
                 }
 
@@ -1595,6 +1606,7 @@ class RequerimientoView {
             }
         }
 
+     
 
         for (let p = 0; p < tempPartidasActivas.length; p++) {
             for (let i = 0; i < subtotalItemList.length; i++) {
@@ -1606,11 +1618,13 @@ class RequerimientoView {
 
         for (let p = 0; p < tempPartidasActivas.length; p++) {
             if (tempPartidasActivas[p].id_moneda_presupuesto_utilizado == 2) { // moneda dolares
-                let alCambio = tempPartidasActivas[p].presupuesto_utilizado * actualTipoCambioCompra;
-                tempPartidasActivas[p].presupuesto_utilizado_al_cambio = alCambio;
-                tempPartidasActivas[p].saldo = tempPartidasActivas[p].presupuesto_total - (alCambio > 0 ? alCambio : 0);
+                let presupuesto_utilizado_alCambio = tempPartidasActivas[p].presupuesto_utilizado * actualTipoCambioCompra;
+                tempPartidasActivas[p].presupuesto_utilizado_al_cambio = presupuesto_utilizado_alCambio;
+                tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0);
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0);
             } else {
-                tempPartidasActivas[p].saldo = tempPartidasActivas[p].presupuesto_total - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+                tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
 
             }
         }
@@ -1622,7 +1636,7 @@ class RequerimientoView {
 
         this.validarPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
-        // console.log(tempPartidasActivas);
+        console.log(tempPartidasActivas);
     }
     validarPresupuestoUtilizadoYSaldoPorPartida(data) {
 
@@ -1630,9 +1644,9 @@ class RequerimientoView {
         let mensajeAlerta = '';
 
         data.forEach(partida => {
-            if (partida.saldo < 0) {
+            if (partida.saldo_total < 0) {
 
-                mensajeAlerta += `La partida ${partida.codigo} - ${partida.descripcion} a excedido el presupuesto asignado, tiene un saldo actual de ${Util.formatoNumero(partida.saldo, 2)}. \n`
+                mensajeAlerta += `La partida ${partida.codigo} - ${partida.descripcion} a excedido el presupuesto asignado, tiene un saldo actual de ${Util.formatoNumero(partida.saldo_total, 2)}. \n`
             }
         });
         if (mensajeAlerta.length > 0) {
@@ -1658,9 +1672,11 @@ class RequerimientoView {
             document.querySelector("tbody[id='body_partidas_activas']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
                 <td>${element.codigo}</td>
                 <td>${element.descripcion}</td>
-                <td style="text-align:right;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
-                <td style="text-align:right;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
-                <td style="text-align:right; color:${element.saldo >= 0 ? '#333' : '#dd4b39'}"><span>S/</span>${Util.formatoNumero(element.saldo, 2)}</td>
+                <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
+                <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
+                <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
+                <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
+                <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  color: green; font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
             </tr>`);
 
         });
@@ -2433,6 +2449,15 @@ class RequerimientoView {
 
             }
         }
+
+        // TODO: Validar si importe de partida excede el ppto de la partida 
+        // for (let index = 0; index < tempPartidasActivas.length; index++) {
+        //     if(tempPartidasActivas[index]['saldo_mes'] <=0){
+
+        //     }
+            
+        // }
+
         if (continuar) {
             let formData = new FormData($('#form-requerimiento')[0]);
 

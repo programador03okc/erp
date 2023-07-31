@@ -46,20 +46,15 @@ class PresupuestoInternoView{
     }
 
     selectPresupuestoInternoDetalle(obj) {
-        // console.log(idPartida);
-        let idPresupuestoInternoDetalle= obj.dataset.idPresupuestoInternoDetalle;
-        let partida= obj.dataset.partida;
-        let descripcion= obj.dataset.descripcion;
-        let montoTotal= obj.dataset.totalPresupuestoAño;
-
-        tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']").value = idPresupuestoInternoDetalle;
+        tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']").value = obj.dataset.idPresupuestoInternoDetalle;
         tempObjectBtnPartida.textContent = 'Cambiar';
 
         let tr = tempObjectBtnPartida.closest("tr");
-        tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = idPresupuestoInternoDetalle;
-        tr.querySelector("p[class='descripcion-partida']").textContent = partida
-        tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = montoTotal;
-        tr.querySelector("p[class='descripcion-partida']").setAttribute('title', descripcion);
+        tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = obj.dataset.idPresupuestoInternoDetalle;
+        tr.querySelector("p[class='descripcion-partida']").textContent = obj.dataset.partida
+        tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = obj.dataset.totalPresupuestoAño;
+        tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = obj.dataset.totalPresupuestoMes;
+        tr.querySelector("p[class='descripcion-partida']").setAttribute('title', obj.dataset.descripcion);
 
         this.updatePartidaItem(tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']"));
         $('#modal-partidas').modal('hide');

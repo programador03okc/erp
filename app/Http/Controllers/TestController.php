@@ -35,7 +35,7 @@ class TestController extends Controller
                     $actualizar->fecha_renovacion = date("Y-m-d", strtotime(Carbon::now()."+ 45 days"));
                 }
             $actualizar->save();
-            $data[] = ['nombre' => $key->nombre_corto, 'clave' => $key->clave, 'decode' => $nuevaClave];
+            $data[] = ['nombre' => $key->nombre_corto, 'clave' => $key->clave, 'decode' => $nuevaClave, "usuario"=>$actualizar];
         }
         return response()->json($data, 200);
     }

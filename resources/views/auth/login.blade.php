@@ -23,7 +23,7 @@
 
                 <form action="{{ route('login') }}" method="post">
                     @csrf
-                    <h5>Usuario ó Correo electrónico</h5>
+                    <h5>Usuario</h5>
                     <div class="form-group has-feedback">
                         <input type="text" name="usuario" class="form-control {{ $errors->has('usuario') ? ' is-invalid' : '' }}" 
                             value="{{ old('usuario') }}" placeholder="Ingrese su usuario">

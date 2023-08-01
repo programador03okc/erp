@@ -19,7 +19,7 @@ class UsuarioController extends Controller
         $hoy = date("Y-m-d");
 
         if ($usuario->renovar == true) {
-            if (date("Y-m-d", strtotime($usuario->fecha_registro."+ 45 days")) > $hoy) {
+            if ($usuario->fecha_renovacion > $hoy) {
                 $success = false;
             }
         } else {
@@ -27,7 +27,7 @@ class UsuarioController extends Controller
         }
         return response()->json(["success"=> $success, "status"=> 200]);
     }
-    
+
     public function modificarClave(Request $request)
     {
         $success = false;
@@ -36,7 +36,7 @@ class UsuarioController extends Controller
             $usuario = Usuario::find(Auth::user()->id_usuario);
             $usuario->clave = StringHelper::encode5t($request->clave);
             $usuario->password = Hash::make($request->clave);
-            $usuario->fecha_registro = Carbon::now();
+            $usuario->fecha_renovacion = date("Y-m-d", strtotime(Carbon::now()."+ 45 days"));
             $usuario->save();
 
             if ($usuario) {

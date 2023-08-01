@@ -30,12 +30,16 @@ class TestController extends Controller
                 if ($key->renovar) {
                     $actualizar->fecha_renovacion = date("Y-m-d", strtotime($key->fecha_registro."+ 45 days"));
                 }
+                if ($key->fecha_registro == null){
+                    $actualizar->fecha_registro = Carbon::now();
+                    $actualizar->fecha_renovacion = date("Y-m-d", strtotime(Carbon::now()."+ 45 days"));
+                }
             $actualizar->save();
             $data[] = ['nombre' => $key->nombre_corto, 'clave' => $key->clave, 'decode' => $nuevaClave];
         }
         return response()->json($data, 200);
     }
-    
+
     public function actualizarClaves()
     {
         $lista = User::all();

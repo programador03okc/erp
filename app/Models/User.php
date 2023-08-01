@@ -19,10 +19,10 @@ class User extends Authenticatable
 
     protected $table = 'configuracion.sis_usua';
     protected $primaryKey = 'id_usuario';
-    protected $fillable = ['id_trabajador', 'usuario', 'clave', 'password', 'estado', 'email', 'nombre_corto', 'renovar'];
+    protected $fillable = ['id_trabajador', 'usuario', 'clave', 'password', 'estado', 'email', 'nombre_corto', 'renovar', 'fecha_renovacion'];
 
 	public $timestamps = false;
-	
+
 	public function trabajador()
 	{
 		return $this->belongsTo(Trabajador::class, 'id_trabajador')->withDefault();
@@ -68,7 +68,7 @@ class User extends Authenticatable
 		$roles = DB::table('configuracion.usuario_rol')->select('sis_rol.*')
 			->join('configuracion.sis_rol', 'sis_rol.id_rol', '=', 'usuario_rol.id_rol')
 			->where([['usuario_rol.id_usuario', $this->id_usuario], ['usuario_rol.estado', 1]])->get();
-			
+
 		foreach ($roles as $s) {
 			if ($texto == '') {
 				$texto .= $s->descripcion;

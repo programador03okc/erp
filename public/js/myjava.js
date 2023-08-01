@@ -32,7 +32,7 @@ $(function () {
                 }
             }).done(function(response) {
                 if (response.success===true) {
-                    $('#actualizar-contraseña').modal('hide');
+                    $('#actualizar-clave').modal('hide');
                     Swal.fire('Éxito', 'Se actualizo con éxito', 'success')
                 } else {
                     Swal.fire('Información', 'Ingrese de nuevo su clave', 'warning' )
@@ -54,7 +54,8 @@ function validarClave() {
         dataType: 'JSON',
         success: function (data) {
             if (data.success === true) {
-                $('#actualizar-contraseña').modal('show');
+                // $('#actualizar-contraseña').modal('show');
+                $('#actualizar-clave').modal('show');
             }
         }
     });

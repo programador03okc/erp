@@ -1832,7 +1832,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('listarGuiasVentaPendientes', [PendientesFacturacionController::class, 'listarGuiasVentaPendientes'])->name('listar-guias-pendientes');
 			Route::post('listarRequerimientosPendientes', [PendientesFacturacionController::class, 'listarRequerimientosPendientes'])->name('listar-requerimientos-pendientes');
 			Route::post('guardar_doc_venta', [PendientesFacturacionController::class, 'guardar_doc_venta'])->name('guardar-doc-venta');
-			Route::get('documentos_ver', [PendientesFacturacionController::class, 'documentos_ver'])->name('ver-doc-venta');
+			Route::get('documentos_ver/{id}', [PendientesFacturacionController::class, 'documentos_ver'])->name('ver-doc-venta');
 			Route::post('anular_doc_ven', [PendientesFacturacionController::class, 'anular_doc_ven'])->name('anular-doc-venta');
 			Route::get('obtenerGuiaVenta/{id}', [PendientesFacturacionController::class, 'obtenerGuiaVenta'])->name('obtener-guia-venta');
 			Route::post('obtenerGuiaVentaSeleccionadas', [PendientesFacturacionController::class, 'obtenerGuiaVentaSeleccionadas'])->name('obtener-guias-ventas');

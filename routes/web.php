@@ -173,6 +173,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('ver/{id}', [ConfiguracionController::class, 'viewAccesos'])->name('ver');
 				Route::get('datos-usuario/{id}', [ConfiguracionController::class, 'accesoUsuario'])->name('datos-usuario');
 				Route::post('modulos', [ConfiguracionController::class, 'getModulosAccion'])->name('modulos');
+				Route::post('ver/guardar-accesos', [ConfiguracionController::class, 'guardarAccesos'])->name('guardar-accesos');
 			});
 		});
 
@@ -766,6 +767,10 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('listarDevolucionesSalidas', [DevolucionController::class, 'listarDevolucionesSalidas'])->name('listar-devoluciones-salidas');
 				Route::get('verDetalleDevolucion/{id}', [SalidasPendientesController::class, 'verDetalleDevolucion'])->name('ver-detalle-devolucion');
+
+                Route::post('importar-excel-series', [SalidasPendientesController::class, 'importarExcelSeries'])->name('importar-excel-series');
+
+
 			});
 
 			Route::group(['as' => 'customizacion.', 'prefix' => 'customizacion'], function () {

@@ -12,6 +12,7 @@ use App\Http\Controllers\Tesoreria\CierreAperturaController as CierreAperturaCon
 use App\Http\Controllers\AlmacenController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Imports\ExcelSeriesImport;
 use App\Models\Almacen\Movimiento;
 use App\models\Configuracion\AccesosUsuarios;
 use App\models\contabilidad\Adjuntos;
@@ -1541,7 +1542,7 @@ class SalidasPendientesController extends Controller
 
             if (intval($periodo_estado) == 2){
                 $msj = 'El periodo esta cerrado. Consulte con contabilidad.';
-                
+
             } else {
 
                 $fecha_anterior = $salida->fecha_almacen;
@@ -2055,5 +2056,18 @@ class SalidasPendientesController extends Controller
                 )
             );
         }
+    }
+    public function importarExcelSeries(Request $request) {
+        $collection = Excel::toCollection(new ExcelSeriesImport, $request->file('import_series'))[0];
+        $array_series = array();
+        foreach($collection as $key=>$item){
+            if($key!==0){
+                if($item[0]!==null && $item[0]!==''){
+                    array_push($array_series,$item[0]);
+                }
+            }
+        }
+        $count = sizeof($array_series);
+        return response()->json(["success"=>true,"data"=>$array_series,"total"=>$count],200);
     }
 }

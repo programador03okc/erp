@@ -93,7 +93,7 @@ function listarSeries(id_producto, id_almacen) {
                 tr += `<tr>
                 <td>
                     <input type="checkbox" data-serie="${element.serie
-                    }" value="${element.id_prod_serie}" 
+                    }" value="${element.id_prod_serie}"
                     ${value !== undefined ? "checked" : ""}/></td>
                 <td class="numero">${i}</td>
                 <td class="serie">${element.serie}</td>
@@ -245,4 +245,30 @@ $("[name=seleccionar_todos]").on("change", function () {
                 .prop("checked", false);
         });
     }
+});
+
+$('#import-serie-excel').change(function (e) {
+    e.preventDefault();
+
+    let data = new FormData($('#form-impor-excel')[0]);
+    let numero_marcados = 0;
+    $("#form-impor-excel")[0].reset()
+    $.ajax({
+        type: 'POST',
+        url: route("almacen.movimientos.pendientes-salida.importar-excel-series"),
+        data: data,
+        dataType: 'JSON',
+        contentType: false,
+        processData: false,
+    }).done(function (response) {
+        $.each(response.data, function (index, element) {
+
+            $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element+'"]').attr('checked','true');
+
+        });
+        $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+response.total+' - Total de marcados: 10')
+    }).always(function () {
+    }).fail(function (jqXHR) {
+    });
+
 });

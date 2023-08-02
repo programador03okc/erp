@@ -14,7 +14,18 @@
                 <input type="text" class="oculto" name="cant_items"/>
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="mytable table table-striped table-condensed table-bordered table-okc-view" 
+                        <form method="POST" action="" id="form-impor-excel" accept="" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="">Seleccione las series por un excel:</label>
+                                <input type="file" name="import_series" id="import-serie-excel" class="form-control">
+                                <small id="total-excel" class="text-muted">Help text</small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="mytable table table-striped table-condensed table-bordered table-okc-view"
                             id="listaSeriesVen" style="margin-bottom: 10px;">
                             <thead>
                                 <tr>
@@ -31,7 +42,7 @@
                                 <input type="checkbox" name="seleccionar_todos" style="margin-right: 10px;"/> Seleccionar todos
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -42,3 +53,4 @@
         </div>
     </div>
 </div>
+

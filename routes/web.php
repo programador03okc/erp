@@ -72,6 +72,7 @@ use App\Http\Controllers\LogisticaController;
 use App\Http\Controllers\Migraciones\MigracionAlmacenSoftLinkController;
 use App\Http\Controllers\Migraciones\MigrateFacturasSoftlinkController;
 use App\Http\Controllers\Migraciones\MigrateOrdenSoftLinkController;
+use App\Http\Controllers\Migraciones\MigrateProductoSoftlinkController;
 use App\Http\Controllers\Migraciones\MigrateRequerimientoSoftLinkController;
 use App\Http\Controllers\NecesidadesController;
 use App\Http\Controllers\Notificaciones\NotificacionController;

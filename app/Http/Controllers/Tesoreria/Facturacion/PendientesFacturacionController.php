@@ -499,7 +499,7 @@ class PendientesFacturacionController extends Controller
         curl_setopt($cUrl, CURLOPT_VERBOSE, true);
         curl_setopt($cUrl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($cUrl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($cUrl, CURLOPT_URL, 'https://mgcp.okccloud.com/mgcp/ordenes-compra/propias/obtener-informacion-adicional');
+        curl_setopt($cUrl, CURLOPT_URL, 'https://mgc.solutionsokc.pe/mgcp/ordenes-compra/propias/obtener-informacion-adicional');
         curl_setopt($cUrl, CURLOPT_POST, true);
         curl_setopt($cUrl, CURLOPT_POSTFIELDS, (http_build_query($dataEnviar)));
         curl_setopt($cUrl, CURLOPT_HEADER, 0);

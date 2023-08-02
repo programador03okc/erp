@@ -138,6 +138,7 @@ Requerimientos pendientes
 
 @include('logistica.gestion_logistica.compras.pendientes.modal_gestionar_estado_requerimiento')
 @include('logistica.gestion_logistica.compras.pendientes.modal_por_regularizar')
+@include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
 @include('logistica.requerimientos.mapeo.mapeoItemsRequerimiento')
 @include('logistica.requerimientos.mapeo.mapeoAsignarProducto')
 @include('logistica.gestion_logistica.compras.pendientes.modal_opciones_para_regularizar_item')
@@ -160,7 +161,6 @@ Requerimientos pendientes
 @include('logistica.cotizaciones.add_proveedor')
 @include('logistica.gestion_logistica.compras.pendientes.ordenesModal')
 @include('logistica.requerimientos.modal_vincular_item_requerimiento')
-@include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
 
 
 @endsection

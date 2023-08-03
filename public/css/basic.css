@@ -45,3 +45,14 @@ body .login-box {
 .input-group-addon.btn {
     color: #fff;
 }
+
+@media (max-width: 768px) {
+    .modal-xl, .modal-lg, .modal-md, .modal-sm, .modal-xs{
+        max-width: 96%;
+        width: 96%;
+        margin: auto;
+    }
+    body .login-box {
+        width: 90%;
+    }
+}

@@ -72,6 +72,7 @@ use App\Http\Controllers\LogisticaController;
 use App\Http\Controllers\Migraciones\MigracionAlmacenSoftLinkController;
 use App\Http\Controllers\Migraciones\MigrateFacturasSoftlinkController;
 use App\Http\Controllers\Migraciones\MigrateOrdenSoftLinkController;
+use App\Http\Controllers\Migraciones\MigrateProductoSoftlinkController;
 use App\Http\Controllers\Migraciones\MigrateRequerimientoSoftLinkController;
 use App\Http\Controllers\NecesidadesController;
 use App\Http\Controllers\Notificaciones\NotificacionController;
@@ -168,7 +169,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('actualizar_usuario', [ConfiguracionController::class, 'savePerfil'])->name('actualizar_usuario');
 			Route::get('decodificar-clave/{id}', [ConfiguracionController::class, 'getPasswordUserDecode'])->name('decodificar-clave');
 			Route::get('perfil/{id}', [ConfiguracionController::class, 'getPerfil'])->name('perfil');
-
+			
 			Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
 				Route::get('ver/{id}', [ConfiguracionController::class, 'viewAccesos'])->name('ver');
 				Route::get('datos-usuario/{id}', [ConfiguracionController::class, 'accesoUsuario'])->name('datos-usuario');
@@ -1837,7 +1838,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('listarGuiasVentaPendientes', [PendientesFacturacionController::class, 'listarGuiasVentaPendientes'])->name('listar-guias-pendientes');
 			Route::post('listarRequerimientosPendientes', [PendientesFacturacionController::class, 'listarRequerimientosPendientes'])->name('listar-requerimientos-pendientes');
 			Route::post('guardar_doc_venta', [PendientesFacturacionController::class, 'guardar_doc_venta'])->name('guardar-doc-venta');
-			Route::get('documentos_ver', [PendientesFacturacionController::class, 'documentos_ver'])->name('ver-doc-venta');
+			Route::get('documentos_ver/{id}', [PendientesFacturacionController::class, 'documentos_ver'])->name('ver-doc-venta');
 			Route::post('anular_doc_ven', [PendientesFacturacionController::class, 'anular_doc_ven'])->name('anular-doc-venta');
 			Route::get('obtenerGuiaVenta/{id}', [PendientesFacturacionController::class, 'obtenerGuiaVenta'])->name('obtener-guia-venta');
 			Route::post('obtenerGuiaVentaSeleccionadas', [PendientesFacturacionController::class, 'obtenerGuiaVentaSeleccionadas'])->name('obtener-guias-ventas');

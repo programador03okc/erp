@@ -233,7 +233,7 @@ class ComprasPendientesController extends Controller
                 'alm_req.fecha_entrega',
                 'alm_tp_req.descripcion AS tipo_req_desc',
                 'division.descripcion as descripcion_division',
-                DB::raw("CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN sis_usua.nombre_largo 
+                DB::raw("CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN sis_usua.nombre_largo
                 ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END AS nombre_solicitado_por"),
                 'sis_usua.nombre_largo as nombre_usuario',
                 'alm_req.observacion',
@@ -1456,7 +1456,7 @@ class ComprasPendientesController extends Controller
                             'descripcion'=>$d->descripcion,
                             'codigo'=>$d->codigo,
                             // 'stock'=>(new SalidaPdfController)->obtenerSaldo($idProducto,$d->id_almacen,($fechaAcual->year.'-01-01'), $fechaAcual),
-                            'stock'=>(new SalidaPdfController)->obtenerSaldo($idProducto,$d->id_almacen,('2022-01-01'), $fechaAcual), //! temporal por el problema de productos sin saldo para este periodo 2023 
+                            'stock'=>(new SalidaPdfController)->obtenerSaldo($idProducto,$d->id_almacen,('2022-01-01'), $fechaAcual), //! temporal por el problema de productos sin saldo para este periodo 2023
                             'cantidad_stock_comprometido'=>$d->cantidad_stock_comprometido
                         ];
                     }
@@ -1505,10 +1505,10 @@ class ComprasPendientesController extends Controller
             foreach ($actualDetalleReq as $key => $value) {
                 if($value->id_tipo_item==1){
                     $productos+=1;
-                } 
+                }
                 if($value->id_tipo_item==2){
                     $servicios+=1;
-                } 
+                }
             }
             $requerimiento= Requerimiento::find($nuevoDetalleRequerimiento->id_requerimiento);
             $requerimiento->id_tipo_detalle= ($productos >0 && $servicios ==0)?'1':($productos ==0 && $servicios >0?'2':($productos >0 && $servicios >0?'3':'3'));
@@ -1788,15 +1788,15 @@ class ComprasPendientesController extends Controller
                     $requerimiento->save();
                     $tipoEstado = 'success';
                     $mensaje = "El requerimiento se actualizó, tiene transformación";
-    
+
                 }else{
                     $requerimiento->tiene_transformacion =false;
                     $requerimiento->save();
                     $tipoEstado = 'success';
                     $mensaje = "El requerimiento se actualizó, no tiene transformación";
-                    
+
                 }
-                
+
 
             }else{
                 $tipoEstado = 'warning';

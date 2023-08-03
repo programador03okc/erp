@@ -27,7 +27,7 @@ function listarDespachosInternos() {
                                     title="Abrir Orden de Transformación" onClick="abrirTransformacion(${element.id_transformacion})"></i>
                             <br>
                             ${element.codigo_req} - ${element.codigo_oportunidad}
-                            <a target="_blank" href="https://mgcp.okccloud.com/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
+                            <a target="_blank" href="https://mgc.solutionsokc.pe/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
                                 data-placement="bottom" title="Ver CDP en mgcp"> <i class="fa fa-th-large"></i></a>
                             <br>
                         </h5>
@@ -58,7 +58,7 @@ function listarDespachosInternos() {
                                 title="Abrir Orden de Transformación" onClick="abrirTransformacion(${element.id_transformacion})"></i>
                             <br>
                             ${element.codigo_req} - ${element.codigo_oportunidad}
-                            <a target="_blank" href="https://mgcp.okccloud.com/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
+                            <a target="_blank" href="https://mgc.solutionsokc.pe/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
                                 data-placement="bottom" title="Ver CDP en mgcp"><i class="fa fa-th-large"></i></a>
                              - ${formatDate(element.fecha_despacho)}
                             <br>
@@ -91,7 +91,7 @@ function listarDespachosInternos() {
                                     title="Abrir Orden de Transformación" onClick="abrirTransformacion(${element.id_transformacion})"></i>
                             <br>
                             ${element.codigo_req} - ${element.codigo_oportunidad}
-                            <a target="_blank" href="https://mgcp.okccloud.com/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
+                            <a target="_blank" href="https://mgc.solutionsokc.pe/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
                                 data-placement="bottom" title="Ver CDP en mgcp"> <i class="fa fa-th-large"></i></a>
                             - ${formatDate(element.fecha_despacho)}
                             <br>
@@ -124,7 +124,7 @@ function listarDespachosInternos() {
                                     title="Abrir Orden de Transformación" onClick="abrirTransformacion(${element.id_transformacion})"></i>
                             <br>
                             ${element.codigo_req} - ${element.codigo_oportunidad}
-                            <a target="_blank" href="https://mgcp.okccloud.com/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
+                            <a target="_blank" href="https://mgc.solutionsokc.pe/mgcp/cuadro-costos/detalles/${element.id_oportunidad}" data-toggle="tooltip"
                                 data-placement="bottom" title="Ver CDP en mgcp"> <i class="fa fa-th-large"></i></a>
                             <br>
                         </h5>

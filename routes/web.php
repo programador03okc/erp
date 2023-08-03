@@ -174,7 +174,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('ver/{id}', [ConfiguracionController::class, 'viewAccesos'])->name('ver');
 				Route::get('datos-usuario/{id}', [ConfiguracionController::class, 'accesoUsuario'])->name('datos-usuario');
 				Route::post('modulos', [ConfiguracionController::class, 'getModulosAccion'])->name('modulos');
-			});
+                Route::post('ver/guardar-accesos', [ConfiguracionController::class, 'guardarAccesos'])->name('guardar-accesos');
+            });
 		});
 
 		Route::group(['as' => 'modulo.', 'prefix' => 'modulo'], function () {

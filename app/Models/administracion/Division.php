@@ -18,14 +18,14 @@ class Division extends Model
         $grupos = Auth::user()->getAllGrupo();
         $idGrupoList=[];
 
-        $soloAutorizadoGarantias=false;
-        $allRol = Auth::user()->getAllRol();
-        foreach ($allRol as  $rol) {
-            if($rol->id_rol == 52) // autorizado garantias
-            {
-                $soloAutorizadoGarantias=true;
-            }
-        }
+        // $soloAutorizadoGarantias=false;
+        // $allRol = Auth::user()->getAllRol();
+        // foreach ($allRol as  $rol) {
+        //     if($rol->id_rol == 52) // autorizado garantias
+        //     {
+        //         $soloAutorizadoGarantias=true;
+        //     }
+        // }
 
         foreach ($grupos as $value) {
             $idGrupoList[]=$value->id_grupo;
@@ -35,9 +35,9 @@ class Division extends Model
         ->select('division.*')
         ->whereIn('division.grupo_id', $idGrupoList)
         ->where('division.estado',1)
-        ->when((($soloAutorizadoGarantias) ==true), function ($query) {
-            return $query->whereRaw('division.id_division = 2');  // autorizado solo ver comercial divison CAS
-        })
+        // ->when((($soloAutorizadoGarantias) ==true), function ($query) {
+        //     return $query->whereRaw('division.id_division = 2');  // autorizado solo ver comercial divison CAS
+        // })
         ->get();
 
         return $divisiones;

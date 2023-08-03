@@ -18,7 +18,7 @@
                             <div class="form-group">
                                 <label for="">Seleccione las series por un excel:</label>
                                 <input type="file" name="import_series" id="import-serie-excel" class="form-control">
-                                <small id="total-excel" class="text-muted">Help text</small>
+                                <small id="total-excel" class="text-muted"></small>
                             </div>
                         </form>
                     </div>

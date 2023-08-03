@@ -252,6 +252,7 @@ $('#import-serie-excel').change(function (e) {
 
     let data = new FormData($('#form-impor-excel')[0]);
     let numero_marcados = 0;
+    let t_body = $('#listaSeriesVen').find('tbody');
     $("#form-impor-excel")[0].reset()
     $.ajax({
         type: 'POST',
@@ -263,10 +264,21 @@ $('#import-serie-excel').change(function (e) {
     }).done(function (response) {
         $.each(response.data, function (index, element) {
 
-            $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element+'"]').attr('checked','true');
+            $.each(t_body.find('tr'), function (index, element_tr) {
+                if (element_tr.children[2].innerText==element) {
+                    numero_marcados = numero_marcados +1;
+                    $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element+'"]').attr('checked','true');
+                    // console.log(element[0].innerText);
+                }
+
+            });
+
+
 
         });
-        $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+response.total+' - Total de marcados: 10')
+        $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+response.total+' - Total de seleccionados : '+numero_marcados+'')
+
+
     }).always(function () {
     }).fail(function (jqXHR) {
     });

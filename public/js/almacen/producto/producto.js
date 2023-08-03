@@ -508,6 +508,13 @@ function migrarProductoSoftlink() {
             type: 'GET',
             url: 'obtenerProductoSoftlink/' + id_producto,
             dataType: 'JSON',
+            beforeSend: data => {
+                $("#tab-producto").LoadingOverlay("show", {
+                    imageAutoResize: true,
+                    progress: true,
+                    imageColor: "#3c8dbc"
+                });
+            },
             success: function (response) {
                 console.log(response);
                 Lobibox.notify(response.tipo, {
@@ -527,6 +534,9 @@ function migrarProductoSoftlink() {
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
+
+        }).always(function() {
+            $("#tab-producto").LoadingOverlay("hide", true);
         });
     } else {
         Lobibox.notify("warning", {

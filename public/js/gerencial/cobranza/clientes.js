@@ -26,8 +26,8 @@ function listarRegistros() {
         },
         columns: [
             {data: 'id_contribuyente', name:"id_contribuyente"},
-            {data: 'nro_documento', name:"nro_documento"},
-            {data: 'razon_social', name:"razon_social"},
+            {data: 'documento', name:"documento"},
+            {data: 'nombre', name:"nombre"},
             {
                 render: function (data, type, row) {
                     html='';

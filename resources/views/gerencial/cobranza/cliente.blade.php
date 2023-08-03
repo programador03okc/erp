@@ -38,7 +38,7 @@
                     <div class="pull-right box-tools">
                         {{-- <button type="button" class="btn btn-success" title="Nuevo Usuario" data-action="nuevo-cliente"><i class="fa fa-save"></i> Nuevo cliente</button> --}}
                         @if (in_array(315, $array_accesos, true))
-                        <a class="btn btn-success" title="Nuevo Usuario" href="{{ route('gerencial.cobranza.nuevo.cliente') }}"><i class="fa fa-save"></i> Nuevo cliente</a>
+                        <a class="btn btn-success" title="Nuevo Usuario" href="{{ route('gerencial.cobranza.crear-cliente') }}"><i class="fa fa-save"></i> Nuevo cliente</a>
                         @endif
 
                         {{-- <button class="btn btn-primary" data-action="actualizar"><i class="fa fa-refresh"></i> Actualizar</button> --}}

@@ -1543,7 +1543,7 @@ class RequerimientoView {
         let codigo = $("#par-" + idPartida + " ").find("td[name=codigo]")[0].innerHTML;
         let descripcion = $("#par-" + idPartida + " ").find("td[name=descripcion]")[0].innerHTML;
         let presupuestoTotal = $("#par-" + idPartida + " ").find("td[name=importe_total]")[0].dataset.presupuestoTotal;
-        let presupuestoMes = $("#par-" + idPartida + " ").find("td[name=importe_mes]")[0].dataset.presupuestoMes;
+        let presupuestoMes = ($("#par-" + idPartida + " ").find("td[name=importe_mes]")[0]) !=null ? $("#par-" + idPartida + " ").find("td[name=importe_mes]")[0].dataset.presupuestoMes:'';
 
         tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']").value = idPartida;
         tempObjectBtnPartida.textContent = 'Cambiar';

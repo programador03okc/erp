@@ -236,7 +236,7 @@ class PresupuestoInternoHistorialHelper
             $historial->id_requerimiento_pago = $idRequerimientoPago;
             $historial->id_requerimiento_pago_detalle = $idDetalleRequerimientoPago;
             $historial->tipo = 'SALIDA';
-            $historial->descripion = $descripcion;
+            $historial->descripcion = $descripcion;
             $historial->operacion = 'R';
             $historial->importe = $importe;
             $historial->mes = str_pad(date('m', strtotime($fecha)), 2, "0", STR_PAD_LEFT);

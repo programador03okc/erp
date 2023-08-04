@@ -7,7 +7,7 @@ var tempCentroCostoSelected;
 var tempArchivoAdjuntoRequerimientoCabeceraList = [];
 var tempArchivoAdjuntoRequerimientoDetalleList = [];
 var objBotonAdjuntoRequerimientoDetalleSeleccionado = '';
-var tempPartidasActivas=[];
+var tempPartidasActivas = [];
 class RequerimientoView {
     constructor(requerimientoCtrl) {
         this.requerimientoCtrl = requerimientoCtrl;
@@ -173,9 +173,9 @@ class RequerimientoView {
             case 'SELECCION_PRESUPUESTO_INTERNO':
                 if (valor > 0) {
                     document.querySelector("select[name='id_proyecto']").setAttribute("disabled", true);
-                    document.querySelector("select[name='id_proyecto']").value='';
+                    document.querySelector("select[name='id_proyecto']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
-                    document.querySelector("input[name='id_cc']").value='';
+                    document.querySelector("input[name='id_cc']").value = '';
 
                 } else {
                     document.querySelector("select[name='id_proyecto']").removeAttribute("disabled");
@@ -186,8 +186,8 @@ class RequerimientoView {
             case 'SELECCION_PROYECTOS':
                 if (valor > 0) {
                     document.querySelector("select[name='id_presupuesto_interno']").setAttribute("disabled", true);
-                    document.querySelector("select[name='id_presupuesto_interno']").value='';
-                    document.querySelector("input[name='id_cc']").value='';
+                    document.querySelector("select[name='id_presupuesto_interno']").value = '';
+                    document.querySelector("input[name='id_cc']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
                 } else {
                     document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
@@ -197,9 +197,9 @@ class RequerimientoView {
             case 'SELECCION_CDP':
                 if (valor > 0) {
                     document.querySelector("select[name='id_presupuesto_interno']").setAttribute("disabled", true);
-                    document.querySelector("select[name='id_presupuesto_interno']").value='';
+                    document.querySelector("select[name='id_presupuesto_interno']").value = '';
                     document.querySelector("select[name='id_proyecto']").setAttribute("disabled", true);
-                    document.querySelector("select[name='id_proyecto']").value='';
+                    document.querySelector("select[name='id_proyecto']").value = '';
                 } else {
                     document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
                     document.querySelector("select[name='id_proyecto']").removeAttribute("disabled");
@@ -538,7 +538,7 @@ class RequerimientoView {
         document.querySelector("input[name='telefono_cliente']").value = data.telefono;
         document.querySelector("input[name='email_cliente']").value = data.email;
         document.querySelector("input[name='direccion_entrega']").value = data.direccion_entrega;
-        document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto!=null?data.tipo_impuesto:0;
+        document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto != null ? data.tipo_impuesto : 0;
         // document.querySelector("input[name='nombre_contacto']").value =data.
         // document.querySelector("input[name='cargo_contacto']").value =data.
         // document.querySelector("input[name='email_contacto']").value =data.
@@ -570,7 +570,7 @@ class RequerimientoView {
             });
         }
 
-        this.llenarComboProyectos(data.id_grupo,data.id_proyecto);
+        this.llenarComboProyectos(data.id_grupo, data.id_proyecto);
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.division_id, data.id_presupuesto_interno);
 
     }
@@ -633,22 +633,22 @@ class RequerimientoView {
             let idFila = dataDetalleRequerimiento[i].id_detalle_requerimiento > 0 ? dataDetalleRequerimiento[i].id_detalle_requerimiento : (this.makeId());
             console.log(dataDetalleRequerimiento);
 
-            let idPartida='';
-            let codigoPartida='';
-            let descripcionPartida='';
-            let totalPartida=0;
-            let totalPartidaMes=0;
-            if(dataDetalleRequerimiento[i].id_partida > 0){
-                idPartida= dataDetalleRequerimiento[i].id_partida;
-                codigoPartida= dataDetalleRequerimiento[i].codigo_partida;
-                descripcionPartida= dataDetalleRequerimiento[i].descripcion_partida;
-                totalPartida= dataDetalleRequerimiento[i].presupuesto_old_total_partida;
-            }else if(dataDetalleRequerimiento[i].id_partida_pi>0){
-                idPartida= dataDetalleRequerimiento[i].id_partida_pi;
-                codigoPartida= dataDetalleRequerimiento[i].codigo_partida_presupuesto_interno;
-                descripcionPartida= dataDetalleRequerimiento[i].descripcion_partida_presupuesto_interno;
-                totalPartida= dataDetalleRequerimiento[i].presupuesto_interno_total_partida;
-                totalPartidaMes= dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
+            let idPartida = '';
+            let codigoPartida = '';
+            let descripcionPartida = '';
+            let totalPartida = 0;
+            let totalPartidaMes = 0;
+            if (dataDetalleRequerimiento[i].id_partida > 0) {
+                idPartida = dataDetalleRequerimiento[i].id_partida;
+                codigoPartida = dataDetalleRequerimiento[i].codigo_partida;
+                descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida;
+                totalPartida = dataDetalleRequerimiento[i].presupuesto_old_total_partida;
+            } else if (dataDetalleRequerimiento[i].id_partida_pi > 0) {
+                idPartida = dataDetalleRequerimiento[i].id_partida_pi;
+                codigoPartida = dataDetalleRequerimiento[i].codigo_partida_presupuesto_interno;
+                descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida_presupuesto_interno;
+                totalPartida = dataDetalleRequerimiento[i].presupuesto_interno_total_partida;
+                totalPartidaMes = dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
             }
 
             if (dataDetalleRequerimiento[i].id_tipo_item == 1) { // producto
@@ -707,7 +707,11 @@ class RequerimientoView {
             } else { // servicio
                 document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr data-estado="${dataDetalleRequerimiento[i].estado}" style="text-align:center;  background-color:${dataDetalleRequerimiento[i].estado == 7 ? '#f5e4e4' : ''};">
                     <td></td>
-                    <td><p class="descripcion-partida" data-id-partida="${idPartida}" data-presupuesto-total="${totalPartida}" title="${descripcionPartida}" >${codigoPartida}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
+                    <td><p class="descripcion-partida" 
+                        data-id-partida="${idPartida}" 
+                        data-presupuesto-total="${totalPartida}" 
+                        data-presupuesto-mes="${totalPartidaMes}" 
+                        title="${descripcionPartida}" >${codigoPartida}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
                         <div class="form-group">
                             <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
                         </div>
@@ -1034,7 +1038,7 @@ class RequerimientoView {
             obj.target.closest('div').classList.add("has-error");
         }
 
-        this.presupuestoInternoView.llenarComboPresupuestoInterno(currentIdGrupo, obj.target.value,null);
+        this.presupuestoInternoView.llenarComboPresupuestoInterno(currentIdGrupo, obj.target.value, null);
 
         this.llenarComboProyectos(currentIdGrupo);
 
@@ -1053,7 +1057,7 @@ class RequerimientoView {
             hiddeElement('mostrar', 'form-requerimiento', [
                 'input-group-cdp'
             ]);
-        }else{
+        } else {
             hiddeElement('ocultar', 'form-requerimiento', [
                 'input-group-cdp'
             ]);
@@ -1073,20 +1077,20 @@ class RequerimientoView {
 
     }
 
-    llenarComboProyectos(idGrupo,idProyecto=null){
+    llenarComboProyectos(idGrupo, idProyecto = null) {
         this.requerimientoCtrl.obtenerListaProyectos(idGrupo).then((res) => {
-            this.construirListaProyecto(res,idProyecto);
+            this.construirListaProyecto(res, idProyecto);
         }).catch(function (err) {
             console.log(err)
         })
     }
 
 
-    construirListaProyecto(data,idProyecto=null){
+    construirListaProyecto(data, idProyecto = null) {
         // console.log(data);
 
         let selectElement = document.querySelector("div[id='input-group-proyecto'] select[name='id_proyecto']");
-        selectElement.innerHTML='';
+        selectElement.innerHTML = '';
         let option = document.createElement("option");
         option.text = "Seleccionar un proyecto";
         option.value = '';
@@ -1094,7 +1098,7 @@ class RequerimientoView {
 
         data.forEach(element => {
             let option = document.createElement("option");
-            option.text = element.codigo+' - '+element.descripcion;
+            option.text = element.codigo + ' - ' + element.descripcion;
             option.value = element.id_proyecto;
             option.setAttribute('data-codigo', element.codigo);
             option.setAttribute('data-id-centro-costo', element.id_centro_costo);
@@ -1543,7 +1547,7 @@ class RequerimientoView {
         let codigo = $("#par-" + idPartida + " ").find("td[name=codigo]")[0].innerHTML;
         let descripcion = $("#par-" + idPartida + " ").find("td[name=descripcion]")[0].innerHTML;
         let presupuestoTotal = $("#par-" + idPartida + " ").find("td[name=importe_total]")[0].dataset.presupuestoTotal;
-        let presupuestoMes = ($("#par-" + idPartida + " ").find("td[name=importe_mes]")[0]) !=null ? $("#par-" + idPartida + " ").find("td[name=importe_mes]")[0].dataset.presupuestoMes:'';
+        let presupuestoMes = ($("#par-" + idPartida + " ").find("td[name=importe_mes]")[0]) != null ? $("#par-" + idPartida + " ").find("td[name=importe_mes]")[0].dataset.presupuestoMes : 0;
 
         tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']").value = idPartida;
         tempObjectBtnPartida.textContent = 'Cambiar';
@@ -1606,7 +1610,7 @@ class RequerimientoView {
             }
         }
 
-     
+
 
         for (let p = 0; p < tempPartidasActivas.length; p++) {
             for (let i = 0; i < subtotalItemList.length; i++) {
@@ -1634,35 +1638,8 @@ class RequerimientoView {
         }
 
 
-        this.validarPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
-        console.log(tempPartidasActivas);
-    }
-    validarPresupuestoUtilizadoYSaldoPorPartida(data) {
-
-
-        let mensajeAlerta = '';
-
-        data.forEach(partida => {
-            if (partida.saldo_total < 0) {
-
-                mensajeAlerta += `La partida ${partida.codigo} - ${partida.descripcion} a excedido el presupuesto asignado, tiene un saldo actual de ${Util.formatoNumero(partida.saldo_total, 2)}. \n`
-            }
-        });
-        if (mensajeAlerta.length > 0) {
-
-            Lobibox.notify('info', {
-                title: false,
-                size: 'normal',
-                width: 500,
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: mensajeAlerta
-            });
-
-
-        }
+        // console.log(tempPartidasActivas);
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
@@ -1676,7 +1653,7 @@ class RequerimientoView {
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
                 <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
                 <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
-                <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  color: green; font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
+                <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
             </tr>`);
 
         });
@@ -2301,7 +2278,8 @@ class RequerimientoView {
 
     actionGuardarEditarRequerimiento() {
 
-        let continuar = true;
+        let camposValidos = true;
+        let presupuestoPartidaValido = true;
         if (document.querySelector("tbody[id='body_detalle_requerimiento']").childElementCount == 0) {
             Swal.fire(
                 '',
@@ -2312,7 +2290,7 @@ class RequerimientoView {
         }
 
         if (document.querySelector("input[name='concepto']").value == '') {
-            continuar = false;
+            camposValidos = false;
             if (document.querySelector("input[name='concepto']").closest('div').querySelector("span") == null) {
                 let newSpanInfo = document.createElement("span");
                 newSpanInfo.classList.add('text-danger');
@@ -2324,7 +2302,7 @@ class RequerimientoView {
         }
 
         if (document.querySelector("select[name='empresa']").value == 0) {
-            continuar = false;
+            camposValidos = false;
             if (document.querySelector("select[name='empresa']").closest('div').querySelector("span") == null) {
                 let newSpanInfo = document.createElement("span");
                 newSpanInfo.classList.add('text-danger');
@@ -2335,7 +2313,7 @@ class RequerimientoView {
         }
 
         if (document.querySelector("select[name='sede']").value == 0) {
-            continuar = false;
+            camposValidos = false;
             if (document.querySelector("select[name='sede']").closest('div').querySelector("span") == null) {
                 let newSpanInfo = document.createElement("span");
                 newSpanInfo.classList.add('text-danger');
@@ -2347,7 +2325,7 @@ class RequerimientoView {
         }
 
         // if (document.querySelector("input[name='fecha_entrega']").value == '') {
-        //     continuar = false;
+        //     camposValidos = false;
         //     if (document.querySelector("input[name='fecha_entrega']").closest('div').querySelector("span") == null) {
         //         let newSpanInfo = document.createElement("span");
         //         newSpanInfo.classList.add('text-danger');
@@ -2359,7 +2337,7 @@ class RequerimientoView {
         // }
 
         if (document.querySelector("select[name='tipo_requerimiento']").value == 0) {
-            continuar = false;
+            camposValidos = false;
             if (document.querySelector("select[name='tipo_requerimiento']").closest('div').querySelector("span") == null) {
                 let newSpanInfo = document.createElement("span");
                 newSpanInfo.classList.add('text-danger');
@@ -2370,7 +2348,7 @@ class RequerimientoView {
 
         }
         if (document.querySelector("select[name='division']").value == 0) {
-            continuar = false;
+            camposValidos = false;
             if (document.querySelector("select[name='division']").closest('div').querySelector("span") == null) {
                 let newSpanInfo = document.createElement("span");
                 newSpanInfo.classList.add('text-danger');
@@ -2384,10 +2362,10 @@ class RequerimientoView {
         let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento']").children;
         for (let index = 0; index < tbodyChildren.length; index++) {
 
-            if(document.querySelector("input[name='id_cc']").value =='' || document.querySelector("input[name='id_cc']").value ==null ){
+            if (document.querySelector("input[name='id_cc']").value == '' || document.querySelector("input[name='id_cc']").value == null) {
 
                 if (tbodyChildren[index].querySelector("input[class~='partida']").value == '') {
-                    continuar = false;
+                    camposValidos = false;
                     if (tbodyChildren[index].querySelector("input[class~='partida']").closest('td').querySelector("span") == null) {
                         let newSpanInfo = document.createElement("span");
                         newSpanInfo.classList.add('text-danger');
@@ -2398,20 +2376,20 @@ class RequerimientoView {
 
                 }
             }
-                if (tbodyChildren[index].querySelector("input[class~='centroCosto']").value == '') {
-                    continuar = false;
-                    if (tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').querySelector("span") == null) {
-                        let newSpanInfo = document.createElement("span");
-                        newSpanInfo.classList.add('text-danger');
-                        newSpanInfo.textContent = 'Ingrese un centro de costo';
-                        tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').appendChild(newSpanInfo);
-                        tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').querySelector("div[class~='form-group']").classList.add('has-error');
-                    }
-
+            if (tbodyChildren[index].querySelector("input[class~='centroCosto']").value == '') {
+                camposValidos = false;
+                if (tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').querySelector("span") == null) {
+                    let newSpanInfo = document.createElement("span");
+                    newSpanInfo.classList.add('text-danger');
+                    newSpanInfo.textContent = 'Ingrese un centro de costo';
+                    tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').appendChild(newSpanInfo);
+                    tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').querySelector("div[class~='form-group']").classList.add('has-error');
                 }
 
+            }
+
             if (tbodyChildren[index].querySelector("input[class~='cantidad']").value == '' || tbodyChildren[index].querySelector("input[class~='cantidad']").value <= 0) {
-                continuar = false;
+                camposValidos = false;
                 if (tbodyChildren[index].querySelector("input[class~='cantidad']").closest('td').querySelector("span") == null) {
                     let newSpanInfo = document.createElement("span");
                     newSpanInfo.classList.add('text-danger');
@@ -2423,7 +2401,7 @@ class RequerimientoView {
             }
 
             if (tbodyChildren[index].querySelector("input[class~='precio']").value == '' || tbodyChildren[index].querySelector("input[class~='precio']").value <= 0) {
-                continuar = false;
+                camposValidos = false;
                 if (tbodyChildren[index].querySelector("input[class~='precio']").closest('td').querySelector("span") == null) {
                     let newSpanInfo = document.createElement("span");
                     newSpanInfo.classList.add('text-danger');
@@ -2436,7 +2414,7 @@ class RequerimientoView {
 
             if (tbodyChildren[index].querySelector("textarea[class~='descripcion']")) {
                 if (tbodyChildren[index].querySelector("textarea[class~='descripcion']").value == '') {
-                    continuar = false;
+                    camposValidos = false;
                     if (tbodyChildren[index].querySelector("textarea[class~='descripcion']").closest('td').querySelector("span") == null) {
                         let newSpanInfo = document.createElement("span");
                         newSpanInfo.classList.add('text-danger');
@@ -2451,14 +2429,30 @@ class RequerimientoView {
         }
 
         // TODO: Validar si importe de partida excede el ppto de la partida 
-        // for (let index = 0; index < tempPartidasActivas.length; index++) {
-        //     if(tempPartidasActivas[index]['saldo_mes'] <=0){
+        // console.log(tempPartidasActivas);
 
-        //     }
-            
-        // }
+        let mensajePartidaActiva='';
+        if (!parseInt(document.querySelector("select[name='id_proyecto']").value) > 0) {
+            for (let index = 0; index < tempPartidasActivas.length; index++) {
+                if (parseFloat(tempPartidasActivas[index]['saldo_mes']) <= 0) {
+                    presupuestoPartidaValido = false;
+                    mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
+                    
+                }
+            }
 
-        if (continuar) {
+            if(mensajePartidaActiva!=''){
+                Swal.fire(
+                    '',
+                    'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,
+                    'warning'
+                );
+            }
+
+        }
+        // console.log(camposValidos);
+        // console.log(presupuestoPartidaValido);
+        if (camposValidos == true && presupuestoPartidaValido == true) {
             let formData = new FormData($('#form-requerimiento')[0]);
 
             if (tempArchivoAdjuntoRequerimientoDetalleList.length > 0) {
@@ -2595,12 +2589,28 @@ class RequerimientoView {
 
 
         } else {
-            Swal.fire(
-                '',
-                'Por favor ingrese los datos faltantes en el formulario',
-                'warning'
-            );
-            console.log("no se va a guardar");
+            if (camposValidos == false) {
+                Lobibox.notify('warning', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'Por favor ingrese los datos faltantes en el formulario.'
+                });
+            }
+            if (presupuestoPartidaValido == false) {
+                Lobibox.notify('warning', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'El subtotal de un item (+IGV), no puede ser mayor al presupuesto de la partida (presupuesto del mes). '
+                });
+            }
+
+
         }
     }
 

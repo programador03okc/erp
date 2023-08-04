@@ -206,9 +206,6 @@ class ComprasPendientesController extends Controller
             ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
             ->leftJoin('administracion.division', 'alm_req.division_id', '=', 'division.id_division')
             ->leftJoin('configuracion.sis_usua', 'alm_req.id_usuario', '=', 'sis_usua.id_usuario')
-            ->leftJoin('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
-            ->leftJoin('rrhh.rrhh_postu', 'rrhh_postu.id_postulante', '=', 'rrhh_trab.id_postulante')
-            ->leftJoin('rrhh.rrhh_perso', 'rrhh_perso.id_persona', '=', 'rrhh_postu.id_persona')
             ->leftJoin('rrhh.rrhh_rol', 'alm_req.id_rol', '=', 'rrhh_rol.id_rol')
             ->leftJoin('rrhh.rrhh_rol_concepto', 'rrhh_rol_concepto.id_rol_concepto', '=', 'rrhh_rol.id_rol_concepto')
             ->leftJoin('administracion.adm_area', 'alm_req.id_area', '=', 'adm_area.id_area')
@@ -233,7 +230,7 @@ class ComprasPendientesController extends Controller
                 'alm_req.fecha_entrega',
                 'alm_tp_req.descripcion AS tipo_req_desc',
                 'division.descripcion as descripcion_division',
-                DB::raw("CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN sis_usua.nombre_largo
+                DB::raw("CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name 
                 ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END AS nombre_solicitado_por"),
                 'sis_usua.nombre_largo as nombre_usuario',
                 'alm_req.observacion',
@@ -321,8 +318,12 @@ class ComprasPendientesController extends Controller
                 'alm_req.id_prioridad',
                 'alm_req.fecha_registro',
                 'alm_req.trabajador_id',
-                DB::raw("UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno))  AS solicitado_por"),
-                'cc_view.name as cc_solicitado_por',
+                // DB::raw("UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno))  AS solicitado_por"),
+                // 'cc_view.name as cc_solicitado_por',
+
+                DB::raw("(CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name 
+                ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END) AS nombre_solicitado_por"),
+                'sis_usua.nombre_largo as nombre_usuario',
                 'alm_req.estado',
                 'alm_req.id_empresa',
                 'alm_req.id_sede',
@@ -425,7 +426,7 @@ class ComprasPendientesController extends Controller
             //     } catch (\Throwable $th) {
             //     }
             // })
-            ->filterColumn('cc_solicitado_por', function ($query, $keyword) {
+            ->filterColumn('nombre_solicitado_por', function ($query, $keyword) {
                 try {
                     $query->where('cc_view.name', trim($keyword));
                 } catch (\Throwable $th) {

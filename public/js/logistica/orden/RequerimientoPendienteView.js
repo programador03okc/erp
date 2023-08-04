@@ -609,14 +609,7 @@ class RequerimientoPendienteView {
                 { 'data': 'division', 'name': 'division.descripcion', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
                     return row.division != null ? JSON.parse(row.division.replace(/&quot;/g, '"')).join(",") : '';
                 }},
-                { 'data': 'cc_solicitado_por', 'name': 'cc_view.name', 'className': 'text-center','render': function (data, type, row) {
-                    if (row.id_tipo_requerimiento != 1) {
-                        return row.solicitado_por != null ? row.solicitado_por : '';
-
-                    } else {
-                        return row.cc_solicitado_por != null ? row.cc_solicitado_por : '';
-                    }
-                }},
+                { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por', 'className': 'text-center'},
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
                 { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-center' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {

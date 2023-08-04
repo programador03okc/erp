@@ -169,7 +169,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('actualizar_usuario', [ConfiguracionController::class, 'savePerfil'])->name('actualizar_usuario');
 			Route::get('decodificar-clave/{id}', [ConfiguracionController::class, 'getPasswordUserDecode'])->name('decodificar-clave');
 			Route::get('perfil/{id}', [ConfiguracionController::class, 'getPerfil'])->name('perfil');
-			
+
 			Route::group(['as' => 'accesos.', 'prefix' => 'accesos'], function () {
 				Route::get('ver/{id}', [ConfiguracionController::class, 'viewAccesos'])->name('ver');
 				Route::get('datos-usuario/{id}', [ConfiguracionController::class, 'accesoUsuario'])->name('datos-usuario');

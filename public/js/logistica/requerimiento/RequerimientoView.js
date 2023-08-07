@@ -1633,9 +1633,9 @@ class RequerimientoView {
             }
         }
 
-        for (let p = 0; p < tempPartidasActivas.length; p++) {
+        // for (let p = 0; p < tempPartidasActivas.length; p++) {
 
-        }
+        // }
 
 
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
@@ -2428,20 +2428,20 @@ class RequerimientoView {
             }
         }
 
-        // TODO: Validar si importe de partida excede el ppto de la partida 
-        // console.log(tempPartidasActivas);
+        
+        // Validar si importe de partida excede el ppto de la partida 
 
         let mensajePartidaActiva='';
-        if (!parseInt(document.querySelector("select[name='id_proyecto']").value) > 0) {
+        if (document.querySelector("select[name='id_proyecto']") ==null || !parseInt(document.querySelector("select[name='id_proyecto']").value) > 0) {
             for (let index = 0; index < tempPartidasActivas.length; index++) {
                 if (parseFloat(tempPartidasActivas[index]['saldo_mes']) <= 0) {
-                    presupuestoPartidaValido = false;
                     mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
                     
                 }
             }
-
+            
             if(mensajePartidaActiva!=''){
+                presupuestoPartidaValido = false;
                 Swal.fire(
                     '',
                     'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,

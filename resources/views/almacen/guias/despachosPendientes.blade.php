@@ -212,6 +212,9 @@
  --}}
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
+{{-- para leer archivos excel con js --}}
+<script src="{{ asset('template/adminlte2-4/plugins/reed-excel-file/read-excel-file.min.js')}}?v={{filemtime(public_path('template/adminlte2-4/plugins/reed-excel-file/read-excel-file.min.js'))}}"></script>
+
 <script src="{{ asset('js/almacen/guia/despachosPendientes.js')}}?v={{filemtime(public_path('js/almacen/guia/despachosPendientes.js'))}}"></script>
 <script src="{{ asset('js/almacen/guia/guia_ven_create.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_ven_create.js'))}}"></script>
 <script src="{{ asset('js/almacen/distribucion/despachoDetalle.js')}}?v={{filemtime(public_path('js/almacen/distribucion/despachoDetalle.js'))}}"></script>

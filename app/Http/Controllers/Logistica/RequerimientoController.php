@@ -1827,8 +1827,8 @@ class RequerimientoController extends Controller
             ->leftJoin('administracion.division', 'division.id_division', '=', 'alm_req.division_id')
             ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
             ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
-            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
+            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc_view.id_oportunidad')
 
             ->select(
                 'alm_req.id_requerimiento',
@@ -1868,7 +1868,7 @@ class RequerimientoController extends Controller
                 'alm_req.division_id',
                 'division.descripcion as division',
                 'sis_usua.nombre_largo as nombre_usuario',
-                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN  sis_usua.nombre_largo
+                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
                 ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)
                 END AS nombre_solicitado_por"),
 
@@ -1992,7 +1992,8 @@ class RequerimientoController extends Controller
             ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
             ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
             ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
+            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc_view.id_oportunidad')
 
             ->select(
                 'alm_req.id_requerimiento',
@@ -2034,7 +2035,11 @@ class RequerimientoController extends Controller
                 'alm_req.division_id',
                 'division.descripcion as division',
                 'sis_usua.nombre_largo as nombre_usuario',
-                DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
+                
+                // DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
+                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
+                ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)
+                END AS nombre_solicitado_por"),
                 DB::raw("(SELECT COUNT(adm_aprobacion.id_aprobacion)
                 FROM administracion.adm_aprobacion
                 WHERE   adm_aprobacion.id_vobo = 3 AND
@@ -2088,7 +2093,7 @@ class RequerimientoController extends Controller
 
         return datatables($requerimientos)
             ->addColumn('nombre_solicitado_por', function ($requerimientos) {
-                return ($requerimientos->id_tipo_requerimiento == 1) ? $requerimientos->nombre_usuario : $requerimientos->solicitado_por;
+                return ($requerimientos->id_tipo_requerimiento == 1) ? ($requerimientos->nombre_solicitado_por!=null?$requerimientos->nombre_solicitado_por:'') : $requerimientos->nombre_usuario;
             })
             ->filterColumn('nombre_usuario', function ($query, $keyword) {
                 $keywords = trim(strtoupper($keyword));

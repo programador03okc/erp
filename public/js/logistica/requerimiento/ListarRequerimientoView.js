@@ -392,8 +392,8 @@ class ListarRequerimientoView {
                 { 'data': 'monto_total', 'name': 'monto_total', 'defaultContent': '', 'className': 'text-right','render': function (data, type, row) {
                     return (row['simbolo_moneda']) + ($.number(row.monto_total, 2,'.',','));
                 }},
-                { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
                 { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por' },
+                { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc','render': function (data, type, row) {
                     switch (row['estado']) {
                         case 1:

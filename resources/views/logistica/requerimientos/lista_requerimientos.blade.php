@@ -109,8 +109,8 @@ Listado de requerimientos logísticos
                                         <th class="text-center">Presupuesto Interno</th>
                                         <th class="text-center">Monto Subtotal</th>
                                         <th class="text-center">Monto Total</th>
-                                        <th class="text-center">Creado por</th>
                                         <th class="text-center">Solicitado por</th>
+                                        <th class="text-center">Creado por</th>
                                         <th class="text-center" style="width:5%;">Estado</th>
                                         <th class="text-center" style="width:15%">Acción</th>
                                     </tr>

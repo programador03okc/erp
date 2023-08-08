@@ -22,9 +22,9 @@
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>C. REQUERIMIENTO</b></th>
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>ITEM</b></th>
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>ESTADO</b></th>
-                    <th style="background-color: #cccccc;text-align: center;" width="18"><b>SIMBOLO VALOR</b></th>
+                    <th style="background-color: #cccccc;text-align: center;"><b>MONEDA</b></th>
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>VALOR</b></th>
-                    <th style="background-color: #cccccc;text-align: center;" width="18"><b>MONTO TOTAL SIMBOLO</b></th>
+                    <th style="background-color: #cccccc;text-align: center;"><b>MONEDA</b></th>
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>MONTO TOTAL</b></th>
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>TIPO PPTO</b></th>
                     <th style="background-color: #cccccc;text-align: center;" width="18"><b>COD PPTO</b></th>
@@ -53,18 +53,18 @@
                             <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->codigo_req}}</td>
                             <td style="">{{ $item_detalle->descripcion }}</td>
                             <td style="">{{ $item_detalle->estados_gasto }}</td>
-                            <td style="vertical-align: text-bottom;text-align: center;">S/.</td>
-                            <td style="vertical-align: text-bottom;text-align: center;">{{($item_detalle->importe_historial)}}</td>
-                            <td style="vertical-align: text-bottom;text-align: center;"> {{$item_detalle->monto_total_simbolo}} </td>
-                            <td style="vertical-align: text-bottom;text-align: center;"> {{$item_detalle->monto_total}} </td>
+                            <td style="vertical-align: text-bottom;text-align: right;">S/.</td>
+                            <td style="vertical-align: text-bottom;text-align: left;">{{($item_detalle->importe_historial)}}</td>
+                            <td style="vertical-align: text-bottom;text-align: right;"> {{$item_detalle->monto_total_simbolo}} </td>
+                            <td style="vertical-align: text-bottom;text-align: left;"> {{$item_detalle->monto_total}} </td>
                             <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->tipo}}</td>
 
                             <td style="vertical-align: text-bottom;text-align: center;">{{ $item_detalle->presupuesto_codigo}}</td>
                             <td style="">{{ $item_detalle->presupuesto_descripcion}}</td>
-                            <td style="vertical-align: text-bottom;text-align: center;"><p>{{$item_detalle->codigo_partida}}</p></td>
-                            <td style="vertical-align: text-bottom;text-align: center;"><p>{{$item_detalle->codigo_descripcion}}</p></td>
-                            <td style="vertical-align: text-bottom;text-align: center;"><p> - </p></td>
-                            <td style="vertical-align: text-bottom;text-align: center;"><p>{{$item_detalle->persona}}</p></td>
+                            <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->codigo_partida}}</td>
+                            <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->codigo_descripcion}}</td>
+                            <td style="vertical-align: text-bottom;text-align: center;"> - </td>
+                            <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->persona}}</td>
                         </tr>
 
                     @endforeach
@@ -98,9 +98,9 @@
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>C. REQUERIMIENTO</b></th>
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>DESCRIPCIÓN</b></th>
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>ESTADO</b></th>
-                <th style="background-color: #cccccc;text-align: center;" width="18"><b>VALOR SIMBOLO</b></th>
+                <th style="background-color: #cccccc;text-align: center;" >MONEDA</th>
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>VALOR</b></th>
-                <th style="background-color: #cccccc;text-align: center;" width="18"><b>MONTO TOTAL SIMBOLO</b></th>
+                <th style="background-color: #cccccc;text-align: center;"><b>MONEDA</b></th>
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>MONTO TOTAL</b></th>
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>TIPO PPTO</b></th>
                 <th style="background-color: #cccccc;text-align: center;" width="18"><b>COD PPTO</b></th>
@@ -125,19 +125,19 @@
                     <td style="vertical-align: text-bottom;text-align: center;">{{$item->codigo_req}}</td>
                     <td style="">{{$item->descripcion_adicional}}</td>
                     <td style="">{{$item->estados_gasto}}</td>
-                    <td style="vertical-align: text-bottom;text-align: center;">S/.</td>
-                    <td style="vertical-align: text-bottom;text-align: center;">{{((float)$item->importe_historial)}}</td>
-                    <td style="vertical-align: text-bottom;text-align: center;"> {{$item->monto_total_simbolo}} </td>
-                    <td style="vertical-align: text-bottom;text-align: center;"> {{$item->monto_total}} </td>
+                    <td style="vertical-align: text-bottom;text-align: right;">S/.</td>
+                    <td style="vertical-align: text-bottom;text-align: left;">{{((float)$item->importe_historial)}}</td>
+                    <td style="vertical-align: text-bottom;text-align: right;"> {{$item->monto_total_simbolo}} </td>
+                    <td style="vertical-align: text-bottom;text-align: left;"> {{$item->monto_total}} </td>
                     <td style="vertical-align: text-bottom;text-align: center;">{{$item->tipo}}</td>
 
                     <td style="">{{ $item->presupuesto_codigo}}</td>
                     <td style="">{{ $item->presupuesto_descripcion}}</td>
-                    <td style=""><p>{{$item->codigo_partida}}</p></td>
-                    <td style=""><p>{{$item->codigo_descripcion}}</p></td>
+                    <td style="">{{$item->codigo_partida}}</td>
+                    <td style="">{{$item->codigo_descripcion}}</td>
 
-                    <td style=""><p>{{$item->codigo_softlink}}</p></td>
-                    <td style=""><p>{{$item->proveedor}}</p></td>
+                    <td style="">{{$item->codigo_softlink}}</td>
+                    <td style="">{{$item->proveedor}}</td>
                 </tr>
             @endforeach
             {{-- <tr>

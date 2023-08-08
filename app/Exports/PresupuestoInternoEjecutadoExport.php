@@ -19,7 +19,7 @@ class PresupuestoInternoEjecutadoExport implements FromView
 
     public function view(): View
     {
-        // dd($this->data);exit;
+
         return view('finanzas.export.presupuesto_interno_monto_ejecutado',['data' => $this->data,]);
     }
 }

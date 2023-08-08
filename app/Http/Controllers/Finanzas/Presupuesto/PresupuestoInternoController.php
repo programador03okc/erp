@@ -1780,55 +1780,31 @@ class PresupuestoInternoController extends Controller
         }
 
         $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$request->id)
-        ->where('tipo','SALIDA')
+        // ->where('tipo','SALIDA')
         // ->where('estado',3)
-        ->whereIn('mes',$mesEnFormatoFechaList)
+        // ->whereIn('mes',$mesEnFormatoFechaList)
         ->orderBy('id','ASC')->get();
 
 
         $orden_detalle = array();
         $requerimiento_detalle = array();
+
+        $requerimiento_pago_array = array();
+        $orden_detalle_logistico_array = array();
         foreach($historial_saldo as $key => $value) {
+
 
             $presupuesto = PresupuestoInterno::find($value->id_presupuesto_interno);
             $presupuesto_detalle = PresupuestoInternoDetalle::find($value->id_partida);
 
-            if(!empty($value->id_orden)){
-                $orden = Orden::find($value->id_orden);
-                $proveedor = Proveedor::where('id_proveedor',$orden->id_proveedor)->first();
-                $contribuyente = Contribuyente::find($proveedor->id_contribuyente);
-                $proveedor = ($contribuyente ? $contribuyente->razon_social: '-');
-                // return $contribuyente;exit;
-                $orden_array = OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->get();
-                if(sizeof($orden_array)>0){
-                    foreach($orden_array as $key => $value_orden) {
-                        $value_orden->codigo_orden = $orden->codigo;
-
-                        $value_orden->presupuesto_codigo = $presupuesto->codigo;
-                        $value_orden->presupuesto_descripcion = $presupuesto->descripcion;
-                        $value_orden->codigo_partida = $presupuesto_detalle->partida;
-                        $value_orden->codigo_descripcion = $presupuesto_detalle->descripcion;
-                        $value_orden->tipo = 'GASTO';
-
-                        $req_detalle = DetalleRequerimiento::find($value_orden->id_detalle_requerimiento);
-                        $requerimiento = Requerimiento::find($req_detalle->id_requerimiento);
-
-                        $value_orden->codigo_req = $requerimiento->codigo;
-                        $value_orden->fecha_autorizacion = $orden->fecha_autorizacion;
-                        $value_orden->importe_historial = $value->importe;
-
-                        $value_orden->codigo_softlink = $orden->codigo_softlink;
-                        $value_orden->proveedor = $proveedor;
-
-                        array_push($orden_detalle,$value_orden);
-                    }
-                }
-            }
-
+            // return  $presupuesto;exit;
+            // se crea la tabla de los requerimientos de pago
             if(!empty($value->id_requerimiento_pago)){
-                $requerimiento = RequerimientoPago::find($value->id_requerimiento_pago);
 
-                $requerimiento_array = RequerimientoPagoDetalle::where('id_requerimiento_pago_detalle',$value->id_requerimiento_pago_detalle)->get();
+                $requerimiento = RequerimientoPago::where('id_requerimiento_pago',$value->id_requerimiento_pago)
+                // ->where('id_estado','!=','7')
+                ->first();
+                $requerimiento_pago_detalle = RequerimientoPagoDetalle::where('id_requerimiento_pago_detalle',$value->id_requerimiento_pago_detalle)->first();
 
                 if(!empty($requerimiento->id_persona)){
                     $rrhh_persona = Persona::find($requerimiento->id_persona);
@@ -1840,31 +1816,116 @@ class PresupuestoInternoController extends Controller
                     $persona = ($contibuyente ? $contibuyente->razon_social : '-');
                 }
 
+                $estado_gasto_requerimiento = '-';
+                if( $requerimiento_pago_detalle->id_estado ===7 ){
+                    $estado_gasto_requerimiento = 'Eliminado';
+                }else{
+                    switch ($value->estado) {
+                        case '1':
+                            $estado_gasto_requerimiento = 'Aprobado';
+                        break;
 
+                        case '2':
+                            $estado_gasto_requerimiento = 'Comprometido';
+                        break;
 
-                // return [$presupuesto,$presupuesto_detalle];exit;
-                if(sizeof($requerimiento_array)>0){
-                    foreach($requerimiento_array as $key => $value_requerimiento) {
-                        $value_requerimiento->codigo_req                = $requerimiento->codigo;
-                        $value_requerimiento->fecha_registro_req        = $requerimiento->fecha_registro;
-
-                        $value_requerimiento->presupuesto_codigo        = $presupuesto->codigo;
-                        $value_requerimiento->presupuesto_descripcion   = $presupuesto->descripcion;
-                        $value_requerimiento->codigo_partida            = $presupuesto_detalle->partida;
-                        $value_requerimiento->codigo_descripcion        = $presupuesto_detalle->descripcion;
-                        $value_requerimiento->tipo                      = 'GASTO';
-                        $value_requerimiento->importe_historial = $value->importe;
-
-                        $value_requerimiento->persona = $persona;
-                        array_push($requerimiento_detalle, $value_requerimiento);
+                        case '3':
+                            $estado_gasto_requerimiento = 'Ejecutado';
+                        break;
                     }
                 }
 
+
+                array_push($requerimiento_pago_array, (object) array(
+                    'descripcion'               => $requerimiento_pago_detalle->descripcion,
+                    'fecha_registro'            => $requerimiento_pago_detalle->fecha_registro,
+                    'codigo_req'                => $requerimiento->codigo,
+                    'codigo_req'                => $requerimiento->codigo,
+                    'fecha_registro_req'        => $requerimiento->fecha_registro,
+                    'presupuesto_codigo'        => $presupuesto->codigo,
+                    'presupuesto_descripcion'   => $presupuesto->descripcion,
+                    'codigo_partida'            => $presupuesto_detalle->partida,
+                    'codigo_descripcion'        => $presupuesto_detalle->descripcion,
+                    'tipo'                      => 'GASTO',
+                    'importe_historial'         => $value->importe,
+                    'persona'                   => $persona,
+                    'monto_total_simbolo'       => ($requerimiento_pago_detalle->id_moneda==2?'$':'S/.'),
+                    'monto_total'               => $requerimiento->monto_total,
+
+                    'estados_gasto'             => $estado_gasto_requerimiento,
+                ));
+            }
+
+            // se crea el listado de los requerimientos logisticos
+
+            if(!empty($value->id_orden)){
+
+                // return $value;exit;
+                $orden = Orden::where('id_orden_compra',$value->id_orden)
+                ->first();
+                $orden_detalle_logistica = ( $orden ? OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->first() : array());
+
+                $requerimiento_detalle_necesidades = ( $orden_detalle_logistica ? DetalleRequerimiento::where('id_detalle_requerimiento',$orden_detalle_logistica->id_detalle_requerimiento)->first() : array());
+
+                $requerimiento_necesidades = ($requerimiento_detalle_necesidades?Requerimiento::where('id_requerimiento',$requerimiento_detalle_necesidades->id_requerimiento)->first():array());
+                // return $orden;exit;
+                // if(!$orden->id_proveedor){
+                //     return $orden;exit;
+                // }
+                $proveedor = Proveedor::where('id_proveedor',$orden->id_proveedor)->first();
+                $contribuyente = Contribuyente::find($proveedor->id_contribuyente);
+                $proveedor = ($contribuyente ? $contribuyente->razon_social: '-');
+
+
+                $estado_gasto_logistico = '-';
+                if($orden_detalle_logistica->estado===7){
+                    $estado_gasto_logistico = 'Eliminado';
+                }else{
+                    switch ($value->estado) {
+                        case '1':
+                            $estado_gasto_logistico = 'Aprobado';
+                        break;
+
+                        case '2':
+                            $estado_gasto_logistico = 'Comprometido';
+                        break;
+
+                        case '3':
+                            $estado_gasto_logistico = 'Ejecutado';
+                        break;
+                    }
+                }
+
+                if(!$orden_detalle_logistica){
+                    return [$value,$orden,$orden_detalle_logistica];exit;
+                }
+                array_push($orden_detalle_logistico_array, (object) array(
+                    "fecha_registro"            => $orden_detalle_logistica->fecha_registro,
+                    "descripcion_adicional"     => $orden_detalle_logistica->descripcion_adicional,
+                    "codigo_orden"              => $orden->codigo,
+                    "presupuesto_codigo"        => $presupuesto->codigo,
+                    "presupuesto_descripcion"   => $presupuesto->descripcion,
+                    "codigo_partida"            => $presupuesto_detalle->partida,
+                    "codigo_descripcion"        => $presupuesto_detalle->descripcion,
+                    "tipo"                      => 'GASTO',
+                    "codigo_req"                => $requerimiento_necesidades->codigo,
+                    "fecha_autorizacion"        => $orden->fecha_autorizacion,
+                    "importe_historial"         => $value->importe,
+                    "codigo_softlink"           => $orden->codigo_softlink,
+                    "proveedor"                 => $proveedor,
+                    "monto_total_simbolo"       => ($orden->id_moneda==2?'$':'S/.'),
+                    "monto_total"               => $orden->monto_total,
+
+                    'estados_gasto'             => $estado_gasto_logistico,
+                ));
             }
         }
+        // $requerimiento_pago_array = (object) $requerimiento_pago_array;
         $detalle_array = array(
             "orden"=>$orden_detalle,
-            "requerimiento"=>$requerimiento_detalle
+            "requerimiento"=>$requerimiento_detalle,
+            "requerimiento_saldo" =>$requerimiento_pago_array,
+            "orden_logistico"=>$orden_detalle_logistico_array,
         );
         // return [$historial_saldo->orden_detalle , $historial_saldo->requerimiento_detalle];exit;
 

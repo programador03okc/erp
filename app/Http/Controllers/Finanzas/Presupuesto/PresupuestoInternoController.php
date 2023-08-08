@@ -1896,12 +1896,12 @@ class PresupuestoInternoController extends Controller
                     }
                 }
 
-                if(!$orden_detalle_logistica){
-                    return [$value,$orden,$orden_detalle_logistica];exit;
-                }
+                // if(!$orden_detalle_logistica){
+                //     return [$value,$orden,$orden_detalle_logistica];exit;
+                // }
                 array_push($orden_detalle_logistico_array, (object) array(
                     "fecha_registro"            => ($orden_detalle_logistica->fecha_registro!=null?$orden_detalle_logistica->fecha_registro:''),
-                    "descripcion_adicional"     => $orden_detalle_logistica->descripcion_adicional,
+                    "descripcion_adicional"     => $requerimiento_detalle_necesidades->descripcion,
                     "codigo_orden"              => $orden->codigo,
                     "presupuesto_codigo"        => $presupuesto->codigo,
                     "presupuesto_descripcion"   => $presupuesto->descripcion,

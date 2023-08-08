@@ -93,7 +93,7 @@ function listarSeries(id_producto, id_almacen) {
                 tr += `<tr>
                 <td>
                     <input type="checkbox" data-serie="${element.serie
-                    }" value="${element.id_prod_serie}" 
+                    }" value="${element.id_prod_serie}"
                     ${value !== undefined ? "checked" : ""}/></td>
                 <td class="numero">${i}</td>
                 <td class="serie">${element.serie}</td>
@@ -245,4 +245,54 @@ $("[name=seleccionar_todos]").on("change", function () {
                 .prop("checked", false);
         });
     }
+});
+$('#import-serie-excel').change( async function (e) {
+    e.preventDefault();
+
+    let data = new FormData($('#form-impor-excel')[0]);
+    let numero_marcados = 0;
+    let t_body = $('#listaSeriesVen').find('tbody');
+    // console.log($(this)[0].files[0]);
+    let contenido = await readXlsxFile($(this)[0].files[0]);
+    // console.log(contenido);
+    let total = contenido.length - 1;
+    // $.each(contenido, function (inedx, element) {
+    //     console.log(element[0]);
+    // });
+
+    $.each(contenido, function (index, element) {
+
+        $.each(t_body.find('tr'), function (index, element_tr) {
+            if (element_tr.children[2].innerText==element[0]) {
+                numero_marcados = numero_marcados +1;
+                $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element[0]+'"]').attr('checked','true');
+            }
+        });
+    });
+    $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+total+' - Total de seleccionados : '+numero_marcados+'');
+
+    $("#form-impor-excel")[0].reset();
+
+    // $.ajax({
+    //     type: 'POST',
+    //     url: route("almacen.movimientos.pendientes-salida.importar-excel-series"),
+    //     data: data,
+    //     dataType: 'JSON',
+    //     contentType: false,
+    //     processData: false,
+    // }).done(function (response) {
+    //     $.each(response.data, function (index, element) {
+
+    //         $.each(t_body.find('tr'), function (index, element_tr) {
+    //             if (element_tr.children[2].innerText==element) {
+    //                 numero_marcados = numero_marcados +1;
+    //                 $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element+'"]').attr('checked','true');
+    //             }
+    //         });
+    //     });
+    //     $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+response.total+' - Total de seleccionados : '+numero_marcados+'')
+    // }).always(function () {
+    // }).fail(function (jqXHR) {
+    // });
+
 });

@@ -1838,10 +1838,10 @@ class PresupuestoInternoController extends Controller
 
                 array_push($requerimiento_pago_array, (object) array(
                     'descripcion'               => $requerimiento_pago_detalle->descripcion,
-                    'fecha_registro'            => $requerimiento_pago_detalle->fecha_registro,
+                    'fecha_registro'            => ($requerimiento_pago_detalle->fecha_registro!=null?$requerimiento_pago_detalle->fecha_registro:''),
                     'codigo_req'                => $requerimiento->codigo,
                     'codigo_req'                => $requerimiento->codigo,
-                    'fecha_registro_req'        => $requerimiento->fecha_registro,
+                    'fecha_registro_req'        => ($requerimiento->fecha_registro!=null?$requerimiento->fecha_registro:''),
                     'presupuesto_codigo'        => $presupuesto->codigo,
                     'presupuesto_descripcion'   => $presupuesto->descripcion,
                     'codigo_partida'            => $presupuesto_detalle->partida,
@@ -1900,7 +1900,7 @@ class PresupuestoInternoController extends Controller
                     return [$value,$orden,$orden_detalle_logistica];exit;
                 }
                 array_push($orden_detalle_logistico_array, (object) array(
-                    "fecha_registro"            => $orden_detalle_logistica->fecha_registro,
+                    "fecha_registro"            => ($orden_detalle_logistica->fecha_registro!=null?$orden_detalle_logistica->fecha_registro:''),
                     "descripcion_adicional"     => $orden_detalle_logistica->descripcion_adicional,
                     "codigo_orden"              => $orden->codigo,
                     "presupuesto_codigo"        => $presupuesto->codigo,
@@ -1909,7 +1909,7 @@ class PresupuestoInternoController extends Controller
                     "codigo_descripcion"        => $presupuesto_detalle->descripcion,
                     "tipo"                      => 'GASTO',
                     "codigo_req"                => $requerimiento_necesidades->codigo,
-                    "fecha_autorizacion"        => $orden->fecha_autorizacion,
+                    "fecha_autorizacion"        => ($orden->fecha_autorizacion!=null?$orden->fecha_autorizacion:''),
                     "importe_historial"         => $value->importe,
                     "codigo_softlink"           => $orden->codigo_softlink,
                     "proveedor"                 => $proveedor,

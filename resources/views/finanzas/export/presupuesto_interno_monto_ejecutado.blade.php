@@ -47,14 +47,14 @@
                         @endphp
                         {{-- {{ dd($item_detalle->presupuesto_descripcion) }} --}}
                         <tr>
-                            <td style="vertical-align: baseline;text-align: center;">{{ date("d/m/Y", strtotime($item_detalle->fecha_registro_req))  }}</td>
-                            <td style="vertical-align: text-bottom;text-align: center;">{{ date("d/m/Y", strtotime($item_detalle->fecha_registro))}}</td>
+                            <td style="vertical-align: baseline;text-align: center;">{{ $item_detalle->fecha_registro_req  }}</td>
+                            <td style="vertical-align: text-bottom;text-align: center;">{{  $item_detalle->fecha_registro }}</td>
                             <td style="vertical-align: text-bottom;text-align: center;"></td>
                             <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->codigo_req}}</td>
                             <td style="">{{ $item_detalle->descripcion }}</td>
                             <td style="">{{ $item_detalle->estados_gasto }}</td>
                             <td style="vertical-align: text-bottom;text-align: center;">S/.</td>
-                            <td style="vertical-align: text-bottom;text-align: center;">{{((float)$item_detalle->importe_historial)}}</td>
+                            <td style="vertical-align: text-bottom;text-align: center;">{{($item_detalle->importe_historial)}}</td>
                             <td style="vertical-align: text-bottom;text-align: center;"> {{$item_detalle->monto_total_simbolo}} </td>
                             <td style="vertical-align: text-bottom;text-align: center;"> {{$item_detalle->monto_total}} </td>
                             <td style="vertical-align: text-bottom;text-align: center;">{{$item_detalle->tipo}}</td>
@@ -119,8 +119,8 @@
                         $total_2 = $total_2 + ((float)$item->importe_historial);
                     @endphp
                 <tr>
-                    <td style="vertical-align: baseline;text-align: center;">{{ date("d/m/Y", strtotime($item->fecha_registro))  }}</td>
-                    <td style="vertical-align: baseline;text-align: center;">{{ date("d/m/Y", strtotime($item->fecha_autorizacion))  }}</td>
+                    <td style="vertical-align: baseline;text-align: center;">{{ $item->fecha_registro  }}</td>
+                    <td style="vertical-align: baseline;text-align: center;">{{ $item->fecha_autorizacion  }}</td>
                     <td style="vertical-align: text-bottom;text-align: center;">{{$item->codigo_orden}}</td>
                     <td style="vertical-align: text-bottom;text-align: center;">{{$item->codigo_req}}</td>
                     <td style="">{{$item->descripcion_adicional}}</td>

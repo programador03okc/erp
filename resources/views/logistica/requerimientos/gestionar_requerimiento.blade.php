@@ -268,7 +268,7 @@ Crear / editar requerimiento
 
                                         <div class="col-md-2" id="input-group-tipo-impuesto">
                                             <div class="form-group">
-                                            <h5>Tipo de Impuesto</h5>
+                                                <h5>Tipo de Impuesto</h5>
                                                 <select class="form-control activation " name="tipo_impuesto">
                                                     <option value="0">No aplica</option>
                                                     <option value="1">Detracción</option>
@@ -310,19 +310,19 @@ Crear / editar requerimiento
                             <fieldset class="group-table">
                                 <div class="row">
                                     <div class="col-md-12">
-                                    <h5>Código</h5>
-                                    <div style="display:flex;">
-                                        <input type="text" class="form-control oculto" name="id_cc">
-                                        <input type="text" class="form-control" name="codigo_oportunidad" readonly>
+                                        <h5>Código</h5>
+                                        <div style="display:flex;">
+                                            <input type="text" class="form-control oculto" name="id_cc">
+                                            <input type="text" class="form-control" name="codigo_oportunidad" readonly>
 
-                                        <button type="button" class="btn-primary handleClickModalListaCuadroDePresupuesto activation" title="Buscar cuadro de presupuesto" name="btnSearchCDP" disabled>
-                                            <i class=" fas fa-search"></i>
-                                        </button>
+                                            <button type="button" class="btn-primary handleClickModalListaCuadroDePresupuesto activation" title="Buscar cuadro de presupuesto" name="btnSearchCDP" disabled>
+                                                <i class=" fas fa-search"></i>
+                                            </button>
 
-                                        <button type="button" class="btn-primary handleClickLimpiarSeleccionCuadroDePresupuesto activation" title="Limpiar selección" name="btnCleanCDP" disabled>
-                                            <i class="fas fa-broom"></i>
-                                        </button>
-                                    </div>
+                                            <button type="button" class="btn-primary handleClickLimpiarSeleccionCuadroDePresupuesto activation" title="Limpiar selección" name="btnCleanCDP" disabled>
+                                                <i class="fas fa-broom"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </fieldset>
@@ -330,25 +330,25 @@ Crear / editar requerimiento
                     </div>
 
                     <div id="input-group-incidencia" hidden>
-                    <div class="col-md-6">
-                        <h4 style="display:flex;justify-content: space-between;">Inicidencia</h4>
-                        <fieldset class="group-table">
-                            <div class="row">
-                                <div class="col-md-12">
-                                <h5>Código - Cliente</h5>
-                                <div style="display:flex;">
-                                    <input type="text" class="form-control oculto" name="id_incidencia">
-                                    <input type="text" class="form-control" name="codigo_incidencia" readonly>
-                                    <input type="text" class="form-control" name="cliente_incidencia" readonly>
-                                    <button type="button" class="btn-primary activation"  onClick="openIncidenciaModal();" title="Buscar incidencias" placeholder="Código incidencia" name="btnSearchInicidencia" disabled>
-                                        <i class=" fas fa-search"></i>
-                                    </button>
+                        <div class="col-md-6">
+                            <h4 style="display:flex;justify-content: space-between;">Inicidencia</h4>
+                            <fieldset class="group-table">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5>Código - Cliente</h5>
+                                        <div style="display:flex;">
+                                            <input type="text" class="form-control oculto" name="id_incidencia">
+                                            <input type="text" class="form-control" name="codigo_incidencia" readonly>
+                                            <input type="text" class="form-control" name="cliente_incidencia" readonly>
+                                            <button type="button" class="btn-primary activation" onClick="openIncidenciaModal();" title="Buscar incidencias" placeholder="Código incidencia" name="btnSearchInicidencia" disabled>
+                                                <i class=" fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                </div>
-                            </div>
-                        </fieldset>
+                            </fieldset>
+                        </div>
                     </div>
-                </div>
 
                 </div>
 
@@ -639,38 +639,46 @@ Crear / editar requerimiento
                     <div class="col-md-8">
                         <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
                         <fieldset class="group-table">
-                            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th width="10">Codigo</th>
-                                        <th width="70">Descripción</th>
-                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
-                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes</th>
-                                        <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
-                                        <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
-                                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="body_partidas_activas">
-                                </tbody>
-                            </table>
+                            <div class="box box-widget">
+                                <div class="box-body">
+                                    <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th width="10">Codigo</th>
+                                                <th width="70">Descripción</th>
+                                                <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                                                <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(actual)</small></th>
+                                                <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
+                                                <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
+                                                <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body_partidas_activas">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </fieldset>
                     </div>
                     <div class="col-md-4">
                         <h4 style="display:flex;justify-content: space-between;">Historial Aprobación</h4>
                         <fieldset class="group-table">
-                            <table class="table table-striped table-bordered" id="listaHistorialAprobacion" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th width="30">Revisado por</th>
-                                        <th width="10">Acción</th>
-                                        <th width="70">Comentario</th>
-                                        <th width="10">Fecha revisión</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="body_historial_aprobacion">
-                                </tbody>
-                            </table>
+                            <div class="box box-widget">
+                                <div class="box-body">
+                                    <table class="table table-striped table-bordered" id="listaHistorialAprobacion" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th width="30">Revisado por</th>
+                                                <th width="10">Acción</th>
+                                                <th width="70">Comentario</th>
+                                                <th width="10">Fecha revisión</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body_historial_aprobacion">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </fieldset>
                     </div>
                 </div>
@@ -738,16 +746,16 @@ Crear / editar requerimiento
 
 @section('scripts')
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.bootstrap.min.js') }}"></script>
 
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
-    
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
+
 <!-- <script src="{{ asset('js/logistica/requerimiento/modal_buscar_stock_almacenes.js') }}"></script> -->
 <script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js') }}"></script>
 <script src="{{ asset('js/logistica/requerimiento/cuadro_costos.js') }}"></script>
@@ -820,7 +828,7 @@ Crear / editar requerimiento
         const requerimientoView = new RequerimientoView(requerimientoController);
         requerimientoView.init();
 
-        
+
 
     };
 </script>

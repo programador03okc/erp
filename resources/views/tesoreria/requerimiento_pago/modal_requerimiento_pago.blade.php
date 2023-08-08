@@ -286,6 +286,13 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                        <h5>Tipo cambio($):</h5>
+                                            <span id="tipo_cambio_compra" style="font-size: 1.8rem;">{{$tipo_cambio}}</span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </fieldset>
                         </div>
@@ -337,6 +344,30 @@
                         </div>
 
                     </div>
+
+                    <div class="row">
+                    <div class="col-md-8">
+                        <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
+                        <fieldset class="group-table">
+                            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="10">Codigo</th>
+                                        <th width="70">Descripción</th>
+                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(actual)</small></th>
+                                        <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
+                                        <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
+                                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="body_partidas_activas">
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-primary" class="close" data-dismiss="modal">Cerrar</button>

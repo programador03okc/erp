@@ -504,7 +504,10 @@ class RequerimientoController extends Controller
                 'incidencia.codigo as codigo_incidencia',
                 'incidencia.cliente as cliente_incidencia',
                 DB::raw("concat(perso_asignado.nombres, ' ' ,perso_asignado.apellido_paterno, ' ' ,perso_asignado.apellido_materno)  AS nombre_trabajador"),
-                DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc")
+                DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc"),
+                DB::raw("(SELECT tpc.compra FROM contabilidad.cont_tp_cambio tpc WHERE tpc.fecha = alm_req.fecha_requerimiento order by tpc.fecha desc limit 1) AS tipo_cambio"),
+                DB::raw("(CASE WHEN alm_req.monto_igv > 0 THEN true ELSE false END) AS incluye_igv")
+
                 // DB::raw("(SELECT SUM(alm_det_req.cantidad * alm_det_req.precio_unitario)
                 // FROM almacen.alm_det_req
                 // WHERE   alm_det_req.id_requerimiento = alm_req.id_requerimiento AND
@@ -531,6 +534,7 @@ class RequerimientoController extends Controller
                     'concepto' => $data->concepto,
                     'id_moneda' => $data->id_moneda,
                     'simbolo_moneda' => $data->simbolo_moneda,
+                    'incluye_igv' => $data->incluye_igv,
                     'id_cc' => $data->id_cc,
                     'codigo_oportunidad' => $data->codigo_oportunidad,
                     'id_proyecto' => $data->id_proyecto,
@@ -604,6 +608,7 @@ class RequerimientoController extends Controller
                     'codigo_presupuesto_interno' => $data->codigo_presupuesto_interno,
                     'descripcion_presupuesto_interno' => $data->descripcion_presupuesto_interno,
                     'tipo_impuesto' => $data->tipo_impuesto >0?$data->tipo_impuesto:'',
+                    'tipo_cambio' => $data->tipo_cambio >0?$data->tipo_cambio:'',
                     'adjuntos' => []
 
                 ];

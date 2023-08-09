@@ -209,7 +209,7 @@
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script> --}}
 
 {{-- <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script> --}}
- --}}
+
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
 {{-- para leer archivos excel con js --}}

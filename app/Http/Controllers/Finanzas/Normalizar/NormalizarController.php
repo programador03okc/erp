@@ -13,6 +13,7 @@ use App\Models\Administracion\Division;
 use App\Models\Administracion\Documento;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInterno;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
@@ -23,6 +24,7 @@ use App\Models\Tesoreria\RegistroPago;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -272,16 +274,21 @@ class NormalizarController extends Controller
                             $titulo='Información';
                             $success=true;
 
+                            LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se vinculo un requerimiento de pago');
+
                         }else{
                             $tipo='warning';
                             $mensaje='El saldo del mes de '.$mes_string.' es menor que el monto del Requerimiento de Pago.';
                             $titulo='Información';
+
+                            LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se intento vincular un requerimiento de pago');
                         }
 
                     }else{
                         $tipo='warning';
                         $mensaje='El requerimiento ya se asigno a una partida';
                         $titulo='Información';
+                        LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se intento vincular un requerimiento de pago');
                     }
 
                 break;

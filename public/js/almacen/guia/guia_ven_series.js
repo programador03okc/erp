@@ -246,7 +246,6 @@ $("[name=seleccionar_todos]").on("change", function () {
         });
     }
 });
-
 $('#import-serie-excel').change( async function (e) {
     e.preventDefault();
 

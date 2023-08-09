@@ -48,21 +48,18 @@ class CuadroPresupuestoHelper
                     $detalleRequerimiento = DetalleRequerimiento::where('id_requerimiento', $idReq)->get();
     
     
-                    foreach ($detalleRequerimiento as $dr) {
+                    // foreach ($detalleRequerimiento as $dr) {
     
-                        if ($dr->id_cc_am_filas!=null) { 
-                            $ccAmFilas = CcAmFila::find($dr->id_cc_am_filas);
-                            if ($dr->estado == 28 || $dr->estado == 5) {
-                                $ccAmFilas->comprado = true;
-                            }else{
-                                if($ccAmFilas && $ccAmFilas->comprado !=null){
-                                    
-                                    $ccAmFilas->comprado = false;
-                                }
-                            }
-                            $ccAmFilas->save();
-                        }
-                    }
+                    //     if ($dr->id_cc_am_filas!=null) { 
+                    //         $ccAmFilas = CcAmFila::find($dr->id_cc_am_filas);
+                    //         if ($dr->estado == 28 || $dr->estado == 5) {
+                    //             $ccAmFilas->comprado = true;
+                    //         }else{
+                    //             $ccAmFilas->comprado = false;
+                    //         }
+                    //         $ccAmFilas->save();
+                    //     }
+                    // }
     
     
                     if ($requerimiento->id_cc != null) {

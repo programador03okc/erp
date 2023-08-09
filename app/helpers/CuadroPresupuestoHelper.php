@@ -55,7 +55,10 @@ class CuadroPresupuestoHelper
                             if ($dr->estado == 28 || $dr->estado == 5) {
                                 $ccAmFilas->comprado = true;
                             }else{
-                                $ccAmFilas->comprado = false;
+                                if($ccAmFilas && $ccAmFilas->comprado !=null){
+                                    
+                                    $ccAmFilas->comprado = false;
+                                }
                             }
                             $ccAmFilas->save();
                         }

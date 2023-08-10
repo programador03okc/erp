@@ -260,7 +260,7 @@ class NormalizarController extends Controller
 
                     if (!$historial_saldo || $historial_saldo->estado!==3) {
 
-                        if (floatval($saldo_presupuesto_detalle->$mes_text)>=floatval($requerimiento_pago->monto_total)) {
+                        // if (floatval($saldo_presupuesto_detalle->$mes_text)>=floatval($requerimiento_pago->monto_total)) {
 
                             $requerimiento_pago->id_presupuesto_interno=$request->presupuesto_interno_id;
                             $requerimiento_pago->save();
@@ -276,13 +276,13 @@ class NormalizarController extends Controller
 
                             LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se vinculo un requerimiento de pago');
 
-                        }else{
-                            $tipo='warning';
-                            $mensaje='El saldo del mes de '.$mes_string.' es menor que el monto del Requerimiento de Pago.';
-                            $titulo='Información';
+                        // }else{
+                        //     $tipo='warning';
+                        //     $mensaje='El saldo del mes de '.$mes_string.' es menor que el monto del Requerimiento de Pago.';
+                        //     $titulo='Información';
 
-                            LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se intento vincular un requerimiento de pago');
-                        }
+                        //     LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se intento vincular un requerimiento de pago');
+                        // }
 
                     }else{
                         $tipo='warning';

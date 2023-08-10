@@ -1791,7 +1791,7 @@ class ListarRequerimientoPagoView {
         
         if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
             for (let index = 0; index < tempPartidasActivas.length; index++) {
-                if (parseFloat(tempPartidasActivas[index]['saldo_mes']) <= 0) {
+                if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
                     mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
                     
                 }

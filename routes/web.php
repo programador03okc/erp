@@ -1319,7 +1319,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida'])->name('homologacion-partidas');
 					Route::get('total-presupuesto/{presup}/{tipo}', [ScriptController::class, 'totalPresupuesto'])->name('total-presupuesto');
 					Route::get('total-consumido-mes/{presup}/{tipo}/{mes}', [ScriptController::class, 'totalConsumidoMes'])->name('total-consumido-mes');
-					Route::get('total-ejecutado', [ScriptController::class, 'totalEjecutado'])->name('total-ejecutado');
+					Route::get('total-ejecutado/{id}', [ScriptController::class, 'totalEjecutado'])->name('total-ejecutado');
 					Route::get('regularizar-montos', [ScriptController::class, 'montosRegular'])->name('regularizar-montos');
 
 					Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class, 'totalPresupuestoAnualPartidasNiveles'])->name('total-presupuesto-anual-niveles');

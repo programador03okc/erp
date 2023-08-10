@@ -153,6 +153,8 @@ function listarRequerimientosPagos() {
             {
                 render: function (data, type, row) {
                     html = '';
+                    html += '<button type="button" class="btn text-black btn-default botonList handleClickVerEnVistaRapidaRequerimientoPago" data-id="' + row['id_requerimiento_pago'] + '" title="Ver detalle" data-mes="' + row['mes'] + '"><i class="fas fa-eye"></i></button>'
+
                     html += '<button type="button" class="btn text-black btn-default botonList detalle-requerimiento-pago" data-id="' + row['id_requerimiento_pago'] + '" title="Ver detalle" data-mes="' + row['mes'] + '"><i class="fas fa-chevron-down"></i></button>'
 
                     html += '';

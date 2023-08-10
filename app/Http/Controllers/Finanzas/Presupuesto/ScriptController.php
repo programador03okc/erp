@@ -10,11 +10,17 @@ use App\Helpers\StringHelper;
 use App\Models\Administracion\Division;
 use App\Models\administracion\DivisionCodigo;
 use App\Models\Administracion\Sede;
+use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\Almacen\Requerimiento;
 use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInterno;
 use App\Models\Finanzas\PresupuestoInternoModelo;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Finanzas\PresupuestoInternoDetalleHistorial;
+use App\Models\Logistica\Orden;
+use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Tesoreria\RequerimientoPago;
+use App\Models\Tesoreria\RequerimientoPagoDetalle;
 
 class ScriptController extends Controller
 {
@@ -502,8 +508,48 @@ class ScriptController extends Controller
         $total = PresupuestoInterno::calcularTotalConsumidoMesFilas($presup, $tipo,$mes);
         return $total;
     }
-    public function totalEjecutado()
+    public function totalEjecutado($id)
     {
+        $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$id)
+            ->where('tipo','SALIDA')
+            ->where('estado',3)
+            ->orderBy('id','DESC')
+        ->get();
+        $suma_total = 0;
+        foreach ($historial_saldo as $key => $value) {
+            if(!empty($value->id_requerimiento_pago)){
+                $requerimiento = RequerimientoPago::where('id_requerimiento_pago',$value->id_requerimiento_pago)
+                // ->where('id_estado','!=','7')
+                ->first();
+                $requerimiento_pago_detalle = RequerimientoPagoDetalle::where('id_requerimiento_pago_detalle',$value->id_requerimiento_pago_detalle)->first();
+
+                if( $requerimiento_pago_detalle->id_estado !==7 ){
+                    $value->activo = 'activo';
+                    $suma_total = $suma_total + $value->importe;
+                }else{
+                    $value->activo = 'desactivo';
+                }
+            }
+
+            if(!empty($value->id_orden)){
+                $orden = Orden::where('id_orden_compra',$value->id_orden)
+                ->first();
+                $orden_detalle_logistica = ( $orden ? OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->first() : array());
+
+                // $requerimiento_detalle_necesidades = ( $orden_detalle_logistica ? DetalleRequerimiento::where('id_detalle_requerimiento',$orden_detalle_logistica->id_detalle_requerimiento)->first() : array());
+
+                // $requerimiento_necesidades = ($requerimiento_detalle_necesidades?Requerimiento::where('id_requerimiento',$requerimiento_detalle_necesidades->id_requerimiento)->first():array());
+
+                if($orden_detalle_logistica->estado !== 7){
+                    $value->activo = 'activo';
+                    $suma_total = $suma_total + $value->importe;
+                }else{
+                    $value->activo = 'desactivo';
+                }
+            }
+        }
+
+        return [$suma_total,$historial_saldo];exit;
         // $valor= PresupuestoInterno::calcularColumnaAuxMensual(31,3,);
         // return ;exit;
         $presupuesto_interno_aprobado = PresupuestoInterno::where('estado',2)->get();

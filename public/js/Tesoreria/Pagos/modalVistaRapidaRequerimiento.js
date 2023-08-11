@@ -167,7 +167,7 @@ function mostrarDataEnVistaRapidaRequerimientoPago(data) {
             console.log(cantidadAdjuntosItem);
             // cantidadAdjuntosItem = data.detalle[i].adjunto.length;
 
-            document.querySelector("tbody[id='body_requerimiento_pago_detalle']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
+            document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
             <td>${i + 1}</td>
             <td>${data.detalle[i].partida ? data.detalle[i].partida.codigo : ''} ${data.detalle[i].presupuesto_interno_detalle ?data.detalle[i].presupuesto_interno_detalle.partida:''}</td>
             <td>${data.detalle[i].centro_costo ? data.detalle[i].centro_costo.codigo : ''}</td>

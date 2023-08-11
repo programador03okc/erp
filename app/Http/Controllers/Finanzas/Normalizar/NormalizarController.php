@@ -11,6 +11,7 @@ use App\Http\Controllers\Tesoreria\RegistroPagoController;
 use App\Models\Administracion\Aprobacion;
 use App\Models\Administracion\Division;
 use App\Models\Administracion\Documento;
+use App\Models\Administracion\Empresa;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
 use App\Models\Configuracion\LogActividad;
@@ -33,7 +34,10 @@ class NormalizarController extends Controller
     //
     public function lista()
     {
+        $empresas = Empresa::all();
         $division = Division::where('estado',1)->get();
+
+        // return $empresas[0]->contribuyente->razon_social;exit;
         return view('finanzas.normalizar.lista', get_defined_vars());
     }
     public function listar(Request  $request)
@@ -154,6 +158,7 @@ class NormalizarController extends Controller
     }
     public function obtenerPresupuesto(Request $request)
     {
+        // return $request;exit;
         switch ($request->tap) {
             case 'requerimiento de pago':
 
@@ -163,7 +168,7 @@ class NormalizarController extends Controller
 
                 break;
         }
-        $presupuesto_interno = PresupuestoInterno::where('id_area',$request->division)->where('estado','=',2)->first();
+        $presupuesto_interno = PresupuestoInterno::where('id_area',$request->division)->where('empresa_id',$request->empresa_id)->where('sede_id',$request->sede_id)->where('estado','=',2)->first();
 
         if ($presupuesto_interno) {
             $presupuesto_interno_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$presupuesto_interno->id_presupuesto_interno)->where('estado',1)->orderBy('partida')->get();

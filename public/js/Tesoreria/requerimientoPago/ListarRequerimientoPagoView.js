@@ -2308,11 +2308,14 @@ class ListarRequerimientoPagoView {
                 });
 
             } else {
-                Swal.fire(
-                    '',
-                    'Por favor ingrese los datos faltantes en el formulario',
-                    'warning'
-                );
+                Lobibox.notify('warning', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'Por favor ingrese los datos faltantes en el formulario'
+                });
             }
         } else {
             Swal.fire(

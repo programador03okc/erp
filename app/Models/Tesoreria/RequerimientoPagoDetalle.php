@@ -51,51 +51,51 @@ class RequerimientoPagoDetalle extends Model
         if($presupuestoInternoDetalle){
             switch ($month) {
                 case 1:
-                    return $presupuestoInternoDetalle->enero_aux;
+                    return $presupuestoInternoDetalle->enero;
                     break;
                 
                 case 2:
-                    return $presupuestoInternoDetalle->febrero_aux;
+                    return $presupuestoInternoDetalle->febrero;
                     break;
                 
                 case 3:
-                    return $presupuestoInternoDetalle->marzo_aux;
+                    return $presupuestoInternoDetalle->marzo;
                     break;
                 
                 case 4:
-                    return $presupuestoInternoDetalle->abril_aux;
+                    return $presupuestoInternoDetalle->abril;
                     break;
                 
                 case 5:
-                    return $presupuestoInternoDetalle->mayo_aux;
+                    return $presupuestoInternoDetalle->mayo;
                     break;
                 
                 case 6:
-                    return $presupuestoInternoDetalle->junio_aux;
+                    return $presupuestoInternoDetalle->junio;
                     break;
                 
                 case 7:
-                    return $presupuestoInternoDetalle->julio_aux;
+                    return $presupuestoInternoDetalle->julio;
                     break;
                 
                 case 8:
-                    return $presupuestoInternoDetalle->agosto_aux;
+                    return $presupuestoInternoDetalle->agosto;
                     break;
                 
                 case 9:
-                    return $presupuestoInternoDetalle->setiembre_aux;
+                    return $presupuestoInternoDetalle->setiembre;
                     break;
                 
                 case 10:
-                    return $presupuestoInternoDetalle->octubre_aux;
+                    return $presupuestoInternoDetalle->octubre;
                     break;
                 
                 case 11:
-                    return $presupuestoInternoDetalle->noviembre_aux;
+                    return $presupuestoInternoDetalle->noviembre;
                     break;
                 
                 case 12:
-                    return $presupuestoInternoDetalle->diciembre_aux;
+                    return $presupuestoInternoDetalle->diciembre;
                     break;
                 
                 default:

@@ -31,6 +31,7 @@ use App\Http\Controllers\Almacen\Ubicacion\AlmacenController as UbicacionAlmacen
 use App\Http\Controllers\Almacen\Ubicacion\PosicionController;
 use App\Http\Controllers\Almacen\Ubicacion\TipoAlmacenController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Cas\CasMarcaController;
 use App\Http\Controllers\Cas\CasModeloController;
@@ -2429,4 +2430,9 @@ Route::middleware(['auth'])->group(function () {
 			});
 		});
 	});
+});
+
+Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {
+	Route::get('tipo_cambio_masivo/{desde}/{hasta}', [ApiController::class, 'tipoCambioMasivo'])->name('tipo_cambio_masivo');
+	Route::get('tipo_cambio_actual', [ApiController::class, 'tipoCambioActual'])->name('tipo_cambio_actual');
 });

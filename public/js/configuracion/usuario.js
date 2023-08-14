@@ -233,6 +233,7 @@ function loadPerfilUsuario(id){
             }
             $('#modal-editar-usuario [name="usuario"]').val(res.data.usuario);
             $('#modal-editar-usuario [name="nombre_corto"]').val(res.data.nombre_corto);
+            $('#modal-editar-usuario [name="nombre_largo"]').val(res.data.nombre_largo);
             $('#modal-editar-usuario [name="codvent_softlink"]').val(res.data.codvend_softlink);
             $.each(res.data.usuario_grupo, function (index, element) {
                 $('#modal-editar-usuario [name="id_grupo[]"] option[value="'+element.id_grupo+'"]').attr('selected',true);
@@ -240,6 +241,9 @@ function loadPerfilUsuario(id){
             $.each(res.data.usuario_rol, function (index, element) {
                 $('#modal-editar-usuario [name="id_rol[]"] option[value="'+element.id_rol+'"]').attr('selected',true);
             });
+
+            $('.selectpicker').selectpicker('refresh') // mostrar los valores que tiene el selectpicker
+
         }
     }).catch(function(err) {
         console.log(err)

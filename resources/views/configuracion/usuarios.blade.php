@@ -104,7 +104,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="fecha_nacimiento">Fecha de nacimiento : </label>
-                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -631,7 +631,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="id_grupo_modificar">Grupo : </label>
                                 <select id="id_grupo_modificar" class="selectpicker" name="id_grupo[]" data-live-search="true" data-width="100%" data-actions-box="true" multiple data-size="10" required>
@@ -641,12 +641,22 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="id_rol_modificar">Rol : </label>
                                 <select id="id_rol_modificar" class="selectpicker" name="id_rol[]" data-live-search="true" data-width="100%" data-actions-box="true" multiple data-size="10" required>
                                     @foreach ($roles as $item)
                                         <option value="{{$item->id_rol}}" >{{$item->descripcion}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_division_modificar">Division : </label>
+                                <select id="id_division_modificar" class="selectpicker" name="id_division[]" data-live-search="true" data-width="100%" data-actions-box="true" multiple data-size="10" required>
+                                    @foreach ($divisiones as $item)
+                                        <option value="{{$item->id_division}}" >{{$item->descripcion_grupo}} - {{$item->descripcion}}</option>
                                     @endforeach
                                 </select>
                             </div>

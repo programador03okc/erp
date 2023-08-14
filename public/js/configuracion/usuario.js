@@ -241,6 +241,9 @@ function loadPerfilUsuario(id){
             $.each(res.data.usuario_rol, function (index, element) {
                 $('#modal-editar-usuario [name="id_rol[]"] option[value="'+element.id_rol+'"]').attr('selected',true);
             });
+            $.each(res.data.usuario_division, function (index, element) {
+                $('#modal-editar-usuario [name="id_division[]"] option[value="'+element.id_division+'"]').attr('selected',true);
+            });
 
             $('.selectpicker').selectpicker('refresh') // mostrar los valores que tiene el selectpicker
 

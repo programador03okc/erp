@@ -84,7 +84,7 @@
                                     <select class="form-control" name="empresa_id" id="empresa_id" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($empresas as $item)
-                                            <option value="{{ $item->id_empresa }}" {{($item->id_empresa===$presupuesto_interno->empresa_id?'selected':'')}}>{{ $item->razon_social }}</option>
+                                            <option value="{{ $item->id_empresa }}" {{($item->id_empresa===$presupuesto_interno->empresa_id?'selected':'')}}>{{ $item->contribuyente->razon_social }}</option>
                                         @endforeach
                                     </select>
                                 </div>

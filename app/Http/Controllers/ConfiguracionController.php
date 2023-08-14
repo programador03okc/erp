@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\StringHelper;
 use App\Models\administracion\AdmGrupo;
+use App\Models\Administracion\Division;
 use App\Models\Configuracion\Acceso;
 use App\models\Configuracion\Accesos;
 use App\models\Configuracion\AccesosUsuarios;
@@ -12,6 +13,7 @@ use App\Models\Configuracion\Pais as ConfiguracionPais;
 use App\Models\Configuracion\Rol;
 use App\Models\Configuracion\SisUsua;
 use App\models\Configuracion\TableConfiguracionModulo;
+use App\Models\Configuracion\UsuarioDivision;
 use App\models\Configuracion\UsuarioGrupo;
 use App\models\Configuracion\UsuarioRol;
 use App\models\rrhh\rrhh_categoria_ocupacional;
@@ -56,6 +58,7 @@ class ConfiguracionController extends Controller{
         // return response()->json(Auth::);
         $modulos = $this->select_modulos();
         $roles=$this->lista_roles();
+        $divisiones=$this->lista_divisiones();
 
         $estado_civil = rrhh_est_civil::where("estado",1)->get();
         $pais = ConfiguracionPais::where('estado',1)->get();
@@ -69,7 +72,7 @@ class ConfiguracionController extends Controller{
         $modulos_padre =DB::table('configuracion.sis_modulo')->where('sis_modulo.estado',1)->where('sis_modulo.id_padre',0)->get();
 
         // return $rol[0]->id_rol;
-        return view('configuracion.usuarios', compact('modulos','roles','estado_civil','pais','tipo_trabajador','categoria_ocupacional','tipo_planilla','pension','grupo','rol','modulos_padre'));
+        return view('configuracion.usuarios', compact('modulos','roles','divisiones','estado_civil','pais','tipo_trabajador','categoria_ocupacional','tipo_planilla','pension','grupo','rol','modulos_padre'));
     }
 
     function view_notas_lanzamiento(){
@@ -158,6 +161,15 @@ class ConfiguracionController extends Controller{
 		->where('sis_rol.estado',1)
 		->get();
 		return $roles;
+    }
+    function lista_divisiones(){
+		$division = DB::table('administracion.division')
+        ->join('administracion.adm_grupo','adm_grupo.id_grupo','=','division.grupo_id')
+		->select('division.*','adm_grupo.descripcion as descripcion_grupo')
+		->where('division.estado',1)
+        ->orderBy('adm_grupo.id_grupo','asc')
+		->get();
+		return $division;
     }
 
     public function mostrarTipoDocumento(){
@@ -689,6 +701,18 @@ class ConfiguracionController extends Controller{
             $usuario_rol->estado        = 1;
             $usuario_rol->save();
         }
+        UsuarioDivision::where('id_estado', 1)->where('id_usuario',$request->id_usuario)
+        ->update(['id_estado' => 7]);
+        foreach ($request->id_division as $key => $value) {
+            $usuario_division                = new UsuarioDivision;
+            $usuario_division->id_division   = $value;
+            $usuario_division->id_usuario    = $sis_usua->id_usuario;
+            // $usuario_division->es_jefe       = false;
+            // $usuario_division->es_gerente    = false;
+            $usuario_division->comentario    = $sis_usua->nombre_corto.' - '.Division::find($value)->descripcion;
+            $usuario_division->id_estado     = 1;
+            $usuario_division->save();
+        }
 
         return response()->json([
             "success"=>true,
@@ -766,7 +790,7 @@ class ConfiguracionController extends Controller{
 
         $usuario=[];
         $status=0;
-        $data = SisUsua::select(
+        $data = SisUsua::with('usuarioDivision.division')->select(
             'sis_usua.*',
             'rrhh_trab.*',
             'rrhh_postu.*',
@@ -775,7 +799,7 @@ class ConfiguracionController extends Controller{
         ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
         ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
         ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
-        ->where('id_usuario',$id)
+        ->where('sis_usua.id_usuario',$id)
         ->first();
         // $data->usuarioGrupo;
         if ($data) {
@@ -784,9 +808,8 @@ class ConfiguracionController extends Controller{
             }else{
                 $data->usuarioGrupo=[];
             }
-            $data->usuarioRol = (sizeof($data->usuarioRol)>0) ? $data->usuarioRol : [] ;
-            // $grupo = Grupo::get();
-            // $rol = Rol::where("estado",1)->get();
+            $data->usuarioRol = (sizeof($data->usuarioRol)>0) ? $data->usuarioRol : [];
+            $data->usuarioDivision = (sizeof($data->usuarioDivision)>0) ? ($data->usuarioDivision) : [];
 
         }else{
             $data = [];
@@ -890,6 +913,17 @@ class ConfiguracionController extends Controller{
             $usuario_rol->id_usuario    = $sis_usua->id_usuario;
             $usuario_rol->estado        = 1;
             $usuario_rol->save();
+        }
+
+        foreach ($request->id_division as $key => $value) {
+            $usuario_division                = new UsuarioDivision;
+            $usuario_division->id_division   = $value;
+            $usuario_division->id_usuario    = $sis_usua->id_usuario;
+            $usuario_division->es_jefe       = false;
+            $usuario_division->es_gerente    = false;
+            $usuario_division->comentario    = $sis_usua->nombre_corto.' - '.Division::find($value)->descripcion;
+            $usuario_division->id_estado     = 1;
+            $usuario_division->save();
         }
 
 

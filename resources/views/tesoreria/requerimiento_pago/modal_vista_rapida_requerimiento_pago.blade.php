@@ -135,7 +135,7 @@
                                             <th style="width: 2%">Adjuntos</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="body_requerimiento_pago_detalle">
+                                    <tbody id="body_requerimiento_pago_detalle_vista">
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -150,29 +150,64 @@
                     </div>
                 </fieldset>
 
-                <fieldset class="group-importes">
-                    <legend style="background:#b3a705;">Historial de revisiones/aprobaciones</legend>
-                    <br>
-                    <div class="box box-widget">
-                        <div class="box-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="listaHistorialRevision">
-                                    <thead>
-                                        <tr>
-                                            <th>Revisado por</th>
-                                            <th>Acción</th>
-                                            <th>Comentario</th>
-                                            <th>Fecha revisión</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="body_requerimiento_pago_historial_revision"></tbody>
-                                </table>
-                            </div>
+                     <br>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <!-- <h4 style="display:flex;justify-content: space-between;"></h4> -->
+                            <fieldset class="group-importes">
+                            <legend>
+                                Partidas activas
+                            </legend>
+                                <div class="box box-widget">
+                                    <div class="box-body">
+                                        <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="10">Codigo</th>
+                                                    <th width="70">Descripción</th>
+                                                    <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                                                    <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(actual)</small></th>
+                                                    <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
+                                                    <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
+                                                    <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="body_partidas_activas">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-5">
+                            <!-- <h4 style="display:flex;justify-content: space-between;"></h4> -->
+                            <fieldset class="group-importes">
+                            <legend>
+                                Historial de revisiones/aprobaciones
+                            </legend>
+                                <div class="box box-widget">
+                                    <div class="box-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="listaHistorialRevision">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Revisado por</th>
+                                                        <th>Acción</th>
+                                                        <th>Comentario</th>
+                                                        <th>Fecha revisión</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="body_requerimiento_pago_historial_revision"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
                         </div>
                     </div>
 
-                </fieldset>
 
+ 
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" class="close" data-dismiss="modal">Cerrar</button>

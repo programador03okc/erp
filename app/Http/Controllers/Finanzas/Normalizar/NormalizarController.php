@@ -11,8 +11,10 @@ use App\Http\Controllers\Tesoreria\RegistroPagoController;
 use App\Models\Administracion\Aprobacion;
 use App\Models\Administracion\Division;
 use App\Models\Administracion\Documento;
+use App\Models\Administracion\Empresa;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInterno;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
@@ -23,6 +25,7 @@ use App\Models\Tesoreria\RegistroPago;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -31,7 +34,10 @@ class NormalizarController extends Controller
     //
     public function lista()
     {
+        $empresas = Empresa::all();
         $division = Division::where('estado',1)->get();
+
+        // return $empresas[0]->contribuyente->razon_social;exit;
         return view('finanzas.normalizar.lista', get_defined_vars());
     }
     public function listar(Request  $request)
@@ -130,7 +136,7 @@ class NormalizarController extends Controller
         $ordenes = $ordenes->whereDate('log_ord_compra.fecha_autorizacion','<=','2023-04-30 23:59:59');
 
         $ordenes = $ordenes->whereIn('log_ord_compra.estado_pago',[6,9,10]); //pagado, con saldo, pagado con saldo
-        $ordenes = $ordenes->where([['log_ord_compra.estado','!=',7],['alm_req.id_cc','=',null],['alm_req.id_proyecto','=',null]])
+        $ordenes = $ordenes->where([['log_ord_compra.estado','!=',7],['alm_req.id_cc','=',null],['alm_req.id_proyecto','=',null],['alm_det_req.id_partida_pi','=',null],['alm_det_req.partida','=',null]])
         ->when(($request->tipo_pago ==1), function ($query) { // rtipo de pago es sin saldo
             return $query->whereRaw('log_ord_compra.monto_total::numeric  - (select sum(registro_pago.total_pago)  from tesoreria.registro_pago  where registro_pago.id_oc = log_ord_compra.id_orden_compra  and registro_pago.estado !=7)::numeric =' . 0);
         })
@@ -152,6 +158,7 @@ class NormalizarController extends Controller
     }
     public function obtenerPresupuesto(Request $request)
     {
+        // return $request;exit;
         switch ($request->tap) {
             case 'requerimiento de pago':
 
@@ -161,7 +168,7 @@ class NormalizarController extends Controller
 
                 break;
         }
-        $presupuesto_interno = PresupuestoInterno::where('id_area',$request->division)->where('estado','=',2)->first();
+        $presupuesto_interno = PresupuestoInterno::where('id_area',$request->division)->where('empresa_id',$request->empresa_id)->where('sede_id',$request->sede_id)->where('estado','=',2)->first();
 
         if ($presupuesto_interno) {
             $presupuesto_interno_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$presupuesto_interno->id_presupuesto_interno)->where('estado',1)->orderBy('partida')->get();
@@ -258,7 +265,7 @@ class NormalizarController extends Controller
 
                     if (!$historial_saldo || $historial_saldo->estado!==3) {
 
-                        if (floatval($saldo_presupuesto_detalle->$mes_text)>=floatval($requerimiento_pago->monto_total)) {
+                        // if (floatval($saldo_presupuesto_detalle->$mes_text)>=floatval($requerimiento_pago->monto_total)) {
 
                             $requerimiento_pago->id_presupuesto_interno=$request->presupuesto_interno_id;
                             $requerimiento_pago->save();
@@ -272,16 +279,21 @@ class NormalizarController extends Controller
                             $titulo='Información';
                             $success=true;
 
-                        }else{
-                            $tipo='warning';
-                            $mensaje='El saldo del mes de '.$mes_string.' es menor que el monto del Requerimiento de Pago.';
-                            $titulo='Información';
-                        }
+                            LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se vinculo un requerimiento de pago');
+
+                        // }else{
+                        //     $tipo='warning';
+                        //     $mensaje='El saldo del mes de '.$mes_string.' es menor que el monto del Requerimiento de Pago.';
+                        //     $titulo='Información';
+
+                        //     LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se intento vincular un requerimiento de pago');
+                        // }
 
                     }else{
                         $tipo='warning';
                         $mensaje='El requerimiento ya se asigno a una partida';
                         $titulo='Información';
+                        LogActividad::registrar(Auth::user(), 'Normalizar requerimiento de pago', 2, null, null, null, 'Se intento vincular un requerimiento de pago');
                     }
 
                 break;

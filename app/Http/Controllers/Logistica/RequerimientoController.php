@@ -504,7 +504,10 @@ class RequerimientoController extends Controller
                 'incidencia.codigo as codigo_incidencia',
                 'incidencia.cliente as cliente_incidencia',
                 DB::raw("concat(perso_asignado.nombres, ' ' ,perso_asignado.apellido_paterno, ' ' ,perso_asignado.apellido_materno)  AS nombre_trabajador"),
-                DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc")
+                DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc"),
+                DB::raw("(SELECT tpc.compra FROM contabilidad.cont_tp_cambio tpc WHERE tpc.fecha = alm_req.fecha_requerimiento order by tpc.fecha desc limit 1) AS tipo_cambio"),
+                DB::raw("(CASE WHEN alm_req.monto_igv > 0 THEN true ELSE false END) AS incluye_igv")
+
                 // DB::raw("(SELECT SUM(alm_det_req.cantidad * alm_det_req.precio_unitario)
                 // FROM almacen.alm_det_req
                 // WHERE   alm_det_req.id_requerimiento = alm_req.id_requerimiento AND
@@ -531,6 +534,7 @@ class RequerimientoController extends Controller
                     'concepto' => $data->concepto,
                     'id_moneda' => $data->id_moneda,
                     'simbolo_moneda' => $data->simbolo_moneda,
+                    'incluye_igv' => $data->incluye_igv,
                     'id_cc' => $data->id_cc,
                     'codigo_oportunidad' => $data->codigo_oportunidad,
                     'id_proyecto' => $data->id_proyecto,
@@ -604,6 +608,7 @@ class RequerimientoController extends Controller
                     'codigo_presupuesto_interno' => $data->codigo_presupuesto_interno,
                     'descripcion_presupuesto_interno' => $data->descripcion_presupuesto_interno,
                     'tipo_impuesto' => $data->tipo_impuesto >0?$data->tipo_impuesto:'',
+                    'tipo_cambio' => $data->tipo_cambio >0?$data->tipo_cambio:'',
                     'adjuntos' => []
 
                 ];
@@ -740,18 +745,18 @@ class RequerimientoController extends Controller
                     FROM finanzas.presupuesto_interno_detalle
                     WHERE  presupuesto_interno_detalle.id_presupuesto_interno_detalle = alm_det_req.id_partida_pi ) AS presupuesto_interno_total_partida"),
 
-                    DB::raw("( CASE WHEN (SELECT date_part('month', (SELECT current_timestamp))) =1 THEN presupuesto_interno_detalle.enero_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =2 THEN presupuesto_interno_detalle.febrero_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =3 THEN presupuesto_interno_detalle.marzo_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =4 THEN presupuesto_interno_detalle.abril_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =5 THEN presupuesto_interno_detalle.mayo_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =6 THEN presupuesto_interno_detalle.junio_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =7 THEN presupuesto_interno_detalle.julio_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =8 THEN presupuesto_interno_detalle.agosto_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =9 THEN presupuesto_interno_detalle.setiembre_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =10 THEN presupuesto_interno_detalle.octubre_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =11 THEN presupuesto_interno_detalle.noviembre_aux
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =12 THEN presupuesto_interno_detalle.diciembre_aux
+                    DB::raw("( CASE WHEN (SELECT date_part('month', (SELECT current_timestamp))) =1 THEN presupuesto_interno_detalle.enero
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =2 THEN presupuesto_interno_detalle.febrero
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =3 THEN presupuesto_interno_detalle.marzo
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =4 THEN presupuesto_interno_detalle.abril
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =5 THEN presupuesto_interno_detalle.mayo
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =6 THEN presupuesto_interno_detalle.junio
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =7 THEN presupuesto_interno_detalle.julio
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =8 THEN presupuesto_interno_detalle.agosto
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =9 THEN presupuesto_interno_detalle.setiembre
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =10 THEN presupuesto_interno_detalle.octubre
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =11 THEN presupuesto_interno_detalle.noviembre
+                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =12 THEN presupuesto_interno_detalle.diciembre
                     ELSE ''
                     END
                       ) AS presupuesto_interno_mes_partida")
@@ -1827,8 +1832,8 @@ class RequerimientoController extends Controller
             ->leftJoin('administracion.division', 'division.id_division', '=', 'alm_req.division_id')
             ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
             ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
-            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
+            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc_view.id_oportunidad')
 
             ->select(
                 'alm_req.id_requerimiento',
@@ -1868,7 +1873,7 @@ class RequerimientoController extends Controller
                 'alm_req.division_id',
                 'division.descripcion as division',
                 'sis_usua.nombre_largo as nombre_usuario',
-                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN  sis_usua.nombre_largo
+                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
                 ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)
                 END AS nombre_solicitado_por"),
 
@@ -1992,7 +1997,8 @@ class RequerimientoController extends Controller
             ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
             ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
             ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
+            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc_view.id_oportunidad')
 
             ->select(
                 'alm_req.id_requerimiento',
@@ -2034,7 +2040,11 @@ class RequerimientoController extends Controller
                 'alm_req.division_id',
                 'division.descripcion as division',
                 'sis_usua.nombre_largo as nombre_usuario',
-                DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
+                
+                // DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
+                DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
+                ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)
+                END AS nombre_solicitado_por"),
                 DB::raw("(SELECT COUNT(adm_aprobacion.id_aprobacion)
                 FROM administracion.adm_aprobacion
                 WHERE   adm_aprobacion.id_vobo = 3 AND
@@ -2088,7 +2098,7 @@ class RequerimientoController extends Controller
 
         return datatables($requerimientos)
             ->addColumn('nombre_solicitado_por', function ($requerimientos) {
-                return ($requerimientos->id_tipo_requerimiento == 1) ? $requerimientos->nombre_usuario : $requerimientos->solicitado_por;
+                return ($requerimientos->id_tipo_requerimiento == 1) ? ($requerimientos->nombre_solicitado_por!=null?$requerimientos->nombre_solicitado_por:'') : $requerimientos->nombre_usuario;
             })
             ->filterColumn('nombre_usuario', function ($query, $keyword) {
                 $keywords = trim(strtoupper($keyword));

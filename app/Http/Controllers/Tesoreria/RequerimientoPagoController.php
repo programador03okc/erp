@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Exports\ListadoRequerimientoPagoExport;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
+use App\Http\Controllers\Almacen\Reporte\SaldosController;
 use App\Http\Controllers\ContabilidadController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
@@ -96,6 +97,9 @@ class RequerimientoPagoController extends Controller
 
         $presupuestoInternoList = (new PresupuestoInternoController)->comboPresupuestoInterno(0, 0);
 
+        $tipo_cambio = (new SaldosController)->tipo_cambio_compra(new Carbon());
+
+
         return view(
             'tesoreria.requerimiento_pago.lista',
             compact(
@@ -119,7 +123,8 @@ class RequerimientoPagoController extends Controller
                 'estados',
                 'array_accesos',
                 'presupuestoInternoList',
-                'tipoDocumentos'
+                'tipoDocumentos',
+                'tipo_cambio'
             )
         );
     }

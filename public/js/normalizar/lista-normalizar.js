@@ -16,6 +16,10 @@ $('[data-form="buscar"]').on("submit", (e) => {
     $data.mes = $('[data-form="buscar"]').find('[name="mes"]').val();
     $data.division = $('[data-form="buscar"]').find('[name="division"]').val();
     $data.tipo_pago = $('[data-form="buscar"]').find('[name="tipo_pago"]').val();
+
+    $data.empresa_id = $('[data-form="buscar"]').find('[name="empresa_id"]').val();
+    $data.sede_id = $('[data-form="buscar"]').find('[name="sede_id"]').val();
+
     $(e.currentTarget).find('button[type="submit"]').attr('disabled', 'true');
     listarRequerimientosPagos();
     listarOrdenes();
@@ -153,6 +157,8 @@ function listarRequerimientosPagos() {
             {
                 render: function (data, type, row) {
                     html = '';
+                    html += '<button type="button" class="btn text-black btn-default botonList handleClickVerEnVistaRapidaRequerimientoPago" data-id="' + row['id_requerimiento_pago'] + '" title="Ver detalle" data-mes="' + row['mes'] + '"><i class="fas fa-eye"></i></button>'
+
                     html += '<button type="button" class="btn text-black btn-default botonList detalle-requerimiento-pago" data-id="' + row['id_requerimiento_pago'] + '" title="Ver detalle" data-mes="' + row['mes'] + '"><i class="fas fa-chevron-down"></i></button>'
 
                     html += '';
@@ -466,7 +472,10 @@ function cargarModalAsignarPartidas(e) {
             id: id,
             mes: $data.mes,
             division: $data.division,
-            tap: tap
+            tap: tap,
+
+            empresa_id: $data.empresa_id,
+            sede_id: $data.sede_id
         },
         // processData: false,
         // contentType: false,
@@ -503,29 +512,29 @@ function cargarModalAsignarPartidas(e) {
             $.each(response.presupuesto_detalle, function (idnex, element) {
 
                 html += `<tr>
-                                            <td>`+ element.partida + `</td>
-                                            <td>`+ element.descripcion + `</td>
-                                            <td style="`+ (mes === '01' ? 'background-color: #bb24249c;' : '') + `">` + element.enero + `</td>
-                                            <td style="`+ (mes === '02' ? 'background-color: #bb24249c;' : '') + `">` + element.febrero + `</td>
-                                            <td style="`+ (mes === '03' ? 'background-color: #bb24249c;' : '') + `">` + element.marzo + `</td>
-                                            <td style="`+ (mes === '04' ? 'background-color: #bb24249c;' : '') + `">` + element.abril + `</td>
-                                            <td>
-                                            `+ (element.registro === '2' ? `<button class="btn btn-default btn-sm"
-                                            data-id-presupuesto-interno="`+ element.id_presupuesto_interno + `" data-id-presupuesto-interno-detalle="` + element.id_presupuesto_interno_detalle + `"
-                                            data-id-requerimiento-pago="`+ id + `"
-                                            data-id-requerimiento-pago-detalle="`+ id_detalle + `"
+                    <td>`+ element.partida + `</td>
+                    <td>`+ element.descripcion + `</td>
+                    <td style="`+ (mes === '01' ? 'background-color: #bb24249c;' : '') + `">` + element.enero + `</td>
+                    <td style="`+ (mes === '02' ? 'background-color: #bb24249c;' : '') + `">` + element.febrero + `</td>
+                    <td style="`+ (mes === '03' ? 'background-color: #bb24249c;' : '') + `">` + element.marzo + `</td>
+                    <td style="`+ (mes === '04' ? 'background-color: #bb24249c;' : '') + `">` + element.abril + `</td>
+                    <td>
+                    `+ (element.registro === '2' ? `<button class="btn btn-default btn-sm"
+                    data-id-presupuesto-interno="`+ element.id_presupuesto_interno + `" data-id-presupuesto-interno-detalle="` + element.id_presupuesto_interno_detalle + `"
+                    data-id-requerimiento-pago="`+ id + `"
+                    data-id-requerimiento-pago-detalle="`+ id_detalle + `"
 
-                                            data-id-orden="`+ id_orden + `"
-                                            data-id-orden-detalle="`+ id_orden_detalle + `"
+                    data-id-orden="`+ id_orden + `"
+                    data-id-orden-detalle="`+ id_orden_detalle + `"
 
-                                            data-id-requerimiento="`+ id_requerimiento + `"
-                                            data-id-requerimiento-detalle="`+ id_requerimiento_detalle + `"
+                    data-id-requerimiento="`+ id_requerimiento + `"
+                    data-id-requerimiento-detalle="`+ id_requerimiento_detalle + `"
 
-                                            data-tap="`+ tap + `"
-                                            data-click="seleccionar-partida">Asignar</button>` : ``) + `
+                    data-tap="`+ tap + `"
+                    data-click="seleccionar-partida">Asignar</button>` : ``) + `
 
-                                            </td>
-                                        </tr>`;
+                    </td>
+                </tr>`;
 
 
             });
@@ -608,7 +617,7 @@ $(document).on('click', 'button[data-click="seleccionar-partida"]', function (e)
         //     response.tipo
         // )
 
-        if (response.success==true) {
+        if (response.success == true) {
             Swal.fire({
                 title: response.titulo,
                 text: response.mensaje,
@@ -625,7 +634,7 @@ $(document).on('click', 'button[data-click="seleccionar-partida"]', function (e)
                     listarOrdenes();
                 }
             })
-        }else{
+        } else {
             Swal.fire(
                 response.titulo,
                 response.mensaje,
@@ -640,3 +649,38 @@ $(document).on('click', 'button[data-click="seleccionar-partida"]', function (e)
     });
 });
 
+// sedes por empresa
+$('[name="empresa_id"]').change(function (e) {
+    var id = $(this).val(),
+        html = '';
+    console.log(id);
+    $.ajax({
+        type: 'GET',
+        url: '/necesidades/requerimiento/elaboracion/listar-sedes-por-empresa/' + id,
+        data: {},
+        // processData: false,
+        // contentType: false,
+        dataType: 'JSON',
+        beforeSend: (data) => {
+            // console.log(data);
+        }
+    }).done(function (response) {
+        html = '<option value="">Seleccione...</option>';
+        $.each(response, function (index, element) {
+            html += '<option value="' + element.id_sede + '">' + element.descripcion + '</option>';
+        });
+        $('[name="sede_id"]').html(html);
+        console.log(response);
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+
+});
+// sedes por empresa
+$('[name="sede_id"]').change(function (e) {
+    $data.empresa_id = $('[data-form="buscar"]').find('[name="empresa_id"]').val();
+    $data.sede_id = $('[data-form="buscar"]').find('[name="sede_id"]').val();
+
+});

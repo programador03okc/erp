@@ -14,6 +14,8 @@ var tempObjectBtnCentroCostos;
 
 var $tablaListaCuadroPresupuesto;
 
+var tempPartidasActivas=[];
+
 class ListarRequerimientoPagoView {
 
     constructor(presupuestoInternoView) {
@@ -30,13 +32,15 @@ class ListarRequerimientoPagoView {
     }
 
     limpiarTabla(idElement) {
-        let nodeTbody = document.querySelector("table[id='" + idElement + "'] tbody");
-        if (nodeTbody != null) {
-            while (nodeTbody.children.length > 0) {
-                nodeTbody.removeChild(nodeTbody.lastChild);
+        let nodeTbodyList = document.querySelectorAll("table[id='" + idElement + "'] tbody");
+        nodeTbodyList.forEach(element => {
+            if (element != null) {
+                while (element.children.length > 0) {
+                    element.removeChild(element.lastChild);
+                }
             }
-
-        }
+            
+        });
     }
     initializeEventHandlerListaRequerimientoPago() {
         this.checkStatusBtnGuardar();
@@ -269,6 +273,104 @@ class ListarRequerimientoPagoView {
             document.querySelector("input[name='id_cc']").value = '';
             document.querySelector("input[name='codigo_oportunidad']").value = '';
         });
+
+        $('#modal-requerimiento-pago').on("blur", "input.handleBlurCalcularPresupuestoUtilizadoYSaldoPorPartida", () => {
+            this.calcularPresupuestoUtilizadoYSaldoPorPartida();
+        });
+
+    }
+
+    calcularPresupuestoUtilizadoYSaldoPorPartida() {
+        tempPartidasActivas = [];
+        let partidaAgregadas = [];
+        let subtotalItemList = [];
+        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount >0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
+
+        let idMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").value;
+        let simboloMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").options[document.querySelector("select[name='moneda']").selectedIndex].dataset.simbolo;
+        let actualTipoCambioCompra = document.querySelector("span[id='tipo_cambio_compra']").textContent;
+
+
+
+        for (let index = 0; index < tbodyChildren.length; index++) {
+            if (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida > 0) {
+                if (!partidaAgregadas.includes(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida)) {
+                    partidaAgregadas.push(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida);
+                    tempPartidasActivas.push({
+                        'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
+                        'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
+                        'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
+                        'presupuesto_mes': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes,
+                        'presupuesto_total': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal,
+                        'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
+                        'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
+                        'presupuesto_utilizado_al_cambio': 0,
+                        'presupuesto_utilizado': 0,
+                        'saldo_total': 0,
+                        'saldo_mes': 0
+                    });
+                }
+
+                let subtotal = (tbodyChildren[index].querySelector("input[class~='cantidad']").value > 0 ? tbodyChildren[index].querySelector("input[class~='cantidad']").value : 0) * (tbodyChildren[index].querySelector("input[class~='precio']").value > 0 ? tbodyChildren[index].querySelector("input[class~='precio']").value : 0);
+
+                subtotalItemList.push({
+                    'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
+                    'subtotal': subtotal
+                });
+
+            }
+        }
+
+
+
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            for (let i = 0; i < subtotalItemList.length; i++) {
+                if (tempPartidasActivas[p].id_partida == subtotalItemList[i].id_partida) {
+                    tempPartidasActivas[p].presupuesto_utilizado += subtotalItemList[i].subtotal;
+                }
+            }
+        }
+
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            if (tempPartidasActivas[p].id_moneda_presupuesto_utilizado == 2) { // moneda dolares
+                let presupuesto_utilizado_alCambio = tempPartidasActivas[p].presupuesto_utilizado * actualTipoCambioCompra;
+                tempPartidasActivas[p].presupuesto_utilizado_al_cambio = presupuesto_utilizado_alCambio;
+                tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0);
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0);
+            } else {
+                tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+
+            }
+        }
+
+
+        this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
+        // console.log(tempPartidasActivas);
+    }
+
+    construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
+        this.limpiarTabla('listaPartidasActivas');
+        data.forEach(element => {
+
+            let bodyPartidaActivasList = document.querySelectorAll("tbody[id='body_partidas_activas']");
+
+            bodyPartidaActivasList.forEach(bodyPartidaActiva => {
+                // console.log(bodyPartidaActiva);
+                bodyPartidaActiva.insertAdjacentHTML('beforeend', `<tr style="text-align:center">
+                    <td>${element.codigo}</td>
+                    <td>${element.descripcion}</td>
+                    <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
+                    <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
+                    <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
+                    <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
+                    <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
+                </tr>`);
+                
+            });
+
+        });
+
     }
 
 
@@ -866,6 +968,8 @@ class ListarRequerimientoPagoView {
         this.updateContadorTotalAdjuntosRequerimientoPagoCabecera();
         this.limpiarTabla('listaArchivosRequerimientoPagoCabecera');
         this.limpiarTabla('listaArchivosRequerimientoPagoDetalle');
+        this.limpiarTabla('listaPartidasActivas');
+        this.limpiarTabla('listaHistorialRevision');
         $(":file").filestyle('clear');
 
         this.limpiarTabla('listaDestinatariosEncontrados');
@@ -1136,25 +1240,38 @@ class ListarRequerimientoPagoView {
         let idPartida='';
         let codigoPartida='';
         let descripcionPartida='';
-        console.log(data);
+        let totalPartida = 0;
+        let totalPartidaMes = 0;
+        // console.log(data);
         if(data!=null){
 
             if(data.id_partida > 0){
                 idPartida= data.id_partida;
                 codigoPartida= data.partida!=null ? data.partida.codigo:'';
                 descripcionPartida= data.partida!=null ? data.partida.descripcion:'';
+                totalPartida = data.presupuesto_old_total_partida??0;
+
             }else if(data.id_partida_pi>0){
                 idPartida= data.id_partida_pi;
                 codigoPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.partida:'';
                 descripcionPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.descripcion:'';
+                // totalPartida = dataDetalleRequerimiento[i].presupuesto_interno_total_partida;
+                // totalPartidaMes = dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
+
             }
         }
 
+        
         // console.log(data);
         document.querySelector("tbody[id='body_detalle_requerimiento_pago']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data != null && data.id_estado == '7' ? '#f1d7d7' : ''}; text-align:center">
         <td>
             <input type="hidden"  class="idEstado" name="idEstado[]" value="${data != null && data.id_estado}">
-            <p class="descripcion-partida" title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}</p>
+            <p class="descripcion-partida" 
+            data-id-partida="${idPartida}" 
+            data-presupuesto-total="${totalPartida}" 
+            data-presupuesto-mes="${totalPartidaMes}" 
+
+            title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${( codigoPartida!=''?codigoPartida:'(NO SELECCIONADO)')}</p>
             <button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
             <div class="form-group">
                 <h5></h5>
@@ -1179,13 +1296,13 @@ class ListarRequerimientoPagoView {
         <td>
             <div class="form-group">
                 <h5></h5>
-                <input class="form-control input-sm cantidad text-right handleCheckStatusValue handleBurUpdateSubtotal" type="number" min="1" name="cantidad[]"  placeholder="Cantidad" value="${data != null && typeof data.cantidad === 'string' ? data.cantidad : ""}">
+                <input class="form-control input-sm cantidad text-right handleCheckStatusValue handleBurUpdateSubtotal handleBlurCalcularPresupuestoUtilizadoYSaldoPorPartida" type="number" min="1" name="cantidad[]"  placeholder="Cantidad" value="${data != null && typeof data.cantidad === 'string' ? data.cantidad : ""}">
             </div>
         </td>
         <td>
             <div class="form-group">
                 <h5></h5>
-                <input class="form-control input-sm precio text-right handleCheckStatusValue handleBurUpdateSubtotal" type="number" min="0" name="precioUnitario[]"  placeholder="Precio U." value="${data != null && typeof data.precio_unitario === 'string' ? data.precio_unitario : ""}">
+                <input class="form-control input-sm precio text-right handleCheckStatusValue handleBurUpdateSubtotal handleBlurCalcularPresupuestoUtilizadoYSaldoPorPartida" type="number" min="0" name="precioUnitario[]"  placeholder="Precio U." value="${data != null && typeof data.precio_unitario === 'string' ? data.precio_unitario : ""}">
             </div>
         </td>
 
@@ -1432,12 +1549,21 @@ class ListarRequerimientoPagoView {
         let codigo = $("#par-" + idPartida + " ").find("td[name=codigo]")[0].innerHTML;
         let descripcion = $("#par-" + idPartida + " ").find("td[name=descripcion]")[0].innerHTML;
         // let presupuestoTotal = $("#par-" + idPartida + " ").find("td[name=importe_total]")[0].dataset.presupuestoTotal;
+        let presupuestoTotal = $("#par-" + idPartida + " ").find("td[name=importe_total]")[0].dataset.presupuestoTotal;
+        let presupuestoMes = ($("#par-" + idPartida + " ").find("td[name=importe_mes]")[0]) != null ? $("#par-" + idPartida + " ").find("td[name=importe_mes]")[0].dataset.presupuestoMes : 0;
+
+
         tempObjectBtnPartida.nextElementSibling.querySelector("input").value = idPartida;
+        
         tempObjectBtnPartida.textContent = 'Cambiar';
 
         let tr = tempObjectBtnPartida.closest("tr");
         // tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = idPartida;
         tr.querySelector("p[class='descripcion-partida']").textContent = codigo
+        tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = idPartida;
+        tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = presupuestoTotal;
+        tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = presupuestoMes;
+
         // tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = presupuestoTotal;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', descripcion);
 
@@ -1660,6 +1786,28 @@ class ListarRequerimientoPagoView {
 
     validarFormularioRequerimientoPago() {
         let continuar = true;
+
+        let mensajePartidaActiva='';
+        
+        // if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
+        //     for (let index = 0; index < tempPartidasActivas.length; index++) {
+        //         if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
+        //             mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
+                    
+        //         }
+        //     }
+        //     console.log(mensajePartidaActiva);
+        //     if(mensajePartidaActiva!=''){
+        //         continuar = false;
+        //         Swal.fire(
+        //             '',
+        //             'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,
+        //             'warning'
+        //         );
+        //     }
+
+        // }
+
         if (document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount == 0) {
             Swal.fire(
                 '',
@@ -2044,11 +2192,16 @@ class ListarRequerimientoPagoView {
             });
 
         } else {
-            Swal.fire(
-                '',
-                'Por favor ingrese los datos faltantes en el formulario',
-                'warning'
-            );
+
+            Lobibox.notify('warning', {
+                title: false,
+                size: 'mini',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: 'Por favor ingrese los datos faltantes en el formulario'
+            });
+  
         }
     }
 
@@ -2155,11 +2308,14 @@ class ListarRequerimientoPagoView {
                 });
 
             } else {
-                Swal.fire(
-                    '',
-                    'Por favor ingrese los datos faltantes en el formulario',
-                    'warning'
-                );
+                Lobibox.notify('warning', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'Por favor ingrese los datos faltantes en el formulario'
+                });
             }
         } else {
             Swal.fire(
@@ -2441,21 +2597,34 @@ class ListarRequerimientoPagoView {
 
         this.limpiarTabla('listaDetalleRequerimientoPago');
         if (data.detalle.length > 0) {
-            // console.log(data.detalle);
+            console.log(data.detalle);
             for (let i = 0; i < data.detalle.length; i++) {
                 let cantidadAdjuntosItem = 0;
                 cantidadAdjuntosItem = (data.detalle[i].adjunto).filter((element, i) => element.id_estado != 7).length;
                 // console.log(cantidadAdjuntosItem);
                 // cantidadAdjuntosItem = data.detalle[i].adjunto.length;
 
-                document.querySelector("tbody[id='body_requerimiento_pago_detalle']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
-                <td>${i + 1}</td>
+                document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
+                <td>
+                    <p class="descripcion-partida" 
+                        data-id-partida="${data.detalle[i].id_partida !=null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}" 
+                        data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}" 
+                        data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}" 
+                        title="${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.partida :'' }";
+                        style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.descripcion :'' }
+                    </p>
+                        ${i + 1}
+                </td>
                 <td title="${data.detalle[i].id_partida >0 ?(data.detalle[i].partida.descripcion).toUpperCase() :(data.detalle[i].id_partida_pi >0?(data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].id_partida >0 ?data.detalle[i].partida.codigo :(data.detalle[i].id_partida_pi >0?data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
                 <td title="${data.detalle[i].id_centro_costo>0?(data.detalle[i].centro_costo.descripcion).toUpperCase():''}">${data.detalle[i].centro_costo !=null ? data.detalle[i].centro_costo.codigo : ''}</td>
                 <td name="descripcion_servicio">${data.detalle[i].descripcion != null ? data.detalle[i].descripcion : ''} </td>
                 <td>${data.detalle[i].unidad_medida != null ? data.detalle[i].unidad_medida.descripcion : ''}</td>
-                <td style="text-align:center;">${data.detalle[i].cantidad >= 0 ? data.detalle[i].cantidad : ''}</td>
-                <td style="text-align:right;">${data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : ''}${Util.formatoNumero(data.detalle[i].precio_unitario, 2)}</td>
+                <td style="text-align:center;">
+                    <input class="form-control input-sm cantidad text-right" type="number" min="1" name="cantidad[]" value="${data.detalle[i].cantidad >= 0 ? data.detalle[i].cantidad : 0}" style="display:none;">
+                    ${data.detalle[i].cantidad >= 0 ? data.detalle[i].cantidad : ''}</td>
+                <td style="text-align:right;">
+                    <input class="form-control input-sm precio text-right" type="number" min="1" name="precio[]" value="${data.detalle[i].precio_unitario}" style="display:none;">
+                    ${data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : ''}${Util.formatoNumero(data.detalle[i].precio_unitario, 2)}</td>
                 <td style="text-align:right;">${data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : ''}${(data.detalle[i].subtotal ? Util.formatoNumero(data.detalle[i].subtotal, 2) : (Util.formatoNumero((data.detalle[i].cantidad * data.detalle[i].precio_unitario), 2)))}</td>
                 <td style="text-align:left;">${data.detalle[i].motivo != null ? data.detalle[i].motivo : ''}</td>
                 <td style="text-align:center;">${data.detalle[i].estado != null ? data.detalle[i].estado.estado_doc : ''}</td>
@@ -2474,7 +2643,12 @@ class ListarRequerimientoPagoView {
             data.aprobacion.forEach(element => {
                 this.agregarHistorialAprobacion(element);
             });
-            // ### ==================== Historia aprobación ====================== ###
+            // ### ==================== /Historia aprobación ====================== ###
+            
+            // ### ==================== Partidas activas ====================== ###
+                this.calcularPresupuestoUtilizadoYSaldoPorPartida();
+            // ### ==================== /Partidas activas ====================== ###
+
 
         }
 
@@ -2709,6 +2883,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='proyecto']").value = data.id_proyecto;
 
         this.limpiarTabla('ListaDetalleRequerimientoPago');
+        this.limpiarTabla('listaPartidasActivas');
 
         data.detalle.forEach(element => {
             if (element.id_estado != 7) {
@@ -2743,6 +2918,7 @@ class ListarRequerimientoPagoView {
             });
         }
         this.updateContadorTotalAdjuntosRequerimientoPagoCabecera();
+        this.calcularPresupuestoUtilizadoYSaldoPorPartida();
 
     }
 

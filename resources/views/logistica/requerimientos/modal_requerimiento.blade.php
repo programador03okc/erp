@@ -7,6 +7,8 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" name="id_requerimiento">
+                <input type="hidden" name="id_moneda">
+                <input type="hidden" name="incluye_igv">
                 <fieldset class="group-importes">
                     <legend>Datos generales</legend>
                     <div class="box box-widget">
@@ -63,7 +65,11 @@
                                         </tr>
                                         <tr>
                                             <td style="width:5%; font-weight:bold; text-align:right;">Tipo Impuesto</td>
-                                            <td id="tipo_impuesto" style="width:10%;" colspan="2"></td>
+                                            <td id="tipo_impuesto" style="width:5%;"></td>
+                                            <td style="width:5%; font-weight:bold; text-align:right;">Moneda</td>
+                                            <td id="simbolo_moneda" style="width:5%;"></td>
+                                            <td style="width:10%; font-weight:bold; text-align:right;">Tipo Cambio</td>
+                                            <td id="tipo_cambio" style="width:5%;"></td>
                                         </tr>
                                         <tr>
                                             <td style="width:5%; font-weight:bold; text-align:right;">Observación</td>
@@ -137,9 +143,30 @@
                 </fieldset>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-7">
                         <fieldset class="group-importes">
-                            <legend style="background:#b3a705;">Historial de revisiones/aprobaciones</legend>
+                            <legend>
+                                Partidas activas
+                            </legend>
+                            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="10">Codigo</th>
+                                        <th width="70">Descripción</th>
+                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(actual)</small></th>
+                                        <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
+                                        <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
+                                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="body_partidas_activas">
+                                </tbody>
+                            </table>
+                        </fieldset>
+                        <br>
+                        <fieldset class="group-importes">
+                            <legend>Historial de revisiones/aprobaciones</legend>
                             <br>
                             <div class="box box-widget">
                                 <div class="box-body">
@@ -160,9 +187,10 @@
                             </div>
                         </fieldset>
                     </div>
-                    <div class="col-md-6">
-                    <fieldset class="group-importes">
-                            <legend style="background:#b3a705;">Flujo de aprobación</legend>
+                    <div class="col-md-5">
+
+                        <fieldset class="group-importes">
+                            <legend>Flujo de aprobación</legend>
                             <br>
                             <div class="box box-widget">
                                 <div class="box-body">

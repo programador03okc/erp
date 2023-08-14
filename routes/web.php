@@ -174,6 +174,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('ver/{id}', [ConfiguracionController::class, 'viewAccesos'])->name('ver');
 				Route::get('datos-usuario/{id}', [ConfiguracionController::class, 'accesoUsuario'])->name('datos-usuario');
 				Route::post('modulos', [ConfiguracionController::class, 'getModulosAccion'])->name('modulos');
+				Route::post('ver/guardar-accesos', [ConfiguracionController::class, 'guardarAccesos'])->name('guardar-accesos');
 			});
 		});
 
@@ -767,6 +768,10 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('listarDevolucionesSalidas', [DevolucionController::class, 'listarDevolucionesSalidas'])->name('listar-devoluciones-salidas');
 				Route::get('verDetalleDevolucion/{id}', [SalidasPendientesController::class, 'verDetalleDevolucion'])->name('ver-detalle-devolucion');
+
+                Route::post('importar-excel-series', [SalidasPendientesController::class, 'importarExcelSeries'])->name('importar-excel-series');
+
+
 			});
 
 			Route::group(['as' => 'customizacion.', 'prefix' => 'customizacion'], function () {
@@ -1314,7 +1319,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida'])->name('homologacion-partidas');
 					Route::get('total-presupuesto/{presup}/{tipo}', [ScriptController::class, 'totalPresupuesto'])->name('total-presupuesto');
 					Route::get('total-consumido-mes/{presup}/{tipo}/{mes}', [ScriptController::class, 'totalConsumidoMes'])->name('total-consumido-mes');
-					Route::get('total-ejecutado', [ScriptController::class, 'totalEjecutado'])->name('total-ejecutado');
+					Route::get('total-ejecutado/{id}', [ScriptController::class, 'totalEjecutado'])->name('total-ejecutado');
 					Route::get('regularizar-montos', [ScriptController::class, 'montosRegular'])->name('regularizar-montos');
 
 					Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class, 'totalPresupuestoAnualPartidasNiveles'])->name('total-presupuesto-anual-niveles');
@@ -2424,4 +2429,8 @@ Route::middleware(['auth'])->group(function () {
 			});
 		});
 	});
+});
+Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {
+	Route::get('tipo_cambio_masivo/{desde}/{hasta}', [ApiController::class, 'tipoCambioMasivo'])->name('tipo_cambio_masivo');
+	Route::get('tipo_cambio_actual', [ApiController::class, 'tipoCambioActual'])->name('tipo_cambio_actual');
 });

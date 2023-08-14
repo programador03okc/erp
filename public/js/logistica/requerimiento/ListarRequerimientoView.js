@@ -31,12 +31,15 @@ class ListarRequerimientoView {
 
     // }
     limpiarTabla(idElement) {
-        let nodeTbody = document.querySelector("table[id='" + idElement + "'] tbody");
-        if (nodeTbody != null) {
-            while (nodeTbody.children.length > 0) {
-                nodeTbody.removeChild(nodeTbody.lastChild);
+        let nodeTbodyList = document.querySelectorAll("table[id='" + idElement + "'] tbody");
+        nodeTbodyList.forEach(element => {
+            if (element != null) {
+                while (element.children.length > 0) {
+                    element.removeChild(element.lastChild);
+                }
             }
-        }
+            
+        });
     }
 
     initializeEventHandler() {
@@ -392,8 +395,8 @@ class ListarRequerimientoView {
                 { 'data': 'monto_total', 'name': 'monto_total', 'defaultContent': '', 'className': 'text-right','render': function (data, type, row) {
                     return (row['simbolo_moneda']) + ($.number(row.monto_total, 2,'.',','));
                 }},
-                { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
                 { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por' },
+                { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc','render': function (data, type, row) {
                     switch (row['estado']) {
                         case 1:
@@ -577,6 +580,7 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] table[id='listaDetalleRequerimientoModal'] label[name='monto_total']").textContent = '';
         this.limpiarTabla('listaDetalleRequerimientoModal');
         this.limpiarTabla('listaHistorialRevision');
+        this.limpiarTabla('listaPartidasActivas');
 
     }
 
@@ -607,6 +611,7 @@ class ListarRequerimientoView {
                 that.construirSeccionItemsDeRequerimiento(res['det_req'], res['requerimiento'][0]['simbolo_moneda'],res['requerimiento'][0]['id_presupuesto_interno']);
                 that.construirSeccionHistorialAprobacion(res['historial_aprobacion']);
                 that.construirSeccionFlujoAprobacion(res['flujo_aprobacion']);
+                that.calcularPresupuestoUtilizadoYSaldoPorPartida();
                 $('#modal-requerimiento div.modal-body').LoadingOverlay("hide", true);
 
             }).catch(function (err) {
@@ -620,6 +625,8 @@ class ListarRequerimientoView {
     construirSeccionDatosGenerales(data) {
         // console.log(data);
         document.querySelector("div[id='modal-requerimiento'] input[name='id_requerimiento']").value = data.id_requerimiento;
+        document.querySelector("div[id='modal-requerimiento'] input[name='id_moneda']").value = data.id_moneda;
+        document.querySelector("div[id='modal-requerimiento'] input[name='incluye_igv']").value = data.incluye_igv;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='codigo']").textContent = data.codigo;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='concepto']").textContent = data.concepto;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='razon_social_empresa']").textContent = data.razon_social_empresa + ' (' + data.codigo_sede_empresa + ')';
@@ -632,6 +639,8 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='creado_por']").textContent = data.persona;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='observacion']").textContent = data.observacion;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='tipo_impuesto']").textContent = data.tipo_impuesto==1?'Detracción':data.tipo_impuesto ==2?'Renta':'No aplica';
+        document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='tipo_cambio']").textContent = data.tipo_cambio??'';
+        document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='simbolo_moneda']").textContent = data.simbolo_moneda;
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = data.simbolo_moneda;
 
         if (data.id_incidencia > 0) {
@@ -716,7 +725,101 @@ class ListarRequerimientoView {
                 }
             }
         }
+
+        
+
     }
+
+    calcularPresupuestoUtilizadoYSaldoPorPartida() {
+        tempPartidasActivas = [];
+        let partidaAgregadas = [];
+        let subtotalItemList = [];
+        let tbodyChildren = document.querySelector("tbody[id='body_item_requerimiento']").children;
+
+        let idMonedaPresupuestoUtilizado = document.querySelector("input[name='id_moneda']").value;
+        let simboloMonedaPresupuestoUtilizado = document.querySelector("td[id='simbolo_moneda']").textContent;;
+        let actualTipoCambioCompra = document.querySelector("td[id='tipo_cambio']").textContent;
+
+        
+        
+        for (let index = 0; index < tbodyChildren.length; index++) {
+            if (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida > 0) {
+                if (!partidaAgregadas.includes(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida)) {
+                    partidaAgregadas.push(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida);
+                    tempPartidasActivas.push({
+                        'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
+                        'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
+                        'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
+                        'presupuesto_mes': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes,
+                        'presupuesto_total': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal,
+                        'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
+                        'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
+                        'presupuesto_utilizado_al_cambio': 0,
+                        'presupuesto_utilizado': 0,
+                        'saldo_total': 0,
+                        'saldo_mes': 0
+                    });
+                }
+
+                let subtotal = (tbodyChildren[index].querySelector("input[class~='cantidad']").value > 0 ? tbodyChildren[index].querySelector("input[class~='cantidad']").value : 0) * (tbodyChildren[index].querySelector("input[class~='precio']").value > 0 ? tbodyChildren[index].querySelector("input[class~='precio']").value : 0);
+                if (document.querySelector("input[name='incluye_igv']") == true || document.querySelector("input[name='incluye_igv']") == 'true') {
+                    subtotal = (subtotal * 0.18) + subtotal;
+                }
+
+                subtotalItemList.push({
+                    'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
+                    'subtotal': subtotal
+                });
+
+            }
+        }
+
+
+
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            for (let i = 0; i < subtotalItemList.length; i++) {
+                if (tempPartidasActivas[p].id_partida == subtotalItemList[i].id_partida) {
+                    tempPartidasActivas[p].presupuesto_utilizado += subtotalItemList[i].subtotal;
+                }
+            }
+        }
+
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            if (tempPartidasActivas[p].id_moneda_presupuesto_utilizado == 2) { // moneda dolares
+                let presupuesto_utilizado_alCambio = tempPartidasActivas[p].presupuesto_utilizado * actualTipoCambioCompra;
+                tempPartidasActivas[p].presupuesto_utilizado_al_cambio = presupuesto_utilizado_alCambio;
+                tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0);
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0);
+            } else {
+                tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+
+            }
+        }
+
+
+        this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
+        // console.log(tempPartidasActivas);
+    }
+
+    construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
+        this.limpiarTabla('listaPartidasActivas');
+        data.forEach(element => {
+
+            document.querySelector("tbody[id='body_partidas_activas']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
+                <td>${element.codigo}</td>
+                <td>${element.descripcion}</td>
+                <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
+                <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
+                <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
+                <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
+                <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
+            </tr>`);
+
+        });
+
+    }
+
 
     verAdjuntosRequerimiento() {
 
@@ -803,14 +906,29 @@ class ListarRequerimientoView {
                     document.querySelector("tbody[id='body_item_requerimiento']").insertAdjacentHTML('beforeend', `<tr>
 
 
-                <td>${i + 1}</td>
+                <td>
+                    ${i + 1}
+                    <p class="descripcion-partida" 
+                        data-id-partida="${data[i].id_partida !=null ? data[i].id_partida : data[i].id_partida_pi}" 
+                        data-presupuesto-total="${data[i].presupuesto_interno_total_partida != null ?data[i].presupuesto_interno_total_partida: data[i].presupuesto_old_total_partida}" 
+                        data-presupuesto-mes="${data[i].presupuesto_interno_mes_partida}" 
+                        title="${data[i].descripcion_partida !=null ? data[i].descripcion_partida :'' }";
+                        style="display:none;"> ${data[i].codigo_partida !=null ? data[i].codigo_partida :'' }
+                    </p>
+                </td>
                 <td title="${data[i].id_partida >0 ?data[i].descripcion_partida.toUpperCase() :(data[i].id_partida_pi >0?data[i].descripcion_partida_presupuesto_interno.toUpperCase() : '')}" >${data[i].id_partida >0 ?data[i].codigo_partida :(data[i].id_partida_pi >0?data[i].codigo_partida_presupuesto_interno : '')}</td>
                 <td title="${data[i].id_centro_costo>0?data[i].descripcion_centro_costo.toUpperCase():''}">${data[i].codigo_centro_costo ? data[i].codigo_centro_costo : ''}</td>
                 <td>${data[i].id_tipo_item == 1 ? (data[i].producto_part_number ? data[i].producto_part_number : data[i].part_number) : '(Servicio)'}${data[i].tiene_transformacion == true ? '<br><span class="label label-default">Transformado</span>' : ''} </td>
                 <td>${data[i].producto_descripcion != null ? data[i].producto_descripcion : (data[i].descripcion ? data[i].descripcion : '')} </td>
                 <td>${data[i].unidad_medida != null ? data[i].unidad_medida : ''}</td>
-                <td style="text-align:center;">${data[i].cantidad >= 0 ? data[i].cantidad : ''}</td>
-                <td style="text-align:right;">${simboloMoneda}${Util.formatoNumero(data[i].precio_unitario, 2)}</td>
+                <td style="text-align:center;">
+                    <input class="form-control input-sm cantidad text-right" type="number" min="1" name="cantidad[]" value="${data[i].cantidad >= 0 ? data[i].cantidad : 0}" style="display:none;">
+                    ${data[i].cantidad >= 0 ? data[i].cantidad : ''}
+                </td>
+                <td style="text-align:right;">
+                    <input class="form-control input-sm precio text-right" type="number" min="1" name="precio[]" value="${data[i].precio_unitario}" style="display:none;">
+                    ${simboloMoneda}${Util.formatoNumero(data[i].precio_unitario, 2)}
+                </td>
                 <td style="text-align:right;">${simboloMoneda}${(data[i].subtotal ? Util.formatoNumero(data[i].subtotal, 2) : (Util.formatoNumero((data[i].cantidad * data[i].precio_unitario), 2)))}</td>
                 <td>${data[i].motivo != null ? data[i].motivo : ''}</td>
                 <td>${data[i].estado_doc != null ? data[i].estado_doc : ''}</td>
@@ -874,7 +992,7 @@ class ListarRequerimientoView {
 
     }
     construirSeccionFlujoAprobacion(data) {
-        console.log(data);
+        // console.log(data);
         this.limpiarTabla('listaFlujoAprobacion');
         let html = '';
         if (data.length > 0) {

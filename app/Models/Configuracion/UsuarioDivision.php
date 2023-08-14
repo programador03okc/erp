@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class UsuarioDivision extends Model {
 
     protected $table = 'configuracion.usuario_division';
+    protected $fillable = ['id_usuario_division','id_usuario','id_estado','id_division','es_jefe','es_gerente','comentario'];
     protected $primaryKey = 'id_usuario_division';
     public $timestamps = false;
 
@@ -31,4 +32,11 @@ class UsuarioDivision extends Model {
 
         return $usuarioDivision;
     }
+
+    public function division()
+    {
+        return $this->hasOne(Division::class, 'id_division', 'id_division')->where('estado',1);
+    }
+
+ 
 }

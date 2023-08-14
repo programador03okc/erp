@@ -637,6 +637,7 @@ class ConfiguracionController extends Controller{
                 $sis_usua->password     = StringHelper::claveHash($request->clave);
             }
             $sis_usua->nombre_corto     = $request->nombre_corto;
+            $sis_usua->nombre_largo     = $request->nombre_largo;
             $sis_usua->codvend_softlink = $request->codvent_softlink;
             $sis_usua->email            = $request->email;
         $sis_usua->save();
@@ -727,6 +728,7 @@ class ConfiguracionController extends Controller{
         $apellido_paterno = $request->apellido_paterno;
         $apellido_materno = $request->apellido_materno;
         $nombre_corto = $request->nombre_corto;
+        $nombre_largo = $request->nombre_largo;
         $usuario = $request->usuario;
         $contraseña =  StringHelper::encode5t($request->contraseña);
         $claveHash = StringHelper::claveHash($request->clave);
@@ -739,7 +741,8 @@ class ConfiguracionController extends Controller{
             'usuario' => $usuario,
             'clave' => $contraseña,
             'password' => $claveHash,
-            'nombre_corto' => $nombre_corto
+            'nombre_corto' => $nombre_corto,
+            'nombre_largo' => $nombre_largo
         ]);
 
 

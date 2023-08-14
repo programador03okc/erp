@@ -2430,3 +2430,7 @@ Route::middleware(['auth'])->group(function () {
 		});
 	});
 });
+Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {
+	Route::get('tipo_cambio_masivo/{desde}/{hasta}', [ApiController::class, 'tipoCambioMasivo'])->name('tipo_cambio_masivo');
+	Route::get('tipo_cambio_actual', [ApiController::class, 'tipoCambioActual'])->name('tipo_cambio_actual');
+});

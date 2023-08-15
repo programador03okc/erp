@@ -480,8 +480,8 @@ function guardarAcceso(){
     });
     return false;
 }
-$(document).on('click','[data-clave="change-clave"]',function () {
 
+$(document).on('click','[data-clave="change-clave"]',function () {
     // $('#modal_cambio_clave').modal('show');
     $('#modal_cambio_clave [name="id_usuario"]').val($(this).attr('data-id'));
     $('#modal_cambio_clave').modal({
@@ -489,6 +489,7 @@ $(document).on('click','[data-clave="change-clave"]',function () {
         backdrop: 'static'
     });
 });
+
 $(document).on('submit','[data-form="cambio-clave"]',function (e) {
     e.preventDefault();
     var data = $(this).serialize();
@@ -552,6 +553,7 @@ $(document).on('submit','[data-form="cambio-clave"]',function (e) {
         })
     }
 });
+
 $(document).on('change','input.dni-unico',function () {
     var documento = $(this).val();
     $.ajax({
@@ -576,6 +578,7 @@ $(document).on('change','input.dni-unico',function () {
         console.log(errorThrown);
     })
 });
+
 $(document).on('change','input.usuario-unico',function () {
     var nombre = $('#formPage [name="nombres"]').val(),
         apellido = $('#formPage [name="apellido_paterno"]').val(),
@@ -588,6 +591,7 @@ $(document).on('change','input.usuario-unico',function () {
         validarUsuario(usuario)
     }
 });
+
 function validarUsuario(usuario) {
     $.ajax({
         type: 'POST',

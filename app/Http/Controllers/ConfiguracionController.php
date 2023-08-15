@@ -637,6 +637,7 @@ class ConfiguracionController extends Controller{
                 $sis_usua->password     = StringHelper::claveHash($request->clave);
             }
             $sis_usua->nombre_corto     = $request->nombre_corto;
+            $sis_usua->nombre_largo     = $request->nombre_largo;
             // $sis_usua->codvend_softlink = $request->codvent_softlink;
             $sis_usua->email            = $request->email;
         $sis_usua->save();
@@ -727,6 +728,7 @@ class ConfiguracionController extends Controller{
         $apellido_paterno = $request->apellido_paterno;
         $apellido_materno = $request->apellido_materno;
         $nombre_corto = $request->nombre_corto;
+        $nombre_largo = $request->nombre_largo;
         $usuario = $request->usuario;
         $contraseña =  StringHelper::encode5t($request->contraseña);
         $claveHash = StringHelper::claveHash($request->clave);
@@ -739,7 +741,8 @@ class ConfiguracionController extends Controller{
             'usuario' => $usuario,
             'clave' => $contraseña,
             'password' => $claveHash,
-            'nombre_corto' => $nombre_corto
+            'nombre_corto' => $nombre_corto,
+            'nombre_largo' => $nombre_largo
         ]);
 
 
@@ -895,7 +898,8 @@ class ConfiguracionController extends Controller{
         $sis_usua->estado           = 1;
         $sis_usua->fecha_registro   = date('Y-m-d H:i:s');
         $sis_usua->nombre_corto     = $request->nombre_corto;
-        // $sis_usua->codvend_softlink = $request->codvent_softlink;
+        $sis_usua->nombre_largo     = $request->nombre_largo;
+        $sis_usua->codvend_softlink = $request->codvent_softlink;
         $sis_usua->email            = $request->email;
         $sis_usua->save();
 
@@ -954,870 +958,868 @@ class ConfiguracionController extends Controller{
 
     }
 /* NOTAS DE LANZAMIENTO */
-public function mostrar_notas_lanzamiento_select(){
-    $data = DB::table('configuracion.nota_lanzamiento')
-        ->select('nota_lanzamiento.*')
-        ->where('nota_lanzamiento.estado', '=', 1)
-        ->orderBy('nota_lanzamiento.id_nota_lanzamiento', 'asc')
-        ->get();
-        return $data;
-}
-public function mostrar_nota_lanzamiento($id_nota){
-    $data = DB::table('configuracion.nota_lanzamiento')
-        ->select('nota_lanzamiento.*')
-        ->where([['nota_lanzamiento.estado', '=', 1],
-                ['nota_lanzamiento.id_nota_lanzamiento', '=', $id_nota],
-                ])
-        ->orderBy('nota_lanzamiento.id_nota_lanzamiento', 'asc')
-        ->get();
+    public function mostrar_notas_lanzamiento_select(){
+        $data = DB::table('configuracion.nota_lanzamiento')
+            ->select('nota_lanzamiento.*')
+            ->where('nota_lanzamiento.estado', '=', 1)
+            ->orderBy('nota_lanzamiento.id_nota_lanzamiento', 'asc')
+            ->get();
+            return $data;
+    }
+    public function mostrar_nota_lanzamiento($id_nota){
+        $data = DB::table('configuracion.nota_lanzamiento')
+            ->select('nota_lanzamiento.*')
+            ->where([['nota_lanzamiento.estado', '=', 1],
+                    ['nota_lanzamiento.id_nota_lanzamiento', '=', $id_nota],
+                    ])
+            ->orderBy('nota_lanzamiento.id_nota_lanzamiento', 'asc')
+            ->get();
+
+            return response()->json($data->first());
+
+    }
+
+    public function mostrar_detalle_nota_lanzamiento($id){
+        $data = DB::table('configuracion.detalle_nota_lanzamiento')
+            ->select('detalle_nota_lanzamiento.*')
+            ->where([
+                ['detalle_nota_lanzamiento.estado', '=', 1],
+                ['detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', '=', $id]
+            ])
+            ->orderBy('detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', 'asc')
+            ->get();
 
         return response()->json($data->first());
-
-}
-
-public function mostrar_detalle_nota_lanzamiento($id){
-    $data = DB::table('configuracion.detalle_nota_lanzamiento')
-        ->select('detalle_nota_lanzamiento.*')
-        ->where([
-            ['detalle_nota_lanzamiento.estado', '=', 1],
-            ['detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', '=', $id]
-        ])
-        ->orderBy('detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', 'asc')
-        ->get();
-
-    return response()->json($data->first());
-}
-
-public function mostrar_detalle_notas_lanzamiento_table($id){
-    $data = DB::table('configuracion.detalle_nota_lanzamiento')
-        ->select('detalle_nota_lanzamiento.*')
-        ->where([
-            ['detalle_nota_lanzamiento.estado', '=', 1],
-            ['detalle_nota_lanzamiento.id_nota_lanzamiento', '=', $id]
-        ])
-        ->orderBy('detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', 'asc')
-        ->get();
-    $output['data'] = $data;
-    return response()->json($output);
-}
-
-public function updateNotaLanzamiento(Request $request){
-    $nota= $request->all();
-    $id_nota_lanzamiento = $nota['id_nota_lanzamiento'];
-    $version = $nota['version'];
-    $version_actual = $nota['version_actual'];
-    $fecha_nota_lanzamiento = $nota['fecha_nota_lanzamiento'];
-    $status='';
-    $update = DB::table('configuracion.nota_lanzamiento')->where('id_nota_lanzamiento', $id_nota_lanzamiento)
-    ->update([
-        'version' => $version,
-        'version_actual' => $version_actual,
-        'fecha_nota_lanzamiento' => $fecha_nota_lanzamiento
-    ]);
-
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
     }
 
-    return  response()->json($status);
-}
-public function updateDetalleNotaLanzamiento(Request $request){
-    $nota= $request->all();
-    $id_detalle_nota_lanzamiento = $nota['id_detalle_nota_lanzamiento'];
-    $titulo = $nota['titulo'];
-    $descripcion = $nota['descripcion'];
-    $fecha_detalle_nota_lanzamiento = $nota['fecha_detalle_nota_lanzamiento'];
-    $status='';
-    $update = DB::table('configuracion.detalle_nota_lanzamiento')->where('id_detalle_nota_lanzamiento', $id_detalle_nota_lanzamiento)
-    ->update([
-        'titulo' => $titulo,
-        'descripcion' => $descripcion,
-        'fecha_detalle_nota_lanzamiento' => $fecha_detalle_nota_lanzamiento
-    ]);
-
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
-    }
-
-    return  response()->json($status);
-}
-
-public function guardarNotaLanzamiento(Request $request){
-    $nota= $request->all();
-    $id_nota_lanzamiento = $nota['id_nota_lanzamiento'];
-    $version = $nota['version'];
-    $version_actual = $nota['version_actual'];
-    $fecha_nota_lanzamiento = $nota['fecha_nota_lanzamiento'];
-    $status='';
-    $guardar = DB::table('configuracion.nota_lanzamiento')->insertGetId([
-        'version' => $version,
-        'version_actual' => $version_actual,
-        'fecha_nota_lanzamiento' => $fecha_nota_lanzamiento,
-        'estado' => 1
-    ],'id_nota_lanzamiento'
-    );
-
-    if($guardar >0){
-        $status='GUARDADO';
-    }else{
-        $status='NO_GUARDADO';
-    }
-    return  response()->json($status);
-}
-
-public function eliminarNotaLanzamiento($id){
-    $status='';
-    $eliminar = DB::table('configuracion.nota_lanzamiento')
-    ->where('id_nota_lanzamiento',$id)
-    ->delete();
-
-    if($eliminar >0){
-        $status='ELIMINADO';
-    }else{
-        $status='NO_ELIMINADO';
-    }
-    return  response()->json($status);
-}
-
-public function eliminarDetalleNotaLanzamiento($id){
-    $status='';
-    $eliminar = DB::table('configuracion.detalle_nota_lanzamiento')
-    ->where('id_detalle_nota_lanzamiento',$id)
-    ->delete();
-
-    if($eliminar >0){
-        $status='ELIMINADO';
-    }else{
-        $status='NO_ELIMINADO';
-    }
-    return  response()->json($status);
-}
-
-public function mostrarVersionActual(){
-    $nota_lanzamiento = DB::table('configuracion.nota_lanzamiento')
-    ->select('nota_lanzamiento.*')
-    ->where([['nota_lanzamiento.estado', '=', 1],['nota_lanzamiento.version_actual','=',true]])
-    ->orderBy('nota_lanzamiento.id_nota_lanzamiento', 'asc')
-    ->get();
-
-    $id_nota_lanzamiento_list=[];
-    foreach($nota_lanzamiento as $data){
-        $id_nota_lanzamiento_list[] = $data->id_nota_lanzamiento;
-    }
-    $detalle_nota = DB::table('configuracion.detalle_nota_lanzamiento')
-    ->select('detalle_nota_lanzamiento.*')
-    ->where([['detalle_nota_lanzamiento.estado', '=', 1]])
-    ->whereIn('detalle_nota_lanzamiento.id_nota_lanzamiento',$id_nota_lanzamiento_list)
-    ->orderBy('detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', 'asc')
-    ->get();
-
-    return $detalle_nota;
-}
-
-/* FLUJO APROBACION  - DOCUMENTO */
-    public function mostrar_documento_table(){
-        $data = DB::table('administracion.adm_estado_doc')
-        ->orderBy('id_estado_doc', 'asc')->get();
+    public function mostrar_detalle_notas_lanzamiento_table($id){
+        $data = DB::table('configuracion.detalle_nota_lanzamiento')
+            ->select('detalle_nota_lanzamiento.*')
+            ->where([
+                ['detalle_nota_lanzamiento.estado', '=', 1],
+                ['detalle_nota_lanzamiento.id_nota_lanzamiento', '=', $id]
+            ])
+            ->orderBy('detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', 'asc')
+            ->get();
         $output['data'] = $data;
         return response()->json($output);
     }
-    public function mostrar_documento_id($id){
-        $sql = DB::table('administracion.adm_estado_doc')
-        ->where('id_estado_doc', $id)->get();
-        $data = [0 => $sql];
-        return response()->json($data);
+
+    public function updateNotaLanzamiento(Request $request){
+        $nota= $request->all();
+        $id_nota_lanzamiento = $nota['id_nota_lanzamiento'];
+        $version = $nota['version'];
+        $version_actual = $nota['version_actual'];
+        $fecha_nota_lanzamiento = $nota['fecha_nota_lanzamiento'];
+        $status='';
+        $update = DB::table('configuracion.nota_lanzamiento')->where('id_nota_lanzamiento', $id_nota_lanzamiento)
+        ->update([
+            'version' => $version,
+            'version_actual' => $version_actual,
+            'fecha_nota_lanzamiento' => $fecha_nota_lanzamiento
+        ]);
+
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
+
+        return  response()->json($status);
     }
-    public function guardar_documento(Request $request){
-        $id = DB::table('administracion.adm_estado_doc')->insertGetId(
-            [
-                'estado_doc' => $request->estado_documento,
-                'bootstrap_color' => $request->color
-            ],
-            'id_estado_doc'
+    public function updateDetalleNotaLanzamiento(Request $request){
+        $nota= $request->all();
+        $id_detalle_nota_lanzamiento = $nota['id_detalle_nota_lanzamiento'];
+        $titulo = $nota['titulo'];
+        $descripcion = $nota['descripcion'];
+        $fecha_detalle_nota_lanzamiento = $nota['fecha_detalle_nota_lanzamiento'];
+        $status='';
+        $update = DB::table('configuracion.detalle_nota_lanzamiento')->where('id_detalle_nota_lanzamiento', $id_detalle_nota_lanzamiento)
+        ->update([
+            'titulo' => $titulo,
+            'descripcion' => $descripcion,
+            'fecha_detalle_nota_lanzamiento' => $fecha_detalle_nota_lanzamiento
+        ]);
+
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
+
+        return  response()->json($status);
+    }
+
+    public function guardarNotaLanzamiento(Request $request){
+        $nota= $request->all();
+        $id_nota_lanzamiento = $nota['id_nota_lanzamiento'];
+        $version = $nota['version'];
+        $version_actual = $nota['version_actual'];
+        $fecha_nota_lanzamiento = $nota['fecha_nota_lanzamiento'];
+        $status='';
+        $guardar = DB::table('configuracion.nota_lanzamiento')->insertGetId([
+            'version' => $version,
+            'version_actual' => $version_actual,
+            'fecha_nota_lanzamiento' => $fecha_nota_lanzamiento,
+            'estado' => 1
+        ],'id_nota_lanzamiento'
         );
-        return response()->json($id);
-    }
-    public function actualizar_documento(Request $request){
-        $data = DB::table('administracion.adm_estado_doc')->where('id_estado_doc', $request->id_documento)
-        ->update([
-            'estado_doc'   => $request->estado_documento,
-            'bootstrap_color' => $request->color,
-        ]);
-        return response()->json($data);
-    }
-    public function anular_documento($id){
-        $idEstadoAnulado = $this->get_estado_doc('Anulado');
-        $data = DB::table('administracion.adm_estado_doc')->where('id_estado_doc', $id)
-        ->update([
-            'estado'    => $idEstadoAnulado
-        ]);
-        return response()->json($data);
+
+        if($guardar >0){
+            $status='GUARDADO';
+        }else{
+            $status='NO_GUARDADO';
+        }
+        return  response()->json($status);
     }
 
-/* FLUJO APROBACION  - HISTORIAL APROBACIÓN */
-    public function mostrar_historial_aprobacion(){
-        $data = DB::table('administracion.adm_aprobacion')
+    public function eliminarNotaLanzamiento($id){
+        $status='';
+        $eliminar = DB::table('configuracion.nota_lanzamiento')
+        ->where('id_nota_lanzamiento',$id)
+        ->delete();
+
+        if($eliminar >0){
+            $status='ELIMINADO';
+        }else{
+            $status='NO_ELIMINADO';
+        }
+        return  response()->json($status);
+    }
+
+    public function eliminarDetalleNotaLanzamiento($id){
+        $status='';
+        $eliminar = DB::table('configuracion.detalle_nota_lanzamiento')
+        ->where('id_detalle_nota_lanzamiento',$id)
+        ->delete();
+
+        if($eliminar >0){
+            $status='ELIMINADO';
+        }else{
+            $status='NO_ELIMINADO';
+        }
+        return  response()->json($status);
+    }
+
+    public function mostrarVersionActual(){
+        $nota_lanzamiento = DB::table('configuracion.nota_lanzamiento')
+        ->select('nota_lanzamiento.*')
+        ->where([['nota_lanzamiento.estado', '=', 1],['nota_lanzamiento.version_actual','=',true]])
+        ->orderBy('nota_lanzamiento.id_nota_lanzamiento', 'asc')
+        ->get();
+
+        $id_nota_lanzamiento_list=[];
+        foreach($nota_lanzamiento as $data){
+            $id_nota_lanzamiento_list[] = $data->id_nota_lanzamiento;
+        }
+        $detalle_nota = DB::table('configuracion.detalle_nota_lanzamiento')
+        ->select('detalle_nota_lanzamiento.*')
+        ->where([['detalle_nota_lanzamiento.estado', '=', 1]])
+        ->whereIn('detalle_nota_lanzamiento.id_nota_lanzamiento',$id_nota_lanzamiento_list)
+        ->orderBy('detalle_nota_lanzamiento.id_detalle_nota_lanzamiento', 'asc')
+        ->get();
+
+        return $detalle_nota;
+    }
+
+    /* FLUJO APROBACION  - DOCUMENTO */
+        public function mostrar_documento_table(){
+            $data = DB::table('administracion.adm_estado_doc')
+            ->orderBy('id_estado_doc', 'asc')->get();
+            $output['data'] = $data;
+            return response()->json($output);
+        }
+        public function mostrar_documento_id($id){
+            $sql = DB::table('administracion.adm_estado_doc')
+            ->where('id_estado_doc', $id)->get();
+            $data = [0 => $sql];
+            return response()->json($data);
+        }
+        public function guardar_documento(Request $request){
+            $id = DB::table('administracion.adm_estado_doc')->insertGetId(
+                [
+                    'estado_doc' => $request->estado_documento,
+                    'bootstrap_color' => $request->color
+                ],
+                'id_estado_doc'
+            );
+            return response()->json($id);
+        }
+        public function actualizar_documento(Request $request){
+            $data = DB::table('administracion.adm_estado_doc')->where('id_estado_doc', $request->id_documento)
+            ->update([
+                'estado_doc'   => $request->estado_documento,
+                'bootstrap_color' => $request->color,
+            ]);
+            return response()->json($data);
+        }
+        public function anular_documento($id){
+            $idEstadoAnulado = $this->get_estado_doc('Anulado');
+            $data = DB::table('administracion.adm_estado_doc')->where('id_estado_doc', $id)
+            ->update([
+                'estado'    => $idEstadoAnulado
+            ]);
+            return response()->json($data);
+        }
+
+    /* FLUJO APROBACION  - HISTORIAL APROBACIÓN */
+        public function mostrar_historial_aprobacion(){
+            $data = DB::table('administracion.adm_aprobacion')
+            ->select(
+                'adm_aprobacion.id_aprobacion',
+                'adm_aprobacion.id_flujo',
+                'adm_aprobacion.id_doc_aprob',
+                'adm_documentos_aprob.codigo_doc',
+                'adm_aprobacion.id_vobo',
+                'adm_aprobacion.id_usuario',
+                'adm_aprobacion.id_area',
+                'adm_aprobacion.fecha_vobo',
+                'adm_aprobacion.detalle_observacion',
+                'adm_aprobacion.id_rol',
+                'adm_flujo.nombre as nombre_flujo',
+                'adm_vobo.descripcion as descripcion_vobo',
+                DB::raw("CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno) as nombre_completo_usuario"),
+                'adm_area.descripcion as descripcion_area',
+                'rrhh_rol_concepto.descripcion as descripcion_rol_concepto'
+            )
+            ->join('administracion.adm_flujo', 'adm_aprobacion.id_flujo', '=', 'adm_flujo.id_flujo')
+            ->join('administracion.adm_vobo', 'adm_aprobacion.id_vobo', '=', 'adm_vobo.id_vobo')
+            ->join('configuracion.sis_usua', 'adm_aprobacion.id_usuario', '=', 'sis_usua.id_usuario')
+            ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
+            ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
+            ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
+            ->join('administracion.adm_area', 'adm_aprobacion.id_area', '=', 'adm_area.id_area')
+            ->join('rrhh.rrhh_rol', 'adm_aprobacion.id_rol', '=', 'rrhh_rol.id_rol')
+            ->join('rrhh.rrhh_rol_concepto', 'rrhh_rol.id_rol_concepto', '=', 'rrhh_rol_concepto.id_rol_concepto')
+            ->join('administracion.adm_documentos_aprob', 'adm_aprobacion.id_doc_aprob', '=', 'adm_documentos_aprob.id_doc_aprob')
+            ->orderBy('id_aprobacion', 'asc')->get();
+            $output['data'] = $data;
+            return response()->json($output);
+        }
+    /* FLUJO APROBACION  - GESTIONAR LFUJO */
+
+    public function mostrar_flujos($id_grupo_flujo=null,$id_flujo=null){
+        $option=[ ['adm_flujo.estado', '=', 1],['adm_operacion.estado', '=', 1]];
+        if($id_grupo_flujo >0){
+            $option[]=['adm_flujo.id_grupo_flujo', '=', $id_grupo_flujo];
+        }
+        if($id_flujo >0){
+            $option[]=['adm_flujo.id_flujo', '=', $id_flujo];
+        }
+
+
+        $data = DB::table('administracion.adm_flujo')
         ->select(
-            'adm_aprobacion.id_aprobacion',
-            'adm_aprobacion.id_flujo',
-            'adm_aprobacion.id_doc_aprob',
-            'adm_documentos_aprob.codigo_doc',
-            'adm_aprobacion.id_vobo',
-            'adm_aprobacion.id_usuario',
-            'adm_aprobacion.id_area',
-            'adm_aprobacion.fecha_vobo',
-            'adm_aprobacion.detalle_observacion',
-            'adm_aprobacion.id_rol',
-            'adm_flujo.nombre as nombre_flujo',
-            'adm_vobo.descripcion as descripcion_vobo',
-            DB::raw("CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno) as nombre_completo_usuario"),
-            'adm_area.descripcion as descripcion_area',
-            'rrhh_rol_concepto.descripcion as descripcion_rol_concepto'
+            'adm_flujo.id_flujo',
+            'adm_flujo.id_grupo_flujo',
+            'adm_flujo.id_operacion',
+            'adm_flujo.id_rol',
+            'adm_flujo.nombre',
+            'adm_flujo.orden',
+            'adm_flujo.estado as flujo_estado',
+            'adm_operacion.descripcion as operacion_descripcion',
+            'adm_operacion.id_grupo',
+            'adm_grupo.descripcion as grupo_descripcion',
+            'adm_operacion.id_tp_documento',
+            'adm_tp_docum.descripcion as tp_documento_descripcion',
+            // 'adm_operacion.id_prioridad', eliminar -> trasladado a detalle_criterio
+            'adm_operacion.id_area',
+            'adm_area.descripcion as area_descripcion',
+            'adm_empresa.id_empresa',
+            'adm_contri.razon_social as razon_social_empresa',
+            'sis_sede.id_sede',
+            'sis_sede.codigo as codigo_sede',
+
+            'adm_operacion.fecha_registro',
+            'adm_operacion.estado as operacion_estado',
+            'rrhh_rol_concepto.descripcion as rol_concepto_descripcion',
+            DB::raw("(SELECT COUNT(adm_detalle_grupo_criterios.id_criterio_monto) FROM administracion.adm_detalle_grupo_criterios
+                WHERE adm_detalle_grupo_criterios.id_flujo = adm_flujo.id_flujo and adm_detalle_grupo_criterios.estado = 1)::integer as cantidad_criterio_monto"),
+            DB::raw("(SELECT COUNT(adm_detalle_grupo_criterios.id_criterio_prioridad) FROM administracion.adm_detalle_grupo_criterios
+                WHERE adm_detalle_grupo_criterios.id_flujo = adm_flujo.id_flujo and adm_detalle_grupo_criterios.estado = 1 )::integer as cantidad_criterio_prioridad")
         )
-        ->join('administracion.adm_flujo', 'adm_aprobacion.id_flujo', '=', 'adm_flujo.id_flujo')
-        ->join('administracion.adm_vobo', 'adm_aprobacion.id_vobo', '=', 'adm_vobo.id_vobo')
-        ->join('configuracion.sis_usua', 'adm_aprobacion.id_usuario', '=', 'sis_usua.id_usuario')
-        ->join('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
-        ->join('rrhh.rrhh_postu', 'rrhh_trab.id_postulante', '=', 'rrhh_postu.id_postulante')
-        ->join('rrhh.rrhh_perso', 'rrhh_postu.id_persona', '=', 'rrhh_perso.id_persona')
-        ->join('administracion.adm_area', 'adm_aprobacion.id_area', '=', 'adm_area.id_area')
-        ->join('rrhh.rrhh_rol', 'adm_aprobacion.id_rol', '=', 'rrhh_rol.id_rol')
-        ->join('rrhh.rrhh_rol_concepto', 'rrhh_rol.id_rol_concepto', '=', 'rrhh_rol_concepto.id_rol_concepto')
-        ->join('administracion.adm_documentos_aprob', 'adm_aprobacion.id_doc_aprob', '=', 'adm_documentos_aprob.id_doc_aprob')
-        ->orderBy('id_aprobacion', 'asc')->get();
-        $output['data'] = $data;
+        ->join('administracion.adm_operacion', 'adm_operacion.id_operacion', '=', 'adm_flujo.id_operacion')
+        ->join('rrhh.rrhh_rol_concepto', 'rrhh_rol_concepto.id_rol_concepto', '=', 'adm_flujo.id_rol')
+        ->join('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'adm_operacion.id_tp_documento')
+        ->leftJoin('administracion.adm_area', 'adm_area.id_area', '=', 'adm_operacion.id_area')
+        ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'adm_operacion.id_grupo')
+        ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'adm_grupo.id_sede')
+        ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
+        ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
+        ->where($option)
+        ->orderBy('adm_flujo.id_flujo', 'asc')
+        ->get();
+        $output['data']=$data;
         return response()->json($output);
     }
-/* FLUJO APROBACION  - GESTIONAR LFUJO */
 
-public function mostrar_flujos($id_grupo_flujo=null,$id_flujo=null){
-    $option=[ ['adm_flujo.estado', '=', 1],['adm_operacion.estado', '=', 1]];
-    if($id_grupo_flujo >0){
-        $option[]=['adm_flujo.id_grupo_flujo', '=', $id_grupo_flujo];
-    }
-    if($id_flujo >0){
-        $option[]=['adm_flujo.id_flujo', '=', $id_flujo];
-    }
+    public function mostrar_operaciones($id_operacion=null){
+        $option=[['adm_operacion.estado', '=', 1]];
+        if($id_operacion >0){
+            $option[]=['adm_flujo.id_operacion', '=', $id_operacion];
+        }
 
-
-    $data = DB::table('administracion.adm_flujo')
-    ->select(
-        'adm_flujo.id_flujo',
-        'adm_flujo.id_grupo_flujo',
-        'adm_flujo.id_operacion',
-        'adm_flujo.id_rol',
-        'adm_flujo.nombre',
-        'adm_flujo.orden',
-        'adm_flujo.estado as flujo_estado',
-        'adm_operacion.descripcion as operacion_descripcion',
-        'adm_operacion.id_grupo',
-        'adm_grupo.descripcion as grupo_descripcion',
-        'adm_operacion.id_tp_documento',
-        'adm_tp_docum.descripcion as tp_documento_descripcion',
-        // 'adm_operacion.id_prioridad', eliminar -> trasladado a detalle_criterio
-        'adm_operacion.id_area',
-        'adm_area.descripcion as area_descripcion',
-        'adm_empresa.id_empresa',
-        'adm_contri.razon_social as razon_social_empresa',
-        'sis_sede.id_sede',
-        'sis_sede.codigo as codigo_sede',
-
-        'adm_operacion.fecha_registro',
-        'adm_operacion.estado as operacion_estado',
-        'rrhh_rol_concepto.descripcion as rol_concepto_descripcion',
-        DB::raw("(SELECT COUNT(adm_detalle_grupo_criterios.id_criterio_monto) FROM administracion.adm_detalle_grupo_criterios
-            WHERE adm_detalle_grupo_criterios.id_flujo = adm_flujo.id_flujo and adm_detalle_grupo_criterios.estado = 1)::integer as cantidad_criterio_monto"),
-        DB::raw("(SELECT COUNT(adm_detalle_grupo_criterios.id_criterio_prioridad) FROM administracion.adm_detalle_grupo_criterios
-            WHERE adm_detalle_grupo_criterios.id_flujo = adm_flujo.id_flujo and adm_detalle_grupo_criterios.estado = 1 )::integer as cantidad_criterio_prioridad")
-    )
-    ->join('administracion.adm_operacion', 'adm_operacion.id_operacion', '=', 'adm_flujo.id_operacion')
-    ->join('rrhh.rrhh_rol_concepto', 'rrhh_rol_concepto.id_rol_concepto', '=', 'adm_flujo.id_rol')
-    ->join('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'adm_operacion.id_tp_documento')
-    ->leftJoin('administracion.adm_area', 'adm_area.id_area', '=', 'adm_operacion.id_area')
-    ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'adm_operacion.id_grupo')
-    ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'adm_grupo.id_sede')
-    ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
-    ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
-    ->where($option)
-    ->orderBy('adm_flujo.id_flujo', 'asc')
-    ->get();
-    $output['data']=$data;
-    return response()->json($output);
-}
-
-public function mostrar_operaciones($id_operacion=null){
-    $option=[['adm_operacion.estado', '=', 1]];
-    if($id_operacion >0){
-        $option[]=['adm_flujo.id_operacion', '=', $id_operacion];
+        $data = DB::table('administracion.adm_operacion')
+        ->select(
+            'adm_operacion.id_operacion',
+            'adm_operacion.descripcion as operacion_descripcion',
+            'adm_operacion.id_grupo',
+            'adm_grupo.descripcion as grupo_descripcion',
+            'adm_operacion.id_tp_documento',
+            'adm_tp_docum.descripcion as tp_documento_descripcion',
+            'adm_operacion.id_area',
+            'adm_area.descripcion as area_descripcion',
+            'adm_empresa.id_empresa',
+            'adm_contri.razon_social as razon_social_empresa',
+            'sis_sede.id_sede',
+            'sis_sede.codigo as codigo_sede',
+            'adm_operacion.fecha_registro',
+            'adm_operacion.estado as operacion_estado'
+        )
+        ->join('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'adm_operacion.id_tp_documento')
+        ->leftJoin('administracion.adm_area', 'adm_area.id_area', '=', 'adm_operacion.id_area')
+        ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'adm_operacion.id_grupo')
+        ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'adm_grupo.id_sede')
+        ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
+        ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
+        ->where($option)
+        ->orderBy('adm_operacion.id_operacion', 'asc')
+        ->get();
+        $output['data']=$data;
+        return response()->json($output);
     }
 
-    $data = DB::table('administracion.adm_operacion')
-    ->select(
-        'adm_operacion.id_operacion',
-        'adm_operacion.descripcion as operacion_descripcion',
-        'adm_operacion.id_grupo',
-        'adm_grupo.descripcion as grupo_descripcion',
-        'adm_operacion.id_tp_documento',
-        'adm_tp_docum.descripcion as tp_documento_descripcion',
-        'adm_operacion.id_area',
-        'adm_area.descripcion as area_descripcion',
-        'adm_empresa.id_empresa',
-        'adm_contri.razon_social as razon_social_empresa',
-        'sis_sede.id_sede',
-        'sis_sede.codigo as codigo_sede',
-        'adm_operacion.fecha_registro',
-        'adm_operacion.estado as operacion_estado'
-    )
-    ->join('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'adm_operacion.id_tp_documento')
-    ->leftJoin('administracion.adm_area', 'adm_area.id_area', '=', 'adm_operacion.id_area')
-    ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'adm_operacion.id_grupo')
-    ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'adm_grupo.id_sede')
-    ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
-    ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
-    ->where($option)
-    ->orderBy('adm_operacion.id_operacion', 'asc')
-    ->get();
-    $output['data']=$data;
-    return response()->json($output);
-}
+    public function updateFlujo(Request $request){
 
-public function updateFlujo(Request $request){
+        $flujo= $request->all();
+        $id_flujo = $flujo['id_flujo'];
+        $nombre_flujo = $flujo['nombre_flujo'];
+        $grupo_flujo = $flujo['grupo_flujo'];
+        $orden = $flujo['orden'];
+        $rol = $flujo['rol'];
+        $estado = $flujo['estado'];
+        $operacion = $flujo['operacion'];
 
-    $flujo= $request->all();
-    $id_flujo = $flujo['id_flujo'];
-    $nombre_flujo = $flujo['nombre_flujo'];
-    $grupo_flujo = $flujo['grupo_flujo'];
-    $orden = $flujo['orden'];
-    $rol = $flujo['rol'];
-    $estado = $flujo['estado'];
-    $operacion = $flujo['operacion'];
-
-    $status='';
-    $update = DB::table('administracion.adm_flujo')->where('id_flujo', $id_flujo)
-    ->update([
-        'id_operacion' => $operacion,
-        'id_rol' => $rol,
-        'nombre' => $nombre_flujo,
-        'orden' => $orden,
-        'estado' => $estado,
-        'id_grupo_flujo' => $grupo_flujo
-    ]);
-
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
-    }
-
-    return  response()->json($status);
-}
-
-public function updateOperacion(Request $request){
-
-    $flujo= $request->all();
-    $id_operacion = $flujo['id_operacion'];
-    $operacion_descripcion = $flujo['operacion_descripcion'];
-    $tipo_documento = $flujo['tipo_documento'];
-    $empresa = $flujo['empresa'];
-    $sede = $flujo['sede'];
-    $grupo = $flujo['grupo'];
-    $area = $flujo['area'];
-    $estado = $flujo['estado'];
-
-    $status='';
-    $update = DB::table('administracion.adm_operacion')->where('id_operacion', $id_operacion)
-    ->update([
-        'descripcion' => $operacion_descripcion,
-        'id_tp_documento' => $tipo_documento,
-        'id_grupo' => $grupo,
-        'id_area' => $area,
-        'estado' => $estado
-    ]);
-
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
-    }
-
-    return  response()->json($status);
-}
-
-public function mostrarCriterioMonto($id_criterio_monto =null){
-    $option=[];
-    if($id_criterio_monto >0){
-        $option[]=['adm_criterio_monto.id_criterio_monto', '=', $id_criterio_monto];
-    }
-
-    $data = DB::table('administracion.adm_criterio_monto')
-    ->select(
-        'adm_criterio_monto.id_criterio_monto',
-        'adm_criterio_monto.descripcion',
-        'adm_criterio_monto.id_operador1',
-        'op1.descripcion as descripcion_operador1',
-        'op1.signo as signo_operador1',
-        'adm_criterio_monto.monto1',
-        'adm_criterio_monto.id_operador2',
-        'op2.signo as signo_operador2',
-        'op2.descripcion as descripcion_operador2',
-        'adm_criterio_monto.monto2',
-        'adm_criterio_monto.estado'
-    )
-    ->leftJoin('administracion.operadores as op1', 'op1.id_operador', '=', 'adm_criterio_monto.id_operador1')
-    ->leftJoin('administracion.operadores as op2', 'op2.id_operador', '=', 'adm_criterio_monto.id_operador2')
-    ->where($option)
-    ->orderBy('adm_criterio_monto.id_criterio_monto', 'asc')
-    ->get();
-    $output['data']=$data;
-    return response()->json($output);
-}
-
-public function mostrarGrupoCriterioByIdFlujo($id_flujo =null){
-    $option=[];
-    if($id_flujo >0){
-        $option[]=['adm_detalle_grupo_criterios.id_flujo', '=', $id_flujo];
-    }
-
-    $sql_detalle_grupo = DB::table('administracion.adm_detalle_grupo_criterios')
-    ->select(
-        'adm_detalle_grupo_criterios.*'
-    )
-    ->where($option)
-    ->orderBy('adm_detalle_grupo_criterios.id_detalle_grupo_criterios', 'asc')
-    ->get();
-
-
-    $id_grupo_criterio_list =[];
-    foreach($sql_detalle_grupo as $data){
-        $id_grupo_criterio_list[] = $data->id_grupo_criterios;
-    }
-
-    $sql_grupo = DB::table('administracion.adm_grupo_criterios')
-    ->select(
-        'adm_grupo_criterios.*'
-    )
-    ->whereIn('adm_grupo_criterios.id_grupo_criterios',$id_grupo_criterio_list)
-    ->orderBy('adm_grupo_criterios.id_grupo_criterios', 'asc')
-    ->get();
-
-
-    return response()->json($sql_grupo);
-
-}
-
-public function mostrarCriterio($id_flujo,$id_grupo_criterio){
-    $option=[];
-    if($id_flujo >0){
-        $option[]=['adm_detalle_grupo_criterios.id_flujo', '=', $id_flujo];
-    }
-    if($id_grupo_criterio >0){
-        $option[]=['adm_detalle_grupo_criterios.id_grupo_criterios', '=', $id_grupo_criterio];
-    }
-
-    $sql_detalle_grupo = DB::table('administracion.adm_detalle_grupo_criterios')
-    ->select(
-        'adm_detalle_grupo_criterios.*'
-    )
-    ->where($option)
-    ->orderBy('adm_detalle_grupo_criterios.id_detalle_grupo_criterios', 'asc')
-    ->get();
-
-
-    return response()->json($sql_detalle_grupo);
-
-}
-
-
-public function updateCriterioMonto(Request $request){
-
-    $criterio_monto= $request->all();
-    $id_criterio_monto = $criterio_monto['id_criterio_monto'];
-    $descripcion_monto = $criterio_monto['descripcion_monto'];
-    $id_operador1 = $criterio_monto['operador1'] >0?$criterio_monto['operador1']:null;
-    $monto1 = $criterio_monto['monto1'];
-    $id_operador2 = $criterio_monto['operador2'] >0?$criterio_monto['operador2']:null;
-    $monto2 = $criterio_monto['monto2'];
-    $estado =$criterio_monto['estado'];
-
-    $status='';
-    $update=0;
-
-    if( $estado >0){
-        $update = DB::table('administracion.adm_criterio_monto')->where('id_criterio_monto', $id_criterio_monto)
+        $status='';
+        $update = DB::table('administracion.adm_flujo')->where('id_flujo', $id_flujo)
         ->update([
-            'descripcion' => $descripcion_monto,
-            'id_operador1' => $id_operador1,
-            'monto1' => $monto1,
-            'id_operador2' => $id_operador2,
-            'monto2' => $monto2,
+            'id_operacion' => $operacion,
+            'id_rol' => $rol,
+            'nombre' => $nombre_flujo,
+            'orden' => $orden,
+            'estado' => $estado,
+            'id_grupo_flujo' => $grupo_flujo
+        ]);
+
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
+
+        return  response()->json($status);
+    }
+
+    public function updateOperacion(Request $request){
+
+        $flujo= $request->all();
+        $id_operacion = $flujo['id_operacion'];
+        $operacion_descripcion = $flujo['operacion_descripcion'];
+        $tipo_documento = $flujo['tipo_documento'];
+        $empresa = $flujo['empresa'];
+        $sede = $flujo['sede'];
+        $grupo = $flujo['grupo'];
+        $area = $flujo['area'];
+        $estado = $flujo['estado'];
+
+        $status='';
+        $update = DB::table('administracion.adm_operacion')->where('id_operacion', $id_operacion)
+        ->update([
+            'descripcion' => $operacion_descripcion,
+            'id_tp_documento' => $tipo_documento,
+            'id_grupo' => $grupo,
+            'id_area' => $area,
             'estado' => $estado
         ]);
-    }else{
-        $update = DB::table('administracion.adm_criterio_monto')->where('id_criterio_monto', $id_criterio_monto)
-        ->update([
-            'descripcion' => $descripcion_monto,
-            'id_operador1' => $id_operador1,
-            'monto1' => $monto1,
-            'id_operador2' => $id_operador2,
-            'monto2' => $monto2
-        ]);
+
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
+
+        return  response()->json($status);
+    }
+
+    public function mostrarCriterioMonto($id_criterio_monto =null){
+        $option=[];
+        if($id_criterio_monto >0){
+            $option[]=['adm_criterio_monto.id_criterio_monto', '=', $id_criterio_monto];
+        }
+
+        $data = DB::table('administracion.adm_criterio_monto')
+        ->select(
+            'adm_criterio_monto.id_criterio_monto',
+            'adm_criterio_monto.descripcion',
+            'adm_criterio_monto.id_operador1',
+            'op1.descripcion as descripcion_operador1',
+            'op1.signo as signo_operador1',
+            'adm_criterio_monto.monto1',
+            'adm_criterio_monto.id_operador2',
+            'op2.signo as signo_operador2',
+            'op2.descripcion as descripcion_operador2',
+            'adm_criterio_monto.monto2',
+            'adm_criterio_monto.estado'
+        )
+        ->leftJoin('administracion.operadores as op1', 'op1.id_operador', '=', 'adm_criterio_monto.id_operador1')
+        ->leftJoin('administracion.operadores as op2', 'op2.id_operador', '=', 'adm_criterio_monto.id_operador2')
+        ->where($option)
+        ->orderBy('adm_criterio_monto.id_criterio_monto', 'asc')
+        ->get();
+        $output['data']=$data;
+        return response()->json($output);
+    }
+
+    public function mostrarGrupoCriterioByIdFlujo($id_flujo =null){
+        $option=[];
+        if($id_flujo >0){
+            $option[]=['adm_detalle_grupo_criterios.id_flujo', '=', $id_flujo];
+        }
+
+        $sql_detalle_grupo = DB::table('administracion.adm_detalle_grupo_criterios')
+        ->select(
+            'adm_detalle_grupo_criterios.*'
+        )
+        ->where($option)
+        ->orderBy('adm_detalle_grupo_criterios.id_detalle_grupo_criterios', 'asc')
+        ->get();
+
+
+        $id_grupo_criterio_list =[];
+        foreach($sql_detalle_grupo as $data){
+            $id_grupo_criterio_list[] = $data->id_grupo_criterios;
+        }
+
+        $sql_grupo = DB::table('administracion.adm_grupo_criterios')
+        ->select(
+            'adm_grupo_criterios.*'
+        )
+        ->whereIn('adm_grupo_criterios.id_grupo_criterios',$id_grupo_criterio_list)
+        ->orderBy('adm_grupo_criterios.id_grupo_criterios', 'asc')
+        ->get();
+
+
+        return response()->json($sql_grupo);
+
+    }
+
+    public function mostrarCriterio($id_flujo,$id_grupo_criterio){
+        $option=[];
+        if($id_flujo >0){
+            $option[]=['adm_detalle_grupo_criterios.id_flujo', '=', $id_flujo];
+        }
+        if($id_grupo_criterio >0){
+            $option[]=['adm_detalle_grupo_criterios.id_grupo_criterios', '=', $id_grupo_criterio];
+        }
+
+        $sql_detalle_grupo = DB::table('administracion.adm_detalle_grupo_criterios')
+        ->select(
+            'adm_detalle_grupo_criterios.*'
+        )
+        ->where($option)
+        ->orderBy('adm_detalle_grupo_criterios.id_detalle_grupo_criterios', 'asc')
+        ->get();
+
+
+        return response()->json($sql_detalle_grupo);
+
     }
 
 
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
+    public function updateCriterioMonto(Request $request){
+
+        $criterio_monto= $request->all();
+        $id_criterio_monto = $criterio_monto['id_criterio_monto'];
+        $descripcion_monto = $criterio_monto['descripcion_monto'];
+        $id_operador1 = $criterio_monto['operador1'] >0?$criterio_monto['operador1']:null;
+        $monto1 = $criterio_monto['monto1'];
+        $id_operador2 = $criterio_monto['operador2'] >0?$criterio_monto['operador2']:null;
+        $monto2 = $criterio_monto['monto2'];
+        $estado =$criterio_monto['estado'];
+
+        $status='';
+        $update=0;
+
+        if( $estado >0){
+            $update = DB::table('administracion.adm_criterio_monto')->where('id_criterio_monto', $id_criterio_monto)
+            ->update([
+                'descripcion' => $descripcion_monto,
+                'id_operador1' => $id_operador1,
+                'monto1' => $monto1,
+                'id_operador2' => $id_operador2,
+                'monto2' => $monto2,
+                'estado' => $estado
+            ]);
+        }else{
+            $update = DB::table('administracion.adm_criterio_monto')->where('id_criterio_monto', $id_criterio_monto)
+            ->update([
+                'descripcion' => $descripcion_monto,
+                'id_operador1' => $id_operador1,
+                'monto1' => $monto1,
+                'id_operador2' => $id_operador2,
+                'monto2' => $monto2
+            ]);
+        }
+
+
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
+
+        return  response()->json($status);
     }
 
-    return  response()->json($status);
-}
+    public function saveCriterioMonto(Request $request){
 
-public function saveCriterioMonto(Request $request){
+        $criterio_monto= $request->all();
+        $descripcion_monto = $criterio_monto['descripcion_monto'];
+        $id_operador1 = $criterio_monto['operador1'] >0?$criterio_monto['operador1']:null;
+        $monto1 = $criterio_monto['monto1'];
+        $id_operador2 = $criterio_monto['operador2'] >0?$criterio_monto['operador2']:null;
+        $monto2 = $criterio_monto['monto2'];
+        $estado =$criterio_monto['estado'];
 
-    $criterio_monto= $request->all();
-    $descripcion_monto = $criterio_monto['descripcion_monto'];
-    $id_operador1 = $criterio_monto['operador1'] >0?$criterio_monto['operador1']:null;
-    $monto1 = $criterio_monto['monto1'];
-    $id_operador2 = $criterio_monto['operador2'] >0?$criterio_monto['operador2']:null;
-    $monto2 = $criterio_monto['monto2'];
-    $estado =$criterio_monto['estado'];
+        $status='';
 
-    $status='';
+        $save = DB::table('administracion.adm_criterio_monto')->insertGetId(
+            [
+                'descripcion' => $descripcion_monto,
+                'id_operador1' => $id_operador1,
+                'monto1' => $monto1,
+                'id_operador2' => $id_operador2,
+                'monto2' => $monto2,
+                'estado' => $estado
+            ],
+            'id_criterio_monto'
+        );
 
-    $save = DB::table('administracion.adm_criterio_monto')->insertGetId(
-        [
-            'descripcion' => $descripcion_monto,
-            'id_operador1' => $id_operador1,
-            'monto1' => $monto1,
-            'id_operador2' => $id_operador2,
-            'monto2' => $monto2,
-            'estado' => $estado
-        ],
-        'id_criterio_monto'
-    );
+        if($save >0){
+            $status='GUARDADO';
+        }else{
+            $status='NO_GUARDADO';
+        }
 
-    if($save >0){
-        $status='GUARDADO';
-    }else{
-        $status='NO_GUARDADO';
+        return  response()->json($status);
+
+
     }
 
-    return  response()->json($status);
+    public function mostrarCriterioPrioridad($id_criterio_prioridad){
+        $option=[];
+        if($id_criterio_prioridad >0){
+            $option[]=['adm_prioridad.id_prioridad', '=', $id_criterio_prioridad];
+        }
 
-
-}
-
-public function mostrarCriterioPrioridad($id_criterio_prioridad){
-    $option=[];
-    if($id_criterio_prioridad >0){
-        $option[]=['adm_prioridad.id_prioridad', '=', $id_criterio_prioridad];
+        $data = DB::table('administracion.adm_prioridad')
+        ->select(
+            'adm_prioridad.id_prioridad',
+            'adm_prioridad.descripcion',
+            'adm_prioridad.estado'
+        )
+        ->where($option)
+        ->orderBy('adm_prioridad.id_prioridad', 'asc')
+        ->get();
+        $output['data']=$data;
+        return response()->json($output);
     }
 
-    $data = DB::table('administracion.adm_prioridad')
-    ->select(
-        'adm_prioridad.id_prioridad',
-        'adm_prioridad.descripcion',
-        'adm_prioridad.estado'
-    )
-    ->where($option)
-    ->orderBy('adm_prioridad.id_prioridad', 'asc')
-    ->get();
-    $output['data']=$data;
-    return response()->json($output);
-}
+    public function updateCriterioPrioridad(Request $request){
 
-public function updateCriterioPrioridad(Request $request){
+        $criterio_prioridad= $request->all();
+        $id_criterio_prioridad = $criterio_prioridad['id_criterio_prioridad'];
+        $descripcion_prioridad = $criterio_prioridad['descripcion_prioridad'];
+        $estado =$criterio_prioridad['estado'];
 
-    $criterio_prioridad= $request->all();
-    $id_criterio_prioridad = $criterio_prioridad['id_criterio_prioridad'];
-    $descripcion_prioridad = $criterio_prioridad['descripcion_prioridad'];
-    $estado =$criterio_prioridad['estado'];
+        $status='';
+        $update=0;
 
-    $status='';
-    $update=0;
+        if( $estado >0){
+            $update = DB::table('administracion.adm_prioridad')->where('id_prioridad', $id_criterio_prioridad)
+            ->update([
+                'descripcion' => $descripcion_prioridad,
+                'estado' => $estado
+            ]);
+        }else{
+            $update = DB::table('administracion.adm_prioridad')->where('id_prioridad', $id_criterio_prioridad)
+            ->update([
+                'descripcion' => $descripcion_prioridad
+            ]);
+        }
 
-    if( $estado >0){
-        $update = DB::table('administracion.adm_prioridad')->where('id_prioridad', $id_criterio_prioridad)
-        ->update([
-            'descripcion' => $descripcion_prioridad,
-            'estado' => $estado
-        ]);
-    }else{
-        $update = DB::table('administracion.adm_prioridad')->where('id_prioridad', $id_criterio_prioridad)
-        ->update([
-            'descripcion' => $descripcion_prioridad
-        ]);
+
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
+
+        return  response()->json($status);
     }
 
 
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
+    public function saveCriterioPrioridad(Request $request){
+
+        $criterio_prioridad= $request->all();
+        $descripcion_prioridad = $criterio_prioridad['descripcion_prioridad'];
+        $estado =$criterio_prioridad['estado'];
+
+        $status='';
+
+        $save = DB::table('administracion.adm_prioridad')->insertGetId(
+            [
+                'descripcion' => $descripcion_prioridad,
+                'estado' => $estado
+            ],
+            'id_prioridad'
+        );
+
+        if($save >0){
+            $status='GUARDADO';
+        }else{
+            $status='NO_GUARDADO';
+        }
+
+        return  response()->json($status);
     }
 
-    return  response()->json($status);
-}
 
+    public function saveAignarCriterio(Request $request){
+        $asignar_criterio= $request->all();
+        $id_criterio_monto = $asignar_criterio['id_criterio_monto'];
+        $id_criterio_prioridad =$asignar_criterio['id_criterio_prioridad'];
+        $id_grupo_criterios =$asignar_criterio['id_grupo_criterio'];
+        $estado_grupo_criterio =$asignar_criterio['estado_grupo_criterio'];
+        $id_flujo =$asignar_criterio['id_flujo'];
+        // $id_detalle_grupo_criterios =$asignar_criterio['id_detalle_grupo_criterios'];
 
-public function saveCriterioPrioridad(Request $request){
+        $status='';
 
-    $criterio_prioridad= $request->all();
-    $descripcion_prioridad = $criterio_prioridad['descripcion_prioridad'];
-    $estado =$criterio_prioridad['estado'];
+        $save = DB::table('administracion.adm_detalle_grupo_criterios')->insertGetId(
+            [
+                'id_grupo_criterios' => $id_grupo_criterios,
+                'id_criterio_monto' => $id_criterio_monto,
+                'id_criterio_prioridad' => $id_criterio_prioridad,
+                'id_flujo' => $id_flujo,
+                'estado' => 1
+            ],
+            'id_detalle_grupo_criterios'
+        );
 
-    $status='';
+        if($save >0){
+            $status='GUARDADO';
+        }else{
+            $status='NO_GUARDADO';
+        }
 
-    $save = DB::table('administracion.adm_prioridad')->insertGetId(
-        [
-            'descripcion' => $descripcion_prioridad,
-            'estado' => $estado
-        ],
-        'id_prioridad'
-    );
-
-    if($save >0){
-        $status='GUARDADO';
-    }else{
-        $status='NO_GUARDADO';
+        return  response()->json($status);
     }
 
-    return  response()->json($status);
-}
+    public function updateAsignarCriterio(Request $request){
+        $asignar_criterio= $request->all();
+        $id_criterio_monto = $asignar_criterio['id_criterio_monto'];
+        $id_criterio_prioridad =$asignar_criterio['id_criterio_prioridad'];
+        $id_grupo_criterios =$asignar_criterio['id_grupo_criterio'];
+        $estado_grupo_criterio =$asignar_criterio['estado_grupo_criterio'];
+        $id_flujo =$asignar_criterio['id_flujo'];
+        $id_detalle_grupo_criterios =$asignar_criterio['id_detalle_grupo_criterios'];
+        $estado =$asignar_criterio['estado'];
 
+        if($estado >0){
+            $update = DB::table('administracion.adm_detalle_grupo_criterios')
+            ->where('id_detalle_grupo_criterios', $id_detalle_grupo_criterios)
+            ->update([
+                'id_grupo_criterios' => $id_grupo_criterios,
+                'id_criterio_monto' => $id_criterio_monto,
+                'id_criterio_prioridad' => $id_criterio_prioridad,
+                'id_flujo' => $id_flujo,
+                'estado' => $estado
+            ]);
+        }else{
+            $update = DB::table('administracion.adm_detalle_grupo_criterios')
+            ->where('id_detalle_grupo_criterios', $id_detalle_grupo_criterios)
+            ->update([
+                'id_grupo_criterios' => $id_grupo_criterios,
+                'id_criterio_monto' => $id_criterio_monto,
+                'id_criterio_prioridad' => $id_criterio_prioridad,
+                'id_flujo' => $id_flujo
+            ]);
+        }
+        $status='';
 
-public function saveAignarCriterio(Request $request){
-    $asignar_criterio= $request->all();
-    $id_criterio_monto = $asignar_criterio['id_criterio_monto'];
-    $id_criterio_prioridad =$asignar_criterio['id_criterio_prioridad'];
-    $id_grupo_criterios =$asignar_criterio['id_grupo_criterio'];
-    $estado_grupo_criterio =$asignar_criterio['estado_grupo_criterio'];
-    $id_flujo =$asignar_criterio['id_flujo'];
-    // $id_detalle_grupo_criterios =$asignar_criterio['id_detalle_grupo_criterios'];
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
 
-    $status='';
-
-    $save = DB::table('administracion.adm_detalle_grupo_criterios')->insertGetId(
-        [
-            'id_grupo_criterios' => $id_grupo_criterios,
-            'id_criterio_monto' => $id_criterio_monto,
-            'id_criterio_prioridad' => $id_criterio_prioridad,
-            'id_flujo' => $id_flujo,
-            'estado' => 1
-        ],
-        'id_detalle_grupo_criterios'
-    );
-
-    if($save >0){
-        $status='GUARDADO';
-    }else{
-        $status='NO_GUARDADO';
+        return  response()->json($status);
     }
 
-    return  response()->json($status);
-}
 
-public function updateAsignarCriterio(Request $request){
-    $asignar_criterio= $request->all();
-    $id_criterio_monto = $asignar_criterio['id_criterio_monto'];
-    $id_criterio_prioridad =$asignar_criterio['id_criterio_prioridad'];
-    $id_grupo_criterios =$asignar_criterio['id_grupo_criterio'];
-    $estado_grupo_criterio =$asignar_criterio['estado_grupo_criterio'];
-    $id_flujo =$asignar_criterio['id_flujo'];
-    $id_detalle_grupo_criterios =$asignar_criterio['id_detalle_grupo_criterios'];
-    $estado =$asignar_criterio['estado'];
+    public function saveGrupoCriterio(Request $request){
+        $grupoCriterio= $request->all();
+        $descripcion_grupo_criterio =$grupoCriterio['descripcion_grupo_criterio'];
 
-    if($estado >0){
-        $update = DB::table('administracion.adm_detalle_grupo_criterios')
-        ->where('id_detalle_grupo_criterios', $id_detalle_grupo_criterios)
-        ->update([
-            'id_grupo_criterios' => $id_grupo_criterios,
-            'id_criterio_monto' => $id_criterio_monto,
-            'id_criterio_prioridad' => $id_criterio_prioridad,
-            'id_flujo' => $id_flujo,
-            'estado' => $estado
-        ]);
-    }else{
-        $update = DB::table('administracion.adm_detalle_grupo_criterios')
-        ->where('id_detalle_grupo_criterios', $id_detalle_grupo_criterios)
-        ->update([
-            'id_grupo_criterios' => $id_grupo_criterios,
-            'id_criterio_monto' => $id_criterio_monto,
-            'id_criterio_prioridad' => $id_criterio_prioridad,
-            'id_flujo' => $id_flujo
-        ]);
-    }
-    $status='';
+        $status='';
 
+        $save = DB::table('administracion.adm_grupo_criterios')->insertGetId(
+            [
+                'descripcion' => $descripcion_grupo_criterio,
+                'fecha_registro' => date('Y-m-d'),
+                'estado' => 1
+            ],
+            'id_grupo_criterios'
+        );
 
+        if($save >0){
+            $status='GUARDADO';
+        }else{
+            $status='NO_GUARDADO';
+        }
 
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
+        return  response()->json($status);
     }
 
-    return  response()->json($status);
-}
+    public function updateGrupoCriterio(Request $request){
+        $grupoCriterio= $request->all();
+        $id_grupo_criterio = $grupoCriterio['id_grupo_criterio'];
+        $descripcion_grupo_criterio =$grupoCriterio['descripcion_grupo_criterio'];
+        $estado =$grupoCriterio['estado'];
+        $status='';
 
 
-public function saveGrupoCriterio(Request $request){
-    $grupoCriterio= $request->all();
-    $descripcion_grupo_criterio =$grupoCriterio['descripcion_grupo_criterio'];
+        if($estado >0){
+            $update = DB::table('administracion.adm_grupo_criterios')
+            ->where('id_grupo_criterios', $id_grupo_criterio)
+            ->update([
+                'descripcion' => $descripcion_grupo_criterio,
+                'estado' => $estado
+            ]);
+        }else{
+            $update = DB::table('administracion.adm_grupo_criterios')
+            ->where('id_grupo_criterios', $id_grupo_criterio)
+            ->update([
+                'descripcion' => $descripcion_grupo_criterio
+            ]);
+        }
 
-    $status='';
+        if($update >0){
+            $status='ACTUALIZADO';
+        }else{
+            $status='NO_ACTUALIZADO';
+        }
 
-    $save = DB::table('administracion.adm_grupo_criterios')->insertGetId(
-        [
-            'descripcion' => $descripcion_grupo_criterio,
-            'fecha_registro' => date('Y-m-d'),
-            'estado' => 1
-        ],
-        'id_grupo_criterios'
-    );
-
-    if($save >0){
-        $status='GUARDADO';
-    }else{
-        $status='NO_GUARDADO';
+        return  response()->json($status);
     }
-
-    return  response()->json($status);
-}
-
-public function updateGrupoCriterio(Request $request){
-    $grupoCriterio= $request->all();
-    $id_grupo_criterio = $grupoCriterio['id_grupo_criterio'];
-    $descripcion_grupo_criterio =$grupoCriterio['descripcion_grupo_criterio'];
-    $estado =$grupoCriterio['estado'];
-    $status='';
-
-
-    if($estado >0){
-        $update = DB::table('administracion.adm_grupo_criterios')
-        ->where('id_grupo_criterios', $id_grupo_criterio)
-        ->update([
-            'descripcion' => $descripcion_grupo_criterio,
-            'estado' => $estado
-        ]);
-    }else{
-        $update = DB::table('administracion.adm_grupo_criterios')
-        ->where('id_grupo_criterios', $id_grupo_criterio)
-        ->update([
-            'descripcion' => $descripcion_grupo_criterio
-        ]);
-    }
-
-    if($update >0){
-        $status='ACTUALIZADO';
-    }else{
-        $status='NO_ACTUALIZADO';
-    }
-
-    return  response()->json($status);
-}
 
 // correo coorporativo
 
-public function mostrar_correo_coorporativo($id_smtp_authentication =null){
-    $option=[];
-    if($id_smtp_authentication >0){
-        $option[]=['smtp_authentication.id_smtp_authentication', '=', $id_smtp_authentication];
+    public function mostrar_correo_coorporativo($id_smtp_authentication =null){
+        $option=[];
+        if($id_smtp_authentication >0){
+            $option[]=['smtp_authentication.id_smtp_authentication', '=', $id_smtp_authentication];
+        }
+
+        $data = DB::table('configuracion.smtp_authentication')
+        ->select(
+            'smtp_authentication.*',
+            'adm_contri.razon_social'
+        )
+        ->leftJoin('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'smtp_authentication.id_empresa')
+        ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
+        ->where($option)
+        ->orderBy('smtp_authentication.id_smtp_authentication', 'asc')
+        ->get();
+        $output['data']=$data;
+        return response()->json($output);
     }
 
-    $data = DB::table('configuracion.smtp_authentication')
-    ->select(
-        'smtp_authentication.*',
-        'adm_contri.razon_social'
-    )
-    ->leftJoin('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'smtp_authentication.id_empresa')
-    ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
-    ->where($option)
-    ->orderBy('smtp_authentication.id_smtp_authentication', 'asc')
-    ->get();
-    $output['data']=$data;
-    return response()->json($output);
-}
+    public function guardar_correo_coorporativo(Request $request){
+        $save = DB::table('configuracion.smtp_authentication')
+        ->insertGetId([
+            'smtp_server'   => $request->smtp_server,
+            'port'          => $request->port,
+            'encryption'    => $request->encryption,
+            'email'         => $request->email,
+            'password'      => $request->password,
+            'fecha_registro'=> date('Y-m-d H:i:s'),
+            'estado'        => $request->estado
+        ],
+        'id_smtp_authentication'
+        );
 
-public function guardar_correo_coorporativo(Request $request){
-    $save = DB::table('configuracion.smtp_authentication')
-    ->insertGetId([
-        'smtp_server'   => $request->smtp_server,
-        'port'          => $request->port,
-        'encryption'    => $request->encryption,
-        'email'         => $request->email,
-        'password'      => $request->password,
-        'fecha_registro'=> date('Y-m-d H:i:s'),
-        'estado'        => $request->estado
-    ],
-    'id_smtp_authentication'
-    );
-
-    return  response()->json($save);
-}
+        return  response()->json($save);
+    }
 
 
-public function actualizar_correo_coorporativo(Request $request){
-    $data = DB::table('configuracion.smtp_authentication')
-    ->where('id_smtp_authentication', $request->id_smtp_authentication)
-    ->update([
-        'id_empresa'   => $request->empresa,
-        'smtp_server'   => $request->smtp_server,
-        'port'          => $request->port,
-        'encryption'    => $request->encryption,
-        'email'         => $request->email,
-        'password'      => $request->password,
-        'estado'        => $request->estado
-    ]);
-    return response()->json($data);
-}
+    public function actualizar_correo_coorporativo(Request $request){
+        $data = DB::table('configuracion.smtp_authentication')
+        ->where('id_smtp_authentication', $request->id_smtp_authentication)
+        ->update([
+            'id_empresa'   => $request->empresa,
+            'smtp_server'   => $request->smtp_server,
+            'port'          => $request->port,
+            'encryption'    => $request->encryption,
+            'email'         => $request->email,
+            'password'      => $request->password,
+            'estado'        => $request->estado
+        ]);
+        return response()->json($data);
+    }
 
-public function anular_correo_coorporativo($id){
-    $estado_anulado =(new LogisticaController)->get_estado_doc('Anulado');
+    public function anular_correo_coorporativo($id){
+        $estado_anulado =(new LogisticaController)->get_estado_doc('Anulado');
 
-    $data = DB::table('configuracion.smtp_authentication')->where('id_smtp_authentication', $id)
-    ->update([
-        'estado'    => $estado_anulado
-    ]);
-    return response()->json($data);
-}
+        $data = DB::table('configuracion.smtp_authentication')->where('id_smtp_authentication', $id)
+        ->update([
+            'estado'    => $estado_anulado
+        ]);
+        return response()->json($data);
+    }
 
-public function guardar_configuracion_socket(Request $request){
-    $save = DB::table('configuracion.socket_setting')
-    ->insertGetId([
-        'modo'   => $request->modo,
-        'host'   => $request->host,
-        'activado' => $request->activado
-    ],
-    'id'
-    );
+    public function guardar_configuracion_socket(Request $request){
+        $save = DB::table('configuracion.socket_setting')
+        ->insertGetId([
+            'modo'   => $request->modo,
+            'host'   => $request->host,
+            'activado' => $request->activado
+        ],
+        'id'
+        );
 
-    return  response()->json($save);
-}
+        return  response()->json($save);
+    }
 
-public function actualizar_configuracion_socket(Request $request){
-    $data = DB::table('configuracion.socket_setting')
-    ->where('id', $request->id)
-    ->update([
-        'modo'   => $request->modo,
-        'host'   => $request->host,
-        'activado'        => $request->activado
-    ]);
-    return response()->json($data);
-}
+    public function actualizar_configuracion_socket(Request $request){
+        $data = DB::table('configuracion.socket_setting')
+        ->where('id', $request->id)
+        ->update([
+            'modo'   => $request->modo,
+            'host'   => $request->host,
+            'activado'        => $request->activado
+        ]);
+        return response()->json($data);
+    }
 
-public function anular_configuracion_socket($id){
-    $data = DB::table('configuracion.socket_setting')->where('id', $id)
-    ->update([
-        'activado'    => false
-    ]);
-    return response()->json($data);
-}
+    public function anular_configuracion_socket($id){
+        $data = DB::table('configuracion.socket_setting')->where('id', $id)
+        ->update([
+            'activado'    => false
+        ]);
+        return response()->json($data);
+    }
 
 
 /* FUNCIONES */
@@ -2621,7 +2623,6 @@ public function anular_configuracion_socket($id){
                 $accesos_usuarios_table->id_padre   = $value['id_padre'];
                 $accesos_usuarios_table->save();
             }
-
         }
 
         return response()->json([
@@ -2631,6 +2632,51 @@ public function anular_configuracion_socket($id){
             "usuarios_faltantes"=>$usuarios_faltantes,
             "accesos"=>$accesos_modulos
         ]);
+    }
+
+    /**
+     * accesos
+     */
+    function view_roles() {
+        return view('configuracion/roles');
+    }
+
+    public function mostrar_roles_table(){
+        $data = DB::table('configuracion.sis_rol')->where('estado', 1)->orderBy('descripcion', 'asc')->get();
+        $output['data'] = $data;
+        return response()->json($output);
+    }
+
+    public function mostrar_roles_id($id){
+        $sql = DB::table('configuracion.sis_rol')->where('id_rol', $id)->get();
+        $data = [0 => $sql];
+        return response()->json($data);
+    }
+
+    public function guardar_rol(Request $request){
+        $id = DB::table('configuracion.sis_rol')->insertGetId(
+            [
+                'descripcion' => $request->descripcion,
+                'estado' => 1
+            ],
+            'id_rol'
+        );
+        return response()->json($id);
+    }
+
+    public function actualizar_rol(Request $request){
+        $data = DB::table('configuracion.sis_rol')->where('id_rol', $request->id_rol)
+        ->update([
+            'descripcion'   => $request->descripcion
+        ]);
+        return response()->json($data);
+    }
+    public function anular_rol($id){
+        $data = DB::table('configuracion.sis_rol')->where('id_rol', $id)
+        ->update([
+            'estado'    => 7
+        ]);
+        return response()->json($data);
     }
 }
 

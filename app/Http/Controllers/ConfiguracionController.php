@@ -637,7 +637,7 @@ class ConfiguracionController extends Controller{
                 $sis_usua->password     = StringHelper::claveHash($request->clave);
             }
             $sis_usua->nombre_corto     = $request->nombre_corto;
-            $sis_usua->codvend_softlink = $request->codvent_softlink;
+            // $sis_usua->codvend_softlink = $request->codvent_softlink;
             $sis_usua->email            = $request->email;
         $sis_usua->save();
 
@@ -895,7 +895,7 @@ class ConfiguracionController extends Controller{
         $sis_usua->estado           = 1;
         $sis_usua->fecha_registro   = date('Y-m-d H:i:s');
         $sis_usua->nombre_corto     = $request->nombre_corto;
-        $sis_usua->codvend_softlink = $request->codvent_softlink;
+        // $sis_usua->codvend_softlink = $request->codvent_softlink;
         $sis_usua->email            = $request->email;
         $sis_usua->save();
 

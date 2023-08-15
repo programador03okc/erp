@@ -899,7 +899,7 @@ class ConfiguracionController extends Controller{
         $sis_usua->fecha_registro   = date('Y-m-d H:i:s');
         $sis_usua->nombre_corto     = $request->nombre_corto;
         $sis_usua->nombre_largo     = $request->nombre_largo;
-        $sis_usua->codvend_softlink = $request->codvent_softlink;
+        // $sis_usua->codvend_softlink = $request->codvent_softlink;
         $sis_usua->email            = $request->email;
         $sis_usua->save();
 

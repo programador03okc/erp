@@ -997,7 +997,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('index', [AlmacenController::class, 'view_busqueda_salidas'])->name('index');
 				Route::get('listar_busqueda_salidas/{alm}/{tp}/{des}/{doc}/{fini}/{ffin}', [AlmacenController::class, 'listar_busqueda_salidas'])->name('listar-busqueda-salidas');
 				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
-				Route::get('imprimir_salida/{id}', [AlmacenController::class, 'imprimir_salida'])->name('imprimir-salida');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
 			});
 
 			Route::group(['as' => 'kardex-general.', 'prefix' => 'kardex-general'], function () {

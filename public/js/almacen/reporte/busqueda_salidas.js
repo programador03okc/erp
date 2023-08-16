@@ -77,8 +77,8 @@ function botones(tbody, tabla) {
     console.log("change");
     $(tbody).on("click", "button.ver", function () {
         var data = tabla.row($(this).parents("tr")).data();
-        var id = encode5t(data.id_mov_alm);
-        window.open('imprimir_salida/' + id);
+        // var id = encode5t(data.id_mov_alm);
+        window.open('imprimir_salida/' + data.id_mov_alm);
     });
 }
 /**Filtros Modal */

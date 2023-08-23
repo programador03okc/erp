@@ -98,6 +98,54 @@
         </div>
     </div>
 
+    <!-- Modal Filtros-->
+    <div class="modal fade" id="model-filtros" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title">Filtros</h5>
+
+                </div>
+                <form action="" id="form-filtros">
+
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group text-right">
+                                    <label for="">Fechas :</label>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group text-center">
+                                            <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control text-center">
+                                            <small id="helpId" class="text-muted">Fecha de Inicio</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group text-center">
+                                            <input type="date" name="fecha_final" id="fecha_inicio" class="form-control text-center">
+                                            <small id="helpId" class="text-muted">Fecha de Final</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @include('cas.fichasReporte.fichaReporteCreate')
     @include('almacen.devoluciones.fichaTecnicaCreate')
     @include('cas.fichasReporte.cierreIncidencia')
@@ -130,7 +178,7 @@
 
     <script>
         $(document).ready(function() {
-            
+
             $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
             vista_extendida();
             listarIncidencias();

@@ -80,7 +80,15 @@ class FichaReporteController extends Controller
 
     public function incidenciasExcel(Request $request)
     {
+
         $data = $this->incidencias()->orderBy('fecha_reporte','desc')->orderBy('id_incidencia','desc');
+        if (!empty($request->fecha_inicio)) {
+            $data = $data->where('incidencia.fecha_registro','>=',$request->fecha_inicio);
+        }
+        if (!empty($request->fecha_final)) {
+            $data = $data->where('incidencia.fecha_registro','<=',$request->fecha_final);
+        }
+        // return $data->get();exit;
         $fecha = new Carbon();
         return Excel::download(new IncidenciasExport(
             $data,
@@ -89,7 +97,9 @@ class FichaReporteController extends Controller
 
     public function incidenciasExcelConHistorial(Request $request)
     {
-        $data = $this->incidencias()->orderBy('fecha_reporte','desc')->orderBy('id_incidencia','desc');
+        $data = $this->incidencias()
+        ->orderBy('fecha_reporte','desc')
+        ->orderBy('id_incidencia','desc');
         $fecha = new Carbon();
         return Excel::download(new IncidenciasConHistorialExport(
             $data,

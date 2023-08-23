@@ -29,11 +29,22 @@ function listarIncidencias() {
 
         },
         className: 'btn-success btn-sm'
+    }),
+    filtros = ({
+        text: '<i class="fa fa-filter" aria-hidden="true"></i>',
+        attr: {
+            id: 'btn-filtros'
+        },
+        action: () => {
+            $('#model-filtros').modal('show');
+
+        },
+        className: 'btn-default btn-sm'
     });
 
     tableIncidenciasx = $('#listaIncidencias').DataTable({
         dom: vardataTables[1],
-        buttons: [buttonDescargarExcelIncidencias,buttonDescargarExcelIncidenciasConHistorial],
+        buttons: [buttonDescargarExcelIncidencias,buttonDescargarExcelIncidenciasConHistorial,filtros],
         language: vardataTables[0],
         serverSide: true,
         ajax: {
@@ -157,7 +168,6 @@ function descargarExcelIncidencias(){
 
 function descargarExcelIncidenciasConHistorial(){
     window.open(`incidenciasExcelConHistorial`);
-
 }
 
 
@@ -297,4 +307,18 @@ $(document).on('click','.btn-clonar',function () {
             }
         }
     });
+});
+
+$("#model-filtros").on("hidden.bs.modal", () => {
+    // e.preventDefault();
+    console.log('ss');
+    let fecha_inicio = $('#model-filtros').find('[name="fecha_inicio"]').val();
+    let fecha_final = $('#model-filtros').find('[name="fecha_final"]').val();
+    let form = $('<form action="'+route('cas.garantias.fichas.incidenciasExcel')+'" target="_blank" method="GET">'+
+            '<input type="hidden" name="_token" value="'+token+'" >'+
+            '<input type="hidden" name="fecha_inicio" value="'+fecha_inicio+'" >'+
+            '<input type="hidden" name="fecha_final" value="'+fecha_final+'" >'+
+        '</form>');
+    $('body').append(form);
+    form.submit();
 });

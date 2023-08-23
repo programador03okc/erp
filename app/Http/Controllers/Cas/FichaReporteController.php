@@ -20,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
+ini_set('max_execution_time', 0);
+
 class FichaReporteController extends Controller
 {
     function view_ficha_reporte()
@@ -80,7 +82,7 @@ class FichaReporteController extends Controller
 
     public function incidenciasExcel(Request $request)
     {
-
+        set_time_limit(0);
         $data = $this->incidencias()->orderBy('fecha_reporte','desc')->orderBy('id_incidencia','desc');
         if (!empty($request->fecha_inicio)) {
             $data = $data->where('incidencia.fecha_registro','>=',$request->fecha_inicio);
@@ -97,9 +99,8 @@ class FichaReporteController extends Controller
 
     public function incidenciasExcelConHistorial(Request $request)
     {
-        $data = $this->incidencias()
-        ->orderBy('fecha_reporte','desc')
-        ->orderBy('id_incidencia','desc');
+        set_time_limit(0);
+        $data = $this->incidencias()->orderBy('fecha_reporte','desc')->orderBy('id_incidencia','desc');
         $fecha = new Carbon();
         return Excel::download(new IncidenciasConHistorialExport(
             $data,

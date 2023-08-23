@@ -512,7 +512,7 @@ class PendientesFacturacionController extends Controller
     }
     public function obtenerListadoVentasInternasExport()
     {
-        return DB::table('almacen.guia_ven', 'almacen.alm_req')
+        return DB::table('almacen.guia_ven')
             ->select(
                 'guia_ven.*',
                 'adm_contri.nro_documento',

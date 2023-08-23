@@ -129,7 +129,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group text-center">
-                                            <input type="date" name="fecha_final" id="fecha_inicio" class="form-control text-center">
+                                            <input type="date" name="fecha_final" id="fecha_final" class="form-control text-center">
                                             <small id="helpId" class="text-muted">Fecha de Final</small>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="reporte-excel-filtros">Aceptar</button>
                     </div>
                 </form>
             </div>

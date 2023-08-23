@@ -31,7 +31,7 @@ function listarIncidencias() {
         className: 'btn-success btn-sm'
     }),
     filtros = ({
-        text: '<i class="fa fa-filter" aria-hidden="true"></i>',
+        text: '<i class="fa fa-filter" aria-hidden="true"></i> Reporte con filtros',
         attr: {
             id: 'btn-filtros'
         },
@@ -309,9 +309,9 @@ $(document).on('click','.btn-clonar',function () {
     });
 });
 
-$("#model-filtros").on("hidden.bs.modal", () => {
-    // e.preventDefault();
-    console.log('ss');
+
+$('#reporte-excel-filtros').click(function (e) {
+    e.preventDefault();
     let fecha_inicio = $('#model-filtros').find('[name="fecha_inicio"]').val();
     let fecha_final = $('#model-filtros').find('[name="fecha_final"]').val();
     let form = $('<form action="'+route('cas.garantias.fichas.incidenciasExcel')+'" target="_blank" method="GET">'+

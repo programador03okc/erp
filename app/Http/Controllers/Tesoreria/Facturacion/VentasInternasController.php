@@ -212,7 +212,7 @@ class VentasInternasController extends Controller
                         'id_tp_documento' => 2,
                         'fecha' => $fecha,
                         'id_usuario' => $id_usuario,
-                        'id_moneda' => 1,
+                        'id_moneda' => ($doc_ven->moneda !=null && $doc_ven->moneda) >0?$doc_ven->moneda:1,
                         'id_proveedor' => $doc_ven->id_proveedor,
                         'codigo' => $codigo_oc,
                         'id_condicion' => $doc_ven->id_condicion,

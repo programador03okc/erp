@@ -116,7 +116,7 @@ class MigrateProductoSoftlinkController extends Controller
                         'cod_cate' => $cod_cate,
                         'cod_subc' => $cod_subc,
                         'cod_prov' => '',
-                        'cod_espe' => (trim($producto->part_number) !='') ?trim($producto->part_number):null,
+                        'cod_espe' => (trim($producto->part_number) !='') ?trim($producto->part_number):'',
                         'cod_sunat' => '',
                         'nom_prod' => trim($producto->descripcion),
                         'cod_unid' => $cod_unid,

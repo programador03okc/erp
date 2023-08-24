@@ -140,7 +140,7 @@ class VentasInternasController extends Controller
                 $requerimiento->id_proyecto = (($req_original!==null && $req_original->id_proyecto!==null) ? $req_original->id_proyecto : null);
                 $requerimiento->id_prioridad = 1;
                 $requerimiento->observacion = 'Creado de forma automática por venta interna';
-                $requerimiento->id_moneda = 1;
+                $requerimiento->id_moneda = ($doc_ven->moneda !=null && $doc_ven->moneda) >0?$doc_ven->moneda:1;
                 $requerimiento->id_empresa = $doc_ven->id_empresa;
                 $requerimiento->id_periodo = $periodo->id_periodo; 
                 $requerimiento->id_sede = $detalle->first()->id_sede;

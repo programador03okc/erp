@@ -292,11 +292,41 @@
 <script src="{{ asset('js/almacen/guia/guia_com_det_series.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_com_det_series.js'))}}"></script>
 <script src="{{ asset('js/almacen/guia/guia_ven_series.js')}}?v={{filemtime(public_path('js/almacen/guia/guia_ven_series.js'))}}"></script>
 
+{{-- para leer archivos excel con js --}}
+<script src="{{ asset('template/adminlte2-4/plugins/reed-excel-file/read-excel-file.min.js')}}?v={{filemtime(public_path('template/adminlte2-4/plugins/reed-excel-file/read-excel-file.min.js'))}}"></script>
+
 <script>
     $(document).ready(function() {
-        
+
         usuarioSession = '{{Auth::user()->id_usuario}}';
         usuarioNombreSession = '{{Auth::user()->nombre_corto}}';
+
+        $('#import-serie-excel').change( async function (e) {
+            e.preventDefault();
+
+            // let data = new FormData($('#form-impor-excel')[0]);
+            let numero_marcados = 0;
+            let t_body = $('#listaSeriesVen').find('tbody');
+            let contenido = await readXlsxFile($(this)[0].files[0]);
+            let total = contenido.length - 1;
+
+            $.each(contenido, function (index, element) {
+
+                $.each(t_body.find('tr'), function (index, element_tr) {
+                    if (element_tr.children[2].innerText==element[0]) {
+                        numero_marcados = numero_marcados +1;
+                        $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element[0]+'"]').attr('checked','true');
+                    }
+                });
+            });
+            $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+total+' - Total de seleccionados : '+numero_marcados+'');
+
+            $("#form-impor-excel")[0].reset();
+            $('#modal-guia_ven_series').find('#total-excel').removeClass('d-none');
+        });
+        $("#modal-guia_ven_series").on("hidden.bs.modal", () => {
+            $(this).find('#total-excel').addClass('d-none')
+        });
     });
 </script>
 @endsection

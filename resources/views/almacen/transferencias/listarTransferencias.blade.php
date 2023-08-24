@@ -271,15 +271,44 @@
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/dataTables.checkboxes.min.js') }}"></script>
 {{--  --}}
 
+{{-- para leer archivos excel con js --}}
+<script src="{{ asset('template/adminlte2-4/plugins/reed-excel-file/read-excel-file.min.js')}}?v={{filemtime(public_path('template/adminlte2-4/plugins/reed-excel-file/read-excel-file.min.js'))}}"></script>
+
 <script>
     // let csrf_token = "{{ csrf_token() }}";
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     $(document).ready(function() {
-        
+
         $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
         iniciar('{{Auth::user()->tieneAccion(91)}}', '{{Auth::user()->id_usuario}}');
         //listarRequerimientosPendientes();
 
+        $('#import-serie-excel').change( async function (e) {
+            e.preventDefault();
+
+            // let data = new FormData($('#form-impor-excel')[0]);
+            let numero_marcados = 0;
+            let t_body = $('#listaSeriesVen').find('tbody');
+            let contenido = await readXlsxFile($(this)[0].files[0]);
+            let total = contenido.length - 1;
+
+            $.each(contenido, function (index, element) {
+
+                $.each(t_body.find('tr'), function (index, element_tr) {
+                    if (element_tr.children[2].innerText==element[0]) {
+                        numero_marcados = numero_marcados +1;
+                        $('#listaSeriesVen').find('tbody').find('input[data-serie="'+element[0]+'"]').attr('checked','true');
+                    }
+                });
+            });
+            $('#form-impor-excel').find('#total-excel').text('Total de series en el excel: '+total+' - Total de seleccionados : '+numero_marcados+'');
+
+            $("#form-impor-excel")[0].reset();
+            $('#modal-guia_ven_series').find('#total-excel').removeClass('d-none');
+        });
+        $("#modal-guia_ven_series").on("hidden.bs.modal", () => {
+            $(this).find('#total-excel').addClass('d-none')
+        });
     });
 </script>
 <script src="{{ asset('js/almacen/transferencias/listarTransferencias.js')}}?v={{filemtime(public_path('js/almacen/transferencias/listarTransferencias.js'))}}"></script>

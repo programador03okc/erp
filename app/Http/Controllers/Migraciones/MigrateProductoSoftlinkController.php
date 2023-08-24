@@ -38,7 +38,7 @@ class MigrateProductoSoftlinkController extends Controller
                 ->first();
             //Verifica si esxiste el producto
             $prod = null;
-            if (!empty($producto->part_number)) { //if ($producto->part_number !== null && $producto->part_number !== '') {
+            if (!empty(trim($producto->part_number))) { //if ($producto->part_number !== null && $producto->part_number !== '') {
                 // return [$producto];exit;
                 $prod = DB::connection('soft')->table('sopprod')
                     ->select('cod_prod')
@@ -116,7 +116,7 @@ class MigrateProductoSoftlinkController extends Controller
                         'cod_cate' => $cod_cate,
                         'cod_subc' => $cod_subc,
                         'cod_prov' => '',
-                        'cod_espe' => trim($producto->part_number),
+                        'cod_espe' => (trim($producto->part_number) !='') ?trim($producto->part_number):null,
                         'cod_sunat' => '',
                         'nom_prod' => trim($producto->descripcion),
                         'cod_unid' => $cod_unid,

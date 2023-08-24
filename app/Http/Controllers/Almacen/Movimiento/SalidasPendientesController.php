@@ -37,7 +37,8 @@ class SalidasPendientesController extends Controller
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view('almacen.guias.despachosPendientes',
+        return view(
+            'almacen.guias.despachosPendientes',
             compact('tp_operacion', 'clasificaciones', 'usuarios', 'motivos_anu', 'nro_od_pendientes', 'array_accesos')
         );
     }
@@ -121,10 +122,10 @@ class SalidasPendientesController extends Controller
             $id_tp_doc_almacen = 2; //Guia Venta
             $id_usuario = Auth::user()->id_usuario;
             $fecha_registro = date('Y-m-d H:i:s');
-
+            $transformacion = null;
             $periodo_estado = CierreAperturaController::consultarPeriodo($request->fecha_emision, $request->id_almacen);
 
-            if (intval($periodo_estado) == 2){
+            if (intval($periodo_estado) == 2) {
                 $mensaje = 'El periodo esta cerrado. Consulte con contabilidad.';
                 $tipo = 'warning';
             } else {
@@ -373,17 +374,36 @@ class SalidasPendientesController extends Controller
                                     'id_almacen' => $request->id_almacen
                                 ]); //Entregado
                         } else {
-                            $count_entregados = DB::table('almacen.orden_despacho_det')
-                                ->where([['id_od', '=', $request->id_od], ['estado', '=', 21]])
-                                ->count();
 
-                            $count_todos = DB::table('almacen.orden_despacho_det') //validar cantidades
-                                ->where('id_od', $request->id_od)->count();
+                            /*
+                            * si la ODE tiene item con transformado =true debe contar unicamente el estado de producto transformado si es 21 para determinar que fue entregado
+                            * de lo contrario si todo los item tiene campo transformado =false, debe considerar el estado entregado (21) para todo los items
+                            */
+                            $count_transformados = DB::table('almacen.orden_despacho_det') //cantidad de items transformados
+                                ->where([['transformado', true], ['id_od', '=', $request->id_od], ['estado', '!=', 7]])->count();
 
-                            if ($count_entregados == $count_todos) {
-                                DB::table('almacen.orden_despacho')
-                                    ->where('id_od', $request->id_od)
-                                    ->update(['estado' => 21]); //Entregado
+                            if ($count_transformados == 0) { // si no existe producto tranformado
+                                $count_entregados = DB::table('almacen.orden_despacho_det')
+                                    ->where([['id_od', '=', $request->id_od], ['estado', '=', 21]])
+                                    ->count();
+
+                                $count_todos = DB::table('almacen.orden_despacho_det') //validar cantidades
+                                    ->where('id_od', $request->id_od)->count();
+
+                                if ($count_entregados == $count_todos) {
+                                    DB::table('almacen.orden_despacho')
+                                        ->where('id_od', $request->id_od)
+                                        ->update(['estado' => 21]); //Entregado
+                                }
+                            } else { // si existe producto tranformado solo considerará el estado del mismo.
+                                $count_tranformado_entregado = DB::table('almacen.orden_despacho_det') //validar cantidades
+                                    ->where([['id_od', $request->id_od], ['transformado', true], ['estado', '=', 21]])->count();
+
+                                if ($count_tranformado_entregado == $count_transformados) {
+                                    DB::table('almacen.orden_despacho')
+                                        ->where('id_od', $request->id_od)
+                                        ->update(['estado' => 21]); //Entregado
+                                }
                             }
                         }
                         //Envia requerimiento a facturacion
@@ -410,7 +430,6 @@ class SalidasPendientesController extends Controller
                                 'id_usuario' => $id_usuario,
                                 'fecha_registro' => date('Y-m-d H:i:s')
                             ]);
-
                         $tipo = 'success';
                         $mensaje = 'Se guardó correctamente la salida de almacén';
                     } else if ($request->id_devolucion !== null) {
@@ -557,7 +576,6 @@ class SalidasPendientesController extends Controller
                         ' . $mensaje;
                 }
             }
-
             DB::commit();
             return response()->json(
                 array(
@@ -660,11 +678,11 @@ class SalidasPendientesController extends Controller
     {
         $data = $this->listarSalidasProcesadas();
         return datatables($data)
-        ->filterColumn('codigo_od', function ($query, $keyword) {
-            $keywords = trim(strtoupper($keyword));
-            $query->whereRaw("devolucion.codigo LIKE ?", ["%{$keywords}%"]);
-        })
-        ->toJson();
+            ->filterColumn('codigo_od', function ($query, $keyword) {
+                $keywords = trim(strtoupper($keyword));
+                $query->whereRaw("devolucion.codigo LIKE ?", ["%{$keywords}%"]);
+            })
+            ->toJson();
     }
 
 
@@ -1534,15 +1552,14 @@ class SalidasPendientesController extends Controller
             DB::beginTransaction();
             $msj = '';
             $salida = DB::table('almacen.guia_ven')
-            ->select('guia_ven.fecha_almacen', 'guia_ven.id_almacen')
-            ->where('id_guia_ven', $request->id_guia_ven)
-            ->first();
+                ->select('guia_ven.fecha_almacen', 'guia_ven.id_almacen')
+                ->where('id_guia_ven', $request->id_guia_ven)
+                ->first();
 
             $periodo_estado = CierreAperturaController::consultarPeriodo($request->salida_fecha_emision, $salida->id_almacen);
 
-            if (intval($periodo_estado) == 2){
+            if (intval($periodo_estado) == 2) {
                 $msj = 'El periodo esta cerrado. Consulte con contabilidad.';
-
             } else {
 
                 $fecha_anterior = $salida->fecha_almacen;
@@ -2057,17 +2074,18 @@ class SalidasPendientesController extends Controller
             );
         }
     }
-    public function importarExcelSeries(Request $request) {
+    public function importarExcelSeries(Request $request)
+    {
         $collection = Excel::toCollection(new ExcelSeriesImport, $request->file('import_series'))[0];
         $array_series = array();
-        foreach($collection as $key=>$item){
-            if($key!==0){
-                if($item[0]!==null && $item[0]!==''){
-                    array_push($array_series,$item[0]);
+        foreach ($collection as $key => $item) {
+            if ($key !== 0) {
+                if ($item[0] !== null && $item[0] !== '') {
+                    array_push($array_series, $item[0]);
                 }
             }
         }
         $count = sizeof($array_series);
-        return response()->json(["success"=>true,"data"=>$array_series,"total"=>$count],200);
+        return response()->json(["success" => true, "data" => $array_series, "total" => $count], 200);
     }
 }

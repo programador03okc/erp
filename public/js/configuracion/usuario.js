@@ -233,6 +233,7 @@ function loadPerfilUsuario(id){
             }
             $('#modal-editar-usuario [name="usuario"]').val(res.data.usuario);
             $('#modal-editar-usuario [name="nombre_corto"]').val(res.data.nombre_corto);
+            $('#modal-editar-usuario [name="nombre_largo"]').val(res.data.nombre_largo);
             $('#modal-editar-usuario [name="codvent_softlink"]').val(res.data.codvend_softlink);
             $.each(res.data.usuario_grupo, function (index, element) {
                 $('#modal-editar-usuario [name="id_grupo[]"] option[value="'+element.id_grupo+'"]').attr('selected',true);
@@ -240,6 +241,12 @@ function loadPerfilUsuario(id){
             $.each(res.data.usuario_rol, function (index, element) {
                 $('#modal-editar-usuario [name="id_rol[]"] option[value="'+element.id_rol+'"]').attr('selected',true);
             });
+            $.each(res.data.usuario_division, function (index, element) {
+                $('#modal-editar-usuario [name="id_division[]"] option[value="'+element.id_division+'"]').attr('selected',true);
+            });
+
+            $('.selectpicker').selectpicker('refresh') // mostrar los valores que tiene el selectpicker
+
         }
     }).catch(function(err) {
         console.log(err)
@@ -473,8 +480,8 @@ function guardarAcceso(){
     });
     return false;
 }
-$(document).on('click','[data-clave="change-clave"]',function () {
 
+$(document).on('click','[data-clave="change-clave"]',function () {
     // $('#modal_cambio_clave').modal('show');
     $('#modal_cambio_clave [name="id_usuario"]').val($(this).attr('data-id'));
     $('#modal_cambio_clave').modal({
@@ -482,6 +489,7 @@ $(document).on('click','[data-clave="change-clave"]',function () {
         backdrop: 'static'
     });
 });
+
 $(document).on('submit','[data-form="cambio-clave"]',function (e) {
     e.preventDefault();
     var data = $(this).serialize();
@@ -545,6 +553,7 @@ $(document).on('submit','[data-form="cambio-clave"]',function (e) {
         })
     }
 });
+
 $(document).on('change','input.dni-unico',function () {
     var documento = $(this).val();
     $.ajax({
@@ -569,6 +578,7 @@ $(document).on('change','input.dni-unico',function () {
         console.log(errorThrown);
     })
 });
+
 $(document).on('change','input.usuario-unico',function () {
     var nombre = $('#formPage [name="nombres"]').val(),
         apellido = $('#formPage [name="apellido_paterno"]').val(),
@@ -581,6 +591,7 @@ $(document).on('change','input.usuario-unico',function () {
         validarUsuario(usuario)
     }
 });
+
 function validarUsuario(usuario) {
     $.ajax({
         type: 'POST',

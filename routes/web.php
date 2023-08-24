@@ -109,6 +109,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
+// use App\Http\Controllers\ApiController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -997,7 +998,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('index', [AlmacenController::class, 'view_busqueda_salidas'])->name('index');
 				Route::get('listar_busqueda_salidas/{alm}/{tp}/{des}/{doc}/{fini}/{ffin}', [AlmacenController::class, 'listar_busqueda_salidas'])->name('listar-busqueda-salidas');
 				Route::get('select_almacenes_empresa/{id}', [AlmacenController::class, 'select_almacenes_empresa'])->name('select-almacenes-empresa');
-				Route::get('imprimir_salida/{id}', [AlmacenController::class, 'imprimir_salida'])->name('imprimir-salida');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
 			});
 
 			Route::group(['as' => 'kardex-general.', 'prefix' => 'kardex-general'], function () {
@@ -2431,7 +2432,6 @@ Route::middleware(['auth'])->group(function () {
 		});
 	});
 });
-
 Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {
 	Route::get('tipo_cambio_masivo/{desde}/{hasta}', [ApiController::class, 'tipoCambioMasivo'])->name('tipo_cambio_masivo');
 	Route::get('tipo_cambio_actual', [ApiController::class, 'tipoCambioActual'])->name('tipo_cambio_actual');

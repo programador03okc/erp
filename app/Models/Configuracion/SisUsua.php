@@ -22,4 +22,8 @@ class SisUsua extends Model
     {
         return $this->hasMany(UsuarioRol::class, 'id_usuario', 'id_usuario')->where('estado',1);
     }
+    public function usuarioDivision()
+    {
+        return $this->hasMany(usuarioDivision::class, 'id_usuario', 'id_usuario')->where('id_estado',1);
+    }
 }

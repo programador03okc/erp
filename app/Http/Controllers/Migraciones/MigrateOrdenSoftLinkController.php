@@ -293,7 +293,7 @@ class MigrateOrdenSoftLinkController extends Controller
                                         'mon_bruto' => $oc->total_precio,
                                         'mon_impto1' => $mon_impto,
                                         'mon_total' => ($oc->total_precio + $mon_impto),
-                                        'txt_observa' => ($oc->observacion !== null ? $oc->observacion : ''),
+                                        'txt_observa' => ($oc->codigo).' / '.($oc->observacion !== null ? $oc->observacion : ''),
                                         'cod_user' => $oc->codvend_softlink,
                                         'tip_cambio' => $tp_cambio->cambio3, //tipo cambio venta
                                         'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
@@ -466,7 +466,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 'tot_cargo' => '0.00',
                 'tot_percep' => '0.00',
                 'tip_codicion' => $oc->id_condicion_softlink,
-                'txt_observa' => ($oc->observacion !== null ? $oc->observacion : ''),
+                'txt_observa' => ($oc->codigo).' / '.($oc->observacion !== null ? $oc->observacion : ''),
                 'flg_kardex' => 0,
                 'flg_anulado' => 0,
                 'flg_referen' => 0,

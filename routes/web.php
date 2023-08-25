@@ -1127,6 +1127,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('no_conforme_transformacion/{id}', [TransformacionController::class, 'no_conforme_transformacion'])->name('no-conforme-transformacion');
 				Route::get('iniciar_transformacion/{id}', [TransformacionController::class, 'iniciar_transformacion'])->name('iniciar-transformacion');
 				Route::post('obtenerArchivosOc', [PendientesFacturacionController::class, 'obtenerArchivosOc'])->name('obtener-archivos-oc');
+
+                Route::post('exportar-ordenes-transformaciones-pendientes', [TransformacionController::class, 'exportarOrdenesTransformacionesPendientes'])->name('exportar-ordenes-transformaciones-pendientes');
+                Route::post('exportar-ordenes-transformaciones-procesadas', [TransformacionController::class, 'exportarOrdenesTransformacionesProcesadas'])->name('exportar-ordenes-transformaciones-procesadas');
 			});
 
 			Route::group(['as' => 'hoja-transformacion.', 'prefix' => 'hoja-transformacion'], function () {

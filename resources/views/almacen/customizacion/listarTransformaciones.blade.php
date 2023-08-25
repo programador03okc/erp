@@ -111,6 +111,53 @@
     </div>
 </div>
 @include('tesoreria.facturacion.archivos_oc_mgcp')
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-filtros-exportables" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">Reporte con filtros</h5>
+
+            </div>
+            <form action="" id="form-filtros-ordenes">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group text-right">
+                                <label for="">Fecha :</label>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group text-center">
+                                      <input type="date" name="fecha_inicio" class="form-control text-center">
+                                      <small class="text-muted ">Fecha Inicio</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group text-center">
+                                      <input type="date" name="fecha_final" class="form-control text-center">
+                                      <small class="text-muted">Fecha Final</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="filtro-ordenes-transformaciones-pendientes">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -132,7 +179,7 @@
     <script src="{{ asset('js/tesoreria/facturacion/archivosMgcp.js')}}"></script>
     <script>
         $(document).ready(function() {
-            
+
             vista_extendida();
             let gestionCustomizacion = new GestionCustomizacion('{{Auth::user()->tieneAccion(125)}}');
 

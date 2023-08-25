@@ -8,7 +8,16 @@ class GestionCustomizacion {
 
     listarTransformacionesPendientes() {
         var vardataTables = funcDatatables();
-        let botones = [];
+        const exportable_filtros={
+            text: '<i class="fa fa-file-export"></i> Reporte en Excel',
+            action: function () {
+                let form = $('<form action="'+route('cas.customizacion.gestion-customizaciones.exportar-ordenes-transformaciones-pendientes')+'" target="_blank" method="POST">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
+            }, className: 'btn btn-sm btn-default'
+        };
 
         $("#listaTransformacionesPendientes").on('search.dt', function () {
             $('#listaTransformacionesPendientes_filter input').prop('disabled', true);
@@ -30,7 +39,7 @@ class GestionCustomizacion {
 
         table = $('#listaTransformacionesPendientes').DataTable({
             dom: vardataTables[1],
-            buttons: botones,
+            buttons: [exportable_filtros],
             language: vardataTables[0],
             pageLength: 50,
             serverSide: true,
@@ -179,9 +188,21 @@ class GestionCustomizacion {
 
     listarTransformaciones() {
         var vardataTables = funcDatatables();
+        const buttons = vardataTables[2];
+        const exportable_filtros={
+            text: '<i class="fa fa-file-export"></i> Reporte en Excel',
+            action: function () {
+                let form = $('<form action="'+route('cas.customizacion.gestion-customizaciones.exportar-ordenes-transformaciones-procesadas')+'" target="_blank" method="POST">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
+            }, className: 'btn btn-default'
+        };
+        buttons.push(exportable_filtros);
         var tabla = $('#listaTransformaciones').DataTable({
             'dom': vardataTables[1],
-            'buttons': vardataTables[2],
+            'buttons': buttons,
             'language': vardataTables[0],
             'destroy': true,
             'ajax': 'listarTransformacionesProcesadas',
@@ -651,3 +672,9 @@ function abrir_transformacion(id_transformacion) {
     // Cambiar el foco al nuevo tab (punto opcional)
     win.focus();
 }
+$('#filtro-ordenes-transformaciones-pendientes').click(function (e) {
+    e.preventDefault();
+    let fecha_inicio    = $('#form-filtros-ordenes').find('[name="fecha_inicio"]').val();
+    let fecha_final     = $('#form-filtros-ordenes').find('[name="fecha_final"]').val();
+
+});

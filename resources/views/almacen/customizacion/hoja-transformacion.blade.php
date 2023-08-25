@@ -277,9 +277,9 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
             @endphp
             @foreach ($comentarios as $comentario)
             <tr>
-                <td>{{$comentario->usuario->name}}</td>
-                <td class="text-center">{{$comentario->fecha}}</td>
-                <td>{{$comentario->comentario}}</td>
+                <td>{{$comentario->usuario->name??''}}</td>
+                <td class="text-center">{{$comentario->fecha??''}}</td>
+                <td>{{$comentario->comentario??''}}</td>
             </tr>
             @endforeach
         </tbody>

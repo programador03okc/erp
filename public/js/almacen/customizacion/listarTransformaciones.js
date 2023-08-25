@@ -9,9 +9,13 @@ class GestionCustomizacion {
     listarTransformacionesPendientes() {
         var vardataTables = funcDatatables();
         const exportable_filtros={
-            text: '<i class="fa fa-filter"></i> Reporte con filtros',
+            text: '<i class="fa fa-file-export"></i> Reporte en Excel',
             action: function () {
-                $('#modal-filtros-exportables').modal('show');
+                let form = $('<form action="'+route('cas.customizacion.gestion-customizaciones.exportar-ordenes-transformaciones-pendientes')+'" target="_blank" method="POST">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
             }, className: 'btn btn-sm btn-default'
         };
 
@@ -184,9 +188,21 @@ class GestionCustomizacion {
 
     listarTransformaciones() {
         var vardataTables = funcDatatables();
+        const buttons = vardataTables[2];
+        const exportable_filtros={
+            text: '<i class="fa fa-file-export"></i> Reporte en Excel',
+            action: function () {
+                let form = $('<form action="'+route('cas.customizacion.gestion-customizaciones.exportar-ordenes-transformaciones-procesadas')+'" target="_blank" method="POST">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
+            }, className: 'btn btn-default'
+        };
+        buttons.push(exportable_filtros);
         var tabla = $('#listaTransformaciones').DataTable({
             'dom': vardataTables[1],
-            'buttons': vardataTables[2],
+            'buttons': buttons,
             'language': vardataTables[0],
             'destroy': true,
             'ajax': 'listarTransformacionesProcesadas',
@@ -658,5 +674,7 @@ function abrir_transformacion(id_transformacion) {
 }
 $('#filtro-ordenes-transformaciones-pendientes').click(function (e) {
     e.preventDefault();
-    console.log('click');
+    let fecha_inicio    = $('#form-filtros-ordenes').find('[name="fecha_inicio"]').val();
+    let fecha_final     = $('#form-filtros-ordenes').find('[name="fecha_final"]').val();
+
 });

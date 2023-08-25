@@ -8,7 +8,12 @@ class GestionCustomizacion {
 
     listarTransformacionesPendientes() {
         var vardataTables = funcDatatables();
-        let botones = [];
+        const exportable_filtros={
+            text: '<i class="fa fa-filter"></i> Reporte con filtros',
+            action: function () {
+                $('#modal-filtros-exportables').modal('show');
+            }, className: 'btn btn-sm btn-default'
+        };
 
         $("#listaTransformacionesPendientes").on('search.dt', function () {
             $('#listaTransformacionesPendientes_filter input').prop('disabled', true);
@@ -30,7 +35,7 @@ class GestionCustomizacion {
 
         table = $('#listaTransformacionesPendientes').DataTable({
             dom: vardataTables[1],
-            buttons: botones,
+            buttons: [exportable_filtros],
             language: vardataTables[0],
             pageLength: 50,
             serverSide: true,
@@ -651,3 +656,7 @@ function abrir_transformacion(id_transformacion) {
     // Cambiar el foco al nuevo tab (punto opcional)
     win.focus();
 }
+$('#filtro-ordenes-transformaciones-pendientes').click(function (e) {
+    e.preventDefault();
+    console.log('click');
+});

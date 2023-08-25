@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Almacen\Movimiento;
 
+use App\Exports\OrdenesTransformacionesPendientesExport;
+use App\Exports\OrdenesTransformacionesProcesadasExport;
 use App\Http\Controllers\Almacen\Catalogo\CategoriaController;
 use App\Http\Controllers\Almacen\Catalogo\ClasificacionController;
 use App\Http\Controllers\Almacen\Catalogo\SubCategoriaController;
@@ -18,6 +20,7 @@ use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\Tesoreria\TipoCambio;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 date_default_timezone_set('America/Lima');
 
@@ -1346,5 +1349,92 @@ class TransformacionController extends Controller
 
         return $pdf->stream();
         return $pdf->download($oportunidad->codigo_oportunidad . '.pdf');
+    }
+    public function exportarOrdenesTransformacionesPendientes(Request $request) {
+        $fecha_inicio = $request->fecha_inicio;
+        $fecha_final = $request->fecha_final;
+
+        $data = DB::table('almacen.transformacion')
+            ->select(
+                'transformacion.*',
+                'adm_contri.razon_social',
+                'alm_almacen.descripcion',
+                'respon.nombre_corto as nombre_responsable',
+                'regist.nombre_corto as nombre_registrado',
+                'adm_estado_doc.estado_doc',
+                'adm_estado_doc.bootstrap_color',
+                'orden_despacho.fecha_despacho',
+                'oc_propias_view.nro_orden',
+                'oc_propias_view.codigo_oportunidad',
+                'oc_propias_view.id as id_oc_propia',
+                'oc_propias_view.tipo',
+                'alm_req.codigo as codigo_req',
+                'alm_req.fecha_entrega as fecha_entrega_req'
+            )
+            ->join('almacen.orden_despacho', 'orden_despacho.id_od', '=', 'transformacion.id_od')
+            ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'orden_despacho.id_requerimiento')
+            ->leftjoin('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'transformacion.id_almacen')
+            // ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_almacen.id_sede')
+            // ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
+            // ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
+            ->leftjoin('comercial.com_cliente', 'com_cliente.id_cliente', '=', 'alm_req.id_cliente')
+            ->leftjoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'com_cliente.id_contribuyente')
+
+            ->leftjoin('configuracion.sis_usua as respon', 'respon.id_usuario', '=', 'transformacion.responsable')
+            ->join('configuracion.sis_usua as regist', 'regist.id_usuario', '=', 'transformacion.registrado_por')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'transformacion.estado')
+            // ->leftjoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'transformacion.id_cc')
+            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
+            ->leftJoin('mgcp_ordenes_compra.oc_propias_view', 'oc_propias_view.id_oportunidad', '=', 'cc.id_oportunidad')
+            ->whereIn('transformacion.estado', [1, 25, 21, 24, 10])
+            ->get();
+        return Excel::download(new OrdenesTransformacionesPendientesExport($data), 'Ordenes_transformación_pendientes_'.date('d-m-Y H:i:s').'.xlsx');
+    }
+    public function exportarOrdenesTransformacionesProcesadas(){
+        $data = DB::table('almacen.transformacion')
+            ->select(
+                'transformacion.*',
+                'adm_contri.razon_social',
+                'alm_almacen.descripcion',
+                'respon.nombre_corto as nombre_responsable',
+                'regist.nombre_corto as nombre_registrado',
+                'adm_estado_doc.estado_doc',
+                'adm_estado_doc.bootstrap_color',
+                'oc_propias.orden_am',
+                'oportunidades.oportunidad',
+                'oportunidades.codigo_oportunidad',
+                'entidades.nombre',
+                'alm_req.codigo as codigo_req',
+                'alm_req.fecha_entrega as fecha_entrega_req',
+                'ingreso.id_mov_alm as id_ingreso',
+                'salida.id_mov_alm as id_salida',
+            )
+            ->join('almacen.orden_despacho', 'orden_despacho.id_od', '=', 'transformacion.id_od')
+            ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'orden_despacho.id_requerimiento')
+            ->join('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'transformacion.id_almacen')
+            ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_almacen.id_sede')
+            ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
+            ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
+            ->leftjoin('configuracion.sis_usua as respon', 'respon.id_usuario', '=', 'transformacion.responsable')
+            ->join('configuracion.sis_usua as regist', 'regist.id_usuario', '=', 'transformacion.registrado_por')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'transformacion.estado')
+            ->leftjoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'transformacion.id_cc')
+            ->leftjoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            ->leftjoin('mgcp_acuerdo_marco.oc_propias', 'oc_propias.id_oportunidad', '=', 'oportunidades.id')
+            ->leftjoin('mgcp_acuerdo_marco.entidades', 'entidades.id', '=', 'oportunidades.id_entidad')
+            ->leftjoin('almacen.mov_alm as ingreso', function ($join) {
+                $join->on('ingreso.id_transformacion', '=', 'transformacion.id_transformacion');
+                $join->where('ingreso.id_tp_mov', '=', 1);
+                $join->where('ingreso.estado', '!=', 7);
+            })
+            ->leftjoin('almacen.mov_alm as salida', function ($join) {
+                $join->on('salida.id_transformacion', '=', 'transformacion.id_transformacion');
+                $join->where('salida.id_tp_mov', '=', 2);
+                $join->where('salida.estado', '!=', 7);
+            })
+            ->where('transformacion.estado', 9)
+            ->orderBy('fecha_registro', 'desc')
+            ->get();
+        return Excel::download(new OrdenesTransformacionesProcesadasExport($data), 'Ordenes_transformación_procesadas_'.date('d-m-Y H:i:s').'.xlsx');
     }
 }

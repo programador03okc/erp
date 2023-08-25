@@ -128,10 +128,27 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="form-group">
-                              <label for="">Fecha</label>
+                            <div class="form-group text-right">
+                                <label for="">Fecha :</label>
                             </div>
                         </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group text-center">
+                                      <input type="date" name="fecha_inicio" class="form-control text-center">
+                                      <small class="text-muted ">Fecha Inicio</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group text-center">
+                                      <input type="date" name="fecha_final" class="form-control text-center">
+                                      <small class="text-muted">Fecha Final</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">

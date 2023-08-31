@@ -298,7 +298,7 @@ class MigrateOrdenSoftLinkController extends Controller
                                         'tip_cambio' => $tp_cambio->cambio3, //tipo cambio venta
                                         'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
                                         'ndocu2' => ($oc->direccion_destino !== null ? $oc->direccion_destino . ' ' . ($oc->ubigeo_destino !== null ? $oc->ubigeo_destino : '') : ''),
-                                        'ndocu3' => ($oc->codigo).' / '.implode(', ', $cuadros)
+                                        'ndocu3' => implode(', ', $cuadros)
                                     ]
                                 );
 
@@ -498,7 +498,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 'mov_pago' => '',
                 'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
                 'ndocu2' => ($oc->direccion_destino !== null ? $oc->direccion_destino . ' ' . ($oc->ubigeo_destino !== null ? $oc->ubigeo_destino : '') : ''),
-                'ndocu3' => ($oc->codigo).' / '.implode(', ', $cuadros),
+                'ndocu3' => implode(', ', $cuadros),
                 'flg_logis' => 1,
                 'cod_recep' => '',
                 'flg_aprueba' => 0,

@@ -70,6 +70,9 @@ class ListaOrdenCtrl {
     listarDocumentosVinculados(id){
         return this.listaOrdenModel.listarDocumentosVinculados(id);
     }
+    generarFiltros(data){
+        return this.listaOrdenModel.generarFiltros(data);
+    }
 
 }
 

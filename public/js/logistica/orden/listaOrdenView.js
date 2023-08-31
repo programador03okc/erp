@@ -4,11 +4,12 @@ var cantidadFiltrosActivosDetalle = 0;
 var tempDataProveedorParaPago = [];
 let $tablaListaOrdenesElaborados;
 let $tablaListaItemsOrdenesElaborados;
-var tempArchivoAdjuntoRequerimientoCabeceraList=[];
+var tempArchivoAdjuntoRequerimientoCabeceraList = [];
 class ListaOrdenView {
     constructor(listaOrdenCtrl) {
         this.listaOrdenCtrl = listaOrdenCtrl;
-        this.filtro = 'SIN_FILTRO';
+        this.fecha_inicio = "01-01-" + (new Date().getFullYear());
+        this.fecha_fin = moment().format("DD-MM-YYYY");
     }
 
     init() {
@@ -73,6 +74,13 @@ class ListaOrdenView {
 
         });
 
+        $('body').on("change", "input.handleChangeFechaInicio", (e) => {
+            this.fecha_inicio = (e.currentTarget.value);
+        });
+        $('body').on("change", "input.handleChangeFechaFin", (e) => {
+            this.fecha_fin = (e.currentTarget.value);
+        });
+
         $('#modal-enviar-solicitud-pago').on("change", "select.handleChangeTipoDestinatario", (e) => {
             this.changeTipoDestinatario(e.currentTarget);
         });
@@ -133,47 +141,8 @@ class ListaOrdenView {
             this.documentosVinculados(e.currentTarget);
         });
 
-        // $('#modal-filtro-lista-ordenes-elaboradas').on("change", "select.handleChangeUpdateValorFiltroOrdenesElaboradas", (e) => {
-        //     this.updateValorFiltroOrdenesElaboradas();
-        // });
-
-        // $('#modal-filtro-lista-ordenes-elaboradas').on("change", "select.handleChangeFiltroEmpresa", (e) => {
-        //     this.handleChangeFiltroEmpresa(e);
-        // });
-
-
-        // $('#modal-filtro-lista-ordenes-elaboradas').on("click", "input[type=checkbox]", (e) => {
-        //     this.estadoCheckFiltroOrdenesElaboradasCabecera(e);
-        // });
-
-        // $('#modal-filtro-lista-ordenes-elaboradas').on('hidden.bs.modal', () => {
-        //     this.updateValorFiltroOrdenesElaboradas();
-        //     if (this.updateContadorFiltroOrdenesElaboradas() == 0) {
-        //         // this.obtenerListaOrdenesElaboradas('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
-        //     } else {
-        //         // this.obtenerListaOrdenesElaboradas(this.ActualParametroTipoOrdenCabecera, this.ActualParametroEmpresaCabecera, this.ActualParametroSedeCabecera, this.ActualParametroFechaDesdeCabecera, this.ActualParametroFechaHastaCabecera, this.ActualParametroEstadoCabecera);
-        //     }
-        // });
-
-
-        // $('#modal-filtro-lista-items-orden-elaboradas').on("change", "select.handleChangeFiltroEmpresa", (e) => {
-        //     this.handleChangeFiltroEmpresa(e);
-        // });
-        // $('#modal-filtro-lista-items-orden-elaboradas').on("click", "input[type=checkbox]", (e) => {
-        //     this.estadoCheckFiltroOrdenesElaboradasDetalle(e);
-        // });
-        // $('#modal-filtro-lista-items-orden-elaboradas').on('hidden.bs.modal', () => {
-        //     this.updateValorFiltroDetalleOrdenesElaboradas();
-        //     if (this.updateContadorFiltroDetalleOrdenesElaboradas() == 0) {
-        //         // this.obtenerListaDetalleOrdenesElaboradas('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
-
-        //     } else {
-        //         // this.obtenerListaDetalleOrdenesElaboradas(this.ActualParametroEmpresaDetalle, this.ActualParametroSedeDetalle, this.ActualParametroFechaDesdeDetalle, this.ActualParametroFechaHastaDetalle, this.ActualParametroEstadoDetalle);
-
-        //     }
-        // });
-        $(document).on('click','.adjuntar-archivos', (e)=> {
-            tempArchivoAdjuntoRequerimientoCabeceraList=[];
+        $(document).on('click', '.adjuntar-archivos', (e) => {
+            tempArchivoAdjuntoRequerimientoCabeceraList = [];
             $(":file").filestyle('clear');
             this.limpiarTabla('adjuntosCabecera');
             var data_id = e.currentTarget.dataset.id,
@@ -183,7 +152,7 @@ class ListaOrdenView {
             $('#modal-adjuntar-orden [name=id_moneda]').val(data_id_moneda);
             $('#modal-adjuntar-orden [name=codigo_orden]').val(e.currentTarget.dataset.codigo);
             $('#modal-adjuntar-orden .codigo').text(data_codigo);
-            $('#modal-adjuntar-orden .codigo').css('color','cadetblue');
+            $('#modal-adjuntar-orden .codigo').css('color', 'cadetblue');
             $('#modal-adjuntar-orden').modal('show');
             this.obteneAdjuntosOrden(data_id).then((res) => {
 
@@ -194,42 +163,42 @@ class ListaOrdenView {
 
                         tempArchivoAdjuntoRequerimientoCabeceraList.push(
                             {
-                                'id':element.id_adjunto,
-                                'category':element.categoria_adjunto_id,
-                                'fecha_emision':element.fecha_emision,
+                                'id': element.id_adjunto,
+                                'category': element.categoria_adjunto_id,
+                                'fecha_emision': element.fecha_emision,
                                 'monto_total': element.monto_total,
                                 'id_moneda': element.id_moneda,
-                                'nro_comprobante':(element.nro_comprobante !=null && element.nro_comprobante.length > 0?element.nro_comprobante:""),
-                                'nameFile':element.archivo,
-                                'accion':'',
+                                'nro_comprobante': (element.nro_comprobante != null && element.nro_comprobante.length > 0 ? element.nro_comprobante : ""),
+                                'nameFile': element.archivo,
+                                'accion': '',
                                 'file': null
-                        }
+                            }
                         );
 
-                            htmlAdjunto+= '<tr id="'+element.id_adjunto+'">'
-                                htmlAdjunto+='<td>'
-                                    htmlAdjunto+='<a href="/files/logistica/comporbantes_proveedor/'+element.archivo+'" target="_blank">'+element.archivo+'</a>'
-                                htmlAdjunto+='</td>'
+                        htmlAdjunto += '<tr id="' + element.id_adjunto + '">'
+                        htmlAdjunto += '<td>'
+                        htmlAdjunto += '<a href="/files/logistica/comporbantes_proveedor/' + element.archivo + '" target="_blank">' + element.archivo + '</a>'
+                        htmlAdjunto += '</td>'
 
-                                htmlAdjunto+='<td>'
-                                    htmlAdjunto+='<span name="fecha_emision_text">'+element.fecha_emision+'</span><input type="date" class="form-control handleChangeFechaEmision oculto" name="fecha_emision" placeholder="Fecha emisión"  value="'+element.fecha_emision+'">'
-                                htmlAdjunto+='</td>'
+                        htmlAdjunto += '<td>'
+                        htmlAdjunto += '<span name="fecha_emision_text">' + element.fecha_emision + '</span><input type="date" class="form-control handleChangeFechaEmision oculto" name="fecha_emision" placeholder="Fecha emisión"  value="' + element.fecha_emision + '">'
+                        htmlAdjunto += '</td>'
 
-                                htmlAdjunto+='<td>'
-                                    htmlAdjunto+='<span name="nro_comprobante_text">'+(element.nro_comprobante !=null && element.nro_comprobante.length > 0?element.nro_comprobante:"")+'</span><input type="text" class="form-control handleChangeNroComprobante oculto" name="nro_comprobante"  placeholder="Nro comprobante" value="'+element.nro_comprobante+'">'
-                                htmlAdjunto+='</td>'
+                        htmlAdjunto += '<td>'
+                        htmlAdjunto += '<span name="nro_comprobante_text">' + (element.nro_comprobante != null && element.nro_comprobante.length > 0 ? element.nro_comprobante : "") + '</span><input type="text" class="form-control handleChangeNroComprobante oculto" name="nro_comprobante"  placeholder="Nro comprobante" value="' + element.nro_comprobante + '">'
+                        htmlAdjunto += '</td>'
 
-                                htmlAdjunto+='<td>'
-                                    htmlAdjunto+=''+element.descripcion_categoria_adjunto+''
-                                htmlAdjunto+='</td>'
-                                htmlAdjunto+='<td>'
-                                    htmlAdjunto+='<div style="display:flex;"><button type="button" class="btn btn-sm btn-warning boton handleClickEditarAdjuntoProveedor" title="Editar" data-id-adjunto="'+element.id_adjunto+'" '+(![27,5,122,14,17,3].includes(auth_user.id_usuario)?'disables':'')+'> <i class="fas fa-edit"></i> </button>'
-                                    htmlAdjunto+='<button type="button" class="btn btn-sm btn-danger boton handleClickAnularAdjuntoProveedor" title="Anular" data-id-adjunto="'+element.id_adjunto+'" '+(![27,5,122,14,17,3].includes(auth_user.id_usuario)?'disables':'')+'> <i class="fas fa-trash"></i> </button></div>'
-                                htmlAdjunto+='</td>'
-                            htmlAdjunto+= '</tr>'
+                        htmlAdjunto += '<td>'
+                        htmlAdjunto += '' + element.descripcion_categoria_adjunto + ''
+                        htmlAdjunto += '</td>'
+                        htmlAdjunto += '<td>'
+                        htmlAdjunto += '<div style="display:flex;"><button type="button" class="btn btn-sm btn-warning boton handleClickEditarAdjuntoProveedor" title="Editar" data-id-adjunto="' + element.id_adjunto + '" ' + (![27, 5, 122, 14, 17, 3].includes(auth_user.id_usuario) ? 'disables' : '') + '> <i class="fas fa-edit"></i> </button>'
+                        htmlAdjunto += '<button type="button" class="btn btn-sm btn-danger boton handleClickAnularAdjuntoProveedor" title="Anular" data-id-adjunto="' + element.id_adjunto + '" ' + (![27, 5, 122, 14, 17, 3].includes(auth_user.id_usuario) ? 'disables' : '') + '> <i class="fas fa-trash"></i> </button></div>'
+                        htmlAdjunto += '</td>'
+                        htmlAdjunto += '</tr>'
 
                     });
-                }else{
+                } else {
                     htmlAdjunto = `<tr>
                     <td style="text-align:center;" colspan="3">Sin adjuntos para mostrar</td>
                     </tr>`;
@@ -248,18 +217,18 @@ class ListaOrdenView {
                 if (res.data.length > 0) {
                     (res.data).forEach(element => {
 
-                            htmlPago+= '<tr id="'+element.id_orden+'">'
+                        htmlPago += '<tr id="' + element.id_orden + '">'
 
-                                element.adjuntos.forEach(nombreAdjunto => {
-                                    htmlPago+='<td>'
-                                        htmlPago+='<a href="/files/tesoreria/pagos/'+nombreAdjunto+'" target="_blank">'+nombreAdjunto+'</a>'
-                                    htmlPago+='</td>'
+                        element.adjuntos.forEach(nombreAdjunto => {
+                            htmlPago += '<td>'
+                            htmlPago += '<a href="/files/tesoreria/pagos/' + nombreAdjunto + '" target="_blank">' + nombreAdjunto + '</a>'
+                            htmlPago += '</td>'
 
-                                });
-                            htmlPago+= '</tr>'
+                        });
+                        htmlPago += '</tr>'
 
                     });
-                }else{
+                } else {
                     htmlPago = `<tr>
                     <td style="text-align:center;" colspan="3">Sin adjuntos para mostrar</td>
                     </tr>`;
@@ -329,8 +298,8 @@ class ListaOrdenView {
         document.querySelector("div[id='contenedor-tabla-nivel-cabecera']").classList.remove('oculto');
         document.querySelector("div[id='contenedor-tabla-nivel-item']").classList.add('oculto');
         // if (this.updateContadorFiltroOrdenesElaboradas() == 0) {
-            // this.obtenerListaOrdenesElaboradas('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
-            this.mostrarListaOrdenesElaboradas();
+        // this.obtenerListaOrdenesElaboradas('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
+        this.mostrarListaOrdenesElaboradas();
 
         // }
     }
@@ -340,9 +309,35 @@ class ListaOrdenView {
         document.querySelector("div[id='contenedor-tabla-nivel-cabecera']").classList.add('oculto');
         document.querySelector("div[id='contenedor-tabla-nivel-item']").classList.remove('oculto');
         // if (this.updateContadorFiltroDetalleOrdenesElaboradas() == 0) {
-            // this.obtenerListaDetalleOrdenesElaboradas('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
-            this.mostrarListaItemsOrdenesElaboradas();
+        // this.obtenerListaDetalleOrdenesElaboradas('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
+        this.mostrarListaItemsOrdenesElaboradas();
         // }
+    }
+
+
+    actualizarFiltros = () => {
+        let actualizar = false;
+        $('#modalFiltrosListaOrdenes').find('input[type=checkbox]').change(function () {
+            actualizar = true;
+        });
+
+        $("#modalFiltrosListaOrdenes").on("hidden.bs.modal", () => {
+            if (actualizar) {
+                actualizar = false;
+                this.generarFiltros();
+                // this.tipoVistaPorCabecera(true);
+            }
+        });
+    }
+
+    generarFiltros() {
+        this.listaOrdenCtrl.generarFiltros($('#formulario-filtros_ordenes_elaboradas').serializeArray()).then((res) => {
+            // console.log(res);
+            this.tipoVistaPorCabecera(true);
+
+        }).catch((err) => {
+            console.log(err)
+        })
     }
 
 
@@ -368,8 +363,8 @@ class ListaOrdenView {
                     <td style="border: none;">${element.descripcion ? element.descripcion : (element.descripcion_adicional ? element.descripcion_adicional : '')}</td>
                     <td style="border: none;">${element.cantidad ? element.cantidad : ''}</td>
                     <td style="border: none;">${element.abreviatura ? element.abreviatura : ''}</td>
-                    <td style="border: none;">${element.moneda_simbolo}${$.number(element.precio, 2,".",",")}</td>
-                    <td style="border: none;">${element.moneda_simbolo}${$.number((element.cantidad * element.precio), 2,".",",")}</td>
+                    <td style="border: none;">${element.moneda_simbolo}${$.number(element.precio, 2, ".", ",")}</td>
+                    <td style="border: none;">${element.moneda_simbolo}${$.number((element.cantidad * element.precio), 2, ".", ",")}</td>
                     <td style="border: none; text-align:center;">${stock_comprometido != null ? stock_comprometido : ''}</td>
 
                     </tr>`;
@@ -784,7 +779,7 @@ class ListaOrdenView {
 
         // document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").value = '';
         // document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value = '';
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='condicion_de_envio_pago']").textContent="";
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='condicion_de_envio_pago']").textContent = "";
 
         let selectCuenta = document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_cuenta']");
         if (selectCuenta != null) {
@@ -805,30 +800,30 @@ class ListaOrdenView {
 
     modalEnviarOrdenAPago(obj) {
 
-            document.querySelector("select[name='numero_de_cuotas']").removeAttribute("disabled");
-            document.querySelector("input[name='pagoEnCuotasCheckbox']").removeAttribute("disabled");
-        tempArchivoAdjuntoRequerimientoCabeceraList=[];
+        document.querySelector("select[name='numero_de_cuotas']").removeAttribute("disabled");
+        document.querySelector("input[name='pagoEnCuotasCheckbox']").removeAttribute("disabled");
+        tempArchivoAdjuntoRequerimientoCabeceraList = [];
         $(":file").filestyle('clear');
         this.limpiarTabla('adjuntosCabecera');
         this.limpiarTabla('historialEnviosAPagoLogistica');
         $('#form-enviar_solicitud_pago')[0].reset();
-        document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='estadoHistorialEnvioAPagoLogistica']").textContent= '';
-        document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='sumaMontoTotalPagado']").textContent= '';
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] textarea[name='comentario']").value= '';
+        document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='estadoHistorialEnvioAPagoLogistica']").textContent = '';
+        document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='sumaMontoTotalPagado']").textContent = '';
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] textarea[name='comentario']").value = '';
 
         document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='codigo_orden']").textContent = '';
         this.limpiarFormEnviarOrdenAPago();
         this.restablecerValoresPorDefectoFormEnviarOrdenAPago();
 
         document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='codigo_orden']").textContent = obj.dataset.codigoOrden;
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_prioridad']").value = obj.dataset.idPrioridadPago>0?obj.dataset.idPrioridadPago:1;
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_prioridad']").value = obj.dataset.idPrioridadPago > 0 ? obj.dataset.idPrioridadPago : 1;
 
         $.ajax({
             type: 'GET',
             url: `calcular-prioridad/${obj.dataset.idOrdenCompra}`,
             dataType: 'JSON',
             beforeSend: (data) => {
-        },
+            },
             success(response) {
                 document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_prioridad']").value = response.prioridad_id;
             },
@@ -841,15 +836,15 @@ class ListaOrdenView {
 
 
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_orden_compra']").value = obj.dataset.idOrdenCompra;
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").setAttribute("data-monto-total-orden",obj.dataset.montoTotalOrden);
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").value = $.number(obj.dataset.montoTotalOrden,2,".",",");
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value =parseFloat(obj.dataset.montoTotalOrden)>0 ?(parseFloat(obj.dataset.montoTotalOrden)).toFixed(2):0;
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value =(parseInt(obj.dataset.numeroDeCuotas));
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").setAttribute("data-monto-total-orden", obj.dataset.montoTotalOrden);
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").value = $.number(obj.dataset.montoTotalOrden, 2, ".", ",");
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value = parseFloat(obj.dataset.montoTotalOrden) > 0 ? (parseFloat(obj.dataset.montoTotalOrden)).toFixed(2) : 0;
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value = (parseInt(obj.dataset.numeroDeCuotas));
 
         // document.querySelector("div[id='modal-enviar-solicitud-pago'] div[name='simboloMoneda']").textContent = obj.dataset.simboloMonedaOrden;
-        $( "div[name*='simboloMoneda']" ).text(obj.dataset.simboloMonedaOrden);
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_moneda']").value =obj.dataset.idMonedaOrden;
-        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='simbolo_moneda']").value =obj.dataset.simboloMonedaOrden;
+        $("div[name*='simboloMoneda']").text(obj.dataset.simboloMonedaOrden);
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_moneda']").value = obj.dataset.idMonedaOrden;
+        document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='simbolo_moneda']").value = obj.dataset.simboloMonedaOrden;
 
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_proveedor']").value = obj.dataset.idProveedor;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_cuenta_contribuyente']").value = obj.dataset.idCuentaPrincipal;
@@ -884,10 +879,10 @@ class ListaOrdenView {
                 console.log(obj.dataset);
                 obtenerContribuyente(obj.dataset.idContribuyentePago);
 
-                obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyentePago, (parseInt(obj.dataset.idCuentaContribuyentePago)>0?obj.dataset.idCuentaContribuyentePago:null ));
+                obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyentePago, (parseInt(obj.dataset.idCuentaContribuyentePago) > 0 ? obj.dataset.idCuentaContribuyentePago : null));
             }
         } else {
-            this.obtenerContribuyentePorIdProveedor(obj.dataset.idProveedor,  obj.dataset.idCuentaContribuyentePago);
+            this.obtenerContribuyentePorIdProveedor(obj.dataset.idProveedor, obj.dataset.idCuentaContribuyentePago);
         }
 
         // this.obtenerMontosParaPago(obj.dataset.idOrdenCompra);
@@ -901,47 +896,47 @@ class ListaOrdenView {
 
                     tempArchivoAdjuntoRequerimientoCabeceraList.push(
                         {
-                            'id':element.id_adjunto,
-                            'category':element.categoria_adjunto_id,
-                            'fecha_emision':element.fecha_emision,
-                            'nro_comprobante':(element.nro_comprobante !=null && element.nro_comprobante.length > 0?element.nro_comprobante:""),
-                            'id_moneda':element.id_moneda,
-                            'monto_total':element.monto_total,
-                            'nameFile':element.archivo,
-                            'accion':'',
-                            'file':[element.id_adjunto]
-                    }
+                            'id': element.id_adjunto,
+                            'category': element.categoria_adjunto_id,
+                            'fecha_emision': element.fecha_emision,
+                            'nro_comprobante': (element.nro_comprobante != null && element.nro_comprobante.length > 0 ? element.nro_comprobante : ""),
+                            'id_moneda': element.id_moneda,
+                            'monto_total': element.monto_total,
+                            'nameFile': element.archivo,
+                            'accion': '',
+                            'file': [element.id_adjunto]
+                        }
                     );
 
-                        htmlAdjunto+= '<tr id="'+element.id_adjunto+'">'
-                            htmlAdjunto+='<td>'
-                                htmlAdjunto+='<a href="/files/logistica/comporbantes_proveedor/'+element.archivo+'" target="_blank">'+element.archivo+'</a>'
-                            htmlAdjunto+='</td>'
+                    htmlAdjunto += '<tr id="' + element.id_adjunto + '">'
+                    htmlAdjunto += '<td>'
+                    htmlAdjunto += '<a href="/files/logistica/comporbantes_proveedor/' + element.archivo + '" target="_blank">' + element.archivo + '</a>'
+                    htmlAdjunto += '</td>'
 
-                            htmlAdjunto+='<td>'
-                                htmlAdjunto+='<span name="fecha_emision_text">'+element.fecha_emision+'</span><input type="date" class="form-control handleChangeFechaEmision oculto" name="fecha_emision" placeholder="Fecha emisión"  value="'+element.fecha_emision+'">'
-                            htmlAdjunto+='</td>'
+                    htmlAdjunto += '<td>'
+                    htmlAdjunto += '<span name="fecha_emision_text">' + element.fecha_emision + '</span><input type="date" class="form-control handleChangeFechaEmision oculto" name="fecha_emision" placeholder="Fecha emisión"  value="' + element.fecha_emision + '">'
+                    htmlAdjunto += '</td>'
 
-                            htmlAdjunto+='<td>'
-                                htmlAdjunto+='<span name="nro_comprobante_text">'+(element.nro_comprobante !=null && element.nro_comprobante.length > 0?element.nro_comprobante:"")+'</span><input type="text" class="form-control handleChangeNroComprobante oculto" name="nro_comprobante"  placeholder="Nro comprobante" value="'+element.nro_comprobante+'">'
-                            htmlAdjunto+='</td>'
+                    htmlAdjunto += '<td>'
+                    htmlAdjunto += '<span name="nro_comprobante_text">' + (element.nro_comprobante != null && element.nro_comprobante.length > 0 ? element.nro_comprobante : "") + '</span><input type="text" class="form-control handleChangeNroComprobante oculto" name="nro_comprobante"  placeholder="Nro comprobante" value="' + element.nro_comprobante + '">'
+                    htmlAdjunto += '</td>'
 
-                            htmlAdjunto+='<td>'
-                                htmlAdjunto+=''+element.descripcion_categoria_adjunto+''
-                            htmlAdjunto+='</td>'
+                    htmlAdjunto += '<td>'
+                    htmlAdjunto += '' + element.descripcion_categoria_adjunto + ''
+                    htmlAdjunto += '</td>'
 
-                            htmlAdjunto+='<td>'
-                            htmlAdjunto+=''+(element.simbolo_moneda!=null ? element.simbolo_moneda:'') + (element.monto_total !=null ? element.monto_total:'')
-                            htmlAdjunto+='</td>'
+                    htmlAdjunto += '<td>'
+                    htmlAdjunto += '' + (element.simbolo_moneda != null ? element.simbolo_moneda : '') + (element.monto_total != null ? element.monto_total : '')
+                    htmlAdjunto += '</td>'
 
-                            htmlAdjunto+='<td>'
-                                htmlAdjunto+='<div style="display:flex;"><button type="button" class="btn btn-sm btn-warning boton handleClickEditarAdjuntoProveedor" title="Editar" data-id-adjunto="'+element.id_adjunto+'" '+(![27,5,122,14,17,3].includes(auth_user.id_usuario)?'disables':'')+'> <i class="fas fa-edit"></i> </button>'
-                                htmlAdjunto+='<button type="button" class="btn btn-sm btn-danger boton handleClickAnularAdjuntoProveedor" title="Anular" data-id-adjunto="'+element.id_adjunto+'" '+(![27,5,122,14,17,3].includes(auth_user.id_usuario)?'disables':'')+'> <i class="fas fa-trash"></i> </button></div>'
-                            htmlAdjunto+='</td>'
-                        htmlAdjunto+= '</tr>'
+                    htmlAdjunto += '<td>'
+                    htmlAdjunto += '<div style="display:flex;"><button type="button" class="btn btn-sm btn-warning boton handleClickEditarAdjuntoProveedor" title="Editar" data-id-adjunto="' + element.id_adjunto + '" ' + (![27, 5, 122, 14, 17, 3].includes(auth_user.id_usuario) ? 'disables' : '') + '> <i class="fas fa-edit"></i> </button>'
+                    htmlAdjunto += '<button type="button" class="btn btn-sm btn-danger boton handleClickAnularAdjuntoProveedor" title="Anular" data-id-adjunto="' + element.id_adjunto + '" ' + (![27, 5, 122, 14, 17, 3].includes(auth_user.id_usuario) ? 'disables' : '') + '> <i class="fas fa-trash"></i> </button></div>'
+                    htmlAdjunto += '</td>'
+                    htmlAdjunto += '</tr>'
 
                 });
-            }else{
+            } else {
                 htmlAdjunto = `<tr>
                 <td style="text-align:center;" colspan="3">Sin adjuntos para mostrar</td>
                 </tr>`;
@@ -957,38 +952,38 @@ class ListaOrdenView {
             // console.log(res);
             let htmlTable = '';
 
-            let sumaMontoTotalMontoCuota=0;
+            let sumaMontoTotalMontoCuota = 0;
 
             console.log(res);
             if (res.hasOwnProperty('detalle') && res.detalle.length > 0) {
-                let contadorCuota=0;
-                (res.detalle).forEach((element,index) => {
-                    if(element.id_estado !=7){
+                let contadorCuota = 0;
+                (res.detalle).forEach((element, index) => {
+                    if (element.id_estado != 7) {
                         contadorCuota++;
-                        sumaMontoTotalMontoCuota+=parseFloat(element.monto_cuota);
-                    let enlaceAdjunto=[];
-                        htmlTable+= '<tr id="'+element.id_pago_cuota_detalle+'">'
-                            htmlTable+='<td>'
-                                htmlTable+= contadorCuota;
-                            htmlTable+='</td>'
+                        sumaMontoTotalMontoCuota += parseFloat(element.monto_cuota);
+                        let enlaceAdjunto = [];
+                        htmlTable += '<tr id="' + element.id_pago_cuota_detalle + '">'
+                        htmlTable += '<td>'
+                        htmlTable += contadorCuota;
+                        htmlTable += '</td>'
 
-                            htmlTable+='<td>'
-                                htmlTable+= $.number(element.monto_cuota,2,".",",");
-                            htmlTable+='</td>'
+                        htmlTable += '<td>'
+                        htmlTable += $.number(element.monto_cuota, 2, ".", ",");
+                        htmlTable += '</td>'
 
-                            htmlTable+='<td>'
-                                htmlTable+= element.observacion??'';
-                            htmlTable+='</td>'
+                        htmlTable += '<td>'
+                        htmlTable += element.observacion ?? '';
+                        htmlTable += '</td>'
 
-                            htmlTable+='<td>'
-                                htmlTable+= element.fecha_registro
-                            htmlTable+='</td>'
-                            htmlTable+='<td>'
+                        htmlTable += '<td>'
+                        htmlTable += element.fecha_registro
+                        htmlTable += '</td>'
+                        htmlTable += '<td>'
 
-                                if(element.adjuntos.length >0){
-                                    (element.adjuntos).forEach(adjunto => {
-                                        // enlaceAdjunto.push(`<a href="/files/logistica/comporbantes_proveedor/${adjunto.archivo}" target="_blank">${adjunto.archivo}</a>`);
-                                        enlaceAdjunto.push( `<a data-toggle="collapse" href="#collapse${adjunto.id_adjunto}" aria-expanded="false" aria-controls="collapse${adjunto.id_adjunto}">
+                        if (element.adjuntos.length > 0) {
+                            (element.adjuntos).forEach(adjunto => {
+                                // enlaceAdjunto.push(`<a href="/files/logistica/comporbantes_proveedor/${adjunto.archivo}" target="_blank">${adjunto.archivo}</a>`);
+                                enlaceAdjunto.push(`<a data-toggle="collapse" href="#collapse${adjunto.id_adjunto}" aria-expanded="false" aria-controls="collapse${adjunto.id_adjunto}">
                                         ${adjunto.archivo}</a>
                                         <i class="fas fa-caret-left"></i>
                                         <div class="collapse" id="collapse${adjunto.id_adjunto}">
@@ -1001,24 +996,24 @@ class ListaOrdenView {
                                         <dt>Fecha emisión</dt>
                                         <dd>${adjunto.fecha_emision}</dd>
                                         <dt>Monto</dt>
-                                        <dd>${adjunto.moneda !=null?adjunto.moneda.simbolo:''} ${adjunto.monto_total=null?adjunto.monto_total:''}</dd>
+                                        <dd>${adjunto.moneda != null ? adjunto.moneda.simbolo : ''} ${adjunto.monto_total = null ? adjunto.monto_total : ''}</dd>
                                         </dl>
                                         </div>`);
-                                    });
-                                }
+                            });
+                        }
 
-                                htmlTable+=enlaceAdjunto.toString().replace(",","<br>");
-                            htmlTable+='</td>'
-                        htmlTable+= '</tr>'
+                        htmlTable += enlaceAdjunto.toString().replace(",", "<br>");
+                        htmlTable += '</td>'
+                        htmlTable += '</tr>'
                     }
                 });
                 // console.log(obj.dataset.numeroDeEnviosAPago);
-                if(obj.dataset.numeroDeEnviosAPago>0){
-                    document.querySelector("select[name='numero_de_cuotas']").setAttribute("disabled",true);
-                    document.querySelector("input[name='pagoEnCuotasCheckbox']").setAttribute("disabled",true);
+                if (obj.dataset.numeroDeEnviosAPago > 0) {
+                    document.querySelector("select[name='numero_de_cuotas']").setAttribute("disabled", true);
+                    document.querySelector("input[name='pagoEnCuotasCheckbox']").setAttribute("disabled", true);
                 }
 
-            }else{
+            } else {
                 htmlTable = `<tr>
                 <td style="text-align:center;" colspan="5">Sin data para mostrar</td>
                 </tr>`;
@@ -1026,12 +1021,12 @@ class ListaOrdenView {
             }
             $('#form-enviar_solicitud_pago #body_historial_de_envios_a_pago_en_cuotas').html(htmlTable)
 
-            document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='sumaMontoTotalPagado']").textContent= sumaMontoTotalMontoCuota;
+            document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='sumaMontoTotalPagado']").textContent = sumaMontoTotalMontoCuota;
 
-            if(parseFloat(sumaMontoTotalMontoCuota) == parseFloat(document.querySelector("input[name='monto_total_orden']").dataset.montoTotalOrden)){
-                document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='estadoHistorialEnvioAPagoLogistica']").textContent= "Cuotas completadas, Orden pagada";
-            }else{
-                document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='estadoHistorialEnvioAPagoLogistica']").textContent= '';
+            if (parseFloat(sumaMontoTotalMontoCuota) == parseFloat(document.querySelector("input[name='monto_total_orden']").dataset.montoTotalOrden)) {
+                document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='estadoHistorialEnvioAPagoLogistica']").textContent = "Cuotas completadas, Orden pagada";
+            } else {
+                document.querySelector("table[id='historialEnviosAPagoLogistica'] span[name='estadoHistorialEnvioAPagoLogistica']").textContent = '';
             }
 
 
@@ -1051,38 +1046,38 @@ class ListaOrdenView {
         });
     }
 
-    updateLabelModalEnviarSolicitudPago(tienePagoEnCuotas){
+    updateLabelModalEnviarSolicitudPago(tienePagoEnCuotas) {
 
-        if(tienePagoEnCuotas ===true){
+        if (tienePagoEnCuotas === true) {
             document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='pagoEnCuotasCheckbox']").checked = true;
-            document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").setAttribute("readOnly",true);
+            document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").setAttribute("readOnly", true);
             document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").removeAttribute("disabled");
             document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='condicion_de_envio_pago']").textContent = "(Pago en cuotas)";
             document.querySelector("div[id='modal-enviar-solicitud-pago'] div[id='group-historialEnviosAPagoLogistica']").removeAttribute("hidden");
-            document.querySelector("div[id='modal-enviar-solicitud-pago'] div[id='group-adjuntosLogisticosRegistrados']").setAttribute("hidden",true);
-        }else{
+            document.querySelector("div[id='modal-enviar-solicitud-pago'] div[id='group-adjuntosLogisticosRegistrados']").setAttribute("hidden", true);
+        } else {
             document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='pagoEnCuotasCheckbox']").checked = false;
             document.querySelector("div[id='modal-enviar-solicitud-pago'] span[id='condicion_de_envio_pago']").textContent = "";
-            document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").setAttribute("disabled",true);
+            document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").setAttribute("disabled", true);
             document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").removeAttribute("readOnly");
-            document.querySelector("div[id='modal-enviar-solicitud-pago'] div[id='group-historialEnviosAPagoLogistica']").setAttribute("hidden",true);
+            document.querySelector("div[id='modal-enviar-solicitud-pago'] div[id='group-historialEnviosAPagoLogistica']").setAttribute("hidden", true);
             document.querySelector("div[id='modal-enviar-solicitud-pago'] div[id='group-adjuntosLogisticosRegistrados']").removeAttribute("hidden");
 
         }
     }
 
-    updateMontoAPagarEnCuotas(){
-        let numeroDeCuotas = document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value??0;
+    updateMontoAPagarEnCuotas() {
+        let numeroDeCuotas = document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value ?? 0;
         // console.log(numeroDeCuotas);
-        if (numeroDeCuotas > 1){
-            let cuota= parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden) / parseInt(numeroDeCuotas);
-            document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value=(cuota);
+        if (numeroDeCuotas > 1) {
+            let cuota = parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden) / parseInt(numeroDeCuotas);
+            document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value = (cuota);
         }
 
-        if (numeroDeCuotas == 1){
+        if (numeroDeCuotas == 1) {
             document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").removeAttribute("readonly");
-        }else{
-            document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").setAttribute("readonly",true);
+        } else {
+            document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").setAttribute("readonly", true);
 
         }
     }
@@ -1101,7 +1096,7 @@ class ListaOrdenView {
 
                     if (response.data.lista_requerimientos.length > 0) {
 
-                        document.querySelector(nombreModalPadre+" select[name='tipo_impuesto']").value= response.data.tipo_impuesto;
+                        document.querySelector(nombreModalPadre + " select[name='tipo_impuesto']").value = response.data.tipo_impuesto;
 
                         (response.data.lista_requerimientos).forEach(requerimiento => {
                             liList += `<li><h5><span class="label label-default"><a href="/necesidades/requerimiento/listado/imprimir-requerimiento-pdf/${requerimiento.id_requerimiento}/0" target="blank_" style="color:#fff">${requerimiento.codigo}</a></span></h5></li>`;
@@ -1120,7 +1115,7 @@ class ListaOrdenView {
                     }
 
                 } else {
-                    document.querySelector(nombreModalPadre+" select[name='tipo_impuesto']").value = "";
+                    document.querySelector(nombreModalPadre + " select[name='tipo_impuesto']").value = "";
                     Lobibox.notify(response.tipo_estado, {
                         size: "mini",
                         rounded: true,
@@ -1184,12 +1179,12 @@ class ListaOrdenView {
     }
 
 
-    obtenerContribuyentePorIdProveedor(idProveedor, idCuenta=null) {
+    obtenerContribuyentePorIdProveedor(idProveedor, idCuenta = null) {
         this.getContribuyentePorIdProveedor(idProveedor).then((res) => {
             // console.log(res);
             if (res.tipo_estado == 'success') {
                 tempDataProveedorParaPago = res.data;
-                this.llenarInputsDeDestinatario(res.data,idCuenta);
+                this.llenarInputsDeDestinatario(res.data, idCuenta);
             } else {
                 Lobibox.notify(res.tipo_estado, {
                     title: false,
@@ -1206,7 +1201,7 @@ class ListaOrdenView {
     }
 
 
-    llenarInputsDeDestinatario(data,idCuenta=null) {
+    llenarInputsDeDestinatario(data, idCuenta = null) {
         // console.log(data);
         document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='id_tipo_destinatario']").value = 2;
         document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_contribuyente']").value = data.id_contribuyente != '' && data.id_contribuyente != null ? data.id_contribuyente : '';
@@ -1226,7 +1221,7 @@ class ListaOrdenView {
 
 
         if (data.id_contribuyente > 0) {
-            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (idCuenta > 0? idCuenta:null));
+            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (idCuenta > 0 ? idCuenta : null));
         }
     }
 
@@ -1263,20 +1258,20 @@ class ListaOrdenView {
                 continuar = true;
             }
         }
-        if (( document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value >1) && (parseInt(document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value) == (parseInt(document.querySelector("div[id='modal-enviar-solicitud-pago'] table[id='historialEnviosAPagoLogistica'] tbody").childElementCount)))){
+        if ((document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value > 1) && (parseInt(document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value) == (parseInt(document.querySelector("div[id='modal-enviar-solicitud-pago'] table[id='historialEnviosAPagoLogistica'] tbody").childElementCount)))) {
             menseje.push('No se puede superar el limite de cuota establecida');
             continuar = false;
         }
-        if (( document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value ==1) && (parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value) > parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden)) ){
+        if ((document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value == 1) && (parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value) > parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden))) {
             menseje.push('No se puede enviar un monto mayor al total de la orden');
             continuar = false;
 
         }
-        if (( document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value ==1)
-        && (
-            parseFloat((document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value).replace(',','')) +
-            parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] span[name='sumaMontoTotalPagado']").textContent)
-            > parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden))){
+        if ((document.querySelector("div[id='modal-enviar-solicitud-pago'] select[name='numero_de_cuotas']").value == 1)
+            && (
+                parseFloat((document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value).replace(',', '')) +
+                parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] span[name='sumaMontoTotalPagado']").textContent)
+                > parseFloat(document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_total_orden']").dataset.montoTotalOrden))) {
             menseje.push('El "monto a enviar" más(+) "la suma de las cutas" supera el monto total de la orden');
             continuar = false;
 
@@ -1297,17 +1292,17 @@ class ListaOrdenView {
 
         let selec_cuenta = $('#form-enviar_solicitud_pago').find('select[name="id_cuenta"]').val();
 
-        if (parseInt(selec_cuenta)>0) {
+        if (parseInt(selec_cuenta) > 0) {
 
             if (this.validarFormularioEnvioOrdenAPago() && selec_cuenta) {
 
                 let formData = new FormData($('#form-enviar_solicitud_pago')[0]);
-                if(tempArchivoAdjuntoRequerimientoCabeceraList.length>0){
+                if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
                     formData.append(`archivoAdjuntoRequerimientoObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoCabeceraList));
                     formData.append(`pagoEnCuotasCheckbox`, document.querySelector("input[name='pagoEnCuotasCheckbox']").checked);
                     tempArchivoAdjuntoRequerimientoCabeceraList.forEach(element => {
                         formData.append(`archivo_adjunto_list[]`, element.file);
-                });
+                    });
                 }
                 $.ajax({
                     type: 'POST',
@@ -1386,7 +1381,7 @@ class ListaOrdenView {
                 });
             }
 
-        }else{
+        } else {
             Swal.fire(
                 'Informativo',
                 'Debe seleccionar una cuanta bancaria',
@@ -1428,9 +1423,9 @@ class ListaOrdenView {
     }
 
     mostrarInfoAdicionalTipoImpuesto() {
-            $('#modal-info-adicional-tipo-impuesto').modal({
-                show: true
-            });
+        $('#modal-info-adicional-tipo-impuesto').modal({
+            show: true
+        });
     }
 
     buscarDestinatarioPorNumeroDeDocumento(obj) {
@@ -1752,7 +1747,7 @@ class ListaOrdenView {
         if (obj.dataset.idPersona > 0) {
             obtenerCuentasBancariasPersona(obj.dataset.idPersona);
         } else if (obj.dataset.idContribuyente > 0) {
-            obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyente,(idCuentaEnvioPago >0 ?idCuentaEnvioPago:null));
+            obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyente, (idCuentaEnvioPago > 0 ? idCuentaEnvioPago : null));
         } else {
 
             Swal.fire(
@@ -1766,28 +1761,37 @@ class ListaOrdenView {
     // ###============ Fin enviar orden a pago ============###
 
 
-    mostrarListaOrdenesElaboradas(filtro = 'SIN_FILTRO') {
+
+    abrirModalFiltrosListaOrdenes() {
+        $('#modalFiltrosListaOrdenes').modal({ show: true, backdrop: 'true' });
+
+
+    }
+
+    mostrarListaOrdenesElaboradas() {
 
         let that = this;
-        let fecha_actual = new Date();
-        let fecha_inicio = "01-01-"+fecha_actual.getFullYear();
-        fecha_actual = moment().format("DD-MM-YYYY");
+        // let fecha_inicio = this.fecha_inicio;
+        // let fecha_actual = this.fecha_fin;
+        // console.log(this.fecha_inicio);
+        // console.log(this.fecha_fin);
+        // fecha_actual = moment().format("DD-MM-YYYY");
 
         vista_extendida();
         var vardataTables = funcDatatables();
-        // const button_filtro = (array_accesos.find(element => element === 287)?{
-        //         text: '<span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtros : 0',
-        //         attr: {
-        //             id: 'btnFiltrosListaOrdenesElaboradas',
-        //             disabled: true
-        //         },
-        //         action: () => {
-        //             // this.abrirModalFiltrosRequerimientosElaborados();
+        const button_filtro = (array_accesos.find(element => element === 287) ? {
+            text: '<span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtros',
+            attr: {
+                id: 'btnFiltrosListaOrdenesElaboradas',
+                disabled: false
+            },
+            action: () => {
+                this.abrirModalFiltrosListaOrdenes();
 
-        //         },
-        //         className: 'btn-default btn-sm'
-        //     }:[]),
-          const  button_descargar_excel = (array_accesos.find(element => element === 244)?{
+            },
+            className: 'btn-default btn-sm'
+        } : []),
+            button_descargar_excel = (array_accesos.find(element => element === 244) ? {
                 text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar',
                 attr: {
                     id: 'btnDescargarListaOrdenesElaboradasExcel',
@@ -1799,10 +1803,10 @@ class ListaOrdenView {
 
                 },
                 className: 'btn-default btn-sm'
-            }:[]);
+            } : []);
         $tablaListaOrdenesElaborados = $('#listaOrdenes').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_descargar_excel],
+            'buttons': [button_descargar_excel, button_filtro],
             'language': vardataTables[0],
             'order': [6, 'desc'],
             'bLengthChange': false,
@@ -1811,11 +1815,10 @@ class ListaOrdenView {
             'ajax': {
                 'url': 'lista-ordenes-elaboradas',
                 'type': 'POST',
-                'data': {
-                    'filtro': filtro,
-                    'fecha_inicio':fecha_inicio,
-                    'fecha_actual':fecha_actual,
+                'data': function (params) {
+                    return Object.assign(params, Util.objectifyForm($('#formFiltros').serializeArray()))
                 },
+                'headers': { 'X-CSRF-TOKEN': this.token },
                 beforeSend: data => {
                     $("#listaOrdenes").LoadingOverlay("show", {
                         imageAutoResize: true,
@@ -1826,43 +1829,45 @@ class ListaOrdenView {
             },
             'columns': [
                 {
-                    'data': 'codigo','className': 'text-center',
+                    'data': 'codigo', 'className': 'text-center',
                     render: function (data, type, row) {
                         return `<label class="lbl-codigo handleClickAbrirOrden" title="Ir a orden" data-id-orden="${row.id}">${row.codigo}</label>`;
                     }
                 },
                 { 'data': 'codigo_softlink', 'name': 'codigo_softlink' },
                 {
-                'data': 'data_codigo_requerimiento','className': 'text-center', 'defaultContent':""
-                // render: function (data, type, row) {
+                    'data': 'data_codigo_requerimiento', 'className': 'text-center', 'defaultContent': ""
+                    // render: function (data, type, row) {
                     // if (data != null && data.length > 0) {
                     //     return (data).map(e => (`<a href="/necesidades/requerimiento/elaboracion/index?id=${e.id_requerimiento}" target="_blank" title="Abrir Requerimiento">${e.codigo_requerimiento}</a>`)).join(",");
                     // } else {
                     //     return 'Sin Código';
                     // }
-                // }
-            },
+                    // }
+                },
                 {
-                    'data': 'data_codigo_oportunidad','className': 'text-center', 'defaultContent':""
+                    'data': 'data_codigo_oportunidad', 'className': 'text-center', 'defaultContent': ""
                     // render: function (data) {
-                        // if (data != null && data.length > 0) {
+                    // if (data != null && data.length > 0) {
 
-                        //     return data.map(e => e.id_cc >0 ?(e.cc_codigo_oportunidad):'').join(",");
-                        // } else {
-                        //     return 'Sin Código';
-                        // }
+                    //     return data.map(e => e.id_cc >0 ?(e.cc_codigo_oportunidad):'').join(",");
+                    // } else {
+                    //     return 'Sin Código';
+                    // }
 
                     // }
                 },
-                { 'data': 'descripcion_sede_empresa', 'name': 'descripcion_sede_empresa','className': 'text-center' },
-                { 'data': 'simbolo_moneda', 'name': 'simbolo_moneda','className': 'text-center','searchable':false },
-                { 'data': 'fecha_emision', 'name': 'fecha_emision','className': 'text-center' },
-                { 'data': 'fecha_llegada',
+                { 'data': 'descripcion_sede_empresa', 'name': 'descripcion_sede_empresa', 'className': 'text-center' },
+                { 'data': 'simbolo_moneda', 'name': 'simbolo_moneda', 'className': 'text-center', 'searchable': false },
+                { 'data': 'fecha_emision', 'name': 'fecha_emision', 'className': 'text-center' },
+                {
+                    'data': 'fecha_llegada',
                     render: function (data, type, row) {
-                        return row.fecha_llegada !=null?(row.fecha_llegada + " / " + row.dias_restantes+' días'):'';
+                        return row.fecha_llegada != null ? (row.fecha_llegada + " / " + row.dias_restantes + ' días') : '';
                     }
                 },
-                { 'data': 'data_atencion_logistica', 'className': 'text-center', 'searchable': false, 'defaultContent':"Sin determinar"
+                {
+                    'data': 'data_atencion_logistica', 'className': 'text-center', 'searchable': false, 'defaultContent': "Sin determinar"
                     // render: function (data) {
                     //     if (data != null && data.length > 0) {
                     //         return data.map(e => (e.atencion_logistica)).join(", ");
@@ -1873,37 +1878,40 @@ class ListaOrdenView {
 
                     // }
                 },
-                { 'data': 'razon_social_proveedor',
+                {
+                    'data': 'razon_social_proveedor',
                     render: function (data, type, row) {
                         return row.razon_social_proveedor + " RUC:" + row.nro_documento_proveedor;
                     }
                 },
-                { 'data': 'condicion', 'name': 'condicion','searchable':false },
-                { 'data': 'razon_social_proveedor',
+                { 'data': 'condicion', 'name': 'condicion', 'searchable': false },
+                {
+                    'data': 'razon_social_proveedor',
                     render: function (data, type, row) {
                         return `<a class="handleClickEditarEstadoOrden" data-id-estado-orden-compra="${row.id_estado}" data-codigo-orden="${row.codigo}" data-id-orden-compra="${row.id}" style="cursor:pointer;">${row.descripcion_estado}</a>`;
                     }
                 },
-                { 'data': 'descripcion_estado_pago', 'name': 'descripcion_estado_pago','className': 'text-center' },
-                { 'data': 'monto_total', 'className': 'text-right',
+                { 'data': 'descripcion_estado_pago', 'name': 'descripcion_estado_pago', 'className': 'text-center' },
+                {
+                    'data': 'monto_total', 'className': 'text-right',
                     render: function (data, type, row) {
-                        return row.simbolo_moneda + $.number(row.monto_total,2,".",",");
+                        return row.simbolo_moneda + $.number(row.monto_total, 2, ".", ",");
                     }
                 },
                 {
-                    'data': 'data_importe_oportunidad', 'defaultContent':"-"
+                    'data': 'data_importe_oportunidad', 'defaultContent': "-"
                     // render: function (data) {
-                        // if (data != null && data.length > 0) {
+                    // if (data != null && data.length > 0) {
 
-                        //     return data.map(e => e.id_cc >0 ?(e.cc_moneda_oportunidad=='s'?('S/'+$.number(e.cc_importe_oportunidad,2)):('$'+$.number(e.cc_importe_oportunidad,2))):'').join(",");
-                        // } else {
-                        //     return 'Sin Código';
-                        // }
+                    //     return data.map(e => e.id_cc >0 ?(e.cc_moneda_oportunidad=='s'?('S/'+$.number(e.cc_importe_oportunidad,2)):('$'+$.number(e.cc_importe_oportunidad,2))):'').join(",");
+                    // } else {
+                    //     return 'Sin Código';
+                    // }
 
                     // }
                 },
                 {
-                    'searchable': false,'render':
+                    'searchable': false, 'render':
                         function (data, type, row, meta) {
                             // let cantidadRequerimientosConEstadosPorRegularizarOenPausa = 0;
                             // if(row.data_requerimiento !=null && row.data_requerimiento.length>0){
@@ -1916,18 +1924,18 @@ class ListaOrdenView {
                             // }
 
                             let containerOpenBrackets = '<div class="btn-group btn-group-xs" role="group" style="margin-bottom: 5px;display: flex;flex-direction: row;flex-wrap: nowrap;">';
-                            let btnImprimirOrden = (array_accesos.find(element => element === 252)?'<button type="button" class="btn btn-sm btn-warning boton handleClickAbrirOrdenPDF" title="Abrir orden PDF"  data-toggle="tooltip" data-placement="bottom" data-id-orden-compra="' + row.id + '"  data-id-pago=""> <i class="fas fa-file-pdf"></i> </button>':'');
+                            let btnImprimirOrden = (array_accesos.find(element => element === 252) ? '<button type="button" class="btn btn-sm btn-warning boton handleClickAbrirOrdenPDF" title="Abrir orden PDF"  data-toggle="tooltip" data-placement="bottom" data-id-orden-compra="' + row.id + '"  data-id-pago=""> <i class="fas fa-file-pdf"></i> </button>' : '');
 
                             let btnAnularOrden = '';
-                            if (row.fecha_ultimo_ingreso_almacen != null || [5,6,8,9, 10].includes(row.estado_pago) ==true) {
-                                btnAnularOrden = (array_accesos.find(element => element === 248)?'<button type="button" class="btn btn-sm btn-default boton" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '" disabled ><i class="fas fa-backspace fa-xs"></i></button>':'');
+                            if (row.fecha_ultimo_ingreso_almacen != null || [5, 6, 8, 9, 10].includes(row.estado_pago) == true) {
+                                btnAnularOrden = (array_accesos.find(element => element === 248) ? '<button type="button" class="btn btn-sm btn-default boton" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '" disabled ><i class="fas fa-backspace fa-xs"></i></button>' : '');
                             } else {
-                                btnAnularOrden = (array_accesos.find(element => element === 248)?'<button type="button" class="btn btn-sm btn-danger boton handleClickAnularOrden" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '"><i class="fas fa-backspace fa-xs"></i></button>':'');
+                                btnAnularOrden = (array_accesos.find(element => element === 248) ? '<button type="button" class="btn btn-sm btn-danger boton handleClickAnularOrden" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '"><i class="fas fa-backspace fa-xs"></i></button>' : '');
                             }
-                            let btnVerDetalle = (array_accesos.find(element => element === 245)?`<button type="button" class="ver-detalle btn btn-sm btn-primary boton handleCliclVerDetalleOrden" data-toggle="tooltip" data-placement="bottom" title="Ver Detalle" data-id="${row.id}">
+                            let btnVerDetalle = (array_accesos.find(element => element === 245) ? `<button type="button" class="ver-detalle btn btn-sm btn-primary boton handleCliclVerDetalleOrden" data-toggle="tooltip" data-placement="bottom" title="Ver Detalle" data-id="${row.id}">
                                                 <i class="fas fa-chevron-down"></i>
-                                                </button>`:'');
-                            let btnEnviarAPago = (array_accesos.find(element => element === 247)?`<button type="button" class="btn btn-sm btn-${([5, 6, 8, 9].includes((row.estado_pago)) ? 'success' : 'info')} boton handleClickModalEnviarOrdenAPago" name="btnEnviarOrdenAPago" ${row.tiene_pago_en_cuotas == true?'style="background-color:purple""':''} title="${([5, 6, 8,9].includes((row.estado_pago)) ? 'Ya se envió a pago' : 'Enviar a pago?')}"
+                                                </button>`: '');
+                            let btnEnviarAPago = (array_accesos.find(element => element === 247) ? `<button type="button" class="btn btn-sm btn-${([5, 6, 8, 9].includes((row.estado_pago)) ? 'success' : 'info')} boton handleClickModalEnviarOrdenAPago" name="btnEnviarOrdenAPago" ${row.tiene_pago_en_cuotas == true ? 'style="background-color:purple""' : ''} title="${([5, 6, 8, 9].includes((row.estado_pago)) ? 'Ya se envió a pago' : 'Enviar a pago?')}"
                                 data-id-orden-compra="${row.id ?? ''}"
                                 data-codigo-orden="${row.codigo ?? ''}"
                                 data-monto-total-orden="${row.monto_total ?? ''}"
@@ -1949,9 +1957,9 @@ class ListaOrdenView {
                                 data-lista-requerimientos-con-tipo-impuesto="${row.lista_requerimientos_con_tipo_impuesto ?? ''}"
                                 >
                                     <i class="fas fa-money-check-alt fa-xs"></i>
-                                </button>`:'');
+                                </button>`: '');
 
-                            let btnAdjuntar = (array_accesos.find(element => element === 249)?`<button type="button"  class="btn btn-default adjuntar-archivos" data-toggle="tooltip" title="Adjuntar archivos" data-codigo="${row.codigo}" data-id="${row.id}" data-codigo="${row.codigo}" data-id-moneda="${row.id_moneda}" ><i class="fas fa-paperclip fa-xs"></i></button>`:'');
+                            let btnAdjuntar = (array_accesos.find(element => element === 249) ? `<button type="button"  class="btn btn-default adjuntar-archivos" data-toggle="tooltip" title="Adjuntar archivos" data-codigo="${row.codigo}" data-id="${row.id}" data-codigo="${row.codigo}" data-id-moneda="${row.id_moneda}" ><i class="fas fa-paperclip fa-xs"></i></button>` : '');
                             let containerCloseBrackets = '</div>';
                             return (containerOpenBrackets + btnVerDetalle + btnImprimirOrden + btnEnviarAPago + btnAnularOrden + btnAdjuntar + containerCloseBrackets);
 
@@ -1970,13 +1978,6 @@ class ListaOrdenView {
                 const $filter = $('#listaOrdenes_filter');
                 const $input = $filter.find('input');
 
-                const selectFiltro= `<select class="form-control input-sm ml-4 handleChangeFiltroListaOrdenes" id="selectFiltroListaOrden" style="margin-left: 1rem;">
-                    <option value="SIN_FILTRO" >Todo</option>
-                    <option value="ORDENES_SIN_ENVIAR_A_PAGO">Ordenes sin envío a pago</option>
-                    <option value="ORDENES_AUTORIZADAS_PARA_PAGO">Ordenes autorizadas para pago</option>
-                    </select>`;
-                document.querySelector("div[id='listaOrdenes_wrapper'] div[class='dt-buttons btn-group']").insertAdjacentHTML('afterbegin', selectFiltro);
-                document.querySelector("select[id='selectFiltroListaOrden']").value=that.filtro;
 
                 $filter.append('<button id="btnBuscarOrden" class="btn btn-default btn-sm pull-right" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>');
 
@@ -1992,19 +1993,6 @@ class ListaOrdenView {
                 })
                 //Fin boton de busqueda
 
-                let html_fechas = `
-
-                <input type="text" class="form-control date-picker input-sm text-center" size="10" id="fecha-inicio"
-                value="`+fecha_inicio+`"/> <input type="text" class="form-control date-picker input-sm text-center" size="10" id="txtOrdenPendienteFechaFin"
-                    value="`+fecha_actual+`"/> `;
-                $('#listaOrdenes_wrapper .dt-buttons').append(html_fechas);
-
-                $('input.date-picker').datepicker({
-                    language: "es",
-                    orientation: "bottom auto",
-                    format: 'dd-mm-yyyy',
-                    autoclose: true
-                });
             },
             "drawCallback": function (settings) {
 
@@ -2059,19 +2047,19 @@ class ListaOrdenView {
         //         },
         //         className: 'btn-default btn-sm'
         //     }:[]),
-           const button_descargar_excel= (array_accesos.find(element => element === 251)?{
-                text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar',
-                attr: {
-                    id: 'btnDescargarListaItemsOrdenesElaboradasExcel',
-                    disabled: false
+        const button_descargar_excel = (array_accesos.find(element => element === 251) ? {
+            text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar',
+            attr: {
+                id: 'btnDescargarListaItemsOrdenesElaboradasExcel',
+                disabled: false
 
-                },
-                action: () => {
-                    this.exportarListaOrdenesElaboradasNivelDetalleExcel();
+            },
+            action: () => {
+                this.exportarListaOrdenesElaboradasNivelDetalleExcel();
 
-                },
-                className: 'btn-default btn-sm'
-            }:[]);
+            },
+            className: 'btn-default btn-sm'
+        } : []);
         $tablaListaItemsOrdenesElaborados = $('#listaItemsOrden').DataTable({
             'dom': vardataTables[1],
             'buttons': [button_descargar_excel],
@@ -2094,14 +2082,14 @@ class ListaOrdenView {
             },
             'columns': [
                 {
-                    'data': 'codigo_orden','className': 'text-center',
+                    'data': 'codigo_orden', 'className': 'text-center',
                     render: function (data, type, row) {
                         return `<label class="lbl-codigo handleClickAbrirOrden" title="Ir a orden" data-id-orden="${row.id_orden}">${row.codigo_orden}</label>`;
                     }
                 },
                 {
-                    'data': 'codigo_requerimiento','className': 'text-center',
-                    render: function (data,type, row) {
+                    'data': 'codigo_requerimiento', 'className': 'text-center',
+                    render: function (data, type, row) {
                         if (row.codigo_requerimiento != null && row.codigo_requerimiento.length > 0) {
                             return `<a href="/necesidades/requerimiento/elaboracion/index?id=${row.id_requerimiento}" target="_blank" title="Abrir Requerimiento">${row.codigo_requerimiento}</a>`;
                         } else {
@@ -2109,8 +2097,8 @@ class ListaOrdenView {
                         }
                     }
                 },
-                { 'data': 'codigo_softlink', 'name': 'codigo_softlink' ,'className': 'text-center'},
-                { 'data': 'concepto_requerimiento', 'name': 'concepto_requerimiento','className': 'text-center' },
+                { 'data': 'codigo_softlink', 'name': 'codigo_softlink', 'className': 'text-center' },
+                { 'data': 'concepto_requerimiento', 'name': 'concepto_requerimiento', 'className': 'text-center' },
                 { 'data': 'razon_social_cliente', 'name': 'razon_social_cliente' },
                 { 'data': 'razon_social_proveedor', 'name': 'razon_social_proveedor' },
                 { 'data': 'descripcion_subcategoria', 'name': 'descripcion_subcategoria' },
@@ -2121,29 +2109,32 @@ class ListaOrdenView {
                 { 'data': 'descripcion_producto', 'name': 'descripcion_producto' },
                 { 'data': 'cantidad', 'name': 'cantidad' },
                 { 'data': 'abreviatura_unidad_medida_det_orden', 'name': 'abreviatura_unidad_medida_det_orden' },
-                { 'data': 'precio', 'className': 'text-right',
-                render: function (data, type, row) {
-                    return row.simbolo_moneda_orden + $.number(row.precio,2,".",",");
+                {
+                    'data': 'precio', 'className': 'text-right',
+                    render: function (data, type, row) {
+                        return row.simbolo_moneda_orden + $.number(row.precio, 2, ".", ",");
                     }
                 },
-                { 'data': 'cc_fila_precio', 'className': 'text-right',
-                render: function (data, type, row) {
-                    return (row.cc_moneda =='s'?'S/':(row.cc_moneda=='d'?'$':'')) + $.number(row.cc_fila_precio,2,".",",");
+                {
+                    'data': 'cc_fila_precio', 'className': 'text-right',
+                    render: function (data, type, row) {
+                        return (row.cc_moneda == 's' ? 'S/' : (row.cc_moneda == 'd' ? '$' : '')) + $.number(row.cc_fila_precio, 2, ".", ",");
                     }
                 },
-                { 'data': 'fecha_emision', 'name': 'fecha_emision','className': 'text-center' },
-                { 'data': 'plazo_entrega', 'name': 'plazo_entrega','className': 'text-center' },
-                { 'data': 'fecha_ingreso_almacen', 'name': 'fecha_ingreso_almacen' ,'className': 'text-center'},
+                { 'data': 'fecha_emision', 'name': 'fecha_emision', 'className': 'text-center' },
+                { 'data': 'plazo_entrega', 'name': 'plazo_entrega', 'className': 'text-center' },
+                { 'data': 'fecha_ingreso_almacen', 'name': 'fecha_ingreso_almacen', 'className': 'text-center' },
                 // { 'data': 'tiempo_atencion_proveedor', 'name': 'tiempo_atencion_proveedor' },
                 { 'data': 'descripcion_sede_empresa', 'name': 'descripcion_sede_empresa' },
-                { 'data': 'descripcion_estado', 'className': 'text-center',
-                render: function (data, type, row) {
-                    let estadoDetalleOrdenHabilitadasActualizar = [1, 2, 3, 4, 5, 6, 15];
-                    if (estadoDetalleOrdenHabilitadasActualizar.includes(row.id_estado) == true) {
-                        return `<a class="handleClickEditarEstadoItemOrden" data-id-estado-detalle-orden-compra="${row.id_estado}" data-id-orden-compra="${row.id_orden}" data-id-detalle-orden-compra="${row.id_detalle_orden}" data-codigo-item="${row.codigo_producto}" style="cursor: pointer;" title="Cambiar Estado de Item">${row.descripcion_estado}</a>`;
-                    } else {
-                        return `<span class="" data-id-estado-detalle-orden-compra="${row.id_estado}" data-id-orden-compra="${row.id_orden}" data-id-detalle-orden-compra="${row.id_detalle_orden}" data-codigo-item="${row.codigo_producto}" style="cursor: default;">${row.descripcion_estado}</span>`;
-                    }
+                {
+                    'data': 'descripcion_estado', 'className': 'text-center',
+                    render: function (data, type, row) {
+                        let estadoDetalleOrdenHabilitadasActualizar = [1, 2, 3, 4, 5, 6, 15];
+                        if (estadoDetalleOrdenHabilitadasActualizar.includes(row.id_estado) == true) {
+                            return `<a class="handleClickEditarEstadoItemOrden" data-id-estado-detalle-orden-compra="${row.id_estado}" data-id-orden-compra="${row.id_orden}" data-id-detalle-orden-compra="${row.id_detalle_orden}" data-codigo-item="${row.codigo_producto}" style="cursor: pointer;" title="Cambiar Estado de Item">${row.descripcion_estado}</a>`;
+                        } else {
+                            return `<span class="" data-id-estado-detalle-orden-compra="${row.id_estado}" data-id-orden-compra="${row.id_orden}" data-id-detalle-orden-compra="${row.id_detalle_orden}" data-codigo-item="${row.codigo_producto}" style="cursor: default;">${row.descripcion_estado}</span>`;
+                        }
 
                     }
                 },
@@ -2152,8 +2143,8 @@ class ListaOrdenView {
                         function (data, type, row, meta) {
 
                             let containerOpenBrackets = '<div class="btn-group btn-group-xs" role="group" style="margin-bottom: 5px;display: flex;flex-direction: row;flex-wrap: nowrap;">';
-                            let btnImprimirOrden = (array_accesos.find(element => element === 246)?'<button type="button" class="btn btn-sm btn-warning boton handleClickAbrirOrdenPDF" name="btnGenerarOrdenRequerimientoPDF" title="Abrir orden PDF" data-id-requerimiento="' + row.id_requerimiento + '"  data-codigo-requerimiento="' + row.codigo_requerimiento + '" data-id-orden-compra="' + row.id_orden + '"><i class="fas fa-file-download fa-xs"></i></button>':'');
-                            let btnDocumentosVinculados = (array_accesos.find(element => element === 253)?'<button type="button" class="btn btn-sm btn-primary boton handleClickDocumentosVinculados" name="btnDocumentosVinculados" title="Ver documentos vinculados" data-id-requerimiento="' + row.id_requerimiento + '"  data-codigo-requerimiento="' + row.codigo_requerimiento + '" data-id-orden-compra="' + row.id_orden + '"><i class="fas fa-folder fa-xs"></i></button>':'');
+                            let btnImprimirOrden = (array_accesos.find(element => element === 246) ? '<button type="button" class="btn btn-sm btn-warning boton handleClickAbrirOrdenPDF" name="btnGenerarOrdenRequerimientoPDF" title="Abrir orden PDF" data-id-requerimiento="' + row.id_requerimiento + '"  data-codigo-requerimiento="' + row.codigo_requerimiento + '" data-id-orden-compra="' + row.id_orden + '"><i class="fas fa-file-download fa-xs"></i></button>' : '');
+                            let btnDocumentosVinculados = (array_accesos.find(element => element === 253) ? '<button type="button" class="btn btn-sm btn-primary boton handleClickDocumentosVinculados" name="btnDocumentosVinculados" title="Ver documentos vinculados" data-id-requerimiento="' + row.id_requerimiento + '"  data-codigo-requerimiento="' + row.codigo_requerimiento + '" data-id-orden-compra="' + row.id_orden + '"><i class="fas fa-folder fa-xs"></i></button>' : '');
                             let containerCloseBrackets = '</div>';
 
                             return (containerOpenBrackets + btnImprimirOrden + btnDocumentosVinculados + containerCloseBrackets);
@@ -2224,7 +2215,7 @@ class ListaOrdenView {
         window.open('exportar-lista-ordenes-elaboradas-nivel-detalle-excel');
     }
 
-    agregarAdjuntoRequerimientoCabeceraCompra(obj){
+    agregarAdjuntoRequerimientoCabeceraCompra(obj) {
         if (obj.files != undefined && obj.files.length > 0) {
             // console.log(obj.files);
             // if((obj.files.length + tempArchivoAdjuntoRequerimientoCabeceraList.length)>1){
@@ -2234,33 +2225,33 @@ class ListaOrdenView {
             //         'warning'
             //     );
             // }else{
-                Array.prototype.forEach.call(obj.files, (file) => {
-                    // console.log(file);
-                    if (this.estaHabilitadoLaExtension(file) == true) {
-                        let payload = {
-                            id: this.makeId(),
-                            category: 2, //default: factura
-                            fecha_emision: moment().format('YYYY-MM-DD'),
-                            nro_comprobante: '',
-                            id_moneda: document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_moneda']").value >0?document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_moneda']").value: (document.querySelector("div[id='modal-adjuntar-orden'] input[name='id_moneda']").value>0?document.querySelector("div[id='modal-adjuntar-orden'] input[name='id_moneda']").value:''),
-                            monto_total: document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value,
-                            nameFile: file.name,
-                            accion: 'GUARDAR',
-                            file: file
-                        };
-                        this.addToTablaArchivosRequerimientoCabecera(payload);
+            Array.prototype.forEach.call(obj.files, (file) => {
+                // console.log(file);
+                if (this.estaHabilitadoLaExtension(file) == true) {
+                    let payload = {
+                        id: this.makeId(),
+                        category: 2, //default: factura
+                        fecha_emision: moment().format('YYYY-MM-DD'),
+                        nro_comprobante: '',
+                        id_moneda: document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_moneda']").value > 0 ? document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_moneda']").value : (document.querySelector("div[id='modal-adjuntar-orden'] input[name='id_moneda']").value > 0 ? document.querySelector("div[id='modal-adjuntar-orden'] input[name='id_moneda']").value : ''),
+                        monto_total: document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value,
+                        nameFile: file.name,
+                        accion: 'GUARDAR',
+                        file: file
+                    };
+                    this.addToTablaArchivosRequerimientoCabecera(payload);
 
-                        tempArchivoAdjuntoRequerimientoCabeceraList.push(payload);
-                        console.log(tempArchivoAdjuntoRequerimientoCabeceraList);
-                        // console.log(payload);
-                    } else {
-                        Swal.fire(
-                            'Este tipo de archivo no esta permitido adjuntar',
-                            file.name,
-                            'warning'
-                        );
-                    }
-                });
+                    tempArchivoAdjuntoRequerimientoCabeceraList.push(payload);
+                    console.log(tempArchivoAdjuntoRequerimientoCabeceraList);
+                    // console.log(payload);
+                } else {
+                    Swal.fire(
+                        'Este tipo de archivo no esta permitido adjuntar',
+                        file.name,
+                        'warning'
+                    );
+                }
+            });
 
             // }
 
@@ -2319,14 +2310,14 @@ class ListaOrdenView {
         }
     }
 
-    editarAdjuntoProveedor(obj){
+    editarAdjuntoProveedor(obj) {
         obj.closest("tr").querySelector("input[name='fecha_emision']").classList.remove("oculto");
         obj.closest("tr").querySelector("span[name='fecha_emision_text']").classList.add("oculto");
         obj.closest("tr").querySelector("input[name='nro_comprobante']").classList.remove("oculto");
         obj.closest("tr").querySelector("span[name='nro_comprobante_text']").classList.add("oculto");
     }
 
-    anularAdjuntoProveedor(obj){
+    anularAdjuntoProveedor(obj) {
         if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
             let indice = tempArchivoAdjuntoRequerimientoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
             tempArchivoAdjuntoRequerimientoCabeceraList[indice].accion = 'ANULAR';
@@ -2365,7 +2356,7 @@ class ListaOrdenView {
     }
 
     estaHabilitadoLaExtension(file) {
-        let extension = (file.name.match(/(?<=\.)\w+$/g) !=null)?file.name.match(/(?<=\.)\w+$/g)[0].toLowerCase():''; // assuming that this file has any extension
+        let extension = (file.name.match(/(?<=\.)\w+$/g) != null) ? file.name.match(/(?<=\.)\w+$/g)[0].toLowerCase() : ''; // assuming that this file has any extension
         if (extension === 'dwg'
             || extension === 'dwt'
             || extension === 'cdr'
@@ -2434,7 +2425,7 @@ class ListaOrdenView {
             <td style="text-align:left;">
                 <div class="input-group">
                 <div class="input-group-addon" style="background:lightgray;" name="simboloMoneda">${simboloMonedaOrden}</div>
-                <input type="number" class="form-control handleChangeMontoTotalComprobante" placeholder="Monto comprobante" value="${payload.monto_total??''}" step="any">
+                <input type="number" class="form-control handleChangeMontoTotalComprobante" placeholder="Monto comprobante" value="${payload.monto_total ?? ''}" step="any">
                 </div>
             </td>
             <td style="text-align:center;">
@@ -2444,7 +2435,7 @@ class ListaOrdenView {
             </td>
             </tr>`;
 
-            document.querySelector("div[id='"+document.querySelector("div[class='modal fade in']").id+"'] tbody[id='body_archivos_requerimiento_compra_cabecera']").insertAdjacentHTML('beforeend', html);
+            document.querySelector("div[id='" + document.querySelector("div[class='modal fade in']").id + "'] tbody[id='body_archivos_requerimiento_compra_cabecera']").insertAdjacentHTML('beforeend', html);
 
         }).catch(function (err) {
             console.log(err)
@@ -2459,16 +2450,16 @@ class ListaOrdenView {
         return ID;
     }
 
-    calcTamañoTotalAdjuntoLogisticoParaSubir(){
-        let tamañoTotalArchivoParaSubir=0;
+    calcTamañoTotalAdjuntoLogisticoParaSubir() {
+        let tamañoTotalArchivoParaSubir = 0;
 
         tempArchivoAdjuntoRequerimientoCabeceraList.forEach(element => {
-            tamañoTotalArchivoParaSubir+=element.size;
+            tamañoTotalArchivoParaSubir += element.size;
 
         });
-            document.querySelector("div[id='modal-adjuntar-orden'] span[id='tamaño_total_archivos_para_subir']").textContent= $.number((tamañoTotalArchivoParaSubir/1000000),2,".",",")+'MB';
+        document.querySelector("div[id='modal-adjuntar-orden'] span[id='tamaño_total_archivos_para_subir']").textContent = $.number((tamañoTotalArchivoParaSubir / 1000000), 2, ".", ",") + 'MB';
     }
-    eliminarAdjuntoRequerimientoCompraCabecera(obj){
+    eliminarAdjuntoRequerimientoCompraCabecera(obj) {
         obj.closest("tr").remove();
         var regExp = /[a-zA-Z]/g; //expresión regular
         if ((regExp.test(obj.dataset.id) == true)) {
@@ -2487,21 +2478,21 @@ class ListaOrdenView {
 
         }
     }
-    guardarAdjuntos(){
-        if(tempArchivoAdjuntoRequerimientoCabeceraList.length>0){
+    guardarAdjuntos() {
+        if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
             let formData = new FormData($('#modal-adjuntar-orden #form-adjunto-orden')[0]);
             formData.append(`archivoAdjuntoRequerimientoObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoCabeceraList));
 
             if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
                 tempArchivoAdjuntoRequerimientoCabeceraList.forEach(element => {
 
-                        formData.append(`id_adjunto[]`, element.id);
-                        formData.append(`fecha_emision_adjunto[]`, element.fecha_emision);
-                        formData.append(`nro_comprobante_adjunto[]`, element.nro_comprobante);
-                        formData.append(`categoria_adjunto[]`, element.category);
-                        formData.append(`archivo_adjunto_list[]`, element.file);
-                        formData.append(`nombre_real_adjunto[]`, element.nameFile);
-                        formData.append(`accion[]`, element.accion);
+                    formData.append(`id_adjunto[]`, element.id);
+                    formData.append(`fecha_emision_adjunto[]`, element.fecha_emision);
+                    formData.append(`nro_comprobante_adjunto[]`, element.nro_comprobante);
+                    formData.append(`categoria_adjunto[]`, element.category);
+                    formData.append(`archivo_adjunto_list[]`, element.file);
+                    formData.append(`nombre_real_adjunto[]`, element.nameFile);
+                    formData.append(`accion[]`, element.accion);
 
                 });
 
@@ -2515,19 +2506,19 @@ class ListaOrdenView {
                 contentType: false,
                 data: formData,
                 dataType: 'JSON',
-                beforeSend:  (data)=> { // Are not working with dataType:'jsonp'
+                beforeSend: (data) => { // Are not working with dataType:'jsonp'
                     $('#modal-adjuntar-orden .modal-content').LoadingOverlay("show", {
                         imageAutoResize: true,
                         progress: true,
                         imageColor: "#3c8dbc"
                     });
                 },
-                success: (response) =>{
-                    if (response.status =='success') {
+                success: (response) => {
+                    if (response.status == 'success') {
                         $('#modal-adjuntar-orden .modal-content').LoadingOverlay("hide", true);
 
                         Lobibox.notify('success', {
-                            title:false,
+                            title: false,
                             size: 'mini',
                             rounded: true,
                             sound: false,
@@ -2546,7 +2537,7 @@ class ListaOrdenView {
                         );
                     }
                 },
-                fail:  (jqXHR, textStatus, errorThrown) =>{
+                fail: (jqXHR, textStatus, errorThrown) => {
                     $('#modal-adjuntar-orden .modal-content').LoadingOverlay("hide", true);
                     Swal.fire(
                         '',
@@ -2559,7 +2550,7 @@ class ListaOrdenView {
                 }
             });
 
-        }else{
+        } else {
             Swal.fire(
                 '',
                 'No existen adjuntos para guardar',
@@ -2575,12 +2566,12 @@ class ListaOrdenView {
                 url: `listar-archivos-adjuntos-orden/${id_orden}`,
                 dataType: 'JSON',
                 beforeSend: (data) => {
-                // $('#modal-adjuntar-orden #adjuntosDePagos').LoadingOverlay("show", {
-                //     imageAutoResize: true,
-                //     progress: true,
-                //     imageColor: "#3c8dbc"
-                // });
-            },
+                    // $('#modal-adjuntar-orden #adjuntosDePagos').LoadingOverlay("show", {
+                    //     imageAutoResize: true,
+                    //     progress: true,
+                    //     imageColor: "#3c8dbc"
+                    // });
+                },
                 success(response) {
                     // $('#modal-adjuntar-orden #adjuntosDePagos').LoadingOverlay("hide", true);
                     resolve(response);
@@ -2599,7 +2590,7 @@ class ListaOrdenView {
                 url: `historial-de-envios-a-pago-en-cuotas/${id_orden}`,
                 dataType: 'JSON',
                 beforeSend: (data) => {
-            },
+                },
                 success(response) {
                     resolve(response);
                 },
@@ -2617,12 +2608,12 @@ class ListaOrdenView {
                 url: `listar-archivos-adjuntos-pago-requerimiento/${idOrden}`,
                 dataType: 'JSON',
                 beforeSend: (data) => {
-                $('#modal-adjuntar-orden #adjuntosPago').LoadingOverlay("show", {
-                    imageAutoResize: true,
-                    progress: true,
-                    imageColor: "#3c8dbc"
-                });
-            },
+                    $('#modal-adjuntar-orden #adjuntosPago').LoadingOverlay("show", {
+                        imageAutoResize: true,
+                        progress: true,
+                        imageColor: "#3c8dbc"
+                    });
+                },
                 success(response) {
                     $('#modal-adjuntar-orden #adjuntosPago').LoadingOverlay("hide", true);
                     resolve(response);

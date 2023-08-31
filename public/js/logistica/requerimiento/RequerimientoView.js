@@ -1444,7 +1444,7 @@ class RequerimientoView {
         } else {
             Swal.fire(
                 '',
-                'No se puedo seleccionar el grupo al que pertence el usuario.',
+                'Debe seleccione primero la división para cargar las opciones.',
                 'warning'
             );
         }

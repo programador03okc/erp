@@ -1,5 +1,5 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-orden_despacho_transportista" style="overflow-y:scroll;">
-    <div class="modal-dialog"  style="width: 500px;">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="form-orden_despacho_transportista">
                 <div class="modal-header">
@@ -7,8 +7,11 @@
                     <h3 class="modal-title">Datos del Transportista</h3>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="oculto" name="id_od"/>
+                    <input type="text" class="oculto" name="id_od" />
                     <input type="text" class="oculto" name="con_id_requerimiento">
+                    <input type="text" class="oculto" name="id_proyecto">
+                    <input type="text" class="oculto" name="unidad">
+                    <input type="text" class="oculto" name="id_moneda" value="1">
                     {{-- <input type="text" class="oculto" name="id_od_grupo_detalle"> --}}
                     <fieldset class="group-table" id="fieldsetTransportista">
                         <div class="row">
@@ -20,9 +23,8 @@
                             <div id="agencia" class="col-md-12">
                                 <h5>Agencia de transporte *</h5>
                                 <div style="display:flex;">
-                                    <input class="oculto" name="tr_id_transportista"/>
-                                    <input type="text" class="form-control" name="tr_razon_social" placeholder="Seleccione un transportista..." 
-                                        aria-describedby="basic-addon1" disabled="true">
+                                    <input class="oculto" name="tr_id_transportista" />
+                                    <input type="text" class="form-control" name="tr_razon_social" placeholder="Seleccione un transportista..." aria-describedby="basic-addon1" disabled="true">
                                     <button type="button" class="input-group-text activation" id="basic-addon1" onClick="openTransportistaModal();">
                                         <i class="fa fa-search"></i>
                                     </button>
@@ -32,57 +34,51 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <h5>Guía del transportista</h5>
                                 <div class="input-group">
-                                    <input type="text" class="form-control"
-                                        name="serie" onBlur="ceros_numero('serie');" placeholder="Serie">
+                                    <input type="text" class="form-control" name="serie" onBlur="ceros_numero('serie');" placeholder="Serie">
                                     <span class="input-group-addon">-</span>
-                                    <input type="text" class="form-control" 
-                                        name="numero" onBlur="ceros_numero('numero');" placeholder="Número">
+                                    <input type="text" class="form-control" name="numero" onBlur="ceros_numero('numero');" placeholder="Número">
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <h5>Fecha de emisión de la guía</h5>
-                                <input type="date" name="fecha_transportista" class="form-control"/>
+                                <input type="date" name="fecha_transportista" class="form-control" />
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <h5>Monto flete <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="" name="fechaRegistroFlete"></span></h5>
                                 <div class="input-group">
                                     <span class="input-group-addon" disabled>S/</span>
                                     {{-- <input type="text" class="form-control decimal" name="fleteReal" > --}}
-                                    <input type="number" class="form-control" name="importe_flete" step="any" placeholder="Flete real" >
+                                    <input type="number" class="form-control" name="importe_flete" step="any" placeholder="Flete real">
                                 </div>
                             </div>
-                            <div class="col-md-6" >
+                            <div class="col-md-3">
                                 <h5>Código de envío</h5>
-                                <input type="text" name="codigo_envio" class="form-control" placeholder="Código de envío"/>
+                                <input type="text" name="codigo_envio" class="form-control" placeholder="Código de envío" />
                             </div>
                         </div>
                         <div class="row">
-                            
-                            <div class="col-md-2">
+
+                            <div class="col-md-1">
                                 <h5>Crédito</h5>
                             </div>
                             <div class="col-md-2">
-                                <input type="checkbox" name="credito" id="credito" style="margin-top: 13px;"/>
+                                <input type="checkbox" name="credito" id="credito" style="margin-top: 13px;" />
                             </div>
                         </div>
-                        
+
                     </fieldset>
-                    <br/>
+                    <br />
                     <fieldset class="group-table" id="fieldsetGuiaVenta">
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Guía de venta</h5>
                                 <div class="input-group">
-                                    <input type="text" class="form-control"
-                                        name="serie_guia_venta" onBlur="ceros_numero('serie_gv');" placeholder="Serie">
+                                    <input type="text" class="form-control" name="serie_guia_venta" onBlur="ceros_numero('serie_gv');" placeholder="Serie">
                                     <span class="input-group-addon">-</span>
-                                    <input type="text" class="form-control" 
-                                        name="numero_guia_venta" onBlur="ceros_numero('numero_gv');" placeholder="Número">
+                                    <input type="text" class="form-control" name="numero_guia_venta" onBlur="ceros_numero('numero_gv');" placeholder="Número">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -91,6 +87,7 @@
                             </div>
                         </div>
                     </fieldset>
+                    <br/>
                     <div class="row">
                         <div class="col-md-12">
                             <h5 style="font-size: 14px;">* Campos obligatorios</h5>
@@ -98,8 +95,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input type="button" id="btn_cerrar_transportista" class="btn btn-default" onClick="cerrarDespachoTransportista();" value="Cerrar"/>
-                    <input type="submit" id="submit_od_transportista" class="btn btn-success" value="Guardar"/>
+                    <input type="button" id="btn_cerrar_transportista" class="btn btn-default" onClick="cerrarDespachoTransportista();" value="Cerrar" />
+                    <input type="submit" id="submit_od_transportista" class="btn btn-success" value="Guardar" />
                 </div>
             </form>
         </div>

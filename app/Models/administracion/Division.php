@@ -32,12 +32,14 @@ class Division extends Model
         }
 
         $divisiones = DB::table('administracion.division')
-        ->select('division.*')
+        ->select('division.*','adm_grupo.descripcion as descripcion_grupo')
+        ->leftJoin('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'division.grupo_id')
         ->whereIn('division.grupo_id', $idGrupoList)
         ->where('division.estado',1)
         // ->when((($soloAutorizadoGarantias) ==true), function ($query) {
         //     return $query->whereRaw('division.id_division = 2');  // autorizado solo ver comercial divison CAS
         // })
+        ->orderBy('division.grupo_id','asc')
         ->get();
 
         return $divisiones;

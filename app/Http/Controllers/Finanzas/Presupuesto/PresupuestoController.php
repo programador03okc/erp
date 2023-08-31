@@ -382,7 +382,7 @@ class PresupuestoController extends Controller
         $partidas = [];
         $grupos = $this->getAllGrupos();
 
-        if ($id_proyecto != null || $id_proyecto != '') {
+        if ($id_proyecto != null || $id_proyecto != '' || $id_proyecto != 0) {
 
             $presupuestos = DB::table('finanzas.presup')
                 ->select('presup.*')

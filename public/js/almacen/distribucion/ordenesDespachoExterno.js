@@ -297,7 +297,7 @@ function listarRequerimientosPendientes(usuario) {
                         `+
                         (row['id_od'] !== null ?
                             ``+(array_accesos.find(element => element === 266)?`<button type="button" class="transportista btn btn-${row['id_transportista'] !== null ? 'info' : 'default'} btn-flat btn-xs " data-toggle="tooltip"
-                            data-placement="bottom" data-od="${row['id_od']}" data-idreq="${row['id_requerimiento']}" title="Agencia de transporte" >
+                            data-placement="bottom" data-od="${row['id_od']}" data-idreq="${row['id_requerimiento']}" data-unidad="${row['unidad']}" data-id-proyecto="${row['id_proyecto']}" title="Agencia de transporte" >
                             <i class="fas fa-truck"></i></button>`:``)+`
 
                             `+(array_accesos.find(element => element === 267)?`<button type="button" class="estados btn btn-${row["count_estados_envios"] > 0 ? 'primary' : 'default'} btn-flat btn-xs" data-toggle="tooltip"

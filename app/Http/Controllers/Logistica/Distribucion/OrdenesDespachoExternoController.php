@@ -9,10 +9,17 @@ use App\Helpers\NotificacionHelper;
 use App\Http\Controllers\AlmacenController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Logistica\RequerimientoController;
+use App\Http\ViewComposers\AuthToViewComposer;
 use App\Mail\EmailContactoDespacho;
 use App\Mail\EmailOrdenDespacho;
+use App\Models\Administracion\Division;
+use App\Models\Administracion\Documento;
+use App\Models\Administracion\Empresa;
 use App\Models\Administracion\Periodo;
+use App\Models\Administracion\Prioridad;
 use App\models\almacen\AdjuntosDespacho;
+use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
 use App\Models\Comercial\Cliente;
 use App\models\Configuracion\AccesosUsuarios;
@@ -21,10 +28,14 @@ use App\Models\Configuracion\Usuario;
 use App\Models\Contabilidad\ContactoContribuyente;
 use App\Models\Contabilidad\Contribuyente;
 use App\Models\Distribucion\OrdenDespacho;
+use App\Models\Distribucion\OrdenDespachoFlete;
 use App\Models\mgcp\AcuerdoMarco\Entidad\Entidad;
 use App\Models\mgcp\CuadroCosto\CuadroCosto;
+use App\Models\mgcp\CuadroCosto\CuadroCostoView;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
+use App\Models\Proyectos\Proyecto;
+use App\Models\Rrhh\Trabajador;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +44,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+
 // use Debugbar;
 
 class OrdenesDespachoExternoController extends Controller
@@ -50,12 +63,22 @@ class OrdenesDespachoExternoController extends Controller
             // ])
             ->whereIn('id_estado', [3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15])->orderBy('descripcion', 'asc')
             ->get();
+
+        $periodos = Periodo::mostrar();
+        $idPeriodoMayor = Periodo::obtenerIdPeriodoActual();
+        $prioridades = Prioridad::mostrar();
+        $divisiones = Division::mostrar();
+        $empresas = Empresa::mostrar();
+        // $proyectos = Proyecto::mostrar();
+        $cdps = CuadroCostoView::mostrar();
+        $idTrabajadorSesion = Auth::user()->id_trabajador;
+        $trabajadores = Trabajador::mostrar();
         $array_accesos = [];
         $accesos_usuario = AccesosUsuarios::where('estado', 1)->where('id_usuario', Auth::user()->id_usuario)->get();
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view('almacen.distribucion.ordenesDespachoExterno', compact('estados', 'array_accesos'));
+        return view('almacen.distribucion.ordenesDespachoExterno', compact('periodos', 'idPeriodoMayor', 'prioridades', 'estados', 'array_accesos', 'empresas', 'divisiones', 'cdps', 'idTrabajadorSesion', 'trabajadores'));
     }
 
     public function listarDespachosExternos(Request $request)
@@ -66,10 +89,15 @@ class OrdenesDespachoExternoController extends Controller
                 'alm_req.id_tipo_requerimiento',
                 'alm_req.codigo',
                 'alm_req.concepto',
+                'alm_req.id_cc',
                 'oc_propias_view.fecha_entrega',
+                // 'oc_propias_view.unidad',
+                // 'oc_propias_view.id_proyecto',
                 'alm_req.tiene_transformacion',
                 'alm_req.direccion_entrega',
                 'alm_req.id_ubigeo_entrega',
+                'alm_req.id_empresa as empresa_requerimiento',
+                'alm_req.division_id as division_requerimiento',
                 'alm_req.id_almacen',
                 'alm_req.id_sede as sede_requerimiento',
                 'alm_req.telefono',
@@ -1601,5 +1629,115 @@ class OrdenesDespachoExternoController extends Controller
             ])
             ->where('alm_req.codigo', $id)->get();
         return $data;
+    }
+
+
+
+    
+    public function mostrarRequerimientoOrdenDespacho($idOd){
+
+        $ordenDespacho= OrdenDespacho::find($idOd);
+        $requerimientoLogistico=[];
+
+        if($ordenDespacho){
+            $requerimientoOrdenDespacho = Requerimiento::find($ordenDespacho->id_requerimiento);
+            $requerimientoLogistico =  (new RequerimientoController)->mostrarRequerimiento($requerimientoOrdenDespacho->id_requerimiento,0);
+            
+        }
+
+        return $requerimientoLogistico;
+
+    }
+
+
+    public function guardarRequerimientoFlete(Request $request){
+        try {
+            DB::beginTransaction();
+                    // si exist el check, se genera requerimiento
+                    $actualOD = OrdenDespacho::find($request->id_od);
+ 
+                        $montoSubtotal = $request->precio_unitario?? null;
+                        $montoIgv = $request->importe_igv ?? null;
+                        $montoTotal = $request->importe_tota ??null;
+                        
+                            $requerimiento = new Requerimiento();
+                            $requerimiento->id_tipo_requerimiento = 8; // por defecto Otros
+                            $requerimiento->id_usuario = Auth::user()->id_usuario;
+                            $requerimiento->fecha_requerimiento = new Carbon();
+                            $requerimiento->id_periodo = $request->periodo;
+                            $requerimiento->id_prioridad = $request->prioridad;
+                            $requerimiento->concepto = strtoupper($request->concepto);
+                            $requerimiento->observacion = $request->observacion;
+                            $requerimiento->id_empresa = $request->empresa ? $request->empresa : null;
+                            $requerimiento->id_sede = $request->sede > 0 ? $request->sede : null;
+                            $requerimiento->id_grupo = $request->grupo > 0 ? $request->grupo : null;
+                            $requerimiento->division_id = $request->division > 0 ?  $request->division : null;
+                            $requerimiento->fecha_registro = new Carbon();
+                            $requerimiento->id_almacen = $request->almacen > 0 ? $request->almacen : null;
+                            $requerimiento->monto_subtotal = $montoSubtotal;
+                            $requerimiento->monto_igv = $montoIgv;
+                            $requerimiento->monto_total = $montoTotal;
+                            $requerimiento->fecha_entrega = $request->fecha_entrega != null ? $request->fecha_entrega : null;
+                            $requerimiento->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
+                            $requerimiento->id_cc = $request->cdp > 0 ? $request->cdp : null;
+                            $requerimiento->trabajador_id = $request->solicitado_por > 0 ? $request->solicitado_por : null;
+                            $requerimiento->id_moneda = 1; // por defecto es en soles
+                            $requerimiento->tiene_transformacion = false;
+                            $requerimiento->confirmacion_pago = true;
+                            $requerimiento->id_tipo_detalle = 2; // tipo servicio
+                            $requerimiento->estado = 1;
+                            $requerimiento->save();
+                                
+        
+                        $detalle = new DetalleRequerimiento();
+                        $detalle->id_requerimiento = $requerimiento->id_requerimiento;
+                        $detalle->id_tipo_item = 2; //servicio
+                        $detalle->partida = null;
+                        $detalle->centro_costo_id = (isset($request->centro_costo) && $request->centro_costo >0)? $request->centro_costo:null;
+                        $detalle->tiene_transformacion = false;
+                        $detalle->descripcion = Str::upper($request->descripcion_item);
+                        $detalle->id_unidad_medida = 17; // servicio
+                        $detalle->cantidad = 1;
+                        $detalle->precio_unitario = $montoTotal;
+                        $detalle->subtotal = $montoTotal;
+                        $detalle->fecha_registro = new Carbon();
+                        $detalle->estado = 1;
+                        $detalle->save();
+        
+                        $documento = new Documento();
+                        $documento->id_tp_documento = 1;
+                        $documento->codigo_doc = $requerimiento->codigo;
+                        $documento->id_doc = $requerimiento->id_requerimiento;
+                        $documento->save();
+            
+
+                        $ordenDespachoFlete = new OrdenDespachoFlete();
+                        $ordenDespachoFlete->id_od = $request->id_od;
+                        $ordenDespachoFlete->id_requerimiento = $requerimiento->id_requerimiento;
+                        $ordenDespachoFlete->estado = 1;
+                        $ordenDespachoFlete->id_usuario = Auth::user()->id_usuario;
+                        $ordenDespachoFlete->fecha_registro = new Carbon();
+                        $ordenDespachoFlete->save();
+
+                    DB::commit();
+
+                    $codigo = Requerimiento::crearCodigo(7, $request->grupo, $requerimiento->id_requerimiento, $request->periodo);
+                    $req = Requerimiento::find($requerimiento->id_requerimiento);
+                    $req->codigo = $codigo;
+                    $req->save();
+
+                    if($req){
+                        return response()->json(['status'=>'success','mensaje'=>'Requerimiento de flete '.$req->codigo.' fue creado.']);
+                        
+                    }else{
+                        return response()->json(['status'=>'error','mensaje'=>'Hubo un problema al generar el requerimiento de flete']);
+
+                    }
+
+                } catch (\PDOException $e) {
+                    DB::rollBack();
+                    return response()->json(['status'=>'error','mensaje'=>$e->getMessage()]);
+
+                }
     }
 }

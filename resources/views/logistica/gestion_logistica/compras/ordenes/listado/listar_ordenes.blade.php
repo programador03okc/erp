@@ -264,7 +264,7 @@ Gestión de ordenes
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-sm btn-primary" class="close" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-sm btn-primary" class="close" data-dismiss="modal">Cerrar</button>
                 </div>
             </form>
         </div>

@@ -1818,7 +1818,7 @@ class ListaOrdenView {
                 'data': function (params) {
                     return Object.assign(params, Util.objectifyForm($('#formFiltros').serializeArray()))
                 },
-                'headers': { 'X-CSRF-TOKEN': this.token },
+                // 'headers': { 'X-CSRF-TOKEN': this.token },
                 beforeSend: data => {
                     $("#listaOrdenes").LoadingOverlay("show", {
                         imageAutoResize: true,

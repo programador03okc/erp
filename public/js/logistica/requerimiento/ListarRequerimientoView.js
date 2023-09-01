@@ -611,8 +611,10 @@ class ListarRequerimientoView {
                 that.construirSeccionItemsDeRequerimiento(res['det_req'], res['requerimiento'][0]['simbolo_moneda'],res['requerimiento'][0]['id_presupuesto_interno']);
                 that.construirSeccionHistorialAprobacion(res['historial_aprobacion']);
                 that.construirSeccionFlujoAprobacion(res['flujo_aprobacion']);
-                that.calcularPresupuestoUtilizadoYSaldoPorPartida();
                 $('#modal-requerimiento div.modal-body').LoadingOverlay("hide", true);
+                setTimeout(function () {
+                         that.calcularPresupuestoUtilizadoYSaldoPorPartida();
+                }, 2000);
 
             }).catch(function (err) {
                 $('#modal-requerimiento .modal-content').LoadingOverlay("hide", true);
@@ -804,6 +806,7 @@ class ListarRequerimientoView {
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
         this.limpiarTabla('listaPartidasActivas');
+        // console.log(data);
         data.forEach(element => {
 
             document.querySelector("tbody[id='body_partidas_activas']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
@@ -912,8 +915,8 @@ class ListarRequerimientoView {
                         data-id-partida="${data[i].id_partida !=null ? data[i].id_partida : data[i].id_partida_pi}" 
                         data-presupuesto-total="${data[i].presupuesto_interno_total_partida != null ?data[i].presupuesto_interno_total_partida: data[i].presupuesto_old_total_partida}" 
                         data-presupuesto-mes="${data[i].presupuesto_interno_mes_partida}" 
-                        title="${data[i].descripcion_partida !=null ? data[i].descripcion_partida :'' }";
-                        style="display:none;"> ${data[i].codigo_partida !=null ? data[i].codigo_partida :'' }
+                        title="${data[i].id_partida !=null ? data[i].descripcion_partida.toUpperCase() :(data[i].id_partida_pi >0?data[i].descripcion_partida_presupuesto_interno.toUpperCase() : '') }";
+                        style="display:none;"> ${data[i].id_partida >0 ?data[i].codigo_partida :(data[i].id_partida_pi >0?data[i].codigo_partida_presupuesto_interno : '')}
                     </p>
                 </td>
                 <td title="${data[i].id_partida >0 ?data[i].descripcion_partida.toUpperCase() :(data[i].id_partida_pi >0?data[i].descripcion_partida_presupuesto_interno.toUpperCase() : '')}" >${data[i].id_partida >0 ?data[i].codigo_partida :(data[i].id_partida_pi >0?data[i].codigo_partida_presupuesto_interno : '')}</td>
@@ -944,7 +947,6 @@ class ListarRequerimientoView {
 
 
         }
-
 
     }
 

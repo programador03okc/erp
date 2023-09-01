@@ -259,6 +259,9 @@ class ListaOrdenView {
         $(document).on("change", "input.handleChangeNroComprobante", (e) => {
             this.actualizarNroComprobanteDeAdjunto(e.currentTarget);
         });
+        $(document).on("change", "select.handleChangeCategoriaAdjunto", (e) => {
+            this.actualizarCategoriaAdjunto(e.currentTarget);
+        });
         $(document).on("change", "input.handleChangeMontoTotalComprobante", (e) => {
             this.actualizarMontoTotalComprobanteDeAdjunto(e.currentTarget);
         });
@@ -2354,6 +2357,20 @@ class ListaOrdenView {
             );
         }
     }
+
+    actualizarCategoriaAdjunto(obj){
+        if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
+            let indice = tempArchivoAdjuntoRequerimientoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
+            tempArchivoAdjuntoRequerimientoCabeceraList[indice].category = parseInt(obj.value) > 0 ? parseInt(obj.value) : 1;
+        } else {
+            Swal.fire(
+                '',
+                'Hubo un error inesperado al intentar cambiar la categoría del adjunto, puede que no el objecto este vacio, elimine adjuntos y vuelva a seleccionar',
+                'error'
+            );
+        }
+    }
+    
 
     estaHabilitadoLaExtension(file) {
         let extension = (file.name.match(/(?<=\.)\w+$/g) != null) ? file.name.match(/(?<=\.)\w+$/g)[0].toLowerCase() : ''; // assuming that this file has any extension

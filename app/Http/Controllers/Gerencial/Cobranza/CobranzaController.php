@@ -287,7 +287,7 @@ class CobranzaController extends Controller
                             'orden_compra'   => (($cobranza->oc_fisica !== '') && ($cobranza->oc_fisica != null )) ? $cobranza->oc_fisica : '',
                         ]);
                     }
-                    
+
                     if (strpos($cobranza->ocam, 'OCAM') == 0) {
                         OrdenCompraPropias::where('orden_am', rtrim($cobranza->ocam))
                         ->update([

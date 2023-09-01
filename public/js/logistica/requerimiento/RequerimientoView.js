@@ -404,6 +404,54 @@ class RequerimientoView {
                 document.querySelector("select[name='division']").innerHTML = optionSelectDivisionHTML;
                 this.mostrarCabeceraRequerimiento(data['requerimiento'][0]);
 
+                if (data.hasOwnProperty('det_req')) {
+                    if (data['requerimiento'][0].estado == 7 || data['requerimiento'][0].estado == 2) {
+                        changeStateButton('cancelar'); //init.js
+                        $("#form-requerimiento .activation").attr('disabled', true);
+    
+                    } else if (data['requerimiento'][0].estado == 1 && data['requerimiento'][0].id_usuario == auth_user.id_usuario) {
+                        document.querySelector("form[id='form-requerimiento']").setAttribute('type', 'edition');
+                        changeStateButton('historial'); //init.js
+                        // allButtonAdjuntarNuevo.forEach(element => {
+                        //     element.removeAttribute("disabled");
+                        // });
+    
+    
+                        $("#form-requerimiento .activation").attr('disabled', true);
+    
+                    } else if ((data['requerimiento'][0].estado == 1 || data['requerimiento'][0].estado == 3)) {
+                        document.querySelector("div[id='group-historial-revisiones']").removeAttribute('hidden');
+                        this.mostrarHistorialRevisionAprobacion(data['historial_aprobacion']);
+                        disabledControl(btnAdjuntosRequerimiento, true);
+    
+                        if (data['requerimiento'][0].id_usuario == auth_user.id_usuario) {
+                            hasDisabledInput = '';
+                            document.querySelector("form[id='form-requerimiento']").setAttribute('type', 'edition');
+                            changeStateButton('editar'); //init.js
+                            disabledControl(btnAdjuntosRequerimiento, false);
+    
+                            // allButtonAdjuntarNuevo.forEach(element => {
+                            //     element.removeAttribute("disabled");
+                            // });
+    
+                            $("#form-requerimiento .activation").attr('disabled', false);
+    
+                        }
+    
+    
+    
+                    } else {
+                        document.querySelector("div[id='group-historial-revisiones']").setAttribute('hidden', true);
+    
+                        // allButtonAdjuntarNuevo.forEach(element => {
+                        //     element.setAttribute("disabled",true);
+                        // });
+    
+    
+                    }
+                    this.mostrarDetalleRequerimiento(data, hasDisabledInput);
+                }
+
             }).catch(function (err) {
                 console.log(err)
                 Swal.fire(
@@ -414,53 +462,7 @@ class RequerimientoView {
             })
             //
 
-            if (data.hasOwnProperty('det_req')) {
-                if (data['requerimiento'][0].estado == 7 || data['requerimiento'][0].estado == 2) {
-                    changeStateButton('cancelar'); //init.js
-                    $("#form-requerimiento .activation").attr('disabled', true);
 
-                } else if (data['requerimiento'][0].estado == 1 && data['requerimiento'][0].id_usuario == auth_user.id_usuario) {
-                    document.querySelector("form[id='form-requerimiento']").setAttribute('type', 'edition');
-                    changeStateButton('historial'); //init.js
-                    // allButtonAdjuntarNuevo.forEach(element => {
-                    //     element.removeAttribute("disabled");
-                    // });
-
-
-                    $("#form-requerimiento .activation").attr('disabled', true);
-
-                } else if ((data['requerimiento'][0].estado == 1 || data['requerimiento'][0].estado == 3)) {
-                    document.querySelector("div[id='group-historial-revisiones']").removeAttribute('hidden');
-                    this.mostrarHistorialRevisionAprobacion(data['historial_aprobacion']);
-                    disabledControl(btnAdjuntosRequerimiento, true);
-
-                    if (data['requerimiento'][0].id_usuario == auth_user.id_usuario) {
-                        hasDisabledInput = '';
-                        document.querySelector("form[id='form-requerimiento']").setAttribute('type', 'edition');
-                        changeStateButton('editar'); //init.js
-                        disabledControl(btnAdjuntosRequerimiento, false);
-
-                        // allButtonAdjuntarNuevo.forEach(element => {
-                        //     element.removeAttribute("disabled");
-                        // });
-
-                        $("#form-requerimiento .activation").attr('disabled', false);
-
-                    }
-
-
-
-                } else {
-                    document.querySelector("div[id='group-historial-revisiones']").setAttribute('hidden', true);
-
-                    // allButtonAdjuntarNuevo.forEach(element => {
-                    //     element.setAttribute("disabled",true);
-                    // });
-
-
-                }
-                this.mostrarDetalleRequerimiento(data, hasDisabledInput);
-            }
 
         } else {
             Swal.fire(
@@ -631,7 +633,7 @@ class RequerimientoView {
             // console.log(objOptionSelectUnidad);
             //  fin fix unidad medida
             let idFila = dataDetalleRequerimiento[i].id_detalle_requerimiento > 0 ? dataDetalleRequerimiento[i].id_detalle_requerimiento : (this.makeId());
-            console.log(dataDetalleRequerimiento);
+            // console.log(dataDetalleRequerimiento);
 
             let idPartida = '';
             let codigoPartida = '';
@@ -757,7 +759,6 @@ class RequerimientoView {
         this.updateContadorItem();
         this.autoUpdateSubtotal();
         this.calcularTotal();
-        this.calcularPresupuestoUtilizadoYSaldoPorPartida();
         tempArchivoAdjuntoRequerimientoDetalleList = [];
         dataDetalleRequerimiento.forEach(element => {
             if (element.adjuntos.length > 0) {
@@ -776,6 +777,8 @@ class RequerimientoView {
             }
 
         });
+
+        this.calcularPresupuestoUtilizadoYSaldoPorPartida();
 
     }
 
@@ -1643,6 +1646,7 @@ class RequerimientoView {
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
+        // console.log(data);
         this.limpiarTabla('listaPartidasActivas');
         data.forEach(element => {
 

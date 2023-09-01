@@ -15,7 +15,7 @@ class RequerimientoPago extends Model
 {
     protected $table = 'tesoreria.requerimiento_pago';
     protected $primaryKey = 'id_requerimiento_pago';
-    protected $appends = ['id_documento', 'termometro', 'nombre_estado','nombre_trabajador'];
+    protected $appends = ['id_documento', 'termometro', 'nombre_estado','nombre_trabajador','tipo_cambio'];
     public $timestamps = false;
 
 
@@ -93,6 +93,14 @@ class RequerimientoPago extends Model
                 return '';
                 break;
         }
+    }
+
+    public function getTipoCambioAttribute()
+    {
+        
+        $tipoCambio = TipoCambio::where("fecha",date('Y-m-d', strtotime($this->attributes['fecha_registro'])))
+        ->first();
+        return $tipoCambio?$tipoCambio->venta:'';
     }
 
     public static function obtenerCantidadRegistros($grupo, $idRequerimientoPago, $idPeriodo)

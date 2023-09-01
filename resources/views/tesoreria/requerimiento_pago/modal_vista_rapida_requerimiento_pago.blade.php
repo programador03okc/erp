@@ -10,6 +10,9 @@
                 <input type="hidden" name="id_requerimiento_pago">
                 <input type="hidden" name="id_estado">
                 <input type="hidden" name="id_usuario">
+                <input type="hidden" name="id_moneda">
+                <input type="hidden" name="simbolo_moneda">
+                <input type="hidden" name="tipo_cambio">
                 <fieldset class="group-importes">
                     <legend>Datos generales</legend>
                     <div class="box box-widget">

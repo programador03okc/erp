@@ -1002,7 +1002,7 @@ class RequerimientoPendienteView {
                                     '<i class="fas fa-eye fa-sm"></i>' +
                                     '</button>' : '') +
                                 (array_accesos.find(element => element === 232) ? '<button type="button" class="btn btn-default btn-xs handleClickVerDetalleRequerimiento" name="btnVerDetalleRequerimiento" title="Ver detalle requerimiento" data-id-requerimiento="' + row.id_requerimiento + '" ><i class="fas fa-chevron-down fa-sm"></i></button>' : '')
-                                + (([17, 27, 1, 3, 77].includes(auth_user.id_usuario)) ? (btnRetornarAListaPendientes) : '')
+                                + (([17, 27, 1, 3, 77, 78,75].includes(auth_user.id_usuario)) ? (btnRetornarAListaPendientes) : '')
                                 + '</div>');
                         } else {
                             let openDiv = '<div class="btn-group" role="group">';

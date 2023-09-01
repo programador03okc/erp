@@ -1747,6 +1747,9 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('eliminar-penalidad', [RegistroController::class, 'eliminarPenalidad']);
 
 			Route::get('exportar-excel-power-bi/{request}', [RegistroController::class, 'exportarExcelPowerBI']);
+
+            Route::get('editar-penalidad/{id}', [RegistroController::class,'editarPenalidad']);
+            Route::post('eliminar-penalidad', [RegistroController::class,'eliminarPenalidad']);
 		});
 
 		// Fondos, Auspicios y Rebates

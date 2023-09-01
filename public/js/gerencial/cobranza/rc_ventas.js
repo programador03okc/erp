@@ -837,10 +837,10 @@ function listarAcciones(id, tipo) {
                         }
 
                         if (estado_pen != 'DEVOLUCION' || estado_pen != 'ANULADA') {
-                            opcion += `<button class="btn btn-xs btn-primary" data-id="`+ element.id_penalidad +`" data-cobranza="`+ element.id_registro_cobranza +`" title="Editar"><i class="fa fa-edit"></i></button>`;
+                            opcion += `<button class="btn btn-xs btn-primary" data-action="editar-penalidad" data-id="`+ element.id_penalidad +`" data-cobranza="`+ element.id_registro_cobranza +`" title="Editar"><i class="fa fa-edit"></i></button>`;
                         }
 
-                        opcion += `<button class="btn btn-xs btn-danger" data-id="`+ element.id_penalidad +`"data-cobranza="`+ element.id_registro_cobranza +`" title="Eliminar"><i class="fa fa-times"></i></button>`;
+                        opcion += `<button class="btn btn-xs btn-danger" data-action="eliminar-penalidad" data-id="`+ element.id_penalidad +`"data-cobranza="`+ element.id_registro_cobranza +`" title="Eliminar" data-estado="7"><i class="fa fa-times"></i></button>`;
                         resultado += `<tr>
                             <td class="text-center">`+ element.tipo +`</td>
                             <td class="text-center">`+ element.documento +`</td>
@@ -949,3 +949,49 @@ function diasAtraso() {
 function exportarExcel() {
     window.open('exportar-excel');
 }
+
+$("#tablaPenalidad").on('click','[data-action="editar-penalidad"]',function (e) {
+    e.preventDefault();
+    var id = $(this).attr('data-id');
+    $.ajax({
+        type: 'GET',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: 'editar-penalidad/'+id,
+        data: {},
+        dataType: 'JSON'
+    }).done(function( data ) {
+
+        $('#formulario-penalidad').find('[name="fecha_penal"]').val(data.fecha);
+        $('#formulario-penalidad').find('[name="doc_penal"]').val(data.documento);
+        $('#formulario-penalidad').find('[name="importe_penal"]').val(data.monto);
+        $('#formulario-penalidad').find('[name="obs_penal"]').val(data.observacion);
+        $('#formulario-penalidad').find('[name="id_penalidad"]').val(data.id_penalidad);
+        $('#formulario-penalidad').find('[name="id_cobranza"]').val(data.id_registro_cobranza);
+    }).fail( function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    })
+});
+$("#tablaPenalidad").on('click','[data-action="eliminar-penalidad"]',function (e) {
+    e.preventDefault();
+    var id = $(this).attr('data-id'),
+        titulo =$('[data-form="guardar-penalidad"]').find('[name="tipo_penal"]').val(),
+        id_registro_cobranza =$(this).attr('data-cobranza'),
+        estado = $(this).attr('data-estado');
+    $.ajax({
+        type: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: 'eliminar-penalidad',
+        data: {tipo:titulo,id:id,id_registro_cobranza:id_registro_cobranza,estado:estado},
+        dataType: 'JSON'
+    }).done(function( data ) {
+        // obtenerPenalidades(id_registro_cobranza, 'PENALIDAD');
+        // listarAcciones(id_registro_cobranza, 'penalidad');
+        listarAcciones(id_registro_cobranza, 'PENALIDAD');
+    }).fail( function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    })
+});

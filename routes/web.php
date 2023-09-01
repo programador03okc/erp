@@ -65,6 +65,7 @@ use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesTransformacionController;
+use App\Http\Controllers\Logistica\Distribucion\ProgramacionDespachosController;
 use App\Http\Controllers\Logistica\ProveedoresController;
 use App\Http\Controllers\Logistica\RequerimientoController;
 use App\Http\Controllers\Logistica\Requerimientos\MapeoProductosController;
@@ -1670,6 +1671,15 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class, 'pasarProgramadasAlDiaSiguiente'])->name('pasar-programadas-al-dia-siguiente');
 				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class, 'listarPendientesAnteriores'])->name('listar-pendientes-anteriores');
 				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class, 'cambiaEstado'])->name('cambia-estado');
+			});
+            Route::name('programacion-despachos.')->prefix('programacion-despachos')->group(function () {
+
+                Route::get('lista', [ProgramacionDespachosController::class, 'lista'])->name('lista');
+                Route::get('listar-odi', [ProgramacionDespachosController::class, 'listarODI'])->name('listar-odi');
+                Route::get('listar-ode', [ProgramacionDespachosController::class, 'listarODE'])->name('listar-ode');
+                Route::post('guardar', [ProgramacionDespachosController::class, 'guardar'])->name('guardar');
+                Route::get('editar/{id}', [ProgramacionDespachosController::class, 'editar'])->name('editar');
+                Route::put('eliminar/{id}', [ProgramacionDespachosController::class, 'eliminar'])->name('eliminar');
 			});
 		});
 	});

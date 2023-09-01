@@ -15,64 +15,6 @@ class ProgramacionDespachoView {
 
         this.model.listarODI(page).then((respuesta) => {
             fun.programarDespachos(respuesta, 'odi');
-            // $.each(respuesta.fechas, function (index, element) {
-
-
-            //     if ($('[data-fecha="'+element+'"]').length===0) {
-            //         html_fecha+=''
-            //         +'<li class="time-label" data-fecha="'+element+'" data-tipo="header">'
-            //             +'<span class="bg-red">'
-            //                 +moment(element).format('DD/MM/YYYY')
-            //             +'</span>'
-            //         +'</li>';
-            //     }else{
-
-            //     }
-            // });
-
-            // $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
-
-            // $.each(respuesta.data.data, function (index, element) {
-
-            //     html_programacion='<li data-despacho="'+element.id+'" data-fecha="'+element.fecha_registro+'">'
-            //         +'<i class="fa fa-cube bg-blue"></i>'
-
-            //         +'<div class="timeline-item-despachos">'
-            //             +'<span class="time"><i class="fa fa-clock"></i> '+moment(element.fecha_programacion).format('DD/MM/YYYY')+'</span>'
-
-            //             +'<h3 class="timeline-header"><a href="#">'+element.titulo+'</a> </h3>'
-
-            //             +'<div class="timeline-body">'
-            //                 +element.descripcion
-            //             +'</div>'
-            //             +'<div class="timeline-footer">'
-            //                 +'<a class="btn btn-primary btn-xs editar" data-id="'+element.id+'" data-despacho="'+tipo+'><i class="fa fa-edit"></i> Editar</a>'
-            //                 +'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>'
-            //             +'</div>'
-            //         +'</div>'
-            //     +'</li>';
-            //     // $('[data-action="despachos-'+tipo+'"] [data-fecha="'+element.fecha_registro+'"]').after(html_programacion);
-            //     $('[data-action="despachos-'+tipo+'"] [data-fecha="'+element.fecha_registro+'"]').last().after(html_programacion);
-            // });
-            // $('[data-action="despachos-'+tipo+'"]').find('#mostrar-'+tipo+'').remove();
-            // if (respuesta.data.next_page_url!==null) {
-
-            //     html+='<li class="time-label" id="mostrar-'+tipo+'">'
-            //         +'<button type="button" class="btn bg-gray btn-sm" data-href="'+respuesta.data.next_page_url+'" data-action="mostar-mas-'+tipo+'"> <i class="fa fa-plus"></i> '
-            //             +'<span class="">'
-            //                 +'Mostrar más'
-            //             +'</span>'
-            //         +'</button>'
-            //     +'</li>' ;
-            // }else{
-            //     html+='<li id="mostrar-'+tipo+'">'
-            //         +'<i class="fa fa-clock bg-gray"></i>'
-            //         +'<div class="timeline-item-despachos">'
-            //         +'</div>'
-            //     +'</li>';
-            // }
-            // $('[data-action="despachos-'+tipo+'"]').append(html);
-
         }).fail((respuesta) => {
             console.log(respuesta);
         }).always(() => {
@@ -84,7 +26,6 @@ class ProgramacionDespachoView {
         let fun = this;
         this.model.listarODE(page).then((respuesta) => {
             fun.programarDespachos(respuesta, 'ode');
-            console.log(respuesta);
         }).fail((respuesta) => {
             console.log(respuesta);
         }).always(() => {
@@ -99,19 +40,19 @@ class ProgramacionDespachoView {
         $.each(respuesta.fechas, function (index, element) {
 
 
-            if ($('[data-fecha="'+element+'"]').length===0) {
-                html_fecha+=''
-                +'<li class="time-label" data-fecha="'+element+'" data-tipo="header">'
+            if ($('[data-action="despachos-'+tipo+'"] [data-fecha="'+element+'"]').length===0) {
+
+                html_fecha='<li class="time-label" data-fecha="'+element+'" data-tipo="header">'
                     +'<span class="bg-red">'
                         +moment(element).format('DD/MM/YYYY')
                     +'</span>'
                 +'</li>';
+                $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
             }else{
-
             }
         });
 
-        $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
+
 
         $.each(respuesta.data.data, function (index, element) {
 
@@ -135,10 +76,10 @@ class ProgramacionDespachoView {
             // $('[data-action="despachos-'+tipo+'"] [data-fecha="'+element.fecha_registro+'"]').after(html_programacion);
             $('[data-action="despachos-'+tipo+'"] [data-fecha="'+element.fecha_registro+'"]').last().after(html_programacion);
         });
-        $('[data-action="despachos-'+tipo+'"]').find('#mostrar-'+tipo+'').remove();
+        $('#mostrar-'+tipo+'').remove();
         if (respuesta.data.next_page_url!==null) {
 
-            html+='<li class="time-label" id="mostrar-'+tipo+'">'
+            html='<li class="time-label" id="mostrar-'+tipo+'">'
                 +'<button type="button" class="btn bg-gray btn-sm" data-href="'+respuesta.data.next_page_url+'" data-action="mostar-mas-'+tipo+'"> <i class="fa fa-plus"></i> '
                     +'<span class="">'
                         +'Mostrar más'
@@ -146,7 +87,7 @@ class ProgramacionDespachoView {
                 +'</button>'
             +'</li>' ;
         }else{
-            html+='<li id="mostrar-'+tipo+'">'
+            html='<li id="mostrar-'+tipo+'">'
                 +'<i class="fa fa-clock bg-gray"></i>'
                 +'<div class="timeline-item-despachos">'
                 +'</div>'
@@ -167,7 +108,6 @@ class ProgramacionDespachoView {
 
             let href = $(e.currentTarget).attr('data-href');
             let array = href.split('=');
-            console.log(href);
             fun.listarODE(array[1]);
         });
         $('#nuevo').on("click", (e) => {
@@ -187,6 +127,8 @@ class ProgramacionDespachoView {
             let html_fecha = '';
             let html_programacion = '';
             let tipo = '';
+            let curren = $('a[data-id="'+$(e.currentTarget).find('[name=id]').val()+'"]');
+
             Swal.fire({
                 title: 'Guardar',
                 text: "¿Está seguro de guardar?",
@@ -218,7 +160,7 @@ class ProgramacionDespachoView {
                         confirmButtonText: 'Aceptar'
                       }).then((resultado) => {
                         if (resultado.isConfirmed) {
-
+                            console.log(result.value.data);
                             if (result.value.success) {
 
                                 if (result.value.data.aplica_cambios=="true") {
@@ -226,6 +168,8 @@ class ProgramacionDespachoView {
                                 } else {
                                     tipo = 'ode';
                                 }
+
+                                curren.closest('li[data-despacho="'+result.value.data.id+'"]').remove();
 
                                 if ($('[data-fecha="'+result.value.data.fecha_registro+'"]').length===0) {
 
@@ -260,7 +204,6 @@ class ProgramacionDespachoView {
                                 +'</li>';
                                 $('[data-action="despachos-'+tipo+'"] [data-fecha="'+result.value.data.fecha_registro+'"]:last').after(html_programacion);
 
-                                console.log($('[data-action="despachos-'+tipo+'"] [data-fecha="'+result.value.data.fecha_registro+'"]:last'));
                             }
                             $('#modal-despachos').modal('hide');
                             // $('#tabla-data').DataTable().ajax.reload(null, false);
@@ -341,7 +284,6 @@ class ProgramacionDespachoView {
                         if (resultado.isConfirmed) {
                             // $('[data-action="despachos-'+tipo+'"] [data-fecha="'+fecha+'"]')
                             curren.closest('li[data-despacho="'+id+'"]').remove();
-                            console.log($('[data-action="despachos-'+tipo+'"] [data-fecha="'+fecha+'"]').length);
                             if ($('[data-action="despachos-'+tipo+'"] [data-fecha="'+fecha+'"]').length===1) {
                                 $('[data-fecha="'+fecha+'"]').remove();
                             }

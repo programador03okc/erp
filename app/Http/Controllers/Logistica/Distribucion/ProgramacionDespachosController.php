@@ -40,7 +40,7 @@ class ProgramacionDespachosController extends Controller
     public function listarODE(Request $request) {
         // en lista la odi
         // if($request->ajax()){
-            $data = ProgramacionDespacho::orderBy('fecha_registro','DESC')->where('aplica_cambios','f')->paginate(2);
+            $data = ProgramacionDespacho::orderBy('fecha_registro','DESC')->where('aplica_cambios','f')->paginate(4);
             $array_fechas = array();
             foreach ($data as $key => $value) {
                 if (!in_array($value->fecha_registro, $array_fechas)) {
@@ -57,11 +57,19 @@ class ProgramacionDespachosController extends Controller
             $data = ProgramacionDespacho::firstOrNew(['id' => $request->id]);
                 $data->titulo           = $request->titulo;
                 $data->descripcion      = $request->descripcion;
-                $data->fecha_registro   = date('Y-m-d');
+
                 $data->fecha_programacion   = $request->fecha_programacion;
-                $data->estado               = 1;
+
                 $data->aplica_cambios       = $request->aplica_cambios;
-                $data->created_id           = Auth()->user()->id_usuario;
+
+                if ((int) $request->id == 0) {
+                    $data->estado               = 1;
+                    $data->fecha_registro   = date('Y-m-d');
+                    $data->created_id           = Auth()->user()->id_usuario;
+
+                }else{
+                    $data->updated_id           = Auth()->user()->id_usuario;
+                }
             $data->save();
             return response()->json(["titulo"=>"Éxito", "mensaje"=>"Se guardo con éxito.", "tipo"=>'success', "data"=>$data,"success"=>true],200);
         } catch (Exception $e) {

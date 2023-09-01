@@ -1037,9 +1037,13 @@ class OrdenController extends Controller
 
     public function generarFiltros(Request $request)
     {
+
+        $desde = Carbon::createFromFormat('Y-m-d', ($request->fechaRegistroDesde))->hour(0)->minute(0)->second(0);
+        $hasta = Carbon::createFromFormat('Y-m-d', ($request->fechaRegistroHasta));
+
         if ($request->chkFechaRegistro == 'on') {
-            $request->session()->put('clFechaRegistroDesde', $request->fechaRegistroDesde);
-            $request->session()->put('clFechaRegistroHasta', $request->fechaRegistroHasta);
+            $request->session()->put('clFechaRegistroDesde',$desde );
+            $request->session()->put('clFechaRegistroHasta', $hasta->addDay()->addSeconds(-1));
         } else {
             $request->session()->forget('clFechaRegistroDesde');
             $request->session()->forget('clFechaRegistroHasta');
@@ -1067,7 +1071,7 @@ class OrdenController extends Controller
             $data = $data->whereBetween('fecha_emision', [session('clFechaRegistroDesde'), session('clFechaRegistroHasta')]);
         } else {
             $fecha = new Carbon();
-            $inicio = $fecha::now()->startOfMonth();
+            $inicio = $fecha::now()->startOfYear();
             $fin = $fecha::now()->endOfMonth();
             $data = $data->whereBetween('fecha_emision', [$inicio, $fin]);
         }

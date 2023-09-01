@@ -96,7 +96,6 @@ class ProgramacionDespachoView {
         let html = '';
         let html_programacion = '';
         let html_fecha = '';
-
         $.each(respuesta.fechas, function (index, element) {
 
 
@@ -163,101 +162,13 @@ class ProgramacionDespachoView {
             let page = href.split('=');
             fun.listarODI(page[1]);
 
-            // let html = '';
-            // let html_programacion = '';
-            // let html_fecha = '';
-            // let tipo = 'odi';
-            // let fun = this;
-
-
-            // console.log(page);
-            // console.log(page[1]);
-
-
-
-            // $.ajax({
-            //     url: route("logistica.distribucion.programacion-despachos.listar-odi")+'?page='+page[1],
-            //     type: "GET",
-            //     dataType: "JSON",
-            //     data: {
-            //         // _token: this.token,
-            //         // page:page[1]
-            //     },
-            //     beforeSend: (data) => {
-
-            //     }
-            // }).done(function (respuesta) {
-
-            //     $.each(respuesta.fechas, function (index, element) {
-
-
-            //         if ($('[data-fecha="'+element+'"]').length===0) {
-            //             html_fecha+=''
-            //             +'<li class="time-label" data-fecha="'+element+'" data-tipo="header">'
-            //                 +'<span class="bg-red">'
-            //                     +moment(element).format('DD/MM/YYYY')
-            //                 +'</span>'
-            //             +'</li>';
-            //         }else{
-
-            //         }
-            //     });
-
-            //     $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
-
-            //     $.each(respuesta.data.data, function (index, element) {
-            //         console.log(element);
-            //         html_programacion='<li data-despacho="'+element.id+'" data-fecha="'+element.fecha_registro+'">'
-            //             +'<i class="fa fa-cube bg-blue"></i>'
-
-            //             +'<div class="timeline-item-despachos">'
-            //                 +'<span class="time"><i class="fa fa-clock"></i> '+moment(element.fecha_programacion).format('DD/MM/YYYY')+'</span>'
-
-            //                 +'<h3 class="timeline-header"><a href="#">'+element.titulo+'</a> </h3>'
-
-            //                 +'<div class="timeline-body">'
-            //                     +element.descripcion
-            //                 +'</div>'
-            //                 +'<div class="timeline-footer">'
-            //                     +'<a class="btn btn-primary btn-xs editar" data-id="'+element.id+'" data-despacho="'+tipo+'><i class="fa fa-edit"></i> Editar</a>'
-            //                     +'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>'
-            //                 +'</div>'
-            //             +'</div>'
-            //         +'</li>';
-            //         // $('[data-action="despachos-'+tipo+'"] [data-fecha="'+element.fecha_registro+'"]').after(html_programacion);
-            //         $('[data-action="despachos-'+tipo+'"] [data-fecha="'+element.fecha_registro+'"]').last().after(html_programacion);
-            //     });
-            //     $('[data-action="despachos-'+tipo+'"]').find('#mostrar-'+tipo+'').remove();
-            //     if (respuesta.data.next_page_url!==null) {
-
-            //         html+='<li class="time-label" id="mostrar-'+tipo+'">'
-            //             +'<button type="button" class="btn bg-gray btn-sm" data-href="'+respuesta.data.next_page_url+'" data-action="mostar-mas-'+tipo+'"> <i class="fa fa-plus"></i> '
-            //                 +'<span class="">'
-            //                     +'Mostrar más'
-            //                 +'</span>'
-            //             +'</button>'
-            //         +'</li>' ;
-            //     }else{
-            //         html+='<li id="mostrar-'+tipo+'">'
-            //             +'<i class="fa fa-clock bg-gray"></i>'
-            //             +'<div class="timeline-item-despachos">'
-            //             +'</div>'
-            //         +'</li>';
-            //     }
-            //     $('[data-action="despachos-'+tipo+'"]').append(html);
-
-            // }).fail(function (jqXHR, textStatus, errorThrown) {
-            //     console.log(jqXHR);
-            //     console.log(textStatus);
-            //     console.log(errorThrown);
-            // });
         });
         $(document).on('click','button[data-action="mostar-mas-ode"]', (e) => {
 
             let href = $(e.currentTarget).attr('data-href');
             let array = href.split('=');
             console.log(href);
-            this.listarODE(array[1]);
+            fun.listarODE(array[1]);
         });
         $('#nuevo').on("click", (e) => {
             $('#modal-despachos').modal('show');

@@ -9,7 +9,7 @@ class ProgramacionDespachoModel {
             url: route("logistica.distribucion.programacion-despachos.listar-odi"),
             type: "GET",
             dataType: "JSON",
-            data: { _token: this.token, page:page },
+            data: {page:page,  _token: this.token,  },
         });
     }
     listarODE = (page) => {
@@ -17,7 +17,7 @@ class ProgramacionDespachoModel {
             url: route("logistica.distribucion.programacion-despachos.listar-ode"),
             type: "GET",
             dataType: "JSON",
-            data: { _token: this.token, page:page },
+            data: { page:page, _token: this.token,  },
         });
     }
 

@@ -13,12 +13,20 @@ class ProgramacionDespachosController extends Controller
     //
     public function lista()
     {
+        $data = ProgramacionDespacho::orderBy('fecha_registro','DESC')->where('aplica_cambios','t')->paginate(4);
+        $array_fechas = array();
+        foreach ($data as $key => $value) {
+            if (!in_array($value->fecha_registro, $array_fechas)) {
+                array_push($array_fechas,$value->fecha_registro);
+            }
+        }
+
         return view('almacen.distribucion.programacio_despachos.lista', get_defined_vars());
     }
     public function listarODI(Request $request) {
         // en lista la odi
-        if($request->ajax()){
-            $data = ProgramacionDespacho::orderBy('fecha_registro','DESC')->where('aplica_cambios','t')->paginate(2);
+        // if($request->ajax()){
+            $data = ProgramacionDespacho::orderBy('fecha_registro','DESC')->where('aplica_cambios','t')->paginate(4);
             $array_fechas = array();
             foreach ($data as $key => $value) {
                 if (!in_array($value->fecha_registro, $array_fechas)) {
@@ -26,12 +34,12 @@ class ProgramacionDespachosController extends Controller
                 }
             }
             return response()->json(["data"=>$data,"fechas"=>$array_fechas],200);
-        }
+        // }
         return response()->json(["success"=>false],404);
     }
     public function listarODE(Request $request) {
         // en lista la odi
-        if($request->ajax()){
+        // if($request->ajax()){
             $data = ProgramacionDespacho::orderBy('fecha_registro','DESC')->where('aplica_cambios','f')->paginate(2);
             $array_fechas = array();
             foreach ($data as $key => $value) {
@@ -40,7 +48,7 @@ class ProgramacionDespachosController extends Controller
                 }
             }
             return response()->json(["data"=>$data,"fechas"=>$array_fechas],200);
-        }
+        // }
         return response()->json(["success"=>false],404);
     }
     public function guardar(Request $request) {

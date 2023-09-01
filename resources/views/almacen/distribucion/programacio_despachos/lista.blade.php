@@ -161,7 +161,7 @@
 
             $('body').addClass('fixed');
             const view = new ProgramacionDespachoView(new ProgramacionDespachoModel(token));
-            view.listarODI(1);
+            view.listarODI();
             view.listarODE(1);
             view.eventos();
             // view.programacionDespachos();

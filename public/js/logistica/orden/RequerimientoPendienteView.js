@@ -636,7 +636,7 @@ class RequerimientoPendienteView {
                                 '<i class="fas fa-eye fa-sm"></i>' +
                                 '</button>' : '') +
 
-                            (([17, 27, 1, 3, 77].includes(auth_user.id_usuario)) ? (btnRetornarAListaPendientes) : '') +
+                            (([17, 27, 1, 3, 77,78,75].includes(auth_user.id_usuario)) ? (btnRetornarAListaPendientes) : '') +
 
                             '</div>');
                     } else {

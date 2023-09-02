@@ -41,14 +41,12 @@ class ProgramacionDespachoView {
 
 
             if ($('[data-action="despachos-'+tipo+'"] [data-fecha="'+element+'"]').length===0) {
-
                 html_fecha='<li class="time-label" data-fecha="'+element+'" data-tipo="header">'
                     +'<span class="bg-red">'
                         +moment(element).format('DD/MM/YYYY')
                     +'</span>'
                 +'</li>';
                 $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
-            }else{
             }
         });
 
@@ -60,15 +58,16 @@ class ProgramacionDespachoView {
                 +'<i class="fa fa-cube bg-blue"></i>'
 
                 +'<div class="timeline-item-despachos">'
-                    +'<span class="time"><i class="fa fa-clock"></i> '+moment(element.fecha_programacion).format('DD/MM/YYYY')+'</span>'
+                    +'<span class="time text-black"><i class="fa fa-calendar-alt"></i> Programado para el '+moment(element.fecha_programacion).format('DD/MM/YYYY')+' </span>'
 
                     +'<h3 class="timeline-header"><a href="#">'+element.titulo+'</a> </h3>'
 
                     +'<div class="timeline-body">'
                         +element.descripcion
+                        +(element.reprogramacion_id!==null?'<br><strong>ORDEN DE DESPACHO REPROGRAMADO</strong>':'')
                     +'</div>'
                     +'<div class="timeline-footer">'
-                        +'<a class="btn btn-primary btn-xs editar" data-id="'+element.id+'" data-despacho="'+tipo+'><i class="fa fa-edit"></i> Editar</a>'
+                        +'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>'
                         +'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>'
                     +'</div>'
                 +'</div>'
@@ -160,7 +159,7 @@ class ProgramacionDespachoView {
                         confirmButtonText: 'Aceptar'
                       }).then((resultado) => {
                         if (resultado.isConfirmed) {
-                            console.log(result.value.data);
+
                             if (result.value.success) {
 
                                 if (result.value.data.aplica_cambios=="true") {
@@ -168,19 +167,26 @@ class ProgramacionDespachoView {
                                 } else {
                                     tipo = 'ode';
                                 }
-
                                 curren.closest('li[data-despacho="'+result.value.data.id+'"]').remove();
+                                console.log(tipo);
+                                console.log($('[data-action="despachos-'+tipo+'"] [data-tipo="header"]')[0]);
 
-                                if ($('[data-fecha="'+result.value.data.fecha_registro+'"]').length===0) {
+                                if ($('[data-action="despachos-'+tipo+'"] [data-tipo="header"][data-fecha="'+result.value.data.fecha_registro+'"]').length==0) {
 
 
-                                    html_fecha+=''
+
+                                    html_fecha=''
                                     +'<li class="time-label" data-fecha="'+result.value.data.fecha_registro+'" data-tipo="header">'
                                         +'<span class="bg-red">'
                                             +moment(result.value.data.fecha_registro).format('DD/MM/YYYY')
                                         +'</span>'
                                     +'</li>';
-                                    $('[data-action="despachos-'+tipo+'"]').find('[data-tipo="header"]').before(html_fecha);
+                                    // $('[data-action="despachos-'+tipo+'"]').find('[data-tipo="header"]:first').after(html_fecha);
+                                    // $('[data-action="despachos-'+tipo+'"]').find('[data-tipo="header"]').before(html_fecha);
+                                    $('[data-action="despachos-'+tipo+'"] [data-tipo="header"]:first').before(html_fecha);
+
+
+                                    // $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
                                 }
 
                                 // $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
@@ -189,7 +195,7 @@ class ProgramacionDespachoView {
                                     +'<i class="fa fa-cube bg-blue"></i>'
 
                                     +'<div class="timeline-item-despachos">'
-                                        +'<span class="time"><i class="fa fa-clock"></i> '+moment(result.value.data.fecha_programacion).format('DD/MM/YYYY')+'</span>'
+                                        +'<span class="time  text-black"><i class="fa fa-calendar-alt"></i> Programado para el '+moment(result.value.data.fecha_programacion).format('DD/MM/YYYY')+'</span>'
 
                                         +'<h3 class="timeline-header"><a href="#">'+result.value.data.titulo+'</a> </h3>'
 
@@ -197,12 +203,14 @@ class ProgramacionDespachoView {
                                             +result.value.data.descripcion
                                         +'</div>'
                                         +'<div class="timeline-footer">'
-                                            +'<a class="btn btn-primary btn-xs editar" data-id="'+result.value.data.id+'"><i class="fa fa-edit"></i> Editar</a>'
+                                            +'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+result.value.data.id+'"><i class="fa fa-edit"></i> Editar</a>'
                                             +'<a class="btn btn-danger btn-xs eliminar" data-id="'+result.value.data.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt"></i> Eliminar</a>'
                                         +'</div>'
                                     +'</div>'
                                 +'</li>';
                                 $('[data-action="despachos-'+tipo+'"] [data-fecha="'+result.value.data.fecha_registro+'"]:last').after(html_programacion);
+
+                                // $('[data-action="despachos-'+tipo+'"] [data-fecha="'+result.value.data.fecha_registro+'"]').last().after(html_programacion);
 
                             }
                             $('#modal-despachos').modal('hide');
@@ -285,7 +293,7 @@ class ProgramacionDespachoView {
                             // $('[data-action="despachos-'+tipo+'"] [data-fecha="'+fecha+'"]')
                             curren.closest('li[data-despacho="'+id+'"]').remove();
                             if ($('[data-action="despachos-'+tipo+'"] [data-fecha="'+fecha+'"]').length===1) {
-                                $('[data-fecha="'+fecha+'"]').remove();
+                                $('[data-action="despachos-'+tipo+'"] [data-fecha="'+fecha+'"]').remove();
                             }
                         }
                     })

@@ -47,6 +47,9 @@
         .timeline>li>.timeline-item-despachos>.timeline-footer {
             padding: 10px !important;
         }
+        .mr-5{
+            margin-right: 5px;
+        }
     </style>
 @endsection
 
@@ -95,7 +98,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="id" value="0">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="">Titulo : <span class="text-red">*</span></label>
                                     <input type="text" class="form-control" name="titulo" value="" required>
@@ -103,13 +106,13 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label for="">Fecha de Programación : <span class="text-red">*</span></label>
                                     <input type="date" class="form-control" name="fecha_programacion" value="" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 ">
                                 <label>Orden de Despacho</label>
                                 <div class="form-group">
 

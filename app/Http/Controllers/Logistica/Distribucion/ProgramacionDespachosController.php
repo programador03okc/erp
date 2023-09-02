@@ -90,4 +90,28 @@ class ProgramacionDespachosController extends Controller
         $data->save();
         return response()->json(["titulo"=>"Éxito", "mensaje"=>"Se guardo con éxito.", "tipo"=>'success', "success"=>true],200);
     }
+    public function reprogramar(){
+        $data = ProgramacionDespacho::where('reprogramado','f')->get();
+        foreach ($data as $key => $value) {
+            if (date('Y-m-d') > $value->fecha_programacion) {
+
+                $item = new ProgramacionDespacho();
+                    $item->titulo           = $value->titulo;
+                    $item->descripcion      = $value->descripcion;
+                    $item->fecha_programacion   = date('Y-m-d');
+                    $item->aplica_cambios       = $value->aplica_cambios;
+                    $item->estado               = 1;
+                    $item->fecha_registro       = date('Y-m-d');
+                    $item->reprogramacion_id    = $value->id;
+                $item->save();
+
+                $programacion = ProgramacionDespacho::find($value->id);
+                $programacion->reprogramado = true;
+                $programacion->save();
+
+            }
+
+        }
+        return response()->json(["data"=>$data,"success"=>true],200);
+    }
 }

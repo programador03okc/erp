@@ -26,17 +26,18 @@ class RequerimientoPagoDetalle extends Model
             $presupuestoInternoTotalPartida=0;
             $presupuestoInternoDetalle =PresupuestoInternoDetalle::where('id_presupuesto_interno_detalle',$this->attributes['id_partida_pi'])->first();
             if($presupuestoInternoDetalle){
-                $presupuestoInternoTotalPartida = floatval($presupuestoInternoDetalle->enero)+
-                floatval($presupuestoInternoDetalle->febrero)+
-                floatval($presupuestoInternoDetalle->abril)+
-                floatval($presupuestoInternoDetalle->mayo)+
-                floatval($presupuestoInternoDetalle->junio)+
-                floatval($presupuestoInternoDetalle->julio)+
-                floatval($presupuestoInternoDetalle->agosto)+
-                floatval($presupuestoInternoDetalle->setiembre)+
-                floatval($presupuestoInternoDetalle->octubre)+
-                floatval($presupuestoInternoDetalle->noviembre)+
-                floatval($presupuestoInternoDetalle->diciembre);
+                $presupuestoInternoTotalPartida = floatval(str_replace(",", "", $presupuestoInternoDetalle->enero))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->febrero))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->marzo))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->abril))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->mayo))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->junio))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->julio))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->agosto))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->setiembre))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->octubre))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->noviembre))+
+                floatval(str_replace(",", "", $presupuestoInternoDetalle->diciembre));
 
             }
 

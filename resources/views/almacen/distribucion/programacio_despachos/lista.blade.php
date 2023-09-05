@@ -171,6 +171,9 @@
             // console.log(view);
             // console.log(view.listar());
             vista_extendida();
+
+
         });
+
     </script>
 @endsection

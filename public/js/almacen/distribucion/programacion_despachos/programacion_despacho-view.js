@@ -41,7 +41,7 @@ class ProgramacionDespachoView {
 
 
             if ($('[data-action="despachos-'+tipo+'"] [data-fecha="'+element+'"]').length===0) {
-                html_fecha='<li class="time-label" data-fecha="'+element+'" data-tipo="header">'
+                html_fecha='<li class="time-label" data-fecha="'+element+'" data-tipo="header" data-od="'+tipo+'">'
                     +'<span class="bg-red">'
                         +moment(element).format('DD/MM/YYYY')
                     +'</span>'
@@ -54,7 +54,13 @@ class ProgramacionDespachoView {
 
         $.each(respuesta.data.data, function (index, element) {
 
-            html_programacion='<li data-despacho="'+element.id+'" data-fecha="'+element.fecha_registro+'">'
+            let visible = $('[data-fecha="'+element.fecha_registro+'"][data-tipo="header"][data-od="'+tipo+'"]').attr('data-visible');
+            if (visible=='true') {
+                $('[data-fecha="'+element.fecha_registro+'"][data-tipo="header"][data-od="'+tipo+'"]').trigger('click');
+            }
+
+
+            html_programacion='<li data-despacho="'+element.id+'" data-fecha="'+element.fecha_registro+'" data-tipo="body" data-od="'+tipo+'">'
                 +'<i class="fa fa-cube bg-blue"></i>'
 
                 +'<div class="timeline-item-despachos">'
@@ -168,15 +174,14 @@ class ProgramacionDespachoView {
                                     tipo = 'ode';
                                 }
                                 curren.closest('li[data-despacho="'+result.value.data.id+'"]').remove();
-                                console.log(tipo);
-                                console.log($('[data-action="despachos-'+tipo+'"] [data-tipo="header"]')[0]);
+
 
                                 if ($('[data-action="despachos-'+tipo+'"] [data-tipo="header"][data-fecha="'+result.value.data.fecha_registro+'"]').length==0) {
 
 
 
                                     html_fecha=''
-                                    +'<li class="time-label" data-fecha="'+result.value.data.fecha_registro+'" data-tipo="header">'
+                                    +'<li class="time-label" data-fecha="'+result.value.data.fecha_registro+'" data-tipo="header" data-od="'+tipo+'">'
                                         +'<span class="bg-red">'
                                             +moment(result.value.data.fecha_registro).format('DD/MM/YYYY')
                                         +'</span>'
@@ -188,10 +193,14 @@ class ProgramacionDespachoView {
 
                                     // $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
                                 }
+                                let visible = $('[data-fecha="'+result.value.data.fecha_registro+'"][data-tipo="header"][data-od="'+tipo+'"]').attr('data-visible');
+                                if (visible=='true') {
+                                    $('[data-fecha="'+result.value.data.fecha_registro+'"][data-tipo="header"][data-od="'+tipo+'"]').trigger('click');
+                                }
 
                                 // $('[data-action="despachos-'+tipo+'"]').append(html_fecha);
 
-                                html_programacion='<li data-despacho="'+result.value.data.id+'" data-fecha="'+result.value.data.fecha_registro+'">'
+                                html_programacion='<li data-despacho="'+result.value.data.id+'" data-fecha="'+result.value.data.fecha_registro+'" data-tipo="body" data-od="'+tipo+'">'
                                     +'<i class="fa fa-cube bg-blue"></i>'
 
                                     +'<div class="timeline-item-despachos">'
@@ -300,6 +309,23 @@ class ProgramacionDespachoView {
 
                 }
             })
+        });
+
+        $(document).on('click','li.time-label[data-tipo="header"]',function (e) {
+            e.preventDefault();
+            let fecha = $(e.currentTarget).attr('data-fecha');
+            let od = $(e.currentTarget).attr('data-od');
+            let visible = $(e.currentTarget).attr('data-visible');
+            console.log('termino');
+            if (visible == 'true') {
+                $(e.currentTarget).attr('data-visible','false');
+            }else{
+                $(e.currentTarget).attr('data-visible','true');
+            }
+
+            $('[data-fecha="'+fecha+'"][data-tipo="body"][data-od="'+od+'"]').toggle(1000, function() {
+                console.log('termino');
+            });
         });
     }
 }

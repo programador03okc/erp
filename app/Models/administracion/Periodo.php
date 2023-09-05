@@ -24,4 +24,17 @@ class Periodo extends Model
             ->get();
         return $data;
     }
+    public static function obtenerIdPeriodoActual()
+    {
+        $data = Periodo::select(
+                'adm_periodo.*'
+            )
+            ->where([
+                ['adm_periodo.estado', '=', 1],
+                ['adm_periodo.activo', '=', true]
+            ])
+            ->orderBy('adm_periodo.descripcion', 'desc')
+            ->first();
+        return $data->id_periodo;
+    }
 }

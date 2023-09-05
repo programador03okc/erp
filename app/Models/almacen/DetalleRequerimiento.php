@@ -13,6 +13,7 @@ class DetalleRequerimiento extends Model
 {
     protected $table = 'almacen.alm_det_req';
     protected $primaryKey = 'id_detalle_requerimiento';
+    protected $fillable = ['id_requerimiento','id_item','precio_referencial','cantidad','descripcion_adicional','unidad_medida','estado','fecha_registro','lugar_entrega','id_tipo_item','stock_comprometido','id_unidad_medida','id_producto','id_almacen_reserva','partida','observacion','id_cc_am_filas','id_cc_venta_filas','id_moneda','tiene_transformacion','centro_costo_id','proveedor_id','precio_unitario','subtotal','motivo','part_number','descripcion','entrega_cliente','id_occ_det_softlink','cantidad_solicitada_original','razon_ajuste_necesidad','id_partida_pi'];
     public $timestamps = false;
     protected $appends = ['codigo_requerimiento', 'ordenes_compra', 'facturas', 'proveedor_seleccionado','movimiento_ingresos_almacen','movimiento_salidas_almacen'];
 

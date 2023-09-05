@@ -1514,6 +1514,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('listar-archivos-adjuntos-pago-requerimiento/{idOrden}', [OrdenController::class, 'listarArchivoAdjuntoPagoRequerimiento'])->name('listar-archivos-adjuntos-pago-requerimiento');
 						Route::get('calcular-prioridad/{id?}', [OrdenController::class, 'calcularPrioridad'])->name('calcular-prioridad');
 						Route::get('obtener-requerimientos-con-impuesto/{idOrden}', [OrdenController::class, 'obtenerRequerimientosConImpuesto'])->name('obtener-requerimientos-con-impuesto');
+						Route::post('generar-filtros', [OrdenController::class, 'generarFiltros'])->name('generar-filtros');
 					});
 				});
 			});
@@ -1642,6 +1643,13 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('migrarDespachos', [OrdenesDespachoExternoController::class, 'migrarDespachos'])->name('migrar-despachos');
 				Route::get('generarDespachoInternoNroOrden', [OrdenesDespachoInternoController::class, 'generarDespachoInternoNroOrden'])->name('generar-despacho-interno-nro-orden');
 				Route::get('usuariosDespacho', [OrdenesDespachoExternoController::class, 'usuariosDespacho'])->name('usuarios-despacho');
+				Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
+				Route::get('mostrar-partidas/{idGrupo?}/{idProyecto?}', [PresupuestoController::class, 'mostrarPresupuestos'])->name('mostrar-partidas');
+				Route::get('mostrar-centro-costos', [CentroCostoController::class, 'mostrarCentroCostosSegunGrupoUsuario'])->name('mostrar-centro-costos');
+				Route::get('mostrar-requerimiento-orden-despacho/{idOd?}', [OrdenesDespachoExternoController::class, 'mostrarRequerimientoOrdenDespacho'])->name('mostrar-requerimiento-orden-despacho');
+				Route::post('guardar-requerimiento-flete', [OrdenesDespachoExternoController::class, 'guardarRequerimientoFlete'])->name('guardar-requerimiento-flete');
+
+
 			});
 
 			Route::name('ordenes-despacho-interno.')->prefix('ordenes-despacho-interno')->group(function () {
@@ -1759,6 +1767,9 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('eliminar-penalidad', [RegistroController::class, 'eliminarPenalidad']);
 
 			Route::get('exportar-excel-power-bi/{request}', [RegistroController::class, 'exportarExcelPowerBI']);
+
+            Route::get('editar-penalidad/{id}', [RegistroController::class,'editarPenalidad']);
+            Route::post('eliminar-penalidad', [RegistroController::class,'eliminarPenalidad']);
 		});
 
 		// Fondos, Auspicios y Rebates

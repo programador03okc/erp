@@ -350,6 +350,7 @@ class ListarRequerimientoPagoView {
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
+        console.log(data);
         this.limpiarTabla('listaPartidasActivas');
         data.forEach(element => {
 

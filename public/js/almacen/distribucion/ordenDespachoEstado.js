@@ -33,6 +33,8 @@ $("#form-ordenDespachoEstados").on("submit", function (e) {
 function guardarEstadoEnvio() {
     $('#submit_ordenDespachoEstados').attr('disabled', 'true');
     var formData = new FormData($('#form-ordenDespachoEstados')[0]);
+    calcularImportesDetalleRequerimientoEstado($("input[name='gasto_extra']").val());
+
     $.ajax({
         type: 'POST',
         url: 'guardarEstadoEnvio',
@@ -53,6 +55,9 @@ function guardarEstadoEnvio() {
                 msg: 'Se guardó el estado con éxito.'
             });
             $('#requerimientosEnProceso').DataTable().ajax.reload(null, false);
+
+            consultaGuardarRequerimientoFlete($("input[name='id_od']").val()); 
+
 
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -198,5 +203,27 @@ function eliminarTrazabilidadEnvio(id) {
                 });
             }
         });
+    }
+}
+
+
+function calcularImportesDetalleRequerimientoEstado(importeFlete) {
+    let importeUnitario = 0;
+    let importeIGV = 0;
+    let importeTotal = 0;
+    if (parseFloat(importeFlete) > 0) {
+        importeUnitario = (parseFloat(importeFlete) / 1.18);
+        importeIGV = (parseFloat(importeFlete) * 0.18);
+        importeTotal = (parseFloat(importeFlete));
+    }
+
+    fleteObject={
+
+        'transportista':'',
+        'estado':$("select[name='estado'] option:selected").text(),
+        'fecha_entrega':$("input[name='fecha_estado']").val(),
+        'precio_unitario' : importeUnitario,
+        'importe_igv' : importeIGV,
+        'importe_total' :importeTotal
     }
 }

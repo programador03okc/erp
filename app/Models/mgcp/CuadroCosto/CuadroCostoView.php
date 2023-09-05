@@ -17,6 +17,18 @@ class CuadroCostoView extends Model
     protected $appends = ['margen_ganancia', 'monto_ganancia', 'tiene_transformacion'];
     public $timestamps = false;
 
+
+    public static function mostrar()
+    {
+        $data = CuadroCostoView::select(
+                'cc_view.*'
+            )
+            ->where('eliminado','=',false)
+            ->orderBy('cc_view.fecha_creacion', 'desc')
+            ->get();
+        return $data;
+    }
+
     public static function listar($request)
     {
         /*$data = CuadroCostoView::with('oportunidad')->join('mgcp_oportunidades.oportunidades', 'id_oportunidad', '=', 'oportunidades.id')

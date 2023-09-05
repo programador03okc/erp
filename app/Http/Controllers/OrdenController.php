@@ -68,7 +68,9 @@ use App\Models\Logistica\Proveedor;
 use App\Models\mgcp\CuadroCosto\CuadroCosto;
 use App\Models\mgcp\CuadroCosto\CuadroCostoView;
 use App\Models\Rrhh\Persona;
+use App\Models\Tesoreria\Estado as TesoreriaEstado;
 use App\Models\Tesoreria\RegistroPago;
+use App\Models\Tesoreria\RequerimientoPagoEstados;
 use App\Models\Tesoreria\RequerimientoPagoTipoDestinatario;
 use Carbon\Carbon;
 use Exception;
@@ -116,7 +118,7 @@ class OrdenController extends Controller
         // $sedes = Auth::user()->sedesAcceso();
         $periodos = Periodo::mostrar();
 
-        return view('logistica.ordenes.generar_orden_requerimiento', compact('sedes', 'empresas', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas','periodos'));
+        return view('logistica.ordenes.generar_orden_requerimiento', compact('sedes', 'empresas', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas', 'periodos'));
     }
     function view_crear_orden_requerimiento()
     {
@@ -163,7 +165,7 @@ class OrdenController extends Controller
         }
         $periodos = Periodo::mostrar();
 
-        return view('logistica.gestion_logistica.compras.ordenes.elaborar.crear_orden_requerimiento', compact('empresas', 'rubros', 'bancos', 'tipo_cuenta', 'sedes', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'condiciones_softlink', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas', 'modulo', 'array_accesos_botonera', 'array_accesos','periodos'));
+        return view('logistica.gestion_logistica.compras.ordenes.elaborar.crear_orden_requerimiento', compact('empresas', 'rubros', 'bancos', 'tipo_cuenta', 'sedes', 'sis_identidad', 'tp_documento', 'tp_moneda', 'tp_doc', 'condiciones', 'condiciones_softlink', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'unidades_medida', 'monedas', 'modulo', 'array_accesos_botonera', 'array_accesos', 'periodos'));
     }
 
     function lista_contactos_proveedor($id_proveedor)
@@ -993,13 +995,14 @@ class OrdenController extends Controller
         $tipo_cuenta = TipoCuenta::mostrar();
         $monedas = Moneda::mostrar();
         $tipos_documentos = Identidad::mostrar();
+        $estadosPago = RequerimientoPagoEstados::mostrar();
 
         $array_accesos = [];
         $accesos_usuario = AccesosUsuarios::where('estado', 1)->where('id_usuario', Auth::user()->id_usuario)->get();
         foreach ($accesos_usuario as $key => $value) {
             array_push($array_accesos, $value->id_acceso);
         }
-        return view('logistica.gestion_logistica.compras.ordenes.listado.listar_ordenes', compact('prioridades', 'empresas', 'grupos', 'estados', 'tiposDestinatario', 'bancos', 'tipo_cuenta', 'monedas', 'tipos_documentos', 'array_accesos'));
+        return view('logistica.gestion_logistica.compras.ordenes.listado.listar_ordenes', compact('prioridades', 'empresas', 'grupos', 'estados', 'tiposDestinatario', 'bancos', 'tipo_cuenta', 'monedas', 'tipos_documentos', 'estadosPago', 'array_accesos'));
     }
 
     function consult_doc_aprob($id_doc, $tp_doc)
@@ -1031,51 +1034,66 @@ class OrdenController extends Controller
         }
         return array_values(array_unique($facturas));
     }
+
+    public function generarFiltros(Request $request)
+    {
+
+        $desde = Carbon::createFromFormat('Y-m-d', ($request->fechaRegistroDesde))->hour(0)->minute(0)->second(0);
+        $hasta = Carbon::createFromFormat('Y-m-d', ($request->fechaRegistroHasta));
+
+        if ($request->chkFechaRegistro == 'on') {
+            $request->session()->put('clFechaRegistroDesde',$desde );
+            $request->session()->put('clFechaRegistroHasta', $hasta->addDay()->addSeconds(-1));
+        } else {
+            $request->session()->forget('clFechaRegistroDesde');
+            $request->session()->forget('clFechaRegistroHasta');
+        }
+
+        if ($request->chkEmpresa == 'on') {
+            $request->session()->put('clEmpresa', $request->empresa);
+        } else {
+            $request->session()->forget('clEmpresa');
+        }
+
+        if ($request->chkEstadoPago == 'on') {
+            $request->session()->put('clEstadoPago', $request->estadoPago);
+        } else {
+            $request->session()->forget('clEstadoPago');
+        }
+
+        return response()->json('filtros', 200);
+    }
+
+    public function obtenerReporteOrdenesElaboradas()
+    {
+        $data = OrdenesView::where([['id_estado', '>=', 1], ['id_tp_documento', '!=', 13]]);
+        if (session()->has('clFechaRegistroDesde')) {
+            $data = $data->whereBetween('fecha_emision', [session('clFechaRegistroDesde'), session('clFechaRegistroHasta')]);
+        } else {
+            $fecha = new Carbon();
+            $inicio = $fecha::now()->startOfYear();
+            $fin = $fecha::now()->endOfMonth();
+            $data = $data->whereBetween('fecha_emision', [$inicio, $fin]);
+        }
+        if (session()->has('clEmpresa') && session('clEmpresa') > 0) {
+            // $data = $data->where('id_empresa', session()->get('clEmpresa'));
+            $data = $data->where('id_empresa', session('clEmpresa'));
+        } else {
+            $data = $data->where('id_empresa', '>', 0);
+        }
+        if (session()->has('clEstadoPago') && session('clEstadoPago') > 0) {
+
+            $data = $data->where('estado_pago', session('clEstadoPago'));
+        }
+
+        return $data->get();
+    }
+
     public function listaOrdenesElaboradas(Request $request)
     {
-        $filtro= $request->filtro;
-        $ordenes = OrdenesView::where([['id_estado', '>=', 1], ['id_tp_documento', '!=', 13]])
-        ->when(($filtro !=null || $filtro !='SIN_FILTRO' ), function ($query) use ($filtro) {
-            switch ($filtro) {
-                case 'ORDENES_SIN_ENVIAR_A_PAGO':
-                    return $query->whereIn('ordenes_view.estado_pago', [1]);
-
-                    break;
-                case 'ORDENES_AUTORIZADAS_PARA_PAGO':
-                    return $query->whereIn('ordenes_view.estado_pago', [5]);
-                    break;
-
-                default:
-                    break;
-            }
-        })
-        ;
-        $ordenes = $ordenes->whereDate('fecha_emision','>=',$request->fecha_inicio);
-        $ordenes = $ordenes->whereDate('fecha_emision','<=',$request->fecha_actual);
-        // return datatables($ordenes)
-        // ->filterColumn('codigo_requerimiento', function ($query, $keyword) {
-        //     $query->whereHas('data_requerimiento.codigo_requerimiento', function ($q) use ($keyword) {
-        //     $q->where('codigo_requerimiento', 'LIKE', "%{$keyword}%");
-        //     });
-        // })
-        return datatables($ordenes)
-        // ->addColumn('estado_prioridad', function ($data) {
-        //     $orden_detalle
-        //     return $data;
-        // })
-            // ->editColumn('codigo_requerimiento', function($ordenes){
-            //     $payload='';
-            //     foreach ($ordenes->data_requerimiento as $key) {
-            //         $payload.= '<a href="/necesidades/requerimiento/elaboracion/index?id='.$key['id_requerimiento'].'" target="_blank" title="Abrir Requerimiento">'.$key['codigo_requerimiento'].'</a>';
-            //     }
-            //     return $payload;
-            // })
-            // ->filterColumn('codigo_requerimiento', function ($query, $keyword) {
-            //     $query->whereJsonContains('data_requerimiento', ['codigo_requerimiento'=> $keyword]);
-
-            // })
-            // ->rawColumns(['codigo_requerimiento'])
-            ->toJson();
+        // $this->generarFiltros($request);
+        $data = $this->obtenerReporteOrdenesElaboradas();
+        return datatables($data)->toJson();
     }
 
     public function listaItemsOrdenesElaboradas(Request $request)
@@ -2143,7 +2161,7 @@ class OrdenController extends Controller
                 $igv = 0;
             }
 
-            $monto_total = ($monto_neto + $igv+ $icbper);
+            $monto_total = ($monto_neto + $igv + $icbper);
             // $subtotal = $data['subtotal']>0?$data['subtotal']:number_format($data['cantidad'] * $data['precio'],2,'.','');
 
             $html .= '<tr style="text-align:left">';
@@ -2156,7 +2174,7 @@ class OrdenController extends Controller
             } else {
                 $html .= '<td>' . ($data['descripcion_adicional'] ? $data['descripcion_adicional'] : $data['descripcion_adicional']) . ' ' . ($data['descripcion_complementaria'] ? $data['descripcion_complementaria'] : '') . '</td>';
             }
-            $html .= '<td>' . ($data['unidad_medida_producto']==null || $data['unidad_medida_producto']==''?$data['unidad_medida']:$data['unidad_medida_producto']) . '</td>';
+            $html .= '<td>' . ($data['unidad_medida_producto'] == null || $data['unidad_medida_producto'] == '' ? $data['unidad_medida'] : $data['unidad_medida_producto']) . '</td>';
             $html .= '<td style="text-align:center">' . $data['cantidad'] . '</td>';
             $html .= '<td style="text-align:center">' . $ordenArray['head']['moneda_simbolo'] . number_format($data['precio'], 2) . '</td>';
             // $html .= '<td class="right">' . number_format((($data['cantidad'] * $data['precio']) - (($data['cantidad']* $data['precio'])/1.18)),2,'.','') . '</td>';
@@ -2234,7 +2252,7 @@ class OrdenController extends Controller
                 </tr>
                 <tr>
                     <td nowrap width="15%" class="subtitle">-' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Comments' : 'Observación') . ':</td>
-                    <td class="verticalTop">' . $ordenArray['head']['observacion'] . ' '. $compra_local . '</td>
+                    <td class="verticalTop">' . $ordenArray['head']['observacion'] . ' ' . $compra_local . '</td>
                 </tr>
             </table>
             <br>
@@ -2667,16 +2685,18 @@ class OrdenController extends Controller
             DB::beginTransaction();
 
             // evaluar si el estado del cierre periodo
-            $añoPeriodo= Periodo::find($request->id_periodo)->descripcion;
+            $añoPeriodo = Periodo::find($request->id_periodo)->descripcion;
             $idEmpresa = Sede::find($request->id_sede)->id_empresa;
             // $fechaPeriodo = Carbon::createFromFormat('Y-m-d', ($periodo->descripcion . '-01-01'));
             $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
             if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
-                return response()->json(['id_orden_compra' => 0, 'codigo' => '','id_tp_documento' => '', 'tipo_estado' => 'warning',
-                'lista_estado_requerimiento' => null,
-                'lista_finalizados' => null,
-                'historial_presupuesto_interno' => [],
-                'mensaje' => 'No se puede generar la orden cuando el periodo operativo esta cerrado']);
+                return response()->json([
+                    'id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning',
+                    'lista_estado_requerimiento' => null,
+                    'lista_finalizados' => null,
+                    'historial_presupuesto_interno' => [],
+                    'mensaje' => 'No se puede generar la orden cuando el periodo operativo esta cerrado'
+                ]);
             }
 
 
@@ -2684,7 +2704,7 @@ class OrdenController extends Controller
             $idTipoDocumento = '';
             $codigoOrden = '';
             $actualizarEstados = [];
-            $detalleOrden=[];
+            $detalleOrden = [];
 
             $idDetalleRequerimientoList = [];
             $count = count($request->idDetalleRequerimiento);
@@ -2756,18 +2776,18 @@ class OrdenController extends Controller
                     // $detalle->descripcion_adicional = (isset($request->descripcion[$i]) && $request->descripcion[$i] != null) ? trim(strtoupper($request->descripcion[$i])) : null;
                     $detalle->descripcion_adicional = ($request->descripcion[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcion[$i]))) : null;
                     $detalle->descripcion_complementaria = ($request->descripcionComplementaria[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcionComplementaria[$i]))) : null;
-                    $subtotalItem= floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
-                    $detalle->subtotal =$subtotalItem;
+                    $subtotalItem = floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
+                    $detalle->subtotal = $subtotalItem;
                     $detalle->tipo_item_id = $request->idTipoItem[$i];
                     $detalle->estado = 1;
                     $detalle->fecha_registro = new Carbon();
 
                     $detalle->save();
-                    $detalle->importe_item_para_presupuesto= $subtotalItem;
-                    $detalleOrden[]= $detalle;
+                    $detalle->importe_item_para_presupuesto = $subtotalItem;
+                    $detalleOrden[] = $detalle;
                 }
 
-            
+
 
                 DB::commit();
 
@@ -2787,32 +2807,31 @@ class OrdenController extends Controller
 
                 //actualizar estado gasto
                 foreach ($detalleOrden as $item) {
-                    if($item->id_detalle_requerimiento >0 ){
+                    if ($item->id_detalle_requerimiento > 0) {
 
-                        $detalleRequerimientoLogistico = DetalleRequerimiento::where([['id_detalle_requerimiento',$item->id_detalle_requerimiento],['estado','!=',7]])->first();
+                        $detalleRequerimientoLogistico = DetalleRequerimiento::where([['id_detalle_requerimiento', $item->id_detalle_requerimiento], ['estado', '!=', 7]])->first();
 
                         if ($detalleRequerimientoLogistico) {
                             $requerimientoLogistico = Requerimiento::find($detalleRequerimientoLogistico->id_requerimiento);
-                            $idPartida= $detalleRequerimientoLogistico->id_partida_pi;
-                            $idRequerimiento=$detalleRequerimientoLogistico->id_requerimiento;
-                            $fecha =$requerimientoLogistico->fecha_requerimiento;
-                            $idPresupuesto= $requerimientoLogistico->id_presupuesto_interno;
-                            $idDetalleRequerimiento= $item->id_detalle_requerimiento;
-                            $idOrden= $item->id_orden_compra;
-                            $idDetalleOrden= $item->id_detalle_orden;
-                            if(isset($request->incluye_igv) && $item->tipo_item_id ==1){
-                                $importe= floatval($item->cantidad) * floatval($item->precio) * floatval(1.18);
-                            }else{
-                                $importe= floatval($item->cantidad) * floatval($item->precio);
+                            $idPartida = $detalleRequerimientoLogistico->id_partida_pi;
+                            $idRequerimiento = $detalleRequerimientoLogistico->id_requerimiento;
+                            $fecha = $requerimientoLogistico->fecha_requerimiento;
+                            $idPresupuesto = $requerimientoLogistico->id_presupuesto_interno;
+                            $idDetalleRequerimiento = $item->id_detalle_requerimiento;
+                            $idOrden = $item->id_orden_compra;
+                            $idDetalleOrden = $item->id_detalle_orden;
+                            if (isset($request->incluye_igv) && $item->tipo_item_id == 1) {
+                                $importe = floatval($item->cantidad) * floatval($item->precio) * floatval(1.18);
+                            } else {
+                                $importe = floatval($item->cantidad) * floatval($item->precio);
                             }
 
-                            $estado= 2;
-                            $operacion= 'R';
-                            if($idPresupuesto > 0 && $idPartida > 0){
-                                PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoLogisticoConOrden($idPresupuesto, $idPartida, $idRequerimiento, $idDetalleRequerimiento, $fecha, $idOrden, $idDetalleOrden,$importe, $estado,$operacion);
+                            $estado = 2;
+                            $operacion = 'R';
+                            if ($idPresupuesto > 0 && $idPartida > 0) {
+                                PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoLogisticoConOrden($idPresupuesto, $idPartida, $idRequerimiento, $idDetalleRequerimiento, $fecha, $idOrden, $idDetalleOrden, $importe, $estado, $operacion);
                             }
                         }
-
                     }
                 }
 
@@ -2826,10 +2845,10 @@ class OrdenController extends Controller
                     'codigo' => $codigoOrden,
                     'mensaje' =>  'OK',
                     'tipo_estado' => 'success',
-                    'lista_estado_requerimiento' => $actualizarEstados['lista_estado_requerimiento']??[],
-                    'lista_finalizados' => $actualizarEstados['lista_finalizados']??[],
+                    'lista_estado_requerimiento' => $actualizarEstados['lista_estado_requerimiento'] ?? [],
+                    'lista_finalizados' => $actualizarEstados['lista_finalizados'] ?? [],
                     'error' => $actualizarEstados['error'],
-                    'historial_presupuesto_interno' => $historialPresupuestoInterno??[]
+                    'historial_presupuesto_interno' => $historialPresupuestoInterno ?? []
 
                 ]);
             } else { // si el estado de algun requerimiento viculado no esta habilitado, esta con estado 38 o 39
@@ -2847,7 +2866,7 @@ class OrdenController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['id_orden_compra' => $idOrden, 'id_tp_documento' => $idTipoDocumento, 'codigo' => $codigoOrden, 'tipo_estado' => 'error', 'lista_finalizados' => ($actualizarEstados != null ? $actualizarEstados['lista_finalizados'] : []), 'historial_presupuesto_interno'=>[], 'mensaje' => 'Mensaje de error: ' . $e->getMessage()]);
+            return response()->json(['id_orden_compra' => $idOrden, 'id_tp_documento' => $idTipoDocumento, 'codigo' => $codigoOrden, 'tipo_estado' => 'error', 'lista_finalizados' => ($actualizarEstados != null ? $actualizarEstados['lista_finalizados'] : []), 'historial_presupuesto_interno' => [], 'mensaje' => 'Mensaje de error: ' . $e->getMessage()]);
         }
     }
 
@@ -3203,11 +3222,11 @@ class OrdenController extends Controller
 
             // evaluar si el estado del cierre periodo
 
-            $añoPeriodo= Periodo::find($request->id_periodo)->descripcion;
+            $añoPeriodo = Periodo::find($request->id_periodo)->descripcion;
             $idEmpresa = Sede::find($request->id_sede)->id_empresa;
-            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo,$idEmpresa);
+            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
             if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
-                return response()->json(['id_orden_compra' => 0, 'codigo' => '','id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden cuando el periodo operativo esta cerrado']);
+                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden cuando el periodo operativo esta cerrado']);
             }
 
 
@@ -3276,7 +3295,7 @@ class OrdenController extends Controller
                 }
 
                 $idDetalleProcesado = [];
-                $detalleArray=[];
+                $detalleArray = [];
 
                 if (isset($request->cantidadAComprarRequerida)) {
 
@@ -3304,8 +3323,8 @@ class OrdenController extends Controller
                                     $detalle = OrdenCompraDetalle::where("id_detalle_orden", $id)->first();
                                     $detalle->estado = 7;
                                     $detalle->save();
-                                    $detalle->importe_item_para_presupuesto= (floatval($detalle->precio) * floatval($detalle->cantidad));
-                                    $detalle->operacion_item_para_presupuesto= 'suma';
+                                    $detalle->importe_item_para_presupuesto = (floatval($detalle->precio) * floatval($detalle->cantidad));
+                                    $detalle->operacion_item_para_presupuesto = 'suma';
                                 }
                             } else {
 
@@ -3314,16 +3333,15 @@ class OrdenController extends Controller
                                 $detalle->id_detalle_requerimiento = $request->idDetalleRequerimiento[$i];
                                 $detalle->cantidad = $request->cantidadAComprarRequerida[$i];
 
-                                $subtotalOrigen=floatval($detalle->precio) * floatval($detalle->cantidad);
-                                $subtotalNuevo=  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
-                                if($subtotalOrigen != $subtotalNuevo){
-                                    if($subtotalOrigen < $subtotalNuevo){
-                                        $importeItemParaPresupuesto=$subtotalNuevo - $subtotalOrigen;
-                                        $tipoOperacionItemParaPresupuesto= 'resta';
-
-                                    }elseif($subtotalOrigen > $subtotalNuevo){
-                                        $importeItemParaPresupuesto=$subtotalOrigen - $subtotalNuevo;
-                                        $tipoOperacionItemParaPresupuesto= 'suma';
+                                $subtotalOrigen = floatval($detalle->precio) * floatval($detalle->cantidad);
+                                $subtotalNuevo =  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
+                                if ($subtotalOrigen != $subtotalNuevo) {
+                                    if ($subtotalOrigen < $subtotalNuevo) {
+                                        $importeItemParaPresupuesto = $subtotalNuevo - $subtotalOrigen;
+                                        $tipoOperacionItemParaPresupuesto = 'resta';
+                                    } elseif ($subtotalOrigen > $subtotalNuevo) {
+                                        $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
+                                        $tipoOperacionItemParaPresupuesto = 'suma';
                                         // Debugbar::info($importeItemParaPresupuesto);
                                     }
                                 }
@@ -3335,30 +3353,29 @@ class OrdenController extends Controller
                                 $detalle->subtotal = floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
                                 $detalle->tipo_item_id = $request->idTipoItem[$i];
                                 $detalle->save();
-                                $detalle->importe_item_para_presupuesto= $importeItemParaPresupuesto??0;
-                                $detalle->operacion_item_para_presupuesto= $tipoOperacionItemParaPresupuesto??'';
+                                $detalle->importe_item_para_presupuesto = $importeItemParaPresupuesto ?? 0;
+                                $detalle->operacion_item_para_presupuesto = $tipoOperacionItemParaPresupuesto ?? '';
                                 $detalleArray[] = $detalle;
 
-                                $tipoOperacionItemParaPresupuesto='';
-                                $importeItemParaPresupuesto=0;
+                                $tipoOperacionItemParaPresupuesto = '';
+                                $importeItemParaPresupuesto = 0;
 
                                 $idDetalleProcesado[] = $detalle->id_detalle_orden;
                             }
                         }
                     }
-
                 }
 
 
-                $detalleParaPresupuestoSumaArray=[];
-                $detalleParaPresupuestoRestaArray=[];
+                $detalleParaPresupuestoSumaArray = [];
+                $detalleParaPresupuestoRestaArray = [];
                 // Debugbar::info($detalleArray);
                 foreach ($detalleArray as $key => $det) {
-                    if(isset($det->operacion_item_para_presupuesto) && $det->operacion_item_para_presupuesto =='suma'){
-                        $detalleParaPresupuestoSumaArray[]=$det;
+                    if (isset($det->operacion_item_para_presupuesto) && $det->operacion_item_para_presupuesto == 'suma') {
+                        $detalleParaPresupuestoSumaArray[] = $det;
                     }
-                    if(isset($det->operacion_item_para_presupuesto) && $det->operacion_item_para_presupuesto =='resta'){
-                        $detalleParaPresupuestoRestaArray[]=$det;
+                    if (isset($det->operacion_item_para_presupuesto) && $det->operacion_item_para_presupuesto == 'resta') {
+                        $detalleParaPresupuestoRestaArray[] = $det;
                     }
                 }
                 // Debugbar::info($detalleParaPresupuestoSumaArray);
@@ -3375,8 +3392,8 @@ class OrdenController extends Controller
                     'id_tp_documento' => $orden->id_tp_documento,
                     'tipo_estado' => 'success',
                     'mensaje' => 'Orden actualizada',
-                    'afecta_presupuesto_interno_suma'=>$afectaPresupuestoInternoSuma??[],
-                    'afecta_presupuesto_interno_resta'=>$afectaPresupuestoInternoResta??[],
+                    'afecta_presupuesto_interno_suma' => $afectaPresupuestoInternoSuma ?? [],
+                    'afecta_presupuesto_interno_resta' => $afectaPresupuestoInternoResta ?? [],
                     // 'mensaje' => $ValidarOrdenSoftlink['mensaje']
                     // 'status_migracion_softlink' => $ValidarOrdenSoftlink,
                 ];
@@ -3401,32 +3418,31 @@ class OrdenController extends Controller
 
                 //actualizar estado gasto
                 foreach ($detalleArray as $item) {
-                    if($item->id_detalle_requerimiento >0 ){
+                    if ($item->id_detalle_requerimiento > 0) {
 
-                        $detalleRequerimientoLogistico = DetalleRequerimiento::where([['id_detalle_requerimiento',$item->id_detalle_requerimiento],['estado','!=',7]])->first();
+                        $detalleRequerimientoLogistico = DetalleRequerimiento::where([['id_detalle_requerimiento', $item->id_detalle_requerimiento], ['estado', '!=', 7]])->first();
 
                         if ($detalleRequerimientoLogistico) {
                             $requerimientoLogistico = Requerimiento::find($detalleRequerimientoLogistico->id_requerimiento);
-                            $idPartida= $detalleRequerimientoLogistico->id_partida_pi;
-                            $idRequerimiento=$detalleRequerimientoLogistico->id_requerimiento;
-                            $fecha =$requerimientoLogistico->fecha_requerimiento;
-                            $idPresupuesto= $requerimientoLogistico->id_presupuesto_interno;
-                            $idDetalleRequerimiento= $item->id_detalle_requerimiento;
-                            $idOrden= $item->id_orden_compra;
-                            $idDetalleOrden= $item->id_detalle_orden;
+                            $idPartida = $detalleRequerimientoLogistico->id_partida_pi;
+                            $idRequerimiento = $detalleRequerimientoLogistico->id_requerimiento;
+                            $fecha = $requerimientoLogistico->fecha_requerimiento;
+                            $idPresupuesto = $requerimientoLogistico->id_presupuesto_interno;
+                            $idDetalleRequerimiento = $item->id_detalle_requerimiento;
+                            $idOrden = $item->id_orden_compra;
+                            $idDetalleOrden = $item->id_detalle_orden;
 
-                            if(isset($request->incluye_igv) && $item->tipo_item_id ==1){ // incluir IGV
-                                $importe= floatval($item->cantidad) * floatval($item->precio) * floatval(1.18);
-                            }else{
-                                $importe= floatval($item->cantidad) * floatval($item->precio);
+                            if (isset($request->incluye_igv) && $item->tipo_item_id == 1) { // incluir IGV
+                                $importe = floatval($item->cantidad) * floatval($item->precio) * floatval(1.18);
+                            } else {
+                                $importe = floatval($item->cantidad) * floatval($item->precio);
                             }
-                            $estado= 2;
-                            $operacion= 'R';
-                            if($idPresupuesto > 0 && $idPartida > 0){
-                                PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoLogisticoConOrden($idPresupuesto, $idPartida, $idRequerimiento, $idDetalleRequerimiento, $fecha, $idOrden, $idDetalleOrden,$importe, $estado,$operacion);
+                            $estado = 2;
+                            $operacion = 'R';
+                            if ($idPresupuesto > 0 && $idPartida > 0) {
+                                PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoLogisticoConOrden($idPresupuesto, $idPartida, $idRequerimiento, $idDetalleRequerimiento, $fecha, $idOrden, $idDetalleOrden, $importe, $estado, $operacion);
                             }
                         }
-
                     }
                 }
                 // if (str_contains($data['mensaje'], 'No existe un id_softlink en la OC seleccionada')) {
@@ -3827,7 +3843,7 @@ class OrdenController extends Controller
         $tipo_estado = '';
         $idUsuariosAlAnularOrden = [];
         $notificacion = [];
-        $detalleArray=[];
+        $detalleArray = [];
 
         $orden = Orden::with('sede')->find($id_orden);
 
@@ -3847,10 +3863,10 @@ class OrdenController extends Controller
 
         $detalleOrden = OrdenCompraDetalle::where('id_orden_compra', $id_orden)->get();
         foreach ($detalleOrden as $key => $item) {
-            $detalle= OrdenCompraDetalle::find($item->id_detalle_orden);
-            $detalle->estado=7;
+            $detalle = OrdenCompraDetalle::find($item->id_detalle_orden);
+            $detalle->estado = 7;
             $detalle->save();
-            $detalle->importe_item_para_presupuesto=$detalle->subtotal;
+            $detalle->importe_item_para_presupuesto = $detalle->subtotal;
             $detalleArray[] = $detalle;
         }
         // $revertirDetalleOrden = DB::table('logistica.log_det_ord_compra') // revertir detalle orden
@@ -3987,8 +4003,7 @@ class OrdenController extends Controller
             }
 
             // actualizar campo estado 7 del registro si la orden fue anulada
-            PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null,$orden->id_orden_compra,null);
-
+            PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null, $orden->id_orden_compra, null);
         } // -> si no tiene detalle la orden
         else {
             $status = 204;
@@ -4031,9 +4046,9 @@ class OrdenController extends Controller
             $orden = Orden::where("id_orden_compra", $request->idOrden)->first();
 
             // verificar cierre de periodo operativo
-            $añoPeriodo= Periodo::find($orden->id_periodo)->descripcion;
+            $añoPeriodo = Periodo::find($orden->id_periodo)->descripcion;
             $idEmpresa = Sede::find($orden->id_sede)->id_empresa;
-            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo,$idEmpresa);
+            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
             if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
                 return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede anular la orden cuando el periodo operativo esta cerrado']);
             }
@@ -4088,13 +4103,11 @@ class OrdenController extends Controller
                             $status = $hasIngreso['status'];
                             $tipo_estado = $hasIngreso['tipo_estado'];
                             $msj[] = $hasIngreso['mensaje'];
-
                         } elseif ($hasPagoAutorizado['status'] != 200) {
                             $status = $hasPagoAutorizado['status'];
                             $tipo_estado = $hasPagoAutorizado['tipo_estado'];
                             $msj[] = $hasPagoAutorizado['mensaje'];
                         }
-
                     }
 
 
@@ -4306,7 +4319,7 @@ class OrdenController extends Controller
 
 
         if ($cuentaBancariaProveedor && $cuentaBancariaProveedor->id_cuenta_contribuyente > 0) {
-            $comentario = 'Cuenta: '.($request->nro_cuenta??'').', CCI: '.($request->nro_cuenta_interbancaria??'').', Agregado por: '.Auth::user()->nombre_corto;
+            $comentario = 'Cuenta: ' . ($request->nro_cuenta ?? '') . ', CCI: ' . ($request->nro_cuenta_interbancaria ?? '') . ', Agregado por: ' . Auth::user()->nombre_corto;
             LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $cuentaBancariaProveedor->getTable(), null, $cuentaBancariaProveedor, $comentario);
 
             $status = 200;
@@ -4328,20 +4341,20 @@ class OrdenController extends Controller
     {
 
         $idMoneda = $request->idMoneda;
-        if($idMoneda != null && $idMoneda >0){
-            $proveedores = Proveedor::with(['contribuyente.tipoDocumentoIdentidad', 'estadoProveedor', 'cuentaContribuyente'=> function($q) use($idMoneda){
-                $q->where([['estado', '=', 1],['id_moneda','=',$idMoneda]]);
-                }])
+        if ($idMoneda != null && $idMoneda > 0) {
+            $proveedores = Proveedor::with(['contribuyente.tipoDocumentoIdentidad', 'estadoProveedor', 'cuentaContribuyente' => function ($q) use ($idMoneda) {
+                $q->where([['estado', '=', 1], ['id_moneda', '=', $idMoneda]]);
+            }])
                 ->whereHas('contribuyente', function ($q) {
+                    $q->where('estado', '=', 1);
+                })->where('log_prove.estado', '=', 1);
+        } else {
+            $proveedores = Proveedor::with(['contribuyente.tipoDocumentoIdentidad', 'estadoProveedor', 'cuentaContribuyente' => function ($q) {
                 $q->where('estado', '=', 1);
-            })->where('log_prove.estado', '=', 1);
-        }else{
-            $proveedores = Proveedor::with(['contribuyente.tipoDocumentoIdentidad', 'estadoProveedor', 'cuentaContribuyente'=> function($q){
-                $q->where('estado', '=', 1);
-                }])
+            }])
                 ->whereHas('contribuyente', function ($q) {
-                $q->where('estado', '=', 1);
-            })->where('log_prove.estado', '=', 1);
+                    $q->where('estado', '=', 1);
+                })->where('log_prove.estado', '=', 1);
         }
 
 
@@ -4557,9 +4570,7 @@ class OrdenController extends Controller
                                 'mensaje' => $registoSolicitudPagoDirecta['mensaje'],
                                 'data' => $registoSolicitudPagoDirecta['data']
                             );
-
                         }
-
                     } else {
                         $arrayRspta = array(
                             'tipo_estado' => 'warning',
@@ -4576,35 +4587,32 @@ class OrdenController extends Controller
                 }
 
                 //actualiar tipo impuesto en los requerimientos
-                if($request->tipo_impuesto >=0){                    
-        
-                    if(count($orden->detalle)>0){
+                if ($request->tipo_impuesto >= 0) {
+
+                    if (count($orden->detalle) > 0) {
                         foreach (($orden->detalle) as $detalleOrden) {
-                            if($detalleOrden->estado != 7 && $detalleOrden->id_detalle_requerimiento >0){
-                                if($detalleOrden->detalleRequerimiento !=null && $detalleOrden->detalleRequerimiento->requerimiento->tipo_impuesto >0){
-                                    if($detalleOrden->detalleRequerimiento->requerimiento->id_requerimiento > 0){
+                            if ($detalleOrden->estado != 7 && $detalleOrden->id_detalle_requerimiento > 0) {
+                                if ($detalleOrden->detalleRequerimiento != null && $detalleOrden->detalleRequerimiento->requerimiento->tipo_impuesto > 0) {
+                                    if ($detalleOrden->detalleRequerimiento->requerimiento->id_requerimiento > 0) {
                                         $requerimiento = Requerimiento::find($detalleOrden->detalleRequerimiento->requerimiento->id_requerimiento);
-                                        if($requerimiento->tipo_impuesto != $request->tipo_impuesto){
+                                        if ($requerimiento->tipo_impuesto != $request->tipo_impuesto) {
 
                                             $anteriorValor = $requerimiento->tipo_impuesto;
                                             $nuevoValor = $request->tipo_impuesto;
 
-                                            $requerimiento->tipo_impuesto = $request->tipo_impuesto!=''?$request->tipo_impuesto:null;
+                                            $requerimiento->tipo_impuesto = $request->tipo_impuesto != '' ? $request->tipo_impuesto : null;
                                             $requerimiento->save();
 
-                                            $comentario = 'Tipo de cuenta: '.($request->tipo_impuesto==1?'Detracción':($request->tipo_impuesto==2?'Renta':'No aplica')).', Agregado por: '.Auth::user()->nombre_corto;
+                                            $comentario = 'Tipo de cuenta: ' . ($request->tipo_impuesto == 1 ? 'Detracción' : ($request->tipo_impuesto == 2 ? 'Renta' : 'No aplica')) . ', Agregado por: ' . Auth::user()->nombre_corto;
 
                                             LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $requerimiento->getTable(), $anteriorValor, $nuevoValor, $comentario);
-
                                         }
-
                                     }
                                 }
                             }
                         }
                     }
                 }
-
             } else {
                 $arrayRspta = array(
                     'tipo_estado' => 'warning',
@@ -4626,144 +4634,66 @@ class OrdenController extends Controller
     {
         // try {
         //     DB::beginTransaction();
-            $orden = Orden::find($request->id_orden_compra);
+        $orden = Orden::find($request->id_orden_compra);
 
-            // validar cantidad de cuotas vs monto total orden, si se completo el numero de cuotas enviar mensaje
-            $sumaPagos = 0;
-            $lastPagoCuota = PagoCuota::where([['id_orden', $orden->id_orden_compra]])->first();
-            if(isset($lastPagoCuota->id_pago_cuota)==true){
-                $lastPagoCuotaDetallePagadas = PagoCuotaDetalle::where([['id_pago_cuota', $lastPagoCuota->id_pago_cuota], ['id_estado', '=', 6]])->get();
-                foreach ($lastPagoCuotaDetallePagadas as $key => $detCuota) {
-                    $sumaPagos += $detCuota->monto_cuota;
-                }
-
+        // validar cantidad de cuotas vs monto total orden, si se completo el numero de cuotas enviar mensaje
+        $sumaPagos = 0;
+        $lastPagoCuota = PagoCuota::where([['id_orden', $orden->id_orden_compra]])->first();
+        if (isset($lastPagoCuota->id_pago_cuota) == true) {
+            $lastPagoCuotaDetallePagadas = PagoCuotaDetalle::where([['id_pago_cuota', $lastPagoCuota->id_pago_cuota], ['id_estado', '=', 6]])->get();
+            foreach ($lastPagoCuotaDetallePagadas as $key => $detCuota) {
+                $sumaPagos += $detCuota->monto_cuota;
             }
-            if (floatval($orden->monto_total) > floatval($sumaPagos)) {
+        }
+        if (floatval($orden->monto_total) > floatval($sumaPagos)) {
 
-
-                $orden->estado_pago = 8; //enviado a pago
-                $orden->id_tipo_destinatario_pago = $request->id_tipo_destinatario;
-                $orden->id_prioridad_pago = $request->id_prioridad;
-
-                if( $request->id_tipo_destinatario == 2){
-                    $orden->id_cta_principal = $request->id_cuenta;
-                }elseif( $request->id_tipo_destinatario == 1){
-                    $orden->id_cuenta_persona_pago = $request->id_cuenta;
-                }
-                $orden->id_persona_pago = $request->id_persona;
-                $orden->comentario_pago = $request->comentario;
-                $orden->tiene_pago_en_cuotas = $request->pagoEnCuotasCheckbox;
-                $orden->fecha_solicitud_pago = Carbon::now();
-                $orden->tipo_impuesto = $request->tipo_impuesto >0?$request->tipo_impuesto:null;
-                $orden->save();
-
-                if ((isset($request->pagoEnCuotasCheckbox) == true)) {
-                    $findPagoCuota = PagoCuota::where('id_orden', $request->id_orden_compra)->first();
-                    if (empty($findPagoCuota) == false && ($findPagoCuota) !=null) {
-                        $pagoCuotaDetalle = new PagoCuotaDetalle();
-                        $pagoCuotaDetalle->id_pago_cuota = $findPagoCuota->id_pago_cuota;
-                        $pagoCuotaDetalle->monto_cuota = str_replace(',', '', $request->monto_a_pagar);
-                        $pagoCuotaDetalle->observacion = $request->comentario;
-                        $pagoCuotaDetalle->id_usuario = Auth::user()->id_usuario;
-                        $pagoCuotaDetalle->fecha_registro = new Carbon();
-                        $pagoCuotaDetalle->id_estado = 1;
-                        $pagoCuotaDetalle->save();
-                    } else {
-                        $pagoCuota = new PagoCuota();
-                        $pagoCuota->id_orden = $request->id_orden_compra;
-                        $pagoCuota->numero_de_cuotas = $request->numero_de_cuotas;
-                        $pagoCuota->id_estado = 1;
-                        $pagoCuota->fecha_registro = new Carbon();
-                        $pagoCuota->save();
-
-                        $pagoCuotaDetalle = new PagoCuotaDetalle();
-                        $pagoCuotaDetalle->id_pago_cuota = $pagoCuota->id_pago_cuota;
-                        $pagoCuotaDetalle->monto_cuota = str_replace(',', '', $request->monto_a_pagar);
-                        $pagoCuotaDetalle->observacion = $request->comentario;
-                        $pagoCuotaDetalle->id_usuario = Auth::user()->id_usuario;
-                        $pagoCuotaDetalle->fecha_registro = new Carbon();
-                        $pagoCuotaDetalle->id_estado = 1;
-                        $pagoCuotaDetalle->save();
-                    }
-                }
-                if(isset($request->archivoAdjuntoRequerimientoObject)){
-                    $ObjectoAdjunto = json_decode($request->archivoAdjuntoRequerimientoObject);
-                    $adjuntoOtrosAdjuntosLength = $request->archivo_adjunto_list != null ? count($request->archivo_adjunto_list) : 0;
-                    $idOrden = $request->id_orden_compra;
-                    $codigoOrden = Orden::find($request->id_orden_compra)->codigo;
-                    $archivoAdjuntoList = $request->archivo_adjunto_list;
-
-                    foreach ($ObjectoAdjunto as $keyObj => $value) {
-                        $ObjectoAdjunto[$keyObj]->id_orden = $idOrden;
-                        $ObjectoAdjunto[$keyObj]->codigo_orden = $codigoOrden;
-                        $ObjectoAdjunto[$keyObj]->id_pago_cuota_detalle = $pagoCuotaDetalle->id_pago_cuota_detalle;
-                        if ($adjuntoOtrosAdjuntosLength > 0) {
-                            foreach ($archivoAdjuntoList as $keyA => $archivo) {
-                                if (is_file($archivo)) {
-                                    $nombreArchivoAdjunto = $archivo->getClientOriginalName();
-                                    if ($nombreArchivoAdjunto == $value->nameFile) {
-                                        $ObjectoAdjunto[$keyObj]->file = $archivo;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    $idAdjunto = [];
-                    if ($adjuntoOtrosAdjuntosLength > 0) {
-
-                        $idAdjunto[] = $this->subirYRegistrarArchivoLogistico($ObjectoAdjunto);
-                    }
-
-                }
-                $arrayRspta = array(
-                    'tipo_estado' => 'success',
-                    'mensaje' => 'Solicitud de pago registrado.',
-                    'data' => $orden
-                );
-            } else {
-                $arrayRspta = array(
-                    'tipo_estado' => 'warning',
-                    'mensaje' => 'Se completo el limite total de cuotas, orden pagada.',
-                    'data' => $orden
-                );
-            }
-            // DB::commit();
-
-            return $arrayRspta;
-        // } catch (Exception $e) {
-
-        //     $arrayRspta = array(
-        //         'tipo_estado' => 'error',
-        //         'mensaje' => 'Hubo un problema al intentar registrar de solicitud de pago en cuotas',
-        //         'data' => []
-        //     );
-
-        //     return $arrayRspta;
-        // }
-    }
-    public function registrarSolicitudDePagarDirecta(Request $request)
-    {
-        // try {
-        //     DB::beginTransaction();
-            $orden = Orden::find($request->id_orden_compra);
 
             $orden->estado_pago = 8; //enviado a pago
             $orden->id_tipo_destinatario_pago = $request->id_tipo_destinatario;
             $orden->id_prioridad_pago = $request->id_prioridad;
-            if( $request->id_tipo_destinatario == 2){
+
+            if ($request->id_tipo_destinatario == 2) {
                 $orden->id_cta_principal = $request->id_cuenta;
-            }elseif( $request->id_tipo_destinatario == 1){
+            } elseif ($request->id_tipo_destinatario == 1) {
                 $orden->id_cuenta_persona_pago = $request->id_cuenta;
             }
             $orden->id_persona_pago = $request->id_persona;
             $orden->comentario_pago = $request->comentario;
-            $orden->tiene_pago_en_cuotas = false;
+            $orden->tiene_pago_en_cuotas = $request->pagoEnCuotasCheckbox;
             $orden->fecha_solicitud_pago = Carbon::now();
-            $orden->tipo_impuesto = $request->tipo_impuesto >0?$request->tipo_impuesto:null;
+            $orden->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $orden->save();
 
+            if ((isset($request->pagoEnCuotasCheckbox) == true)) {
+                $findPagoCuota = PagoCuota::where('id_orden', $request->id_orden_compra)->first();
+                if (empty($findPagoCuota) == false && ($findPagoCuota) != null) {
+                    $pagoCuotaDetalle = new PagoCuotaDetalle();
+                    $pagoCuotaDetalle->id_pago_cuota = $findPagoCuota->id_pago_cuota;
+                    $pagoCuotaDetalle->monto_cuota = str_replace(',', '', $request->monto_a_pagar);
+                    $pagoCuotaDetalle->observacion = $request->comentario;
+                    $pagoCuotaDetalle->id_usuario = Auth::user()->id_usuario;
+                    $pagoCuotaDetalle->fecha_registro = new Carbon();
+                    $pagoCuotaDetalle->id_estado = 1;
+                    $pagoCuotaDetalle->save();
+                } else {
+                    $pagoCuota = new PagoCuota();
+                    $pagoCuota->id_orden = $request->id_orden_compra;
+                    $pagoCuota->numero_de_cuotas = $request->numero_de_cuotas;
+                    $pagoCuota->id_estado = 1;
+                    $pagoCuota->fecha_registro = new Carbon();
+                    $pagoCuota->save();
 
-            if(isset($request->archivoAdjuntoRequerimientoObject)){
+                    $pagoCuotaDetalle = new PagoCuotaDetalle();
+                    $pagoCuotaDetalle->id_pago_cuota = $pagoCuota->id_pago_cuota;
+                    $pagoCuotaDetalle->monto_cuota = str_replace(',', '', $request->monto_a_pagar);
+                    $pagoCuotaDetalle->observacion = $request->comentario;
+                    $pagoCuotaDetalle->id_usuario = Auth::user()->id_usuario;
+                    $pagoCuotaDetalle->fecha_registro = new Carbon();
+                    $pagoCuotaDetalle->id_estado = 1;
+                    $pagoCuotaDetalle->save();
+                }
+            }
+            if (isset($request->archivoAdjuntoRequerimientoObject)) {
                 $ObjectoAdjunto = json_decode($request->archivoAdjuntoRequerimientoObject);
                 $adjuntoOtrosAdjuntosLength = $request->archivo_adjunto_list != null ? count($request->archivo_adjunto_list) : 0;
                 $idOrden = $request->id_orden_compra;
@@ -4773,7 +4703,7 @@ class OrdenController extends Controller
                 foreach ($ObjectoAdjunto as $keyObj => $value) {
                     $ObjectoAdjunto[$keyObj]->id_orden = $idOrden;
                     $ObjectoAdjunto[$keyObj]->codigo_orden = $codigoOrden;
-                    $ObjectoAdjunto[$keyObj]->id_pago_cuota_detalle = null;
+                    $ObjectoAdjunto[$keyObj]->id_pago_cuota_detalle = $pagoCuotaDetalle->id_pago_cuota_detalle;
                     if ($adjuntoOtrosAdjuntosLength > 0) {
                         foreach ($archivoAdjuntoList as $keyA => $archivo) {
                             if (is_file($archivo)) {
@@ -4790,19 +4720,94 @@ class OrdenController extends Controller
 
                     $idAdjunto[] = $this->subirYRegistrarArchivoLogistico($ObjectoAdjunto);
                 }
-
             }
-
-
-
             $arrayRspta = array(
                 'tipo_estado' => 'success',
                 'mensaje' => 'Solicitud de pago registrado.',
                 'data' => $orden
             );
+        } else {
+            $arrayRspta = array(
+                'tipo_estado' => 'warning',
+                'mensaje' => 'Se completo el limite total de cuotas, orden pagada.',
+                'data' => $orden
+            );
+        }
+        // DB::commit();
 
-            // DB::commit();
-            return $arrayRspta;
+        return $arrayRspta;
+        // } catch (Exception $e) {
+
+        //     $arrayRspta = array(
+        //         'tipo_estado' => 'error',
+        //         'mensaje' => 'Hubo un problema al intentar registrar de solicitud de pago en cuotas',
+        //         'data' => []
+        //     );
+
+        //     return $arrayRspta;
+        // }
+    }
+    public function registrarSolicitudDePagarDirecta(Request $request)
+    {
+        // try {
+        //     DB::beginTransaction();
+        $orden = Orden::find($request->id_orden_compra);
+
+        $orden->estado_pago = 8; //enviado a pago
+        $orden->id_tipo_destinatario_pago = $request->id_tipo_destinatario;
+        $orden->id_prioridad_pago = $request->id_prioridad;
+        if ($request->id_tipo_destinatario == 2) {
+            $orden->id_cta_principal = $request->id_cuenta;
+        } elseif ($request->id_tipo_destinatario == 1) {
+            $orden->id_cuenta_persona_pago = $request->id_cuenta;
+        }
+        $orden->id_persona_pago = $request->id_persona;
+        $orden->comentario_pago = $request->comentario;
+        $orden->tiene_pago_en_cuotas = false;
+        $orden->fecha_solicitud_pago = Carbon::now();
+        $orden->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
+        $orden->save();
+
+
+        if (isset($request->archivoAdjuntoRequerimientoObject)) {
+            $ObjectoAdjunto = json_decode($request->archivoAdjuntoRequerimientoObject);
+            $adjuntoOtrosAdjuntosLength = $request->archivo_adjunto_list != null ? count($request->archivo_adjunto_list) : 0;
+            $idOrden = $request->id_orden_compra;
+            $codigoOrden = Orden::find($request->id_orden_compra)->codigo;
+            $archivoAdjuntoList = $request->archivo_adjunto_list;
+
+            foreach ($ObjectoAdjunto as $keyObj => $value) {
+                $ObjectoAdjunto[$keyObj]->id_orden = $idOrden;
+                $ObjectoAdjunto[$keyObj]->codigo_orden = $codigoOrden;
+                $ObjectoAdjunto[$keyObj]->id_pago_cuota_detalle = null;
+                if ($adjuntoOtrosAdjuntosLength > 0) {
+                    foreach ($archivoAdjuntoList as $keyA => $archivo) {
+                        if (is_file($archivo)) {
+                            $nombreArchivoAdjunto = $archivo->getClientOriginalName();
+                            if ($nombreArchivoAdjunto == $value->nameFile) {
+                                $ObjectoAdjunto[$keyObj]->file = $archivo;
+                            }
+                        }
+                    }
+                }
+            }
+            $idAdjunto = [];
+            if ($adjuntoOtrosAdjuntosLength > 0) {
+
+                $idAdjunto[] = $this->subirYRegistrarArchivoLogistico($ObjectoAdjunto);
+            }
+        }
+
+
+
+        $arrayRspta = array(
+            'tipo_estado' => 'success',
+            'mensaje' => 'Solicitud de pago registrado.',
+            'data' => $orden
+        );
+
+        // DB::commit();
+        return $arrayRspta;
         // } catch (Exception $e) {
 
         //     $arrayRspta = array(
@@ -4833,16 +4838,16 @@ class OrdenController extends Controller
 
 
 
-    public static function reporteListaOrdenes($filtro='SIN_FILTRO')
+    public static function reporteListaOrdenes($filtro = 'SIN_FILTRO')
     {
 
 
         $data = [];
         $ord_compra = OrdenesView::where('id_estado', '>=', 1)
-            ->when(($filtro!='SIN_FILTRO'), function ($query) use ($filtro) {
+            ->when(($filtro != 'SIN_FILTRO'), function ($query) use ($filtro) {
                 switch ($filtro) {
                     case 'ORDENES_SIN_ENVIAR_A_PAGO':
-                        return $query->whereIn('ordenes_view.estado_pago',[1]);
+                        return $query->whereIn('ordenes_view.estado_pago', [1]);
                         break;
                     case 'ORDENES_AUTORIZADAS_PARA_PAGO':
                         return $query->whereIn('ordenes_view.estado_pago', [5]);
@@ -4870,8 +4875,8 @@ class OrdenController extends Controller
                 'tiempo_atencion_logistica' => $d['data_atencion_logistica'] ?? '',
                 'fecha_ultimo_ingreso_almacen' => $d['fecha_ultimo_ingreso_almacen'] ?? '',
                 'razon_social_proveedor' => $d['razon_social_proveedor'] ?? '',
-                'condicion_compra'=>$d['condicion_compra'] ?? '',
-                'credito_dias'=>$d['credito_dias'] ?? '',
+                'condicion_compra' => $d['condicion_compra'] ?? '',
+                'credito_dias' => $d['credito_dias'] ?? '',
                 'estado_orden' => $d['descripcion_estado'] ?? '',
                 'estado_pago' => $d['descripcion_estado_pago'] ?? '-',
                 'monto_total' => $d['monto_total'] ?? '',
@@ -4893,21 +4898,21 @@ class OrdenController extends Controller
                 'codigo_orden' => $d['codigo_orden'] ?? '',
                 'codigo_requerimiento' => $d['codigo_requerimiento'] ?? '',
                 'codigo_softlink' => $d['codigo_softlink'] ?? '',
-                'nro_orden_mgc'=> $d['nro_orden_mgc']??'',
+                'nro_orden_mgc' => $d['nro_orden_mgc'] ?? '',
                 'concepto_requerimiento' => $d['concepto_requerimiento'] ?? '',
                 'razon_social_cliente' => $d['razon_social_cliente'] ?? '',
                 'razon_social_proveedor' => $d['razon_social_proveedor'] ?? '',
-                'codigo_am'=> $d['codigo_am']??'',
-                'nombre_am'=> $d['nombre_am']??'',
+                'codigo_am' => $d['codigo_am'] ?? '',
+                'nombre_am' => $d['nombre_am'] ?? '',
                 'descripcion_subcategoria' => $d['descripcion_subcategoria'] ?? '',
                 'descripcion_categoria' => $d['descripcion_categoria'] ?? '',
                 'codigo_producto' => $d['codigo_producto'] ?? '',
                 'part_number_producto' => $d['part_number_producto'] ?? '',
                 'cod_softlink_producto' => $d['cod_softlink_producto'] ?? '',
                 'descripcion_producto' => $d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional'],
-                'lugar_entrega_cdp'=> $d['lugar_entrega_cdp']??'',
+                'lugar_entrega_cdp' => $d['lugar_entrega_cdp'] ?? '',
                 'cantidad' => $d['cantidad'] ?? '',
-                'abreviatura_unidad_medida_producto' => $d['abreviatura_unidad_medida_producto'] ?? ($d['abreviatura_unidad_medida_det_orden']??'') ,
+                'abreviatura_unidad_medida_producto' => $d['abreviatura_unidad_medida_producto'] ?? ($d['abreviatura_unidad_medida_det_orden'] ?? ''),
                 'simbolo_moneda_orden' => $d['simbolo_moneda_orden'] ?? '',
                 'precio' => $d['precio'] ?? '',
                 'cc_fila_precio' => $d['cc_fila_precio'] ?? '',
@@ -4932,7 +4937,7 @@ class OrdenController extends Controller
     public function listarCategoriasAdjuntos()
     {
         // $categoria_adjunto =
-        return DB::table('logistica.categoria_adjunto')->where('estado',1)
+        return DB::table('logistica.categoria_adjunto')->where('estado', 1)
             ->get();
     }
     public function guardarAdjuntoOrden(Request $request)
@@ -5137,68 +5142,67 @@ class OrdenController extends Controller
     public function calcularPrioridad($id_orden)
     {
         $detalle_orden = OrdenCompraDetalle::select('alm_req.*')
-        ->where('log_det_ord_compra.estado','!=',7)
-        ->join('almacen.alm_det_req', 'alm_det_req.id_detalle_requerimiento', '=', 'log_det_ord_compra.id_detalle_requerimiento')
-        ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
-        ->where('log_det_ord_compra.id_orden_compra',$id_orden)
-        ->get();
+            ->where('log_det_ord_compra.estado', '!=', 7)
+            ->join('almacen.alm_det_req', 'alm_det_req.id_detalle_requerimiento', '=', 'log_det_ord_compra.id_detalle_requerimiento')
+            ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
+            ->where('log_det_ord_compra.id_orden_compra', $id_orden)
+            ->get();
 
-        $prioridad_mayor=0;
-        $prioridad_menor=0;
-        foreach($detalle_orden as $key => $value) {
+        $prioridad_mayor = 0;
+        $prioridad_menor = 0;
+        foreach ($detalle_orden as $key => $value) {
 
-            if($value->id_prioridad > $prioridad_mayor){
+            if ($value->id_prioridad > $prioridad_mayor) {
                 $prioridad_mayor = $value->id_prioridad;
                 $prioridad_menor = $prioridad_mayor;
             }
         }
         return response()->json([
-            "success"=>true,
-            "prioridad_id"=>$prioridad_mayor,
+            "success" => true,
+            "prioridad_id" => $prioridad_mayor,
             // "requerimientos"=>$detalle_orden,
-        ],200);
+        ], 200);
     }
 
-    public function obtenerRequerimientosConImpuesto($idOrden){
+    public function obtenerRequerimientosConImpuesto($idOrden)
+    {
 
-        $mensaje='';
-        $estado='info';
+        $mensaje = '';
+        $estado = 'info';
 
-        $requerimientoList=[];
-        $tipoImpuestoList=[];
-        $payload=[];
+        $requerimientoList = [];
+        $tipoImpuestoList = [];
+        $payload = [];
 
         $orden = Orden::with('detalle.detalleRequerimiento.requerimiento')->find($idOrden);
-        
-        if(count($orden->detalle)>0){
-            foreach (($orden->detalle) as $detalleOrden) {
-                if($detalleOrden->estado != 7 && $detalleOrden->id_detalle_requerimiento >0){
-                    if($detalleOrden->detalleRequerimiento !=null && $detalleOrden->detalleRequerimiento->requerimiento->tipo_impuesto >0){
 
-                        $requerimientoList[]=['id_requerimiento'=>$detalleOrden->detalleRequerimiento->requerimiento->id_requerimiento, 'codigo'=>$detalleOrden->detalleRequerimiento->requerimiento->codigo]; 
-                        $tipoImpuestoList[]=$detalleOrden->detalleRequerimiento->requerimiento->tipo_impuesto; 
+        if (count($orden->detalle) > 0) {
+            foreach (($orden->detalle) as $detalleOrden) {
+                if ($detalleOrden->estado != 7 && $detalleOrden->id_detalle_requerimiento > 0) {
+                    if ($detalleOrden->detalleRequerimiento != null && $detalleOrden->detalleRequerimiento->requerimiento->tipo_impuesto > 0) {
+
+                        $requerimientoList[] = ['id_requerimiento' => $detalleOrden->detalleRequerimiento->requerimiento->id_requerimiento, 'codigo' => $detalleOrden->detalleRequerimiento->requerimiento->codigo];
+                        $tipoImpuestoList[] = $detalleOrden->detalleRequerimiento->requerimiento->tipo_impuesto;
                     }
                 }
             }
         }
 
-    
-        $payload['lista_requerimientos']= array_unique($requerimientoList);
 
-        if(count($tipoImpuestoList) ==1){
-            
-        $tipoImpuesto= $tipoImpuestoList[0];
-        $estado='success';
+        $payload['lista_requerimientos'] = array_unique($requerimientoList);
 
-        }else{
-            $tipoImpuesto='';
+        if (count($tipoImpuestoList) == 1) {
+
+            $tipoImpuesto = $tipoImpuestoList[0];
+            $estado = 'success';
+        } else {
+            $tipoImpuesto = '';
             $mensaje = 'Debe seleccionar el tipo de impuesto, existe requerimientos con distinto tipo de impuesto ';
-            $estado='warning';
+            $estado = 'warning';
         }
 
-        $payload['tipo_impuesto']= $tipoImpuesto;
+        $payload['tipo_impuesto'] = $tipoImpuesto;
 
-        return ["data" => $payload, 'estado'=>$estado, "mensaje" => $mensaje];
-
+        return ["data" => $payload, 'estado' => $estado, "mensaje" => $mensaje];
     }
 }

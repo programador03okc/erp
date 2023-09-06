@@ -31,7 +31,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <h5>Gasto extra</h5>
+                                <h5>Gasto extra  <small>(Include IGV)</small></h5>
                                 <div class="input-group">
                                     <span class="input-group-addon" disabled>S/</span>
                                     <input type="number" class="form-control" name="gasto_extra" step="any" placeholder="Gasto extra" >

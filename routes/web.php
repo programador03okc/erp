@@ -31,6 +31,7 @@ use App\Http\Controllers\Almacen\Ubicacion\AlmacenController as UbicacionAlmacen
 use App\Http\Controllers\Almacen\Ubicacion\PosicionController;
 use App\Http\Controllers\Almacen\Ubicacion\TipoAlmacenController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Cas\CasMarcaController;
 use App\Http\Controllers\Cas\CasModeloController;
@@ -64,6 +65,7 @@ use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesTransformacionController;
+use App\Http\Controllers\Logistica\Distribucion\ProgramacionDespachosController;
 use App\Http\Controllers\Logistica\ProveedoresController;
 use App\Http\Controllers\Logistica\RequerimientoController;
 use App\Http\Controllers\Logistica\Requerimientos\MapeoProductosController;
@@ -108,7 +110,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\ApiController;
+// use App\Http\Controllers\ApiController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -1677,6 +1679,17 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('pasarProgramadasAlDiaSiguiente/{fec}', [OrdenesDespachoInternoController::class, 'pasarProgramadasAlDiaSiguiente'])->name('pasar-programadas-al-dia-siguiente');
 				Route::get('listarPendientesAnteriores/{fec}', [OrdenesDespachoInternoController::class, 'listarPendientesAnteriores'])->name('listar-pendientes-anteriores');
 				Route::post('cambiaEstado', [OrdenesDespachoInternoController::class, 'cambiaEstado'])->name('cambia-estado');
+			});
+            Route::name('programacion-despachos.')->prefix('programacion-despachos')->group(function () {
+
+                Route::get('lista', [ProgramacionDespachosController::class, 'lista'])->name('lista');
+                Route::get('listar-odi', [ProgramacionDespachosController::class, 'listarODI'])->name('listar-odi');
+                Route::get('listar-ode', [ProgramacionDespachosController::class, 'listarODE'])->name('listar-ode');
+                Route::post('guardar', [ProgramacionDespachosController::class, 'guardar'])->name('guardar');
+                Route::get('editar/{id}', [ProgramacionDespachosController::class, 'editar'])->name('editar');
+                Route::put('eliminar/{id}', [ProgramacionDespachosController::class, 'eliminar'])->name('eliminar');
+
+                Route::get('reprogramar', [ProgramacionDespachosController::class, 'reprogramar'])->name('reprogramar');
 			});
 		});
 	});

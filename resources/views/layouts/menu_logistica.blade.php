@@ -103,6 +103,8 @@
             {{-- @if(Auth::user()->tieneAplicacion(80)) --}}
             <li><a href="{{route('logistica.distribucion.ordenes-despacho-externo.index')}}"><i class="far fa-circle fa-xs"></i> Despachos Externos </a></li>
             <li><a href="{{route('logistica.distribucion.ordenes-despacho-interno.index')}}"><i class="far fa-circle fa-xs"></i> Despachos Internos </a></li>
+
+            <li><a href="{{route('logistica.distribucion.programacion-despachos.lista')}}"><i class="far fa-circle fa-xs"></i> Programación de despachos </a></li>
             {{-- @endif --}}
 </ul>
 </li>

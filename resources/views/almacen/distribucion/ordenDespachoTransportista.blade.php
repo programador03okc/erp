@@ -47,7 +47,7 @@
                                 <input type="date" name="fecha_transportista" class="form-control" />
                             </div>
                             <div class="col-md-3">
-                                <h5>Monto flete <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="" name="fechaRegistroFlete"></span></h5>
+                                <h5>Monto flete <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="" name="fechaRegistroFlete"></span> <small>(Include IGV)</small></h5>
                                 <div class="input-group">
                                     <span class="input-group-addon" disabled>S/</span>
                                     {{-- <input type="text" class="form-control decimal" name="fleteReal" > --}}

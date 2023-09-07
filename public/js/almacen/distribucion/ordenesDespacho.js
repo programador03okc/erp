@@ -1385,7 +1385,6 @@ $("#gruposDespachados tbody").on("click", "button.transportista", function () {
         $("[name=serie]").val("");
         $("[name=numero]").val("");
         // $('[name=fecha_transportista]').val('');
-        $("[name=codigo_envio]").val("");
         $("[name=importe_flete]").val("");
         $("#submit_od_transportista").removeAttr("disabled");
     } else {

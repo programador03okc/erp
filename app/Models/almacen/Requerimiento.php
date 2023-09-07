@@ -247,8 +247,14 @@ class Requerimiento extends Model
     {
 
         $Periodo=Periodo::find($idPeriodo);
-        $yyyy = $Periodo->descripcion;
-        $yy = substr($Periodo->descripcion,2,2);
+        if($Periodo){
+            $yyyy = $Periodo->descripcion;
+            $yy = substr($Periodo->descripcion,2,2);
+        }else{
+            $Periodo=Periodo::orderBy('descripcion','desc')->first();
+            $yyyy = $Periodo->descripcion;
+            $yy = substr($Periodo->descripcion,2,2);
+        }
 
         $documento = 'R'; //Prefijo para el codigo de requerimiento
         switch ($tipoRequerimiento) {

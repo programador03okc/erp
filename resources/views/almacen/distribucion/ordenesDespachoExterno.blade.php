@@ -141,6 +141,7 @@ Gestión de Despachos
 @include('almacen.distribucion.agregarTransportista')
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
 @include('almacen.distribucion.requerimientoFlete')
+@include('logistica.requerimientos.modal_adjuntar_archivos_detalle_requerimiento')
 @include('logistica.requerimientos.modal_centro_costos')
 
 @endsection
@@ -155,6 +156,7 @@ Gestión de Despachos
 <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-datepicker/dist/js/locales/bootstrap-datepicker.es.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
 <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/bootstrap-select/js/i18n/defaults-es_ES.min.js') }}"></script>

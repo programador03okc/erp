@@ -1633,111 +1633,137 @@ class OrdenesDespachoExternoController extends Controller
 
 
 
-    
-    public function mostrarRequerimientoOrdenDespacho($idOd){
 
-        $ordenDespacho= OrdenDespacho::find($idOd);
-        $requerimientoLogistico=[];
+    public function mostrarRequerimientoOrdenDespacho($idOd)
+    {
 
-        if($ordenDespacho){
+        $ordenDespacho = OrdenDespacho::find($idOd);
+        $requerimientoLogistico = [];
+
+        if ($ordenDespacho) {
             $requerimientoOrdenDespacho = Requerimiento::find($ordenDespacho->id_requerimiento);
-            $requerimientoLogistico =  (new RequerimientoController)->mostrarRequerimiento($requerimientoOrdenDespacho->id_requerimiento,0);
-            
+            $requerimientoLogistico =  (new RequerimientoController)->mostrarRequerimiento($requerimientoOrdenDespacho->id_requerimiento, 0);
         }
 
         return $requerimientoLogistico;
-
     }
 
 
-    public function guardarRequerimientoFlete(Request $request){
+    public function guardarRequerimientoFlete(Request $request)
+    {
         try {
             DB::beginTransaction();
-                    // si exist el check, se genera requerimiento
-                    $actualOD = OrdenDespacho::find($request->id_od);
- 
-                        $montoSubtotal = $request->precio_unitario?? null;
-                        $montoIgv = $request->importe_igv ?? null;
-                        $montoTotal = $request->importe_tota ??null;
-                        
-                            $requerimiento = new Requerimiento();
-                            $requerimiento->id_tipo_requerimiento = 8; // por defecto Otros
-                            $requerimiento->id_usuario = Auth::user()->id_usuario;
-                            $requerimiento->fecha_requerimiento = new Carbon();
-                            $requerimiento->id_periodo = $request->periodo;
-                            $requerimiento->id_prioridad = $request->prioridad;
-                            $requerimiento->concepto = strtoupper($request->concepto);
-                            $requerimiento->observacion = $request->observacion;
-                            $requerimiento->id_empresa = $request->empresa ? $request->empresa : null;
-                            $requerimiento->id_sede = $request->sede > 0 ? $request->sede : null;
-                            $requerimiento->id_grupo = $request->grupo > 0 ? $request->grupo : null;
-                            $requerimiento->division_id = $request->division > 0 ?  $request->division : null;
-                            $requerimiento->fecha_registro = new Carbon();
-                            $requerimiento->id_almacen = $request->almacen > 0 ? $request->almacen : null;
-                            $requerimiento->monto_subtotal = $montoSubtotal;
-                            $requerimiento->monto_igv = $montoIgv;
-                            $requerimiento->monto_total = $montoTotal;
-                            $requerimiento->fecha_entrega = $request->fecha_entrega != null ? $request->fecha_entrega : null;
-                            $requerimiento->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
-                            $requerimiento->id_cc = $request->cdp > 0 ? $request->cdp : null;
-                            $requerimiento->trabajador_id = $request->solicitado_por > 0 ? $request->solicitado_por : null;
-                            $requerimiento->id_moneda = 1; // por defecto es en soles
-                            $requerimiento->tiene_transformacion = false;
-                            $requerimiento->confirmacion_pago = true;
-                            $requerimiento->id_tipo_detalle = 2; // tipo servicio
-                            $requerimiento->estado = 1;
-                            $requerimiento->save();
-                                
-        
-                        $detalle = new DetalleRequerimiento();
-                        $detalle->id_requerimiento = $requerimiento->id_requerimiento;
-                        $detalle->id_tipo_item = 2; //servicio
-                        $detalle->partida = null;
-                        $detalle->centro_costo_id = (isset($request->centro_costo) && $request->centro_costo >0)? $request->centro_costo:null;
-                        $detalle->tiene_transformacion = false;
-                        $detalle->descripcion = Str::upper($request->descripcion_item);
-                        $detalle->id_unidad_medida = 17; // servicio
-                        $detalle->cantidad = 1;
-                        $detalle->precio_unitario = $montoTotal;
-                        $detalle->subtotal = $montoTotal;
-                        $detalle->fecha_registro = new Carbon();
-                        $detalle->estado = 1;
-                        $detalle->save();
-        
-                        $documento = new Documento();
-                        $documento->id_tp_documento = 1;
-                        $documento->codigo_doc = $requerimiento->codigo;
-                        $documento->id_doc = $requerimiento->id_requerimiento;
-                        $documento->save();
-            
+            // si exist el check, se genera requerimiento
+            $actualOD = OrdenDespacho::find($request->id_od);
 
-                        $ordenDespachoFlete = new OrdenDespachoFlete();
-                        $ordenDespachoFlete->id_od = $request->id_od;
-                        $ordenDespachoFlete->id_requerimiento = $requerimiento->id_requerimiento;
-                        $ordenDespachoFlete->estado = 1;
-                        $ordenDespachoFlete->id_usuario = Auth::user()->id_usuario;
-                        $ordenDespachoFlete->fecha_registro = new Carbon();
-                        $ordenDespachoFlete->save();
+            $montoSubtotal = $request->precio_unitario ?? null;
+            $montoIgv = $request->importe_igv ?? null;
+            $montoTotal = $request->importe_tota ?? null;
 
-                    DB::commit();
+            $requerimiento = new Requerimiento();
+            $requerimiento->id_tipo_requerimiento = 8; // por defecto Otros
+            $requerimiento->id_usuario = Auth::user()->id_usuario;
+            $requerimiento->fecha_requerimiento = new Carbon();
+            $requerimiento->id_periodo = $request->periodo;
+            $requerimiento->id_prioridad = $request->prioridad;
+            $requerimiento->concepto = strtoupper($request->concepto);
+            $requerimiento->observacion = $request->observacion;
+            $requerimiento->id_empresa = $request->empresa ? $request->empresa : null;
+            $requerimiento->id_sede = $request->sede > 0 ? $request->sede : null;
+            $requerimiento->id_grupo = $request->grupo > 0 ? $request->grupo : null;
+            $requerimiento->division_id = $request->division > 0 ?  $request->division : null;
+            $requerimiento->fecha_registro = new Carbon();
+            $requerimiento->id_almacen = $request->almacen > 0 ? $request->almacen : null;
+            $requerimiento->monto_subtotal = $montoSubtotal;
+            $requerimiento->monto_igv = $montoIgv;
+            $requerimiento->monto_total = $montoTotal;
+            $requerimiento->fecha_entrega = $request->fecha_entrega != null ? $request->fecha_entrega : null;
+            $requerimiento->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
+            $requerimiento->id_cc = $request->cdp > 0 ? $request->cdp : null;
+            $requerimiento->trabajador_id = $request->solicitado_por > 0 ? $request->solicitado_por : null;
+            $requerimiento->id_moneda = 1; // por defecto es en soles
+            $requerimiento->tiene_transformacion = false;
+            $requerimiento->confirmacion_pago = true;
+            $requerimiento->id_tipo_detalle = 2; // tipo servicio
+            $requerimiento->estado = 1;
+            $requerimiento->save();
 
-                    $codigo = Requerimiento::crearCodigo(7, $request->grupo, $requerimiento->id_requerimiento, $request->periodo);
-                    $req = Requerimiento::find($requerimiento->id_requerimiento);
-                    $req->codigo = $codigo;
-                    $req->save();
 
-                    if($req){
-                        return response()->json(['status'=>'success','mensaje'=>'Requerimiento de flete '.$req->codigo.' fue creado.']);
-                        
-                    }else{
-                        return response()->json(['status'=>'error','mensaje'=>'Hubo un problema al generar el requerimiento de flete']);
+            $detalle = new DetalleRequerimiento();
+            $detalle->id_requerimiento = $requerimiento->id_requerimiento;
+            $detalle->id_tipo_item = 2; //servicio
+            $detalle->partida = null;
+            $detalle->centro_costo_id = (isset($request->centro_costo) && $request->centro_costo > 0) ? $request->centro_costo : null;
+            $detalle->tiene_transformacion = false;
+            $detalle->descripcion = Str::upper($request->descripcion_item);
+            $detalle->id_unidad_medida = 17; // servicio
+            $detalle->cantidad = 1;
+            $detalle->precio_unitario = $montoTotal;
+            $detalle->subtotal = $montoTotal;
+            $detalle->fecha_registro = new Carbon();
+            $detalle->estado = 1;
+            $detalle->save();
+            $detalle->idRegister = $request->id_item;
+            $detalleArray[] = $detalle;
 
+
+            $documento = new Documento();
+            $documento->id_tp_documento = 1;
+            $documento->codigo_doc = $requerimiento->codigo;
+            $documento->id_doc = $requerimiento->id_requerimiento;
+            $documento->save();
+
+
+            $ordenDespachoFlete = new OrdenDespachoFlete();
+            $ordenDespachoFlete->id_od = $request->id_od;
+            $ordenDespachoFlete->id_requerimiento = $requerimiento->id_requerimiento;
+            $ordenDespachoFlete->estado = 1;
+            $ordenDespachoFlete->id_usuario = Auth::user()->id_usuario;
+            $ordenDespachoFlete->fecha_registro = new Carbon();
+            $ordenDespachoFlete->save();
+
+
+
+            DB::commit();
+
+            $codigo = Requerimiento::crearCodigo(7, $request->grupo, $requerimiento->id_requerimiento, $request->periodo);
+            $req = Requerimiento::find($requerimiento->id_requerimiento);
+            $req->codigo = $codigo;
+            $req->save();
+
+
+            //si existe nuevos adjuntos de nuevos item
+            $adjuntoDetelleRequerimiento = [];
+            if (isset($detalleArray) && count($detalleArray) > 0) {
+                for ($i = 0; $i < count($detalleArray); $i++) {
+                    $archivos = $request->{"archivoAdjuntoRequerimientoDetalleGuardar" . $detalleArray[$i]['idRegister']};
+                    if (isset($archivos)) {
+                        foreach ($archivos as $archivo) {
+                            if ($archivo != null) {
+                                $adjuntoDetelleRequerimiento[] = [
+                                    'id_detalle_requerimiento' => $detalleArray[$i]['id_detalle_requerimiento'],
+                                    // 'nombre_archivo' => $archivo->getClientOriginalName(),
+                                    'archivo' => $archivo
+                                ];
+                            }
+                        }
                     }
-
-                } catch (\PDOException $e) {
-                    DB::rollBack();
-                    return response()->json(['status'=>'error','mensaje'=>$e->getMessage()]);
-
                 }
+            }
+
+            if (count($adjuntoDetelleRequerimiento) > 0) {
+                (new RequerimientoController)->guardarAdjuntoNivelDetalleItem($adjuntoDetelleRequerimiento, $codigo);
+            }
+
+
+            if ($req) {
+                return response()->json(['status' => 'success', 'mensaje' => 'Requerimiento de flete ' . $req->codigo . ' fue creado.']);
+            } else {
+                return response()->json(['status' => 'error', 'mensaje' => 'Hubo un problema al generar el requerimiento de flete']);
+            }
+        } catch (\PDOException $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'mensaje' => $e->getMessage()]);
+        }
     }
 }

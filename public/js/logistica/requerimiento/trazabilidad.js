@@ -253,7 +253,7 @@ function construirModalTrazabilidad(data) {
             <strong>Guía transportista:</strong>
             <p>${data.guia_transportista.serie ? ((data.guia_transportista.serie ?? '') + '-' + (data.guia_transportista.numero ?? '')) : ''}<br>
             ${data.guia_transportista.fecha_transportista ? data.guia_transportista.fecha_transportista : ''}<br>
-            ${data.guia_transportista.codigo_envio ? 'Cód. envio: ' + data.guia_transportista.codigo_envio : ''} ${data.guia_transportista.importe_flete ? 'S/' + data.guia_transportista.importe_flete : ''}</p>
+            ${data.guia_transportista.importe_flete ? 'S/' + data.guia_transportista.importe_flete : ''}</p>
             <strong>Acciónes Reparto:</strong>
             <p>${repartoAccion.join('<br>')}</p>
             </div>

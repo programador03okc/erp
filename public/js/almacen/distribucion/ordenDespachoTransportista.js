@@ -21,7 +21,6 @@ function openAgenciaTransporte(data) {
     $("[name=fecha_despacho_real]").val(data.fecha_despacho_real !== null ? data.fecha_despacho_real : '');
     $("[name=importe_flete]").val(data.importe_flete !== null ? data.importe_flete : '');
     $("[name=fechaRegistroFlete]").prop('title', (data.fecha_registro_flete != null ? ('Fecha registro de flete: ' + (moment(data.fecha_registro_flete).format("DD-MM-YYYY h:m"))) : 'Flete Sin fecha registro'));
-    $("[name=codigo_envio]").val(data.codigo_envio !== null ? data.codigo_envio : '');
 
     if (data.credito) {
         $('[name=credito]').prop('checked', true);

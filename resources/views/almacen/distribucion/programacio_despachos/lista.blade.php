@@ -66,19 +66,23 @@
     <div class="row">
         <div class="col-md-12 ">
             <div class="form-group">
-                <button type="button" id="nuevo" class="btn btn-success btn-sm" ><i class="fa fa-plus"></i> Nuava Programación</button>
+                @if (in_array(330,$array_accesos))
+                    <button type="button" id="nuevo" class="btn btn-success btn-sm" ><i class="fa fa-plus"></i> Nuava Programación</button>
+                @endif
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <h3>ORDEN DE DESPACHO INTERNO (ODI)</h3>
-            <ul class="timeline" data-action="despachos-odi">
+            <ul class="timeline" data-action="despachos-odi" >
+                <li data-tipo="header"style="display: none" data-li="inicio"></li>
             </ul>
         </div>
         <div class="col-md-6">
             <h3>ORDEN DE DESPACHO EXTERNO (ODE)</h3>
             <ul class="timeline" data-action="despachos-ode">
+                <li data-tipo="header"style="display: none" data-li="inicio"></li>
             </ul>
         </div>
     </div>
@@ -155,21 +159,21 @@
     <script src="{{ asset('js/almacen/distribucion/programacion_despachos/programacion_despacho-view.js') }}"></script>
 
     <script>
+        const array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
         $(document).ready(function() {
             //iCheck for checkbox and radio inputs
             $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
                 checkboxClass: 'icheckbox_minimal-blue',
                 radioClass   : 'iradio_minimal-blue'
             })
-
             $('body').addClass('fixed');
+
+
+            // console.log(array_accesos);
             const view = new ProgramacionDespachoView(new ProgramacionDespachoModel(token));
             view.listarODI();
-            view.listarODE(1);
+            view.listarODE();
             view.eventos();
-            // view.programacionDespachos();
-            // console.log(view);
-            // console.log(view.listar());
             vista_extendida();
 
 

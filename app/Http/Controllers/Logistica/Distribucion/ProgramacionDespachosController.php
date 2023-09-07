@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Logistica\Distribucion;
 
 use App\Http\Controllers\Controller;
+use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Logistica\ProgramacionDespacho;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,6 +20,12 @@ class ProgramacionDespachosController extends Controller
             if (!in_array($value->fecha_registro, $array_fechas)) {
                 array_push($array_fechas,$value->fecha_registro);
             }
+        }
+
+        $array_accesos=[];
+        $accesos_usuario = AccesosUsuarios::where('estado',1)->where('id_usuario',Auth::user()->id_usuario)->get();
+        foreach ($accesos_usuario as $key => $value) {
+            array_push($array_accesos,$value->id_acceso);
         }
 
         return view('almacen.distribucion.programacio_despachos.lista', get_defined_vars());

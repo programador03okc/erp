@@ -33,8 +33,21 @@ $('#modal-centro-costos').on("click", "button.handleClickSelectCentroCosto", (e)
     this.selectCentroCosto(e.currentTarget.dataset.idCentroCosto, e.currentTarget.dataset.codigo, e.currentTarget.dataset.descripcionCentroCosto);
 });
 
+$('#modal-requerimiento_flete').on("click", "button.handleClickAdjuntarArchivoItem", (e) => {
+    this.modalAdjuntarArchivosDetalle(e.currentTarget);
+});
 
+$('#modal-adjuntar-archivos-detalle-requerimiento').on("change", "input.handleChangeAgregarAdjuntoDetalle", (e) => {
+    this.agregarAdjuntoRequerimientoPagoDetalle(e.currentTarget);
+});
 
+$('#modal-adjuntar-archivos-detalle-requerimiento').on("click", "button.handleClickEliminarArchivoRequerimientoDetalle", (e) => {
+    this.eliminarArchivoRequerimientoDetalle(e.currentTarget);
+});
+
+var objBotonAdjuntoRequerimientoDetalleSeleccionado='';
+var tempArchivoAdjuntoItemsRequerimientoList=[];
+ 
 function consultaGuardarRequerimientoFlete(id_od){
     
     if(id_od>0){
@@ -183,11 +196,23 @@ $("#form-requerimiento_flete").on("submit", function (e) {
 
 function guardarRequerimientoFlete(){
     $('#submit_od_requerimiento_flete').attr('disabled', 'true');
+
+    let formData = new FormData($('#form-requerimiento_flete')[0]);
+
+    tempArchivoAdjuntoItemsRequerimientoList.forEach(element => {
+        if (element.action == 'GUARDAR') {
+            formData.append(`archivoAdjuntoRequerimientoDetalleGuardar${element.id_detalle_requerimiento}[]`, element.file);
+        }
+    });
+
+
     $.ajax({
         type: 'POST',
         url: 'guardar-requerimiento-flete',
-        data: $('form[id="form-requerimiento_flete"]').serialize(),
+        data: formData,
         dataType: 'JSON',
+        processData: false,
+        contentType: false,
         success: function (response) {
             // console.log(response);
             if (response.status == 'success') {
@@ -200,6 +225,9 @@ function guardarRequerimientoFlete(){
                     delayIndicator: false,
                     msg: response.mensaje
                 });
+
+                tempArchivoAdjuntoItemsRequerimientoList=[];
+                objBotonAdjuntoRequerimientoDetalleSeleccionado='';
             }else{
                 Lobibox.notify("error", {
                     title: false,
@@ -670,6 +698,148 @@ function selectCentroCosto(idCentroCosto, codigo, descripcion) {
     tr.querySelector("p[class='descripcion-centro-costo']").setAttribute('title', descripcion);
     $('#modal-centro-costos').modal('hide');
     tempObjectBtnCentroCostos = null;
+}
+
+
+function modalAdjuntarArchivosDetalle(obj) {
+    objBotonAdjuntoRequerimientoDetalleSeleccionado =obj;
+    $('#modal-adjuntar-archivos-detalle-requerimiento').modal({
+        show: true,
+        backdrop: 'true'
+    });
+    this.limpiarTabla('listaArchivos');
+
+    $(":file").filestyle('clear');
+
+    this.listarArchivosAdjuntosDetalle(obj.dataset.id);
+
+}
+
+function listarArchivosAdjuntosDetalle(idDetalleRequerimiento){
+    if (idDetalleRequerimiento.length > 0) {
+        this.limpiarTabla('listaArchivos');
+        let html = '';
+        tempArchivoAdjuntoItemsRequerimientoList.forEach(element => {
+            if (idDetalleRequerimiento.length > 0 && idDetalleRequerimiento == element.id_detalle_requerimiento) {
+
+                html += `<tr id="${element.id}" style="text-align:center">
+            <td style="text-align:left;">${element.nameFile}</td>
+            <td style="text-align:center;">
+                <div class="btn-group" role="group">`;
+                if (Number.isInteger(element.id)) {
+                    html += `<button type="button" class="btn btn-info btn-md handleClickDescargarArchivoRequerimientoDetalle" name="btnDescargarArchivoRequerimientoDetalle" title="Descargar" data-id="${element.id}" ><i class="fas fa-paperclip"></i></button>`;
+                }
+
+                html += `<button type="button" class="btn btn-danger btn-md handleClickEliminarArchivoRequerimientoDetalle" name="btnEliminarArchivoRequerimientoDetalle" title="Eliminar" data-id="${element.id}" ><i class="fas fa-trash-alt"></i></button>
+
+                </div>
+            </td>
+            </tr>`;
+            }
+        });
+        document.querySelector("tbody[id='body_archivos_item']").insertAdjacentHTML('beforeend', html);    }
+}
+
+
+function agregarAdjuntoRequerimientoPagoDetalle(obj){
+    if (obj.files != undefined && obj.files.length > 0) {
+        Array.prototype.forEach.call(obj.files, (file) => {
+            if (this.estaHabilitadoLaExtension(file) == true) {
+                let payload = {
+                    id: this.makeId(),
+                    id_detalle_requerimiento: objBotonAdjuntoRequerimientoDetalleSeleccionado.dataset.id,
+                    nameFile: file.name,
+                    action: 'GUARDAR',
+                    file: file
+                };
+                this.agregarRegistroEnTablaAdjuntoRequerimientoDetalle(payload);
+                tempArchivoAdjuntoItemsRequerimientoList.push(payload);
+            } else {
+                Swal.fire(
+                    'Este tipo de archivo no esta permitido adjuntar',
+                    file.name,
+                    'warning'
+                );
+            }
+        });
+    }
+    return false;
+}
+
+function makeId() {
+    let ID = "";
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (let i = 0; i < 12; i++) {
+        ID += characters.charAt(Math.floor(Math.random() * 36));
+    }
+    return ID;
+}
+
+
+function estaHabilitadoLaExtension(file) {
+    let extension = file.name.match(/(?<=\.)\w+$/g)[0].toLowerCase(); // assuming that this file has any extension
+    if (extension === 'dwg'
+        || extension === 'dwt'
+        || extension === 'cdr'
+        || extension === 'back'
+        || extension === 'backup'
+        || extension === 'psd'
+        || extension === 'sql'
+        || extension === 'exe'
+        || extension === 'html'
+        || extension === 'js'
+        || extension === 'php'
+        || extension === 'ai'
+        || extension === 'mp4'
+        || extension === 'mp3'
+        || extension === 'avi'
+        || extension === 'mkv'
+        || extension === 'flv'
+        || extension === 'mov'
+        || extension === 'wmv'
+    ) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function agregarRegistroEnTablaAdjuntoRequerimientoDetalle(payload){
+    let html = '';
+    html = `<tr id="${payload.id}" style="text-align:center">
+    <td style="text-align:left;">${payload.nameFile}</td>
+    <td style="text-align:center;">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-danger btn-xs handleClickEliminarArchivoRequerimientoDetalle" name="btnEliminarArchivoRequerimientoDetalle" title="Eliminar" data-id="${payload.id}" ><i class="fas fa-trash-alt"></i></button>
+        </div>
+    </td>
+    </tr>`;
+
+    document.querySelector("tbody[id='body_archivos_item']").insertAdjacentHTML('beforeend', html);
+}
+
+function eliminarArchivoRequerimientoDetalle(obj){
+    
+    // tempIdArchivoAdjuntoRequerimientoPagoDetalleToDeleteList.push(obj.dataset.id);
+    var regExp = /[a-zA-Z]/g; //expresión regular
+    if ((regExp.test(obj.dataset.id) == true)) {
+
+        tempArchivoAdjuntoItemsRequerimientoList = tempArchivoAdjuntoItemsRequerimientoList.filter((element, i) => element.id != obj.dataset.id);
+        obj.closest("tr").remove();
+    } else {
+        if (tempArchivoAdjuntoItemsRequerimientoList.length > 0) {
+            let indice = tempArchivoAdjuntoItemsRequerimientoList.findIndex(elemnt => elemnt.id == obj.dataset.id);
+            tempArchivoAdjuntoItemsRequerimientoList[indice].action = 'ELIMINAR';
+            obj.closest("tr").remove();
+        } else {
+            Swal.fire(
+                '',
+                'Hubo un error inesperado al intentar eliminar el adjunto del item, puede que no el objecto este vacio, elimine adjuntos y vuelva a seleccionar',
+                'error'
+            );
+        }
+
+    }
 }
 
 

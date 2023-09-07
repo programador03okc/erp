@@ -1,7 +1,7 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-requerimiento_flete" style="overflow-y:scroll;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="form-requerimiento_flete">
+            <form id="form-requerimiento_flete" type="register" enctype="multipart/form-data">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
                     <h3 class="modal-title">Requerimiento de Flete</h3>
@@ -154,11 +154,12 @@
                                                                 <th style="width: 10%">Precio Unit.</th>
                                                                 <th style="width: 10%">IGV</th>
                                                                 <th style="width: 10%">Total</th>
+                                                                <th style="width: 10%">Acción</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="body_detalle_requerimiento">
                                                             <tr>
-                                                                <td>1<input type="text" class="oculto" name="id_item"></td>
+                                                                <td>1<input type="text" class="oculto" name="id_item" value="1"></td>
                                                                 <!-- <td>
                                                                     <p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
                                                                     <div class="form-group">
@@ -177,6 +178,11 @@
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span> <span id="precio_unitario"></span><input type="text" class="oculto" name="precio_unitario"></td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span> <span id="importe_igv"></span><input type="text" class="oculto" name="importe_igv"></td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span> <span id="importe_total"></span><input type="text" class="oculto" name="importe_total"></td>
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn btn-warning btn-xs handleClickAdjuntarArchivoItem" name="btnAdjuntarArchivoItem[]" data-id="1" title="Adjuntos">
+                                                                        <i class="fas fa-paperclip"></i>
+                                                                    </button>
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>

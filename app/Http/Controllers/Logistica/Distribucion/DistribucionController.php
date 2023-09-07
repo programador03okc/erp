@@ -1913,12 +1913,12 @@ class DistribucionController extends Controller
             }
         }
 
-        $obs = DB::table('almacen.orden_despacho_obs')
-            ->where([
-                ['id_od', '=', $request->id_od],
-                ['accion', '=', $request->estado]
-            ])
-            ->first();
+        // $obs = DB::table('almacen.orden_despacho_obs')
+        //     ->where([
+        //         ['id_od', '=', $request->id_od],
+        //         ['accion', '=', $request->estado]
+        //     ])
+        //     ->first();
 
         if ($request->estado == 8 || $request->estado == 7 || $request->estado == 6) {
 
@@ -1934,20 +1934,19 @@ class DistribucionController extends Controller
                 ]);
         }
 
-        if ($obs !== null) {
-            $id_obs = $obs->id_obs;
-            DB::table('almacen.orden_despacho_obs')
-                ->where('id_obs', $obs->id_obs)
-                ->update([
-                    'accion' => $request->estado,
-                    'observacion' => $request->observacion,
-                    'fecha_estado' => $request->fecha_estado,
-                    'registrado_por' => $id_usuario,
-                    'gasto_extra' => $request->gasto_extra,
-                    // 'plazo_excedido' => ((isset($request->plazo_excedido) && $request->plazo_excedido == 'on') ? true : false),
-                    'fecha_registro' => $fechaRegistro
-                ]);
-        } else {
+        // if ($obs !== null) {
+        //     $id_obs = $obs->id_obs;
+        //     DB::table('almacen.orden_despacho_obs')
+        //         ->where('id_obs', $obs->id_obs)
+        //         ->update([
+        //             'accion' => $request->estado,
+        //             'observacion' => $request->observacion,
+        //             'fecha_estado' => $request->fecha_estado,
+        //             'registrado_por' => $id_usuario,
+        //             'gasto_extra' => $request->gasto_extra,
+        //             'fecha_registro' => $fechaRegistro
+        //         ]);
+        // } else {
             $id_obs = DB::table('almacen.orden_despacho_obs')
                 ->insertGetId([
                     'id_od' => $request->id_od,
@@ -1958,7 +1957,7 @@ class DistribucionController extends Controller
                     'gasto_extra' => $request->gasto_extra,
                     'fecha_registro' => $fechaRegistro
                 ], 'id_obs');
-        }
+        // }
 
         if (isset($file)) {
             //obtenemos el nombre del archivo

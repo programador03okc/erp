@@ -282,7 +282,7 @@ class OrdenController extends Controller
             ->select('adm_tp_docum.id_tp_documento', 'adm_tp_docum.descripcion', 'adm_tp_docum.abreviatura')
             ->where([
                 ['adm_tp_docum.estado', '=', 1],
-                ['adm_tp_docum.descripcion', 'like', '%Orden%']
+                ['adm_tp_docum.uso_logistica', true]
             ])
             ->orderBy('adm_tp_docum.id_tp_documento', 'asc')
             ->get();

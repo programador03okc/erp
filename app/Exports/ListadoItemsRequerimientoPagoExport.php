@@ -42,8 +42,8 @@ class ListadoItemsRequerimientoPagoExport implements FromView,WithColumnFormatti
         $idEstado = $this->idEstado;
 
         $data=[];
-            $requerimientosDetalle = (new RequerimientoPagoController)->obtenerItemsRequerimientoPagoElaborados($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado);   
-
+            $requerimientosDetalle = (new RequerimientoPagoController)->obtenerItemsRequerimientoPagoElaborados($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado);
+            // dd($requerimientosDetalle);exit;
             foreach ($requerimientosDetalle as $key => $value) {
 
                 $data[]=[
@@ -101,7 +101,7 @@ class ListadoItemsRequerimientoPagoExport implements FromView,WithColumnFormatti
             'A:AF'  => ['font' => ['size' => 10]]
         ];
     }
-    
+
     public function columnFormats(): array
     {
         return [

@@ -16,6 +16,15 @@ var $tablaListaCuadroPresupuesto;
 
 var tempPartidasActivas=[];
 
+var filtros_rq_pagos={};
+filtros_rq_pagos.elaborado = 'SIN_FILTRO';
+filtros_rq_pagos.empresa = 'SIN_FILTRO';
+filtros_rq_pagos.sede = 'SIN_FILTRO';
+filtros_rq_pagos.grupo = 'SIN_FILTRO';
+filtros_rq_pagos.division = 'SIN_FILTRO';
+filtros_rq_pagos.fecha_inicio = 'SIN_FILTRO';
+filtros_rq_pagos.fecha_final = 'SIN_FILTRO';
+filtros_rq_pagos.estado = 'SIN_FILTRO';
 class ListarRequerimientoPagoView {
 
     constructor(presupuestoInternoView) {
@@ -39,7 +48,7 @@ class ListarRequerimientoPagoView {
                     element.removeChild(element.lastChild);
                 }
             }
-            
+
         });
     }
     initializeEventHandlerListaRequerimientoPago() {
@@ -367,7 +376,7 @@ class ListarRequerimientoPagoView {
                     <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
                     <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
                 </tr>`);
-                
+
             });
 
         });
@@ -701,15 +710,45 @@ class ListarRequerimientoPagoView {
     }
 
     descargarListaCabeceraRequerimientoPagoElaboradosExcel() {
-        window.open(`listado-requerimientos-pagos-export-excel/${this.ActualParametroAllOrMe}/${this.ActualParametroEmpresa}/${this.ActualParametroSede}/${this.ActualParametroGrupo}/${this.ActualParametroDivision}/${this.ActualParametroFechaDesde}/${this.ActualParametroFechaHasta}/${this.ActualParametroEstado}`);
+        // window.open(`listado-requerimientos-pagos-export-excel/${this.ActualParametroAllOrMe}/${this.ActualParametroEmpresa}/${this.ActualParametroSede}/${this.ActualParametroGrupo}/${this.ActualParametroDivision}/${this.ActualParametroFechaDesde}/${this.ActualParametroFechaHasta}/${this.ActualParametroEstado}`);
+
+        // window.open(`listado-requerimientos-pagos-export-excel/${filtros_rq_pagos.elaborado}/${filtros_rq_pagos.empresa}/${filtros_rq_pagos.sede}/${filtros_rq_pagos.grupo}/${filtros_rq_pagos.division}/${filtros_rq_pagos.fecha_inicio}/${filtros_rq_pagos.fecha_final}/${filtros_rq_pagos.estado}`);
+        let form = $('<form action="listado-requerimientos-pagos-export-excel" method="POST" target="_blank">'+
+                '<input type="hidden" name="_token" value="'+token+'" >'+
+                '<input type="hidden" name="elaborado" value="'+filtros_rq_pagos.elaborado+'" >'+
+                '<input type="hidden" name="empresa" value="'+filtros_rq_pagos.empresa+'" >'+
+                '<input type="hidden" name="sede" value="'+filtros_rq_pagos.sede+'" >'+
+                '<input type="hidden" name="grupo" value="'+filtros_rq_pagos.grupo+'" >'+
+                '<input type="hidden" name="division" value="'+filtros_rq_pagos.division+'" >'+
+                '<input type="hidden" name="fecha_inicio" value="'+filtros_rq_pagos.fecha_inicio+'" >'+
+                '<input type="hidden" name="fecha_final" value="'+filtros_rq_pagos.fecha_final+'" >'+
+                '<input type="hidden" name="estado" value="'+filtros_rq_pagos.estado+'" >'+
+            '</form>');
+        $('body').append(form);
+        form.submit();
 
     }
     descargarListaItemsRequerimientoPagoElaboradosExcel() {
-        window.open(`listado-items-requerimientos-pagos-export-excel/${this.ActualParametroAllOrMe}/${this.ActualParametroEmpresa}/${this.ActualParametroSede}/${this.ActualParametroGrupo}/${this.ActualParametroDivision}/${this.ActualParametroFechaDesde}/${this.ActualParametroFechaHasta}/${this.ActualParametroEstado}`);
+        // window.open(`listado-items-requerimientos-pagos-export-excel/${this.ActualParametroAllOrMe}/${this.ActualParametroEmpresa}/${this.ActualParametroSede}/${this.ActualParametroGrupo}/${this.ActualParametroDivision}/${this.ActualParametroFechaDesde}/${this.ActualParametroFechaHasta}/${this.ActualParametroEstado}`);
 
+        // window.open(`listado-items-requerimientos-pagos-export-excel/${filtros_rq_pagos.elaborado}/${filtros_rq_pagos.empresa}/${filtros_rq_pagos.sede}/${filtros_rq_pagos.grupo}/${filtros_rq_pagos.division}/${filtros_rq_pagos.fecha_inicio}/${filtros_rq_pagos.fecha_final}/${filtros_rq_pagos.estado}`);
+
+        let form = $('<form action="listado-items-requerimientos-pagos-export-excel" method="POST" target="_blank">'+
+                '<input type="hidden" name="_token" value="'+token+'" >'+
+                '<input type="hidden" name="elaborado" value="'+filtros_rq_pagos.elaborado+'" >'+
+                '<input type="hidden" name="empresa" value="'+filtros_rq_pagos.empresa+'" >'+
+                '<input type="hidden" name="sede" value="'+filtros_rq_pagos.sede+'" >'+
+                '<input type="hidden" name="grupo" value="'+filtros_rq_pagos.grupo+'" >'+
+                '<input type="hidden" name="division" value="'+filtros_rq_pagos.division+'" >'+
+                '<input type="hidden" name="fecha_inicio" value="'+filtros_rq_pagos.fecha_inicio+'" >'+
+                '<input type="hidden" name="fecha_final" value="'+filtros_rq_pagos.fecha_final+'" >'+
+                '<input type="hidden" name="estado" value="'+filtros_rq_pagos.estado+'" >'+
+            '</form>');
+        $('body').append(form);
+        form.submit();
     }
 
-    mostrarListaRequerimientoPago(meOrAll = 'SIN_FILTRO', idEmpresa = 'SIN_FILTRO', idSede = 'SIN_FILTRO', idGrupo = 'SIN_FILTRO', idDivision = 'SIN_FILTRO', fechaRegistroDesde = 'SIN_FILTRO', fechaRegistroHasta = 'SIN_FILTRO', idEstado = 'SIN_FILTRO') {
+    mostrarListaRequerimientoPago() {
         // console.log(meOrAll,idEmpresa,idSede,idGrupo,idDivision,fechaRegistroDesde,fechaRegistroHasta,idEstado);
         let that = this;
         vista_extendida();
@@ -788,7 +827,7 @@ class ListarRequerimientoPagoView {
             'ajax': {
                 'url': 'lista-requerimiento-pago',
                 'type': 'POST',
-                'data': { 'meOrAll': meOrAll, 'idEmpresa': idEmpresa, 'idSede': idSede, 'idGrupo': idGrupo, 'idDivision': idDivision, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'idEstado': idEstado },
+                'data': filtros_rq_pagos,
                 beforeSend: data => {
 
                     $("#ListaRequerimientoPago").LoadingOverlay("show", {
@@ -1262,15 +1301,15 @@ class ListarRequerimientoPagoView {
             }
         }
 
-        
+
         // console.log(data);
         document.querySelector("tbody[id='body_detalle_requerimiento_pago']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data != null && data.id_estado == '7' ? '#f1d7d7' : ''}; text-align:center">
         <td>
             <input type="hidden"  class="idEstado" name="idEstado[]" value="${data != null && data.id_estado}">
-            <p class="descripcion-partida" 
-            data-id-partida="${idPartida}" 
-            data-presupuesto-total="${totalPartida}" 
-            data-presupuesto-mes="${totalPartidaMes}" 
+            <p class="descripcion-partida"
+            data-id-partida="${idPartida}"
+            data-presupuesto-total="${totalPartida}"
+            data-presupuesto-mes="${totalPartidaMes}"
 
             title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${( codigoPartida!=''?codigoPartida:'(NO SELECCIONADO)')}</p>
             <button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
@@ -1555,7 +1594,7 @@ class ListarRequerimientoPagoView {
 
 
         tempObjectBtnPartida.nextElementSibling.querySelector("input").value = idPartida;
-        
+
         tempObjectBtnPartida.textContent = 'Cambiar';
 
         let tr = tempObjectBtnPartida.closest("tr");
@@ -1789,12 +1828,12 @@ class ListarRequerimientoPagoView {
         let continuar = true;
 
         let mensajePartidaActiva='';
-        
+
         // if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
         //     for (let index = 0; index < tempPartidasActivas.length; index++) {
         //         if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
         //             mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
-                    
+
         //         }
         //     }
         //     console.log(mensajePartidaActiva);
@@ -2202,7 +2241,7 @@ class ListarRequerimientoPagoView {
                 delayIndicator: false,
                 msg: 'Por favor ingrese los datos faltantes en el formulario'
             });
-  
+
         }
     }
 
@@ -2607,10 +2646,10 @@ class ListarRequerimientoPagoView {
 
                 document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
                 <td>
-                    <p class="descripcion-partida" 
-                        data-id-partida="${data.detalle[i].id_partida !=null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}" 
-                        data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}" 
-                        data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}" 
+                    <p class="descripcion-partida"
+                        data-id-partida="${data.detalle[i].id_partida !=null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
+                        data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
+                        data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"
                         title="${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.partida :'' }";
                         style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.descripcion :'' }
                     </p>
@@ -2645,7 +2684,7 @@ class ListarRequerimientoPagoView {
                 this.agregarHistorialAprobacion(element);
             });
             // ### ==================== /Historia aprobación ====================== ###
-            
+
             // ### ==================== Partidas activas ====================== ###
                 this.calcularPresupuestoUtilizadoYSaldoPorPartida();
             // ### ==================== /Partidas activas ====================== ###
@@ -3736,7 +3775,7 @@ class ListarRequerimientoPagoView {
                                         selectCuenta.removeChild(selectCuenta.lastChild);
                                     }
                                 }
-                               
+
                                 (response.data[0].cuenta_persona).forEach(element => {
                                     option += `
                                     <option
@@ -3745,7 +3784,7 @@ class ListarRequerimientoPagoView {
                                         data-tipo-cuenta="${element.tipo_cuenta != null ? element.tipo_cuenta.descripcion : ''}"
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
-                                        value="${element.id_cuenta_bancaria}" 
+                                        value="${element.id_cuenta_bancaria}"
                                         ${idCuentaPreSeleccionada == element.id_cuenta_bancaria ?'selected':''}
                                         >
                                         ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cci != null && element.nro_cci != "" ? (element.nro_cci + " (CCI)") : "")}
@@ -4003,4 +4042,147 @@ class ListarRequerimientoPagoView {
         }
     }
 
+    filtrosRequerimientosPago(){
+        let model = this;
+        $('#filtrar-reuerimiento-pago').click(function (e) {
+            e.preventDefault();
+            filtros_rq_pagos._token=token;
+            model.mostrarListaRequerimientoPago();
+        });
+        $('[data-action="checked"]').change(function (e) {
+            e.preventDefault();
+            let checked = $(e.currentTarget).prop('checked');
+            let key = $(e.currentTarget).attr('data-name');
+            let modal = $('#modal-filtro-requerimientos-elaborados');
+            if(checked) {
+                $(e.currentTarget).closest('.form-group').find('[data-action="disabled"]').removeAttr('disabled');
+            }else{
+                $(e.currentTarget).closest('.form-group').find('[data-action="disabled"]').attr('disabled','true');
+            }
+            seleccionarFiltros(key, checked, $(e.currentTarget));
+
+        });
+        $('[data-select="change"]').change(function (e) {
+            e.preventDefault();
+            let key = $(e.currentTarget).closest('.form-group').find('[data-action="checked"]').attr('data-name');
+            let checked = $(e.currentTarget).closest('.form-group').find('[data-action="checked"]').prop('checked');
+            let input_checked = $(e.currentTarget).closest('.form-group').find('[data-action="checked"]');
+
+            seleccionarFiltros(key, checked, input_checked);
+        });
+        function seleccionarFiltros(key, checked, input_checked){
+            switch (key) {
+                case 'elaborado':
+
+                    if (checked) {
+                        filtros_rq_pagos.elaborado = input_checked.closest('.form-group').find('[name="elaborado"]').val();
+                    }else{
+                        filtros_rq_pagos.elaborado = 'SIN_FILTRO';
+                    }
+                break;
+
+                case 'empresa':
+                    if (checked) {
+                        filtros_rq_pagos.empresa = input_checked.closest('.form-group').find('[name="empresa"]').val();
+                        filtros_rq_pagos.sede = input_checked.closest('.form-group').find('[name="sede"]').val();
+                    }else{
+                        filtros_rq_pagos.empresa = 'SIN_FILTRO';
+                        filtros_rq_pagos.sede = 'SIN_FILTRO';
+                    }
+                break;
+
+
+                case 'grupo':
+                    if (checked) {
+                        filtros_rq_pagos.grupo = input_checked.closest('.form-group').find('[name="grupo"]').val();
+                        filtros_rq_pagos.division = input_checked.closest('.form-group').find('[name="division"]').val();
+                    }else{
+                        filtros_rq_pagos.grupo = 'SIN_FILTRO';
+                        filtros_rq_pagos.division = 'SIN_FILTRO';
+                    }
+                break;
+
+
+                case 'fechas':
+                    if (checked) {
+                        filtros_rq_pagos.fecha_inicio = input_checked.closest('.form-group').find('[name="fechaRegistroDesde"]').val();
+                        filtros_rq_pagos.fecha_final = input_checked.closest('.form-group').find('[name="fechaRegistroHasta"]').val();
+                    }else{
+                        filtros_rq_pagos.fecha_inicio = 'SIN_FILTRO';
+                        filtros_rq_pagos.fecha_final = 'SIN_FILTRO';
+                    }
+                break;
+
+                case 'estado':
+                    if (checked) {
+                        filtros_rq_pagos.estado = input_checked.closest('.form-group').find('[name="estado"]').val();
+                    }else{
+                        filtros_rq_pagos.estado = 'SIN_FILTRO';
+                    }
+                break;
+            }
+        }
+
+        $('[name="empresa"]').change(function (e) {
+            e.preventDefault();
+            let value = $(e.currentTarget).val();
+            var html = '';
+            $.ajax({
+                type: 'GET',
+                // url: '/necesidades/requerimiento/elaboracion/listar-sedes-por-empresa/'+value,
+                url: route("necesidades.requerimiento.elaboracion.listar-sedes-por-empresa", {id:value}),
+                data: {},
+                // processData: false,
+                // contentType: false,
+                dataType: 'JSON',
+                beforeSend: (data) => {
+                    // console.log(data);
+                }
+            }).done(function(response) {
+                html = '<option value="">Sede...</option>';
+                $.each(response, function (index, element) {
+                    html += '<option value="'+element.id_sede+'">'+element.descripcion+'</option>';
+                });
+                $('[name="sede"]').html(html);
+                console.log(response);
+            }).fail( function( jqXHR, textStatus, errorThrown ){
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            });
+
+            console.log(value);
+        });
+
+        $('[name="grupo"]').change(function (e) {
+            e.preventDefault();
+            let value = $(e.currentTarget).val();
+            var html = '';
+            $.ajax({
+                type: 'GET',
+                // url: '/necesidades/requerimiento/elaboracion/listar-sedes-por-empresa/'+value,
+                url: route("finanzas.presupuesto.presupuesto-interno.get-area"),
+                data: {id_grupo:value},
+                // processData: false,
+                // contentType: false,
+                dataType: 'JSON',
+                beforeSend: (data) => {
+                    // console.log(data);
+                }
+            }).done(function(response) {
+                html ='<option value="" hidden>Division...</option>';
+                $.each(response.data, function (index, element) {
+                    html+='<option value="'+element.id_division+'" >'+element.descripcion+'</option>';
+                });
+                $('[name="division"]').html(html);
+                console.log(response);
+            }).fail( function( jqXHR, textStatus, errorThrown ){
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            });
+
+            console.log(value);
+        });
+    }
 }

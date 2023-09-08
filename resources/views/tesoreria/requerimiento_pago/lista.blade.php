@@ -141,7 +141,7 @@ Listado de requerimientos de pago
     var gruposUsuario = JSON.parse('{!!$gruposUsuario!!}');
 
     $(document).ready(function() {
-        
+
         // console.log('initializeEventHandlerListaRequerimientoPago');
 
         const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));

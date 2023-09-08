@@ -39,7 +39,7 @@ class ListarRequerimientoPagoView {
                     element.removeChild(element.lastChild);
                 }
             }
-            
+
         });
     }
     initializeEventHandlerListaRequerimientoPago() {
@@ -367,7 +367,7 @@ class ListarRequerimientoPagoView {
                     <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
                     <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
                 </tr>`);
-                
+
             });
 
         });
@@ -1262,15 +1262,15 @@ class ListarRequerimientoPagoView {
             }
         }
 
-        
+
         // console.log(data);
         document.querySelector("tbody[id='body_detalle_requerimiento_pago']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data != null && data.id_estado == '7' ? '#f1d7d7' : ''}; text-align:center">
         <td>
             <input type="hidden"  class="idEstado" name="idEstado[]" value="${data != null && data.id_estado}">
-            <p class="descripcion-partida" 
-            data-id-partida="${idPartida}" 
-            data-presupuesto-total="${totalPartida}" 
-            data-presupuesto-mes="${totalPartidaMes}" 
+            <p class="descripcion-partida"
+            data-id-partida="${idPartida}"
+            data-presupuesto-total="${totalPartida}"
+            data-presupuesto-mes="${totalPartidaMes}"
 
             title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${( codigoPartida!=''?codigoPartida:'(NO SELECCIONADO)')}</p>
             <button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
@@ -1555,7 +1555,7 @@ class ListarRequerimientoPagoView {
 
 
         tempObjectBtnPartida.nextElementSibling.querySelector("input").value = idPartida;
-        
+
         tempObjectBtnPartida.textContent = 'Cambiar';
 
         let tr = tempObjectBtnPartida.closest("tr");
@@ -1789,12 +1789,12 @@ class ListarRequerimientoPagoView {
         let continuar = true;
 
         let mensajePartidaActiva='';
-        
+
         // if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
         //     for (let index = 0; index < tempPartidasActivas.length; index++) {
         //         if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
         //             mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
-                    
+
         //         }
         //     }
         //     console.log(mensajePartidaActiva);
@@ -2202,7 +2202,7 @@ class ListarRequerimientoPagoView {
                 delayIndicator: false,
                 msg: 'Por favor ingrese los datos faltantes en el formulario'
             });
-  
+
         }
     }
 
@@ -2607,10 +2607,10 @@ class ListarRequerimientoPagoView {
 
                 document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
                 <td>
-                    <p class="descripcion-partida" 
-                        data-id-partida="${data.detalle[i].id_partida !=null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}" 
-                        data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}" 
-                        data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}" 
+                    <p class="descripcion-partida"
+                        data-id-partida="${data.detalle[i].id_partida !=null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
+                        data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
+                        data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"
                         title="${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.partida :'' }";
                         style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.descripcion :'' }
                     </p>
@@ -2645,7 +2645,7 @@ class ListarRequerimientoPagoView {
                 this.agregarHistorialAprobacion(element);
             });
             // ### ==================== /Historia aprobación ====================== ###
-            
+
             // ### ==================== Partidas activas ====================== ###
                 this.calcularPresupuestoUtilizadoYSaldoPorPartida();
             // ### ==================== /Partidas activas ====================== ###

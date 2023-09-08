@@ -277,6 +277,9 @@ class ListarRequerimientoPagoView {
         $('#modal-requerimiento-pago').on("blur", "input.handleBlurCalcularPresupuestoUtilizadoYSaldoPorPartida", () => {
             this.calcularPresupuestoUtilizadoYSaldoPorPartida();
         });
+        $('#modal-requerimiento-pago').on("change", "select.handleChangeCalcularPresupuestoUtilizadoYSaldoPorPartida", () => {
+            this.calcularPresupuestoUtilizadoYSaldoPorPartida();
+        });
 
     }
 

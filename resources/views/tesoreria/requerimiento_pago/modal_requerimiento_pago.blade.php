@@ -276,7 +276,7 @@
                                             <h5>Monto Total:</h5>
                                             <div style="display:flex;">
                                                 <!-- <div class="input-group-addon" name="montoMoneda" style="width: auto;">S/.</div> -->
-                                                <select class="form-control activation handleCheckStatusValue handleChangeUpdateMoneda" name="moneda" style="width:50%;">
+                                                <select class="form-control activation handleCheckStatusValue handleChangeUpdateMoneda handleChangeCalcularPresupuestoUtilizadoYSaldoPorPartida" name="moneda" style="width:50%;">
                                                     @foreach ($monedas as $moneda)
                                                     <option data-simbolo="{{$moneda->simbolo}}" value="{{$moneda->id_moneda}}">{{$moneda->simbolo}}</option>
                                                     @endforeach

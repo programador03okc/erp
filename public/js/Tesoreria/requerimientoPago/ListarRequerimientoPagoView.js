@@ -3695,7 +3695,7 @@ class ListarRequerimientoPagoView {
 
     buscarDestinatarioPorNumeroDeDocumento(obj) {
         let idTipoDestinatario = parseInt(document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_tipo_destinatario']").value);
-        let option = ``;
+        let option = '';
         let nroDocumento = (obj.value).trim();
         if (nroDocumento.length > 0 && idTipoDestinatario > 0) {
             $.ajax({
@@ -3713,8 +3713,9 @@ class ListarRequerimientoPagoView {
                 },
                 success: (response) => {
                     $("input[name='nombre_destinatario']").LoadingOverlay("hide", true);
-
+                    let idCuentaPreSeleccionada = '';
                     if (response.tipo_estado == 'success') {
+                        console.log(response.data);
                         if (response.data != null && response.data.length > 0) {
                             if (idTipoDestinatario == 1) { // persona
                                 document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_destinatario']").value = response.data[0]['nombre_completo'];
@@ -3724,13 +3725,18 @@ class ListarRequerimientoPagoView {
                                 }
 
                                 // llenar cuenta bancaria
-                                document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").value = "";
+                                if(response.data[0]['cuenta_persona']!=null){
+
+                                    idCuentaPreSeleccionada= response.data[0]['cuenta_persona'][0]['id_cuenta_bancaria'];
+                                }
+                                document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = idCuentaPreSeleccionada;
                                 let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
                                 if (selectCuenta != null) {
                                     while (selectCuenta.children.length > 0) {
                                         selectCuenta.removeChild(selectCuenta.lastChild);
                                     }
                                 }
+                               
                                 (response.data[0].cuenta_persona).forEach(element => {
                                     option += `
                                     <option
@@ -3739,10 +3745,14 @@ class ListarRequerimientoPagoView {
                                         data-tipo-cuenta="${element.tipo_cuenta != null ? element.tipo_cuenta.descripcion : ''}"
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
-                                        value="${element.id_cuenta_bancaria}">${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cci != null && element.nro_cci != "" ? (element.nro_cci + " (CCI)") : "")}
+                                        value="${element.id_cuenta_bancaria}" 
+                                        ${idCuentaPreSeleccionada == element.id_cuenta_bancaria ?'selected':''}
+                                        >
+                                        ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cci != null && element.nro_cci != "" ? (element.nro_cci + " (CCI)") : "")}
                                     </option>`;
-                                    document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").insertAdjacentHTML('beforeend', option);
+
                                 });
+                                document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").insertAdjacentHTML('beforeend', option);
 
 
                             } else if (idTipoDestinatario == 2) { // contribuyente
@@ -3752,7 +3762,10 @@ class ListarRequerimientoPagoView {
                                     document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = (response.data[0]['tipo_documento_identidad']['descripcion']) != null ? response.data[0]['tipo_documento_identidad']['descripcion'] : '';
                                 }
                                 // llenar cuenta bancaria
-                                document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").value = "";
+                                idCuentaPreSeleccionada= response.data[0]['cuenta_contribuyente'][0]['id_cuenta_contribuyente'];
+
+                                document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = idCuentaPreSeleccionada;
+
                                 let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
                                 if (selectCuenta != null) {
                                     while (selectCuenta.children.length > 0) {
@@ -3767,11 +3780,13 @@ class ListarRequerimientoPagoView {
                                         data-tipo-cuenta="${element.tipo_cuenta != null ? element.tipo_cuenta.descripcion : ''}"
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
-                                        value="${element.id_cuenta_contribuyente}">${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != "" ? (element.nro_cuenta_interbancaria + " (CCI)") : "")}
+                                        value="${element.id_cuenta_contribuyente}"
+                                        ${idCuentaPreSeleccionada == element.id_cuenta_contribuyente ?'selected':''}
+                                        >
+                                        ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != "" ? (element.nro_cuenta_interbancaria + " (CCI)") : "")}
                                     </option>`;
-                                    document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").insertAdjacentHTML('beforeend', option);
-
                                 });
+                                document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").insertAdjacentHTML('beforeend', option);
                             }
                             this.listarEnResultadoDestinatario(response.data, idTipoDestinatario);
                         } else {

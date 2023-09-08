@@ -281,6 +281,10 @@ class RequerimientoPagoController extends Controller
                 $data = $data->where('requerimiento_pago.fecha_registro','<=', $request->fecha_final);
             }
 
+            if($request->estado != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.id_estado','=', $request->estado);
+            }
+
             $data = $data->whereIn('requerimiento_pago.id_grupo', $idGrupoDeUsuarioEnSesionList);
 
 

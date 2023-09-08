@@ -1790,24 +1790,24 @@ class ListarRequerimientoPagoView {
 
         let mensajePartidaActiva='';
         
-        // if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
-        //     for (let index = 0; index < tempPartidasActivas.length; index++) {
-        //         if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
-        //             mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
+        if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
+            for (let index = 0; index < tempPartidasActivas.length; index++) {
+                if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
+                    mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
                     
-        //         }
-        //     }
-        //     console.log(mensajePartidaActiva);
-        //     if(mensajePartidaActiva!=''){
-        //         continuar = false;
-        //         Swal.fire(
-        //             '',
-        //             'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,
-        //             'warning'
-        //         );
-        //     }
+                }
+            }
+            console.log(mensajePartidaActiva);
+            if(mensajePartidaActiva!=''){
+                continuar = false;
+                Swal.fire(
+                    '',
+                    'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,
+                    'warning'
+                );
+            }
 
-        // }
+        }
 
         if (document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount == 0) {
             Swal.fire(

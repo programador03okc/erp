@@ -3988,4 +3988,10 @@ class ListarRequerimientoPagoView {
         }
     }
 
+    filtrosRequerimientosPago = () => {
+        $('#filtrar-reuerimiento-pago').click(function (e) {
+            e.preventDefault();
+            console.log('s');
+        });
+    }
 }

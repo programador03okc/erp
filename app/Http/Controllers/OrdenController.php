@@ -31,6 +31,7 @@ use App\Helpers\NotificacionHelper;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\Migraciones\MigrateOrdenSoftLinkController;
 use App\Http\Controllers\Tesoreria\CierreAperturaController;
+use App\Http\Controllers\Tesoreria\RegistroPagoController;
 use App\Mail\EmailFinalizacionCuadroPresupuesto;
 use App\Mail\EmailOrdenAnulada;
 use App\Mail\EmailOrdenServicioOrdenTransformacion;
@@ -2835,6 +2836,12 @@ class OrdenController extends Controller
                     }
                 }
 
+
+                //registrar en log actividad
+                $comentario = 'Orden: '.$codigoOrden;
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $orden->getTable(), null, $orden, $comentario);
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $detalle->getTable(), null, $detalle, $comentario);
+
                 // if ($request->migrar_oc_softlink == true) {
                 //     $statusMigracionSoftlink = (new MigrateOrdenSoftLinkController)->migrarOrdenCompra($idOrden)->original ?? null; //tipo : success , warning, error, mensaje : ""
                 // }
@@ -3229,6 +3236,11 @@ class OrdenController extends Controller
                 return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden cuando el periodo operativo esta cerrado']);
             }
 
+            $pagoEfectuados = (new RegistroPagoController)->consultarPagoEfectuadosDeOrden($request->id_orden);
+            if ($pagoEfectuados >0) { // cantidad de pagos efectuados
+                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden debido a que cuenta con '.$pagoEfectuados.' pago procesado' ]);
+            }
+
 
             $data = [];
             $status = 0;
@@ -3384,8 +3396,6 @@ class OrdenController extends Controller
                 // $afectaPresupuestoInternoSuma = (new PresupuestoInternoController)->afectarPresupuestoInterno('suma','orden',$orden->id_orden_compra, $detalleParaPresupuestoSumaArray);
                 // $afectaPresupuestoInternoResta = (new PresupuestoInternoController)->afectarPresupuestoInterno('resta','orden',$orden->id_orden_compra, $detalleParaPresupuestoRestaArray);
 
-
-
                 $data = [
                     'id_orden_compra' => $orden->id_orden_compra,
                     'codigo' => $orden->codigo,
@@ -3445,6 +3455,13 @@ class OrdenController extends Controller
                         }
                     }
                 }
+
+                //registrar en log actividad
+                $comentario='Orden: '.$orden->codigo;
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 3, $orden->getTable(), null, $orden, $comentario);
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 3, $detalle->getTable(), null, $detalle, $comentario);
+
+                
                 // if (str_contains($data['mensaje'], 'No existe un id_softlink en la OC seleccionada')) {
                 //     $migrarOrdenSoftlink = (new MigrateOrdenSoftLinkController)->migrarOrdenCompra($request->id_orden)->original;
                 //     if ($migrarOrdenSoftlink['tipo'] == 'success') {
@@ -4004,6 +4021,12 @@ class OrdenController extends Controller
 
             // actualizar campo estado 7 del registro si la orden fue anulada
             PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null, $orden->id_orden_compra, null);
+
+                            //registrar en log actividad
+            $comentario = 'Orden: '.$orden->codigo.', status: '.$status.' Mensaje: ('.implode(',',$msj).')';
+            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 4, $orden->getTable(), null, $orden, $comentario);
+            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 4, $detalle->getTable(), null, $detalle, $comentario);
+            
         } // -> si no tiene detalle la orden
         else {
             $status = 204;
@@ -4052,6 +4075,12 @@ class OrdenController extends Controller
             if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
                 return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede anular la orden cuando el periodo operativo esta cerrado']);
             }
+
+            $pagoEfectuados = (new RegistroPagoController)->consultarPagoEfectuadosDeOrden($request->idOrden);
+            if ($pagoEfectuados >0) { // cantidad de pagos efectuados
+                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden debido a que cuenta con '.$pagoEfectuados.' pago procesado' ]);
+            }
+
 
             foreach ($detalleOrden as $do) {
                 if ($do->id_detalle_requerimiento > 0) {

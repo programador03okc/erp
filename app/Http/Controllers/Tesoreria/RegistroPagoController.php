@@ -1590,4 +1590,13 @@ class RegistroPagoController extends Controller
         }
         return response()->json(["empresas" => $empresa, "estados" => $estados, "monedas" => $monedas], 200);
     }
+
+
+    public function consultarPagoEfectuadosDeOrden($idOrden){
+        $cantidadPagoEfectuados=0;
+        if($idOrden >0){
+            $cantidadPagoEfectuados= RegistroPago::where([['id_oc',$idOrden],['estado','!=',7]])->count();
+        }
+        return $cantidadPagoEfectuados;
+    }
 }

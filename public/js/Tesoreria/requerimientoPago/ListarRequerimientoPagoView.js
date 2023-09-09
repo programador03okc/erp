@@ -1120,7 +1120,7 @@ class ListarRequerimientoPagoView {
         if (idGrupo > 0) {
             document.querySelector("div[id='modal-requerimiento-pago'] select[name='division']").removeAttribute("disabled");
 
-            this.construirOptSelectDivision(idGrupo);
+            this.construirOptSelectDivision(idGrupo,null);
 
             this.llenarComboProyectos(idGrupo);
 
@@ -1259,8 +1259,9 @@ class ListarRequerimientoPagoView {
             if (element.id_division == idDivision) {
                 option.selected = true;
             }
-
-            option.setAttribute('data-id-grupo', element.grupo_id);
+            
+            option.dataset.idGrupo = element.grupo_id;
+            // option.setAttribute('data-id-grupo', element.grupo_id);
             selectElement.add(option);
         });
     }
@@ -4157,7 +4158,7 @@ class ListarRequerimientoPagoView {
             console.log(value);
         });
 
-        $('[name="grupo"]').change(function (e) {
+        $('[name="grupo"]').change(function (e) { // ? evaluar si usar mejor la func llenarSelectDivision
             e.preventDefault();
             let value = $(e.currentTarget).val();
             var html = '';
@@ -4175,7 +4176,8 @@ class ListarRequerimientoPagoView {
             }).done(function(response) {
                 html ='<option value="" hidden>Division...</option>';
                 $.each(response.data, function (index, element) {
-                    html+='<option value="'+element.id_division+'" >'+element.descripcion+'</option>';
+                     
+                    html+='<option value="'+element.id_division+'" data-id-grupo="'+element.grupo_id+'">'+element.descripcion+'</option>';
                 });
                 $('[name="division"]').html(html);
                 console.log(response);

@@ -99,7 +99,6 @@ function formatTimeLine(table_id, id, row) {
                             <strong>${element.estado_doc.toUpperCase()}</strong><br>
                             ${element.observacion !== null ? element.observacion + '<br>' : ''}
                             ${element.razon_social_transportista !== null ? element.razon_social_transportista + '<br>' : 'Propia'}
-                            ${element.codigo_envio !== null ? ('Cod.Envío: ' + element.codigo_envio + '<br>') : ''}
                             ${element.importe_flete !== null ? ('<strong>Flete real: S/' + element.importe_flete + (element.credito ? ' (Crédito)' : '') + '</strong>') : ''}</small><br></p>
                             </div>
                         </div>

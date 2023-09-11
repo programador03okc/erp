@@ -64,7 +64,7 @@ function listarGuiasTransportistas(){
                     return (row['fecha_transportista']!==null ? formatDate(row['fecha_transportista']):'');
                 }
             },
-            {'data': 'codigo_envio'},
+            {'data': 'importe_flete'},
             {'render': function (data, type, row){
                     return (row['importe_flete']!==null ? ('S/'+formatDecimal(row['importe_flete'])) : '');
                 }

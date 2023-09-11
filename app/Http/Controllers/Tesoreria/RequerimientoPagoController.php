@@ -44,6 +44,7 @@ use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoAdjunto;
 use App\Models\Tesoreria\RequerimientoPagoAdjuntoDetalle;
 use App\Models\Tesoreria\RequerimientoPagoCategoriaAdjunto;
+use App\Models\Tesoreria\RequerimientoPagoEstados;
 use App\Models\Tesoreria\RequerimientoPagoTipo;
 use App\Models\Tesoreria\RequerimientoPagoTipoDestinatario;
 use Carbon\Carbon;
@@ -87,7 +88,8 @@ class RequerimientoPagoController extends Controller
         $idUsuario = Auth::user()->id_usuario;
         $nombreUsuario = Auth::user()->nombre_corto;
 
-        $estados = Estado::mostrar();
+        // $estados = Estado::mostrar();
+        $estados = RequerimientoPagoEstados::mostrar();
         $array_accesos = [];
         $accesos_usuario = AccesosUsuarios::where('estado', 1)->where('id_usuario', Auth::user()->id_usuario)->get();
         $tipoDocumentos = (new ContabilidadController)->listaTipoDocumentos();
@@ -216,41 +218,74 @@ class RequerimientoPagoController extends Controller
                     LEFT JOIN configuracion.sis_usua ON sis_usua.id_usuario = adm_aprobacion.id_usuario
                 WHERE requerimiento_pago.id_requerimiento_pago = adm_documentos_aprob.id_doc and adm_documentos_aprob.id_tp_documento =11 and adm_aprobacion.id_vobo =1 order by adm_aprobacion.fecha_vobo desc limit 1 ) AS ultimo_aprobador")
 
-            )
-            ->when(($mostrar === 'ME'), function ($query) {
-                $idUsuario = Auth::user()->id_usuario;
-                return $query->whereRaw('requerimiento_pago.id_usuario = ' . $idUsuario);
-            })
-            ->when(($mostrar === 'ALL'), function ($query) {
-                return $query->whereRaw('requerimiento_pago.id_usuario > 0');
-            })
-            ->when((intval($idEmpresa) > 0), function ($query)  use ($idEmpresa) {
-                return $query->whereRaw('requerimiento_pago.id_empresa = ' . $idEmpresa);
-            })
-            ->when((intval($idSede) > 0), function ($query)  use ($idSede) {
-                return $query->whereRaw('requerimiento_pago.id_sede = ' . $idSede);
-            })
-            ->when((intval($idGrupo) > 0), function ($query)  use ($idGrupo) {
-                return $query->whereRaw('sis_grupo.id_grupo = ' . $idGrupo);
-            })
-            ->when((intval($division) > 0), function ($query)  use ($division) {
-                return $query->whereRaw('requerimiento_pago.division_id = ' . $division);
-            })
-            ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta == 'SIN_FILTRO')), function ($query) use ($fechaRegistroDesde) {
-                return $query->where('requerimiento_pago.fecha_registro', '>=', $fechaRegistroDesde);
-            })
-            ->when((($fechaRegistroDesde == 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use ($fechaRegistroHasta) {
-                return $query->where('requerimiento_pago.fecha_registro', '<=', $fechaRegistroHasta);
-            })
-            ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use ($fechaRegistroDesde, $fechaRegistroHasta) {
-                return $query->whereBetween('requerimiento_pago.fecha_registro', [$fechaRegistroDesde, $fechaRegistroHasta]);
-            })
+            );
+            // ->when(($mostrar === 'ME'), function ($query) {
+            //     $idUsuario = Auth::user()->id_usuario;
+            //     return $query->whereRaw('requerimiento_pago.id_usuario = ' . $idUsuario);
+            // })
+            // ->when(($mostrar === 'ALL'), function ($query) {
+            //     return $query->whereRaw('requerimiento_pago.id_usuario > 0');
+            // })
+            // ->when((intval($idEmpresa) > 0), function ($query)  use ($idEmpresa) {
+            //     return $query->whereRaw('requerimiento_pago.id_empresa = ' . $idEmpresa);
+            // })
+            // ->when((intval($idSede) > 0), function ($query)  use ($idSede) {
+            //     return $query->whereRaw('requerimiento_pago.id_sede = ' . $idSede);
+            // })
+            // ->when((intval($idGrupo) > 0), function ($query)  use ($idGrupo) {
+            //     return $query->whereRaw('sis_grupo.id_grupo = ' . $idGrupo);
+            // })
+            // ->when((intval($division) > 0), function ($query)  use ($division) {
+            //     return $query->whereRaw('requerimiento_pago.division_id = ' . $division);
+            // })
+            // ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta == 'SIN_FILTRO')), function ($query) use ($fechaRegistroDesde) {
+            //     return $query->where('requerimiento_pago.fecha_registro', '>=', $fechaRegistroDesde);
+            // })
+            // ->when((($fechaRegistroDesde == 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use ($fechaRegistroHasta) {
+            //     return $query->where('requerimiento_pago.fecha_registro', '<=', $fechaRegistroHasta);
+            // })
+            // ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta != 'SIN_FILTRO')), function ($query) use ($fechaRegistroDesde, $fechaRegistroHasta) {
+            //     return $query->whereBetween('requerimiento_pago.fecha_registro', [$fechaRegistroDesde, $fechaRegistroHasta]);
+            // })
 
-            ->when((intval($idEstado) > 0), function ($query)  use ($idEstado) {
-                return $query->whereRaw('requerimiento_pago.id_estado = ' . $idEstado);
-            })
+            // ->when((intval($idEstado) > 0), function ($query)  use ($idEstado) {
+            //     return $query->whereRaw('requerimiento_pago.id_estado = ' . $idEstado);
+            // })
 
-            ->whereIn('requerimiento_pago.id_grupo', $idGrupoDeUsuarioEnSesionList);
+            if($request->elaborado != 'SIN_FILTRO'){
+                if((int) $request->elaborado > 0){
+                    $data = $data->where('requerimiento_pago.id_usuario','=',(int) $request->elaborado);
+                }else{
+                    $data = $data->where('requerimiento_pago.id_usuario','>',(int) $request->elaborado);
+                }
+            }
+
+            if($request->empresa != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.id_empresa', $request->empresa);
+            }
+            if($request->sede != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.id_sede', $request->sede);
+            }
+
+            if($request->grupo != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.id_grupo', $request->grupo);
+            }
+            if($request->division != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.id_division', $request->division);
+            }
+
+            if($request->fecha_inicio != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.fecha_registro','>=', $request->fecha_inicio);
+            }
+            if($request->fecha_final != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.fecha_registro','<=', $request->fecha_final);
+            }
+
+            if($request->estado != 'SIN_FILTRO'){
+                $data = $data->where('requerimiento_pago.id_estado','=', $request->estado);
+            }
+
+            $data = $data->whereIn('requerimiento_pago.id_grupo', $idGrupoDeUsuarioEnSesionList);
 
 
         return datatables($data)
@@ -1599,13 +1634,34 @@ class RequerimientoPagoController extends Controller
             return response()->json(['data' => [], 'status' => $status, 'mensaje' => 'Hubo un problema al intentar duplicar el requerimiento de pago. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
     }
-    public function listadoRequerimientoPagoExportExcel($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
+    // public function listadoRequerimientoPagoExportExcel($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
+    public function listadoRequerimientoPagoExportExcel(Request $request)
     {
         # code...
+        $meOrAll                =$request->elaborado;
+        $idEmpresa              =$request->empresa;
+        $idSede                 =$request->sede;
+        $idGrupo                =$request->grupo;
+        $idDivision             =$request->division;
+        $fechaRegistroDesde     =$request->fecha_inicio;
+        $fechaRegistroHasta     =$request->fecha_final;
+        $idEstado               =$request->estado;
+
         return Excel::download(new ListadoRequerimientoPagoExport($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado), 'listado_requerimiento_pago.xlsx');;
     }
-    public function listadoItemsRequerimientoPagoExportExcel($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
+    // public function listadoItemsRequerimientoPagoExportExcel($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
+    public function listadoItemsRequerimientoPagoExportExcel(Request $request)
     {
+        // return $request;exit;
+        $meOrAll                =$request->elaborado;
+        $idEmpresa              =$request->empresa;
+        $idSede                 =$request->sede;
+        $idGrupo                =$request->grupo;
+        $idDivision             =$request->division;
+        $fechaRegistroDesde     =$request->fecha_inicio;
+        $fechaRegistroHasta     =$request->fecha_final;
+        $idEstado               =$request->estado;
+
         return Excel::download(new ListadoItemsRequerimientoPagoExport($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado), 'listado_items_requerimiento_pago.xlsx');;
     }
     public function obtenerRequerimientosElaborados($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
@@ -1667,11 +1723,18 @@ class RequerimientoPagoController extends Controller
                 WHERE requerimiento_pago.id_requerimiento_pago = adm_documentos_aprob.id_doc and adm_documentos_aprob.id_tp_documento =11 and adm_aprobacion.id_vobo =1 order by adm_aprobacion.fecha_vobo desc limit 1 ) AS ultimo_aprobador")
 
             )
-            ->when(($meOrAll === 'ME'), function ($query) {
+            // ->when(($meOrAll === 'ME'), function ($query) {
+            //     $idUsuario = Auth::user()->id_usuario;
+            //     return $query->whereRaw('requerimiento_pago.id_usuario = ' . $idUsuario);
+            // })
+            // ->when(($meOrAll === 'ALL'), function ($query) {
+            //     return $query->whereRaw('requerimiento_pago.id_usuario > 0');
+            // })
+            ->when(((int) $meOrAll > 0), function ($query) {
                 $idUsuario = Auth::user()->id_usuario;
                 return $query->whereRaw('requerimiento_pago.id_usuario = ' . $idUsuario);
             })
-            ->when(($meOrAll === 'ALL'), function ($query) {
+            ->when((int) ($meOrAll === 0), function ($query) {
                 return $query->whereRaw('requerimiento_pago.id_usuario > 0');
             })
             ->when((intval($idEmpresa) > 0), function ($query)  use ($idEmpresa) {
@@ -1781,6 +1844,7 @@ class RequerimientoPagoController extends Controller
     }
     public function obtenerItemsRequerimientoPagoElaborados($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
     {
+        // return $idEmpresa;exit;
 
         $detalleRequerimientoPagoList_2 = DB::table('tesoreria.requerimiento_pago_detalle')
             ->leftJoin('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
@@ -1857,13 +1921,14 @@ class RequerimientoPagoController extends Controller
                 WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = requerimiento_pago_detalle.id_partida_pi and requerimiento_pago.id_presupuesto_interno > 0 limit 1) AS descripcion_partida_presupuesto_interno")
 
             )
-            ->when(($meOrAll === 'ME'), function ($query) {
+            ->when(((int) $meOrAll > 0), function ($query) {
                 $idUsuario = Auth::user()->id_usuario;
                 return $query->whereRaw('requerimiento_pago.id_usuario = ' . $idUsuario);
             })
-            ->when(($meOrAll === 'ALL'), function ($query) {
+            ->when((int) ($meOrAll === 0), function ($query) {
                 return $query->whereRaw('requerimiento_pago.id_usuario > 0');
             })
+
             ->when((intval($idEmpresa) > 0), function ($query)  use ($idEmpresa) {
                 return $query->whereRaw('requerimiento_pago.id_empresa = ' . $idEmpresa);
             })
@@ -1890,7 +1955,8 @@ class RequerimientoPagoController extends Controller
                 return $query->whereRaw('requerimiento_pago.id_estado = ' . $idEstado);
             })
             ->where([['requerimiento_pago_detalle.id_estado', '!=', 7], ['requerimiento_pago.id_estado', '!=', 7]])
-            ->orderBy('requerimiento_pago_detalle.fecha_registro', 'desc')
+            // ->orderBy('requerimiento_pago_detalle.fecha_registro', 'desc')
+            ->orderBy('requerimiento_pago.codigo', 'asc')
             ->get();
 
         // $requerimientoPago = DB::table('tesoreria.requerimiento_pago')

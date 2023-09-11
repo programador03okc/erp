@@ -154,6 +154,8 @@ Listado de requerimientos de pago
 
         listarRequerimientoPagoView.initializeEventHandlerListaRequerimientoPago();
 
+        listarRequerimientoPagoView.filtrosRequerimientosPago();
+
         const facturaView = new FacturaView(presupuestoInternoView);
         facturaView.eventos();
 

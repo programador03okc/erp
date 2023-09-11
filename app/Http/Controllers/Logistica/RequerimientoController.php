@@ -375,7 +375,8 @@ class RequerimientoController extends Controller
             ->when((($soloAutorizadoGarantias) ==true), function ($query) {
                 return $query->whereRaw('alm_req.id_tipo_requerimiento = 6');  // autorizado solo ver comercial divison CAS, tipo de requerimiento de garantias
             })
-            ->orderBy('alm_det_req.fecha_registro', 'desc')
+            // ->orderBy('alm_det_req.fecha_registro', 'desc')
+            ->orderBy('alm_req.codigo', 'desc')
             ->get();
 
         return $detalleRequerimientoList;
@@ -1957,7 +1958,7 @@ class RequerimientoController extends Controller
         $GrupoDeUsuarioEnSesionList = Auth::user()->getAllGrupo();
         $idGrupoDeUsuarioEnSesionList = [];
         $idTipoRequerimientoList=[1,2,3,4,5,6,7,8];
-        
+
         foreach ($GrupoDeUsuarioEnSesionList as $grupo) {
             $idGrupoDeUsuarioEnSesionList[] = $grupo->id_grupo; // lista de id_rol del usuario en sesion
         }
@@ -2040,7 +2041,7 @@ class RequerimientoController extends Controller
                 'alm_req.division_id',
                 'division.descripcion as division',
                 'sis_usua.nombre_largo as nombre_usuario',
-                
+
                 // DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
                 DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
                 ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)

@@ -98,7 +98,7 @@ class ProgramacionDespachosController extends Controller
         return response()->json(["titulo"=>"Éxito", "mensaje"=>"Se guardo con éxito.", "tipo"=>'success', "success"=>true],200);
     }
     public function reprogramar(){
-        $data = ProgramacionDespacho::where('reprogramado','f')->get();
+        $data = ProgramacionDespacho::where('reprogramado','f')->where('finalizado','f')->get();
         foreach ($data as $key => $value) {
             if (date('Y-m-d') > $value->fecha_programacion) {
 
@@ -120,5 +120,12 @@ class ProgramacionDespachosController extends Controller
 
         }
         return response()->json(["data"=>$data,"success"=>true],200);
+    }
+    public function finalizarProgramacion(Request $request){
+        $item = ProgramacionDespacho::find($request->id);
+            $item->reprogramado   = true;
+            $item->finalizado   = true;
+        $item->save();
+        return response()->json(["success"=>true,"data"=>$request->all()],200);
     }
 }

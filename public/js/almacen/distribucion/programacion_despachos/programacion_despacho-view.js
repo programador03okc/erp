@@ -61,7 +61,8 @@ class ProgramacionDespachoView {
 
 
             html_programacion='<li data-despacho="'+element.id+'" data-fecha="'+element.fecha_registro+'" data-tipo="body" data-od="'+tipo+'">'
-                +'<i class="fa fa-cube bg-blue"></i>'
+                +'<i class="fa fa-cube '+(element.finalizado == true ?'bg-green' :'bg-blue')+'"></i>'
+
 
                 +'<div class="timeline-item-despachos">'
                     +'<span class="time text-black"><i class="fa fa-calendar-alt"></i> Programado para el '+moment(element.fecha_programacion).format('DD/MM/YYYY')+' </span>'
@@ -73,10 +74,14 @@ class ProgramacionDespachoView {
                         +(element.reprogramacion_id!==null?'<br><strong>ORDEN DE DESPACHO REPROGRAMADO</strong>':'')
                     +'</div>'
                     +'<div class="timeline-footer">'
-                        +(array_accesos.find(element => element === 331)?'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>':``)
-                        +(array_accesos.find(element => element === 332)?'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>':``)
+                        // if (element.finalizado == false) {
+                            +(array_accesos.find(element => element === 331)?(element.finalizado == false?'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>':''):``)
 
-                        // +(array_accesos.find(element => element === 332)?'<a class="btn btn-danger btn-xs finalizar-despacho" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>':``)
+                            +(array_accesos.find(element => element === 332)?(element.finalizado == false?'<a class="btn btn-danger btn-xs eliminar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>':''):``)
+
+                            +(array_accesos.find(element => element === 332)?(element.finalizado == false?'<a class="btn btn-success btn-xs despacho-finalizar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-check" ></i> Finalizar</a>':''):``)
+                        // }
+
 
                         // +'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>'
                         // +'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>'
@@ -220,6 +225,7 @@ class ProgramacionDespachoView {
                                         +'<div class="timeline-footer">'
                                             +'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+result.value.data.id+'"><i class="fa fa-edit"></i> Editar</a>'
                                             +'<a class="btn btn-danger btn-xs eliminar" data-id="'+result.value.data.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt"></i> Eliminar</a>'
+                                            +'<a class="btn btn-success btn-xs despacho-finalizar" data-id="'+result.value.data.id+'" data-despacho="'+tipo+'"><i class="fa fa-check" ></i> Finalizar</a>'
                                         +'</div>'
                                     +'</div>'
                                 +'</li>';
@@ -331,6 +337,27 @@ class ProgramacionDespachoView {
 
             $('[data-fecha="'+fecha+'"][data-tipo="body"][data-od="'+od+'"]').toggle(1000, function() {
                 console.log('termino');
+            });
+        });
+
+        $(document).on("click", '.despacho-finalizar', (e) => {
+            let id =$(e.currentTarget).attr('data-id');
+            let button = $(e.currentTarget);
+            let form = $("#guardar");
+            this.model.finalizarProgramacion(id).then((respuesta) => {
+                if (respuesta.success==true) {
+                    Swal.fire(
+                        'Éxito!',
+                        'Se finalizo la programación de despacho',
+                        'success'
+                    );
+                    button.closest('li[data-despacho="'+id+'"]').find('.fa.fa-cube').removeClass('bg-blue');
+                    button.closest('li[data-despacho="'+id+'"]').find('.fa.fa-cube').addClass('bg-green');
+                    button.closest('.timeline-footer').find('a').remove();
+                }
+            }).fail((respuesta) => {
+                console.log(respuesta);
+            }).always((respuesta) => {
             });
         });
     }

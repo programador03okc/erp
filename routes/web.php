@@ -1691,6 +1691,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('guardar', [ProgramacionDespachosController::class, 'guardar'])->name('guardar');
                 Route::get('editar/{id}', [ProgramacionDespachosController::class, 'editar'])->name('editar');
                 Route::put('eliminar/{id}', [ProgramacionDespachosController::class, 'eliminar'])->name('eliminar');
+                Route::post('finalizar-programacion', [ProgramacionDespachosController::class, 'finalizarProgramacion'])->name('finalizar-programacion');
 
                 Route::get('reprogramar', [ProgramacionDespachosController::class, 'reprogramar'])->name('reprogramar');
 			});

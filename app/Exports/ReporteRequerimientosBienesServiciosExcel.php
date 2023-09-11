@@ -55,6 +55,7 @@ class reporteRequerimientosBienesServiciosExcel implements FromView,ShouldAutoSi
                 'monto_total'=> number_format($element->monto_total,2),
                 'observacion'=> $element->observacion,
                 'nombre_usuario'=> $element->nombre_usuario,
+                'nombre_solicitado_por'=> $element->nombre_solicitado_por,
                 'ultimo_aprobador'=>$element->ultimo_aprobador,
                 'observacion'=> $element->observacion,
                 'estado_doc'=> $element->nombre_estado

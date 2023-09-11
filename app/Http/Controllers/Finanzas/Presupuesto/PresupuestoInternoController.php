@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Finanzas\Presupuesto;
 
 use App\Exports\PresupuestoInternoEjecutadoExport;
 use App\Exports\PresupuestoInternoExport;
+use App\Exports\PresupuestoInternoSaldoExport;
 use App\Helpers\ConfiguracionHelper;
 use App\Helpers\StringHelper;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
@@ -1933,6 +1934,29 @@ class PresupuestoInternoController extends Controller
         return Excel::download(new PresupuestoInternoEjecutadoExport($detalle_array), 'presupuesto_interno_monto_ejecutado.xlsx');
 
         // return response()->json($historial_saldo,200);
+    }
+    public function saldosPresupuesto(Request $request){
+        $presupuesto  = PresupuestoInterno::where('id_presupuesto_interno',$request->id)->first();
+        $presupuesto_detalle  = PresupuestoInternoDetalle::where('id_presupuesto_interno',$request->id)->orderBy('partida')->get();
+
+        foreach($presupuesto_detalle as $key=>$item){
+            $monto = 0;
+            if($item->registro == 2){
+                $monto = HistorialPresupuestoInternoSaldo::totalEjecutadoPartida($item->id_presupuesto_interno_detalle);
+            }
+            $item->ejecutado = $monto;
+            $total_partida = PresupuestoInterno::calcularTotalPresupuestoFilas($presupuesto->id_presupuesto_interno, 3,1);
+
+            $total=0;
+            foreach($total_partida as $value){
+                if($value['partida']==$item->partida){
+                    $total = $value['total'];
+                }
+            }
+            $item->total = $total;
+
+        }
+        return Excel::download(new PresupuestoInternoSaldoExport(json_encode($presupuesto_detalle)), ''.$presupuesto->codigo.'-'.date('Y-m-d').'.xlsx');
     }
 
 }

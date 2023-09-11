@@ -1323,6 +1323,9 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('listar-sedes-por-empresa/{id}', [PresupuestoInternoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
 
+                //exportable de excel saldos ejecutado
+				Route::post('saldos-presupuesto', [PresupuestoInternoController::class, 'saldosPresupuesto'])->name('saldos-presupuesto');
+
 				Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
 					Route::get('generar-presupuesto-gastos', [ScriptController::class, 'generarPresupuestoGastos'])->name('generar-presupuesto-gastos');
 					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida'])->name('homologacion-partidas');

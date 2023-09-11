@@ -198,7 +198,6 @@ class VentasInternasController extends Controller
                         ->update(['codigo' => $codigo]);
                 }
 
-                $codigo_oc = Orden::nextCodigoOrden(2);
                 
                 $subtotal=0;
                 foreach ($detalle as $item) {
@@ -214,7 +213,6 @@ class VentasInternasController extends Controller
                         'id_usuario' => $id_usuario,
                         'id_moneda' => ($doc_ven->moneda !=null && $doc_ven->moneda) >0?$doc_ven->moneda:1,
                         'id_proveedor' => $doc_ven->id_proveedor,
-                        'codigo' => $codigo_oc,
                         'id_condicion' => $doc_ven->id_condicion,
                         'plazo_dias' => $doc_ven->credito_dias,
                         'id_condicion_softlink' => $id_condicion_softlink,
@@ -306,6 +304,19 @@ class VentasInternasController extends Controller
             }
 
             DB::commit();
+
+            $codigo = Orden::nextCodigoOrden(2);
+            $cantidadCodigosExistentes = Orden::validateCodigoOrden($codigo);
+            
+            if($cantidadCodigosExistentes>0){
+                $codigo = Orden::nextCodigoOrden(2);
+            }
+
+            $ord = Orden::find($id_orden_compra);
+            $ord->codigo = $codigo;
+            $ord->save();
+
+
             $rpta = "ok";
         } catch (\PDOException $e) {
             // Woopsy

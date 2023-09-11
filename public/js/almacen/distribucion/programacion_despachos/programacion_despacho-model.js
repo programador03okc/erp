@@ -47,5 +47,15 @@ class ProgramacionDespachoModel {
             data: { _token: this.token },
         });
     }
+    finalizarProgramacion = (id) => {
+        return $.ajax({
+            url: route("logistica.distribucion.programacion-despachos.finalizar-programacion"),
+            type: "POST",
+            dataType: "JSON",
+            // processData: false,
+            // contentType: false,
+            data: { _token: this.token, id:id },
+        });
+    }
 
 }

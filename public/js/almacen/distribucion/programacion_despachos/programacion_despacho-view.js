@@ -73,8 +73,10 @@ class ProgramacionDespachoView {
                         +(element.reprogramacion_id!==null?'<br><strong>ORDEN DE DESPACHO REPROGRAMADO</strong>':'')
                     +'</div>'
                     +'<div class="timeline-footer">'
-                        +(array_accesos.find(element => element === 331)?`<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>`:``)
-                        +(array_accesos.find(element => element === 332)?`<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>`:``)
+                        +(array_accesos.find(element => element === 331)?'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>':``)
+                        +(array_accesos.find(element => element === 332)?'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>':``)
+
+                        // +(array_accesos.find(element => element === 332)?'<a class="btn btn-danger btn-xs finalizar-despacho" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>':``)
 
                         // +'<a class="btn btn-primary btn-xs editar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-edit"> </i> Editar</a>'
                         // +'<a class="btn btn-danger btn-xs eliminar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>'

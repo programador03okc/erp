@@ -79,7 +79,7 @@ class ProgramacionDespachoView {
 
                             +(array_accesos.find(element => element === 332)?(element.finalizado == false?'<a class="btn btn-danger btn-xs eliminar mr-5" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-trash-alt" ></i> Eliminar</a>':''):``)
 
-                            +(array_accesos.find(element => element === 332)?(element.finalizado == false?'<a class="btn btn-success btn-xs despacho-finalizar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-check" ></i> Finalizar</a>':''):``)
+                            +(array_accesos.find(element => element === 333)?(element.finalizado == false?'<a class="btn btn-success btn-xs despacho-finalizar" data-id="'+element.id+'" data-despacho="'+tipo+'"><i class="fa fa-check" ></i> Finalizar</a>':''):``)
                         // }
 
 

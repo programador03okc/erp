@@ -193,17 +193,24 @@ class Orden extends Model
         $correlativo = Orden::leftZero(4, ($num + 1));
 
         if ($id_tp_docum == 2) {
-            $codigoOrden = "OC-{$anio}{$mes}{$correlativo}";
+            $prefijo = "OC-{$anio}{$mes}";
         } else if ($id_tp_docum == 3) {
-            $codigoOrden = "OS-{$anio}{$mes}{$correlativo}";
+            $prefijo = "OS-{$anio}{$mes}";
         } else if ($id_tp_docum == 12) {
-            $codigoOrden = "OI-{$anio}{$mes}{$correlativo}";
+            $prefijo = "OI-{$anio}{$mes}";
         } else if ($id_tp_docum == 13) {
-            $codigoOrden = "OD-{$anio}{$mes}{$correlativo}";
+            $prefijo = "OD-{$anio}{$mes}";
         } else {
-            $codigoOrden = "-{$anio}{$mes}{$correlativo}";
+            $prefijo = "-{$anio}{$mes}";
         }
-        return $codigoOrden;
+
+        return "{$prefijo}{$correlativo}";
+    }
+
+    public static function validateCodigoOrden($codigoOrden){
+        $cantidadCodigoExistentes= Orden::where('codigo',trim($codigoOrden))->count();
+        return $cantidadCodigoExistentes;
+        
     }
 
     public function getTieneTransformacionAttribute()

@@ -2791,11 +2791,19 @@ class OrdenController extends Controller
 
 
                 DB::commit();
-
+                
                 $codigo = Orden::nextCodigoOrden($orden->id_tp_documento);
+                $cantidadCodigosExistentes = Orden::validateCodigoOrden($codigo);
+                
+                if($cantidadCodigosExistentes>0){
+                    $codigo = Orden::nextCodigoOrden($orden->id_tp_documento);
+                }
+    
                 $ord = Orden::find($orden->id_orden_compra);
                 $ord->codigo = $codigo;
                 $ord->save();
+
+
 
                 $codigoOrden = $ord->codigo;
                 $idOrden = $orden->id_orden_compra;

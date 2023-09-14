@@ -428,15 +428,13 @@ class PresupuestoInternoHistorialHelper
         }
         if ($idOrden > 0) {
 
-            $detalleOrden = OrdenCompraDetalle::where([['id_orden_compra', $idOrden], ['estado', '!=', 7]])->get();
+            $detalleOrden = OrdenCompraDetalle::where([['id_orden_compra', $idOrden]])->get();
             foreach ($detalleOrden as $itemOrden) {
                 if ($itemOrden->id_detalle_requerimiento > 0) {
                     $detalleRequerimiento = DetalleRequerimiento::with('requerimiento')->find($itemOrden->id_detalle_requerimiento);
 
-                    foreach ($detalleRequerimiento as $detReq) {
-                        if ($detReq->requerimiento->id_presupuesto_interno > 0) {
-                            $tienePresupuestoInterno = true;
-                        }
+                    if ($detalleRequerimiento->requerimiento && $detalleRequerimiento->requerimiento->id_presupuesto_interno > 0) {
+                        $tienePresupuestoInterno = true;
                     }
                 }
             }
@@ -444,8 +442,7 @@ class PresupuestoInternoHistorialHelper
             if ($tienePresupuestoInterno == true) {
                 $historialList = HistorialPresupuestoInternoSaldo::where(
                     [['id_orden', '=', $idOrden]]
-                )
-                    ->get();
+                )->get();
             }
 
             foreach ($historialList as $value) {

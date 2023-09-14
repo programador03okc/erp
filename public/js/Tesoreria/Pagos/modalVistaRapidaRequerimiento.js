@@ -199,6 +199,7 @@ function mostrarDataEnVistaRapidaRequerimientoPago(data) {
             <td style="text-align:right;">${data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : ''}${formatNumber.decimal(data.detalle[i].precio_unitario, '', -2)} <input type="hidden" class="precio" name="precio" value="${data.detalle[i].precio_unitario >= 0 ? data.detalle[i].precio_unitario : 0}" /></td>
             <td style="text-align:right;">${data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : ''}${(data.detalle[i].subtotal ? formatNumber.decimal(data.detalle[i].subtotal, '', -2) : (formatNumber.decimal((data.detalle[i].cantidad * data.detalle[i].precio_unitario), '', -2)))}</td>
             <td style="text-align:center;">${data.detalle[i].estado != null ? data.detalle[i].estado.estado_doc : ''}</td>
+            <td style="text-align:center;">${data.detalle[i].motivo != null ? data.detalle[i].motivo : ''}</td>
             <td style="text-align: center;"> 
             ${cantidadAdjuntosItem > 0 ? '<a title="Ver archivos adjuntos de item" style="cursor:pointer;" class="handleClickAdjuntarArchivoDetalle" data-tipo-modal="lectura" data-id="' + data.detalle[i].id_requerimiento_pago_detalle + '" >Ver (<span>' + cantidadAdjuntosItem + '</span>)</a>' : '-'}
             </td>

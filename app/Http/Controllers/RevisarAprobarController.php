@@ -388,7 +388,7 @@ class RevisarAprobarController extends Controller{
                 $operaciones = Operacion::getOperacion($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago,$idRolUsuarioDocList);
                 // //Debugbar::info($operaciones);
                 // //Debugbar::info($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago,$idRolUsuarioDocList);
-                if(count($operaciones)>1){
+                if($operaciones && count($operaciones)>1){
                     $mensaje[]= "Se detecto que los criterios del requerimiento dan como resultado multibles operaciones :".$operaciones;
 
                 }

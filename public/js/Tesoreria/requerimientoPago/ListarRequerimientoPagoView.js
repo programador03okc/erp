@@ -1277,7 +1277,7 @@ class ListarRequerimientoPagoView {
 
 
     agregarServicio(data = null) {
-        // console.log( data.adjunto);
+        // console.log( data);
         let idFila = data != null && data.id_requerimiento_pago_detalle > 0 ? data.id_requerimiento_pago_detalle : (this.makeId());
         let cantidadAdjuntos = data != null && data.adjunto ? (data.adjunto).filter((element, i) => element.id_estado != 7).length : 0;
 
@@ -1299,8 +1299,8 @@ class ListarRequerimientoPagoView {
                 idPartida= data.id_partida_pi;
                 codigoPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.partida:'';
                 descripcionPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.descripcion:'';
-                totalPartida = data.presupuesto_interno_detalle!=null ?data.presupuesto_interno_detalle.presupuesto_interno_total_partida:0;
-                totalPartidaMes = data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.presupuesto_interno_mes_partida:0;
+                totalPartida = data.presupuesto_interno_total_partida!=null ?data.presupuesto_interno_total_partida:0;
+                totalPartidaMes = data.presupuesto_interno_mes_partida!=null ? data.presupuesto_interno_mes_partida:0;
 
             }
         }

@@ -112,7 +112,9 @@ function lista() {
                             :'');
                         }
 
+                        html+='<button type="button" class="btn btn-default text-black btn-flat botonList saldos-presupuesto" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Exportar Saldos" data-original-title="Exportar Saldos"><i class="fa fa-file-alt"></i></button>';
 
+                        html +='<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat botonList " title="Exportar Ejecutados" data-original-title="Exportar Ejecutados"><i class="fa fa-file"></i></a>';
                     html+='';
                     return html;
                 },
@@ -376,4 +378,17 @@ $(document).on('click','[data-action="exportar-ejecutado"]',function (e) {
         '</form>');
         $('body').append(form);
     form.submit();
+});
+$(document).on('click','.saldos-presupuesto',function (e) {
+    e.preventDefault();
+    console.log(token);
+    let id = $(this).attr('data-id'),
+        // token = $('meta[name="csrf-token"]').attr('content'),
+        form = $('<form action="'+route("finanzas.presupuesto.presupuesto-interno.saldos-presupuesto")+'" method="POST" target="_blank">'+
+            '<input type="hidden" name="_token" value="'+token+'">'+
+            '<input type="hidden" name="id" value="'+id+'">'+
+        '</form>');
+        $('body').append(form);
+    form.submit();
+
 });

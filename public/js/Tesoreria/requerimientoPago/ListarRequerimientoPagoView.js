@@ -1299,8 +1299,8 @@ class ListarRequerimientoPagoView {
                 idPartida= data.id_partida_pi;
                 codigoPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.partida:'';
                 descripcionPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.descripcion:'';
-                totalPartida = dataDetalleRequerimiento[i].presupuesto_interno_total_partida;
-                totalPartidaMes = dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
+                totalPartida = data.presupuesto_interno_detalle!=null ?data.presupuesto_interno_detalle.presupuesto_interno_total_partida:0;
+                totalPartidaMes = data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.presupuesto_interno_mes_partida:0;
 
             }
         }

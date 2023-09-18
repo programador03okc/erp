@@ -151,7 +151,7 @@
                 <td>{{$item->partida}}</td>
                 <td>{{$item->descripcion}}</td>
                 {{-- <td >{{($item->registro==='1'?'':$item->porcentaje_costo.'%')}} </td> --}}
-                <td style="text-align: right;">{{$item->enero}}</td>
+                <td style="text-align: right;">{{(float)$item->enero}}</td>
                 <td style="text-align: right;">{{$item->febrero}}</td>
                 <td style="text-align: right;">{{$item->marzo}}</td>
                 <td style="text-align: right;">{{$item->abril}}</td>

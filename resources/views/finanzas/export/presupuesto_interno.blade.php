@@ -151,18 +151,18 @@
                 <td>{{$item->partida}}</td>
                 <td>{{$item->descripcion}}</td>
                 {{-- <td >{{($item->registro==='1'?'':$item->porcentaje_costo.'%')}} </td> --}}
-                <td style="text-align: right;">{{$item->enero}}</td>
-                <td style="text-align: right;">{{$item->febrero}}</td>
-                <td style="text-align: right;">{{$item->marzo}}</td>
-                <td style="text-align: right;">{{$item->abril}}</td>
-                <td style="text-align: right;">{{$item->mayo}}</td>
-                <td style="text-align: right;">{{$item->junio}}</td>
-                <td style="text-align: right;">{{$item->julio}}</td>
-                <td style="text-align: right;">{{$item->agosto}}</td>
-                <td style="text-align: right;">{{$item->setiembre}}</td>
-                <td style="text-align: right;">{{$item->octubre}}</td>
-                <td style="text-align: right;">{{$item->noviembre}}</td>
-                <td style="text-align: right;">{{$item->diciembre}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->enero)), 2, '.', ',')  }}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->febrero)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->marzo)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->abril)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->mayo)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->junio)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->julio)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->agosto)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->setiembre)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->octubre)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->noviembre)), 2, '.', ',')}}</td>
+                <td style="text-align: right;">{{ number_format(floatval(str_replace(",", "", $item->diciembre)), 2, '.', ',')}}</td>
             </tr>
 
             @endforeach

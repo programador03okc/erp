@@ -1890,15 +1890,16 @@ class RequerimientoPendienteView {
         if (parseInt(obj.dataset.idDetalleRequerimiento) > 0) {
             this.requerimientoPendienteCtrl.obtenerHistorialDetalleRequerimientoParaReserva(obj.dataset.idDetalleRequerimiento).then((res) => {
                 $('#modal-historial-reserva .modal-content').LoadingOverlay("hide", true);
+                console.log(res);
                 if (res.status == 200) {
                     this.llenarModalHistorialReserva(res.data);
                 }
-            }).catch(function (err) {
-                Swal.fire(
-                    '',
-                    'Hubo un problema al intentar obtener la data del producto',
-                    'error'
-                );
+            }).catch( (err)=> {
+                // Swal.fire(
+                //     '',
+                //     'Hubo un problema al intentar obtener la data del producto',
+                //     'error'
+                // );
             })
 
         }
@@ -1962,7 +1963,7 @@ class RequerimientoPendienteView {
             this.requerimientoPendienteCtrl.obtenerDetalleRequerimientoParaReserva(obj.dataset.idDetalleRequerimiento).then((res1) => {
 
                 // this.requerimientoPendienteCtrl.obtenerAlmacenPorDefectoRequerimiento(obj.dataset.idRequerimiento).then((res2) => {
-                // console.log(res1);
+                console.log(res1);
                 // console.log(res2);
                 $('#modal-nueva-reserva .modal-content').LoadingOverlay("hide", true);
                 if (res1.status == 200) {

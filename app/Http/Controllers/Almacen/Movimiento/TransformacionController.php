@@ -974,7 +974,7 @@ class TransformacionController extends Controller
         $transformacion->save();
 
         $comentario = 'Recibido conforme transformación ID: '.$id.' Actualizado por: ' . Auth::user()->nombre_corto;
-        LogActividad::registrar(Auth::user(), 'Tab ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
+        LogActividad::registrar(Auth::user(), 'Ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
 
         return response()->json($transformacion);
 
@@ -989,7 +989,7 @@ class TransformacionController extends Controller
         $transformacion->save();
 
         $comentario = 'Recibido no conforme transformación ID: '.$id.' Actualizado por: ' . Auth::user()->nombre_corto;
-        LogActividad::registrar(Auth::user(), 'Tab ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
+        LogActividad::registrar(Auth::user(), 'Ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
 
 
         return response()->json($transformacion);
@@ -1018,7 +1018,7 @@ class TransformacionController extends Controller
         }
 
         $comentario = 'Iniciar transformación ID: '.$id.' Actualizado por: ' . Auth::user()->nombre_corto;
-        LogActividad::registrar(Auth::user(), 'Tab ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
+        LogActividad::registrar(Auth::user(), 'Ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
 
 
         return response()->json($transformacion);

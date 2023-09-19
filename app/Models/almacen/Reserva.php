@@ -49,7 +49,7 @@ class Reserva extends Model
         return $this->hasone('App\Models\Almacen\Producto','id_producto','id_producto');
     }
     public function usuario(){
-        return $this->hasone('App\Models\Configuracion\Usuario','id_usuario','usuario_registro');
+        return $this->hasone('App\Models\Configuracion\Usuario','id_usuario','usuario_registro')->withTrashed();
     }
     public function guia_compra_detalle(){
         return $this->hasMany('App\Models\Almacen\GuiaCompraDetalle','id_guia_com_det','id_guia_com_det');

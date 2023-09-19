@@ -1894,6 +1894,8 @@ class RequerimientoPendienteView {
                 if (res.status == 200) {
                     this.llenarModalHistorialReserva(res.data);
                 }
+            }).catch((err) => {
+                console.log(err)
             })
 
         }
@@ -1979,12 +1981,8 @@ class RequerimientoPendienteView {
                 // })
 
 
-            }).catch( (err) => {
-                // Swal.fire(
-                //     '',
-                //     'Hubo un problema al  intentar obtener la data del producto',
-                //     'error'
-                // );
+            }).catch((err) => {
+                console.log(err)
             })
             //inicio obtener lista de almacenes con stock del producto selecciondo
 

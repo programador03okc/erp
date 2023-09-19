@@ -1894,12 +1894,6 @@ class RequerimientoPendienteView {
                 if (res.status == 200) {
                     this.llenarModalHistorialReserva(res.data);
                 }
-            }).catch( (err)=> {
-                // Swal.fire(
-                //     '',
-                //     'Hubo un problema al intentar obtener la data del producto',
-                //     'error'
-                // );
             })
 
         }

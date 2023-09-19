@@ -1906,6 +1906,7 @@ class RequerimientoPendienteView {
     }
 
     llenarModalHistorialReserva(data) {
+        console.log(data);
         if (data.id_producto > 0) {
             document.querySelector("div[id='modal-historial-reserva'] label[id='partNumber']").textContent = data.producto.part_number != null ? data.producto.part_number : (data.part_number != null ? data.part_number : '');
             document.querySelector("div[id='modal-historial-reserva'] label[id='descripcion']").textContent = data.producto.descripcion != null ? data.producto.descripcion : (data.descripcion != null ? data.descripcion : '');
@@ -1924,6 +1925,7 @@ class RequerimientoPendienteView {
     }
 
     listarTablaHistorialReservaProducto(data) {
+        console.log(data);
         this.requerimientoPendienteCtrl.limpiarTabla('listaHistorialReserva');
         // let cantidadTotalStockComprometido=0;
         if (data.length > 0) {

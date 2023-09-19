@@ -482,6 +482,12 @@ class RequerimientoPagoController extends Controller
                 }
             }
 
+            $comentarioCabecera = 'Nuevo requerimiento de pago (cabecera): ' . ($rp->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Nuevo requerimiento de pago', 2, $rp->getTable(), null, $rp, $comentarioCabecera,'Necesidades');
+            $comentarioDetalle = 'Nuevo requerimiento de pago (detalle): ' . ($rp->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Nuevo requerimiento de pago', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+
+            
             return response()->json(['id_requerimiento_pago' => $requerimientoPago->id_requerimiento_pago, 'mensaje' => 'Se guardó el requerimiento de pago ' . $codigo]);
         } catch (Exception $e) {
             DB::rollBack();
@@ -820,6 +826,7 @@ class RequerimientoPagoController extends Controller
             }
 
             $requerimientoPago = RequerimientoPago::where("id_requerimiento_pago", $request->id_requerimiento_pago)->first();
+            $valorAteriorCabecera = $requerimientoPago;
             $requerimientoPago->id_usuario = Auth::user()->id_usuario;
             $requerimientoPago->concepto = strtoupper($request->concepto);
             $requerimientoPago->id_periodo = $request->periodo;
@@ -882,6 +889,8 @@ class RequerimientoPagoController extends Controller
 
             $afectaPresupuestoInternoSuma = [];
             $afectaPresupuestoInternoResta = [];
+            
+            $valorAteriorDetalle = RequerimientoPagoDetalle::where("id_requerimiento_pago", $request->id_requerimiento_pago)->get();
 
             for ($i = 0; $i < $count; $i++) {
                 $id = $request->idRegister[$i];
@@ -1023,6 +1032,14 @@ class RequerimientoPagoController extends Controller
                     $idAdjuntoDetalle[] = $this->guardarAdjuntoRequerimientoPagoDetalle($ObjectoAdjuntoDetalle);
                 }
             }
+
+
+            $comentarioCabecera = 'Actualizar requerimiento de pago (cabecera): ' . ($requerimientoPago->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Editar requerimiento de pago', 3, $requerimientoPago->getTable(), $valorAteriorCabecera, $requerimientoPago, $comentarioCabecera,'Necesidades');
+            $comentarioDetalle = 'Actualizar requerimiento de pago (detalle): ' . ($requerimientoPago->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Editar requerimiento de pago', 3, $detalle->getTable(), $valorAteriorDetalle, $detalle, $comentarioDetalle,'Necesidades');
+
+
             DB::commit();
 
             return response()->json([
@@ -1099,6 +1116,12 @@ class RequerimientoPagoController extends Controller
                         'tipo_estado' => 'success',
                         'mensaje' => 'El requerimiento de pago ' . $requerimientoPago->codigo . ' fue anulado',
                     ];
+
+                    $comentarioCabecera = 'Anular requerimiento de pago (cabecera): ' . ($requerimientoPago->codigo ?? '').', Anulado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Listado de requerimientos de pago', 4, $requerimientoPago->getTable(), null, $requerimientoPago, $comentarioCabecera,'Necesidades');
+                    $comentarioDetalle = 'Anular requerimiento de pago (detalle): ' . ($requerimientoPago->codigo ?? '').', Anulado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Listado de requerimientos de pago', 4, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+        
                 } else {
                     $output = [
                         'id_requerimiento_pago' => 0,

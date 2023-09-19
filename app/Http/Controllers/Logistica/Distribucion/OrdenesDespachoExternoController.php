@@ -24,10 +24,12 @@ use App\Models\Almacen\Requerimiento;
 use App\Models\Comercial\Cliente;
 use App\models\Configuracion\AccesosUsuarios;
 use App\models\Configuracion\AdjuntosNotificaciones;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Usuario;
 use App\Models\Contabilidad\ContactoContribuyente;
 use App\Models\Contabilidad\Contribuyente;
 use App\Models\Distribucion\OrdenDespacho;
+use App\Models\Distribucion\OrdenDespachoDetalle;
 use App\Models\Distribucion\OrdenDespachoFlete;
 use App\Models\mgcp\AcuerdoMarco\Entidad\Entidad;
 use App\Models\mgcp\CuadroCosto\CuadroCosto;
@@ -532,6 +534,8 @@ class OrdenesDespachoExternoController extends Controller
                     $ordenDespacho->id_estado_envio = $id_estado_envio;
                     $ordenDespacho->save();
                     //Agrega accion en requerimiento
+
+
                     DB::table('almacen.alm_req_obs')
                         ->insert([
                             'id_requerimiento' => $requerimiento->id_requerimiento,
@@ -562,29 +566,43 @@ class OrdenesDespachoExternoController extends Controller
                     }
 
                     foreach ($detalle as $d) {
-                        DB::table('almacen.orden_despacho_det')
-                            ->insert([
-                                'id_od' => $ordenDespacho->id_od,
-                                // 'id_producto' => $d->id_producto,
-                                'id_detalle_requerimiento' => $d->id_detalle_requerimiento,
-                                'cantidad' => $d->cantidad,
-                                'transformado' => $d->tiene_transformacion,
-                                'estado' => 1,
-                                'fecha_registro' => $fechaRegistro
-                            ]);
 
-                        DB::table('almacen.alm_det_req')
-                            ->where('id_detalle_requerimiento', $d->id_detalle_requerimiento)
-                            ->update(['estado' => 23]); //despacho externo
+                            $ordenDepachoDetalle = new OrdenDespachoDetalle();
+                            $ordenDepachoDetalle->id_od = $ordenDespacho->id_od;
+                            $ordenDepachoDetalle->id_detalle_requerimiento = $d->id_detalle_requerimiento;
+                            $ordenDepachoDetalle->cantidad = $d->cantidad;
+                            $ordenDepachoDetalle->transformado = $d->tiene_transformacion;
+                            $ordenDepachoDetalle->estado = 1;
+                            $ordenDepachoDetalle->fecha_registro = $fechaRegistro;
+                            $ordenDepachoDetalle->save();
+
+                            $comentario = 'Generar orden de despacho externo (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
+                            LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentario,'Logística');
+                
+                            $detalleRequerimiento = DetalleRequerimiento::find($d->id_detalle_requerimiento);
+                            $detalleRequerimiento->estado = 23; // despacho entregado
+                            $detalleRequerimiento->save();
+        
+                            $comentariDetalleoRequerimientoActualizado = 'Actualizando estado detalle requerimiento ID: '.$d->id_detalle_requerimiento.' a estado (23) despacho entregado, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
+                            LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $detalleRequerimiento->getTable(), null, $detalleRequerimiento, $comentariDetalleoRequerimientoActualizado,'Logística');
+        
                     }
 
-                    DB::table('almacen.alm_req')
-                        ->where('id_requerimiento', $requerimiento->id_requerimiento)
-                        ->update(['estado_despacho' => 23]); //despacho externo
+                        $requerimiento = Requerimiento::find($requerimiento->id_requerimiento);
+                        $requerimiento->estado_despacho = 23; // despacho externo
+                        $requerimiento->save();
+    
+                        $comentarioRequerimientoActualizado = 'Actualizando estado requerimiento ID: '.$requerimiento->id_requerimiento.' a estado (23) despacho externo, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
+                        LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioRequerimientoActualizado,'Logística');
+    
 
                     $ordenDespacho->codigo = OrdenDespacho::ODnextId($requerimiento->id_almacen, false, $ordenDespacho->id_od, $request->fecha_documento_ode);
                     $ordenDespacho->fecha_documento = $request->fecha_documento_ode;
                     $ordenDespacho->save();
+
+                    $comentarioDespacho = 'Generar orden de despacho externo (cabecera). Id: ' . ($ordenDespacho->id_od ?? '').', Código OD: '. ($ordenDespacho->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDespacho->getTable(), null, $ordenDespacho, $comentarioDespacho,'Logística');
+        
 
                     //Agrega primera trazabilidad de envio (la generacion de la Orden de despacho)
                     $obs = DB::table('almacen.orden_despacho_obs')

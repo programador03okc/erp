@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
 // use Debugbar;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductosExport;
+use App\Models\Almacen\Producto;
+use App\Models\Configuracion\LogActividad;
 
 class ProductoController extends Controller
 {
@@ -226,37 +228,35 @@ class ProductoController extends Controller
         }
 
         if ($count == 0) {
-            $id_producto = DB::table('almacen.alm_prod')->insertGetId(
-                [
-                    'part_number' => $pn,
-                    'id_clasif' => $request->id_clasif,
-                    'id_subcategoria' => $request->id_subcategoria,
-                    'id_categoria' => $request->id_categoria,
-                    'descripcion' => $des,
-                    'id_unidad_medida' => ($request->id_unidad_medida !== 0 ? $request->id_unidad_medida : null),
-                    'id_unid_equi' => (($request->id_unid_equi !== 0 && $request->id_unid_equi !== null) ? $request->id_unid_equi : null),
-                    'cant_pres' => ($request->cant_pres !== null ? $request->cant_pres : null),
-                    'series' => ($request->series == null || $request->series !== '1') ? false : true,
-                    'afecto_igv' => ($request->afecto_igv == null || $request->afecto_igv !== '1') ? false : true,
-                    'id_moneda' => $request->id_moneda,
-                    'notas' => ($request->notas !== null ? $request->notas : ''),
-                    'id_usuario' => $id_usuario,
-                    'sunat_unsps' => $request->sunat_unsps,
-                    'codigo_compuesto' => $request->codigo_compuesto,
-                    'peso' => $request->peso,
-                    'largo' => $request->largo,
-                    'ancho' => $request->ancho,
-                    'alto' => $request->alto,
-                    'estado' => 1,
-                    'fecha_registro' => $fecha
-                ],
-                'id_producto'
-            );
 
-            $codigo = AlmacenController::leftZero(7, $id_producto);
+            $producto = new Producto();
+            $producto->part_number = $pn;
+            $producto->id_clasif = $request->id_clasif;
+            $producto->id_subcategoria = $request->id_subcategoria;
+            $producto->id_categoria = $request->id_categoria;
+            $producto->descripcion = $des;
+            $producto->id_unidad_medida = ($request->id_unidad_medida !== 0 ? $request->id_unidad_medida : null);
+            $producto->id_unid_equi = (($request->id_unid_equi !== 0 && $request->id_unid_equi !== null) ? $request->id_unid_equi : null);
+            $producto->cant_pres = ($request->cant_pres !== null ? $request->cant_pres : null);
+            $producto->series = ($request->series == null || $request->series !== '1') ? false : true;
+            $producto->afecto_igv = ($request->afecto_igv == null || $request->afecto_igv !== '1') ? false : true;
+            $producto->id_moneda = $request->id_moneda;
+            $producto->notas = ($request->notas !== null ? $request->notas : '');
+            $producto->id_usuario = $id_usuario;
+            $producto->sunat_unsps = $request->sunat_unsps;
+            $producto->codigo_compuesto = $request->codigo_compuesto;
+            $producto->peso = $request->peso;
+            $producto->largo = $request->largo;
+            $producto->ancho =  $request->ancho;
+            $producto->alto =  $request->alto;
+            $producto->estado = 1;
+            $producto->fecha_registro = $fecha;
+            $producto->save();
+
+            $codigo = AlmacenController::leftZero(7, $producto->id_producto);
 
             DB::table('almacen.alm_prod')
-                ->where('id_producto', $id_producto)
+                ->where('id_producto', $producto->id_producto)
                 ->update(['codigo' => $codigo]);
 
             // $id_item = DB::table('almacen.alm_item')->insertGetId(
@@ -265,14 +265,18 @@ class ProductoController extends Controller
             //         'fecha_registro' => $fecha
             //     ],  'id_item');
 
-            $producto = DB::table('almacen.alm_prod')
+            $comentario = 'Producto creado. Código: '.$codigo.', Partnumber: '.$producto->part_number.', Descripción: '.$producto->descripcion.' , Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Producto', 2, $producto->getTable(), null, $producto, $comentario, 'Almacén');
+
+
+            $productoCreado = DB::table('almacen.alm_prod')
                 ->select('alm_prod.*', 'alm_und_medida.abreviatura', 'alm_cat_prod.descripcion as categoria', 'alm_subcat.descripcion as subcategoria')
                 ->join('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
                 ->join('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
                 ->join('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                ->where('id_producto', $id_producto)->first();
+                ->where('id_producto', $producto->id_producto)->first();
 
-            return response()->json(['msj' => $msj, 'id_item' => 0, 'id_producto' => $id_producto, 'producto' => $producto]);
+            return response()->json(['msj' => $msj, 'id_item' => 0, 'id_producto' => $producto->id_producto, 'producto' => $productoCreado]);
         } else {
             $prod = DB::table('almacen.alm_prod')
                 ->select('codigo')

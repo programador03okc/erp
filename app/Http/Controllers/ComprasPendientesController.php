@@ -29,6 +29,7 @@ use App\Models\Almacen\UnidadMedida;
 use App\Models\Comercial\CuadroCosto\CcAmFila;
 use App\Models\Comercial\CuadroCosto\CuadroCosto;
 use App\models\Configuracion\AccesosUsuarios;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Moneda;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
@@ -844,6 +845,12 @@ class ComprasPendientesController extends Controller
                     $reserva->estado = 1;
                     $reserva->save();
 
+                    $almacen = Almacen::find($request->almacenReserva);
+                    $nombreAlmacen = ($almacen!=null?$almacen->descripcion:'');
+
+                    $comentario = 'Reserva generada: ' . ($reserva->codigo ?? '').', Almacen:'.$nombreAlmacen. ', Agregado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Nueva Reserva en almacén', 2, $reserva->getTable(), null, $reserva, $comentario,'Logística');
+        
                     // if ($request->idDetalleRequerimiento > 0) {
                     //     $idRequerimientoList[] = DetalleRequerimiento::find($request->idDetalleRequerimiento)->first()->id_requerimiento;
                     // }

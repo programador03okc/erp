@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
+use App\Models\almacen\Transformacion;
+use App\Models\Configuracion\LogActividad;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\Tesoreria\TipoCambio;
 use Carbon\Carbon;
@@ -967,44 +969,59 @@ class TransformacionController extends Controller
 
     public function recibido_conforme_transformacion($id)
     {
-        $data = DB::table('almacen.transformacion')
-            ->where('id_transformacion', $id)
-            ->update(['conformidad' => true]);
-        return response()->json($data);
+        $transformacion = Transformacion::find($id);
+        $transformacion->conformidad = true;
+        $transformacion->save();
+
+        $comentario = 'Recibido conforme transformación ID: '.$id.' Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Tab ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
+
+        return response()->json($transformacion);
+
+
     }
 
     public function no_conforme_transformacion($id)
     {
-        $data = DB::table('almacen.transformacion')
-            ->where('id_transformacion', $id)
-            ->update(['conformidad' => false]);
-        return response()->json($data);
+
+        $transformacion = Transformacion::find($id);
+        $transformacion->conformidad = false;
+        $transformacion->save();
+
+        $comentario = 'Recibido no conforme transformación ID: '.$id.' Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Tab ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
+
+
+        return response()->json($transformacion);
     }
 
     public function iniciar_transformacion($id)
     {
-        $data = DB::table('almacen.transformacion')
-            ->where('id_transformacion', $id)
-            ->update([
-                'estado' => 24, //iniciado
-                'conformidad' => true,
-                'fecha_inicio' => date('Y-m-d H:i:s')
-            ]);
+ 
+        $transformacion = Transformacion::find($id);
+        $transformacion->estado = 24; //iniciado
+        $transformacion->conformidad = true;
+        $transformacion->fecha_inicio=  date('Y-m-d H:i:s');
+        $transformacion->save();
 
-        $transformacion = DB::table('almacen.transformacion')
+        $trans = DB::table('almacen.transformacion')
             ->select('id_od')
             ->where('id_transformacion', $id)
             ->first();
 
-        if ($transformacion->id_od !== null) {
+        if ($trans->id_od !== null) {
             DB::table('almacen.orden_despacho')
-                ->where('id_od', $transformacion->id_od)
+                ->where('id_od', $trans->id_od)
                 ->update([
                     'estado' => 24, //Iniciado
                 ]);
         }
 
-        return response()->json($data);
+        $comentario = 'Iniciar transformación ID: '.$id.' Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Tab ordenes de transformación pendientes', 3, $transformacion->getTable(), null, $transformacion, $comentario,'Servicios CAS');
+
+
+        return response()->json($transformacion);
     }
 
     public function procesar_transformacion(Request $request)

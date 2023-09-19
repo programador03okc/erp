@@ -3,6 +3,7 @@
 namespace App\Helpers\Almacen;
 
 use App\Helpers\Necesidad\RequerimientoHelper;
+use App\Models\Almacen\Almacen;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\almacen\DevolucionDetalle;
 use App\Models\almacen\GuiaCompraDetalle;
@@ -13,6 +14,7 @@ use App\Models\Almacen\Reserva;
 use App\Models\almacen\TransferenciaDetalle;
 use App\Models\almacen\Transformacion;
 use App\Models\almacen\Transformado;
+use App\Models\Configuracion\LogActividad;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -179,6 +181,13 @@ class ReservaHelper
         $actualReserva->deleted_at = new Carbon();
         $actualReserva->motivo_anulacion = isset($motivoDeAnulacion) ? $motivoDeAnulacion : '';
         $actualReserva->save();
+
+        $almacen = Almacen::find($actualReserva->id_almacen_reserva);
+        $nombreAlmacen = ($almacen!=null?$almacen->descripcion:'');
+
+        $comentario = 'Reserva anulada: ' . ($actualReserva->codigo ?? '').', Almacen:'.$nombreAlmacen. ', motivo: '.$actualReserva->motivo_anulacion.', Anulado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Nueva Reserva en almacén', 4, $actualReserva->getTable(), null, $actualReserva, $comentario,'Logística');
+
         return 'success';
     }
 
@@ -261,6 +270,13 @@ class ReservaHelper
                             $tipo_estado = 'success';
                             $cantidadReservasAnuladas++;
                             $mensaje = 'Reserva Anulada';
+
+                            $almacen = Almacen::find($reserva->id_almacen_reserva);
+                            $nombreAlmacen = ($almacen!=null?$almacen->descripcion:'');
+                            $comentario = 'Reserva anulada: ' . ($reserva->codigo ?? '').', Almacen:'.$nombreAlmacen. ', motivo: '.$reserva->motivo_anulacion.', Anulado por: ' . Auth::user()->nombre_corto;
+                            LogActividad::registrar(Auth::user(), 'Requerimientos atendidos', 4, $reserva->getTable(), null, $reserva, $comentario,'Logística');
+                    
+
                         }
                     } else {
                         $cantidadEstadoElaborado++;

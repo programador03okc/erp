@@ -23,7 +23,7 @@ class LogActividad extends Model {
         return $this->belongsTo(LogTipoAccion::class);
     }
 
-    public static function registrar($usuario, $formulario, $idAccion, $tabla = null, $valorAnterior = null, $nuevoValor = null, $comentarios = null)
+    public static function registrar($usuario, $formulario, $idAccion, $tabla = null, $valorAnterior = null, $nuevoValor = null, $comentarios = null, $modulo= null)
     {
         $log = new LogActividad();
             $log->fecha = new Carbon();
@@ -34,6 +34,7 @@ class LogActividad extends Model {
             if ($valorAnterior != null) { $log->valor_anterior = json_encode($valorAnterior, JSON_PRETTY_PRINT); }
             if ($nuevoValor != null) { $log->nuevo_valor = json_encode($nuevoValor, JSON_PRETTY_PRINT); }
             $log->comentarios = $comentarios;
+            $log->modulo = $modulo;
         $log->save();
     }
 

@@ -57,8 +57,8 @@
                 <td style="border: 6px solid #000 !important;">{{ $item->oc_fisica }}</td>
                 <td style="border: 6px solid #000 !important;">{{ $item->siaf }}</td>
                 <td style="border: 6px solid #000 !important;">{{ $item->fuente_financ }}</td>
-                <td style="border: 6px solid #000 !important;">{{ $item->fecha_emision }}</td>
-                <td style="border: 6px solid #000 !important;">{{ $item->fecha_recepcion }}</td>
+                <td style="border: 6px solid #000 !important;">{{ date('d/m/Y', strtotime($item->fecha_emision)) }}</td>
+                <td style="border: 6px solid #000 !important;">{{ date('d/m/Y', strtotime($item->fecha_recepcion)) }}</td>
                 <td style="border: 6px solid #000 !important;" align="center">{{ $item->periodo }}</td>
                 <td style="border: 6px solid #000 !important;" align="center">{{ $item->moneda }}</td>
                 <td style="border: 6px solid #000 !important;">{{ $item->importe }}</td>
@@ -77,7 +77,7 @@
                 <td style="border: 6px solid #000 !important;">{{ $item->monto_retencion }}</td>
                 <td style="border: 6px solid #000 !important;" align="center">{{ ($item->tiene_detraccion) ? 'SI' : 'NO' }}</td>
                 <td style="border: 6px solid #000 !important;">{{ $item->monto_detraccion }}</td>
-                <td style="border: 6px solid #000 !important;">{{ $item->programacion_pago }}</td>
+                <td style="border: 6px solid #000 !important;">{{ date('d/m/Y', strtotime($item->programacion_pago)) }}</td>
             </tr>
             @endforeach
         </tbody>

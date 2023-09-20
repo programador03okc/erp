@@ -45,6 +45,6 @@ class CobranzaFondo extends Model
 
     public function responsable()
     {
-        return $this->belongsTo(Usuario::class, 'responsable_id', 'id_usuario');
+        return $this->belongsTo(Usuario::class, 'responsable_id', 'id_usuario')->withTrashed();
     }
 }

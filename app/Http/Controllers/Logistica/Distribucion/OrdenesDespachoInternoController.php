@@ -5,9 +5,15 @@ namespace App\Http\Controllers\Logistica\Distribucion;
 use App\Helpers\NotificacionHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\almacen\Materia;
+use App\Models\Almacen\Requerimiento;
+use App\Models\almacen\Transformacion;
+use App\Models\almacen\Transformado;
 use App\models\Configuracion\AccesosUsuarios;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Usuario;
 use App\Models\Distribucion\OrdenDespacho;
+use App\Models\Distribucion\OrdenDespachoDetalle;
 use App\Models\mgcp\CuadroCosto\CuadroCosto;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use Carbon\Carbon;
@@ -234,27 +240,29 @@ class OrdenesDespachoInternoController extends Controller
                         ->whereDate('fecha_despacho', '=', (new Carbon($request->fecha_despacho))->format('Y-m-d'))
                         ->count();
 
-                    $id_od = DB::table('almacen.orden_despacho')
-                        ->insertGetId(
-                            [
-                                'id_sede' => $req->id_sede,
-                                'id_requerimiento' => $req->id_requerimiento,
-                                'id_almacen' => $req->id_almacen,
-                                'id_cliente' => $req->id_cliente,
-                                'codigo' => $codigo,
-                                'fecha_despacho' => $request->fecha_despacho,
-                                'fecha_documento' => $request->fecha_documento,
-                                'comentario' => trim($request->comentario),
-                                'nro_orden' => ($nro_orden + 1),
-                                'aplica_cambios' => true,
-                                'registrado_por' => $usuario,
-                                'fecha_registro' => $fechaRegistro,
-                                'estado' => 1,
-                            ],
-                            'id_od'
-                        );
+        
 
-                    $idOd=$id_od;
+                        $ordenDespacho = new OrdenDespacho();
+                        $ordenDespacho->id_sede= $req->id_sede;
+                        $ordenDespacho->id_requerimiento = $req->id_requerimiento;
+                        $ordenDespacho->id_almacen= $req->id_almacen;
+                        $ordenDespacho->id_cliente= $req->id_cliente;
+                        $ordenDespacho->codigo= $codigo;
+                        $ordenDespacho->fecha_despacho= $request->fecha_despacho;
+                        $ordenDespacho->fecha_documento= $request->fecha_documento;
+                        $ordenDespacho->comentario= trim($request->comentario);
+                        $ordenDespacho->nro_orden= ($nro_orden + 1);
+                        $ordenDespacho->aplica_cambios= true;
+                        $ordenDespacho->registrado_por= $usuario;
+                        $ordenDespacho->fecha_registro= $fechaRegistro;
+                        $ordenDespacho->estado=1;
+                        $ordenDespacho->save();
+
+
+                        $comentarioDespacho = 'Generar orden de despacho interno (cabecera). Id: ' . ($ordenDespacho->id_od ?? '').', Código OD: '. ($ordenDespacho->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+                        LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $ordenDespacho->getTable(), null, $ordenDespacho, $comentarioDespacho,'Logística');
+            
+                    $idOd=$ordenDespacho->id_od;
 
                     //Agrega accion en requerimiento
                     DB::table('almacen.alm_req_obs')
@@ -268,31 +276,30 @@ class OrdenesDespachoInternoController extends Controller
 
                     $codTrans = $this->transformacion_nextId($request->fecha_documento, $req->id_empresa);
 
-                    $id_transformacion = DB::table('almacen.transformacion')
-                        ->insertGetId(
-                            [
-                                'codigo' => $codTrans,
-                                'tipo' => "OT",
-                                'id_od' => $id_od,
-                                'id_cc' => $req->id_cc,
-                                'id_moneda' => 1,
-                                'fecha_documento' => $request->fecha_documento,
-                                'id_almacen' => $req->id_almacen,
-                                'descripcion_sobrantes' => '', //$req->descripcion_sobrantes,
-                                'total_materias' => 0,
-                                'total_directos' => 0,
-                                'costo_primo' => 0,
-                                'total_indirectos' => 0,
-                                'total_sobrantes' => 0,
-                                'costo_transformacion' => 0,
-                                'registrado_por' => $usuario,
-                                'conformidad' => false,
-                                'tipo_cambio' => 1,
-                                'fecha_registro' => $fechaRegistro,
-                                'estado' => 1,
-                            ],
-                            'id_transformacion'
-                        );
+                    $transformacion = new Transformacion();
+                    $transformacion->codigo = $codTrans;
+                    $transformacion->tipo = "OT";
+                    $transformacion->id_od = $ordenDespacho->id_od;
+                    $transformacion->id_cc = $req->id_cc;
+                    $transformacion->id_moneda = 1;
+                    $transformacion->fecha_documento = $request->fecha_documento;
+                    $transformacion->id_almacen = $req->id_almacen;
+                    $transformacion->descripcion_sobrantes = "";  //$req->descripcion_sobrantes
+                    $transformacion->total_materias = 0;
+                    $transformacion->total_directos = 0;
+                    $transformacion->costo_primo = 0;
+                    $transformacion->total_indirectos = 0;
+                    $transformacion->total_sobrantes = 0;
+                    $transformacion->costo_transformacion = 0;
+                    $transformacion->registrado_por = $usuario;
+                    $transformacion->conformidad = false;
+                    $transformacion->tipo_cambio = 1;
+                    $transformacion->fecha_registro = $fechaRegistro;
+                    $transformacion->estado = 1;
+                    $transformacion->save();
+
+                    $comentarioTranformacion = 'Generar transformación. '.'Id: '.$transformacion->id_transformacion.', Código transformación: ' . ($transformacion->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $transformacion->getTable(), null, $transformacion, $comentarioTranformacion,'Logística');
 
                     $detalles = DB::table('almacen.alm_det_req')
                         ->where([
@@ -306,54 +313,60 @@ class OrdenesDespachoInternoController extends Controller
 
                         if ($i->tiene_transformacion && $i->entrega_cliente) {
 
-                            $id_od_detalle = DB::table('almacen.orden_despacho_det')
-                                ->insertGetId(
-                                    [
-                                        'id_od' => $id_od,
-                                        'id_detalle_requerimiento' => $i->id_detalle_requerimiento,
-                                        'cantidad' => $i->cantidad,
-                                        'transformado' => $i->tiene_transformacion,
-                                        'estado' => 1,
-                                        'fecha_registro' => $fechaRegistro
-                                    ],
-                                    'id_od_detalle'
-                                );
+                            $ordenDepachoDetalle = new OrdenDespachoDetalle();
+                            $ordenDepachoDetalle->id_od =$idOd;
+                            $ordenDepachoDetalle->id_detalle_requerimiento = $i->id_detalle_requerimiento;
+                            $ordenDepachoDetalle->cantidad =  $i->cantidad;
+                            $ordenDepachoDetalle->transformado = $i->tiene_transformacion;
+                            $ordenDepachoDetalle->estado = 1;
+                            $ordenDepachoDetalle->fecha_registro= $fechaRegistro;
+                            $ordenDepachoDetalle->save();
 
-                            DB::table('almacen.transfor_transformado')
-                                ->insert([
-                                    'id_transformacion' => $id_transformacion,
-                                    'id_od_detalle' => $id_od_detalle,
-                                    'cantidad' => $i->cantidad,
-                                    'valor_unitario' => 0,
-                                    'valor_total' => 0,
-                                    'estado' => 1,
-                                    'fecha_registro' => $fechaRegistro
-                                ]);
+                            $comentario = 'Generar orden de despacho interno (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
+                            LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentario,'Logística');
+                
+                            $transforTranformado = new Transformado();
+                            $transforTranformado->id_transformacion = $transformacion->id_transformacion;
+                            $transforTranformado->id_od_detalle = $ordenDepachoDetalle->id_od_detalle;
+                            $transforTranformado->cantidad = $i->cantidad;
+                            $transforTranformado->valor_unitario = 0;
+                            $transforTranformado->valor_total =0;
+                            $transforTranformado->estado = 1;
+                            $transforTranformado->fecha_registro = $fechaRegistro;
+                            $transforTranformado->save();
+
+                            $comentarioTransformado = 'Generar transformado. '.'Id: '.$transforTranformado->id_transformado.', código transformación: ' . ($transformacion->codigo ?? '').',Generado por el sistema, Iniciado por: ' . Auth::user()->nombre_corto;
+                            LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $transforTranformado->getTable(), null, $transforTranformado, $comentarioTransformado,'Logística');
+                
+
                         } else if ($i->tiene_transformacion == false && $i->entrega_cliente == false) {
+                                
+                            $ordenDepachoDetalle = new OrdenDespachoDetalle();
+                            $ordenDepachoDetalle->id_od =$idOd;
+                            $ordenDepachoDetalle->id_detalle_requerimiento = $i->id_detalle_requerimiento;
+                            $ordenDepachoDetalle->cantidad =  $i->cantidad;
+                            $ordenDepachoDetalle->transformado = $i->tiene_transformacion;
+                            $ordenDepachoDetalle->estado = 1;
+                            $ordenDepachoDetalle->fecha_registro= $fechaRegistro;
+                            $ordenDepachoDetalle->save();
+                            
+                            $comentarioDetalleDespacho = 'Generar orden de despacho interno (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
+                            LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentarioDetalleDespacho,'Logística');
+                
+                            $materia = new Materia();
+                            $materia->id_transformacion = $transformacion->id_transformacion;
+                            $materia->cantidad = $i->cantidad;
+                            $materia->id_od_detalle = $ordenDepachoDetalle->id_od_detalle;
+                            $materia->valor_unitario = 0;
+                            $materia->valor_total = 0;
+                            $materia->estado = 1;
+                            $materia->fecha_registro = $fechaRegistro;
+                            $materia->save();
+                            
+                            $comentarioMateria = 'Generar materia. '.'Id: '.$materia->id_materia.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
 
-                            $id_od_detalle = DB::table('almacen.orden_despacho_det')
-                                ->insertGetId(
-                                    [
-                                        'id_od' => $id_od,
-                                        'id_detalle_requerimiento' => $i->id_detalle_requerimiento,
-                                        'cantidad' => $i->cantidad,
-                                        'transformado' => $i->tiene_transformacion,
-                                        'estado' => 1,
-                                        'fecha_registro' => $fechaRegistro
-                                    ],
-                                    'id_od_detalle'
-                                );
-
-                            DB::table('almacen.transfor_materia')
-                                ->insert([
-                                    'id_transformacion' => $id_transformacion,
-                                    'cantidad' => $i->cantidad,
-                                    'id_od_detalle' => $id_od_detalle,
-                                    'valor_unitario' => 0, //($val / $i->cantidad),
-                                    'valor_total' => 0,
-                                    'estado' => 1,
-                                    'fecha_registro' => $fechaRegistro
-                                ]);
+                            LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $materia->getTable(), null, $materia, $comentarioMateria,'Logística');
+                
                         }
 
                         // DB::table('almacen.alm_det_req')
@@ -362,9 +375,12 @@ class OrdenesDespachoInternoController extends Controller
 
                     }
 
-                    DB::table('almacen.alm_req')
-                        ->where('id_requerimiento', $request->id_requerimiento)
-                        ->update(['estado_despacho' => 22]); //despacho interno
+                    $requerimiento = Requerimiento::find($request->id_requerimiento);
+                    $requerimiento->estado_despacho = 22; // despacho interno
+                    $requerimiento->save();
+
+                    $comentarioRequerimientoActualizado = 'Actualizando estado de requerimiento ID: '.$request->id_requerimiento.' a estado (22) despacho interno, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioRequerimientoActualizado,'Logística');
 
                     $arrayRspta = array(
                         'tipo' => 'success',
@@ -380,7 +396,7 @@ class OrdenesDespachoInternoController extends Controller
                     $idUsuarios = Usuario::getAllIdUsuariosPorRol(26);
                 }
                 //$orden_despacho = OrdenDespacho::where('id_requerimiento', $request->id_requerimiento)->first();
-                $idOd= isset($id_od) && $id_od>0?$id_od:(isset($req->id_od) && $req->id_od > 0? $req->id_od:0);
+                $idOd= isset($ordenDespacho->id_od) && $ordenDespacho->id_od>0?$ordenDespacho->id_od:(isset($req->id_od) && $req->id_od > 0? $req->id_od:0);
                // Debugbar::info($idOd);
                 if($idOd>0){
                     $orden_despacho = OrdenDespacho::find($idOd);

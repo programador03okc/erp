@@ -1043,7 +1043,7 @@ class OrdenController extends Controller
         $hasta = Carbon::createFromFormat('Y-m-d', ($request->fechaRegistroHasta));
 
         if ($request->chkFechaRegistro == 'on') {
-            $request->session()->put('clFechaRegistroDesde',$desde );
+            $request->session()->put('clFechaRegistroDesde', $desde);
             $request->session()->put('clFechaRegistroHasta', $hasta->addDay()->addSeconds(-1));
         } else {
             $request->session()->forget('clFechaRegistroDesde');
@@ -2791,14 +2791,14 @@ class OrdenController extends Controller
 
 
                 DB::commit();
-                
+
                 $codigo = Orden::nextCodigoOrden($orden->id_tp_documento);
                 $cantidadCodigosExistentes = Orden::validateCodigoOrden($codigo);
-                
-                if($cantidadCodigosExistentes>0){
+
+                if ($cantidadCodigosExistentes > 0) {
                     $codigo = Orden::nextCodigoOrden($orden->id_tp_documento);
                 }
-    
+
                 $ord = Orden::find($orden->id_orden_compra);
                 $ord->codigo = $codigo;
                 $ord->save();
@@ -2846,9 +2846,10 @@ class OrdenController extends Controller
 
 
                 //registrar en log actividad
-                $comentario = 'Orden: '.$codigoOrden;
-                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $orden->getTable(), null, $orden, $comentario);
-                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $detalle->getTable(), null, $detalle, $comentario);
+                $comentarioCabecera = 'Orden (cabecera): ' . $codigoOrden;
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $orden->getTable(), null, $orden, $comentarioCabecera, 'Logística');
+                $comentarioDetalle = 'Orden (detalle): ' . $codigoOrden;
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle, 'Logística');
 
                 // if ($request->migrar_oc_softlink == true) {
                 //     $statusMigracionSoftlink = (new MigrateOrdenSoftLinkController)->migrarOrdenCompra($idOrden)->original ?? null; //tipo : success , warning, error, mensaje : ""
@@ -3245,8 +3246,8 @@ class OrdenController extends Controller
             }
 
             $pagoEfectuados = (new RegistroPagoController)->consultarPagoEfectuadosDeOrden($request->id_orden);
-            if ($pagoEfectuados >0) { // cantidad de pagos efectuados
-                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden debido a que cuenta con '.$pagoEfectuados.' pago procesado' ]);
+            if ($pagoEfectuados > 0) { // cantidad de pagos efectuados
+                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden debido a que cuenta con ' . $pagoEfectuados . ' pago procesado']);
             }
 
 
@@ -3465,11 +3466,12 @@ class OrdenController extends Controller
                 }
 
                 //registrar en log actividad
-                $comentario='Orden: '.$orden->codigo;
-                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 3, $orden->getTable(), null, $orden, $comentario);
-                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 3, $detalle->getTable(), null, $detalle, $comentario);
+                $comentarioCabecera = 'Orden (cabecera): ' . $orden->codigo;
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 3, $orden->getTable(), null, $orden, $comentarioCabecera, 'Logística');
+                $comentarioDetalle = 'Orden (detalle): ' . $orden->codigo;
+                LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 3, $detalle->getTable(), null, $detalle, $comentarioDetalle, 'Logística');
 
-                
+
                 // if (str_contains($data['mensaje'], 'No existe un id_softlink en la OC seleccionada')) {
                 //     $migrarOrdenSoftlink = (new MigrateOrdenSoftLinkController)->migrarOrdenCompra($request->id_orden)->original;
                 //     if ($migrarOrdenSoftlink['tipo'] == 'success') {
@@ -4030,11 +4032,11 @@ class OrdenController extends Controller
             // actualizar campo estado 7 del registro si la orden fue anulada
             PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null, $orden->id_orden_compra, null);
 
-                            //registrar en log actividad
-            $comentario = 'Orden: '.$orden->codigo.', status: '.$status.' Mensaje: ('.implode(',',$msj).')';
-            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 4, $orden->getTable(), null, $orden, $comentario);
-            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 4, $detalle->getTable(), null, $detalle, $comentario);
-            
+            //registrar en log actividad
+            $comentarioCabecera = 'Orden (cabecera): ' . $orden->codigo . ', status: ' . $status . ' Mensaje: (' . implode(',', $msj) . ')';
+            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 4, $orden->getTable(), null, $orden, $comentarioCabecera, 'Logística');
+            $comentarioDetalle = 'Orden (detalle): ' . $orden->codigo . ', status: ' . $status . ' Mensaje: (' . implode(',', $msj) . ')';
+            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 4, $detalle->getTable(), null, $detalle, $comentarioDetalle, 'Logística');
         } // -> si no tiene detalle la orden
         else {
             $status = 204;
@@ -4085,8 +4087,8 @@ class OrdenController extends Controller
             }
 
             $pagoEfectuados = (new RegistroPagoController)->consultarPagoEfectuadosDeOrden($request->idOrden);
-            if ($pagoEfectuados >0) { // cantidad de pagos efectuados
-                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden debido a que cuenta con '.$pagoEfectuados.' pago procesado' ]);
+            if ($pagoEfectuados > 0) { // cantidad de pagos efectuados
+                return response()->json(['id_orden_compra' => 0, 'codigo' => '', 'id_tp_documento' => '', 'tipo_estado' => 'warning', 'mensaje' => 'No se puede actualizar la orden debido a que cuenta con ' . $pagoEfectuados . ' pago procesado']);
             }
 
 
@@ -4357,7 +4359,7 @@ class OrdenController extends Controller
 
         if ($cuentaBancariaProveedor && $cuentaBancariaProveedor->id_cuenta_contribuyente > 0) {
             $comentario = 'Cuenta: ' . ($request->nro_cuenta ?? '') . ', CCI: ' . ($request->nro_cuenta_interbancaria ?? '') . ', Agregado por: ' . Auth::user()->nombre_corto;
-            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $cuentaBancariaProveedor->getTable(), null, $cuentaBancariaProveedor, $comentario);
+            LogActividad::registrar(Auth::user(), 'Orden Compra / servicio', 2, $cuentaBancariaProveedor->getTable(), null, $cuentaBancariaProveedor, $comentario, 'Logística');
 
             $status = 200;
         }
@@ -4642,7 +4644,7 @@ class OrdenController extends Controller
 
                                             $comentario = 'Tipo de cuenta: ' . ($request->tipo_impuesto == 1 ? 'Detracción' : ($request->tipo_impuesto == 2 ? 'Renta' : 'No aplica')) . ', Agregado por: ' . Auth::user()->nombre_corto;
 
-                                            LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $requerimiento->getTable(), $anteriorValor, $nuevoValor, $comentario);
+                                            LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $requerimiento->getTable(), $anteriorValor, $nuevoValor, $comentario, 'Logística');
                                         }
                                     }
                                 }

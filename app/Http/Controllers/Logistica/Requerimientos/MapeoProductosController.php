@@ -9,6 +9,7 @@ use App\Http\Controllers\Migraciones\MigrateRequerimientoSoftLinkController;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Producto;
 use App\Models\Almacen\Requerimiento;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Rrhh\Persona;
 use Dotenv\Regex\Success;
 use Illuminate\Support\Facades\DB;
@@ -152,6 +153,10 @@ class MapeoProductosController extends Controller
                 $data=['id_producto'=>$productoCreado->id_producto];
                 $status="success";
                 $mensaje="Producto creado";
+                
+                $comentario="Producto creado: ".$productoCreado->codigo.' '.$productoCreado->part_number.' '.$productoCreado->descripcion.', Creado por:'. Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Requerimientos pendientes', 2, $producto->getTable(), null, $producto, $comentario, 'Logística');
+
             }else{
                 $status="warning";
                 $mensaje="Hubo un problema para crear el producto";
@@ -173,6 +178,7 @@ class MapeoProductosController extends Controller
 
         if(!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $idDetalleRequerimiento) >=1){ // id que contenga solo numeros
 
+            $valorAtenrior = DetalleRequerimiento::find($idDetalleRequerimiento);
             $detalle = DetalleRequerimiento::find($idDetalleRequerimiento);
             $detalle->id_producto =$nuevoIdProducto;
             $detalle->save();
@@ -180,6 +186,11 @@ class MapeoProductosController extends Controller
             $this->actualizarUnidadMedidaDetalleRequerimiento($idDetalleRequerimiento,$nuevoIdProducto);
             $status='success';
             $mensaje='Id producto actualizado';
+
+            $productoMapeado = Producto::find($nuevoIdProducto);
+            $comentario = 'Maperar Ítem. item de requerimiento: '.($detalle->codigo.' '.$detalle->part_number.' '.$detalle->descripcion).', Producto mapeado: '.($productoMapeado->codigo.' '.$productoMapeado->part_number.' '.$productoMapeado->descripcion).' , Mapeado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Mapeo de productos', 3, $detalle->getTable(), $valorAtenrior, $detalle, $comentario, 'Logística');
+
 
         }else{
             $status='warning';
@@ -201,34 +212,39 @@ class MapeoProductosController extends Controller
                 $nuevaCantidad= $detalleOrigen->cantidad;
             }
     
-            $duplicaDetalleRequerimiento= DB::table('almacen.alm_det_req')->insertGetId(
-                [
-                    'id_requerimiento' => $detalleOrigen->id_requerimiento,
-                    'part_number' => $detalleOrigen->part_number,
-                    'id_producto' => $nuevoIdProducto,
-                    'cantidad' => $nuevaCantidad,
-                    'descripcion' => $detalleOrigen->descripcion,
-                    'id_unidad_medida' => $detalleOrigen->id_unidad_medida,
-                    'id_moneda' => $detalleOrigen->id_moneda,
-                    'estado' => 1,
-                    'id_cc_am_filas' => $detalleOrigen->id_cc_am_filas,
-                    'id_tipo_item' => $detalleOrigen->id_tipo_item,
-                    'tiene_transformacion' => $detalleOrigen->tiene_transformacion,
-                    'proveedor_id' => $detalleOrigen->proveedor_id,
-                    'partida' => $detalleOrigen->partida,
-                    'centro_costo_id' => $detalleOrigen->centro_costo_id,
-                    'precio_unitario' => $detalleOrigen->precio_unitario,
-                    'subtotal' => $detalleOrigen->subtotal,
-                    'motivo' => $detalleOrigen->motivo,
-                    'fecha_registro' => date('Y-m-d H:i:s')
-                ],
-                    'id_detalle_requerimiento'
-                );
+            $duplicaDetalleRequerimiento = new DetalleRequerimiento();
+            $duplicaDetalleRequerimiento->id_requerimiento = $detalleOrigen->id_requerimiento;
+            $duplicaDetalleRequerimiento->part_number = $detalleOrigen->part_number;
+            $duplicaDetalleRequerimiento->id_producto = $nuevoIdProducto;
+            $duplicaDetalleRequerimiento->cantidad = $nuevaCantidad;
+            $duplicaDetalleRequerimiento->descripcion = $detalleOrigen->descripcion;
+            $duplicaDetalleRequerimiento->id_unidad_medida = $detalleOrigen->id_unidad_medida;
+            $duplicaDetalleRequerimiento->id_moneda = $detalleOrigen->id_moneda;
+            $duplicaDetalleRequerimiento->estado = 1;
+            $duplicaDetalleRequerimiento->id_cc_am_filas= $detalleOrigen->id_cc_am_filas;
+            $duplicaDetalleRequerimiento->id_tipo_item = $detalleOrigen->id_tipo_item;
+            $duplicaDetalleRequerimiento->tiene_transformacion = $detalleOrigen->tiene_transformacion;
+            $duplicaDetalleRequerimiento->proveedor_id = $detalleOrigen->proveedor_id;
+            $duplicaDetalleRequerimiento->partida = $detalleOrigen->partida;
+            $duplicaDetalleRequerimiento->centro_costo_id = $detalleOrigen->centro_costo_id;
+            $duplicaDetalleRequerimiento->precio_unitario = $detalleOrigen->precio_unitario;
+            $duplicaDetalleRequerimiento->subtotal = $detalleOrigen->subtotal;
+            $duplicaDetalleRequerimiento->motivo = $detalleOrigen->motivo;
+            $duplicaDetalleRequerimiento->id_partida_pi = $detalleOrigen->id_partida_pi;
+            $duplicaDetalleRequerimiento->fecha_registro = date('Y-m-d H:i:s');
+            $duplicaDetalleRequerimiento->save();
+
+    
             
-                if($duplicaDetalleRequerimiento>0){
+                if($duplicaDetalleRequerimiento->id_detalle_requerimiento >0){
                     $status='success';
-                    $data=['id_detalle_requerimiento'=>$duplicaDetalleRequerimiento];
+                    $data=['id_detalle_requerimiento'=>$duplicaDetalleRequerimiento->id_detalle_requerimiento];
                     $mensaje='Item duplicado';
+
+
+                    $comentario="Item duplicado. id: ".$duplicaDetalleRequerimiento->id_detalle_requerimiento.', descripción: '.$duplicaDetalleRequerimiento->descripcion.', cantidad: '.$duplicaDetalleRequerimiento->cantidad.', duplicado por:'. Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Mapeo de productos', 2, $duplicaDetalleRequerimiento->getTable(), null, $duplicaDetalleRequerimiento, $comentario, 'Logística');
+    
                 }
 
         }else{
@@ -263,7 +279,13 @@ class MapeoProductosController extends Controller
     
                 // anular items si existe
                 if($det['id_detalle_requerimiento'] >0 && $det['estado'] =='7'){
-                     DB::table('almacen.alm_det_req')->where('id_detalle_requerimiento', $det['id_detalle_requerimiento'])->update(['estado' => 7]); // estado anulado
+                    $itemAnulado = DetalleRequerimiento::find($det['id_detalle_requerimiento']);
+                    $itemAnulado->estado = 7;
+                    $itemAnulado->save();
+
+                    $comentario = 'Item anulado : '.($itemAnulado->codigo.' '.$itemAnulado->part_number.' '.$itemAnulado->descripcion).', Anulado por:'. Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Mapeo de productos', 4, $itemAnulado->getTable(), null, $itemAnulado, $comentario, 'Logística');
+
                     $cantidadAnulado++;
                 }   
 

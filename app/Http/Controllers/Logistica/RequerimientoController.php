@@ -46,6 +46,7 @@ use App\Models\Almacen\RequerimientoLogisticoView;
 use App\Models\Almacen\Transferencia;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Grupo;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Finanzas\PresupuestoInterno;
 use App\Models\Logistica\AdjuntosLogisticos;
 use App\Models\Logistica\Orden;
@@ -1113,6 +1114,12 @@ class RequerimientoController extends Controller
             $req->codigo = $codigo;
             $req->save();
 
+
+            $comentarioCabecera = 'Nuevo requerimiento logístico (cabecera): ' . ($req->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 2, $req->getTable(), null, $req, $comentarioCabecera,'Necesidades');
+            $comentarioDetalle = 'Nuevo requerimiento logístico (detalle): ' . ($req->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+
             $this->guardarAdjuntoNivelRequerimiento($requerimiento, $codigo);
 
             $adjuntoDetelleRequerimiento = [];
@@ -1552,6 +1559,12 @@ class RequerimientoController extends Controller
             }
         }
 
+        $comentarioCabecera = 'Actualizar requerimiento logístico (cabecera): ' . ($requerimiento->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Necesidades');
+        $comentarioDetalle = 'Actualizar requerimiento logístico (detalle): ' . ($requerimiento->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 3, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+
+
         // detalle requerimientos para anular
         foreach ($todoDetalleRequerimiento as $detalleRequerimiento) {
             if (!in_array($detalleRequerimiento->id_detalle_requerimiento, $idDetalleRequerimientoProcesado)) {
@@ -1561,6 +1574,10 @@ class RequerimientoController extends Controller
                 // anular adjunto detalle requerimiento
                 AdjuntoDetalleRequerimiento::where('id_detalle_requerimiento', '=', $detalleRequerimiento->id_detalle_requerimiento)
                     ->update(['estado' => 7]);
+
+                    $comentarioDetalle = 'Anular item con id requerimiento:'.$detalleRequerimiento->id_detalle_requerimiento.', codigo: ' . ($requerimiento->codigo ?? '').', Anular por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $detalleConAnulidad->getTable(), null, $detalleConAnulidad, $comentarioDetalle,'Necesidades');
+            
             }
 
             // anular adjuntos de detalle requerimiento
@@ -1761,8 +1778,15 @@ class RequerimientoController extends Controller
 
                     $mensaje = 'Se anulo el requerimiento ' . $requerimiento->codigo . ' y su transferencia fue anulada';
                     $tipoMensaje = 'success';
+
+                    $comentarioCabecera = 'Anular requerimiento logístico (cabecera). codigo: ' . ($requerimiento->codigo ?? '').'. Anular transferencia: '.$transferencia->codigo.',  Anular por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Necesidades');
+                    $comentarioDetalle = 'Anular requerimiento logístico (detalle). codigo: ' . ($requerimiento->codigo ?? '').'. Anular transferencia: '.$transferencia->codigo.',  Anular por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioDetalle,'Necesidades');
+
+                    
                 } else { // no se puede anular un requerimiento con transferencia procesada
-                    $mensaje = 'No es posible anulr el requerimiento ' . $requerimiento->codigo . ' tiene una transferencia procesada';
+                    $mensaje = 'No es posible anular el requerimiento ' . $requerimiento->codigo . ' tiene una transferencia procesada';
                     $tipoMensaje = 'warning';
                 }
             } else {
@@ -1778,6 +1802,12 @@ class RequerimientoController extends Controller
                 $mensaje = 'Se anulo el requerimiento ' . $requerimiento->codigo;
                 $tipoMensaje = 'success';
 
+                $comentarioCabecera = 'Anular requerimiento (cabecera). codigo: ' . ($requerimiento->codigo ?? '').',  Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Necesidades');
+                $comentarioDetalle = 'Anular requerimiento (detalle). codigo: ' . ($requerimiento->codigo ?? '').',  Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+
+
                 if (intval($requerimiento->id_requerimiento) > 0) {
                     $documento = $this->obtenerIdDocumento(1, $requerimiento->id_requerimiento);
                 }
@@ -1792,6 +1822,8 @@ class RequerimientoController extends Controller
                 $aprobacion->tiene_sustento = false;
                 $aprobacion->save();
             }
+
+ 
 
             DB::commit();
             return response()->json(['estado' => $requerimiento->estado, 'mensaje' => $mensaje, 'tipo_mensaje' => $tipoMensaje]);

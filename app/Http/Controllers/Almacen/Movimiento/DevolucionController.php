@@ -7,8 +7,11 @@ use App\Http\Controllers\AlmacenController as GenericoAlmacenController;
 use App\Http\Controllers\Tesoreria\CierreAperturaController as CierreAperturaController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\almacen\Devolucion;
+use App\Models\almacen\DevolucionDetalle;
 use App\Models\Almacen\Reserva;
 use App\models\Configuracion\AccesosUsuarios;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Presupuestos\Moneda;
 use App\Models\Tesoreria\TipoCambio;
 use Carbon\Carbon;
@@ -17,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Undefined;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Deviations;
 use Yajra\DataTables\Facades\DataTables;
 
 class DevolucionController extends Controller
@@ -811,16 +815,21 @@ class DevolucionController extends Controller
                 ->first();
             //Si existe ingreso y salida relacionado
             if ($mov->estado == 1) {
-                DB::table('cas.devolucion')
-                    ->where('id_devolucion', $request->id_devolucion)
-                    ->update([
-                        'estado' => 2,
-                        'revisado_por' => $request->responsable_revision,
-                        'comentario_revision' => $request->comentario_revision,
-                        'fecha_revision' => new Carbon(),
-                    ]);
+
+                $devolucion = Devolucion::find($request->id_devolucion);
+                $devolucion->estado= 2;
+                $devolucion->revisado_por = $request->responsable_revision;
+                $devolucion->comentario_revision = $request->comentario_revision;
+                $devolucion->fecha_revision = new Carbon();
+                $devolucion->save();
+
                 $mensaje = 'Se dió la conformidad correctamente.';
                 $tipo = 'success';
+
+                $comentario = 'Dar conformidad a devolución con ID: '.$request->id_devolucion.' Actualizado por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Lista de devoluciones', 3, $devolucion->getTable(), null, $devolucion, $comentario,'Servicios CAS');
+        
+
                 //Revisada
             } else if ($mov->estado == 2) {
                 $mensaje = 'La devolución ya fue revisada.';
@@ -850,9 +859,14 @@ class DevolucionController extends Controller
                 ->first();
             //Si existe ingreso y salida relacionado
             if ($dev->estado !== 3) {
-                DB::table('cas.devolucion')
-                    ->where('id_devolucion', $id_devolucion)
-                    ->update(['estado' => 1]);
+
+                $devolucion = Devolucion::find($id_devolucion);
+                $devolucion->estado= 1;
+                $devolucion->save();
+
+                $comentario = 'Revertir conformidad a devolución con ID: '.$id_devolucion.' Actualizado por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Lista de devoluciones', 3, $devolucion->getTable(), null, $devolucion, $comentario,'Servicios CAS');
+
                 $mensaje = 'Se dió revertió correctamente.';
                 $tipo = 'success';
                 //Revisada

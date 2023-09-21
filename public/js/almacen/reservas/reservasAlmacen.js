@@ -173,7 +173,7 @@ function listarReservasAlmacen(id_usuario) {
                     </button>`:``)
                     :'';
 
-                    return $btn_editar+$btn_eliminar+((([17,27,1,3,77].includes(auth_user.id_usuario))? btnAjustaReserva :''));
+                    return $btn_editar+$btn_eliminar+((([17,27,1,3,77,145].includes(auth_user.id_usuario))? btnAjustaReserva :''));
 
 
                 }, targets: 15

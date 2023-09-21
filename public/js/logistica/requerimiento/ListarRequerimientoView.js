@@ -611,9 +611,31 @@ class ListarRequerimientoView {
                 that.construirSeccionItemsDeRequerimiento(res['det_req'], res['requerimiento'][0]['simbolo_moneda'],res['requerimiento'][0]['id_presupuesto_interno']);
                 that.construirSeccionHistorialAprobacion(res['historial_aprobacion']);
                 that.construirSeccionFlujoAprobacion(res['flujo_aprobacion']);
+
+                // calcular monto neto, monto igv y monto total cuando no existe valor en los montos de la cabecera del req
+                if(! parseFloat(res['requerimiento'][0]['monto_total']) >0){
+                    let montoNeto=0;
+                    let montoIGV=0;
+                    let montoTotal=0;
+                    res['det_req'].forEach(item => {
+                        montoNeto += (parseFloat(item.precio_unitario) * parseFloat(item.cantidad));
+                    });
+
+                    if(res['requerimiento']['incluye_igv']){
+                        montoIGV = parseFloat(montoNeto)*0.18;
+                    }
+
+                    montoTotal = parseFloat(montoNeto) + parseFloat(montoIGV);
+
+                    document.querySelector("div[id='modal-requerimiento'] table[id='listaDetalleRequerimientoModal'] label[name='monto_subtotal']").textContent = $.number(montoNeto, 2);
+                    document.querySelector("div[id='modal-requerimiento'] table[id='listaDetalleRequerimientoModal'] label[name='monto_igv']").textContent = $.number(montoIGV, 2);
+                    document.querySelector("div[id='modal-requerimiento'] table[id='listaDetalleRequerimientoModal'] label[name='monto_total']").textContent = $.number(montoTotal, 2);
+                }
+                // 
+
                 $('#modal-requerimiento div.modal-body').LoadingOverlay("hide", true);
                 setTimeout(function () {
-                         that.calcularPresupuestoUtilizadoYSaldoPorPartida();
+                        that.calcularPresupuestoUtilizadoYSaldoPorPartida();
                 }, 2000);
 
             }).catch(function (err) {

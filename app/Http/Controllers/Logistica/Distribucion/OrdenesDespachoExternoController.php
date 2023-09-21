@@ -1676,7 +1676,7 @@ class OrdenesDespachoExternoController extends Controller
 
             $montoSubtotal = $request->precio_unitario ?? null;
             $montoIgv = $request->importe_igv ?? null;
-            $montoTotal = $request->importe_tota ?? null;
+            $montoTotal = $request->importe_total ?? null;
 
             $requerimiento = new Requerimiento();
             $requerimiento->id_tipo_requerimiento = 8; // por defecto Otros

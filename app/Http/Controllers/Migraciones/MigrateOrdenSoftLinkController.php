@@ -453,6 +453,13 @@ class MigrateOrdenSoftLinkController extends Controller
                 ->where('mov_id',$mov_id)
                 ->update(['num_docu' => $num_docu]);
 
+                DB::table('logistica.log_ord_compra')
+                ->where('id_orden_compra', $id_orden_compra)
+                ->update([
+                    'codigo_softlink' => $num_docu,
+                    'id_softlink' => $mov_id
+                ]);
+
                 $arrayRspta = array(
                     'tipo' => 'success',
                     'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,

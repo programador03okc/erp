@@ -427,7 +427,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
             // si existe uno o mas cod_docu con num_doc iguales entonces debe volver a contar para aumentar el contador y actualizar las tablas movimien y detmov
             $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $num_docu],['cod_docu',$cod_docu]])->count();
-            if ($cantidadCodigosExistentes > 1) {
+            if ($cantidadCodigosExistentes > 0) {
                     //obtiene el ultimo registro
                     $ult_mov = DB::connection('soft')->table('movimien')
                     ->where([

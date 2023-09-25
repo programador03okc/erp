@@ -255,7 +255,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
                             return  array(
                                 'tipo' => 'warning',
-                                'mensaje' => 'La orden AGILE es distinta a la de SOFTLINK',
+                                'mensaje' => 'La orden AGILE tiene distinta empresa que la migrada en SOFTLINK',
                                 'ocSoftlink' => array('cabecera' => $oc_softlink),
                                 'ocAgile' => array('cabecera' => $oc),
                             );

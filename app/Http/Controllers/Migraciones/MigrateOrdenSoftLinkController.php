@@ -248,7 +248,20 @@ class MigrateOrdenSoftLinkController extends Controller
                     //obtiene oc softlink
                     $oc_softlink = DB::connection('soft')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
 
+
                     if ($oc_softlink !== null) {
+
+                        if($oc_softlink->cod_docu != $cod_docu){
+
+                            return  array(
+                                'tipo' => 'warning',
+                                'mensaje' => 'La orden AGILE es distinta a la de SOFTLINK',
+                                'ocSoftlink' => array('cabecera' => $oc_softlink),
+                                'ocAgile' => array('cabecera' => $oc),
+                            );
+
+                        }
+
                         //pregunta si fue referenciado
                         $guia_referen = DB::connection('soft')->table('movimien')
                             ->where([
@@ -426,48 +439,50 @@ class MigrateOrdenSoftLinkController extends Controller
             DB::commit();
 
             // si existe uno o mas cod_docu con num_doc iguales entonces debe volver a contar para aumentar el contador y actualizar las tablas movimien y detmov
-            $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $num_docu],['cod_docu',$cod_docu]])->count();
-            if ($cantidadCodigosExistentes > 1) {
-                    //obtiene el ultimo registro
-                    $ult_mov = DB::connection('soft')->table('movimien')
-                    ->where([
-                        ['num_docu', '>', $yy . '0000000'],
-                        ['num_docu', '<', $yy . '9999999'],
-                        ['cod_suc', '=', $cod_suc],
-                        ['tipo', '=', 1], //ingreso
-                        ['cod_docu', '=', $cod_docu]
-                    ])
-                    ->orderBy('num_docu', 'desc')->first();
-                //obtiene el correlativo
-                $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
-                //crea el correlativo del documento
-                $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
-                //anida el anio con el numero de documento
-                $num_docu = $yy . $nro_mov;
+            if ($oc->id_softlink == null) {
+                $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $num_docu],['cod_docu',$cod_docu]])->count();
+                if ($cantidadCodigosExistentes > 1) {
+                        //obtiene el ultimo registro
+                        $ult_mov = DB::connection('soft')->table('movimien')
+                        ->where([
+                            ['num_docu', '>', $yy . '0000000'],
+                            ['num_docu', '<', $yy . '9999999'],
+                            ['cod_suc', '=', $cod_suc],
+                            ['tipo', '=', 1], //ingreso
+                            ['cod_docu', '=', $cod_docu]
+                        ])
+                        ->orderBy('num_docu', 'desc')->first();
+                    //obtiene el correlativo
+                    $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
+                    //crea el correlativo del documento
+                    $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+                    //anida el anio con el numero de documento
+                    $num_docu = $yy . $nro_mov;
 
-                DB::connection('soft')->table('movimien')
-                ->where('mov_id',$mov_id)
-                ->update(['num_docu' => $num_docu]);
+                    DB::connection('soft')->table('movimien')
+                    ->where('mov_id',$mov_id)
+                    ->update(['num_docu' => $num_docu]);
 
-                DB::connection('soft')->table('detmov')
-                ->where('mov_id',$mov_id)
-                ->update(['num_docu' => $num_docu]);
+                    DB::connection('soft')->table('detmov')
+                    ->where('mov_id',$mov_id)
+                    ->update(['num_docu' => $num_docu]);
 
-                DB::table('logistica.log_ord_compra')
-                ->where('id_orden_compra', $id_orden_compra)
-                ->update([
-                    'codigo_softlink' => $num_docu,
-                    'id_softlink' => $mov_id
-                ]);
+                    DB::table('logistica.log_ord_compra')
+                    ->where('id_orden_compra', $id_orden_compra)
+                    ->update([
+                        'codigo_softlink' => $num_docu,
+                        'id_softlink' => $mov_id
+                    ]);
 
-                $arrayRspta = array(
-                    'tipo' => 'success',
-                    'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
-                    'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
-                    'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
-                    'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
-                );
- 
+                    $arrayRspta = array(
+                        'tipo' => 'success',
+                        'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
+                        'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
+                        'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
+                        'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
+                    );
+    
+                }
             }
             // return response()->json($msj);
             return response()->json($arrayRspta, 200);

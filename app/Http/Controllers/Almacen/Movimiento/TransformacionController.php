@@ -1475,6 +1475,7 @@ class TransformacionController extends Controller
             'oc_propias.orden_am',
             'entidades.nombre',
             'respon.nombre_corto as nombre_responsable',
+            'alm_und_medida.abreviatura',
             )
         ->join('almacen.transformacion','transformacion.id_transformacion','=','transfor_materia.id_transformacion')
         ->join('almacen.orden_despacho_det','orden_despacho_det.id_od_detalle','=','transfor_materia.id_od_detalle')
@@ -1489,6 +1490,8 @@ class TransformacionController extends Controller
         ->leftjoin('mgcp_acuerdo_marco.oc_propias', 'oc_propias.id_oportunidad', '=', 'oportunidades.id')
         ->leftjoin('mgcp_acuerdo_marco.entidades', 'entidades.id', '=', 'oportunidades.id_entidad')
         ->leftjoin('configuracion.sis_usua as respon', 'respon.id_usuario', '=', 'transformacion.responsable')
+        ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+
         ->where('transfor_materia.estado',1)
         ->get();
 

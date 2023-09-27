@@ -16,6 +16,8 @@
             <th>Código de Producto</th>
             <th>Part Number</th>
             <th>Descripción</th>
+            <th>Cant.</th>
+            <th>Unid.</th>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +38,8 @@
                 <td>{{ $item->codigo_producto }}</td>
                 <td>{{ $item->part_number }}</td>
                 <td>{{ $item->descripcion }}</td>
+                <td>{{ $item->cantidad }}</td>
+                <td>{{ ($item->abreviatura !== null ? $item->abreviatura : '')  }}</td>
             </tr>
         @endforeach
 

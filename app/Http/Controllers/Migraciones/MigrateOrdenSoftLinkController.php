@@ -251,15 +251,14 @@ class MigrateOrdenSoftLinkController extends Controller
 
                     if ($oc_softlink !== null) {
 
-                        if($oc_softlink->cod_docu != $cod_docu){
+                        if ($oc_softlink->cod_docu != $cod_docu) {
 
                             return  array(
                                 'tipo' => 'warning',
-                                'mensaje' => 'La orden AGILE tiene distinta empresa que la migrada en SOFTLINK',
+                                'mensaje' => 'La orden Agile tiene distinta empresa o tipo orden a la migrada en Softlink',
                                 'ocSoftlink' => array('cabecera' => $oc_softlink),
                                 'ocAgile' => array('cabecera' => $oc),
                             );
-
                         }
 
                         //pregunta si fue referenciado
@@ -306,12 +305,12 @@ class MigrateOrdenSoftLinkController extends Controller
                                         'mon_bruto' => $oc->total_precio,
                                         'mon_impto1' => $mon_impto,
                                         'mon_total' => ($oc->total_precio + $mon_impto),
-                                        'txt_observa' => ($oc->codigo).' / '.($oc->observacion !== null ? $oc->observacion : ''),
+                                        'txt_observa' => ($oc->codigo) . ' / ' . ($oc->observacion !== null ? $oc->observacion : ''),
                                         'cod_user' => $oc->codvend_softlink,
                                         'tip_cambio' => $tp_cambio->cambio3, //tipo cambio venta
                                         'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
                                         'ndocu2' => ($oc->direccion_destino !== null ? $oc->direccion_destino . ' ' . ($oc->ubigeo_destino !== null ? $oc->ubigeo_destino : '') : ''),
-                                        'ndocu3' => ($oc->codigo).'/'.implode(', ', $cuadros)
+                                        'ndocu3' => ($oc->codigo) . '/' . implode(', ', $cuadros)
                                     ]
                                 );
 
@@ -380,7 +379,7 @@ class MigrateOrdenSoftLinkController extends Controller
                     $hoy = date('Y-m-d'); //Carbon::now()
 
                     if ($oc->codvend_softlink == '000055' || $oc->codvend_softlink == '000022') { //si es deza o dorado
-                        $yy = 'P0'.$anho;
+                        $yy = 'P0' . $anho;
                     } else {
                         //obtiene el año a 2 digitos y le aumenta 2 ceros adelante
                         $yy = $this->leftZero(4, intval(date('y', strtotime($hoy))));
@@ -440,10 +439,10 @@ class MigrateOrdenSoftLinkController extends Controller
 
             // si existe uno o mas cod_docu con num_doc iguales entonces debe volver a contar para aumentar el contador y actualizar las tablas movimien y detmov
             if ($oc->id_softlink == null) {
-                $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $num_docu],['cod_docu',$cod_docu]])->count();
+                $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $num_docu], ['cod_docu', $cod_docu]])->count();
                 if ($cantidadCodigosExistentes > 1) {
-                        //obtiene el ultimo registro
-                        $ult_mov = DB::connection('soft')->table('movimien')
+                    //obtiene el ultimo registro
+                    $ult_mov = DB::connection('soft')->table('movimien')
                         ->where([
                             ['num_docu', '>', $yy . '0000000'],
                             ['num_docu', '<', $yy . '9999999'],
@@ -460,19 +459,19 @@ class MigrateOrdenSoftLinkController extends Controller
                     $num_docu = $yy . $nro_mov;
 
                     DB::connection('soft')->table('movimien')
-                    ->where('mov_id',$mov_id)
-                    ->update(['num_docu' => $num_docu]);
+                        ->where('mov_id', $mov_id)
+                        ->update(['num_docu' => $num_docu]);
 
                     DB::connection('soft')->table('detmov')
-                    ->where('mov_id',$mov_id)
-                    ->update(['num_docu' => $num_docu]);
+                        ->where('mov_id', $mov_id)
+                        ->update(['num_docu' => $num_docu]);
 
                     DB::table('logistica.log_ord_compra')
-                    ->where('id_orden_compra', $id_orden_compra)
-                    ->update([
-                        'codigo_softlink' => $num_docu,
-                        'id_softlink' => $mov_id
-                    ]);
+                        ->where('id_orden_compra', $id_orden_compra)
+                        ->update([
+                            'codigo_softlink' => $num_docu,
+                            'id_softlink' => $mov_id
+                        ]);
 
                     $arrayRspta = array(
                         'tipo' => 'success',
@@ -481,7 +480,6 @@ class MigrateOrdenSoftLinkController extends Controller
                         'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
                         'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
                     );
-    
                 }
             }
             // return response()->json($msj);
@@ -526,7 +524,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 'tot_cargo' => '0.00',
                 'tot_percep' => '0.00',
                 'tip_codicion' => $oc->id_condicion_softlink,
-                'txt_observa' => ($oc->codigo).' / '.($oc->observacion !== null ? $oc->observacion : ''),
+                'txt_observa' => ($oc->codigo) . ' / ' . ($oc->observacion !== null ? $oc->observacion : ''),
                 'flg_kardex' => 0,
                 'flg_anulado' => 0,
                 'flg_referen' => 0,
@@ -558,7 +556,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 'mov_pago' => '',
                 'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
                 'ndocu2' => ($oc->direccion_destino !== null ? $oc->direccion_destino . ' ' . ($oc->ubigeo_destino !== null ? $oc->ubigeo_destino : '') : ''),
-                'ndocu3' => ($oc->codigo).'/'.implode(', ', $cuadros),
+                'ndocu3' => ($oc->codigo) . '/' . implode(', ', $cuadros),
                 'flg_logis' => 1,
                 'cod_recep' => '',
                 'flg_aprueba' => 0,

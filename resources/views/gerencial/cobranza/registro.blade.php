@@ -90,7 +90,7 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" id="modal-cobranza" data-action="modal">
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-cobranza" data-action="modal" style="overflow: auto;">
 	<div class="modal-dialog" style="width: 70%;">
 		<div class="modal-content">
 			<form class="formPage" id="formulario" form="cobranza" type="register" data-form="guardar-formulario">
@@ -307,11 +307,23 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <h6>Nombre del Vendedor</h6>
-                                <select name="vendedor" class="selectpicker" title="Elija un vendedor" data-live-search="true" data-width="100%" data-actions-box="true" data-size="5" required>
+                                {{-- <select name="vendedor" class="selectpicker" title="Elija un vendedor" data-live-search="true" data-width="100%" data-actions-box="true" data-size="5" required>
                                     @foreach ($vendedores as $vendedor)
                                         <option value="{{ $vendedor->id_vendedor }}">{{ $vendedor->nombre }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                <div class="input-group input-group-sm">
+                                    <select name="vendedor" class="selectpicker" title="Elija un vendedor" data-live-search="true" data-width="100%" data-actions-box="true" data-size="5" required>
+                                        @foreach ($vendedores as $vendedor)
+                                            <option value="{{ $vendedor->id_vendedor }}">{{ $vendedor->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default btn-flat nuevo-vendedor" type="button">
+                                            <span class="fa fa-plus"></span>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -739,6 +751,35 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-vendedor">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title"> Nuevo Vendedor</h3>
+			</div>
+            <form id="formulario-vendedor" data-formulario="">
+                <div class="modal-body">
+
+                    <input type="hidden" name="id" value="0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label for="nombre" class="form-label">Descripcion</label>
+                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese el nombre de un Vendedor..." required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-pill btn-default shadow-none" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-pill btn-success">Guardar</button>
+                </div>
+            </form>
 		</div>
 	</div>
 </div>

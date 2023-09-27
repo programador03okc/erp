@@ -1728,6 +1728,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('cambio-estado-penalidad', [CobranzaController::class, 'cambioEstadoPenalidad'])->name('cambio-estado-penalidad');
 			Route::get('exportar-excel', [CobranzaController::class, 'exportarExcel'])->name('exportar-excel');
 
+            Route::post('guardar-vededor', [CobranzaController::class,'guardarVededor'])->name('guardar-vededor');
 			/**
 			 * Script para recuperar la info de Gerencia e Iniciar en las nuevas tablas
 			 */
@@ -1777,6 +1778,8 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('editar-penalidad/{id}', [RegistroController::class,'editarPenalidad']);
             Route::post('eliminar-penalidad', [RegistroController::class,'eliminarPenalidad']);
+
+
 		});
 
 		// Fondos, Auspicios y Rebates

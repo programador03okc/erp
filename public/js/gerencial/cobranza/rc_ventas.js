@@ -995,3 +995,35 @@ $("#tablaPenalidad").on('click','[data-action="eliminar-penalidad"]',function (e
         console.log(errorThrown);
     })
 });
+$('.nuevo-vendedor').click(function (e) {
+    e.preventDefault();
+    $('#modal-vendedor').modal('show');
+    $('#modal-vendedor').find('[name="id"]').val(0);
+    $('#modal-vendedor').find('.modal-title').text('Nuevo Vendedor');
+});
+$('#formulario-vendedor').submit(function (e) {
+    e.preventDefault();
+    let data = $(this).serialize();
+
+
+    // $('.selectpicker[name="vendedor"]').selectpicker('destroy');
+    $.ajax({
+        type: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: route("gerencial.cobranza.guardar-vededor"),
+        data: data,
+        dataType: 'JSON'
+    }).done(function( jqs ) {
+        $('#modal-vendedor').modal('hide');
+        var newOption = new Option(jqs.nombre, jqs.id_vendedor, false, false);
+        $('[name="vendedor"]').append(newOption).trigger('change');
+        $('.selectpicker[name="vendedor"]').selectpicker('refresh');
+        $('.selectpicker[name="vendedor"]').val(jqs.id_vendedor);
+        $('.selectpicker[name="vendedor"]').selectpicker('render');
+
+    }).fail( function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    })
+});

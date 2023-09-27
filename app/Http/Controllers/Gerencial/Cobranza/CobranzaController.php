@@ -741,4 +741,12 @@ class CobranzaController extends Controller
         }
         return response()->json($count, 200);
     }
+    public function guardarVededor(Request $request) {
+        $data = new Vendedor();
+        $data->nombre = $request->nombre;
+        $data->estado = 1;
+        $data->save();
+        $vendedores = Vendedor::where('estado',1)->get();
+        return response()->json($data,200);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Almacen\Movimiento;
 
 use App\Exports\OrdenesTransformacionesPendientesExport;
+use App\Exports\OrdenesTransFormacionesProcesadasDetalleExport;
 use App\Exports\OrdenesTransformacionesProcesadasExport;
 use App\Http\Controllers\Almacen\Catalogo\CategoriaController;
 use App\Http\Controllers\Almacen\Catalogo\ClasificacionController;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\almacen\Materia;
 use App\Models\Almacen\Requerimiento;
 use App\Models\almacen\Transformacion;
 use App\Models\Configuracion\LogActividad;
@@ -1456,88 +1458,40 @@ class TransformacionController extends Controller
     }
     public function exportarOrdenesDetalleTransformacionesProcesadas() {
 
-        $data = DB::table('almacen.transformacion')
-            ->select(
-                'transformacion.*',
-                'adm_contri.razon_social',
-                'alm_almacen.descripcion',
-                'respon.nombre_corto as nombre_responsable',
-                'regist.nombre_corto as nombre_registrado',
-                'adm_estado_doc.estado_doc',
-                'adm_estado_doc.bootstrap_color',
-                'oc_propias.orden_am',
-                'oportunidades.oportunidad',
-                'oportunidades.codigo_oportunidad',
-                'entidades.nombre',
-                'alm_req.codigo as codigo_req',
-                'alm_req.fecha_entrega as fecha_entrega_req',
-                'ingreso.id_mov_alm as id_ingreso',
-                'salida.id_mov_alm as id_salida',
-            )
-            ->join('almacen.orden_despacho', 'orden_despacho.id_od', '=', 'transformacion.id_od')
-            ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'orden_despacho.id_requerimiento')
-            ->join('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'transformacion.id_almacen')
-            ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_almacen.id_sede')
-            ->join('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
-            ->join('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
-            ->leftjoin('configuracion.sis_usua as respon', 'respon.id_usuario', '=', 'transformacion.responsable')
-            ->join('configuracion.sis_usua as regist', 'regist.id_usuario', '=', 'transformacion.registrado_por')
-            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'transformacion.estado')
-            ->leftjoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'transformacion.id_cc')
-            ->leftjoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
-            ->leftjoin('mgcp_acuerdo_marco.oc_propias', 'oc_propias.id_oportunidad', '=', 'oportunidades.id')
-            ->leftjoin('mgcp_acuerdo_marco.entidades', 'entidades.id', '=', 'oportunidades.id_entidad')
-            ->leftjoin('almacen.mov_alm as ingreso', function ($join) {
-                $join->on('ingreso.id_transformacion', '=', 'transformacion.id_transformacion');
-                $join->where('ingreso.id_tp_mov', '=', 1);
-                $join->where('ingreso.estado', '!=', 7);
-            })
-            ->leftjoin('almacen.mov_alm as salida', function ($join) {
-                $join->on('salida.id_transformacion', '=', 'transformacion.id_transformacion');
-                $join->where('salida.id_tp_mov', '=', 2);
-                $join->where('salida.estado', '!=', 7);
-            })
-            ->where('transformacion.estado', 9)
-            ->orderBy('fecha_registro', 'desc')
-            ->get();
+        $data = Materia::select(
+            'transfor_materia.*',
+            'alm_det_req.part_number as part_number_req',
+            'alm_det_req.descripcion as descripcion_req',
 
+            'alm_prod.codigo as codigo_producto',
+            'alm_prod.descripcion',
+            'alm_prod.part_number',
+            'alm_prod.series',
 
-        $data = DB::table('almacen.transfor_materia')
-            ->select(
-                'transfor_materia.*',
-                'alm_prod.codigo',
-                'alm_prod.descripcion',
-                'alm_prod.part_number',
-                'alm_und_medida.abreviatura',
-                'alm_prod.series',
-                'guia_ven_det.id_guia_ven_det',
-                'transformacion.id_almacen',
-                'alm_det_req.part_number as part_number_req',
-                'alm_det_req.descripcion as descripcion_req',
+            'transformacion.*',
+
+            'alm_req.codigo as codigo_req',
+            'alm_req.fecha_entrega as fecha_entrega_req',
+            'oc_propias.orden_am',
+            'entidades.nombre',
+            'respon.nombre_corto as nombre_responsable',
             )
-            // ->join('almacen.orden_despacho_det', 'orden_despacho_det.id_od_detalle', '=', 'transfor_materia.id_od_detalle')
-            ->join('almacen.orden_despacho_det', function ($join) {
-                $join->on('orden_despacho_det.id_od_detalle', '=', 'transfor_materia.id_od_detalle');
-                $join->where('orden_despacho_det.estado', '!=', 7);
-            })
-            // ->leftjoin('almacen.guia_ven_det', 'guia_ven_det.id_od_det', '=', 'orden_despacho_det.id_od_detalle')
-            ->join('almacen.guia_ven_det', function ($join) {
-                $join->on('guia_ven_det.id_od_det', '=', 'orden_despacho_det.id_od_detalle');
-                $join->where('guia_ven_det.estado', '!=', 7);
-            })
-            // ->join('almacen.alm_det_req', 'alm_det_req.id_detalle_requerimiento', '=', 'orden_despacho_det.id_detalle_requerimiento')
-            ->join('almacen.alm_det_req', function ($join) {
-                $join->on('alm_det_req.id_detalle_requerimiento', '=', 'orden_despacho_det.id_detalle_requerimiento');
-                $join->where('alm_det_req.estado', '!=', 7);
-            })
-            ->leftjoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
-            ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
-            ->join('almacen.transformacion', 'transformacion.id_transformacion', '=', 'transfor_materia.id_transformacion')
-            ->where([
-                ['transfor_materia.id_transformacion', '=', $id_transformacion],
-                ['transfor_materia.estado', '!=', 7]
-            ])
-            ->get();
-        return response()->json($data,200);
+        ->join('almacen.transformacion','transformacion.id_transformacion','=','transfor_materia.id_transformacion')
+        ->join('almacen.orden_despacho_det','orden_despacho_det.id_od_detalle','=','transfor_materia.id_od_detalle')
+        ->join('almacen.alm_det_req','alm_det_req.id_detalle_requerimiento','=','orden_despacho_det.id_detalle_requerimiento')
+        ->leftjoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+
+        ->join('almacen.orden_despacho', 'orden_despacho.id_od', '=', 'transformacion.id_od')
+        ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'orden_despacho.id_requerimiento')
+
+        ->leftjoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'transformacion.id_cc')
+        ->leftjoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+        ->leftjoin('mgcp_acuerdo_marco.oc_propias', 'oc_propias.id_oportunidad', '=', 'oportunidades.id')
+        ->leftjoin('mgcp_acuerdo_marco.entidades', 'entidades.id', '=', 'oportunidades.id_entidad')
+        ->leftjoin('configuracion.sis_usua as respon', 'respon.id_usuario', '=', 'transformacion.responsable')
+        ->where('transfor_materia.estado',1)
+        ->get();
+
+        return Excel::download(new OrdenesTransFormacionesProcesadasDetalleExport(json_encode($data)), 'Ordenes_transformación_procesadas_detalle_'.date('d-m-Y H:i:s').'.xlsx');
     }
 }

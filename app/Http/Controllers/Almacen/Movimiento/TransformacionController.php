@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Almacen\Movimiento;
 
 use App\Exports\OrdenesTransformacionesPendientesExport;
+use App\Exports\OrdenesTransFormacionesProcesadasDetalleExport;
 use App\Exports\OrdenesTransformacionesProcesadasExport;
 use App\Http\Controllers\Almacen\Catalogo\CategoriaController;
 use App\Http\Controllers\Almacen\Catalogo\ClasificacionController;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\almacen\Materia;
 use App\Models\Almacen\Requerimiento;
 use App\Models\almacen\Transformacion;
 use App\Models\Configuracion\LogActividad;
@@ -997,7 +999,7 @@ class TransformacionController extends Controller
 
     public function iniciar_transformacion($id)
     {
- 
+
         $transformacion = Transformacion::find($id);
         $transformacion->estado = 24; //iniciado
         $transformacion->conformidad = true;
@@ -1453,5 +1455,43 @@ class TransformacionController extends Controller
             ->orderBy('fecha_registro', 'desc')
             ->get();
         return Excel::download(new OrdenesTransformacionesProcesadasExport($data), 'Ordenes_transformación_procesadas_'.date('d-m-Y H:i:s').'.xlsx');
+    }
+    public function exportarOrdenesDetalleTransformacionesProcesadas() {
+
+        $data = Materia::select(
+            'transfor_materia.*',
+            'alm_det_req.part_number as part_number_req',
+            'alm_det_req.descripcion as descripcion_req',
+
+            'alm_prod.codigo as codigo_producto',
+            'alm_prod.descripcion',
+            'alm_prod.part_number',
+            'alm_prod.series',
+
+            'transformacion.*',
+
+            'alm_req.codigo as codigo_req',
+            'alm_req.fecha_entrega as fecha_entrega_req',
+            'oc_propias.orden_am',
+            'entidades.nombre',
+            'respon.nombre_corto as nombre_responsable',
+            )
+        ->join('almacen.transformacion','transformacion.id_transformacion','=','transfor_materia.id_transformacion')
+        ->join('almacen.orden_despacho_det','orden_despacho_det.id_od_detalle','=','transfor_materia.id_od_detalle')
+        ->join('almacen.alm_det_req','alm_det_req.id_detalle_requerimiento','=','orden_despacho_det.id_detalle_requerimiento')
+        ->leftjoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+
+        ->join('almacen.orden_despacho', 'orden_despacho.id_od', '=', 'transformacion.id_od')
+        ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'orden_despacho.id_requerimiento')
+
+        ->leftjoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'transformacion.id_cc')
+        ->leftjoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+        ->leftjoin('mgcp_acuerdo_marco.oc_propias', 'oc_propias.id_oportunidad', '=', 'oportunidades.id')
+        ->leftjoin('mgcp_acuerdo_marco.entidades', 'entidades.id', '=', 'oportunidades.id_entidad')
+        ->leftjoin('configuracion.sis_usua as respon', 'respon.id_usuario', '=', 'transformacion.responsable')
+        ->where('transfor_materia.estado',1)
+        ->get();
+
+        return Excel::download(new OrdenesTransFormacionesProcesadasDetalleExport(json_encode($data)), 'Ordenes_transformación_procesadas_detalle_'.date('d-m-Y H:i:s').'.xlsx');
     }
 }

@@ -199,7 +199,20 @@ class GestionCustomizacion {
                 form.submit();
             }, className: 'btn btn-default'
         };
+
+        const reporte_detalle_excel={
+            text: '<i class="fa fa-file-export"></i> Reporte en Excel Detalle',
+            action: function () {
+                let form = $('<form action="'+route('cas.customizacion.gestion-customizaciones.exportar-ordenes-detalle-transformaciones-procesadas')+'" target="_blank" method="POST">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
+            }, className: 'btn btn-default'
+        };
+
         buttons.push(exportable_filtros);
+        buttons.push(reporte_detalle_excel);
         var tabla = $('#listaTransformaciones').DataTable({
             'dom': vardataTables[1],
             'buttons': buttons,

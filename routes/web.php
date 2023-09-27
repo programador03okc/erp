@@ -1134,6 +1134,8 @@ Route::middleware(['auth'])->group(function () {
 
                 Route::post('exportar-ordenes-transformaciones-pendientes', [TransformacionController::class, 'exportarOrdenesTransformacionesPendientes'])->name('exportar-ordenes-transformaciones-pendientes');
                 Route::post('exportar-ordenes-transformaciones-procesadas', [TransformacionController::class, 'exportarOrdenesTransformacionesProcesadas'])->name('exportar-ordenes-transformaciones-procesadas');
+
+                Route::post('exportar-ordenes-detalle-transformaciones-procesadas', [TransformacionController::class, 'exportarOrdenesDetalleTransformacionesProcesadas'])->name('exportar-ordenes-detalle-transformaciones-procesadas');
 			});
 
 			Route::group(['as' => 'hoja-transformacion.', 'prefix' => 'hoja-transformacion'], function () {

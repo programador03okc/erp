@@ -661,6 +661,41 @@ class ScriptController extends Controller
         );
         return response()->json($array,200);
     }
+    public function nivelarPartidas($mes){
 
+        $presupuesto = PresupuestoInterno::where('estado',2)->get();
+        // $mes = '05';
+
+        $array_historial = array();
+        foreach ($presupuesto as $key => $value) {
+            // $mes = date('m');
+
+            $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$value->id_presupuesto_interno)->get();
+
+            foreach ($presupuesto_detalle as $key_detalle => $detalle) {
+                // return $detalle->id_presupuesto_interno;exit;
+
+                $historial = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$detalle->id_presupuesto_interno)
+                ->where('estado',3)
+                ->where('tipo','SALIDA')
+                ->where('operacion','R')
+                ->where('mes',$mes)
+                ->where('id_partida','=',$detalle->id_presupuesto_interno_detalle)
+                ->get();
+                // return $historial;exit;
+                // array_push($array_historial,$historial);
+
+                if (sizeof($historial)>0) {
+                    foreach ($historial as $key_historia => $historia){
+
+                    }
+                    array_push($array_historial,$historial);
+                }
+            }
+        }
+        // return $array_historial;exit;
+
+        return response()->json($array_historial,200);
+    }
 
 }

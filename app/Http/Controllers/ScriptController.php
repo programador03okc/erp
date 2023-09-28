@@ -119,4 +119,5 @@ class ScriptController extends Controller
         }
         return response()->json([$seeder],200);
     }
+
 }

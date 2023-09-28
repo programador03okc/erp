@@ -1716,8 +1716,8 @@ class OrdenesDespachoExternoController extends Controller
             $detalle->descripcion = Str::upper($request->descripcion_item);
             $detalle->id_unidad_medida = 17; // servicio
             $detalle->cantidad = 1;
-            $detalle->precio_unitario = $montoTotal;
-            $detalle->subtotal = $montoTotal;
+            $detalle->precio_unitario = $request->precio_unitario;
+            $detalle->subtotal = $request->precio_unitario;
             $detalle->fecha_registro = new Carbon();
             $detalle->estado = 1;
             $detalle->save();

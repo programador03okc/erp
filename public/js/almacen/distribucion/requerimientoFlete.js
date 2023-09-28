@@ -63,15 +63,18 @@ function consultaGuardarRequerimientoFlete(id_od){
     
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#modal-requerimiento_flete').modal({
-                    show: true
-                });
-                llenarFormularioRequerimientoFlete(id_od);
-    
+                openModalRequerimientoFlete(id_od);
             }
         });
 
     }
+}
+
+function openModalRequerimientoFlete(id_od){
+    $('#modal-requerimiento_flete').modal({
+        show: true
+    });
+    llenarFormularioRequerimientoFlete(id_od);   
 }
 
 

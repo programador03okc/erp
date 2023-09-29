@@ -3349,39 +3349,42 @@ class OrdenController extends Controller
                                 }
                             } else {
 
-                                $detalle = OrdenCompraDetalle::where("id_detalle_orden", $id)->first();
-                                $detalle->id_producto = $request->idProducto[$i];
-                                $detalle->id_detalle_requerimiento = $request->idDetalleRequerimiento[$i];
-                                $detalle->cantidad = $request->cantidadAComprarRequerida[$i];
-
-                                $subtotalOrigen = floatval($detalle->precio) * floatval($detalle->cantidad);
-                                $subtotalNuevo =  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
-                                if ($subtotalOrigen != $subtotalNuevo) {
-                                    if ($subtotalOrigen < $subtotalNuevo) {
-                                        $importeItemParaPresupuesto = $subtotalNuevo - $subtotalOrigen;
-                                        $tipoOperacionItemParaPresupuesto = 'resta';
-                                    } elseif ($subtotalOrigen > $subtotalNuevo) {
-                                        $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
-                                        $tipoOperacionItemParaPresupuesto = 'suma';
-                                        // Debugbar::info($importeItemParaPresupuesto);
+                                if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $id)) // es un id no tiene numeros con letras
+                                    {
+                                        $detalle = OrdenCompraDetalle::where("id_detalle_orden", $id)->first();
+                                        $detalle->id_producto = $request->idProducto[$i];
+                                        $detalle->id_detalle_requerimiento = $request->idDetalleRequerimiento[$i];
+                                        $detalle->cantidad = $request->cantidadAComprarRequerida[$i];
+        
+                                        $subtotalOrigen = floatval($detalle->precio) * floatval($detalle->cantidad);
+                                        $subtotalNuevo =  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
+                                        if ($subtotalOrigen != $subtotalNuevo) {
+                                            if ($subtotalOrigen < $subtotalNuevo) {
+                                                $importeItemParaPresupuesto = $subtotalNuevo - $subtotalOrigen;
+                                                $tipoOperacionItemParaPresupuesto = 'resta';
+                                            } elseif ($subtotalOrigen > $subtotalNuevo) {
+                                                $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
+                                                $tipoOperacionItemParaPresupuesto = 'suma';
+                                                // Debugbar::info($importeItemParaPresupuesto);
+                                            }
+                                        }
+        
+                                        $detalle->id_unidad_medida = $request->unidad[$i];
+                                        $detalle->precio = $request->precioUnitario[$i];
+                                        $detalle->descripcion_adicional = ($request->descripcion[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcion[$i]))) : null;
+                                        $detalle->descripcion_complementaria = ($request->descripcionComplementaria[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcionComplementaria[$i]))) : null;
+                                        $detalle->subtotal = floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
+                                        $detalle->tipo_item_id = $request->idTipoItem[$i];
+                                        $detalle->save();
+                                        $detalle->importe_item_para_presupuesto = $importeItemParaPresupuesto ?? 0;
+                                        $detalle->operacion_item_para_presupuesto = $tipoOperacionItemParaPresupuesto ?? '';
+                                        $detalleArray[] = $detalle;
+        
+                                        $tipoOperacionItemParaPresupuesto = '';
+                                        $importeItemParaPresupuesto = 0;
+        
+                                        $idDetalleProcesado[] = $detalle->id_detalle_orden;
                                     }
-                                }
-
-                                $detalle->id_unidad_medida = $request->unidad[$i];
-                                $detalle->precio = $request->precioUnitario[$i];
-                                $detalle->descripcion_adicional = ($request->descripcion[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcion[$i]))) : null;
-                                $detalle->descripcion_complementaria = ($request->descripcionComplementaria[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcionComplementaria[$i]))) : null;
-                                $detalle->subtotal = floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
-                                $detalle->tipo_item_id = $request->idTipoItem[$i];
-                                $detalle->save();
-                                $detalle->importe_item_para_presupuesto = $importeItemParaPresupuesto ?? 0;
-                                $detalle->operacion_item_para_presupuesto = $tipoOperacionItemParaPresupuesto ?? '';
-                                $detalleArray[] = $detalle;
-
-                                $tipoOperacionItemParaPresupuesto = '';
-                                $importeItemParaPresupuesto = 0;
-
-                                $idDetalleProcesado[] = $detalle->id_detalle_orden;
                             }
                         }
                     }

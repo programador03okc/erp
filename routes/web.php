@@ -405,7 +405,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('mostrarDocumentosByRequerimiento/{id}', [TrazabilidadRequerimientoController::class, 'mostrarDocumentosByRequerimiento'])->name('mostrar-documentos-por-requerimiento');
 				Route::get('imprimir_transferencia/{id}', [TransferenciaController::class, 'imprimir_transferencia'])->name('imprimir-transferencia');
 				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
-				Route::get('imprimir_salida/{id}', [SalidasPendientesController::class, 'imprimir_salida'])->name('imprimir-salida');
+				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');
 				Route::get('imprimir_transformacion/{id}', [TransformacionController::class, 'imprimir_transformacion'])->name('imprimir-transformacion');
 				Route::get('reporte-requerimientos-bienes-servicios-excel/{meOrAll}/{Empresa}/{Sede}/{Grupo}/{Division}/{FechaDesde}/{FechaHasta}/{Estado}', [RequerimientoController::class, 'reporteRequerimientosBienesServiciosExcel'])->name('reporte-requerimientos-bienes-servicios-excel');
 				Route::get('reporte-items-requerimientos-bienes-servicios-excel/{meOrAll}/{Empresa}/{Sede}/{Grupo}/{Division}/{FechaDesde}/{FechaHasta}/{Estado}', [RequerimientoController::class, 'reporteItemsRequerimientosBienesServiciosExcel'])->name('reporte-items-requerimientos-bienes-servicios-excel');

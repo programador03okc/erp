@@ -165,8 +165,8 @@ function construirModalTrazabilidad(data) {
                 transferenciaGC.push(`<a href="imprimir_ingreso/${element.id_ingreso}"  target="_blank" title="Abrir Ingreso">${element.serie_guia_com ?? ''}-${element.numero_guia_com ?? ''}</a>`)
             }
             if (element.numero_guia_ven != null) {
-                var idSalidaEncode = encode5t(element.id_salida);
-                transferenciaGV.push(`<a href="imprimir_salida/${idSalidaEncode}" target="_blank" title="Abrir Salida">${element.serie_guia_ven ?? ''}-${element.numero_guia_ven ?? ''}</a>`)
+                // var idSalidaEncode = encode5t(element.id_salida);
+                transferenciaGV.push(`<a href="imprimir_salida/${id_salida}" target="_blank" title="Abrir Salida">${element.serie_guia_ven ?? ''}-${element.numero_guia_ven ?? ''}</a>`)
             }
         });
 

@@ -166,7 +166,7 @@ function construirModalTrazabilidad(data) {
             }
             if (element.numero_guia_ven != null) {
                 // var idSalidaEncode = encode5t(element.id_salida);
-                transferenciaGV.push(`<a href="imprimir_salida/${id_salida}" target="_blank" title="Abrir Salida">${element.serie_guia_ven ?? ''}-${element.numero_guia_ven ?? ''}</a>`)
+                transferenciaGV.push(`<a href="imprimir_salida/${element.id_salida}" target="_blank" title="Abrir Salida">${element.serie_guia_ven ?? ''}-${element.numero_guia_ven ?? ''}</a>`)
             }
         });
 

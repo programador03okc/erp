@@ -37,8 +37,8 @@ class RequerimientoPago {
             },
             className: 'btn-default btn-sm'
         };
-        let button_excel_filtros = {
-            text: '<i class="fas fa-file-export"></i> Reporte',
+        let button_excel_nivel_cabecera = {
+            text: '<i class="fas fa-file-export"></i> Reporte cabecera',
             attr: {
                 id: 'btn-excel-filtro',
                 href:'#',
@@ -60,9 +60,32 @@ class RequerimientoPago {
             },
             className: 'btn-default btn-sm'
         };
+        let button_excel_nivel_item = {
+            text: '<i class="fas fa-file-export"></i> Reporte items',
+            attr: {
+                id: 'btn-excel-filtro',
+                href:'#',
+                // target:"_blank"
+            },
+            action: () => {
+                let form = $('<form action="exportar-requerimientos-pagos-items" method="POST" target="_blank">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                    '<input type="hidden" name="prioridad" value="'+$data.prioridad+'" >'+
+                    '<input type="hidden" name="empresa" value="'+$data.empresa+'" >'+
+                    '<input type="hidden" name="estado" value="'+$data.estado+'" >'+
+                    '<input type="hidden" name="fecha_inicio" value="'+$data.fecha_inicio+'" >'+
+                    '<input type="hidden" name="fecha_final" value="'+$data.fecha_final+'" >'+
+                    '<input type="hidden" name="simbolo" value="'+$data.simbolo+'" >'+
+                    '<input type="hidden" name="total" value="'+$data.total+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
+            },
+            className: 'btn-default btn-sm'
+        };
         tableRequerimientos = $('#listaRequerimientos').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_filtro,button_excel_filtros,button_excel],
+            'buttons': [button_filtro,button_excel_nivel_cabecera,button_excel_nivel_item,button_excel],
             'language': vardataTables[0],
             'destroy': true,
 
@@ -251,8 +274,8 @@ class RequerimientoPago {
             },
             className: 'btn-default btn-sm'
         };
-        let button_excel_filtros = {
-            text: '<i class="fas fa-file-export"></i> Reporte ',
+        let button_excel_nivel_cabecera = {
+            text: '<i class="fas fa-file-export"></i> Reporte cabecera',
             attr: {
                 id: 'btn-excel-filtro',
                 href:'#',
@@ -274,9 +297,32 @@ class RequerimientoPago {
             },
             className: 'btn-default btn-sm'
         };
+        let button_excel_nivel_item = {
+            text: '<i class="fas fa-file-export"></i> Reporte items',
+            attr: {
+                id: 'btn-excel-filtro',
+                href:'#',
+                // target:"_blank"
+            },
+            action: () => {
+                let form = $('<form action="exportar-ordeners-compras-servicios-items" method="POST" target="_blank">'+
+                    '<input type="hidden" name="_token" value="'+token+'" >'+
+                    '<input type="hidden" name="prioridad" value="'+$data_orden.prioridad+'" >'+
+                    '<input type="hidden" name="empresa" value="'+$data_orden.empresa+'" >'+
+                    '<input type="hidden" name="estado" value="'+$data_orden.estado+'" >'+
+                    '<input type="hidden" name="fecha_inicio" value="'+$data_orden.fecha_inicio+'" >'+
+                    '<input type="hidden" name="fecha_final" value="'+$data_orden.fecha_final+'" >'+
+                    '<input type="hidden" name="simbolo" value="'+$data_orden.simbolo+'" >'+
+                    '<input type="hidden" name="total" value="'+$data_orden.total+'" >'+
+                '</form>');
+                $('body').append(form);
+                form.submit();
+            },
+            className: 'btn-default btn-sm'
+        };
         tableOrdenes = $('#listaOrdenes').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_filtro,button_excel_filtros,button_excel],
+            'buttons': [button_filtro,button_excel_nivel_cabecera,button_excel_nivel_item,button_excel],
             'language': vardataTables[0],
             'pageLength': 10,
             'destroy': true,

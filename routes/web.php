@@ -1848,9 +1848,11 @@ Route::middleware(['auth'])->group(function () {
 
 				#exportar excel con los fltros aplicados
 				Route::post('exportar-requerimientos-pagos', [RegistroPagoController::class, 'exportarRequerimientosPagos'])->name('exportar-requerimientos-pagos');
+				Route::post('exportar-requerimientos-pagos-items', [RegistroPagoController::class, 'exportarRequerimientosPagosItems'])->name('exportar-requerimientos-pagos-items');
 
 				#exportar excel con los fltros aplicados
 				Route::post('exportar-ordeners-compras-servicios', [RegistroPagoController::class, 'exportarOrdenesComprasServicios'])->name('exportar-ordeners-compras-servicios');
+				Route::post('exportar-ordeners-compras-servicios-items', [RegistroPagoController::class, 'exportarOrdenesComprasServiciosItems'])->name('exportar-ordeners-compras-servicios-items');
 
 				// lista adjuntos pago
 				// Route::get('adjuntos-pago/{id}', 'OrdenController@listarArchivosOrder');

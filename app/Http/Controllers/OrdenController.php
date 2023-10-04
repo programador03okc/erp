@@ -20,6 +20,7 @@ date_default_timezone_set('America/Lima');
 use PDO;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ListOrdenesHeadExport;
+use App\Exports\OrdenesItemsFiltroExport;
 use App\Exports\ReporteComprasLocalesExcel;
 use App\Exports\ReporteOrdenesCompraExcel;
 use App\Exports\ReporteOrdenesServicioExcel;
@@ -1101,8 +1102,23 @@ class OrdenController extends Controller
     {
 
         $itemsOrdenes = ItemsOrdenesView::where([['id_estado', '>=', 1], ['id_tp_documento', '!=', 13]]);
-        return datatables($itemsOrdenes)
 
+        if (!empty($request->fecha_inicio)) {
+            # code...
+            $itemsOrdenes = $itemsOrdenes->whereDate('fecha_emision','>=', $request->fecha_inicio);
+        }
+        if (!empty($request->fecha_final)) {
+            $itemsOrdenes = $itemsOrdenes->whereDate('fecha_emision','<=', $request->fecha_final);
+        }
+
+        return datatables($itemsOrdenes)
+        ->addColumn('numero_factura', function ($data) {
+            // concat(dc.serie, '-', dc.numero) AS nro_doc_com,
+            $serie = ($data->serie?$data->serie:'');
+            $numero = ($data->numero?$data->numero:'');
+            $factura = $serie.'-'.$numero;
+            return $factura;
+        })
             ->toJson();
     }
     // public function listarOrdenes(Request $request)
@@ -3355,7 +3371,7 @@ class OrdenController extends Controller
                                         $detalle->id_producto = $request->idProducto[$i];
                                         $detalle->id_detalle_requerimiento = $request->idDetalleRequerimiento[$i];
                                         $detalle->cantidad = $request->cantidadAComprarRequerida[$i];
-        
+
                                         $subtotalOrigen = floatval($detalle->precio) * floatval($detalle->cantidad);
                                         $subtotalNuevo =  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
                                         if ($subtotalOrigen != $subtotalNuevo) {
@@ -3368,7 +3384,7 @@ class OrdenController extends Controller
                                                 // Debugbar::info($importeItemParaPresupuesto);
                                             }
                                         }
-        
+
                                         $detalle->id_unidad_medida = $request->unidad[$i];
                                         $detalle->precio = $request->precioUnitario[$i];
                                         $detalle->descripcion_adicional = ($request->descripcion[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcion[$i]))) : null;
@@ -3379,10 +3395,10 @@ class OrdenController extends Controller
                                         $detalle->importe_item_para_presupuesto = $importeItemParaPresupuesto ?? 0;
                                         $detalle->operacion_item_para_presupuesto = $tipoOperacionItemParaPresupuesto ?? '';
                                         $detalleArray[] = $detalle;
-        
+
                                         $tipoOperacionItemParaPresupuesto = '';
                                         $importeItemParaPresupuesto = 0;
-        
+
                                         $idDetalleProcesado[] = $detalle->id_detalle_orden;
                                     }
                             }
@@ -5246,5 +5262,63 @@ class OrdenController extends Controller
         $payload['tipo_impuesto'] = $tipoImpuesto;
 
         return ["data" => $payload, 'estado' => $estado, "mensaje" => $mensaje];
+    }
+    public function reporteFiltros(Request $request){
+        $array = array("fecha_final"=>$request->fecha_final,"fecha_inicio"=>$request->fecha_inicio);
+        return Excel::download(new OrdenesItemsFiltroExport(json_encode($array)), 'ordenes_items_'.date('d-m-Y h:i:s').'.xlsx');
+        return $request;
+    }
+    public static function reporteListaItemsOrdenesFiltros($filtros)
+    {
+        $data = [];
+        $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
+        ->orderBy('items_ordenes_view.fecha_emision', 'desc');
+
+        if (!empty($filtros->fecha_inicio)) {
+            # code...
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','>=', $filtros->fecha_inicio);
+        }
+        if (!empty($filtros->fecha_final)) {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','<=', $filtros->fecha_final);
+        }
+        $det_ord_compra = $det_ord_compra->get();
+
+        foreach ($det_ord_compra as $key => $d) {
+            $data[] = [
+                'codigo_orden' => $d['codigo_orden'] ?? '',
+                'codigo_requerimiento' => $d['codigo_requerimiento'] ?? '',
+                'codigo_softlink' => $d['codigo_softlink'] ?? '',
+                'nro_orden_mgc' => $d['nro_orden_mgc'] ?? '',
+                'concepto_requerimiento' => $d['concepto_requerimiento'] ?? '',
+                'razon_social_cliente' => $d['razon_social_cliente'] ?? '',
+                'razon_social_proveedor' => $d['razon_social_proveedor'] ?? '',
+                'codigo_am' => $d['codigo_am'] ?? '',
+                'nombre_am' => $d['nombre_am'] ?? '',
+                'descripcion_subcategoria' => $d['descripcion_subcategoria'] ?? '',
+                'descripcion_categoria' => $d['descripcion_categoria'] ?? '',
+                'codigo_producto' => $d['codigo_producto'] ?? '',
+                'part_number_producto' => $d['part_number_producto'] ?? '',
+                'cod_softlink_producto' => $d['cod_softlink_producto'] ?? '',
+                'descripcion_producto' => $d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional'],
+                'lugar_entrega_cdp' => $d['lugar_entrega_cdp'] ?? '',
+                'cantidad' => $d['cantidad'] ?? '',
+                'abreviatura_unidad_medida_producto' => $d['abreviatura_unidad_medida_producto'] ?? ($d['abreviatura_unidad_medida_det_orden'] ?? ''),
+                'simbolo_moneda_orden' => $d['simbolo_moneda_orden'] ?? '',
+                'precio' => $d['precio'] ?? '',
+                'cc_fila_precio' => $d['cc_fila_precio'] ?? '',
+                'fecha_emision' => $d['fecha_emision'] ?? '',
+                'fecha_llegada' => $d['fecha_llegada'] ?? '',
+                'fecha_ingreso_almacen' => $d['fecha_ingreso_almacen'] ?? '',
+                'tiempo_atencion_proveedor' => $d['tiempo_atencion_proveedor'] ?? '',
+                'descripcion_sede_empresa' => $d['descripcion_sede_empresa'] ?? '',
+                'descripcion_estado' => $d['descripcion_estado'] ?? '',
+                'numero_factura' => $d['serie'].'-'.$d['numero']
+
+
+            ];
+        }
+
+
+        return $data;
     }
 }

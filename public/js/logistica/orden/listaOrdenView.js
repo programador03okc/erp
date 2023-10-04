@@ -5,11 +5,15 @@ var tempDataProveedorParaPago = [];
 let $tablaListaOrdenesElaborados;
 let $tablaListaItemsOrdenesElaborados;
 var tempArchivoAdjuntoRequerimientoCabeceraList = [];
+let filtrosItem={fecha_inicio:null, fecha_final:null};
+
 class ListaOrdenView {
     constructor(listaOrdenCtrl) {
         this.listaOrdenCtrl = listaOrdenCtrl;
         this.fecha_inicio = "01-01-" + (new Date().getFullYear());
         this.fecha_fin = moment().format("DD-MM-YYYY");
+        // this.filtrosItem = filtrosItem;
+
     }
 
     init() {
@@ -331,6 +335,8 @@ class ListaOrdenView {
                 // this.tipoVistaPorCabecera(true);
             }
         });
+
+
     }
 
     generarFiltros() {
@@ -2063,9 +2069,39 @@ class ListaOrdenView {
             },
             className: 'btn-default btn-sm'
         } : []);
+        const button_filtros = {
+            text: '<span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtros',
+            attr: {
+                id: 'btnFiltros',
+                disabled: false
+            },
+            action: () => {
+                $('#modal-filtro').modal('show');
+            },
+            className: 'btn-default btn-sm'
+        };
+        const button_reporte = {
+            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte con Filtros',
+            attr: {
+                id: 'btnReporteFiltros',
+                disabled: false
+            },
+            action: () => {
+                let form = $('<form action="'+route('logistica.gestion-logistica.compras.ordenes.listado.reporte-filtros')+'" method="POST" target="_blank"> '+
+                        '<input type="hidden" name="_token" value="'+token+'" >'+
+                        '<input type="hidden" name="fecha_final" value="'+filtrosItem.fecha_final+'" >'+
+                        '<input type="hidden" name="fecha_inicio" value="'+filtrosItem.fecha_inicio+'" >'+
+                    '</form>');
+                $('body').append(form);
+                form.submit();
+
+            },
+            className: 'btn-default btn-sm'
+        };
+        // console.log(filtrosItem);
         $tablaListaItemsOrdenesElaborados = $('#listaItemsOrden').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_descargar_excel],
+            'buttons': [button_descargar_excel,button_filtros,button_reporte],
             'language': vardataTables[0],
             'order': [[15, 'desc']],
             'bLengthChange': false,
@@ -2074,7 +2110,7 @@ class ListaOrdenView {
             'ajax': {
                 'url': 'lista-items-ordenes-elaboradas',
                 'type': 'POST',
-                // 'data': { 'meOrAll': meOrAll, 'idEmpresa': idEmpresa, 'idSede': idSede, 'idGrupo': idGrupo, 'idDivision': idDivision, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'idEstado': idEstado },
+                'data': filtrosItem,
                 beforeSend: data => {
                     $("#listaItemsOrden").LoadingOverlay("show", {
                         imageAutoResize: true,
@@ -2084,6 +2120,7 @@ class ListaOrdenView {
                 },
             },
             'columns': [
+                { 'data': 'numero_factura', 'name': 'numero_factura', 'className': 'text-center' },
                 {
                     'data': 'codigo_orden', 'className': 'text-center',
                     render: function (data, type, row) {
@@ -2370,7 +2407,7 @@ class ListaOrdenView {
             );
         }
     }
-    
+
 
     estaHabilitadoLaExtension(file) {
         let extension = (file.name.match(/(?<=\.)\w+$/g) != null) ? file.name.match(/(?<=\.)\w+$/g)[0].toLowerCase() : ''; // assuming that this file has any extension
@@ -2641,6 +2678,53 @@ class ListaOrdenView {
                 }
             });
         });
+    }
+
+    actualizarFiltrosItems = () => {
+        let $this = this;
+        $('#filtros-detalle').click(function (e) {
+            e.preventDefault();
+            console.log(filtrosItem);
+            $this.mostrarListaItemsOrdenesElaboradas();
+        });
+        $('[data-action="change"]').change(function (e) {
+            e.preventDefault();
+
+            let select = $(e.currentTarget).attr('data-select');
+            let checked = $(e.currentTarget).closest('.row[data-select="'+select+'"]').find('[name="'+select+'"]').prop('checked');
+            let current = $(e.currentTarget).closest('.row[data-select="'+select+'"]');
+
+            arrayFiltrosItem(select, checked, current);
+        });
+        $('[name="fecha"]').change((e)=>  {
+            e.preventDefault();
+            let checked = $(e.currentTarget).prop('checked');
+            let select = $(e.currentTarget).attr('name');
+            let current = $(e.currentTarget).closest('.row[data-select="'+select+'"]');
+
+            if (checked) {
+                current.find('[data-select="'+select+'"]').removeAttr('disabled');
+            } else {
+                current.find('[data-select="'+select+'"]').attr('disabled','true');
+            }
+
+            arrayFiltrosItem(select, checked, current);
+        });
+
+        function arrayFiltrosItem(tipo, checked, current) {
+            switch (tipo) {
+                case 'fecha':
+                    if (checked) {
+                        filtrosItem.fecha_inicio = current.find('[name="fecha_inicio"]').val();
+                        filtrosItem.fecha_final = current.find('[name="fecha_final"]').val();
+                    } else {
+                        filtrosItem.fecha_inicio = null;
+                        filtrosItem.fecha_final = null;
+                    }
+                break;
+            }
+        }
+
     }
 }
 

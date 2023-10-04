@@ -86,6 +86,7 @@ Gestión de ordenes
                             <table class="mytable table table-hover table-condensed table-bordered table-okc-view" id="listaItemsOrden" style="font-size: 0.9rem;">
                                 <thead>
                                     <tr>
+                                        <th>Factura</th>
                                         <th>cod. ord.</th>
                                         <th>Cod. req.</th>
                                         <th>Cod OC Soft.</th>
@@ -271,6 +272,51 @@ Gestión de ordenes
     </div>
 </div>
 
+<div id="modal-filtro" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="my-modal-title">Title</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row" data-select="fecha">
+                    <div class="col-md-3">
+                        <div class="form-group text-right">
+                            <input id="fecha" class="form-check-input" type="checkbox" name="fecha" value="true">
+                            <label for="fecha">Fechas :</label>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group text-center">
+                                    <input class="form-control text-center" type="date" name="fecha_inicio" data-action="change" data-select="fecha" disabled>
+                                    <span class="help-block">Desde (dd-mm-aaaa)</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group text-center">
+                                    <input class="form-control text-center" type="date" name="fecha_final" data-action="change" data-select="fecha" disabled>
+                                    <span class="help-block">Hasta (dd-mm-aaaa)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="filtros-detalle">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -307,6 +353,7 @@ Gestión de ordenes
         listaOrdenView.init();
         listaOrdenView.initializeEventHandler();
         listaOrdenView.actualizarFiltros();
+        listaOrdenView.actualizarFiltrosItems();
         // Util.activarFiltros('#listaOrdenes', listaOrdenView  );
 
         $('[name=monto_a_pagar]').number(true, 2);

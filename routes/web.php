@@ -1526,6 +1526,8 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('calcular-prioridad/{id?}', [OrdenController::class, 'calcularPrioridad'])->name('calcular-prioridad');
 						Route::get('obtener-requerimientos-con-impuesto/{idOrden}', [OrdenController::class, 'obtenerRequerimientosConImpuesto'])->name('obtener-requerimientos-con-impuesto');
 						Route::post('generar-filtros', [OrdenController::class, 'generarFiltros'])->name('generar-filtros');
+
+						Route::post('reporte-filtros', [OrdenController::class, 'reporteFiltros'])->name('reporte-filtros');
 					});
 				});
 			});

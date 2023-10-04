@@ -541,6 +541,8 @@ class RequerimientoView {
         document.querySelector("input[name='email_cliente']").value = data.email;
         document.querySelector("input[name='direccion_entrega']").value = data.direccion_entrega;
         document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto != null ? data.tipo_impuesto : 0;
+        document.querySelector("span[id='mes_ppto']").textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+
         // document.querySelector("input[name='nombre_contacto']").value =data.
         // document.querySelector("input[name='cargo_contacto']").value =data.
         // document.querySelector("input[name='email_contacto']").value =data.

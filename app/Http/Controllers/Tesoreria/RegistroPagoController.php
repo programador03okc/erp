@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Tesoreria;
 
 use App\Exports\OrdenCompraServicioExport;
+use App\Exports\OrdenCompraServicioNivelItemExport;
 use App\Exports\OrdenesCompraServicioExport;
 use App\Exports\RegistroPagosExport;
 use App\Exports\RequerimientoPagosExport;
+use App\Exports\RequerimientoPagosNivelItemExport;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
 use App\Http\Controllers\AlmacenController;
 use Illuminate\Http\Request;
@@ -1336,6 +1338,139 @@ class RegistroPagoController extends Controller
         return Excel::download(new RequerimientoPagosExport(json_encode($json_excel)), 'requerimiento_de_pago_pagados.xlsx');
         // return response()->json($json_excel,200);
     }
+
+    public function exportarRequerimientosPagosItems(Request $request)
+    {
+        $data = DB::table('tesoreria.requerimiento_pago_detalle')
+        ->select(
+            'requerimiento_pago_detalle.id_requerimiento_pago_detalle',
+            'requerimiento_pago_detalle.descripcion',
+            'requerimiento_pago_detalle.motivo',
+            'requerimiento_pago_detalle.cantidad',
+            'requerimiento_pago_detalle.precio_unitario',
+            'requerimiento_pago_detalle.subtotal',
+            'requerimiento_pago_detalle.fecha_registro',
+            'adm_prioridad.descripcion as prioridad',
+            'requerimiento_pago_tipo.descripcion AS tipo_requerimiento',
+            'requerimiento_pago.codigo',
+            'oportunidades.codigo_oportunidad',
+            'requerimiento_pago.concepto',
+            'requerimiento_pago.comentario',
+            'sis_moneda.simbolo as simbolo_moneda',
+            'sis_sede.codigo as sede',
+            'sis_sede.descripcion as descripcion_empresa_sede',
+            'adm_contri.razon_social as empresa_razon_social',
+            'sis_identi.descripcion as empresa_tipo_documento',
+            'proy_proyecto.descripcion AS descripcion_proyecto',
+            'sis_grupo.descripcion as grupo',
+            'division.descripcion as division',
+            'requerimiento_pago.monto_total',
+            'presup_par.codigo as partida',
+            'presup_par.descripcion as descripcion_partida',
+            'presup_par.id_partida',
+            'padre_centro_costo.codigo as padre_centro_costo',
+            'padre_centro_costo.descripcion as padre_descripcion_centro_costo',
+            'centro_costo.codigo as centro_costo',
+            'centro_costo.descripcion as descripcion_centro_costo',
+            'centro_costo.id_centro_costo',
+            'requerimiento_pago_estado.descripcion as estado_requerimiento',
+            'presup.codigo as codigo_presupuesto_old',
+            'presup.descripcion as descripcion_presupuesto_old',
+            'presupuesto_interno.codigo as codigo_presupuesto_interno',
+            'presupuesto_interno.descripcion as descripcion_presupuesto_interno',
+            
+            DB::raw("(SELECT 
+            (CAST (replace(presupuesto_interno_detalle.enero, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.febrero, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.marzo, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.abril, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.mayo, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.junio, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.julio, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.agosto, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.setiembre, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.octubre, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.noviembre, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.diciembre, ',', '') AS NUMERIC(10,2)))
+            FROM finanzas.presupuesto_interno_detalle
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno = requerimiento_pago.id_presupuesto_interno and requerimiento_pago_detalle.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle limit 1) AS presupuesto_interno_total_partida"),
+            
+            DB::raw("( SELECT
+                CASE WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =4 THEN presupuesto_interno_detalle.abril
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =5 THEN presupuesto_interno_detalle.mayo
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =6 THEN presupuesto_interno_detalle.junio
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =7 THEN presupuesto_interno_detalle.julio
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =8 THEN presupuesto_interno_detalle.agosto
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =9 THEN presupuesto_interno_detalle.setiembre
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =10 THEN presupuesto_interno_detalle.octubre
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =11 THEN presupuesto_interno_detalle.noviembre
+                    WHEN (SELECT date_part('month', requerimiento_pago.fecha_registro)) =12 THEN presupuesto_interno_detalle.diciembre
+                    ELSE ''
+                    END
+                FROM finanzas.presupuesto_interno_detalle
+                WHERE presupuesto_interno_detalle.id_presupuesto_interno = requerimiento_pago.id_presupuesto_interno 
+                and requerimiento_pago_detalle.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                limit 1 ) AS presupuesto_interno_mes_partida "),
+            
+            DB::raw("(SELECT presup_titu.descripcion
+            FROM finanzas.presup_titu
+            WHERE presup_titu.codigo = presup_par.cod_padre and presup_titu.id_presup=presup_par.id_presup limit 1) AS descripcion_partida_padre"),
+            DB::raw("(SELECT presupuesto_interno_detalle.partida
+            FROM finanzas.presupuesto_interno_detalle
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = requerimiento_pago_detalle.id_partida_pi and requerimiento_pago.id_presupuesto_interno > 0 limit 1) AS codigo_sub_partida_presupuesto_interno"),
+            DB::raw("(SELECT presupuesto_interno_detalle.descripcion
+            FROM finanzas.presupuesto_interno_detalle
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = requerimiento_pago_detalle.id_partida_pi and requerimiento_pago.id_presupuesto_interno > 0 limit 1) AS descripcion_sub_partida_presupuesto_interno"),
+            DB::raw("(SELECT presupuesto_interno_modelo.descripcion
+            FROM finanzas.presupuesto_interno_detalle
+            inner join finanzas.presupuesto_interno_modelo on presupuesto_interno_modelo.id_modelo_presupuesto_interno = presupuesto_interno_detalle.id_padre
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = requerimiento_pago_detalle.id_partida_pi and requerimiento_pago.id_presupuesto_interno > 0 limit 1) AS descripcion_partida_presupuesto_interno")
+
+        )
+        ->leftJoin('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
+        ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'requerimiento_pago.id_presupuesto_interno')
+        ->leftJoin('configuracion.sis_moneda', 'requerimiento_pago.id_moneda', '=', 'sis_moneda.id_moneda')
+        ->leftJoin('administracion.adm_prioridad', 'requerimiento_pago.id_prioridad', '=', 'adm_prioridad.id_prioridad')
+        ->leftJoin('configuracion.sis_grupo', 'requerimiento_pago.id_grupo', '=', 'sis_grupo.id_grupo')
+        ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'requerimiento_pago.id_sede')
+        ->leftJoin('administracion.division', 'division.id_division', '=', 'requerimiento_pago.id_division')
+        ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'requerimiento_pago.id_proyecto')
+        ->leftJoin('administracion.adm_empresa', 'requerimiento_pago.id_empresa', '=', 'adm_empresa.id_empresa')
+        ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
+        ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
+        ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'requerimiento_pago.id_cc')
+        ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+        ->leftJoin('tesoreria.requerimiento_pago_tipo', 'requerimiento_pago_tipo.id_requerimiento_pago_tipo', '=', 'requerimiento_pago.id_requerimiento_pago_tipo')
+        ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'requerimiento_pago_detalle.id_partida')
+        ->leftJoin('finanzas.presup', 'presup.id_presup', '=', 'presup_par.id_presup')
+        ->leftJoin('finanzas.centro_costo', 'centro_costo.id_centro_costo', '=', 'requerimiento_pago_detalle.id_centro_costo')
+        ->leftJoin('finanzas.centro_costo as padre_centro_costo', 'padre_centro_costo.id_centro_costo', '=', 'centro_costo.id_padre')
+        ->leftJoin('tesoreria.requerimiento_pago_estado', 'requerimiento_pago.id_estado', '=', 'requerimiento_pago_estado.id_requerimiento_pago_estado')
+        ->whereIn('requerimiento_pago.id_estado', [6, 2, 5, 8, 9]);
+        if (!empty($request->prioridad)) {
+            $data = $data->where('adm_prioridad.id_prioridad', $request->prioridad);
+        }
+        if (!empty($request->empresa)) {
+            $data = $data->where('adm_empresa.id_empresa', $request->empresa);
+        }
+        if (!empty($request->estado)) {
+            $data = $data->where('requerimiento_pago_estado.id_requerimiento_pago_estado', $request->estado);
+        }
+        if (!empty($request->fecha_inicio)) {
+            $data = $data->whereDate('requerimiento_pago.fecha_registro', '>=', $request->fecha_inicio);
+        }
+        if (!empty($request->fecha_final)) {
+            $data = $data->whereDate('requerimiento_pago.fecha_registro', '<=', $request->fecha_final);
+        }
+
+        $data = $data->orderBy('requerimiento_pago.id_requerimiento_pago', 'DESC')->get();
+
+        return Excel::download(new RequerimientoPagosNivelItemExport(json_encode($data)), 'requerimiento_pagados_nivel_item.xlsx');
+    }
+
     public function exportarOrdenesComprasServicios(Request $request)
     {
         $data = Orden::select(
@@ -1470,6 +1605,173 @@ class RegistroPagoController extends Controller
         }
 
         return Excel::download(new OrdenCompraServicioExport(json_encode($json_excel)), 'requerimiento_logisticos_pagados.xlsx');
+    }
+    public function exportarOrdenesComprasServiciosItems(Request $request)
+    {
+        $data = DB::table('almacen.alm_det_req')
+        ->select(
+            'alm_prod.codigo as codigo_producto',
+            'alm_prod.descripcion as descripcion_producto',
+            'alm_det_req.descripcion as descripcion_detalle_requerimiento',
+            'alm_det_req.motivo',
+            'alm_det_req.cantidad',
+            'alm_det_req.precio_unitario',
+            'alm_det_req.subtotal',
+            'alm_det_req.fecha_registro',
+            'adm_prioridad.descripcion as prioridad',
+            'alm_tp_req.descripcion AS tipo_requerimiento',
+            'alm_req.codigo',
+            'oportunidades.codigo_oportunidad',
+            'alm_req.concepto',
+            'alm_req.codigo',
+            'alm_req.observacion',
+            'sis_moneda.simbolo as simbolo_moneda',
+            'sis_sede.codigo as sede',
+            'sis_sede.descripcion as descripcion_empresa_sede',
+            'adm_contri.razon_social as empresa_razon_social',
+            'sis_identi.descripcion as empresa_tipo_documento',
+            'proy_proyecto.descripcion AS descripcion_proyecto',
+            'sis_grupo.descripcion as grupo',
+            'division.descripcion as division',
+            'alm_req.monto_total',
+            'presup_par.descripcion as descripcion_partida',
+            'presup_par.codigo as partida',
+            'presup_par.id_partida',
+            'padre_centro_costo.codigo as padre_centro_costo',
+            'padre_centro_costo.descripcion as padre_descripcion_centro_costo',
+            'centro_costo.descripcion as descripcion_centro_costo',
+            'centro_costo.codigo as centro_costo',
+            'centro_costo.id_centro_costo',
+            'adm_estado_doc.estado_doc as estado_requerimiento',
+            'presup.codigo as codigo_presupuesto_old',
+            'presup.descripcion as descripcion_presupuesto_old',
+            'presupuesto_interno.codigo as codigo_presupuesto_interno',
+            'presupuesto_interno.descripcion as descripcion_presupuesto_interno',
+
+            DB::raw("(SELECT 
+            (CAST (replace(presupuesto_interno_detalle.enero, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.febrero, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.marzo, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.abril, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.mayo, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.junio, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.julio, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.agosto, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.setiembre, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.octubre, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.noviembre, ',', '') AS NUMERIC(10,2))
+            + CAST (replace(presupuesto_interno_detalle.diciembre, ',', '') AS NUMERIC(10,2)))
+            FROM finanzas.presupuesto_interno_detalle
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle limit 1) AS presupuesto_interno_total_partida"),
+            
+            DB::raw("( SELECT
+                CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =4 THEN presupuesto_interno_detalle.abril
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =5 THEN presupuesto_interno_detalle.mayo
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =6 THEN presupuesto_interno_detalle.junio
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =7 THEN presupuesto_interno_detalle.julio
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =8 THEN presupuesto_interno_detalle.agosto
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =9 THEN presupuesto_interno_detalle.setiembre
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =10 THEN presupuesto_interno_detalle.octubre
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =11 THEN presupuesto_interno_detalle.noviembre
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =12 THEN presupuesto_interno_detalle.diciembre
+                    ELSE ''
+                    END
+                FROM finanzas.presupuesto_interno_detalle
+                WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
+                and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                limit 1 ) AS presupuesto_interno_mes_partida "),
+            
+            DB::raw("(SELECT presup_titu.descripcion
+            FROM finanzas.presup_titu
+            WHERE presup_titu.codigo = presup_par.cod_padre and presup_titu.id_presup=presup_par.id_presup limit 1) AS descripcion_partida_padre"),
+            DB::raw("(SELECT presupuesto_interno_detalle.partida
+            FROM finanzas.presupuesto_interno_detalle
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = alm_det_req.id_partida_pi and alm_req.id_presupuesto_interno > 0 limit 1) AS codigo_sub_partida_presupuesto_interno"),
+            DB::raw("(SELECT presupuesto_interno_detalle.descripcion
+            FROM finanzas.presupuesto_interno_detalle
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = alm_det_req.id_partida_pi and alm_req.id_presupuesto_interno > 0 limit 1) AS descripcion_sub_partida_presupuesto_interno"),
+            DB::raw("(SELECT presupuesto_interno_modelo.descripcion
+            FROM finanzas.presupuesto_interno_detalle
+            inner join finanzas.presupuesto_interno_modelo on presupuesto_interno_modelo.id_modelo_presupuesto_interno = presupuesto_interno_detalle.id_padre
+            WHERE presupuesto_interno_detalle.id_presupuesto_interno_detalle = alm_det_req.id_partida_pi and alm_req.id_presupuesto_interno > 0 limit 1) AS descripcion_partida_presupuesto_interno"),
+            
+            'log_ord_compra.codigo as nro_orden',
+            'estados_compra.descripcion as estado_orden',
+            'requerimiento_pago_estado.descripcion as estado_pago',
+            'moneda_orden.simbolo as simbolo_moneda_orden',
+            'log_det_ord_compra.cantidad as cantidad_orden',
+            'log_det_ord_compra.precio as precio_orden',
+            DB::raw("(SELECT log_det_ord_compra.subtotal  
+            FROM logistica.log_ord_compra
+            WHERE log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra 
+            and log_det_ord_compra.id_detalle_requerimiento = alm_det_req.id_detalle_requerimiento limit 1) AS subtotal_orden"),
+            DB::raw("(SELECT CASE WHEN 
+            log_ord_compra.incluye_igv =true THEN (log_det_ord_compra.subtotal * 1.18 ) ELSE log_det_ord_compra.subtotal END  
+            FROM logistica.log_ord_compra
+            WHERE log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra 
+            and log_det_ord_compra.id_detalle_requerimiento = alm_det_req.id_detalle_requerimiento limit 1) AS subtotal_orden_considera_igv"),
+
+            'alm_req.fecha_requerimiento',
+            DB::raw("(SELECT cont_tp_cambio.venta  
+            FROM contabilidad.cont_tp_cambio
+            WHERE TO_DATE(to_char(cont_tp_cambio.fecha,'YYYY-MM-DD'),'YYYY-MM-DD') = TO_DATE(to_char(alm_req.fecha_requerimiento,'YYYY-MM-DD'),'YYYY-MM-DD') limit 1) AS tipo_cambio"),
+
+            'estado_despacho.estado_doc as estado_despacho',
+        )
+
+        ->leftJoin('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
+        ->leftJoin('finanzas.presupuesto_interno', 'presupuesto_interno.id_presupuesto_interno', '=', 'alm_req.id_presupuesto_interno')
+        ->leftJoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+        ->leftJoin('configuracion.sis_moneda', 'alm_req.id_moneda', '=', 'sis_moneda.id_moneda')
+        ->leftJoin('administracion.adm_prioridad', 'alm_req.id_prioridad', '=', 'adm_prioridad.id_prioridad')
+        ->leftJoin('configuracion.sis_grupo', 'alm_req.id_grupo', '=', 'sis_grupo.id_grupo')
+        ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_req.id_sede')
+        ->leftJoin('administracion.division', 'division.id_division', '=', 'alm_req.division_id')
+        ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
+        ->leftJoin('administracion.adm_empresa', 'alm_req.id_empresa', '=', 'adm_empresa.id_empresa')
+        ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
+        ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
+        ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
+        ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+        ->leftJoin('almacen.alm_tp_req', 'alm_tp_req.id_tipo_requerimiento', '=', 'alm_req.id_tipo_requerimiento')
+        ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'alm_det_req.partida')
+        ->leftJoin('finanzas.presup', 'presup.id_presup', '=', 'presup_par.id_presup')
+
+        ->leftJoin('finanzas.centro_costo', 'centro_costo.id_centro_costo', '=', 'alm_det_req.centro_costo_id')
+        ->leftJoin('finanzas.centro_costo as padre_centro_costo', 'padre_centro_costo.id_centro_costo', '=', 'centro_costo.id_padre')
+        ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
+        ->leftJoin('logistica.log_det_ord_compra','log_det_ord_compra.id_detalle_requerimiento','=','alm_det_req.id_detalle_requerimiento')
+        ->leftJoin('logistica.log_ord_compra','log_ord_compra.id_orden_compra','=','log_det_ord_compra.id_orden_compra')
+        ->leftJoin('configuracion.sis_moneda as moneda_orden', 'moneda_orden.id_moneda', '=', 'log_ord_compra.id_moneda')
+        ->leftJoin('logistica.estados_compra', 'estados_compra.id_estado', '=', 'log_ord_compra.estado')
+        ->leftJoin('tesoreria.requerimiento_pago_estado', 'requerimiento_pago_estado.id_requerimiento_pago_estado', '=', 'log_ord_compra.estado_pago')
+        ->leftJoin('almacen.orden_despacho', 'orden_despacho.id_requerimiento', '=', 'alm_req.id_requerimiento')
+        ->leftJoin('administracion.adm_estado_doc as estado_despacho', 'estado_despacho.id_estado_doc', '=', 'orden_despacho.estado') 
+        ->whereIn('log_ord_compra.estado_pago', [8, 5, 6, 9, 10])
+        ->where('log_ord_compra.estado', '!=', 7);
+
+        if (!empty($request->prioridad)) {
+            $data = $data->where('adm_prioridad.id_prioridad', $request->prioridad);
+        }
+        if (!empty($request->empresa)) {
+            $data = $data->where('adm_empresa.id_empresa', $request->empresa);
+        }
+        if (!empty($request->estado)) {
+            $data = $data->where('requerimiento_pago_estado.id_requerimiento_pago_estado', $request->estado);
+        }
+        if (!empty($request->fecha_inicio)) {
+            $data = $data->whereDate('log_ord_compra.fecha_solicitud_pago', '>=', $request->fecha_inicio);
+        }
+        if (!empty($request->fecha_final)) {
+            $data = $data->whereDate('log_ord_compra.fecha_solicitud_pago', '<=', $request->fecha_final);
+        }
+
+        $data = $data->orderBy('log_ord_compra.id_orden_compra', 'DESC')->get();
+
+        return Excel::download(new OrdenCompraServicioNivelItemExport(json_encode($data)), 'requerimiento_logisticos_pagados_nivel_item.xlsx');
     }
     public function cuadroComparativoPagos()
     {

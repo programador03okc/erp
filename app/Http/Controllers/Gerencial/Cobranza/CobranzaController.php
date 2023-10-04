@@ -12,6 +12,7 @@ use App\Models\almacen\DocumentoVenta;
 use App\Models\Comercial\Cliente;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Departamento;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Pais;
 use App\Models\Configuracion\SisUsua;
 use App\Models\Contabilidad\Contribuyente;
@@ -189,6 +190,7 @@ class CobranzaController extends Controller
             /**
              * Registro de cobranza
              */
+            $cobranza_old = RegistroCobranza::find($request->id);
             $cobranza = RegistroCobranza::firstOrNew(['id_registro_cobranza' => $request->id]);
                 if ($request->id===0 || $request->id==='0') {
                     $cobranza->fecha_registro = new Carbon();
@@ -230,6 +232,16 @@ class CobranzaController extends Controller
                 $cobranza->fecha_entrega = $request->fecha_entrega;
                 $cobranza->id_oc = $request->id_oc;
             $cobranza->save();
+
+            if((int) $request->id > 0){
+                $comentarioCabecera = 'EDITAR COBRANZA';
+                LogActividad::registrar(Auth::user(), 'Crear / editar registro de Cobranza', 3, $cobranza->getTable(), $cobranza_old, $cobranza, $comentarioCabecera,'GERENCIAL');
+            }else{
+                $comentarioCabecera = 'NUEVA COBRANZA';
+                LogActividad::registrar(Auth::user(), 'Crear / editar registro de Cobranza', 2, $cobranza->getTable(), null, $cobranza, $comentarioCabecera,'GERENCIAL');
+            }
+
+
 
             if ($request->id == 0) {
                 /**
@@ -341,6 +353,9 @@ class CobranzaController extends Controller
             $registro_cobranza->deleted_id   = Auth::user()->id_usuario; #obtiene la fecha de la eliminacion del registro
             $registro_cobranza->user_ip   = $request->ip();
         $registro_cobranza->save();
+
+        $comentarioCabecera = 'SE PROCEDIO A ELIMINAR EL REGISTRO';
+        LogActividad::registrar(Auth::user(), 'Eliminar registro de Cobranza', 4, $registro_cobranza->getTable(), null, $registro_cobranza, $comentarioCabecera,'GERENCIAL');
         return response()->json(["success" => true, "status" => 200]);
     }
 
@@ -446,12 +461,22 @@ class CobranzaController extends Controller
             $nuevo->fecha = $request->fecha_fase;
         $nuevo->save();
 
+        $comentarioCabecera = 'SE PROCEDIO A CREAR UNA FASE - cobranza_id'.$request->id_registro_cobranza;
+        LogActividad::registrar(Auth::user(), 'Crear FASE', 2, $nuevo->getTable(), null, $nuevo, $comentarioCabecera,'GERENCIAL - FASES');
+
         return response()->json(["success" => true, "status" => 200, "data" => $nuevo]);
     }
 
     public function eliminarFase(Request $request)
     {
+        $cobranza = RegistroCobranzaFase::find($request->id);
+        $comentarioCabecera = 'SE PROCEDIO A ELIMINAR UNA FASE - cobranza_id'.$cobranza->cobranza_id;
+        LogActividad::registrar(Auth::user(), 'ELIMINAR FASE', 4, $cobranza->getTable(), null, $cobranza, $comentarioCabecera,'GERENCIAL - FASES');
+
         RegistroCobranzaFase::find($request->id)->delete();
+
+
+
         return response()->json(["success" => true, "status" => 200]);
     }
 
@@ -474,6 +499,9 @@ class CobranzaController extends Controller
             $observacion->updated_at = date('Y-m-d H:i:s');
         $observacion->save();
 
+        $comentarioCabecera = 'SE PROCEDIO A CREAR UNA OBSERVACIÓN - cobranza_id'.$request->cobranza_id;
+        LogActividad::registrar(Auth::user(), 'Crear observaciones', 2, $observacion->getTable(), null, $observacion, $comentarioCabecera,'GERENCIAL - OBSERVACIONES');
+
         return response()->json(["success" => true, "status" => 200, "data" => $observacion]);
     }
 
@@ -482,6 +510,10 @@ class CobranzaController extends Controller
         $observacion = Observaciones::find($request->id);
             $observacion->estado = 7;
         $observacion->save();
+
+        $comentarioCabecera = 'SE PROCEDIO A ELIMINAR UNA OBSERVACIÓN - cobranza_id'.$observacion->cobranza_id;
+        LogActividad::registrar(Auth::user(), 'ELIMINAR observaciones', 4, $observacion->getTable(), null, $observacion, $comentarioCabecera,'GERENCIAL - OBSERVACIONES');
+
         return response()->json(["success" => true, "status" => 200]);
     }
 

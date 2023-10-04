@@ -51,8 +51,9 @@ class RequerimientoPagoDetalle extends Model
 
         if (isset($this->attributes['id_partida_pi'])) {
             $presupuestoInternoDetalle = PresupuestoInternoDetalle::where('id_presupuesto_interno_detalle', $this->attributes['id_partida_pi'])->first();
-            $month = date('m');
-
+            $requerimientopago = RequerimientoPago::find($this->attributes['id_requerimiento_pago']);
+            $month = (new Carbon($requerimientopago->fecha_registro))->format('m');
+            
             if ($presupuestoInternoDetalle) {
                 switch ($month) {
                     case 1:

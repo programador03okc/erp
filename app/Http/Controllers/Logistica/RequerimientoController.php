@@ -747,21 +747,25 @@ class RequerimientoController extends Controller
                     FROM finanzas.presupuesto_interno_detalle
                     WHERE  presupuesto_interno_detalle.id_presupuesto_interno_detalle = alm_det_req.id_partida_pi ) AS presupuesto_interno_total_partida"),
 
-                    DB::raw("( CASE WHEN (SELECT date_part('month', (SELECT current_timestamp))) =1 THEN presupuesto_interno_detalle.enero
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =2 THEN presupuesto_interno_detalle.febrero
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =3 THEN presupuesto_interno_detalle.marzo
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =4 THEN presupuesto_interno_detalle.abril
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =5 THEN presupuesto_interno_detalle.mayo
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =6 THEN presupuesto_interno_detalle.junio
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =7 THEN presupuesto_interno_detalle.julio
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =8 THEN presupuesto_interno_detalle.agosto
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =9 THEN presupuesto_interno_detalle.setiembre
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =10 THEN presupuesto_interno_detalle.octubre
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =11 THEN presupuesto_interno_detalle.noviembre
-                    WHEN (SELECT date_part('month', (SELECT current_timestamp))) =12 THEN presupuesto_interno_detalle.diciembre
-                    ELSE ''
-                    END
-                      ) AS presupuesto_interno_mes_partida")
+                    DB::raw("( SELECT
+                    CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =4 THEN presupuesto_interno_detalle.abril
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =5 THEN presupuesto_interno_detalle.mayo
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =6 THEN presupuesto_interno_detalle.junio
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =7 THEN presupuesto_interno_detalle.julio
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =8 THEN presupuesto_interno_detalle.agosto
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =9 THEN presupuesto_interno_detalle.setiembre
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =10 THEN presupuesto_interno_detalle.octubre
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =11 THEN presupuesto_interno_detalle.noviembre
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =12 THEN presupuesto_interno_detalle.diciembre
+                        ELSE ''
+                        END
+                    FROM finanzas.presupuesto_interno_detalle
+                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
+                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                    limit 1 ) AS presupuesto_interno_mes_partida ")
                 )
                 ->where([
                     ['alm_det_req.estado', '!=', 7],

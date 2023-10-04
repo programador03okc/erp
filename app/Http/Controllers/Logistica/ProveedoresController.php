@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Logistica;
 
+use App\Exports\ReporteListaProveedoresExcel;
 use App\Http\Controllers\Controller;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Distrito;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 
 // use Debugbar;
 
@@ -49,6 +51,11 @@ class ProveedoresController extends Controller
             array_push($array_accesos,$value->id_acceso);
         }
         return view('logistica.gestion_logistica.proveedores.lista_proveedores', compact('paises', 'tipoDocumentos', 'tipoContribuyentes', 'bancos', 'tipo_cuenta', 'monedas','array_accesos'));
+    }
+
+    public function getDataListadoProveedores()
+    {
+        return Proveedor::listado()->get();
     }
 
     public function obtenerDataListado()
@@ -464,6 +471,11 @@ class ProveedoresController extends Controller
             DB::rollBack();
             return response()->json(['data' => null, 'tipo_estado'=>$tipoEstado, 'mensaje' => 'Hubo un problema en el controllador para  obtener los datos del contribuyente. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
+    }
+
+    public function reporteListaProveedores(){
+        return Excel::download(new ReporteListaProveedoresExcel(), 'lista_proveedores.xlsx');
+
     }
 
 }

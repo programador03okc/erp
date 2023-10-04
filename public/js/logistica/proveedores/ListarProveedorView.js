@@ -186,7 +186,7 @@ class ListarProveedorView {
         vista_extendida();
         var vardataTables = funcDatatables();
         const button_nuevo = (array_accesos.find(element => element === 254)?{
-                text: '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo',
+                text: '<span class="fas fa-plus"></span> Nuevo',
                 attr:  {
                     id: 'btnCrearProveedor'
                 },
@@ -196,9 +196,20 @@ class ListarProveedorView {
                 },
                 className: 'btn-success btn-sm'
             }:[]);
+        const button_descargar = (array_accesos.find(element => element === 254)?{
+                text: '<span class="fas fa-file-excel"></span> Reporte lista de Proveedores',
+                attr:  {
+                    id: 'btnReporteListaProveedores'
+                },
+                action: ()=>{
+                    this.reporteListaProveedores();
+
+                },
+                className: 'btn-success btn-sm'
+            }:[]);
         $tablaListaProveedores = $('#listaProveedores').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_nuevo,
+            'buttons': [button_nuevo,button_descargar
                 // {
                 //     text: '<span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtros : 0',
                 //     attr:  {
@@ -1533,6 +1544,12 @@ class ListarProveedorView {
                 <td colspan="5" style="text-align:center;">(Sin registros)</td>
                 </tr>`);
         }
+    }
+
+
+    reporteListaProveedores(){
+        window.open(`reporte-lista-proveedores`);
+
     }
 
 }

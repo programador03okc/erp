@@ -1535,6 +1535,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('obtener-data-listado', [ProveedoresController::class, 'obtenerDataListado'])->name('obtener-data-listado');
 				Route::get('listar_ubigeos', [AlmacenController::class, 'listar_ubigeos'])->name('listar-ubigeos');
 				Route::post('obtener-data-contribuyente-segun-nro-documento', [ProveedoresController::class, 'obtenerDataContribuyenteSegunNroDocumento'])->name('obtener-data-contribuyente-segun-nro-documento');
+				Route::get('reporte-lista-proveedores', [ProveedoresController::class, 'reporteListaProveedores'])->name('reporte-lista-proveedores');
 			});
 
 			Route::name('reportes.')->prefix('reportes')->group(function () {

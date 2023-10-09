@@ -684,6 +684,7 @@ class ScriptController extends Controller
                 $mes = date("m", strtotime($registro_pago->fecha_pago));
                 $mes = $this->mesSeleccionado($mes);
 
+                //usarlo una vez
                 $data = PresupuestoInternoDetalle::find($value->id_presupuesto_interno_detalle);
                 $data->$mes = $value->$mes + $value_historia->importe;
                 $data->save();

@@ -1339,6 +1339,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class, 'totalPresupuestoAnualPartidasNiveles'])->name('total-presupuesto-anual-niveles');
 
 					Route::get('nivelar-partidas/{mes}', [ScriptController::class, 'nivelarPartidas'])->name('nivelar-partidas');
+					Route::get('actualizar-saldos', [ScriptController::class, 'actualizarSaldos'])->name('actualizar-saldos');
 
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');

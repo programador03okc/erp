@@ -2120,7 +2120,9 @@ class ListaOrdenView {
                 },
             },
             'columns': [
+
                 { 'data': 'nro_doc_com', 'name': 'nro_doc_com', 'className': 'text-center' },
+                { 'data': 'emision_factura', 'name': 'emision_factura', 'className': 'text-center' },
                 {
                     'data': 'codigo_orden', 'className': 'text-center',
                     render: function (data, type, row) {

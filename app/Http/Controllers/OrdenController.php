@@ -5264,9 +5264,10 @@ class OrdenController extends Controller
         return ["data" => $payload, 'estado' => $estado, "mensaje" => $mensaje];
     }
     public function reporteFiltros(Request $request){
+        set_time_limit(1);
         $array = array("fecha_final"=>$request->fecha_final,"fecha_inicio"=>$request->fecha_inicio);
+        // return $request->all();exit;
         return Excel::download(new OrdenesItemsFiltroExport(json_encode($array)), 'ordenes_items_'.date('d-m-Y h:i:s').'.xlsx');
-        return $request;
     }
     public static function reporteListaItemsOrdenesFiltros($filtros)
     {

@@ -34,7 +34,7 @@
 
     <tbody>
         @foreach ($data as $item)
-        {{-- {{dd($item)}} --}}
+        {{-- {{dd($item['numero_factura'])}} --}}
                 <tr>
                     <td>{{ $item['numero_factura'] }}</td>
                     <td>{{ $item['codigo_orden'] }}</td>
@@ -64,8 +64,6 @@
                     <td>{{ $item['tiempo_atencion_proveedor'] }}</td>
                     <td>{{ $item['descripcion_sede_empresa'] }}</td>
                     <td>{{ $item['descripcion_estado'] }}</td>
-
-
                 </tr>
         @endforeach
     </tbody>

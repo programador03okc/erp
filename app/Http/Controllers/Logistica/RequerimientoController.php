@@ -4719,4 +4719,213 @@ class RequerimientoController extends Controller
         );
         return response()->json($respuesta,200);
     }
+
+
+    public function obtenerRequerimientosVinculadosConPartida(Request $request)
+    {
+
+        $data=[];
+        if($request->tipo_presupuesto =='INTERNO'){
+
+            $detalle = DetalleRequerimiento::where([['id_partida_pi',$request->id_partida],['estado','!=',7]])->distinct()->get();
+            foreach ($detalle as $key => $value) {
+                $idRequerimientoList[]=$value->id_requerimiento;
+            }
+        }
+
+        if($idRequerimientoList){
+            $data = Requerimiento::join('almacen.alm_tp_req', 'alm_req.id_tipo_requerimiento', '=', 'alm_tp_req.id_tipo_requerimiento')
+            ->leftJoin('administracion.adm_prioridad', 'alm_req.id_prioridad', '=', 'adm_prioridad.id_prioridad')
+            ->leftJoin('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'alm_req.id_almacen')
+            ->leftJoin('almacen.tipo_cliente', 'tipo_cliente.id_tipo_cliente', '=', 'alm_req.tipo_cliente')
+            ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
+            ->leftJoin('configuracion.sis_usua', 'alm_req.id_usuario', '=', 'sis_usua.id_usuario')
+            ->leftJoin('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
+            ->leftJoin('rrhh.rrhh_postu', 'rrhh_postu.id_postulante', '=', 'rrhh_trab.id_postulante')
+            ->leftJoin('rrhh.rrhh_perso', 'rrhh_perso.id_persona', '=', 'rrhh_postu.id_persona')
+            ->leftJoin('rrhh.rrhh_rol', 'alm_req.id_rol', '=', 'rrhh_rol.id_rol')
+            ->leftJoin('rrhh.rrhh_rol_concepto', 'rrhh_rol_concepto.id_rol_concepto', '=', 'rrhh_rol.id_rol_concepto')
+            ->leftJoin('administracion.adm_area', 'alm_req.id_area', '=', 'adm_area.id_area')
+            ->leftJoin('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'alm_req.id_grupo')
+            ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_req.id_sede')
+            ->leftJoin('comercial.com_cliente', 'alm_req.id_cliente', '=', 'com_cliente.id_cliente')
+            ->leftJoin('contabilidad.adm_contri as contri_cliente', 'com_cliente.id_contribuyente', '=', 'contri_cliente.id_contribuyente')
+            ->leftJoin('rrhh.rrhh_perso as perso_natural', 'alm_req.id_persona', '=', 'perso_natural.id_persona')
+            ->leftJoin('configuracion.sis_moneda', 'alm_req.id_moneda', '=', 'sis_moneda.id_moneda')
+            ->leftJoin('rrhh.rrhh_trab as trab_solicitado_por', 'alm_req.trabajador_id', '=', 'trab_solicitado_por.id_trabajador')
+            ->leftJoin('rrhh.rrhh_postu as postu_solicitado_por', 'postu_solicitado_por.id_postulante', '=', 'trab_solicitado_por.id_postulante')
+            ->leftJoin('rrhh.rrhh_perso as perso_solicitado_por', 'perso_solicitado_por.id_persona', '=', 'postu_solicitado_por.id_persona')
+            ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
+            ->select(
+                'alm_req.id_requerimiento',
+                'alm_req.codigo',
+                'adm_prioridad.descripcion as descripcion_prioridad',
+                'alm_req.concepto',
+                'alm_req.observacion',
+                'alm_req.id_moneda',
+                'alm_req.id_almacen',
+                'alm_req.id_proyecto',
+                'alm_req.id_presupuesto_interno',
+                DB::raw("CONCAT(alm_almacen.codigo,'-',alm_almacen.descripcion) as almacen_requerimiento"),
+                'alm_req.fecha_entrega',
+                'sis_moneda.simbolo as simbolo_moneda',
+                'sis_moneda.descripcion as moneda',
+                'alm_req.fecha_requerimiento',
+                'alm_req.id_tipo_requerimiento',
+                'alm_tp_req.descripcion AS tipo_req_desc',
+                'alm_req.tipo_cliente',
+                'tipo_cliente.descripcion AS tipo_cliente_desc',
+                'sis_usua.usuario',
+                DB::raw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) as nombre_usuario"),
+                'rrhh_rol.id_area',
+                'adm_area.descripcion AS area_desc',
+                'rrhh_rol.id_rol',
+                'rrhh_rol.id_rol_concepto',
+                'rrhh_rol_concepto.descripcion AS rrhh_rol_concepto',
+                'alm_req.id_grupo',
+                'adm_grupo.descripcion AS adm_grupo_descripcion',
+                'alm_req.concepto AS alm_req_concepto',
+                'alm_req.id_cliente',
+                'contri_cliente.nro_documento as cliente_ruc',
+                'contri_cliente.razon_social as cliente_razon_social',
+                'alm_req.id_persona',
+                'perso_natural.nro_documento as dni_persona',
+                DB::raw("CONCAT(perso_natural.nombres,' ', perso_natural.apellido_paterno,' ', perso_natural.apellido_materno)  AS nombre_persona"),
+                'alm_req.id_prioridad',
+                'alm_req.fecha_registro',
+                'alm_req.trabajador_id',
+                DB::raw("(CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name 
+                ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END) AS nombre_solicitado_por"),
+                'sis_usua.nombre_largo as nombre_usuario',
+                'alm_req.estado',
+                'alm_req.id_empresa',
+                'alm_req.id_sede',
+                'alm_req.tiene_transformacion',
+                'sis_sede.descripcion as empresa_sede',
+                'adm_estado_doc.estado_doc',
+                'adm_estado_doc.bootstrap_color',
+                DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc"),
+                DB::raw("(SELECT json_agg(DISTINCT nivel.unidad) FROM almacen.alm_det_req dr
+                INNER JOIN finanzas.cc_niveles_view nivel ON dr.centro_costo_id = nivel.id_centro_costo
+                WHERE dr.id_requerimiento = almacen.alm_req.id_requerimiento and dr.tiene_transformacion=false ) as division"),
+                DB::raw("(SELECT SUM(det.cantidad * det.precio_unitario ) FROM almacen.alm_det_req AS det
+                WHERE det.id_requerimiento = alm_req.id_requerimiento
+                AND det.estado != 7 and det.id_partida_pi=".$request->id_partida.") AS importe_item_por_partida"),
+                DB::raw("(SELECT
+                (CAST (replace(presupuesto_interno_detalle.enero, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.febrero, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.marzo, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.abril, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.mayo, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.junio, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.julio, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.agosto, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.setiembre, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.octubre, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.noviembre, ',', '') AS NUMERIC(10,2))
+                + CAST (replace(presupuesto_interno_detalle.diciembre, ',', '') AS NUMERIC(10,2)))
+                FROM finanzas.presupuesto_interno_detalle
+                WHERE  presupuesto_interno_detalle.id_presupuesto_interno_detalle = ".$request->id_partida." ) AS presupuesto_interno_total_partida"),
+
+                DB::raw("( SELECT
+                CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =4 THEN presupuesto_interno_detalle.abril
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =5 THEN presupuesto_interno_detalle.mayo
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =6 THEN presupuesto_interno_detalle.junio
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =7 THEN presupuesto_interno_detalle.julio
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =8 THEN presupuesto_interno_detalle.agosto
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =9 THEN presupuesto_interno_detalle.setiembre
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =10 THEN presupuesto_interno_detalle.octubre
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =11 THEN presupuesto_interno_detalle.noviembre
+                    WHEN (SELECT date_part('month', alm_req.fecha_registro)) =12 THEN presupuesto_interno_detalle.diciembre
+                    ELSE ''
+                    END
+                FROM finanzas.presupuesto_interno_detalle
+                WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
+                and ".$request->id_partida."=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                limit 1 ) AS presupuesto_interno_mes_partida ")
+            )
+            ->whereIn('alm_req.id_requerimiento',$idRequerimientoList)
+            ->where([['alm_req.estado',2],['alm_req.flg_compras', '=', 0]]);
+
+        return datatables($data)
+            ->filterColumn('alm_req.fecha_entrega', function ($query, $keyword) {
+                try {
+                    $keywords = Carbon::createFromFormat('d-m-Y', trim($keyword));
+                    $query->where('alm_req.fecha_entrega', $keywords);
+                } catch (\Throwable $th) {
+                }
+            })
+            ->filterColumn('alm_req.fecha_registro', function ($query, $keyword) {
+                try {
+                    $desde = Carbon::createFromFormat('d-m-Y', trim($keyword))->hour(0)->minute(0)->second(0);
+                    $hasta = Carbon::createFromFormat('d-m-Y', trim($keyword));
+                    $query->whereBetween('alm_req.fecha_registro', [$desde, $hasta->addDay()->addSeconds(-1)]);
+                } catch (\Throwable $th) {
+                }
+            })
+            ->filterColumn('nombre_usuario', function ($query, $keyword) {
+                $keywords = trim(strtoupper($keyword));
+                $query->whereRaw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) LIKE ?", ["%{$keywords}%"]);
+            })
+
+            ->filterColumn('nombre_solicitado_por', function ($query, $keyword) {
+                try {
+                    $query->where('cc_view.name', trim($keyword));
+                } catch (\Throwable $th) {
+                }
+            })
+            ->filterColumn('estado_doc', function ($query, $keyword) {
+                try {
+                    $query->where('adm_estado_doc.estado_doc', trim($keyword));
+                } catch (\Throwable $th) {
+                }
+            })
+            ->rawColumns(['termometro'])->toJson();
+        }
+    }
+
+    public function obteneritemsRequerimientoConPartidaDePresupuestoInterno($id_requerimiento,$id_partida)
+    {
+        $detalles = DetalleRequerimiento::select(
+            'alm_req.codigo as codigo_requerimiento',
+            'alm_det_req.*',
+            'presupuesto_interno_detalle.partida as codigo_partida_presupuesto_interno',
+            'presupuesto_interno_detalle.descripcion as descripcion_partida_presupuesto_interno',
+            'presup_par.codigo as codigo_partida',
+            'presup_par.descripcion as descripcion_partida',
+            'sis_moneda.simbolo as moneda_simbolo',
+            'sis_moneda.descripcion as moneda_descripcion',
+            'adm_estado_doc.estado_doc',
+            'adm_estado_doc.bootstrap_color',
+            'alm_prod.descripcion as producto_descripcion',
+            'alm_prod.codigo as producto_codigo',
+            'alm_prod.cod_softlink as producto_codigo_softlink',
+            'alm_prod.part_number as producto_part_number',
+            'alm_prod.id_unidad_medida as producto_id_unidad_medida',
+            'alm_und_medida.abreviatura',
+            'unidad_medida_prod.abreviatura as unidad_medida_producto'
+        )
+            ->leftJoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+            ->leftJoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_det_req.id_unidad_medida')
+            ->leftJoin('almacen.alm_und_medida as unidad_medida_prod', 'unidad_medida_prod.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'alm_det_req.estado')
+            ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
+            ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'alm_req.id_moneda')
+            ->leftJoin('finanzas.presupuesto_interno_detalle', 'presupuesto_interno_detalle.id_presupuesto_interno_detalle', '=', 'alm_det_req.id_partida_pi')
+            ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'alm_det_req.partida')
+
+            ->where([
+                ['alm_det_req.id_requerimiento', '=', $id_requerimiento],
+                ['alm_det_req.id_partida_pi', '=', $id_partida],
+                ['alm_det_req.estado', '!=', 7]
+            ])
+            ->get();
+
+        return response()->json($detalles);
+    }
+
+    
 }

@@ -648,9 +648,10 @@ Crear / editar requerimiento
                                                 <th width="70">Descripción</th>
                                                 <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
                                                 <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
-                                                <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
+                                                <th width="10" style="background-color: #fbdddd;">presupuesto a utilizar</th>
                                                 <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
                                                 <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                                <th width="10">Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody id="body_partidas_activas">
@@ -703,6 +704,8 @@ Crear / editar requerimiento
         @endforeach
     </select>
 </div>
+@include('logistica.requerimientos.modal_requerimientos_vinculados_con_partida')
+
 @include('logistica.requerimientos.modal_lista_incidencias')
 
 <!-- @include('logistica.requerimientos.modal_buscar_stock_almacenes') -->
@@ -797,6 +800,7 @@ Crear / editar requerimiento
 
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js'))}}"></script>
 
 <script>
     var grupos = JSON.parse('{!!$grupos!!}');

@@ -155,9 +155,10 @@
                                         <th width="70">Descripción</th>
                                         <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
                                         <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
-                                        <th width="10" style="background-color: #fbdddd;">Presupuesto Utilizado</th>
+                                        <th width="10" style="background-color: #fbdddd;">presupuesto a utilizar</th>
                                         <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
                                         <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                        <th style="text-align:center;width:7%;">Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="body_partidas_activas">

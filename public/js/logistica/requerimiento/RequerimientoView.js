@@ -638,16 +638,19 @@ class RequerimientoView {
             // console.log(dataDetalleRequerimiento);
 
             let idPartida = '';
+            let tipoPresupuesto = '';
             let codigoPartida = '';
             let descripcionPartida = '';
             let totalPartida = 0;
             let totalPartidaMes = 0;
             if (dataDetalleRequerimiento[i].id_partida > 0) {
+                tipoPresupuesto = 'ANTIGUO';
                 idPartida = dataDetalleRequerimiento[i].id_partida;
                 codigoPartida = dataDetalleRequerimiento[i].codigo_partida;
                 descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida;
                 totalPartida = dataDetalleRequerimiento[i].presupuesto_old_total_partida;
             } else if (dataDetalleRequerimiento[i].id_partida_pi > 0) {
+                tipoPresupuesto ='INTERNO';
                 idPartida = dataDetalleRequerimiento[i].id_partida_pi;
                 codigoPartida = dataDetalleRequerimiento[i].codigo_partida_presupuesto_interno;
                 descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida_presupuesto_interno;
@@ -655,17 +658,26 @@ class RequerimientoView {
                 totalPartidaMes = dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
             }
 
+
+            let partidaTd = `<p class="descripcion-partida"
+            data-tipo-presupuesto="${tipoPresupuesto}"
+            data-id-partida="${idPartida}"
+            data-presupuesto-total="${totalPartida}"
+            data-presupuesto-mes="${totalPartidaMes}"
+            title="${descripcionPartida !='' || descripcionPartida !=null ?descripcionPartida: '(NO SELECCIONADO)'}" >${codigoPartida !=null ||  codigoPartida !='' ?codigoPartida :'(NO SELECCIONADO)'}</p>
+            <button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
+            <div class="form-group">
+            <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
+            </div>`;
+
             if (dataDetalleRequerimiento[i].id_tipo_item == 1) { // producto
+
+
+
                 document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr data-estado="${dataDetalleRequerimiento[i].estado}" style="text-align:center; background-color:${dataDetalleRequerimiento[i].estado == 7 ? '#f5e4e4' : ''}; ">
                 <td></td>
-                <td><p class="descripcion-partida" 
-                    data-id-partida="${idPartida}" 
-                    data-presupuesto-total="${totalPartida}" 
-                    data-presupuesto-mes="${totalPartidaMes}" 
-                    title="${descripcionPartida ?? '(NO SELECCIONADO)'}" >${codigoPartida ?? '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
-                    <div class="form-group">
-                        <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
-                    </div>
+                <td>
+                    ${partidaTd}
                 </td>
                 <td><p class="descripcion-centro-costo" title="${dataDetalleRequerimiento[i].descripcion_centro_costo ?? '(NO SELECCIONADO)'}">${dataDetalleRequerimiento[i].codigo_centro_costo ?? '(NO SELECCIONADO)'} </p><button type="button" class="btn btn-xs btn-primary activation handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" ${hasDisabledInput} >Seleccionar</button>
                     <div class="form-group">
@@ -709,16 +721,11 @@ class RequerimientoView {
                 </td>
                 </tr>`);
             } else { // servicio
+
                 document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr data-estado="${dataDetalleRequerimiento[i].estado}" style="text-align:center;  background-color:${dataDetalleRequerimiento[i].estado == 7 ? '#f5e4e4' : ''};">
                     <td></td>
-                    <td><p class="descripcion-partida" 
-                        data-id-partida="${idPartida}" 
-                        data-presupuesto-total="${totalPartida}" 
-                        data-presupuesto-mes="${totalPartidaMes}" 
-                        title="${descripcionPartida}" >${codigoPartida}</p><button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
-                        <div class="form-group">
-                            <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
-                        </div>
+                    <td>
+                    ${partidaTd}
                     </td>
                     <td><p class="descripcion-centro-costo" title="${dataDetalleRequerimiento[i].descripcion_centro_costo ?? '(NO SELECCIONADO)'}">${dataDetalleRequerimiento[i].codigo_centro_costo ?? '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary activation handleClickCargarModalCentroCostos" name="centroCostos" ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" ${hasDisabledInput} >Seleccionar</button>
                         <div class="form-group">
@@ -1188,13 +1195,17 @@ class RequerimientoView {
 
         let tipoRequerimiento = document.querySelector("form[id='form-requerimiento'] select[name='tipo_requerimiento']").value;
         let idGrupo = document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value;
+        let tipoPptoCDP = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
+
+        const partidaTd= `<p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
+        <div class="form-group">
+            <input type="text" class="partida" name="idPartida[]" hidden>
+        </div>`;
 
         document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
         <td></td>
-        <td><p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
-            <div class="form-group">
-                <input type="text" class="partida" name="idPartida[]" hidden>
-            </div>
+        <td>
+            ${tipoPptoCDP >0?'':partidaTd}
         </td>
         <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
@@ -1242,6 +1253,7 @@ class RequerimientoView {
     agregarFilaServicio() {
         vista_extendida();
         let idFila = this.makeId();
+        let tipoPptoCDP = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
 
         // fix unidad medida que toma el html de un select oculto y debe tener por defecto seleccionado el option que viene de data
         let um = document.querySelector("select[id='selectUnidadMedida']").getElementsByTagName('option');
@@ -1254,13 +1266,16 @@ class RequerimientoView {
         document.querySelector("select[id='selectUnidadMedida']").getElementsByTagName('option')[indexUm].setAttribute("selected", "");
         //  fin fix unidad medida
 
+        const partidaTd = `<p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
+        <div class="form-group">
+            <input type="text" class="partida" name="idPartida[]" hidden>
+        </div>`;
+
         document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
         <td></td>
-        <td><p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
-            <div class="form-group">
-                <input type="text" class="partida" name="idPartida[]" hidden>
-            </div>
-            </td>
+        <td>
+            ${tipoPptoCDP >0?'':partidaTd}
+        </td>
             <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : ''}" hidden>
@@ -1437,14 +1452,28 @@ class RequerimientoView {
             }
         });
         if (id_grupo > 0) {
-            $('#modal-partidas').modal({
-                show: true,
-                backdrop: 'true'
-            });
 
             if (!$("select[name='id_presupuesto_interno']").val() > 0) { //* si presupuesto interno fue seleccionado, no cargar presupuesto antiguo.
 
-                this.listarPartidas(id_grupo, id_proyecto > 0 ? id_proyecto : null);
+                if(id_proyecto>0){
+                    $('#modal-partidas').modal({
+                        show: true,
+                        backdrop: 'true'
+                    });
+                    this.listarPartidas(id_grupo, id_proyecto > 0 ? id_proyecto : null);
+                }else{
+                    Swal.fire(
+                        '',
+                        'Debe seleccione un tipo presupuesto / proyecto',
+                        'warning'
+                    );
+                }
+
+            }else{
+                $('#modal-partidas').modal({
+                    show: true,
+                    backdrop: 'true'
+                });
             }
         } else {
             Swal.fire(
@@ -1559,7 +1588,8 @@ class RequerimientoView {
 
         let tr = tempObjectBtnPartida.closest("tr");
         tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = idPartida;
-        tr.querySelector("p[class='descripcion-partida']").textContent = codigo
+        tr.querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto = 'PROYECTO';
+        tr.querySelector("p[class='descripcion-partida']").textContent = codigo;
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = presupuestoTotal;
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = presupuestoMes;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', descripcion);
@@ -1589,6 +1619,7 @@ class RequerimientoView {
                     partidaAgregadas.push(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida);
                     tempPartidasActivas.push({
                         'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
+                        'tipo_prespuesto': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto,
                         'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
                         'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
                         'presupuesto_mes': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes,
@@ -1648,10 +1679,10 @@ class RequerimientoView {
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
-        // console.log(data);
+        console.log(data);
         this.limpiarTabla('listaPartidasActivas');
         data.forEach(element => {
-
+                
             document.querySelector("tbody[id='body_partidas_activas']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
                 <td>${element.codigo}</td>
                 <td>${element.descripcion}</td>
@@ -1660,7 +1691,12 @@ class RequerimientoView {
                 <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
                 <td style="text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
                 <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
-            </tr>`);
+                <td style="text-align:center;">
+                    <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" onClick="verRequerimientosVinculadosConPartida(${element.id_partida},'${element.codigo.trim()}','${element.descripcion.trim()}','${element.tipo_prespuesto}');"title="Ver Requerimientos vinculados con partida">
+                    <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+                </tr>`);
 
         });
 

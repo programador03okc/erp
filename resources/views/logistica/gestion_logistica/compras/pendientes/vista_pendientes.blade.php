@@ -12,9 +12,9 @@ Requerimientos pendientes
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
 <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-select/css/bootstrap-select.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
 @endsection
 
@@ -35,10 +35,10 @@ Requerimientos pendientes
                 @if (in_array(218,$array_accesos) || in_array(219,$array_accesos) )
                 <ul class="nav nav-tabs" role="tablist">
                     @if (in_array(218,$array_accesos))
-                        <li role="presentation" class="handleClickTabRequerimientosPendientes active"><a href="#requerimientos_pendientes" aria-controls="requerimientos_pendientes" role="tab" data-toggle="tab">Requerimientos pendientes</a></li>
+                    <li role="presentation" class="handleClickTabRequerimientosPendientes active"><a href="#requerimientos_pendientes" aria-controls="requerimientos_pendientes" role="tab" data-toggle="tab">Requerimientos pendientes</a></li>
                     @endif
                     @if (in_array(219,$array_accesos))
-                    <li role="presentation" class="handleClickTabRequerimientosAtendidos"><a href="#requerimientos_atendidos"  aria-controls="requerimientos_atendidos" role="tab" data-toggle="tab" >Requerimientos atendidos</a></li>
+                    <li role="presentation" class="handleClickTabRequerimientosAtendidos"><a href="#requerimientos_atendidos" aria-controls="requerimientos_atendidos" role="tab" data-toggle="tab">Requerimientos atendidos</a></li>
                     @endif
                 </ul>
                 <!-- Tab panes -->
@@ -50,28 +50,32 @@ Requerimientos pendientes
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div id="form-requerimientosPendientes" type="register">
-                                            <table class="mytable table table-condensed table-striped table-hover table-bordered table-okc-view" id="listaRequerimientosPendientes">
-                                                <thead>
-                                                    <tr>
-                                                        <th hidden>Id</th>
-                                                        <th style="text-align:center;">Selec.</th>
-                                                        <th style="text-align:center;">Prio.</th>
-                                                        <th style="text-align:center;">Empresa - Sede</th>
-                                                        <th style="text-align:center; width:10%;">Código</th>
-                                                        <th style="text-align:center;">Fecha creación</th>
-                                                        <th style="text-align:center;">Fecha limite</th>
-                                                        <th style="text-align:center;">Concepto</th>
-                                                        <th style="text-align:center;">Tipo Req.</th>
-                                                        <th style="text-align:center;">División</th>
-                                                        <th style="text-align:center;">Solicitado por</th>
-                                                        <th style="text-align:center;">Req. creado por</th>
-                                                        <th style="text-align:center;">Observación</th>
-                                                        <th style="text-align:center;">Estado</th>
-                                                        <th style="text-align:center;width:7%;">Acción</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody></tbody>
-                                            </table>
+                                            <div class="box box-widget">
+                                                <div class="box-body">
+                                                    <table class="mytable table table-condensed table-striped table-hover table-bordered table-okc-view" id="listaRequerimientosPendientes">
+                                                        <thead>
+                                                            <tr>
+                                                                <th hidden>Id</th>
+                                                                <th style="text-align:center;">Selec.</th>
+                                                                <th style="text-align:center;">Prio.</th>
+                                                                <th style="text-align:center;">Empresa - Sede</th>
+                                                                <th style="text-align:center; width:10%;">Código</th>
+                                                                <th style="text-align:center;">Fecha creación</th>
+                                                                <th style="text-align:center;">Fecha limite</th>
+                                                                <th style="text-align:center;">Concepto</th>
+                                                                <th style="text-align:center;">Tipo Req.</th>
+                                                                <th style="text-align:center;">División</th>
+                                                                <th style="text-align:center;">Solicitado por</th>
+                                                                <th style="text-align:center;">Req. creado por</th>
+                                                                <th style="text-align:center;">Observación</th>
+                                                                <th style="text-align:center;">Estado</th>
+                                                                <th style="text-align:center;width:7%;">Acción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-12 right">
                                                 </div>
@@ -87,27 +91,31 @@ Requerimientos pendientes
                     <div role="tabpanel" class="tab-pane" id="requerimientos_atendidos">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                            <div class="row">
+                                <div class="row">
                                     <div class="col-md-12">
                                         <div id="form-requerimientosAtendidos">
-                                            <table class="mytable table table-condensed table-striped table-hover table-bordered table-okc-view" id="listaRequerimientosAtendidos">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="text-align:center;">Empresa - Sede</th>
-                                                        <th style="text-align:center; width:10%;">Código</th>
-                                                        <th style="text-align:center;">Fecha creación</th>
-                                                        <th style="text-align:center;">Fecha limite</th>
-                                                        <th style="text-align:center;">Concepto</th>
-                                                        <th style="text-align:center;">Tipo Req.</th>
-                                                        <th style="text-align:center;">División</th>
-                                                        <th style="text-align:center;">Solicitado por</th>
-                                                        <th style="text-align:center;">Req. creado por</th>
-                                                        <th style="text-align:center;">Estado</th>
-                                                        <th style="text-align:center;width:7%;">Acción</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody></tbody>
-                                            </table>
+                                            <div class="box box-widget">
+                                                <div class="box-body">
+                                                    <table class="mytable table table-condensed table-striped table-hover table-bordered table-okc-view" id="listaRequerimientosAtendidos">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center;">Empresa - Sede</th>
+                                                                <th style="text-align:center; width:10%;">Código</th>
+                                                                <th style="text-align:center;">Fecha creación</th>
+                                                                <th style="text-align:center;">Fecha limite</th>
+                                                                <th style="text-align:center;">Concepto</th>
+                                                                <th style="text-align:center;">Tipo Req.</th>
+                                                                <th style="text-align:center;">División</th>
+                                                                <th style="text-align:center;">Solicitado por</th>
+                                                                <th style="text-align:center;">Req. creado por</th>
+                                                                <th style="text-align:center;">Estado</th>
+                                                                <th style="text-align:center;width:7%;">Acción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-12 right">
                                                 </div>
@@ -202,14 +210,14 @@ Requerimientos pendientes
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm');
         $.fn.dataTable.moment('DD-MM-YYYY');
 
-        
 
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
             let tab = $(e.target).attr("href") // activated tab
             // console.log('tab: '+tab);
 
-            if (tab=='#seleccionar'){
-                listarProductosSugeridos($('[name=part_number]').val(), decodeURIComponent( $('[name=descripcion]').val()), 0);
+            if (tab == '#seleccionar') {
+                listarProductosSugeridos($('[name=part_number]').val(), decodeURIComponent($('[name=descripcion]').val()), 0);
                 listarProductosCatalogo();
             }
         });
@@ -218,7 +226,7 @@ Requerimientos pendientes
         const requerimientoPendienteController = new RequerimientoPendienteCtrl(requerimientoPendienteModel);
         const requerimientoPendienteView = new RequerimientoPendienteView(requerimientoPendienteController);
 
-        requerimientoPendienteView.renderRequerimientoPendienteList('SIN_FILTRO','SIN_FILTRO','SIN_FILTRO','SIN_FILTRO','SIN_FILTRO','SIN_FILTRO','SIN_FILTRO');
+        requerimientoPendienteView.renderRequerimientoPendienteList('SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO', 'SIN_FILTRO');
         requerimientoPendienteView.initializeEventHandler();
 
     });

@@ -51,7 +51,8 @@ class PresupuestoInternoView{
 
         let tr = tempObjectBtnPartida.closest("tr");
         tr.querySelector("p[class='descripcion-partida']").dataset.idPartida = obj.dataset.idPresupuestoInternoDetalle;
-        tr.querySelector("p[class='descripcion-partida']").textContent = obj.dataset.partida
+        tr.querySelector("p[class='descripcion-partida']").textContent = obj.dataset.partida;
+        tr.querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto = 'INTERNO';
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = obj.dataset.totalPresupuestoAño;
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = obj.dataset.totalPresupuestoMes;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', obj.dataset.descripcion);

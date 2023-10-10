@@ -10,19 +10,17 @@ use Maatwebsite\Excel\Concerns\FromView;
 class OrdenesItemsFiltroExport implements FromView
 {
 
-    public $filtros;
+    public $data;
 
-    public function __construct($filtros)
+    public function __construct($data)
     {
-        $this->filtros = json_decode($filtros);
+        $this->data = json_decode($data);
     }
 
     public function view(): View
     {
-        $data =(new OrdenController)->reporteListaItemsOrdenesFiltros($this->filtros);
-        // dd($data);exit;
-        return view('logistica.gestion_logistica.compras.ordenes.export.ordenes_items', [
-            'data' => $data
-        ]);
+        // $data =(new OrdenController)->reporteListaItemsOrdenesFiltros($this->filtros);
+        // var_dump($data);exit;
+        return view('logistica.gestion_logistica.compras.ordenes.export.ordenes_items', [ 'data' => $this->data ]);
     }
 }

@@ -5264,58 +5264,105 @@ class OrdenController extends Controller
         return ["data" => $payload, 'estado' => $estado, "mensaje" => $mensaje];
     }
     public function reporteFiltros(Request $request){
-        set_time_limit(1);
-        $array = array("fecha_final"=>$request->fecha_final,"fecha_inicio"=>$request->fecha_inicio);
-        // return $request->all();exit;
-        return Excel::download(new OrdenesItemsFiltroExport(json_encode($array)), 'ordenes_items_'.date('d-m-Y h:i:s').'.xlsx');
-    }
-    public static function reporteListaItemsOrdenesFiltros($filtros)
-    {
+        // set_time_limit(1);
         $data = [];
         $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
         ->orderBy('items_ordenes_view.fecha_emision', 'desc');
 
-        if (!empty($filtros->fecha_inicio)) {
-            # code...
+        if (!empty($request->fecha_inicio) && $request->fecha_inicio!=="null") {
+            // return $filtros->fecha_final;exit;
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','>=', $request->fecha_inicio);
+        }
+        if (!empty($request->fecha_final) && $request->fecha_final!=="null") {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','<=', $request->fecha_final);
+        }
+        $det_ord_compra = $det_ord_compra->get();
+
+        foreach ($det_ord_compra as $key => $d) {
+            // return ;;
+            $data[] = [
+                'codigo_orden'          => ($d['codigo_orden'] ?$d['codigo_orden']:'-'),
+                'codigo_requerimiento'  => ($d['codigo_requerimiento'] ?$d['codigo_requerimiento']: '-'),
+                'codigo_softlink'       => ($d['codigo_softlink'] ?$d['codigo_softlink']: '-'),
+                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ?$d['nro_orden_mgc']: '-'),
+                'concepto_requerimiento'    => ($d['concepto_requerimiento'] ? $d['concepto_requerimiento'] : '-'),
+                'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
+                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ?$d['razon_social_proveedor'] :'-'),
+                'codigo_am'                 => ($d['codigo_am'] ?$d['codigo_am']: '-'),
+                'nombre_am'                 => ($d['nombre_am'] ?$d['nombre_am']: '-'),
+                'descripcion_subcategoria'  => ($d['descripcion_subcategoria'] ?$d['descripcion_subcategoria']: '-'),
+                'descripcion_categoria'     => ($d['descripcion_categoria'] ?$d['descripcion_categoria']: '-'),
+                'codigo_producto'           => ($d['codigo_producto'] ?$d['codigo_producto']: '-'),
+                'part_number_producto'      => ($d['part_number_producto'] ?$d['part_number_producto']: '-'),
+                'cod_softlink_producto'     => ($d['cod_softlink_producto'] ?$d['cod_softlink_producto']: '-'),
+                'descripcion_producto'      => ($d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional']),
+                'lugar_entrega_cdp'         => ($d['lugar_entrega_cdp'] ?$d['lugar_entrega_cdp']: '-'),
+                'cantidad'                  => ($d['cantidad'] ?$d['cantidad']: '-'),
+                'abreviatura_unidad_medida_producto' => ($d['abreviatura_unidad_medida_producto'] ?$d['abreviatura_unidad_medida_producto']: ($d['abreviatura_unidad_medida_det_orden'] ?$d['abreviatura_unidad_medida_det_orden']: '-')),
+                'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ?$d['simbolo_moneda_orden']: '-'),
+                'precio'                    => ($d['precio'] ?$d['precio']: '-'),
+                'cc_fila_precio'            => ($d['cc_fila_precio'] ?$d['cc_fila_precio']: '-'),
+                'fecha_emision'             => ($d['fecha_emision'] ?$d['fecha_emision']: '-'),
+                'fecha_llegada'             => ($d['fecha_llegada'] ?$d['fecha_llegada']: '-'),
+                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ?$d['fecha_ingreso_almacen']: '-'),
+                'tiempo_atencion_proveedor' => ($d['tiempo_atencion_proveedor'] ?$d['tiempo_atencion_proveedor']: '-'),
+                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ?$d['descripcion_sede_empresa']: '-'),
+                'descripcion_estado'        => ($d['descripcion_estado'] ?$d['descripcion_estado']: '-'),
+                'numero_factura'            => $d['serie'].'-'.$d['numero']
+            ];
+        }
+
+        return Excel::download(new OrdenesItemsFiltroExport(json_encode($data)), 'ordenes_items.xlsx');
+    }
+    public static function reporteListaItemsOrdenesFiltros($filtros)
+    {
+
+        $filtros = json_decode($filtros);
+
+        $data = [];
+        $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
+        ->orderBy('items_ordenes_view.fecha_emision', 'desc');
+
+        if (!empty($filtros->fecha_inicio) && $filtros->fecha_inicio!=="null") {
+            // return $filtros->fecha_final;exit;
             $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','>=', $filtros->fecha_inicio);
         }
-        if (!empty($filtros->fecha_final)) {
+        if (!empty($filtros->fecha_final) && $filtros->fecha_final!=="null") {
             $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','<=', $filtros->fecha_final);
         }
         $det_ord_compra = $det_ord_compra->get();
 
         foreach ($det_ord_compra as $key => $d) {
+            // return ;;
             $data[] = [
-                'codigo_orden' => $d['codigo_orden'] ?? '',
-                'codigo_requerimiento' => $d['codigo_requerimiento'] ?? '',
-                'codigo_softlink' => $d['codigo_softlink'] ?? '',
-                'nro_orden_mgc' => $d['nro_orden_mgc'] ?? '',
-                'concepto_requerimiento' => $d['concepto_requerimiento'] ?? '',
-                'razon_social_cliente' => $d['razon_social_cliente'] ?? '',
-                'razon_social_proveedor' => $d['razon_social_proveedor'] ?? '',
-                'codigo_am' => $d['codigo_am'] ?? '',
-                'nombre_am' => $d['nombre_am'] ?? '',
-                'descripcion_subcategoria' => $d['descripcion_subcategoria'] ?? '',
-                'descripcion_categoria' => $d['descripcion_categoria'] ?? '',
-                'codigo_producto' => $d['codigo_producto'] ?? '',
-                'part_number_producto' => $d['part_number_producto'] ?? '',
-                'cod_softlink_producto' => $d['cod_softlink_producto'] ?? '',
-                'descripcion_producto' => $d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional'],
-                'lugar_entrega_cdp' => $d['lugar_entrega_cdp'] ?? '',
-                'cantidad' => $d['cantidad'] ?? '',
-                'abreviatura_unidad_medida_producto' => $d['abreviatura_unidad_medida_producto'] ?? ($d['abreviatura_unidad_medida_det_orden'] ?? ''),
-                'simbolo_moneda_orden' => $d['simbolo_moneda_orden'] ?? '',
-                'precio' => $d['precio'] ?? '',
-                'cc_fila_precio' => $d['cc_fila_precio'] ?? '',
-                'fecha_emision' => $d['fecha_emision'] ?? '',
-                'fecha_llegada' => $d['fecha_llegada'] ?? '',
-                'fecha_ingreso_almacen' => $d['fecha_ingreso_almacen'] ?? '',
-                'tiempo_atencion_proveedor' => $d['tiempo_atencion_proveedor'] ?? '',
-                'descripcion_sede_empresa' => $d['descripcion_sede_empresa'] ?? '',
-                'descripcion_estado' => $d['descripcion_estado'] ?? '',
-                'numero_factura' => $d['serie'].'-'.$d['numero']
-
-
+                'codigo_orden'          => ($d['codigo_orden'] ?$d['codigo_orden']:'-'),
+                'codigo_requerimiento'  => ($d['codigo_requerimiento'] ?$d['codigo_requerimiento']: '-'),
+                'codigo_softlink'       => ($d['codigo_softlink'] ?$d['codigo_softlink']: '-'),
+                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ?$d['nro_orden_mgc']: '-'),
+                'concepto_requerimiento'    => ($d['concepto_requerimiento'] ? $d['concepto_requerimiento'] : '-'),
+                'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
+                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ?$d['razon_social_proveedor'] :'-'),
+                'codigo_am'                 => ($d['codigo_am'] ?$d['codigo_am']: '-'),
+                'nombre_am'                 => ($d['nombre_am'] ?$d['nombre_am']: '-'),
+                'descripcion_subcategoria'  => ($d['descripcion_subcategoria'] ?$d['descripcion_subcategoria']: '-'),
+                'descripcion_categoria'     => ($d['descripcion_categoria'] ?$d['descripcion_categoria']: '-'),
+                'codigo_producto'           => ($d['codigo_producto'] ?$d['codigo_producto']: '-'),
+                'part_number_producto'      => ($d['part_number_producto'] ?$d['part_number_producto']: '-'),
+                'cod_softlink_producto'     => ($d['cod_softlink_producto'] ?$d['cod_softlink_producto']: '-'),
+                'descripcion_producto'      => ($d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional']),
+                'lugar_entrega_cdp'         => ($d['lugar_entrega_cdp'] ?$d['lugar_entrega_cdp']: '-'),
+                'cantidad'                  => ($d['cantidad'] ?$d['cantidad']: '-'),
+                'abreviatura_unidad_medida_producto' => ($d['abreviatura_unidad_medida_producto'] ?$d['abreviatura_unidad_medida_producto']: ($d['abreviatura_unidad_medida_det_orden'] ?$d['abreviatura_unidad_medida_det_orden']: '-')),
+                'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ?$d['simbolo_moneda_orden']: '-'),
+                'precio'                    => ($d['precio'] ?$d['precio']: '-'),
+                'cc_fila_precio'            => ($d['cc_fila_precio'] ?$d['cc_fila_precio']: '-'),
+                'fecha_emision'             => ($d['fecha_emision'] ?$d['fecha_emision']: '-'),
+                'fecha_llegada'             => ($d['fecha_llegada'] ?$d['fecha_llegada']: '-'),
+                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ?$d['fecha_ingreso_almacen']: '-'),
+                'tiempo_atencion_proveedor' => ($d['tiempo_atencion_proveedor'] ?$d['tiempo_atencion_proveedor']: '-'),
+                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ?$d['descripcion_sede_empresa']: '-'),
+                'descripcion_estado'        => ($d['descripcion_estado'] ?$d['descripcion_estado']: '-'),
+                'numero_factura'            => $d['serie'].'-'.$d['numero']
             ];
         }
 

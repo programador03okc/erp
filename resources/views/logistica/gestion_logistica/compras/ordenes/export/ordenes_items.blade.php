@@ -43,23 +43,23 @@
                     <td>{{ $item->codigo_requerimiento }}</td>
                     <td>{{ $item->codigo_softlink }}</td>
                     <td>{{ $item->nro_orden_mgc }}</td>
-                    <td>{!! $item->concepto_requerimiento !!}</td>
+                    <td>{{ $item->concepto_requerimiento }}</td>
                     <td>{{ $item->razon_social_cliente }}</td>
                     <td>{{ $item->razon_social_proveedor }}</td>
                     <td>{{ $item->codigo_am }}</td>
                     <td>{{ $item->nombre_am }}</td>
                     <td>{{ $item->descripcion_subcategoria }}</td>
                     <td>{{ $item->descripcion_categoria }}</td>
-                    {{-- <td>{{ $item->codigo_producto }}</td> --}}
-                    {{-- <td>{{ $item->part_number_producto }}</td> --}}
-                    {{-- <td>{{ $item->cod_softlink_producto }}</td> --}}
-                    {{-- <td>{{ $item->descripcion_producto }}</td> --}}
+                    <td>{{ $item->codigo_producto }}</td>
+                    <td>{{ $item->part_number_producto }}</td>
+                    <td>{{ $item->cod_softlink_producto }}</td>
+                    <td>{{ $item->descripcion_producto }}</td>
                     <td>{{ $item->lugar_entrega_cdp }}</td>
                     <td>{{ $item->cantidad }}</td>
                     <td>{{ $item->abreviatura_unidad_medida_producto }}</td>
                     <td>{{ $item->simbolo_moneda_orden }}</td>
                     <td>{{ $item->precio }}</td>
-                    <td>{!! $item->cc_fila_precio !!}</td>
+                    <td>{{ $item->cc_fila_precio }}</td>
                     <td>{{ $item->fecha_emision }}</td>
                     <td>{{ $item->fecha_llegada }}</td>
                     <td>{{ $item->fecha_ingreso_almacen }}</td>

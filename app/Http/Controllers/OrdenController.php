@@ -5264,14 +5264,14 @@ class OrdenController extends Controller
         return ["data" => $payload, 'estado' => $estado, "mensaje" => $mensaje];
     }
     public function reporteFiltros(Request $request){
-        // set_time_limit(1);
+
         ini_set('memory_limit', '999999M');
+
         $data = [];
         $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
         ->orderBy('items_ordenes_view.fecha_emision', 'desc');
 
         if (!empty($request->fecha_inicio) && $request->fecha_inicio!=="null") {
-            // return $filtros->fecha_final;exit;
             $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','>=', $request->fecha_inicio);
         }
         if (!empty($request->fecha_final) && $request->fecha_final!=="null") {
@@ -5280,9 +5280,9 @@ class OrdenController extends Controller
         $det_ord_compra = $det_ord_compra->get();
 
         foreach ($det_ord_compra as $key => $d) {
-            // return ;;
             $data[] = [
                 'codigo_orden'          => ($d['codigo_orden'] ?$d['codigo_orden']:'-'),
+                'emision_factura'          => ($d['emision_factura'] ?$d['emision_factura']:'-'),
                 'codigo_requerimiento'  => ($d['codigo_requerimiento'] ?$d['codigo_requerimiento']: '-'),
                 'codigo_softlink'       => ($d['codigo_softlink'] ?$d['codigo_softlink']: '-'),
                 'nro_orden_mgc'         => ($d['nro_orden_mgc'] ?$d['nro_orden_mgc']: '-'),
@@ -5313,7 +5313,91 @@ class OrdenController extends Controller
             ];
         }
 
-        return Excel::download(new OrdenesItemsFiltroExport(json_encode($data)), 'ordenes_items.xlsx');
+        // return sizeof($det_ord_compra);exit;
+
+        $numero = sizeof($det_ord_compra) +1;
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+
+        // $spreadsheet->getActiveSheet()->setAutoFilter('A1:AC'.$numero);
+
+
+        $activeWorksheet->setCellValue('A1','Factura');
+            $activeWorksheet->setCellValue('B1','F. Fecha de Emision');
+            $activeWorksheet->setCellValue('C1','Cod. orden');
+            $activeWorksheet->setCellValue('D1','Cod. req.');
+            $activeWorksheet->setCellValue('E1','Cod. orden softlink');
+            $activeWorksheet->setCellValue('F1','Nro. Orden MGC');
+            $activeWorksheet->setCellValue('G1','Concepto');
+            $activeWorksheet->setCellValue('H1','Cliente');
+            $activeWorksheet->setCellValue('I1','Proveedor');
+            $activeWorksheet->setCellValue('J1','Cod.AM');
+            $activeWorksheet->setCellValue('K1','Nombre AM');
+            $activeWorksheet->setCellValue('L1','Marca');
+            $activeWorksheet->setCellValue('M1','Categoría');
+            $activeWorksheet->setCellValue('N1','Cod. producto');
+            $activeWorksheet->setCellValue('O1','Part number');
+            $activeWorksheet->setCellValue('P1','Cod. softlink');
+            $activeWorksheet->setCellValue('Q1','Descripción');
+            $activeWorksheet->setCellValue('R1','Lugar entrega MGC');
+            $activeWorksheet->setCellValue('S1','Cantidad');
+            $activeWorksheet->setCellValue('T1','Unitdad medida.');
+            $activeWorksheet->setCellValue('U1','Moneda');
+            $activeWorksheet->setCellValue('V1','Precio unit. Ord.');
+            $activeWorksheet->setCellValue('W1','Precio unit. CDP');
+            $activeWorksheet->setCellValue('X1','Fecha emisión orden');
+            $activeWorksheet->setCellValue('Y1','Plazo entrega');
+            $activeWorksheet->setCellValue('Z1','Fecha ingreso almacén');
+            $activeWorksheet->setCellValue('AA1','Tiempo atención proveedor');
+            $activeWorksheet->setCellValue('AB1','Empresa - sede');
+        $activeWorksheet->setCellValue('AC1','Estado');
+
+        foreach($data as $key => $item){
+            $celda = $key+2;
+
+            $activeWorksheet->setCellValue('A'.$celda,$item['numero_factura']);
+            $activeWorksheet->setCellValue('B'.$celda,$item['emision_factura']);
+            $activeWorksheet->setCellValue('C'.$celda,$item['codigo_orden']);
+            $activeWorksheet->setCellValue('D'.$celda,$item['codigo_requerimiento']);
+            $activeWorksheet->setCellValue('E'.$celda,$item['codigo_softlink']);
+            $activeWorksheet->setCellValue('F'.$celda,$item['nro_orden_mgc']);
+            $activeWorksheet->setCellValue('G'.$celda,$item['concepto_requerimiento']);
+            $activeWorksheet->setCellValue('H'.$celda,$item['razon_social_cliente']);
+            $activeWorksheet->setCellValue('I'.$celda,$item['razon_social_proveedor']);
+            $activeWorksheet->setCellValue('J'.$celda,$item['codigo_am']);
+            $activeWorksheet->setCellValue('K'.$celda,$item['nombre_am']);
+            $activeWorksheet->setCellValue('L'.$celda,$item['descripcion_subcategoria']);
+            $activeWorksheet->setCellValue('M'.$celda,$item['descripcion_categoria']);
+            $activeWorksheet->setCellValue('N'.$celda,$item['codigo_producto']);
+            $activeWorksheet->setCellValue('O'.$celda,$item['part_number_producto']);
+            $activeWorksheet->setCellValue('P'.$celda,$item['cod_softlink_producto']);
+            $activeWorksheet->setCellValue('Q'.$celda,$item['descripcion_producto']);
+            $activeWorksheet->setCellValue('R'.$celda,$item['lugar_entrega_cdp']);
+            $activeWorksheet->setCellValue('S'.$celda,$item['cantidad']);
+            $activeWorksheet->setCellValue('T'.$celda,$item['abreviatura_unidad_medida_producto']);
+            $activeWorksheet->setCellValue('U'.$celda,$item['simbolo_moneda_orden']);
+            $activeWorksheet->setCellValue('V'.$celda,$item['precio']);
+            $activeWorksheet->setCellValue('W'.$celda,$item['cc_fila_precio']);
+            $activeWorksheet->setCellValue('X'.$celda,$item['fecha_emision']);
+            $activeWorksheet->setCellValue('Y'.$celda,$item['fecha_llegada']);
+            $activeWorksheet->setCellValue('Z'.$celda,$item['fecha_ingreso_almacen']);
+            $activeWorksheet->setCellValue('AA'.$celda,$item['tiempo_atencion_proveedor']);
+            $activeWorksheet->setCellValue('AB'.$celda,$item['descripcion_sede_empresa']);
+            $activeWorksheet->setCellValue('AC'.$celda,$item['descripcion_estado']);
+        }
+
+
+
+
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="ordenes_items.xls"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+        $writer->save('php://output');
+
+        // return Excel::download(new OrdenesItemsFiltroExport(json_encode($data)), 'ordenes_items.xlsx');
     }
     public static function reporteListaItemsOrdenesFiltros($filtros)
     {

@@ -14,9 +14,9 @@ var tempObjectBtnCentroCostos;
 
 var $tablaListaCuadroPresupuesto;
 
-var tempPartidasActivas=[];
+var tempPartidasActivas = [];
 
-var filtros_rq_pagos={};
+var filtros_rq_pagos = {};
 filtros_rq_pagos.elaborado = 'SIN_FILTRO';
 filtros_rq_pagos.empresa = 'SIN_FILTRO';
 filtros_rq_pagos.sede = 'SIN_FILTRO';
@@ -59,7 +59,7 @@ class ListarRequerimientoPagoView {
         });
 
         document.onkeydown = function (evt) {
-            if(document.querySelectorAll("div[class='modal fade in']").length ==1 && document.querySelectorAll("div[class='modal fade in']")[0].getAttribute("id") =='modal-requerimiento-pago'){
+            if (document.querySelectorAll("div[class='modal fade in']").length == 1 && document.querySelectorAll("div[class='modal fade in']")[0].getAttribute("id") == 'modal-requerimiento-pago') {
                 evt = evt || window.event;
                 var isEscape = false;
                 if ("key" in evt) {
@@ -116,8 +116,8 @@ class ListarRequerimientoPagoView {
         });
 
         $('#ListaDetalleRequerimientoPago tbody').on("click", "button.handleClickCargarModalPartidas", (e) => {
-            document.querySelector("div[id='listaPartidas']").innerHTML='';
-            document.querySelector("div[id='listaPresupuesto']").innerHTML='';
+            document.querySelector("div[id='listaPartidas']").innerHTML = '';
+            document.querySelector("div[id='listaPresupuesto']").innerHTML = '';
             this.cargarModalPartidas(e);
         });
 
@@ -296,7 +296,7 @@ class ListarRequerimientoPagoView {
         tempPartidasActivas = [];
         let partidaAgregadas = [];
         let subtotalItemList = [];
-        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount >0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
+        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount > 0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
 
         let idMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").value;
         let simboloMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").options[document.querySelector("select[name='moneda']").selectedIndex].dataset.simbolo;
@@ -392,9 +392,9 @@ class ListarRequerimientoPagoView {
             case 'SELECCION_PRESUPUESTO_INTERNO':
                 if (valor > 0) {
                     document.querySelector("select[name='proyecto']").setAttribute("disabled", true);
-                    document.querySelector("select[name='proyecto']").value='';
+                    document.querySelector("select[name='proyecto']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
-                    document.querySelector("input[name='id_cc']").value='';
+                    document.querySelector("input[name='id_cc']").value = '';
                 } else {
                     document.querySelector("select[name='proyecto']").removeAttribute("disabled");
                     document.querySelector("button[name='btnSearchCDP']").removeAttribute("disabled");
@@ -403,8 +403,8 @@ class ListarRequerimientoPagoView {
             case 'SELECCION_PROYECTOS':
                 if (valor > 0) {
                     document.querySelector("select[name='id_presupuesto_interno']").setAttribute("disabled", true);
-                    document.querySelector("select[name='id_presupuesto_interno']").value='';
-                    document.querySelector("input[name='id_cc']").value='';
+                    document.querySelector("select[name='id_presupuesto_interno']").value = '';
+                    document.querySelector("input[name='id_cc']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
 
                 } else {
@@ -415,9 +415,9 @@ class ListarRequerimientoPagoView {
             case 'SELECCION_CDP':
                 if (valor > 0) {
                     document.querySelector("select[name='id_presupuesto_interno']").setAttribute("disabled", true);
-                    document.querySelector("select[name='id_presupuesto_interno']").value='';
+                    document.querySelector("select[name='id_presupuesto_interno']").value = '';
                     document.querySelector("select[name='proyecto']").setAttribute("disabled", true);
-                    document.querySelector("select[name='proyecto']").value='';
+                    document.querySelector("select[name='proyecto']").value = '';
                 } else {
                     document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
                     document.querySelector("select[name='proyecto']").removeAttribute("disabled");
@@ -655,7 +655,7 @@ class ListarRequerimientoPagoView {
         let currentIdGrupo = obj.options[obj.selectedIndex].dataset.idGrupo;
         // console.log(currentIdGrupo);
         // console.log(obj.value);
-        this.presupuestoInternoView.llenarComboPresupuestoInterno(currentIdGrupo,obj.value);
+        this.presupuestoInternoView.llenarComboPresupuestoInterno(currentIdGrupo, obj.value);
 
     }
 
@@ -716,16 +716,16 @@ class ListarRequerimientoPagoView {
         // window.open(`listado-requerimientos-pagos-export-excel/${this.ActualParametroAllOrMe}/${this.ActualParametroEmpresa}/${this.ActualParametroSede}/${this.ActualParametroGrupo}/${this.ActualParametroDivision}/${this.ActualParametroFechaDesde}/${this.ActualParametroFechaHasta}/${this.ActualParametroEstado}`);
 
         // window.open(`listado-requerimientos-pagos-export-excel/${filtros_rq_pagos.elaborado}/${filtros_rq_pagos.empresa}/${filtros_rq_pagos.sede}/${filtros_rq_pagos.grupo}/${filtros_rq_pagos.division}/${filtros_rq_pagos.fecha_inicio}/${filtros_rq_pagos.fecha_final}/${filtros_rq_pagos.estado}`);
-        let form = $('<form action="listado-requerimientos-pagos-export-excel" method="POST" target="_blank">'+
-                '<input type="hidden" name="_token" value="'+token+'" >'+
-                '<input type="hidden" name="elaborado" value="'+filtros_rq_pagos.elaborado+'" >'+
-                '<input type="hidden" name="empresa" value="'+filtros_rq_pagos.empresa+'" >'+
-                '<input type="hidden" name="sede" value="'+filtros_rq_pagos.sede+'" >'+
-                '<input type="hidden" name="grupo" value="'+filtros_rq_pagos.grupo+'" >'+
-                '<input type="hidden" name="division" value="'+filtros_rq_pagos.division+'" >'+
-                '<input type="hidden" name="fecha_inicio" value="'+filtros_rq_pagos.fecha_inicio+'" >'+
-                '<input type="hidden" name="fecha_final" value="'+filtros_rq_pagos.fecha_final+'" >'+
-                '<input type="hidden" name="estado" value="'+filtros_rq_pagos.estado+'" >'+
+        let form = $('<form action="listado-requerimientos-pagos-export-excel" method="POST" target="_blank">' +
+            '<input type="hidden" name="_token" value="' + token + '" >' +
+            '<input type="hidden" name="elaborado" value="' + filtros_rq_pagos.elaborado + '" >' +
+            '<input type="hidden" name="empresa" value="' + filtros_rq_pagos.empresa + '" >' +
+            '<input type="hidden" name="sede" value="' + filtros_rq_pagos.sede + '" >' +
+            '<input type="hidden" name="grupo" value="' + filtros_rq_pagos.grupo + '" >' +
+            '<input type="hidden" name="division" value="' + filtros_rq_pagos.division + '" >' +
+            '<input type="hidden" name="fecha_inicio" value="' + filtros_rq_pagos.fecha_inicio + '" >' +
+            '<input type="hidden" name="fecha_final" value="' + filtros_rq_pagos.fecha_final + '" >' +
+            '<input type="hidden" name="estado" value="' + filtros_rq_pagos.estado + '" >' +
             '</form>');
         $('body').append(form);
         form.submit();
@@ -736,16 +736,16 @@ class ListarRequerimientoPagoView {
 
         // window.open(`listado-items-requerimientos-pagos-export-excel/${filtros_rq_pagos.elaborado}/${filtros_rq_pagos.empresa}/${filtros_rq_pagos.sede}/${filtros_rq_pagos.grupo}/${filtros_rq_pagos.division}/${filtros_rq_pagos.fecha_inicio}/${filtros_rq_pagos.fecha_final}/${filtros_rq_pagos.estado}`);
 
-        let form = $('<form action="listado-items-requerimientos-pagos-export-excel" method="POST" target="_blank">'+
-                '<input type="hidden" name="_token" value="'+token+'" >'+
-                '<input type="hidden" name="elaborado" value="'+filtros_rq_pagos.elaborado+'" >'+
-                '<input type="hidden" name="empresa" value="'+filtros_rq_pagos.empresa+'" >'+
-                '<input type="hidden" name="sede" value="'+filtros_rq_pagos.sede+'" >'+
-                '<input type="hidden" name="grupo" value="'+filtros_rq_pagos.grupo+'" >'+
-                '<input type="hidden" name="division" value="'+filtros_rq_pagos.division+'" >'+
-                '<input type="hidden" name="fecha_inicio" value="'+filtros_rq_pagos.fecha_inicio+'" >'+
-                '<input type="hidden" name="fecha_final" value="'+filtros_rq_pagos.fecha_final+'" >'+
-                '<input type="hidden" name="estado" value="'+filtros_rq_pagos.estado+'" >'+
+        let form = $('<form action="listado-items-requerimientos-pagos-export-excel" method="POST" target="_blank">' +
+            '<input type="hidden" name="_token" value="' + token + '" >' +
+            '<input type="hidden" name="elaborado" value="' + filtros_rq_pagos.elaborado + '" >' +
+            '<input type="hidden" name="empresa" value="' + filtros_rq_pagos.empresa + '" >' +
+            '<input type="hidden" name="sede" value="' + filtros_rq_pagos.sede + '" >' +
+            '<input type="hidden" name="grupo" value="' + filtros_rq_pagos.grupo + '" >' +
+            '<input type="hidden" name="division" value="' + filtros_rq_pagos.division + '" >' +
+            '<input type="hidden" name="fecha_inicio" value="' + filtros_rq_pagos.fecha_inicio + '" >' +
+            '<input type="hidden" name="fecha_final" value="' + filtros_rq_pagos.fecha_final + '" >' +
+            '<input type="hidden" name="estado" value="' + filtros_rq_pagos.estado + '" >' +
             '</form>');
         $('body').append(form);
         form.submit();
@@ -844,10 +844,12 @@ class ListarRequerimientoPagoView {
             'columns': [
                 { 'data': 'id_requerimiento_pago', 'name': 'requerimiento_pago.id_requerimiento_pago', 'visible': false },
                 { 'data': 'prioridad', 'name': 'adm_prioridad.descripcion', 'className': 'text-center', 'visible': false },
-                { 'data': 'codigo', 'name': 'codigo', 'className': 'text-center', 'render': function (data, type, row) {
-                    // return `<label class="lbl-codigo handleClickAbrirRequerimiento" title="Abrir Requerimiento">${row.codigo}</label>`;
-                    return `<div style="display:flex;">${row['termometro']} &nbsp; ${row.codigo} </div>`;
-                }},
+                {
+                    'data': 'codigo', 'name': 'codigo', 'className': 'text-center', 'render': function (data, type, row) {
+                        // return `<label class="lbl-codigo handleClickAbrirRequerimiento" title="Abrir Requerimiento">${row.codigo}</label>`;
+                        return `<div style="display:flex;">${row['termometro']} &nbsp; ${row.codigo} </div>`;
+                    }
+                },
                 { 'data': 'concepto', 'name': 'concepto' },
                 { 'data': 'descripcion_requerimiento_pago_tipo', 'name': 'requerimiento_pago_tipo.descripcion' },
                 { 'data': 'fecha_registro', 'name': 'requerimiento_pago.fecha_registro', 'className': 'text-center' },
@@ -856,59 +858,65 @@ class ListarRequerimientoPagoView {
                 { 'data': 'division', 'name': 'division.descripcion', 'className': 'text-center' },
                 { 'data': 'descripcion_proyecto', 'name': 'proy_proyecto.descripcion', 'className': 'text-center' },
                 { 'data': 'descripcion_presupuesto_interno', 'name': 'presupuesto_interno.descripcion', 'className': 'text-center' },
-                { 'data': 'monto_total', 'name': 'requerimiento_pago.monto_total', 'defaultContent': '', 'className': 'text-right', 'render': function (data, type, row) {
-                    return row['simbolo_moneda'].concat(' ', $.number(row['monto_total'], 2));
-                }},
-                { 'data': 'usuario_nombre_corto', 'name': 'sis_usua.nombre_corto' },
-                { 'data': 'nombre_estado', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
-                    switch (row['id_estado']) {
-                        case 1:
-                            return '<span class="labelEstado label label-default">' + row['nombre_estado'] + '</span>';
-                            break;
-                        case 2:
-                            return '<span class="labelEstado label label-success">' + row['nombre_estado'] + '</span>';
-                            break;
-                        case 3:
-                            return '<span class="labelEstado label label-warning">' + row['nombre_estado'] + '</span>';
-                            break;
-                        case 5:
-                            return '<span class="labelEstado label label-primary">' + row['nombre_estado'] + '</span>';
-                            break;
-                        case 7:
-                            return '<span class="labelEstado label label-danger">' + row['nombre_estado'] + '</span>';
-                            break;
-                        default:
-                            return '<span class="labelEstado label label-default">' + row['nombre_estado'] + '</span>';
-                            break;
-
+                {
+                    'data': 'monto_total', 'name': 'requerimiento_pago.monto_total', 'defaultContent': '', 'className': 'text-right', 'render': function (data, type, row) {
+                        return row['simbolo_moneda'].concat(' ', $.number(row['monto_total'], 2));
                     }
-                }, },
-                { 'data': 'id_requerimiento_pago', 'name': 'requerimiento_pago.id_requerimiento_pago','render': function (data, type, row) {
+                },
+                { 'data': 'usuario_nombre_corto', 'name': 'sis_usua.nombre_corto' },
+                {
+                    'data': 'nombre_estado', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
+                        switch (row['id_estado']) {
+                            case 1:
+                                return '<span class="labelEstado label label-default">' + row['nombre_estado'] + '</span>';
+                                break;
+                            case 2:
+                                return '<span class="labelEstado label label-success">' + row['nombre_estado'] + '</span>';
+                                break;
+                            case 3:
+                                return '<span class="labelEstado label label-warning">' + row['nombre_estado'] + '</span>';
+                                break;
+                            case 5:
+                                return '<span class="labelEstado label label-primary">' + row['nombre_estado'] + '</span>';
+                                break;
+                            case 7:
+                                return '<span class="labelEstado label label-danger">' + row['nombre_estado'] + '</span>';
+                                break;
+                            default:
+                                return '<span class="labelEstado label label-default">' + row['nombre_estado'] + '</span>';
+                                break;
 
-                    let containerOpenBrackets = '<center><div class="btn-group" role="group" style="margin-bottom: 5px;">';
-                    let containerCloseBrackets = '</div></center>';
-                    let btnVerEnModal = (array_accesos.find(element => element === 13) ? '<button type="button" class="btn btn-xs btn-primary  handleClickVerEnVistaRapidaRequerimientoPago" name="btnVerEnVistaRapidaRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '" title="Vista rápida"><i class="fas fa-eye fa-xs"></i></button>' : '');
-                    let btnVerAdjuntosModal = (array_accesos.find(element => element === 31) ? '<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAdjuntosRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '"  data-id-moneda="' + row.id_moneda + '" data-simbolo-moneda="' + row.simbolo_moneda + '" data-monto-a-pagar="' + row.monto_total + '" title="Ver archivos adjuntos" data-sustento="'+row['requerimiento_sustentado']+'" ><i class="fas fa-paperclip fa-xs"></i></button>' : '');
-                    let btnEditar = '<button type="button" class="btn btn-xs btn-warning  handleClickEditarRequerimientoPago" name="btnEditarRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '" title="Editar"><i class="fas fa-edit fa-xs"></i></button>';
-                    let btnAnular = '<button type="button" class="btn btn-xs btn-danger  handleClickAnularRequerimientoPago" name="btnAnularRapidaRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '" title="Anular"><i class="fas fa-ban fa-xs"></i></button>';
-                    let btnImprimirEnPdf = (array_accesos.find(element => element === 30) ? `<button type="button" class="btn btn-xs btn-default handleClickimprimirRequerimientoPagoEnPdf" name="btnImprimirRequerimientoPagoEnPdf" data-toggle="tooltip" data-placement="bottom" title="Imprimir en PDF" data-id-requerimiento-pago="${row.id_requerimiento_pago}">
+                        }
+                    },
+                },
+                {
+                    'data': 'id_requerimiento_pago', 'name': 'requerimiento_pago.id_requerimiento_pago', 'render': function (data, type, row) {
+
+                        let containerOpenBrackets = '<center><div class="btn-group" role="group" style="margin-bottom: 5px;">';
+                        let containerCloseBrackets = '</div></center>';
+                        let btnVerEnModal = (array_accesos.find(element => element === 13) ? '<button type="button" class="btn btn-xs btn-primary  handleClickVerEnVistaRapidaRequerimientoPago" name="btnVerEnVistaRapidaRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '" title="Vista rápida"><i class="fas fa-eye fa-xs"></i></button>' : '');
+                        let btnVerAdjuntosModal = (array_accesos.find(element => element === 31) ? '<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAdjuntosRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '"  data-id-moneda="' + row.id_moneda + '" data-simbolo-moneda="' + row.simbolo_moneda + '" data-monto-a-pagar="' + row.monto_total + '" title="Ver archivos adjuntos" data-sustento="' + row['requerimiento_sustentado'] + '" ><i class="fas fa-paperclip fa-xs"></i></button>' : '');
+                        let btnEditar = '<button type="button" class="btn btn-xs btn-warning  handleClickEditarRequerimientoPago" name="btnEditarRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '" title="Editar"><i class="fas fa-edit fa-xs"></i></button>';
+                        let btnAnular = '<button type="button" class="btn btn-xs btn-danger  handleClickAnularRequerimientoPago" name="btnAnularRapidaRequerimientoPago" data-id-requerimiento-pago="' + row.id_requerimiento_pago + '" data-codigo-requerimiento-pago="' + row.codigo + '" title="Anular"><i class="fas fa-ban fa-xs"></i></button>';
+                        let btnImprimirEnPdf = (array_accesos.find(element => element === 30) ? `<button type="button" class="btn btn-xs btn-default handleClickimprimirRequerimientoPagoEnPdf" name="btnImprimirRequerimientoPagoEnPdf" data-toggle="tooltip" data-placement="bottom" title="Imprimir en PDF" data-id-requerimiento-pago="${row.id_requerimiento_pago}">
                     <i class="fas fa-print"></i>
                     </button>`: '');
 
-                    let botonera = containerOpenBrackets + btnVerEnModal + btnImprimirEnPdf;
-                    if (row.id_usuario == auth_user.id_usuario && (row.id_estado == 1 || row.id_estado == 3)) {
-                        botonera += btnEditar + btnAnular;
+                        let botonera = containerOpenBrackets + btnVerEnModal + btnImprimirEnPdf;
+                        if (row.id_usuario == auth_user.id_usuario && (row.id_estado == 1 || row.id_estado == 3)) {
+                            botonera += btnEditar + btnAnular;
+                        }
+                        // if (row.cantidad_adjuntos_pago > 0) {
+                        botonera += btnVerAdjuntosModal;
+                        // }
+
+                        botonera += containerCloseBrackets;
+
+                        return botonera;
+
+
                     }
-                    // if (row.cantidad_adjuntos_pago > 0) {
-                    botonera += btnVerAdjuntosModal;
-                    // }
-
-                    botonera += containerCloseBrackets;
-
-                    return botonera;
-
-
-                }}
+                }
             ],
             "createdRow": function (row, data, dataIndex) {
 
@@ -1120,7 +1128,7 @@ class ListarRequerimientoPagoView {
         if (idGrupo > 0) {
             document.querySelector("div[id='modal-requerimiento-pago'] select[name='division']").removeAttribute("disabled");
 
-            this.construirOptSelectDivision(idGrupo,null);
+            this.construirOptSelectDivision(idGrupo, null);
 
             this.llenarComboProyectos(idGrupo);
 
@@ -1132,7 +1140,7 @@ class ListarRequerimientoPagoView {
                 document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cc']").value = '';
                 document.querySelector("div[id='modal-requerimiento-pago'] input[name='codigo_oportunidad']").value = '';
                 document.querySelector("div[id='modal-requerimiento-pago'] div[id='contenedor-cdp']").classList.add("oculto");
-            }else{
+            } else {
                 document.querySelector("div[id='modal-requerimiento-pago'] select[name='proyecto']").value = 0;
 
             }
@@ -1151,19 +1159,19 @@ class ListarRequerimientoPagoView {
         return false;
     }
 
-    llenarComboProyectos(idGrupo,idProyecto=null){
+    llenarComboProyectos(idGrupo, idProyecto = null) {
         this.obtenerListaProyectos(idGrupo).then((res) => {
-            this.construirListaProyecto(res,idProyecto);
+            this.construirListaProyecto(res, idProyecto);
         }).catch(function (err) {
             console.log(err)
         })
     }
 
-    obtenerListaProyectos(idGrupo){
-        return new Promise(function(resolve, reject) {
+    obtenerListaProyectos(idGrupo) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 type: 'GET',
-                url:`obtener-lista-proyectos/${idGrupo}`,
+                url: `obtener-lista-proyectos/${idGrupo}`,
                 dataType: 'JSON',
                 beforeSend: function (data) {
 
@@ -1172,7 +1180,7 @@ class ListarRequerimientoPagoView {
                         progress: true,
                         imageColor: "#3c8dbc"
                     });
-                    },
+                },
                 success(response) {
                     $('select[name="id_proyecto"]').LoadingOverlay("hide", true);
                     resolve(response);
@@ -1185,15 +1193,15 @@ class ListarRequerimientoPagoView {
                     console.log(textStatus);
                     console.log(errorThrown);
                 }
-                });
+            });
         });
     }
 
 
-    construirListaProyecto(data,idProyecto=null){
+    construirListaProyecto(data, idProyecto = null) {
 
         let selectElement = document.querySelector("div[id='contenedor-proyecto'] select[name='proyecto']");
-        selectElement.innerHTML='';
+        selectElement.innerHTML = '';
         let option = document.createElement("option");
         option.text = "Seleccionar un proyecto";
         option.value = '';
@@ -1201,7 +1209,7 @@ class ListarRequerimientoPagoView {
 
         data.forEach(element => {
             let option = document.createElement("option");
-            option.text = element.codigo+' - '+element.descripcion;
+            option.text = element.codigo + ' - ' + element.descripcion;
             option.value = element.id_proyecto;
             option.setAttribute('data-codigo', element.codigo);
             option.setAttribute('data-id-centro-costo', element.id_centro_costo);
@@ -1281,26 +1289,26 @@ class ListarRequerimientoPagoView {
         let idFila = data != null && data.id_requerimiento_pago_detalle > 0 ? data.id_requerimiento_pago_detalle : (this.makeId());
         let cantidadAdjuntos = data != null && data.adjunto ? (data.adjunto).filter((element, i) => element.id_estado != 7).length : 0;
 
-        let idPartida='';
-        let codigoPartida='';
-        let descripcionPartida='';
+        let idPartida = '';
+        let codigoPartida = '';
+        let descripcionPartida = '';
         let totalPartida = 0;
         let totalPartidaMes = 0;
         // console.log(data);
-        if(data!=null){
+        if (data != null) {
 
-            if(data.id_partida > 0){
-                idPartida= data.id_partida;
-                codigoPartida= data.partida!=null ? data.partida.codigo:'';
-                descripcionPartida= data.partida!=null ? data.partida.descripcion:'';
-                totalPartida = data.presupuesto_old_total_partida??0;
+            if (data.id_partida > 0) {
+                idPartida = data.id_partida;
+                codigoPartida = data.partida != null ? data.partida.codigo : '';
+                descripcionPartida = data.partida != null ? data.partida.descripcion : '';
+                totalPartida = data.presupuesto_old_total_partida ?? 0;
 
-            }else if(data.id_partida_pi>0){
-                idPartida= data.id_partida_pi;
-                codigoPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.partida:'';
-                descripcionPartida= data.presupuesto_interno_detalle!=null ? data.presupuesto_interno_detalle.descripcion:'';
-                totalPartida = data.presupuesto_interno_total_partida!=null ?data.presupuesto_interno_total_partida:0;
-                totalPartidaMes = data.presupuesto_interno_mes_partida!=null ? data.presupuesto_interno_mes_partida:0;
+            } else if (data.id_partida_pi > 0) {
+                idPartida = data.id_partida_pi;
+                codigoPartida = data.presupuesto_interno_detalle != null ? data.presupuesto_interno_detalle.partida : '';
+                descripcionPartida = data.presupuesto_interno_detalle != null ? data.presupuesto_interno_detalle.descripcion : '';
+                totalPartida = data.presupuesto_interno_total_partida != null ? data.presupuesto_interno_total_partida : 0;
+                totalPartidaMes = data.presupuesto_interno_mes_partida != null ? data.presupuesto_interno_mes_partida : 0;
 
             }
         }
@@ -1315,7 +1323,7 @@ class ListarRequerimientoPagoView {
             data-presupuesto-total="${totalPartida}"
             data-presupuesto-mes="${totalPartidaMes}"
 
-            title="${( descripcionPartida!=''?descripcionPartida:'(NO SELECCIONADO)')}">${( codigoPartida!=''?codigoPartida:'(NO SELECCIONADO)')}</p>
+            title="${(descripcionPartida != '' ? descripcionPartida : '(NO SELECCIONADO)')}">${(codigoPartida != '' ? codigoPartida : '(NO SELECCIONADO)')}</p>
             <button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
             <div class="form-group">
                 <h5></h5>
@@ -1450,6 +1458,7 @@ class ListarRequerimientoPagoView {
         tempObjectBtnPartida = obj.target;
         let id_grupo = document.querySelector("form[id='form-requerimiento-pago'] select[name='grupo']").value;
         let id_proyecto = document.querySelector("form[id='form-requerimiento-pago'] select[name='proyecto']").value;
+        let id_cc = document.querySelector("form[id='form-requerimiento-pago'] input[name='id_cc']").value;
         let usuarioProyectos = false;
         // console.log(gruposUsuario);
         gruposUsuario.forEach(element => {
@@ -1458,18 +1467,38 @@ class ListarRequerimientoPagoView {
             }
         });
         if (id_grupo > 0) {
-            $('#modal-partidas').modal({
-                show: true
-            });
 
             if (!$("select[name='id_presupuesto_interno']").val() > 0) { //* si presupuesto interno fue seleccionado, no cargar presupuesto antiguo.
 
-                this.listarPartidas(id_grupo, id_proyecto > 0 ? id_proyecto : '');
+                if (id_proyecto > 0) {
+                    $('#modal-partidas').modal({
+                        show: true,
+                        backdrop: 'true'
+                    });
+                    this.listarPartidas(id_grupo, id_proyecto > 0 ? id_proyecto : null);
+                } else if (id_cc > 0) {
+                    Swal.fire(
+                        '',
+                        'No es requerido completar la partida cuando selecciona un CDP. Puede omitir',
+                        'info'
+                    );
+                } else {
+                    Swal.fire(
+                        '',
+                        'Debe seleccione un tipo presupuesto o proyecto',
+                        'warning'
+                    );
+                }
+            } else {
+                $('#modal-partidas').modal({
+                    show: true,
+                    backdrop: 'true'
+                });
             }
         } else {
             Swal.fire(
                 '',
-                'Debe seleccionar un grupo',
+                'Debe seleccione primero la división para cargar las opciones.',
                 'warning'
             );
         }
@@ -1831,21 +1860,21 @@ class ListarRequerimientoPagoView {
     validarFormularioRequerimientoPago() {
         let continuar = true;
 
-        let mensajePartidaActiva='';
+        let mensajePartidaActiva = '';
 
-        if ( document.querySelector("select[name='proyecto']") ==null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
+        if (document.querySelector("select[name='proyecto']") == null || !parseInt(document.querySelector("select[name='proyecto']").value) > 0) {
             for (let index = 0; index < tempPartidasActivas.length; index++) {
                 if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
-                    mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
+                    mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',') + '<br>';
 
                 }
             }
             console.log(mensajePartidaActiva);
-            if(mensajePartidaActiva!=''){
+            if (mensajePartidaActiva != '') {
                 continuar = false;
                 Swal.fire(
                     '',
-                    'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,
+                    'Se excedió el presupuesto de la partida: <br>' + mensajePartidaActiva,
                     'warning'
                 );
             }
@@ -1948,7 +1977,7 @@ class ListarRequerimientoPagoView {
                         tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').querySelector("div[class~='form-group']").classList.add('has-error');
                     }
                 }
-                if(document.querySelector("input[name='id_cc']").value =='' || document.querySelector("input[name='id_cc']").value ==null ){
+                if (document.querySelector("input[name='id_cc']").value == '' || document.querySelector("input[name='id_cc']").value == null) {
 
                     if (!(tbodyChildren[index].querySelector("input[class~='partida']").value > 0)) {
                         continuar = false;
@@ -1973,7 +2002,7 @@ class ListarRequerimientoPagoView {
                     }
 
                 }
-                if (!(tbodyChildren[index].querySelector("input[class~='precio']").value >0)) {
+                if (!(tbodyChildren[index].querySelector("input[class~='precio']").value > 0)) {
                     continuar = false;
                     if (tbodyChildren[index].querySelector("input[class~='precio']").closest('td').querySelector("span") == null) {
                         let newSpanInfo = document.createElement("span");
@@ -2021,10 +2050,10 @@ class ListarRequerimientoPagoView {
             );
         }
 
-        if(obj.value==2){ // factura
+        if (obj.value == 2) { // factura
             obj.closest('tr').querySelector("button[name='btnVincularFacturaRequerimientoPago']").removeAttribute('disabled');
-        }else{
-            obj.closest('tr').querySelector("button[name='btnVincularFacturaRequerimientoPago']").setAttribute('disabled',true);
+        } else {
+            obj.closest('tr').querySelector("button[name='btnVincularFacturaRequerimientoPago']").setAttribute('disabled', true);
         }
     }
     actualizarFechaEmisionAdjunto(obj) {
@@ -2032,7 +2061,7 @@ class ListarRequerimientoPagoView {
             let indice = tempArchivoAdjuntoRequerimientoPagoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
             tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].fecha_emision = obj.value;
 
-            if(facturaList.length>0){
+            if (facturaList.length > 0) {
                 let indiceFac = facturaList.findIndex(elemnt => elemnt.id_adjunto == obj.closest('tr').id);
                 facturaList[indiceFac].fecha_emision = obj.value;
                 // console.log(facturaList);
@@ -2058,7 +2087,7 @@ class ListarRequerimientoPagoView {
             let indice = tempArchivoAdjuntoRequerimientoPagoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
             tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].serie = obj.value;
 
-            if(facturaList.length>0){
+            if (facturaList.length > 0) {
                 let indiceFac = facturaList.findIndex(elemnt => elemnt.id_adjunto == obj.closest('tr').id);
                 facturaList[indiceFac].serie = obj.value;
                 console.log(facturaList);
@@ -2067,7 +2096,7 @@ class ListarRequerimientoPagoView {
             var regExp = /[a-zA-Z]/g; //expresión regular
             if (regExp.test(tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].id) == false) {
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].action = 'ACTUALIZAR';
-            }else{
+            } else {
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].action = 'GUARDAR';
             }
         } else {
@@ -2083,7 +2112,7 @@ class ListarRequerimientoPagoView {
             let indice = tempArchivoAdjuntoRequerimientoPagoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
             tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].numero = obj.value;
 
-            if(facturaList.length>0){
+            if (facturaList.length > 0) {
                 let indiceFac = facturaList.findIndex(elemnt => elemnt.id_adjunto == obj.closest('tr').id);
                 facturaList[indiceFac].numero = obj.value;
                 // console.log(facturaList);
@@ -2093,7 +2122,7 @@ class ListarRequerimientoPagoView {
             var regExp = /[a-zA-Z]/g; //expresión regular
             if (regExp.test(tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].id) == false) {
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].action = 'ACTUALIZAR';
-            }else{
+            } else {
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].action = 'GUARDAR';
             }
         } else {
@@ -2111,7 +2140,7 @@ class ListarRequerimientoPagoView {
             var regExp = /[a-zA-Z]/g; //expresión regular
             if (regExp.test(tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].id) == false) {
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].action = 'ACTUALIZAR';
-            }else{
+            } else {
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList[indice].action = 'GUARDAR';
             }
         } else {
@@ -2132,11 +2161,11 @@ class ListarRequerimientoPagoView {
 
                 tempArchivoAdjuntoRequerimientoPagoCabeceraList.forEach(element => {
                     formData.append(`archivo_adjunto_list[]`, element.file);
-            });
+                });
 
-            if (facturaList.length > 0) { // agregar a formdata si existe lista facturas
-                formData.append(`facturaObject`, JSON.stringify(facturaList));
-            };
+                if (facturaList.length > 0) { // agregar a formdata si existe lista facturas
+                    formData.append(`facturaObject`, JSON.stringify(facturaList));
+                };
                 // tempArchivoAdjuntoRequerimientoPagoCabeceraList.forEach(element => {
                 //     formData.append(`archivoAdjuntoRequerimientoPagoCabeceraFile${element.category}[]`, element.file);
                 //     formData.append(`id_adjunto[]`, element.id);
@@ -2591,7 +2620,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='solicitado_por']").textContent = data.nombre_trabajador != null && data.nombre_trabajador != undefined ? data.nombre_trabajador : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='periodo']").textContent = data.periodo != null && data.periodo.descripcion != undefined ? data.periodo.descripcion : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='comentario']").textContent = data.comentario;
-        document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='tipo_impuesto']").textContent = data.tipo_impuesto==1?'Detracción':data.tipo_impuesto ==2?'Renta':'No aplica';
+        document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='tipo_impuesto']").textContent = data.tipo_impuesto == 1 ? 'Detracción' : data.tipo_impuesto == 2 ? 'Renta' : 'No aplica';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosDestinatario'] td[id='tipo_destinatario']").textContent = data.tipo_destinatario != null ? data.tipo_destinatario.descripcion : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosDestinatario'] td[id='destinatario']").textContent = destinatario;
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosDestinatario'] td[id='tipo_documento_destinatario']").textContent = tipo_documento_destinatario;
@@ -2608,7 +2637,7 @@ class ListarRequerimientoPagoView {
 
 
         if (data.id_presupuesto_interno > 0) {
-            document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='presupuesto_interno']").textContent = (data.presupuesto_interno !=null ?data.presupuesto_interno.codigo: '')+' - '+(data.presupuesto_interno !=null ? data.presupuesto_interno.descripcion: '');
+            document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='presupuesto_interno']").textContent = (data.presupuesto_interno != null ? data.presupuesto_interno.codigo : '') + ' - ' + (data.presupuesto_interno != null ? data.presupuesto_interno.descripcion : '');
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] tr[id='contenedor_presupuesto_interno']").classList.remove("oculto");
         } else {
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] tr[id='contenedor_presupuesto_interno']").classList.add("oculto");
@@ -2652,16 +2681,16 @@ class ListarRequerimientoPagoView {
                 document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
                 <td>
                     <p class="descripcion-partida"
-                        data-id-partida="${data.detalle[i].id_partida !=null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
+                        data-id-partida="${data.detalle[i].id_partida != null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
                         data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
                         data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"
-                        title="${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.partida :'' }";
-                        style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.descripcion :'' }
+                        title="${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.partida : ''}";
+                        style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.descripcion : ''}
                     </p>
                         ${i + 1}
                 </td>
-                <td title="${data.detalle[i].id_partida >0 ?(data.detalle[i].partida.descripcion).toUpperCase() :(data.detalle[i].id_partida_pi >0?(data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].id_partida >0 ?data.detalle[i].partida.codigo :(data.detalle[i].id_partida_pi >0?data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
-                <td title="${data.detalle[i].id_centro_costo>0?(data.detalle[i].centro_costo.descripcion).toUpperCase():''}">${data.detalle[i].centro_costo !=null ? data.detalle[i].centro_costo.codigo : ''}</td>
+                <td title="${data.detalle[i].id_partida > 0 ? (data.detalle[i].partida.descripcion).toUpperCase() : (data.detalle[i].id_partida_pi > 0 ? (data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].id_partida > 0 ? data.detalle[i].partida.codigo : (data.detalle[i].id_partida_pi > 0 ? data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
+                <td title="${data.detalle[i].id_centro_costo > 0 ? (data.detalle[i].centro_costo.descripcion).toUpperCase() : ''}">${data.detalle[i].centro_costo != null ? data.detalle[i].centro_costo.codigo : ''}</td>
                 <td name="descripcion_servicio">${data.detalle[i].descripcion != null ? data.detalle[i].descripcion : ''} </td>
                 <td>${data.detalle[i].unidad_medida != null ? data.detalle[i].unidad_medida.descripcion : ''}</td>
                 <td style="text-align:center;">
@@ -2691,7 +2720,7 @@ class ListarRequerimientoPagoView {
             // ### ==================== /Historia aprobación ====================== ###
 
             // ### ==================== Partidas activas ====================== ###
-                this.calcularPresupuestoUtilizadoYSaldoPorPartida();
+            this.calcularPresupuestoUtilizadoYSaldoPorPartida();
             // ### ==================== /Partidas activas ====================== ###
 
 
@@ -2912,7 +2941,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='moneda']").value = data.id_moneda;
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='prioridad']").value = data.id_prioridad;
         document.querySelector("div[id='modal-requerimiento-pago'] textarea[name='comentario']").value = data.comentario;
-        document.querySelector("div[id='modal-requerimiento-pago'] select[name='tipo_impuesto']").value = data.tipo_impuesto!=null?data.tipo_impuesto:0;
+        document.querySelector("div[id='modal-requerimiento-pago'] select[name='tipo_impuesto']").value = data.tipo_impuesto != null ? data.tipo_impuesto : 0;
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='empresa']").value = data.id_empresa;
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='sede']").value = data.id_sede;
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='grupo']").value = data.id_grupo;
@@ -2924,7 +2953,7 @@ class ListarRequerimientoPagoView {
 
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.id_division, data.id_presupuesto_interno);
 
-        this.llenarComboProyectos(data.id_grupo,data.id_proyecto);
+        this.llenarComboProyectos(data.id_grupo, data.id_proyecto);
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='proyecto']").value = data.id_proyecto;
 
         this.limpiarTabla('ListaDetalleRequerimientoPago');
@@ -2951,7 +2980,7 @@ class ListarRequerimientoPagoView {
                             'id_moneda': element.id_moneda,
                             'monto_total': element.monto_total,
                             'nameFile': element.archivo,
-                            'fecha_emision':element.fecha_emision,
+                            'fecha_emision': element.fecha_emision,
                             'category': element.id_tp_doc,
                             'documento_compra': element.documento_compra,
                             'action': '',
@@ -2977,20 +3006,20 @@ class ListarRequerimientoPagoView {
                 this.getAdjuntosRequerimientoPagoCabecera(idRequerimientoPago).then((adjuntoList) => {
                     tempArchivoAdjuntoRequerimientoPagoCabeceraList = [];
                     (adjuntoList).forEach(element => {
-                            tempArchivoAdjuntoRequerimientoPagoCabeceraList.push({
-                                id: element.id_requerimiento_pago_adjunto,
-                                serie: element.serie,
-                                numero: element.numero,
-                                id_moneda: element.id_moneda,
-                                monto_total: element.monto_total,
-                                category: element.id_tp_doc,
-                                fecha_emision:element.fecha_emision,
-                                nameFile: element.archivo,
-                                id_doc_com: element.id_doc_com,
-                                documento_compra:element.documento_compra,
-                                action:'',
-                                file: []
-                            });
+                        tempArchivoAdjuntoRequerimientoPagoCabeceraList.push({
+                            id: element.id_requerimiento_pago_adjunto,
+                            serie: element.serie,
+                            numero: element.numero,
+                            id_moneda: element.id_moneda,
+                            monto_total: element.monto_total,
+                            category: element.id_tp_doc,
+                            fecha_emision: element.fecha_emision,
+                            nameFile: element.archivo,
+                            id_doc_com: element.id_doc_com,
+                            documento_compra: element.documento_compra,
+                            action: '',
+                            file: []
+                        });
                     });
                     this.construirTablaVerAdjuntosRequerimientoPagoCabecera(tempArchivoAdjuntoRequerimientoPagoCabeceraList, categoriaAdjuntoList);
                 }).catch(function (err) {
@@ -3011,9 +3040,9 @@ class ListarRequerimientoPagoView {
         <td style="text-align:left;">${element.nameFile}</td>
         <td style="text-align:left;">${element.fecha_emision}</td>`;
 
-        html+=`<td style="text-align:left;"> ${element.serie??''}-${element.numero??''}</td>`;
+            html += `<td style="text-align:left;"> ${element.serie ?? ''}-${element.numero ?? ''}</td>`;
 
-        html+=`<td>
+            html += `<td>
             <select class="form-control handleChangeCategoriaAdjunto" name="categoriaAdjunto" disabled>
         `;
             categoriaAdjuntoList.forEach(categoria => {
@@ -3055,17 +3084,17 @@ class ListarRequerimientoPagoView {
                         // tempArchivoAdjuntoRequerimientoPagoCabeceraList = []; //? vaciar variable causa que al volver ingresar al modal de ajuntos se pierda lo cargado (lo agregado sin guardar)
                         // console.log(adjuntoList);
                         (adjuntoList).forEach(element => {
-                            let agregadoAlArray=0;
+                            let agregadoAlArray = 0;
                             tempArchivoAdjuntoRequerimientoPagoCabeceraList.forEach(adj => {
-                                if(adj.id ==element.id_requerimiento_pago_adjunto){
+                                if (adj.id == element.id_requerimiento_pago_adjunto) {
                                     agregadoAlArray++;
                                 }
                             });
-                            if(agregadoAlArray==0){
+                            if (agregadoAlArray == 0) {
                                 tempArchivoAdjuntoRequerimientoPagoCabeceraList.push({
                                     id: element.id_requerimiento_pago_adjunto,
-                                    serie:element.serie,
-                                    numero:element.numero,
+                                    serie: element.serie,
+                                    numero: element.numero,
                                     id_moneda: element.id_moneda,
                                     monto_total: element.monto_total,
                                     category: element.id_tp_doc,
@@ -3073,8 +3102,8 @@ class ListarRequerimientoPagoView {
                                     nameFile: element.archivo,
                                     id_doc_com: element.id_doc_com,
                                     documento_compra: element.documento_compra,
-                                    action:'',
-                                    confirmada:'',
+                                    action: '',
+                                    confirmada: '',
                                     file: []
                                 });
                             }
@@ -3162,23 +3191,23 @@ class ListarRequerimientoPagoView {
             html += `<tr id="${element.id}" style="text-align:center">
         <td style="text-align:left;">${element.nameFile}</td>
         <td style="text-align:left;">`;
-            if(element.id >0){
-                html+=`${element.fecha_emision??''}`
-            }else{
-                html+=`<input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" value="${element.fecha_emision??''}" />`;
+            if (element.id > 0) {
+                html += `${element.fecha_emision ?? ''}`
+            } else {
+                html += `<input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" value="${element.fecha_emision ?? ''}" />`;
             }
-        html+=`</td>`;
-        // console.log(element);
+            html += `</td>`;
+            // console.log(element);
 
-        html+=`
-        <td style="text-align:left; display:flex;" data-id-doc-com="${element.id_doc_com??''}">
-        <input type="text" class="form-control handleChangeSerieComprobante" name="serie"  placeholder="Serie" value="${element.serie??''}"  ${element.id_doc_com>0?'disabled':''}>
-        <input type="text" class="form-control handleChangeNumeroComprobante" name="numero"  placeholder="Número" value="${element.numero??''}" ${element.id_doc_com>0?'disabled':''}>
+            html += `
+        <td style="text-align:left; display:flex;" data-id-doc-com="${element.id_doc_com ?? ''}">
+        <input type="text" class="form-control handleChangeSerieComprobante" name="serie"  placeholder="Serie" value="${element.serie ?? ''}"  ${element.id_doc_com > 0 ? 'disabled' : ''}>
+        <input type="text" class="form-control handleChangeNumeroComprobante" name="numero"  placeholder="Número" value="${element.numero ?? ''}" ${element.id_doc_com > 0 ? 'disabled' : ''}>
         </td>
         `;
 
-        html+=`<td>
-            <select class="form-control handleChangeCategoriaAdjunto" name="categoriaAdjunto" ${element.id_doc_com>0 || element.confirmada ==true ?'disabled':''} >
+            html += `<td>
+            <select class="form-control handleChangeCategoriaAdjunto" name="categoriaAdjunto" ${element.id_doc_com > 0 || element.confirmada == true ? 'disabled' : ''} >
         `;
             categoriaAdjuntoList.forEach(categoria => {
                 if (element.category == categoria.id_tp_doc) {
@@ -3192,10 +3221,10 @@ class ListarRequerimientoPagoView {
         </td>
         <td style="text-align:center;">
             <div class="btn-group" role="group">`;
-            if(element.id_doc_com>0){
+            if (element.id_doc_com > 0) {
                 html += `<button type="button" class="btn btn-primary btn-xs handleClickVerVinculoConFactura" name="btnVerVinculoConFactura" title="Ver vínculo con factura" data-id="${element.id}" data-id-doc-com="${element.id_doc_com}" ><i class="fas fa-receipt"></i></button>`;
-            }else{
-                html +=`<button type="button" class="btn btn-success btn-xs handleClickVincularFacturaRequerimientoPago" name="btnVincularFacturaRequerimientoPago" title="Crear factura" data-id="${element.id}" ><i class="fas fa-receipt"></i></button>`;
+            } else {
+                html += `<button type="button" class="btn btn-success btn-xs handleClickVincularFacturaRequerimientoPago" name="btnVincularFacturaRequerimientoPago" title="Crear factura" data-id="${element.id}" ><i class="fas fa-receipt"></i></button>`;
             }
             if (Number.isInteger(element.id)) {
                 html += `<button type="button" class="btn btn-info btn-xs handleClickDescargarArchivoCabeceraRequerimientoPago" name="btnDescargarArchivoCabeceraRequerimientoPago" title="Descargar" data-id="${element.id}" ><i class="fas fa-file-download"></i></button>`;
@@ -3285,8 +3314,8 @@ class ListarRequerimientoPagoView {
                 if (this.estaHabilitadoLaExtension(file) == true) {
                     let payload = {
                         id: this.makeId(),
-                        serie:'',
-                        numero:'',
+                        serie: '',
+                        numero: '',
                         id_moneda: document.querySelector("div[id='modal-requerimiento-pago'] select[name='moneda']").value,
                         monto_total: document.querySelector("div[id='modal-requerimiento-pago'] input[name='monto_total']").value,
                         category: 2, //default: factura
@@ -3769,9 +3798,9 @@ class ListarRequerimientoPagoView {
                                 }
 
                                 // llenar cuenta bancaria
-                                if(response.data[0]['cuenta_persona']!=null){
+                                if (response.data[0]['cuenta_persona'] != null) {
 
-                                    idCuentaPreSeleccionada= response.data[0]['cuenta_persona'][0]['id_cuenta_bancaria'];
+                                    idCuentaPreSeleccionada = response.data[0]['cuenta_persona'][0]['id_cuenta_bancaria'];
                                 }
                                 document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = idCuentaPreSeleccionada;
                                 let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
@@ -3790,7 +3819,7 @@ class ListarRequerimientoPagoView {
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
                                         value="${element.id_cuenta_bancaria}"
-                                        ${idCuentaPreSeleccionada == element.id_cuenta_bancaria ?'selected':''}
+                                        ${idCuentaPreSeleccionada == element.id_cuenta_bancaria ? 'selected' : ''}
                                         >
                                         ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cci != null && element.nro_cci != "" ? (element.nro_cci + " (CCI)") : "")}
                                     </option>`;
@@ -3806,7 +3835,7 @@ class ListarRequerimientoPagoView {
                                     document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = (response.data[0]['tipo_documento_identidad']['descripcion']) != null ? response.data[0]['tipo_documento_identidad']['descripcion'] : '';
                                 }
                                 // llenar cuenta bancaria
-                                idCuentaPreSeleccionada= response.data[0]['cuenta_contribuyente'][0]['id_cuenta_contribuyente'];
+                                idCuentaPreSeleccionada = response.data[0]['cuenta_contribuyente'][0]['id_cuenta_contribuyente'];
 
                                 document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = idCuentaPreSeleccionada;
 
@@ -3825,7 +3854,7 @@ class ListarRequerimientoPagoView {
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
                                         value="${element.id_cuenta_contribuyente}"
-                                        ${idCuentaPreSeleccionada == element.id_cuenta_contribuyente ?'selected':''}
+                                        ${idCuentaPreSeleccionada == element.id_cuenta_contribuyente ? 'selected' : ''}
                                         >
                                         ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != "" ? (element.nro_cuenta_interbancaria + " (CCI)") : "")}
                                     </option>`;
@@ -4047,11 +4076,11 @@ class ListarRequerimientoPagoView {
         }
     }
 
-    filtrosRequerimientosPago(){
+    filtrosRequerimientosPago() {
         let model = this;
         $('#filtrar-reuerimiento-pago').click(function (e) {
             e.preventDefault();
-            filtros_rq_pagos._token=token;
+            filtros_rq_pagos._token = token;
             model.mostrarListaRequerimientoPago();
         });
         $('[data-action="checked"]').change(function (e) {
@@ -4059,10 +4088,10 @@ class ListarRequerimientoPagoView {
             let checked = $(e.currentTarget).prop('checked');
             let key = $(e.currentTarget).attr('data-name');
             let modal = $('#modal-filtro-requerimientos-elaborados');
-            if(checked) {
+            if (checked) {
                 $(e.currentTarget).closest('.form-group').find('[data-action="disabled"]').removeAttr('disabled');
-            }else{
-                $(e.currentTarget).closest('.form-group').find('[data-action="disabled"]').attr('disabled','true');
+            } else {
+                $(e.currentTarget).closest('.form-group').find('[data-action="disabled"]').attr('disabled', 'true');
             }
             seleccionarFiltros(key, checked, $(e.currentTarget));
 
@@ -4075,56 +4104,56 @@ class ListarRequerimientoPagoView {
 
             seleccionarFiltros(key, checked, input_checked);
         });
-        function seleccionarFiltros(key, checked, input_checked){
+        function seleccionarFiltros(key, checked, input_checked) {
             switch (key) {
                 case 'elaborado':
 
                     if (checked) {
                         filtros_rq_pagos.elaborado = input_checked.closest('.form-group').find('[name="elaborado"]').val();
-                    }else{
+                    } else {
                         filtros_rq_pagos.elaborado = 'SIN_FILTRO';
                     }
-                break;
+                    break;
 
                 case 'empresa':
                     if (checked) {
                         filtros_rq_pagos.empresa = input_checked.closest('.form-group').find('[name="empresa"]').val();
                         filtros_rq_pagos.sede = input_checked.closest('.form-group').find('[name="sede"]').val();
-                    }else{
+                    } else {
                         filtros_rq_pagos.empresa = 'SIN_FILTRO';
                         filtros_rq_pagos.sede = 'SIN_FILTRO';
                     }
-                break;
+                    break;
 
 
                 case 'grupo':
                     if (checked) {
                         filtros_rq_pagos.grupo = input_checked.closest('.form-group').find('[name="grupo"]').val();
                         filtros_rq_pagos.division = input_checked.closest('.form-group').find('[name="division"]').val();
-                    }else{
+                    } else {
                         filtros_rq_pagos.grupo = 'SIN_FILTRO';
                         filtros_rq_pagos.division = 'SIN_FILTRO';
                     }
-                break;
+                    break;
 
 
                 case 'fechas':
                     if (checked) {
                         filtros_rq_pagos.fecha_inicio = input_checked.closest('.form-group').find('[name="fechaRegistroDesde"]').val();
                         filtros_rq_pagos.fecha_final = input_checked.closest('.form-group').find('[name="fechaRegistroHasta"]').val();
-                    }else{
+                    } else {
                         filtros_rq_pagos.fecha_inicio = 'SIN_FILTRO';
                         filtros_rq_pagos.fecha_final = 'SIN_FILTRO';
                     }
-                break;
+                    break;
 
                 case 'estado':
                     if (checked) {
                         filtros_rq_pagos.estado = input_checked.closest('.form-group').find('[name="estado"]').val();
-                    }else{
+                    } else {
                         filtros_rq_pagos.estado = 'SIN_FILTRO';
                     }
-                break;
+                    break;
             }
         }
 
@@ -4135,7 +4164,7 @@ class ListarRequerimientoPagoView {
             $.ajax({
                 type: 'GET',
                 // url: '/necesidades/requerimiento/elaboracion/listar-sedes-por-empresa/'+value,
-                url: route("necesidades.requerimiento.elaboracion.listar-sedes-por-empresa", {id:value}),
+                url: route("necesidades.requerimiento.elaboracion.listar-sedes-por-empresa", { id: value }),
                 data: {},
                 // processData: false,
                 // contentType: false,
@@ -4143,14 +4172,14 @@ class ListarRequerimientoPagoView {
                 beforeSend: (data) => {
                     // console.log(data);
                 }
-            }).done(function(response) {
+            }).done(function (response) {
                 html = '<option value="">Sede...</option>';
                 $.each(response, function (index, element) {
-                    html += '<option value="'+element.id_sede+'">'+element.descripcion+'</option>';
+                    html += '<option value="' + element.id_sede + '">' + element.descripcion + '</option>';
                 });
                 $('[name="sede"]').html(html);
                 console.log(response);
-            }).fail( function( jqXHR, textStatus, errorThrown ){
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
@@ -4167,22 +4196,22 @@ class ListarRequerimientoPagoView {
                 type: 'GET',
                 // url: '/necesidades/requerimiento/elaboracion/listar-sedes-por-empresa/'+value,
                 url: route("finanzas.presupuesto.presupuesto-interno.get-area"),
-                data: {id_grupo:value},
+                data: { id_grupo: value },
                 // processData: false,
                 // contentType: false,
                 dataType: 'JSON',
                 beforeSend: (data) => {
                     // console.log(data);
                 }
-            }).done(function(response) {
-                html ='<option value="" hidden>Division...</option>';
+            }).done(function (response) {
+                html = '<option value="" hidden>Division...</option>';
                 $.each(response.data, function (index, element) {
 
-                    html+='<option value="'+element.id_division+'" data-id-grupo="'+element.grupo_id+'">'+element.descripcion+'</option>';
+                    html += '<option value="' + element.id_division + '" data-id-grupo="' + element.grupo_id + '">' + element.descripcion + '</option>';
                 });
                 $('[name="division"]').html(html);
                 console.log(response);
-            }).fail( function( jqXHR, textStatus, errorThrown ){
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);

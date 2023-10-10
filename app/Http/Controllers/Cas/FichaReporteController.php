@@ -85,10 +85,10 @@ class FichaReporteController extends Controller
         set_time_limit(0);
         $data = $this->incidencias()->orderBy('fecha_reporte','desc')->orderBy('id_incidencia','desc');
         if (!empty($request->fecha_inicio)) {
-            $data = $data->where('incidencia.fecha_registro','>=',$request->fecha_inicio);
+            $data = $data->where('incidencia.fecha_reporte','>=',$request->fecha_inicio);
         }
         if (!empty($request->fecha_final)) {
-            $data = $data->where('incidencia.fecha_registro','<=',$request->fecha_final);
+            $data = $data->where('incidencia.fecha_reporte','<=',$request->fecha_final);
         }
         // return $data->get();exit;
         $fecha = new Carbon();

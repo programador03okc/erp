@@ -408,46 +408,46 @@ class RequerimientoView {
                     if (data['requerimiento'][0].estado == 7 || data['requerimiento'][0].estado == 2) {
                         changeStateButton('cancelar'); //init.js
                         $("#form-requerimiento .activation").attr('disabled', true);
-    
+
                     } else if (data['requerimiento'][0].estado == 1 && data['requerimiento'][0].id_usuario == auth_user.id_usuario) {
                         document.querySelector("form[id='form-requerimiento']").setAttribute('type', 'edition');
                         changeStateButton('historial'); //init.js
                         // allButtonAdjuntarNuevo.forEach(element => {
                         //     element.removeAttribute("disabled");
                         // });
-    
-    
+
+
                         $("#form-requerimiento .activation").attr('disabled', true);
-    
+
                     } else if ((data['requerimiento'][0].estado == 1 || data['requerimiento'][0].estado == 3)) {
                         document.querySelector("div[id='group-historial-revisiones']").removeAttribute('hidden');
                         this.mostrarHistorialRevisionAprobacion(data['historial_aprobacion']);
                         disabledControl(btnAdjuntosRequerimiento, true);
-    
+
                         if (data['requerimiento'][0].id_usuario == auth_user.id_usuario) {
                             hasDisabledInput = '';
                             document.querySelector("form[id='form-requerimiento']").setAttribute('type', 'edition');
                             changeStateButton('editar'); //init.js
                             disabledControl(btnAdjuntosRequerimiento, false);
-    
+
                             // allButtonAdjuntarNuevo.forEach(element => {
                             //     element.removeAttribute("disabled");
                             // });
-    
+
                             $("#form-requerimiento .activation").attr('disabled', false);
-    
+
                         }
-    
-    
-    
+
+
+
                     } else {
                         document.querySelector("div[id='group-historial-revisiones']").setAttribute('hidden', true);
-    
+
                         // allButtonAdjuntarNuevo.forEach(element => {
                         //     element.setAttribute("disabled",true);
                         // });
-    
-    
+
+
                     }
                     this.mostrarDetalleRequerimiento(data, hasDisabledInput);
                 }
@@ -650,7 +650,7 @@ class RequerimientoView {
                 descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida;
                 totalPartida = dataDetalleRequerimiento[i].presupuesto_old_total_partida;
             } else if (dataDetalleRequerimiento[i].id_partida_pi > 0) {
-                tipoPresupuesto ='INTERNO';
+                tipoPresupuesto = 'INTERNO';
                 idPartida = dataDetalleRequerimiento[i].id_partida_pi;
                 codigoPartida = dataDetalleRequerimiento[i].codigo_partida_presupuesto_interno;
                 descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida_presupuesto_interno;
@@ -664,7 +664,7 @@ class RequerimientoView {
             data-id-partida="${idPartida}"
             data-presupuesto-total="${totalPartida}"
             data-presupuesto-mes="${totalPartidaMes}"
-            title="${descripcionPartida !='' || descripcionPartida !=null ?descripcionPartida: '(NO SELECCIONADO)'}" >${codigoPartida !=null ||  codigoPartida !='' ?codigoPartida :'(NO SELECCIONADO)'}</p>
+            title="${descripcionPartida != '' || descripcionPartida != null ? descripcionPartida : '(NO SELECCIONADO)'}" >${codigoPartida != null || codigoPartida != '' ? codigoPartida : '(NO SELECCIONADO)'}</p>
             <button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
             <div class="form-group">
             <input type="text" class="partida" name="idPartida[]" value="${idPartida}" hidden>
@@ -1197,7 +1197,7 @@ class RequerimientoView {
         let idGrupo = document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value;
         let tipoPptoCDP = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
 
-        const partidaTd= `<p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
+        const partidaTd = `<p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
         <div class="form-group">
             <input type="text" class="partida" name="idPartida[]" hidden>
         </div>`;
@@ -1205,7 +1205,7 @@ class RequerimientoView {
         document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
         <td></td>
         <td>
-            ${tipoPptoCDP >0?'':partidaTd}
+            ${tipoPptoCDP > 0 ? '' : partidaTd}
         </td>
         <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
@@ -1274,7 +1274,7 @@ class RequerimientoView {
         document.querySelector("tbody[id='body_detalle_requerimiento']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
         <td></td>
         <td>
-            ${tipoPptoCDP >0?'':partidaTd}
+            ${tipoPptoCDP > 0 ? '' : partidaTd}
         </td>
             <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
@@ -1445,6 +1445,8 @@ class RequerimientoView {
         tempObjectBtnPartida = obj.target;
         let id_grupo = document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value;
         let id_proyecto = document.querySelector("form[id='form-requerimiento'] select[name='id_proyecto']").value;
+        let id_cc = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
+
         let usuarioProyectos = false;
         grupos.forEach(element => {
             if (element.id_grupo == 3) { // proyectos
@@ -1455,21 +1457,26 @@ class RequerimientoView {
 
             if (!$("select[name='id_presupuesto_interno']").val() > 0) { //* si presupuesto interno fue seleccionado, no cargar presupuesto antiguo.
 
-                if(id_proyecto>0){
+                if (id_proyecto > 0) {
                     $('#modal-partidas').modal({
                         show: true,
                         backdrop: 'true'
                     });
                     this.listarPartidas(id_grupo, id_proyecto > 0 ? id_proyecto : null);
-                }else{
+                } else if (id_cc > 0) {
                     Swal.fire(
                         '',
-                        'Debe seleccione un tipo presupuesto / proyecto',
+                        'No es requerido completar la partida cuando selecciona un CDP. Puede omitir',
+                        'info'
+                    );
+                } else {
+                    Swal.fire(
+                        '',
+                        'Debe seleccione un tipo presupuesto o proyecto',
                         'warning'
                     );
                 }
-
-            }else{
+            } else {
                 $('#modal-partidas').modal({
                     show: true,
                     backdrop: 'true'
@@ -1682,7 +1689,7 @@ class RequerimientoView {
         console.log(data);
         this.limpiarTabla('listaPartidasActivas');
         data.forEach(element => {
-                
+
             document.querySelector("tbody[id='body_partidas_activas']").insertAdjacentHTML('beforeend', `<tr style="text-align:center">
                 <td>${element.codigo}</td>
                 <td>${element.descripcion}</td>
@@ -2470,23 +2477,23 @@ class RequerimientoView {
             }
         }
 
-        
+
         // Validar si importe de partida excede el ppto de la partida 
 
-        let mensajePartidaActiva='';
-        if (document.querySelector("select[name='id_proyecto']") ==null || !parseInt(document.querySelector("select[name='id_proyecto']").value) > 0) {
+        let mensajePartidaActiva = '';
+        if (document.querySelector("select[name='id_proyecto']") == null || !parseInt(document.querySelector("select[name='id_proyecto']").value) > 0) {
             for (let index = 0; index < tempPartidasActivas.length; index++) {
                 if (parseFloat(tempPartidasActivas[index]['saldo_mes']) < 0) {
-                    mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',')+'<br>';
-                    
+                    mensajePartidaActiva += tempPartidasActivas[index]['descripcion'] + ' con un saldo de ' + $.number(tempPartidasActivas[index]['saldo_mes'], 2, '.', ',') + '<br>';
+
                 }
             }
-            
-            if(mensajePartidaActiva!=''){
+
+            if (mensajePartidaActiva != '') {
                 presupuestoPartidaValido = false;
                 Swal.fire(
                     '',
-                    'Se excedió el presupuesto de la partida: <br>'+mensajePartidaActiva,
+                    'Se excedió el presupuesto de la partida: <br>' + mensajePartidaActiva,
                     'warning'
                 );
             }

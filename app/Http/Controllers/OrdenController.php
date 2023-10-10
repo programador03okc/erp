@@ -5265,6 +5265,7 @@ class OrdenController extends Controller
     }
     public function reporteFiltros(Request $request){
         // set_time_limit(1);
+        ini_set('memory_limit', '999999M');
         $data = [];
         $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
         ->orderBy('items_ordenes_view.fecha_emision', 'desc');

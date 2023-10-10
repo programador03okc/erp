@@ -43,7 +43,7 @@ class ApiController extends Controller
                     'promedio'  => $promedio
                 ], 'id_tp_cambio');
 
-                DB::table('mgcp_cuadro_costo.tipo_cambio')->where('id', 1)->update([
+                DB::table('mgcp_cuadro_costos.tipo_cambio')->where('id', 1)->update([
                     'tipo_cambio'   => $ventaMGC,
                     'fecha'         => date('Y-m-d H:i:s')
                 ]);
@@ -67,6 +67,7 @@ class ApiController extends Controller
             $compra = $query->orderBy('id_tp_cambio', 'desc')->first()->compra;
             $venta = $query->orderBy('id_tp_cambio', 'desc')->first()->venta;
             $promedio = $query->orderBy('id_tp_cambio', 'desc')->first()->promedio;
+            $ventaMGC = $venta + ($venta * 0.02);
         } else {
             $rpta = 'null';
             $apiQ = json_decode($this->consultaSunat('https://api.apis.net.pe/v1/tipo-cambio-sunat'));
@@ -84,11 +85,12 @@ class ApiController extends Controller
                 'promedio'  => $promedio
             ], 'id_tp_cambio');
 
-            DB::table('mgcp_cuadro_costo.tipo_cambio')->where('id', 1)->update([
-                'tipo_cambio'   => $ventaMGC,
-                'fecha'         => date('Y-m-d H:i:s')
-            ]);
         }
+
+        DB::table('mgcp_cuadro_costos.tipo_cambio')->where('id', 1)->update([
+            'tipo_cambio'   => $ventaMGC,
+            'fecha'         => date('Y-m-d H:i:s')
+        ]);
         // $data[] = ['fecha' => $fecha, 'compra' => $compra, 'venta' => $venta];
         // return response()->json(array('response' => $rpta, 'data' => $data), 200);
 

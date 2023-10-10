@@ -43,7 +43,7 @@ class ApiController extends Controller
                     'promedio'  => $promedio
                 ], 'id_tp_cambio');
 
-                DB::table('mgcp_cuadro_costo.tipo_cambio')->insert([
+                DB::table('mgcp_cuadro_costo.tipo_cambio')->where('id', 1)->update([
                     'tipo_cambio'   => $ventaMGC,
                     'fecha'         => date('Y-m-d H:i:s')
                 ]);
@@ -84,7 +84,7 @@ class ApiController extends Controller
                 'promedio'  => $promedio
             ], 'id_tp_cambio');
 
-            DB::table('mgcp_cuadro_costo.tipo_cambio')->insert([
+            DB::table('mgcp_cuadro_costo.tipo_cambio')->where('id', 1)->update([
                 'tipo_cambio'   => $ventaMGC,
                 'fecha'         => date('Y-m-d H:i:s')
             ]);

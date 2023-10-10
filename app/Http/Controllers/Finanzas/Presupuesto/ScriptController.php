@@ -19,6 +19,7 @@ use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Finanzas\PresupuestoInternoDetalleHistorial;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Tesoreria\RegistroPago;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 
@@ -663,39 +664,108 @@ class ScriptController extends Controller
     }
     public function nivelarPartidas($mes){
 
-        $presupuesto = PresupuestoInterno::where('estado',2)->get();
-        // $mes = '05';
+        // $presupuesto = PresupuestoInterno::where('estado',2)->get();
+        $presupuesto = PresupuestoInterno::find(31);
+        $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$presupuesto->id_presupuesto_interno)->where('registro', 2)->orderBy('partida','asc')->get();
 
-        $array_historial = array();
-        foreach ($presupuesto as $key => $value) {
-            // $mes = date('m');
+        foreach ($presupuesto_detalle as $key => $value) {
+            $historial = HistorialPresupuestoInternoSaldo::where('estado',3)
+            ->where('tipo','SALIDA')
+            ->where('operacion','R')
+            ->where('documento_anulado','f')
+            ->whereNotNull('id_requerimiento_pago')
+            ->whereNotNull('id_requerimiento_pago_detalle')
+            ->where('id_partida','=',$value->id_presupuesto_interno_detalle)
+            ->get();
 
-            $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$value->id_presupuesto_interno)->get();
+            foreach ($historial as $key_historia => $value_historia) {
+                $registro_pago = RegistroPago::where('id_requerimiento_pago', $value_historia->id_requerimiento_pago)->where('estado',1)->first();
 
-            foreach ($presupuesto_detalle as $key_detalle => $detalle) {
-                // return $detalle->id_presupuesto_interno;exit;
+                $mes = date("m", strtotime($registro_pago->fecha_pago));
+                $mes = $this->mesSeleccionado($mes);
 
-                $historial = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$detalle->id_presupuesto_interno)
-                ->where('estado',3)
+                //usarlo una vez
+                $data = PresupuestoInternoDetalle::find($value->id_presupuesto_interno_detalle);
+                $data->$mes = $value->$mes + $value_historia->importe;
+                $data->save();
+
+
+                // return $value;exit;
+            }
+            // return [$historial,$value];exit;
+        }
+
+        return $presupuesto_detalle;exit;
+
+        // return response()->json($array_historial,200);
+    }
+    public function mesSeleccionado($mes){
+        $string = '';
+        switch ($mes) {
+            case '01':
+                $string = 'ene';
+            break;
+
+            case '02':
+                $string = 'feb';
+            break;
+            case '03':
+                $string = 'mar';
+            break;
+            case '04':
+                $string = 'abr';
+            break;
+            case '05':
+                $string = 'may';
+            break;
+            case '06':
+                $string = 'jun';
+            break;
+            case '07':
+                $string = 'jul';
+            break;
+            case '08':
+                $string = 'agos';
+            break;
+            case '09':
+                $string = 'set';
+            break;
+            case '10':
+                $string = 'oct';
+            break;
+            case '11':
+                $string = 'nov';
+            break;
+            case '12':
+                $string = 'dic';
+            break;
+        }
+        return $string;
+    }
+    public function actualizarSaldos(){
+        $historial = HistorialPresupuestoInternoSaldo::where('estado',3)
                 ->where('tipo','SALIDA')
                 ->where('operacion','R')
-                ->where('mes',$mes)
-                ->where('id_partida','=',$detalle->id_presupuesto_interno_detalle)
+                ->orderBy('fecha_registro','asc')
+                ->whereNotNull('id_requerimiento_pago')
+                ->whereNotNull('id_requerimiento_pago_detalle')
                 ->get();
-                // return $historial;exit;
-                // array_push($array_historial,$historial);
 
-                if (sizeof($historial)>0) {
-                    foreach ($historial as $key_historia => $historia){
-
-                    }
-                    array_push($array_historial,$historial);
-                }
+        $array = array();
+        foreach ($historial as $key => $value) {
+            $cantidad = $historial = HistorialPresupuestoInternoSaldo::where('estado',3)
+            ->where('id_requerimiento_pago_detalle', $value->id_requerimiento_pago_detalle)
+            ->count();
+            if($cantidad>1){
+                array_push($array, array(
+                    "id_requerimiento_pago_detalle"=>$value->id_requerimiento_pago_detalle,
+                    "id"=>$value->id,
+                    "cantidad"=>$cantidad,
+                    "fecha"=>$value->fecha_registro,
+                ));
             }
         }
-        // return $array_historial;exit;
-
-        return response()->json($array_historial,200);
+        return response()->json($array,200);
     }
 
 }

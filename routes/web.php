@@ -387,6 +387,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
 				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
+				Route::post('obtener-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'obtenerRequerimientosVinculadosConPartida'])->name('obtener-requerimientos-vinculados-con-partida');
+				Route::get('obtener-items-requerimiento-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoConPartidaDePresupuestoInterno'])->name('obtener-items-requerimiento-con-partida-presupuesto-interno');
+
 			});
 
 			Route::name('listado.')->prefix('listado')->group(function () {
@@ -420,6 +423,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
 				Route::get('listar-flujo/{idDocumento}', [RevisarAprobarController::class, 'mostrarTodoFlujoAprobacionDeDocumento'])->name('listar-flujo');
 				Route::post('requerimiento-sustentado', [RequerimientoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
+				Route::post('obtener-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'obtenerRequerimientosVinculadosConPartida'])->name('obtener-requerimientos-vinculados-con-partida');
+				Route::get('obtener-items-requerimiento-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoConPartidaDePresupuestoInterno'])->name('obtener-items-requerimiento-con-partida-presupuesto-interno');
+
 			});
 
 			Route::name('mapeo.')->prefix('mapeo')->group(function () {
@@ -1339,6 +1345,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('total-presupuesto-anual-niveles/{presupuesto_intero_id}/{tipo}/{nivel}/{tipo_campo}', [ScriptController::class, 'totalPresupuestoAnualPartidasNiveles'])->name('total-presupuesto-anual-niveles');
 
 					Route::get('nivelar-partidas/{mes}', [ScriptController::class, 'nivelarPartidas'])->name('nivelar-partidas');
+					Route::get('actualizar-saldos', [ScriptController::class, 'actualizarSaldos'])->name('actualizar-saldos');
 
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');

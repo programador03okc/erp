@@ -87,6 +87,7 @@ Gestión de ordenes
                                 <thead>
                                     <tr>
                                         <th>Factura</th>
+                                        <th>F. Fecha de Emision </th>
                                         <th>cod. ord.</th>
                                         <th>Cod. req.</th>
                                         <th>Cod OC Soft.</th>

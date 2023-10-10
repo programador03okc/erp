@@ -15,6 +15,8 @@ class HistorialPresupuestoInternoSaldo extends Model
         $historial_requerimientos = HistorialPresupuestoInternoSaldo::where('id_partida',$partida_id)
         ->where('estado', 3)
         ->where('operacion', 'R')
+        ->where('documento_anulado','f')
+        ->where('tipo','SALIDA')
         ->whereNotNull('id_requerimiento_pago_detalle')
         ->get();
         $total_pagos = 0;
@@ -26,6 +28,8 @@ class HistorialPresupuestoInternoSaldo extends Model
         ->where('estado', 3)
         ->where('operacion', 'R')
         ->whereNotNull('id_orden_detalle')
+        ->where('documento_anulado','f')
+        ->where('tipo','SALIDA')
         ->get();
         $total_ordenes = 0;
         foreach ($historial_ordenes as $key => $value) {

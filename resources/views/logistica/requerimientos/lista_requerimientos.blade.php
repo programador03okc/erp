@@ -165,6 +165,7 @@ Listado de requerimientos logísticos
 
 
 @include('logistica.requerimientos.modal_requerimiento')
+@include('logistica.requerimientos.modal_requerimientos_vinculados_con_partida')
 
 @include('logistica.requerimientos.modal_ver_agregar_adjuntos_requerimiento_compra')
 @include('logistica.requerimientos.modal_adjuntar_archivos_requerimiento')
@@ -189,6 +190,7 @@ Listado de requerimientos logísticos
 <script src="{{ asset('js/logistica/requerimiento/RequerimientoModel.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/RequerimientoModel.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/trazabilidad.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/trazabilidad.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/verTodoAdjuntosYAdicionalesRequerimientoCompra.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verTodoAdjuntosYAdicionalesRequerimientoCompra.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js'))}}"></script>
 
 
 <script>

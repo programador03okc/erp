@@ -270,8 +270,8 @@ function verRequerimientosVinculadosConPartida(idPartida,descripcionPartida,codi
 
     function contruirResumenRequerimientosVinculadosConPartida(data){
         importeItemPorPartida +=parseFloat(data.importe_item_por_partida);
-        document.querySelector("table[id='tablaResumenRequerimientoVinculadosConPartida'] span[id='ppto_partida_anual']").textContent= 'S/'+$.number((parseFloat(data.presupuesto_interno_total_partida)), 2, ".", ","); 
-        document.querySelector("table[id='tablaResumenRequerimientoVinculadosConPartida'] span[id='ppto_partida_mes']").textContent=  'S/'+$.number((parseFloat(data.presupuesto_interno_mes_partida)), 2, ".", ",");
+        document.querySelector("table[id='tablaResumenRequerimientoVinculadosConPartida'] span[id='ppto_partida_anual']").textContent= 'S/'+$.number((parseFloat(data.presupuesto_interno_total_partida.replace(/,/g, ''))), 2, ".", ","); 
+        document.querySelector("table[id='tablaResumenRequerimientoVinculadosConPartida'] span[id='ppto_partida_mes']").textContent=  'S/'+$.number((parseFloat(data.presupuesto_interno_mes_partida.replace(/,/g, ''))), 2, ".", ",");
         document.querySelector("table[id='tablaResumenRequerimientoVinculadosConPartida'] span[id='total_partida_de_requerimientos_aprobados']").textContent = 'S/'+$.number((parseFloat(importeItemPorPartida)), 2, ".", ",");
         document.querySelector("table[id='tablaResumenRequerimientoVinculadosConPartida'] span[id='total_partida_de_requerimientos_aprobados_incluido_igv']").textContent= 'S/'+$.number((parseFloat(importeItemPorPartida) *1.18), 2, ".", ","); 
 

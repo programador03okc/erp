@@ -4698,12 +4698,12 @@ class OrdenController extends Controller
         $sumaPagos = 0;
         $lastPagoCuota = PagoCuota::where([['id_orden', $orden->id_orden_compra]])->first();
         if (isset($lastPagoCuota->id_pago_cuota) == true) {
-            $lastPagoCuotaDetallePagadas = PagoCuotaDetalle::where([['id_pago_cuota', $lastPagoCuota->id_pago_cuota], ['id_estado', '=', 6]])->get();
+            $lastPagoCuotaDetallePagadas = PagoCuotaDetalle::where([['id_pago_cuota', $lastPagoCuota->id_pago_cuota], ['id_estado', '!=', 7]])->get();
             foreach ($lastPagoCuotaDetallePagadas as $key => $detCuota) {
                 $sumaPagos += $detCuota->monto_cuota;
             }
         }
-        if (floatval($orden->monto_total) > floatval($sumaPagos)) {
+        if (floatval($orden->monto_total) >= (floatval($sumaPagos) + floatval($request->monto_a_pagar))) {
 
 
             $orden->estado_pago = 8; //enviado a pago
@@ -4787,7 +4787,7 @@ class OrdenController extends Controller
         } else {
             $arrayRspta = array(
                 'tipo_estado' => 'warning',
-                'mensaje' => 'Se completo el limite total de cuotas, orden pagada.',
+                'mensaje' => 'Las cuotas mas el monto envia a pago supera el monto total de orden.',
                 'data' => $orden
             );
         }

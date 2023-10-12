@@ -283,6 +283,7 @@ class RequerimientoController extends Controller
 
             ->select(
 
+                'alm_det_req.id_detalle_requerimiento',
                 'alm_prod.descripcion as descripcion_producto',
                 'alm_det_req.descripcion as descripcion_detalle_requerimiento',
                 'alm_det_req.motivo',
@@ -339,6 +340,20 @@ class RequerimientoController extends Controller
                 FROM contabilidad.cont_tp_cambio
                 WHERE TO_DATE(to_char(cont_tp_cambio.fecha,'YYYY-MM-DD'),'YYYY-MM-DD') = TO_DATE(to_char(alm_req.fecha_requerimiento,'YYYY-MM-DD'),'YYYY-MM-DD') limit 1) AS tipo_cambio"),
 
+                DB::raw("(SELECT  string_agg(DISTINCT log_ord_compra.codigo::text, ', '::text) AS string_agg
+                FROM logistica.log_ord_compra
+                inner join logistica.log_det_ord_compra on log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra
+                WHERE log_det_ord_compra.id_detalle_requerimiento = alm_det_req.id_detalle_requerimiento and log_det_ord_compra.estado != 7) AS codigo_orden"),
+
+                DB::raw("(SELECT string_agg(DISTINCT log_det_ord_compra.cantidad::text, ', '::text) AS string_agg
+                FROM logistica.log_ord_compra
+                inner join logistica.log_det_ord_compra on log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra
+                WHERE log_det_ord_compra.id_detalle_requerimiento = alm_det_req.id_detalle_requerimiento and log_det_ord_compra.estado != 7) AS cantidad_orden"),
+
+                DB::raw("(SELECT string_agg(DISTINCT log_det_ord_compra.precio::text, ', '::text) AS string_agg
+                FROM logistica.log_ord_compra
+                inner join logistica.log_det_ord_compra on log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra
+                WHERE log_det_ord_compra.id_detalle_requerimiento = alm_det_req.id_detalle_requerimiento and log_det_ord_compra.estado != 7) AS precio_orden"),
             )
             ->when(($meOrAll === 'ME'), function ($query) {
                 $idUsuario = Auth::user()->id_usuario;

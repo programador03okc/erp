@@ -46,7 +46,8 @@ class ListOrdenesDetailExport implements FromCollection, WithHeadings
             "Fecha ingreso almacén", 
             "Tiempo atención proveedor", 
             "Empresa - sede", 
-            "Estado" 
+            "Estado",
+            "Id detalle requerimiento"
         ];
     }
 }

@@ -1,6 +1,7 @@
 <table>
     <thead>
         <tr>
+            <th rowspan="2" style="background-color:#cccccc;">Id detalle requerimiento</th>
             <th rowspan="2" style="background-color:#cccccc;">Prioridad</th>
             <th rowspan="2" style="background-color:#cccccc;">Requerimiento</th>
             <th rowspan="2" style="background-color:#cccccc;">CDP</th>
@@ -28,6 +29,7 @@
             <th rowspan="2" style="background-color:#cccccc;">Fecha Registro</th>
             <th rowspan="2" style="background-color:#cccccc;">Hora Registro</th>
             <th rowspan="2" style="background-color:#cccccc;">Estado Requerimiento</th>
+            <th colspan="3" style="background-color:#cccccc;">Orden de compra</th>
         </tr>
         <tr>
             <th style="background-color:#cccccc;" width="10">Cod.Prespuesto</th>
@@ -46,11 +48,16 @@
             <th style="background-color:#cccccc;">Subtotal</th>
             <th style="background-color:#cccccc;">Moneda</th>
 
+            <th style="background-color:#cccccc;">Cod. Orden</th>
+            <th style="background-color:#cccccc;">Cantidad</th>
+            <th style="background-color:#cccccc;">Precio Unitario (Sin IGV)</th>
+
         </tr>
     </thead>
     <tbody>
         @foreach ($items as $item)
                 <tr>
+                    <td>{{ $item['id_detalle_requerimiento'] }}</td>
                     <td>{{ $item['prioridad'] }}</td>
                     <td>{{ $item['codigo'] }}</td>
                     <td>{{ $item['codigo_oportunidad'] }}</td>
@@ -87,6 +94,9 @@
                     <td>{{ $item['fecha_registro'] }}</td>
                     <td>{{ $item['hora_registro'] }}</td>
                     <td>{{ $item['estado_requerimiento'] }}</td>
+                    <td>{{ $item['codigo_orden'] }}</td>
+                    <td>{{ $item['cantidad_orden'] }}</td>
+                    <td>{{ $item['precio_orden'] }}</td>
                 </tr>
         @endforeach
     </tbody>

@@ -16,6 +16,7 @@
             <th rowspan="2" style="background-color:#cccccc;">Proyecto</th>
             <th rowspan="2" style="background-color:#cccccc;" width="30">Motivo</th>
             <th rowspan="2" style="background-color:#cccccc;" width="80">Concepto</th>
+            <th rowspan="2" style="background-color:#cccccc;">cod. Producto</th>
             <th rowspan="2" style="background-color:#cccccc;">Item</th>
             <th rowspan="2" style="background-color:#cccccc;">Tipo Requerimiento</th>
             <th rowspan="2" style="background-color:#cccccc;">Empresa</th>
@@ -78,6 +79,7 @@
                     <td>{{ $item['descripcion_proyecto'] }}</td>
                     <td>{{ $item['motivo'] }}</td>
                     <td>{{ $item['concepto'] }}</td>
+                    <td>{{ $item['codigo_producto'] }}</td>
                     <td>{{ $item['descripcion'] }}</td>
                     <td>{{ $item['tipo_requerimiento'] }}</td>
                     <td>{{ $item['empresa_razon_social'] }}</td>

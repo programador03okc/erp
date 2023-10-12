@@ -42,6 +42,7 @@ class reporteItemsRequerimientosBienesServiciosExcel implements FromView, WithCo
         foreach($requerimientos as $element){
 
             $data[]=[
+                'id_detalle_requerimiento'=> $element->id_detalle_requerimiento,
                 'prioridad'=> $element->prioridad,
                 'codigo'=> $element->codigo,
                 'codigo_oportunidad'=> $element->codigo_oportunidad,
@@ -77,7 +78,11 @@ class reporteItemsRequerimientosBienesServiciosExcel implements FromView, WithCo
                 'motivo'=> $element->motivo,
                 'fecha_registro'=> date('d/m/Y', strtotime($element->fecha_registro)),
                 'hora_registro'=> date('H:i:s', strtotime($element->fecha_registro)),
-                'estado_requerimiento'=> $element->estado_requerimiento
+                'estado_requerimiento'=> $element->estado_requerimiento,
+                'codigo_orden'=> $element->codigo_orden =!null ?$element->codigo_orden :'',
+                'cantidad_orden'=> $element->cantidad_orden =!null ?$element->cantidad_orden :'',
+                'precio_orden'=> $element->precio_orden =!null ?$element->precio_orden :'',
+
 
             ];
         }

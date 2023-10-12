@@ -4979,7 +4979,8 @@ class OrdenController extends Controller
                 'fecha_ingreso_almacen' => $d['fecha_ingreso_almacen'] ?? '',
                 'tiempo_atencion_proveedor' => $d['tiempo_atencion_proveedor'] ?? '',
                 'descripcion_sede_empresa' => $d['descripcion_sede_empresa'] ?? '',
-                'descripcion_estado' => $d['descripcion_estado'] ?? ''
+                'descripcion_estado' => $d['descripcion_estado'] ?? '',
+                'id_detalle_requerimiento' => $d['id_detalle_requerimiento'] ?? ''
 
 
             ];

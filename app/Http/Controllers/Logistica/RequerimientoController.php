@@ -4740,6 +4740,7 @@ class RequerimientoController extends Controller
     {
 
         $data=[];
+        $idRequerimientoList=[];
         if($request->tipo_presupuesto =='INTERNO'){
 
             $detalle = DetalleRequerimiento::where([['id_partida_pi',$request->id_partida],['estado','!=',7]])->distinct()->get();
@@ -4748,7 +4749,7 @@ class RequerimientoController extends Controller
             }
         }
 
-        if($idRequerimientoList){
+        if(count($idRequerimientoList)>0){
             $data = Requerimiento::join('almacen.alm_tp_req', 'alm_req.id_tipo_requerimiento', '=', 'alm_tp_req.id_tipo_requerimiento')
             ->leftJoin('administracion.adm_prioridad', 'alm_req.id_prioridad', '=', 'adm_prioridad.id_prioridad')
             ->leftJoin('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'alm_req.id_almacen')
@@ -4899,6 +4900,8 @@ class RequerimientoController extends Controller
                 }
             })
             ->rawColumns(['termometro'])->toJson();
+        }else{
+            return datatables($data)->toJson();
         }
     }
 

@@ -282,8 +282,8 @@ class RequerimientoController extends Controller
             ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
 
             ->select(
-
                 'alm_det_req.id_detalle_requerimiento',
+                'alm_prod.codigo as codigo_producto',
                 'alm_prod.descripcion as descripcion_producto',
                 'alm_det_req.descripcion as descripcion_detalle_requerimiento',
                 'alm_det_req.motivo',

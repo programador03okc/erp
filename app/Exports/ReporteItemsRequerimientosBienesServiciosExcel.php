@@ -61,6 +61,7 @@ class reporteItemsRequerimientosBienesServiciosExcel implements FromView, WithCo
                 'codigo_sub_partida_presupuesto_interno'=>$element->codigo_sub_partida_presupuesto_interno,
                 'descripcion_sub_partida_presupuesto_interno'=>$element->descripcion_sub_partida_presupuesto_interno,
                 'concepto'=> str_replace("'", "", str_replace("", "", $element->concepto)),
+                'codigo_producto'=> $element->codigo_producto,
                 'descripcion'=> $element->descripcion_producto != null? str_replace("'", "", str_replace("", "" ,$element->descripcion_producto)): str_replace("'", "", str_replace("", "" ,$element->descripcion_detalle_requerimiento)),
                 'cantidad'=> $element->cantidad,
                 'precio_unitario'=> $element->precio_unitario,

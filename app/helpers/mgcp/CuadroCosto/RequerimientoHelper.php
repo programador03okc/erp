@@ -33,6 +33,7 @@ use App\Models\mgcp\Usuario\Notificacion;
 use Illuminate\Support\Facades\Auth;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
+use App\Models\mgcp\Usuario\LogActividad;
 use App\Models\RRHH\Persona;
 use App\Models\RRHH\Postulante;
 use App\Models\RRHH\Trabajador;
@@ -73,8 +74,10 @@ class RequerimientoHelper
                 $requerimiento = $this->crearRequerimiento($oportunidad, $ordenCompra, $cuadro);
                 $this->crearDetalles($requerimiento, $cuadro);
                 $respuesta->estado = 'nuevo';
+                LogActividad::registrar(Auth::user(), 'Replica por CDP - Creación', 16, $ordenCompra->getTable(), $ordenCompra);
             } else {
                 $respuesta->estado = $this->actualizarRequerimiento($requerimiento, $cuadro);
+                LogActividad::registrar(Auth::user(), 'Replica por CDP - Actualización', 16, $ordenCompra->getTable(), $ordenCompra);
             }
             $this->crearHistorialAprobacion($requerimiento, $cuadro, 1); // referente a la tabla administracion.adm_vobo  1=Aprobado
             DB::commit();

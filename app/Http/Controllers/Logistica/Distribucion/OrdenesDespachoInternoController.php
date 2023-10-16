@@ -14,6 +14,7 @@ use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Usuario;
 use App\Models\Distribucion\OrdenDespacho;
 use App\Models\Distribucion\OrdenDespachoDetalle;
+use App\Models\Logistica\ProgramacionDespacho;
 use App\Models\mgcp\CuadroCosto\CuadroCosto;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use Carbon\Carbon;
@@ -240,7 +241,7 @@ class OrdenesDespachoInternoController extends Controller
                         ->whereDate('fecha_despacho', '=', (new Carbon($request->fecha_despacho))->format('Y-m-d'))
                         ->count();
 
-        
+
 
                         $ordenDespacho = new OrdenDespacho();
                         $ordenDespacho->id_sede= $req->id_sede;
@@ -261,7 +262,28 @@ class OrdenesDespachoInternoController extends Controller
 
                         $comentarioDespacho = 'Generar orden de despacho interno (cabecera). Id: ' . ($ordenDespacho->id_od ?? '').', Código OD: '. ($ordenDespacho->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
                         LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $ordenDespacho->getTable(), null, $ordenDespacho, $comentarioDespacho,'Logística');
-            
+
+
+                        // se genera una programacion de despaho url: logistica/distribucion/programacion-despachos/lista
+                        $requerimiento = Requerimiento::where('id_requerimiento', $request->id_requerimiento)->first();
+                        $programacion_despachos = new ProgramacionDespacho();
+                        $programacion_despachos->titulo             = $requerimiento->concepto;
+                        $programacion_despachos->descripcion        = $requerimiento->observacion;
+                        $programacion_despachos->fecha_registro     = date("Y-m-d");
+                        $programacion_despachos->fecha_programacion = $request->fecha_despacho;
+                        $programacion_despachos->estado             = 1;
+                        $programacion_despachos->requerimiento_id   = $requerimiento->id_requerimiento;
+
+                        $programacion_despachos->aplica_cambios     = true; //false si es ODE
+                        $programacion_despachos->created_id         = Auth::user()->id_usuario;
+
+                        $programacion_despachos->orden_despacho_id  = $ordenDespacho->id_od;
+                        $programacion_despachos->save();
+
+                        $comentario_programacion_despacho = 'Se realizo una programción de despacho';
+                        LogActividad::registrar(Auth::user(), 'Programacion de Despacho Interno', 2, $programacion_despachos->getTable(), null, $ordenDespacho, $comentario_programacion_despacho,'Logística');
+
+
                     $idOd=$ordenDespacho->id_od;
 
                     //Agrega accion en requerimiento
@@ -324,7 +346,7 @@ class OrdenesDespachoInternoController extends Controller
 
                             $comentario = 'Generar orden de despacho interno (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
                             LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentario,'Logística');
-                
+
                             $transforTranformado = new Transformado();
                             $transforTranformado->id_transformacion = $transformacion->id_transformacion;
                             $transforTranformado->id_od_detalle = $ordenDepachoDetalle->id_od_detalle;
@@ -337,10 +359,10 @@ class OrdenesDespachoInternoController extends Controller
 
                             $comentarioTransformado = 'Generar transformado. '.'Id: '.$transforTranformado->id_transformado.', código transformación: ' . ($transformacion->codigo ?? '').',Generado por el sistema, Iniciado por: ' . Auth::user()->nombre_corto;
                             LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $transforTranformado->getTable(), null, $transforTranformado, $comentarioTransformado,'Logística');
-                
+
 
                         } else if ($i->tiene_transformacion == false && $i->entrega_cliente == false) {
-                                
+
                             $ordenDepachoDetalle = new OrdenDespachoDetalle();
                             $ordenDepachoDetalle->id_od =$idOd;
                             $ordenDepachoDetalle->id_detalle_requerimiento = $i->id_detalle_requerimiento;
@@ -349,10 +371,10 @@ class OrdenesDespachoInternoController extends Controller
                             $ordenDepachoDetalle->estado = 1;
                             $ordenDepachoDetalle->fecha_registro= $fechaRegistro;
                             $ordenDepachoDetalle->save();
-                            
+
                             $comentarioDetalleDespacho = 'Generar orden de despacho interno (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
                             LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentarioDetalleDespacho,'Logística');
-                
+
                             $materia = new Materia();
                             $materia->id_transformacion = $transformacion->id_transformacion;
                             $materia->cantidad = $i->cantidad;
@@ -362,11 +384,11 @@ class OrdenesDespachoInternoController extends Controller
                             $materia->estado = 1;
                             $materia->fecha_registro = $fechaRegistro;
                             $materia->save();
-                            
+
                             $comentarioMateria = 'Generar materia. '.'Id: '.$materia->id_materia.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
 
                             LogActividad::registrar(Auth::user(), 'Orden de despacho interno', 2, $materia->getTable(), null, $materia, $comentarioMateria,'Logística');
-                
+
                         }
 
                         // DB::table('almacen.alm_det_req')

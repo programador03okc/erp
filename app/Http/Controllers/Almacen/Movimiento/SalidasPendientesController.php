@@ -16,6 +16,7 @@ use App\Imports\ExcelSeriesImport;
 use App\Models\Almacen\Movimiento;
 use App\models\Configuracion\AccesosUsuarios;
 use App\models\contabilidad\Adjuntos;
+use App\Models\Logistica\ProgramacionDespacho;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -115,6 +116,7 @@ class SalidasPendientesController extends Controller
 
     public function guardarSalidaGuiaDespacho(Request $request)
     {
+        // return $request->all();exit;
         try {
             DB::beginTransaction();
             $id_salida = null;
@@ -575,6 +577,13 @@ class SalidasPendientesController extends Controller
                     $mensaje = 'No hay stock disponible para éstos productos:
                         ' . $mensaje;
                 }
+            }
+
+            if($tipo='success'){
+                $item = ProgramacionDespacho::where('requerimiento_id',$request->id_requerimiento)->first();
+                    $item->reprogramado   = true;
+                    $item->finalizado   = true;
+                $item->save();
             }
             DB::commit();
             return response()->json(

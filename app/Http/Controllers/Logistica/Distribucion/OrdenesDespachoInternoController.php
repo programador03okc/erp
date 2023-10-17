@@ -267,8 +267,8 @@ class OrdenesDespachoInternoController extends Controller
                         // se genera una programacion de despaho url: logistica/distribucion/programacion-despachos/lista
                         $requerimiento = Requerimiento::where('id_requerimiento', $request->id_requerimiento)->first();
                         $programacion_despachos = new ProgramacionDespacho();
-                        $programacion_despachos->titulo             = $requerimiento->concepto;
-                        $programacion_despachos->descripcion        = $requerimiento->observacion;
+                        $programacion_despachos->titulo             = $requerimiento->codigo;
+                        $programacion_despachos->descripcion        = $requerimiento->concepto.' - '.$requerimiento->observacion;
                         $programacion_despachos->fecha_registro     = date("Y-m-d");
                         $programacion_despachos->fecha_programacion = $request->fecha_despacho;
                         $programacion_despachos->estado             = 1;

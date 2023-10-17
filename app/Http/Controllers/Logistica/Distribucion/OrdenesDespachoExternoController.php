@@ -651,8 +651,8 @@ class OrdenesDespachoExternoController extends Controller
                     $programacion_despachos->created_id         = Auth::user()->id_usuario;
                     $programacion_despachos->orden_despacho_id  = $ordenDespacho->id_od;
 
-                    $programacion_despachos->titulo             = $requerimiento->concepto;
-                    $programacion_despachos->descripcion        = $requerimiento->observacion;
+                    $programacion_despachos->titulo             = $requerimiento->codigo;
+                    $programacion_despachos->descripcion        = $requerimiento->concepto.' - '.$requerimiento->observacion;
                     $programacion_despachos->fecha_programacion = $request->fecha_documento_ode;
                     $programacion_despachos->estado             = 1;
                     $programacion_despachos->requerimiento_id   = $requerimiento->id_requerimiento;

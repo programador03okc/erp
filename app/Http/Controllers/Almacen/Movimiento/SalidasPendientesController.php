@@ -569,6 +569,9 @@ class SalidasPendientesController extends Controller
                             ->where('id_devolucion', $request->id_devolucion)
                             ->update(['estado' => 3]);
 
+
+
+
                         $tipo = 'success';
                         $mensaje = 'Se guardó correctamente la salida de almacén';
                     }
@@ -579,10 +582,11 @@ class SalidasPendientesController extends Controller
                 }
             }
 
-            if($tipo='success'){
-                $item = ProgramacionDespacho::where('requerimiento_id',$request->id_requerimiento)->where('aplica_cambios','f')->first();
-                    $item->reprogramado   = true;
-                    $item->finalizado   = true;
+
+            $item = ProgramacionDespacho::where('orden_despacho_id',$request->id_od)->where('aplica_cambios','f')->first();
+            if($item){
+                $item->reprogramado   = true;
+                $item->finalizado   = true;
                 $item->save();
             }
             DB::commit();

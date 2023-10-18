@@ -27,7 +27,7 @@ class MapeoProductosController extends Controller
         $categorias = AlmacenController::mostrar_categorias_cbo();
         $unidades = AlmacenController::mostrar_unidades_cbo();
 
-        return view('logistica.requerimientos.mapeo.index', 
+        return view('logistica.requerimientos.mapeo.index',
         compact('tipos','clasificaciones','subcategorias','categorias','unidades'));
     }
 
@@ -79,9 +79,9 @@ class MapeoProductosController extends Controller
                 if(!in_array($detalleOrigen->id_detalle_requerimiento,$idDetalleRequerimientoOrigenList)){
                     $idDetalleRequerimientoOrigenList[] = $detalleOrigen->id_detalle_requerimiento;
                 }
-            }        
-        }   
-        
+            }
+        }
+
         if(count($idDetalleRequerimientoOrigenList)>0){
             foreach ($idDetalleRequerimientoOrigenList as $idOrigen) {
                 $sumCantidadProductoDescompuesto=0;
@@ -153,7 +153,7 @@ class MapeoProductosController extends Controller
                 $data=['id_producto'=>$productoCreado->id_producto];
                 $status="success";
                 $mensaje="Producto creado";
-                
+
                 $comentario="Producto creado: ".$productoCreado->codigo.' '.$productoCreado->part_number.' '.$productoCreado->descripcion.', Creado por:'. Auth::user()->nombre_corto;
                 LogActividad::registrar(Auth::user(), 'Requerimientos pendientes', 2, $producto->getTable(), null, $producto, $comentario, 'Logística');
 
@@ -164,9 +164,9 @@ class MapeoProductosController extends Controller
             }
         }else{
             $status="warning";
-            $mensaje="Es necesario que se complete minimamente una descripción, unidad de medida y moneda para guardar un producto"; 
+            $mensaje="Es necesario que se complete minimamente una descripción, unidad de medida y moneda para guardar un producto";
         }
-    
+
         return ['data'=>$data,'status'=>$status,'mensaje'=>$mensaje];
 
     }
@@ -207,11 +207,11 @@ class MapeoProductosController extends Controller
         $mensaje='';
         if($idDetalleRequerimiento >0){
             $detalleOrigen= DetalleRequerimiento::find($idDetalleRequerimiento);
-    
+
             if($nuevaCantidad ==null){
                 $nuevaCantidad= $detalleOrigen->cantidad;
             }
-    
+
             $duplicaDetalleRequerimiento = new DetalleRequerimiento();
             $duplicaDetalleRequerimiento->id_requerimiento = $detalleOrigen->id_requerimiento;
             $duplicaDetalleRequerimiento->part_number = $detalleOrigen->part_number;
@@ -234,8 +234,8 @@ class MapeoProductosController extends Controller
             $duplicaDetalleRequerimiento->fecha_registro = date('Y-m-d H:i:s');
             $duplicaDetalleRequerimiento->save();
 
-    
-            
+
+
                 if($duplicaDetalleRequerimiento->id_detalle_requerimiento >0){
                     $status='success';
                     $data=['id_detalle_requerimiento'=>$duplicaDetalleRequerimiento->id_detalle_requerimiento];
@@ -244,14 +244,14 @@ class MapeoProductosController extends Controller
 
                     $comentario="Item duplicado. id: ".$duplicaDetalleRequerimiento->id_detalle_requerimiento.', descripción: '.$duplicaDetalleRequerimiento->descripcion.', cantidad: '.$duplicaDetalleRequerimiento->cantidad.', duplicado por:'. Auth::user()->nombre_corto;
                     LogActividad::registrar(Auth::user(), 'Mapeo de productos', 2, $duplicaDetalleRequerimiento->getTable(), null, $duplicaDetalleRequerimiento, $comentario, 'Logística');
-    
+
                 }
 
         }else{
             $status='warning';
             $mensaje='El id enviado para duplicar debe ser mayor a cero';
         }
-        
+
         return ['data'=>$data,'status'=>$status,'mensaje'=>$mensaje];
     }
 
@@ -266,7 +266,7 @@ class MapeoProductosController extends Controller
             $cantidadItemsTotal=0;
             $mensaje =[];
             $status_migracion_occ=null;
-            
+
             $validacionDescomposicion =$this->esValidaLaCantidadDeProductoDuplicadosConCantidadOrigen($request->detalle);
             if($validacionDescomposicion==false){
                 return response()->json(['response' => 'warning','status_migracion_occ'=>null,
@@ -276,7 +276,7 @@ class MapeoProductosController extends Controller
 
             $idDetalleRequerimientoOrigenList=[];
             foreach($request->detalle as $det){
-    
+
                 // anular items si existe
                 if($det['id_detalle_requerimiento'] >0 && $det['estado'] =='7'){
                     $itemAnulado = DetalleRequerimiento::find($det['id_detalle_requerimiento']);
@@ -287,7 +287,7 @@ class MapeoProductosController extends Controller
                     LogActividad::registrar(Auth::user(), 'Mapeo de productos', 4, $itemAnulado->getTable(), null, $itemAnulado, $comentario, 'Logística');
 
                     $cantidadAnulado++;
-                }   
+                }
 
                 if( isset($det['id_detalle_requerimiento_origen']) && $det['id_detalle_requerimiento_origen'] >0){ // si es un item duplicado se duplicara y evalua si debe crear id producto para luego asignar
                     $detalleRequerimientoDuplicado = $this->duplicarDetalleRequerimiento($det['id_detalle_requerimiento_origen'],$det['cantidad'],$det['id_producto']);
@@ -329,7 +329,7 @@ class MapeoProductosController extends Controller
             $cantidadItemsMapeados=$cantidades['cantidadMapeados'];
             $cantidadItemsTotal=$cantidades['cantidadTotal'];
 
-        
+
             $estadoRequerimiento= null;
             if($cantidadItemsMapeados >0){
                 $mensaje[]='Productos mapeados con éxito';
@@ -344,7 +344,7 @@ class MapeoProductosController extends Controller
                 //TODO: revisar si actualizar estado de requerimiento
                 $estadoRequerimiento= Requerimiento::actualizarEstadoRequerimientoAtendido('ACTUALIZAR',[$DetalleRequerimiento->id_requerimiento]);
             }
-    
+
 
 
             DB::commit();

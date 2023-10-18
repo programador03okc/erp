@@ -641,24 +641,16 @@ class OrdenesDespachoExternoController extends Controller
 
                 // se genera una programacion de despaho url: logistica/distribucion/programacion-despachos/lista
 
-                $programacion_despachos = ProgramacionDespacho::where('requerimiento_id',$requerimiento->id_requerimiento)
-                ->where('aplica_cambios','t')
-                ->first();
-                if(!$programacion_despachos){
+                $programacion_despachos = new ProgramacionDespacho();
+                $programacion_despachos->fecha_registro     = date("Y-m-d");
+                $programacion_despachos->created_id         = Auth::user()->id_usuario;
+                $programacion_despachos->orden_despacho_id  = $ordenDespacho->id_od;
 
-                    $programacion_despachos = new ProgramacionDespacho();
-                    $programacion_despachos->fecha_registro     = date("Y-m-d");
-                    $programacion_despachos->created_id         = Auth::user()->id_usuario;
-                    $programacion_despachos->orden_despacho_id  = $ordenDespacho->id_od;
-
-                    $programacion_despachos->titulo             = $requerimiento->codigo;
-                    $programacion_despachos->descripcion        = $requerimiento->concepto.' - '.$requerimiento->observacion;
-                    $programacion_despachos->fecha_programacion = $request->fecha_documento_ode;
-                    $programacion_despachos->estado             = 1;
-                    $programacion_despachos->requerimiento_id   = $requerimiento->id_requerimiento;
-
-                }
-
+                $programacion_despachos->titulo             = $requerimiento->codigo;
+                $programacion_despachos->descripcion        = $requerimiento->concepto.' - '.$requerimiento->observacion;
+                $programacion_despachos->fecha_programacion = $request->fecha_documento_ode;
+                $programacion_despachos->estado             = 1;
+                $programacion_despachos->requerimiento_id   = $requerimiento->id_requerimiento;
                 $programacion_despachos->aplica_cambios     = false; //false si es ODE
                 $programacion_despachos->save();
 

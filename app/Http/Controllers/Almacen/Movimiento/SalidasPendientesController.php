@@ -580,7 +580,7 @@ class SalidasPendientesController extends Controller
             }
 
             if($tipo='success'){
-                $item = ProgramacionDespacho::where('requerimiento_id',$request->id_requerimiento)->first();
+                $item = ProgramacionDespacho::where('requerimiento_id',$request->id_requerimiento)->where('aplica_cambios','f')->first();
                     $item->reprogramado   = true;
                     $item->finalizado   = true;
                 $item->save();

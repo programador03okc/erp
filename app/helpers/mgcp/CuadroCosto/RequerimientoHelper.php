@@ -33,6 +33,7 @@ use App\Models\mgcp\Usuario\Notificacion;
 use Illuminate\Support\Facades\Auth;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
+use App\Models\mgcp\Usuario\LogActividad;
 use App\Models\RRHH\Persona;
 use App\Models\RRHH\Postulante;
 use App\Models\RRHH\Trabajador;
@@ -43,7 +44,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
-// use Debugbar;
+use Debugbar;
 
 
 class RequerimientoHelper
@@ -70,24 +71,13 @@ class RequerimientoHelper
 
             DB::beginTransaction();
             if ($requerimiento == null) { //Si requerimiento no existe
-                /*if ($respuesta->requerimiento->estado == self::ID_ANULADO_AGIL) { //Y está anulado
-                    $crearRequerimiento = true; //Crear nuevo requerimiento
-                    $respuesta->reemplazado = $respuesta->requerimiento;
-                } else //Caso contrario, que devuelva el requerimiento
-                {
-                    $respuesta->reemplazado = null;
-                    $respuesta->estado = 'sin_cambios';
-                    return $respuesta;
-                }*/
-
                 $requerimiento = $this->crearRequerimiento($oportunidad, $ordenCompra, $cuadro);
-                //die("OKA");
                 $this->crearDetalles($requerimiento, $cuadro);
                 $respuesta->estado = 'nuevo';
+                LogActividad::registrar(Auth::user(), 'Replica por CDP - Creación', 16, $ordenCompra->getTable(), $ordenCompra);
             } else {
                 $respuesta->estado = $this->actualizarRequerimiento($requerimiento, $cuadro);
-                //$crearRequerimiento = true; //Requerimiento no existe y se debe crear uno
-                //$respuesta->reemplazado = null;
+                LogActividad::registrar(Auth::user(), 'Replica por CDP - Actualización', 16, $ordenCompra->getTable(), $ordenCompra);
             }
             $this->crearHistorialAprobacion($requerimiento, $cuadro, 1); // referente a la tabla administracion.adm_vobo  1=Aprobado
             DB::commit();
@@ -123,80 +113,82 @@ class RequerimientoHelper
 
     private function actualizarRequerimiento($requerimiento, $cuadro)
     {
+        // Actualiza la cabecera del requerimiento
+        $actualizarCabecera = Requerimiento::find($requerimiento->id_requerimiento);
+            $actualizarCabecera->tiene_transformacion = $cuadro->tiene_transformacion;
+        $actualizarCabecera->save();
+
         $estado = 'sin_cambios';
         $marcarRequerimientoPorRegularizar = false;
-        //Analizar las filas del cuadro
         $filasCuadro = CcAmFila::where('id_cc_am', $cuadro->id)->orderBy('id', 'asc')->get();
 
         foreach ($filasCuadro as $filaCuadro) {
             //Obtiene las filas base del cuadro
-            $detalleReq = DetalleRequerimiento::where('id_cc_am_filas', $filaCuadro->id)->where('estado', '!=', 7)->where('tiene_transformacion', false)->first();
-            if ($detalleReq == null) {
-                //Crea la fila del requerimiento, si es un item nuevo del cdp sin importar si tiene orden/reserva el requerimiento lo crear con estado 1
-                    $detalleReq = $this->crearFilaRequerimiento($requerimiento, $cuadro, $filaCuadro);
-                    $detalleReq->save();
-                    $estado = 'actualizado';
-                // }
+            $detReqBase = DetalleRequerimiento::where('id_cc_am_filas', $filaCuadro->id)->where('estado', '!=', 7)->where('tipo_cc_am_filas', 1)->first();
+
+            if ($detReqBase == null) {
+                $this->crearFilaRequerimiento($requerimiento, $cuadro, $filaCuadro);
+                $estado = 'actualizado';
             } else {
-                //Actualizar fila del requerimiento
-                if ($detalleReq->cantidad != $filaCuadro->cantidad || $detalleReq->descripcion != $filaCuadro->descripcion || $detalleReq->part_number != $filaCuadro->part_no) {
-                    if ($detalleReq->id_producto != null && $this->ItemConOrdenOReserva($detalleReq->id_detalle_requerimiento)==true) { //Si la fila estaba mapeada y tiene orden o reserva, que se marque por regularizar, caso contrario que se actualice la fila sin notificar al usuario
-                        $detalleReq->estado = self::ID_ESTADO_REGULARIZAR;
-                        $marcarRequerimientoPorRegularizar = true;
-                    } else {
-                        $detalleReq->cantidad = $filaCuadro->cantidad;
-                        $detalleReq->descripcion = $filaCuadro->descripcion;
-                        $detalleReq->part_number = $filaCuadro->part_no;
-                    }
-
-                    $detalleReq->save();
-                    $estado = 'actualizado';
-                }
-
-                //Busca si tiene transformación
-                $transformacionDetalleReq = DetalleRequerimiento::where('id_cc_am_filas', $filaCuadro->id)->where('estado', '!=', 7)->where('tiene_transformacion', true)->first();
                 if ($filaCuadro->tieneTransformacion()) {
-                    //Si la fila de cuadro tiene transformación y el requerimento no tiene, crear
-                    if ($transformacionDetalleReq == null) {
+                    /*
+                     * Evalua 2 opciones:
+                     * a) Si CDP tiene transf y el REQ no tiene transf
+                     * b) Si CDP tiene transf y el REQ también tiene transf
+                     */
+                    $detReqTransf = DetalleRequerimiento::where('id_cc_am_filas', $filaCuadro->id)->where('estado', '!=', 7)->where('tipo_cc_am_filas', 2)->first();
+                    if ($detReqTransf == null) {
                         $this->crearDetallePorTransformacion($filaCuadro, $requerimiento);
-                    } else { //Caso contrario, actualizar
-                        if ($transformacionDetalleReq->cantidad != $filaCuadro->cantidad || $transformacionDetalleReq->descripcion != $filaCuadro->descripcion_producto_transformado || $transformacionDetalleReq->part_number != $filaCuadro->part_no_producto_transformado) {
-
-                            if ($transformacionDetalleReq->id_producto != null && $this->ItemConOrdenOReserva($transformacionDetalleReq->id_detalle_requerimiento)==true) { //Si la fila estaba mapeada y  tiene orden o reserva, que se marque por regularizar, caso contrario que se actualice la fila sin notificar al usuario
-
-                                $transformacionDetalleReq->estado = self::ID_ESTADO_REGULARIZAR;
+                    } else {
+                        if ($detReqBase->cantidad != $filaCuadro->cantidad || $detReqTransf->descripcion != $filaCuadro->descripcion_producto_transformado || $detReqTransf->part_number != $filaCuadro->part_no_producto_transformado || $detReqBase->precio_unitario != $filaCuadro->pvu_oc) {
+                            if ($detReqBase->id_producto != null && $this->ItemConOrdenOReserva($detReqBase->id_detalle_requerimiento) == true) {
+                                $detReqBase->estado = self::ID_ESTADO_REGULARIZAR;
                                 $marcarRequerimientoPorRegularizar = true;
-                            } else {
-                                $transformacionDetalleReq->cantidad = $filaCuadro->cantidad;
-                                $transformacionDetalleReq->descripcion = $filaCuadro->descripcion_producto_transformado;
-                                $transformacionDetalleReq->part_number = $filaCuadro->part_no_producto_transformado;
                             }
-                            $transformacionDetalleReq->save();
-                            $estado = 'actualizado';
+
+                                $detReqTransf->cantidad = $filaCuadro->cantidad;
+                                $detReqTransf->descripcion = $filaCuadro->descripcion_producto_transformado;
+                                $detReqTransf->part_number = $filaCuadro->part_no_producto_transformado;
+                                $detReqTransf->precio_unitario = $filaCuadro->pvu_oc;
+                            $detReqTransf->save();
                         }
                     }
+
+                    if ($detReqBase->cantidad != $filaCuadro->cantidad || $detReqBase->descripcion != $filaCuadro->descripcion || $detReqBase->part_number != $filaCuadro->part_no || $detReqBase->precio_unitario != $filaCuadro->pvu_oc) {
+                        if ($detReqBase->id_producto != null && $this->ItemConOrdenOReserva($detReqBase->id_detalle_requerimiento) == true) {
+                            $detReqBase->estado = self::ID_ESTADO_REGULARIZAR;
+                            $marcarRequerimientoPorRegularizar = true;
+                        }
+                            $detReqBase->cantidad = $filaCuadro->cantidad;
+                            $detReqBase->descripcion = $filaCuadro->descripcion;
+                            $detReqBase->part_number = $filaCuadro->part_no;
+                            $detReqBase->precio_unitario = $filaCuadro->pvu_oc;
+                        $detReqBase->save();
+                    }
+                    $estado = 'actualizado';
                 } else {
-                    //Si la fila de cuadro no tiene transformación pero en el requerimiento se tiene una fila para transformación, anular
-                    if ($transformacionDetalleReq != null) {
-                        $transformacionDetalleReq->estado = self::ID_ESTADO_ANULADO;
-                        $transformacionDetalleReq->save();
-                        $estado = 'actualizado';
+                    /*
+                     * Evalua 1 opción:
+                     * a) Si CDP no tiene transf y el REQ también tiene transf
+                     */
+                    $detReqTransf = DetalleRequerimiento::where('id_cc_am_filas', $filaCuadro->id)->where('estado', '!=', 7)->where('tipo_cc_am_filas', 2)->first();
+                    if ($detReqTransf) {
+                            $detReqTransf->estado = 7;
+                        $detReqTransf->save();
+                    }
+
+                    if ($detReqBase->cantidad != $filaCuadro->cantidad || $detReqBase->descripcion != $filaCuadro->descripcion || $detReqBase->part_number != $filaCuadro->part_no || $detReqBase->precio_unitario != $filaCuadro->pvu_oc) {
+                        if ($detReqBase->id_producto != null && $this->ItemConOrdenOReserva($detReqBase->id_detalle_requerimiento) == true) {
+                            $detReqBase->estado = self::ID_ESTADO_REGULARIZAR;
+                            $marcarRequerimientoPorRegularizar = true;
+                        }
+                            $detReqBase->cantidad = $filaCuadro->cantidad;
+                            $detReqBase->descripcion = $filaCuadro->descripcion;
+                            $detReqBase->part_number = $filaCuadro->part_no;
+                            $detReqBase->precio_unitario = $filaCuadro->pvu_oc;
+                        $detReqBase->save();
                     }
                 }
-            }
-        }
-
-        //Analizar las filas del requerimiento
-        $filasRequerimiento = DetalleRequerimiento::join('almacen.alm_req', 'alm_req.id_requerimiento', 'alm_det_req.id_requerimiento')
-            ->where('id_cc', $cuadro->id)->where('alm_det_req.estado', '!=', 7)->where('alm_det_req.tiene_transformacion', false)->get();
-
-        foreach ($filasRequerimiento as $filaReq) {
-            $filaCuadro = CcAmFila::find($filaReq->id_cc_am_filas);
-            if ($filaCuadro == null) {
-                //Anula la fila del requerimiento porque no existe la fila en el CDP
-                $filaReq->estado = self::ID_ESTADO_ANULADO;
-                $filaReq->save();
-                $marcarRequerimientoPorRegularizar = true;
             }
         }
 
@@ -251,14 +243,6 @@ class RequerimientoHelper
         $requerimiento->fecha_requerimiento = new Carbon();
         $concepto = ($ordenCompra == null ? '' : 'O/C: ' . $ordenCompra->nro_orden . ' / ');
         $requerimiento->concepto = trim($concepto . ' CDP: ' . $oportunidad->codigo_oportunidad . ' / CLIENTE: ' . $oportunidad->entidad->nombre);
-        
-        /*if ($respuesta->reemplazado == null) {
-            $respuesta->estado = 'nuevo';
-        } else {
-            $requerimiento->concepto .= ' (REEMPLAZA A ' . $respuesta->reemplazado->codigo . ')';
-
-          $respuesta->estado = 'reemplazado';
-        }*/
 
         $requerimiento->id_grupo = 2; //2 es Comercial
         $requerimiento->estado = 2;
@@ -304,9 +288,9 @@ class RequerimientoHelper
     {
         if($requerimiento){
             $documento = new Documento();
-            $documento->id_tp_documento = 1;
-            $documento->codigo_doc = $requerimiento->codigo??'';
-            $documento->id_doc = $requerimiento->id_requerimiento;
+                $documento->id_tp_documento = 1;
+                $documento->codigo_doc = $requerimiento->codigo??'';
+                $documento->id_doc = $requerimiento->id_requerimiento;
             $documento->save();
         }
     }
@@ -314,28 +298,21 @@ class RequerimientoHelper
     private function crearHistorialAprobacion($requerimiento, $cuadro, $tipoAprobacion, $comentario = null)
     {
         $ultimaSolicitudCc = CcSolicitud::where('id_cc', $cuadro->id)->orderBy('id', 'DESC')->first();
-
-        if ($comentario != null) {
-            $comentarioDesc = $comentario;
-        } else {
-            $comentarioDesc = $ultimaSolicitudCc->comentario_aprobador;
-        }
-
+        $comentarioDesc = ($comentario != null) ? $comentario : $ultimaSolicitudCc->comentario_aprobador;
         $documento = Documento::where("id_doc",$requerimiento->id_requerimiento)->first();
 
-        if($documento && $documento->id_doc_aprob >0){
-
+        if($documento && $documento->id_doc_aprob >0) {
             // Debugbar::info($this->obtenerIdUsuario($idUsuario));
             $aprobacion = new Aprobacion();
-            $aprobacion->id_flujo=null;
-            $aprobacion->id_doc_aprob=$documento->id_doc_aprob;
-            $aprobacion->id_vobo=$tipoAprobacion; //positble valores => 1=Aprobado, 2=Demegado, 3=Observado, 5=Revisado, 6=Pausado
-            $aprobacion->id_usuario= $this->obtenerIdUsuario($ultimaSolicitudCc->enviada_a);
-            $aprobacion->id_usuario= null;
-            $aprobacion->fecha_vobo=new Carbon();
-            $aprobacion->detalle_observacion=$comentarioDesc;
-            $aprobacion->id_rol=null;
-            $aprobacion->tiene_sustento=null;
+            $aprobacion->id_flujo = null;
+            $aprobacion->id_doc_aprob = $documento->id_doc_aprob;
+            $aprobacion->id_vobo = $tipoAprobacion; //posibles valores: 1=Aprobado, 2=Demegado, 3=Observado, 5=Revisado, 6=Pausado
+            $aprobacion->id_usuario = $this->obtenerIdUsuario($ultimaSolicitudCc->enviada_a);
+            $aprobacion->id_usuario = null;
+            $aprobacion->fecha_vobo = new Carbon();
+            $aprobacion->detalle_observacion = $comentarioDesc;
+            $aprobacion->id_rol = null;
+            $aprobacion->tiene_sustento = null;
             $aprobacion->save();
         }
     }
@@ -349,23 +326,6 @@ class RequerimientoHelper
             return self::ID_USUARIO_MGCP; //Usuario MGCP
         } else {
             return $usuarioAgil->id_usuario;
-
-            /*$postulante = Postulante::where('id_persona', $persona->id_persona)->first();
-            if ($postulante == null) {
-                return self::ID_USUARIO_MGCP;
-            } else {
-                $trabajador = Trabajador::where('id_postulante', $postulante->id_postulante)->first();
-                if ($trabajador == null) {
-                    return self::ID_USUARIO_MGCP;
-                } else {
-                    $usuario = Usuario::where('id_trabajador', $trabajador->id_trabajador)->first();
-                    if ($usuario == null) {
-                        return self::ID_USUARIO_MGCP;
-                    } else {
-                        return $usuario->id_usuario;
-                    }
-                }
-            }*/
         }
     }
 
@@ -404,7 +364,6 @@ class RequerimientoHelper
         return $id;
     }
 
-
     /**
      * Obtiene el ID del almacén por Sede
      */
@@ -436,57 +395,51 @@ class RequerimientoHelper
         $proveedorFila = $filaCuadro->amProveedor;
 
         $detalle = new DetalleRequerimiento();
-        $detalle->id_requerimiento = $cabecera->id_requerimiento;
-        $detalle->cantidad = $filaCuadro->cantidad ?? 0;
-        $detalle->estado = 1; //1 es elaborado
-        $detalle->fecha_registro = new Carbon();
-        $detalle->id_tipo_item = 1; //1 es producto
-        $detalle->id_unidad_medida = 1; //Unidad (UND)
-        $detalle->id_cc_am_filas = $filaCuadro->id;
-        $detalle->id_moneda = 2; //siempre en dólares 
-        $detalle->tiene_transformacion = false; //False son los productos base
-        $detalle->centro_costo_id = $cuadro->id_centro_costo;
-
-        $objProducto = $this->obtenerProducto($filaCuadro->marca, $filaCuadro->part_no);
-
-        $detalle->id_producto = $objProducto == null ? null : $objProducto->id_producto; //Mapeo de producto si es que existe en el catálogo de Agil. El MGC no lo crea de forma automática
-
-        $detalle->proveedor_id = $proveedorFila == null ? null : $this->obtenerProveedor($proveedorFila->id_proveedor)->id_proveedor;
-        $detalle->precio_unitario = $proveedorFila == null ? 0 : ($proveedorFila->precio / ($proveedorFila->moneda == 'd' ? 1 :  $cuadro->tipo_cambio));
-
-        $detalle->part_number = $filaCuadro->part_no;
-        $detalle->descripcion = $filaCuadro->descripcion;
-
-        $detalle->entrega_cliente = ($filaCuadro->tieneTransformacion() == false && (CcFilaMovimientoTransformacion::where('id_fila_ingresa', $filaCuadro->id)->first() == null));
-
+            $detalle->id_requerimiento = $cabecera->id_requerimiento;
+            $detalle->cantidad = $filaCuadro->cantidad ?? 0;
+            $detalle->estado = 1; //1 es elaborado
+            $detalle->fecha_registro = new Carbon();
+            $detalle->id_tipo_item = 1; //1 es producto
+            $detalle->id_unidad_medida = 1; //Unidad (UND)
+            $detalle->id_cc_am_filas = $filaCuadro->id;
+            $detalle->id_moneda = 2; //siempre en dólares 
+            $detalle->tiene_transformacion = false; //False son los productos base
+            $detalle->centro_costo_id = $cuadro->id_centro_costo;
+            
+            $objProducto = $this->obtenerProducto($filaCuadro->marca, $filaCuadro->part_no);
+            
+            $detalle->id_producto = $objProducto == null ? null : $objProducto->id_producto; //Mapeo de producto si es que existe en el catálogo de Agil. El MGC no lo crea de forma automática
+            $detalle->proveedor_id = $proveedorFila == null ? null : $this->obtenerProveedor($proveedorFila->id_proveedor)->id_proveedor;
+            $detalle->precio_unitario = $proveedorFila == null ? 0 : ($proveedorFila->precio / ($proveedorFila->moneda == 'd' ? 1 :  $cuadro->tipo_cambio));
+            $detalle->part_number = $filaCuadro->part_no;
+            $detalle->descripcion = $filaCuadro->descripcion;
+            $detalle->entrega_cliente = ($filaCuadro->tieneTransformacion() == false && (CcFilaMovimientoTransformacion::where('id_fila_ingresa', $filaCuadro->id)->first() == null));
+            
+            if ($filaCuadro->tieneTransformacion()) {
+                $this->crearDetallePorTransformacion($filaCuadro, $cabecera);
+            }
         $detalle->save();
-        if ($filaCuadro->tieneTransformacion()) {
-            $this->crearDetallePorTransformacion($filaCuadro, $cabecera);
-        }
         return $detalle;
     }
 
     private function crearDetallePorTransformacion($fila, $cabecera)
     {
         $detalle = new DetalleRequerimiento();
-        $detalle->id_requerimiento = $cabecera->id_requerimiento;
-        $detalle->cantidad = $fila->cantidad ?? 0;
-        $detalle->estado = 1; //1 es elaborado
-        $detalle->fecha_registro = new Carbon();
-        $detalle->id_tipo_item = 1; //1 es producto
-        $detalle->id_unidad_medida = 1; //Unidad (UND)
-        $detalle->id_cc_am_filas = $fila->id;
-        $detalle->id_moneda = 2; //siempre en dólares 
-        $detalle->tiene_transformacion = true; //$fila->tieneTransformacion();
-        $detalle->part_number = $fila->part_no_producto_transformado;
-        $detalle->descripcion = $fila->descripcion_producto_transformado;
-
-        //$detalle->id_producto = $this->obtenerProducto($fila->marca_producto_transformado, $fila->descripcion_producto_transformado, $fila->part_no_producto_transformado)->id_producto;
-
-        $detalle->proveedor_id = null;
-        $detalle->precio_unitario = 0;
-        $detalle->entrega_cliente = true;
-        //$detalle->descripcion_adicional="PRODUCTO TRANSFORMADO";
+            $detalle->id_requerimiento = $cabecera->id_requerimiento;
+            $detalle->cantidad = $fila->cantidad ?? 0;
+            $detalle->estado = 1; //1 es elaborado
+            $detalle->fecha_registro = new Carbon();
+            $detalle->id_tipo_item = 1; //1 es producto
+            $detalle->id_unidad_medida = 1; //Unidad (UND)
+            $detalle->id_cc_am_filas = $fila->id;
+            $detalle->id_moneda = 2; //siempre en dólares 
+            $detalle->tiene_transformacion = true; //$fila->tieneTransformacion();
+            $detalle->part_number = $fila->part_no_producto_transformado;
+            $detalle->descripcion = $fila->descripcion_producto_transformado;
+            $detalle->proveedor_id = null;
+            $detalle->precio_unitario = 0;
+            $detalle->entrega_cliente = true;
+            $detalle->tipo_cc_am_filas = 2;
         $detalle->save();
     }
 
@@ -636,3 +589,4 @@ class RequerimientoHelper
         return $idTipoDetalle;
     }
 }
+

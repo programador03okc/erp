@@ -31,7 +31,7 @@ class ApiController extends Controller
                     $compra = (float) $apiQ->compra;
                     $venta = (float) $apiQ->venta;
                     $promedio = ($compra + $venta) / 2;
-                    $ventaMGC = $venta + ($venta * 0.02);
+                    $ventaMGC = $venta + ($venta * 0.01);
                 }
 
                 DB::table('contabilidad.cont_tp_cambio')->insertGetId([
@@ -67,14 +67,14 @@ class ApiController extends Controller
             $compra = $query->orderBy('id_tp_cambio', 'desc')->first()->compra;
             $venta = $query->orderBy('id_tp_cambio', 'desc')->first()->venta;
             $promedio = $query->orderBy('id_tp_cambio', 'desc')->first()->promedio;
-            $ventaMGC = $venta + ($venta * 0.02);
+            $ventaMGC = $venta + ($venta * 0.01);
         } else {
             $rpta = 'null';
             $apiQ = json_decode($this->consultaSunat('https://api.apis.net.pe/v1/tipo-cambio-sunat'));
             $compra = (float) $apiQ->compra;
             $venta = (float) $apiQ->venta;
             $promedio = ($compra + $venta) / 2;
-            $ventaMGC = $venta + ($venta * 0.02);
+            $ventaMGC = $venta + ($venta * 0.01);
 
             DB::table('contabilidad.cont_tp_cambio')->insertGetId([
                 'fecha'     => $fecha,

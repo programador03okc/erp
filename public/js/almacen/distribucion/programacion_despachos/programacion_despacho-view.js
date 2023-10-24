@@ -67,7 +67,7 @@ class ProgramacionDespachoView {
                 +'<div class="timeline-item-despachos">'
                     +'<span class="time text-black"><i class="fa fa-calendar-alt"></i> Programado para el '+moment(element.fecha_programacion).format('DD/MM/YYYY')+' </span>'
 
-                    +'<h3 class="timeline-header"><a href="#">'+element.titulo+'</a> </h3>'
+                    +'<h3 class="timeline-header"><a href="/necesidades/requerimiento/elaboracion/index?id='+element.requerimiento_id+'" target="_blank" title="Abrir Requerimiento">'+element.titulo+'</a> </h3>'
 
                     +'<div class="timeline-body">'
                         +element.descripcion

@@ -26,7 +26,7 @@ function updateCantidadItem(obj){
             'Hubo un problema al actualizar la cantidad del item, vuelva a cargar la página F5 y vuelva a intentar',
             'error'
         );
- 
+
     }
 
 }
@@ -102,7 +102,7 @@ function mostrar_detalle() {
             idDetalleRequerimientoConDescomposicionList.push(element.id_detalle_requerimiento_origen);
         }
     });
-    
+
 
     detalle.forEach(element => {
         let cantidadRervas=0;
@@ -113,7 +113,7 @@ function mostrar_detalle() {
         var link_des = '';
 
         var regExp = /[a-zA-Z]/g; //expresión regular
-         
+
         if ((regExp.test(element.id_detalle_requerimiento) != true) || element.estado !=7) {
             console.log(element);
             if(element.reserva!= null){
@@ -141,14 +141,14 @@ function mostrar_detalle() {
 
         if (pn !== null) {
             link_pn = `
-            <a href="javascript: void(0);" 
+            <a href="javascript: void(0);"
                 onclick="openAsignarProducto('`+ pn + `', '` + dsc + `', ` + element.id_detalle_requerimiento + `, 1);">
             `+ pn + `
             </a>`;
         }
         if (dsc !== null) {
             link_des = `
-            <a href="javascript: void(0);" 
+            <a href="javascript: void(0);"
                 onclick="openAsignarProducto('`+ pn + `', '` + dsc + `', ` + element.id_detalle_requerimiento + `, 2);">
             `+ decodeURIComponent(dsc) + `
             </a>`;
@@ -163,42 +163,42 @@ function mostrar_detalle() {
             <td>`+ link_des + `</td>
             <td name="tdCantidad">
             ${((element.id_detalle_requerimiento_origen !=undefined && element.id_detalle_requerimiento_origen >0) || (idDetalleRequerimientoConDescomposicionList.includes(element.id_detalle_requerimiento))) ? `<input type="number" class="form-control handleBlurUpdateCantidadItem" name="cantidad" step="0.1" max="${element.cantidad_original??0}" value="${element.cantidad}" data-id="${element.id_detalle_requerimiento}" data-id-detalle-requerimiento-origen="${element.id_detalle_requerimiento_origen}" >` : (element.cantidad !== null ? element.cantidad : '')}
-                
+
             </td>
             <td>${element.abreviatura !== null ? element.abreviatura : ''}</td>
             <td>${element.descripcion_moneda !== null ? element.descripcion_moneda : ''}</td>
             <td style="display:flex;">
-                <button type="button" style="padding-left:8px;padding-right:7px;" 
-                    class="asignar btn btn-xs btn-info boton" data-toggle="tooltip" 
-                    data-placement="bottom" data-partnumber="${element.part_number_requerimiento??element.part_number}" 
+                <button type="button" style="padding-left:8px;padding-right:7px;"
+                    class="asignar btn btn-xs btn-info boton" data-toggle="tooltip"
+                    data-placement="bottom" data-partnumber="${element.part_number_requerimiento??element.part_number}"
                     data-desc="${encodeURIComponent(element.descripcion_requerimiento??element.descripcion)}" data-id="${element.id_detalle_requerimiento}"
                     title="${(cantidadRervas > 0 || cantidadOrdenes >0)?'No se puede asignar si tiene atención':'Asignar producto'}"  ${(cantidadRervas > 0 || cantidadOrdenes >0)?'disabled':''} >
                     <i class="fas fa-angle-double-right"></i>
                 </button>`;
 
                         html += `
-                            <button type="button" title="Duplicar para descomponer producto" 
-                            data-id="${element.id_detalle_requerimiento}" 
-                            data-id-producto="${element.id_producto}" 
-                            data-codigo="${element.codigo !=null?element.codigo:''}" 
-                            data-partnumber="${element.part_number_requerimiento}" 
-                            data-desc="${encodeURIComponent(element.descripcion_requerimiento)}" 
-                            data-cantidad="${element.cantidad}" 
-                            data-id-unidad-medida="${element.id_unidad_medida}" 
-                            data-unidad-medida="${element.abreviatura}" 
-                            data-id-moneda="${element.id_moneda}" 
-                            data-moneda="${element.descripcion_moneda}" 
-                            data-tiene-transformacion="${element.tiene_transformacion}" 
+                            <button type="button" title="Duplicar para descomponer producto"
+                            data-id="${element.id_detalle_requerimiento}"
+                            data-id-producto="${element.id_producto}"
+                            data-codigo="${element.codigo !=null?element.codigo:''}"
+                            data-partnumber="${element.part_number_requerimiento}"
+                            data-desc="${encodeURIComponent(element.descripcion_requerimiento)}"
+                            data-cantidad="${element.cantidad}"
+                            data-id-unidad-medida="${element.id_unidad_medida}"
+                            data-unidad-medida="${element.abreviatura}"
+                            data-id-moneda="${element.id_moneda}"
+                            data-moneda="${element.descripcion_moneda}"
+                            data-tiene-transformacion="${element.tiene_transformacion}"
                             class="duplicarParaDescomponer btn-xs btn btn-warning" title="${(cantidadRervas > 0 || cantidadOrdenes >0)?'No se puede descomponer si tiene atención':'Descomponer'}" ${(cantidadRervas > 0 || cantidadOrdenes >0)?'disabled':''}><i class="fas fa-clone"></i></button>
                         `;
 
-                
+
                 }
         if (element.estado == 7) {
             html += `
-                <button type="button" style="padding-left:8px;padding-right:7px;" 
-                    class="anular btn btn-xs btn-danger boton oculto" data-toggle="tooltip" 
-                    data-placement="bottom" data-partnumber="${element.part_number_requerimiento}" 
+                <button type="button" style="padding-left:8px;padding-right:7px;"
+                    class="anular btn btn-xs btn-danger boton oculto" data-toggle="tooltip"
+                    data-placement="bottom" data-partnumber="${element.part_number_requerimiento}"
                     data-desc="${encodeURIComponent(element.descripcion_requerimiento)}" data-id="${element.id_detalle_requerimiento}"
                     title="Anular" >
                     <i class="fas fa-times"></i>
@@ -208,9 +208,9 @@ function mostrar_detalle() {
 
         } else {
             html += `
-                <button type="button" style="padding-left:8px;padding-right:7px;" 
-                    class="anular btn btn-xs btn-danger boton" data-toggle="tooltip" 
-                    data-placement="bottom" data-partnumber="${element.part_number_requerimiento}" 
+                <button type="button" style="padding-left:8px;padding-right:7px;"
+                    class="anular btn btn-xs btn-danger boton" data-toggle="tooltip"
+                    data-placement="bottom" data-partnumber="${element.part_number_requerimiento}"
                     data-desc="${encodeURIComponent(element.descripcion_requerimiento)}" data-id="${element.id_detalle_requerimiento}"
                     title="Anular" >
                     <i class="fas fa-times"></i>
@@ -268,7 +268,7 @@ function anularProducto(partnumber, desc, id, obj) {
             }else{
                 obj.closest("tr").classList.add('bg-danger');
                 obj.closest("td").querySelector("button[class~='anular']").classList.add("oculto")
-            
+
                 let tdBotoneraAccionMapeo = obj.closest("td");
                 if (tdBotoneraAccionMapeo.querySelector("button[class~='restablecer']") == null) {
                     let buttonRestablecerItem = document.createElement("button");
@@ -277,11 +277,11 @@ function anularProducto(partnumber, desc, id, obj) {
                     buttonRestablecerItem.title = "Restablecer";
                     buttonRestablecerItem.className = "restablecer btn-xs btn btn-primary";
                     buttonRestablecerItem.innerHTML = "<i class='fas fa-undo'></i>";
-             
+
                     tdBotoneraAccionMapeo.appendChild(buttonRestablecerItem);
                 } else {
                     obj.closest("td").querySelector("button[class~='restablecer']").classList.remove("oculto")
-            
+
                 }
             }
             Lobibox.notify('success', {
@@ -350,7 +350,7 @@ function openAsignarProducto(partnumber, desc, id, type) {
         e.preventDefault();
         return false;
 
-    
+
     });
 
 }
@@ -405,7 +405,7 @@ $("#form-mapeoItemsRequerimiento").on("submit", function (e) {
 
                 dataType: 'JSON',
                 beforeSend: data => {
-    
+
                     $("#modal-mapeoItemsRequerimiento .modal-dialog").LoadingOverlay("show", {
                         imageAutoResize: true,
                         progress: true,
@@ -437,7 +437,7 @@ $("#form-mapeoItemsRequerimiento").on("submit", function (e) {
                         }
 
                         $('#modal-mapeoItemsRequerimiento').modal('hide');
-                        
+
                         if (objBtnMapeo != undefined) {
                             let cantidadPorMapear = parseInt(response.cantidad_total_items) - parseInt(response.cantidad_items_mapeados);
                             // console.log(objBtnMapeo.closest("div"));
@@ -470,7 +470,7 @@ $("#form-mapeoItemsRequerimiento").on("submit", function (e) {
                                 }
                             }
 
-                            // actualizar cantidad de items por mapear 
+                            // actualizar cantidad de items por mapear
                             objBtnMapeo.querySelector("span[class='badge']").textContent = cantidadPorMapear;
                             objBtnMapeo.closest("tr").querySelector("input[type='checkbox']").dataset.mapeosPendientes = cantidadPorMapear;
                             objBtnMapeo.closest("tr").querySelector("input[type='checkbox']").dataset.mapeados = response.cantidad_items_mapeados;
@@ -558,7 +558,7 @@ function duplicarParaDescomponerProducto(id, obj){
         'tiene_transformacion' : obj.dataset.tieneTransformacion ==true?true:null
         });
 
-    // poner tambien un input para cantidad en el item que se quier clonar 
+    // poner tambien un input para cantidad en el item que se quier clonar
     obj.closest('tr').querySelector("td[name='tdCantidad']").innerHTML=`<input type="number" class="form-control handleBlurUpdateCantidadItem" step="0.1" name="cantidad" max="${detalle[indexProductoOrigen].cantidad_original}" data-id="${id}" value="${detalle[indexProductoOrigen].cantidad}"   >`;
     //poner linea clonada
     obj.closest('tr').insertAdjacentHTML('afterend', `<tr>
@@ -571,17 +571,17 @@ function duplicarParaDescomponerProducto(id, obj){
     <td>${obj.dataset.unidadMedida}</td>
     <td>${obj.dataset.moneda}</td>
     <td>
-        <button type="button" style="padding-left:8px;padding-right:7px;" 
-        class="asignar btn btn-xs btn-info boton" data-toggle="tooltip" 
-        data-placement="bottom" data-partnumber="${obj.dataset.partnumber}" 
+        <button type="button" style="padding-left:8px;padding-right:7px;"
+        class="asignar btn btn-xs btn-info boton" data-toggle="tooltip"
+        data-placement="bottom" data-partnumber="${obj.dataset.partnumber}"
         data-desc="${obj.dataset.desc}" data-id="${newIdTemporal}"
         title="Asignar producto" >
         <i class="fas fa-angle-double-right"></i>
         </button>
 
-        <button type="button" style="padding-left:8px;padding-right:7px;" 
-        class="anular btn btn-xs btn-danger boton" data-toggle="tooltip" 
-        data-placement="bottom" data-partnumber="${obj.dataset.partnumber}" 
+        <button type="button" style="padding-left:8px;padding-right:7px;"
+        class="anular btn btn-xs btn-danger boton" data-toggle="tooltip"
+        data-placement="bottom" data-partnumber="${obj.dataset.partnumber}"
         data-desc="${obj.dataset.desc}" data-id="${newIdTemporal}"
         title="Anular" >
         <i class="fas fa-times"></i>

@@ -31,6 +31,7 @@ use App\Models\Contabilidad\Contribuyente;
 use App\Models\Distribucion\OrdenDespacho;
 use App\Models\Distribucion\OrdenDespachoDetalle;
 use App\Models\Distribucion\OrdenDespachoFlete;
+use App\Models\Logistica\ProgramacionDespacho;
 use App\Models\mgcp\AcuerdoMarco\Entidad\Entidad;
 use App\Models\mgcp\CuadroCosto\CuadroCosto;
 use App\Models\mgcp\CuadroCosto\CuadroCostoView;
@@ -503,6 +504,7 @@ class OrdenesDespachoExternoController extends Controller
             $cuadro = null;
             $oportunidad = null;
 
+
             if ($request->id_requerimiento !== null) {
 
                 $requerimiento = Requerimiento::where('id_requerimiento', $request->id_requerimiento)->first();
@@ -578,23 +580,23 @@ class OrdenesDespachoExternoController extends Controller
 
                             $comentario = 'Generar orden de despacho externo (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
                             LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentario,'Logística');
-                
+
                             $detalleRequerimiento = DetalleRequerimiento::find($d->id_detalle_requerimiento);
                             $detalleRequerimiento->estado = 23; // despacho entregado
                             $detalleRequerimiento->save();
-        
+
                             $comentariDetalleoRequerimientoActualizado = 'Actualizando estado detalle requerimiento ID: '.$d->id_detalle_requerimiento.' a estado (23) despacho entregado, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
                             LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $detalleRequerimiento->getTable(), null, $detalleRequerimiento, $comentariDetalleoRequerimientoActualizado,'Logística');
-        
+
                     }
 
                         $requerimiento = Requerimiento::find($requerimiento->id_requerimiento);
                         $requerimiento->estado_despacho = 23; // despacho externo
                         $requerimiento->save();
-    
+
                         $comentarioRequerimientoActualizado = 'Actualizando estado requerimiento ID: '.$requerimiento->id_requerimiento.' a estado (23) despacho externo, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
                         LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioRequerimientoActualizado,'Logística');
-    
+
 
                     $ordenDespacho->codigo = OrdenDespacho::ODnextId($requerimiento->id_almacen, false, $ordenDespacho->id_od, $request->fecha_documento_ode);
                     $ordenDespacho->fecha_documento = $request->fecha_documento_ode;
@@ -602,7 +604,7 @@ class OrdenesDespachoExternoController extends Controller
 
                     $comentarioDespacho = 'Generar orden de despacho externo (cabecera). Id: ' . ($ordenDespacho->id_od ?? '').', Código OD: '. ($ordenDespacho->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
                     LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDespacho->getTable(), null, $ordenDespacho, $comentarioDespacho,'Logística');
-        
+
 
                     //Agrega primera trazabilidad de envio (la generacion de la Orden de despacho)
                     $obs = DB::table('almacen.orden_despacho_obs')
@@ -636,6 +638,26 @@ class OrdenesDespachoExternoController extends Controller
                             ]);
                     }
                 }
+
+                // se genera una programacion de despaho url: logistica/distribucion/programacion-despachos/lista
+
+                $programacion_despachos = new ProgramacionDespacho();
+                $programacion_despachos->fecha_registro     = date("Y-m-d");
+                $programacion_despachos->created_id         = Auth::user()->id_usuario;
+                $programacion_despachos->orden_despacho_id  = $ordenDespacho->id_od;
+
+                $programacion_despachos->titulo             = $requerimiento->codigo;
+                $programacion_despachos->descripcion        = $requerimiento->concepto.' - '.$requerimiento->observacion;
+                $programacion_despachos->fecha_programacion = $request->fecha_documento_ode;
+                $programacion_despachos->estado             = 1;
+                $programacion_despachos->requerimiento_id   = $requerimiento->id_requerimiento;
+                $programacion_despachos->aplica_cambios     = false; //false si es ODE
+                $programacion_despachos->save();
+
+                $comentario_programacion_despacho = 'Se realizo una programción de despacho';
+                LogActividad::registrar(Auth::user(), 'Programacion de Despacho Externo', 2, $programacion_despachos->getTable(), null, $ordenDespacho, $comentario_programacion_despacho,'Logística');
+
+                // ------------------
             }
             if ($request->envio == 'envio') {
 

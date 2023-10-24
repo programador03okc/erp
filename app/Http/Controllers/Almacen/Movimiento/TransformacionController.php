@@ -20,6 +20,7 @@ use App\Models\almacen\Materia;
 use App\Models\Almacen\Requerimiento;
 use App\Models\almacen\Transformacion;
 use App\Models\Configuracion\LogActividad;
+use App\Models\Logistica\ProgramacionDespacho;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\Tesoreria\TipoCambio;
 use Carbon\Carbon;
@@ -1028,6 +1029,7 @@ class TransformacionController extends Controller
 
     public function procesar_transformacion(Request $request)
     {
+        // return $request->all();exit;
         try {
             DB::beginTransaction();
 
@@ -1058,6 +1060,11 @@ class TransformacionController extends Controller
                             'estado_despacho' => 10, //Culminado
                         ]);
                 }
+
+                $item = ProgramacionDespacho::where('orden_despacho_id',$request->id_od)->first();
+                    $item->reprogramado   = true;
+                    $item->finalizado   = true;
+                $item->save();
             }
             DB::commit();
             return response()->json('ok');
@@ -1493,6 +1500,7 @@ class TransformacionController extends Controller
         ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
 
         ->where('transfor_materia.estado',1)
+        ->orderBy('transformacion.fecha_inicio', 'desc')
         ->get();
 
         return Excel::download(new OrdenesTransFormacionesProcesadasDetalleExport(json_encode($data)), 'Ordenes_transformación_procesadas_detalle_'.date('d-m-Y H:i:s').'.xlsx');

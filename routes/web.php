@@ -245,6 +245,13 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('index', [ConfiguracionController::class, 'view_historial_aprobaciones'])->name('index');
 			Route::get('listar', [ConfiguracionController::class, 'mostrar_historial_aprobacion'])->name('listar');
 		});
+
+		Route::group(['as' => 'reportes.', 'prefix' => 'reportes'], function () {
+			Route::group(['as' => 'log-actividad.', 'prefix' => 'log-actividad'], function () {
+				Route::get('index', [ConfiguracionController::class, 'view_log_actividad'])->name('index');
+				Route::get('listar', [ConfiguracionController::class, 'listar_log_actividad'])->name('listar');
+			});
+		});
 	});
 
 	/**

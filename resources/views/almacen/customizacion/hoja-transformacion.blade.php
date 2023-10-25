@@ -165,9 +165,7 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
     @endphp
 
     @foreach ($filasCuadro as $fila)
-    @if ($fila->es_ingreso_transformacion)
-    @continue
-    @endif
+
     <div class="producto-transformar">Producto {{ $contador++ }} ({{$fila->tieneTransformacion() ? 'con' : 'sin'}} transformación):</div>
     <div class="seccion-producto">- Producto base</div>
     <table class="bordered">

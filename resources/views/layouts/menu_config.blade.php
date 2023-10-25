@@ -34,4 +34,12 @@
         <li><a href="{{ route('configuracion.correos.index') }}"><i class="far fa-circle fa-xs"></i> Correo Corporativo</a></li>
     </ul>
 </li>
+<li class="treeview">
+    <a href="#">
+        <i class="fas fa-file"></i> <span> Reportes</span> <i class="fa fa-angle-left pull-right"></i>
+    </a>
+    <ul class="treeview-menu">
+        <li><a href="{{ route('configuracion.reportes.log-actividad.index') }}"><i class="far fa-circle fa-xs"></i> Log de actividad </a></li>
+    </ul>
+</li>
 @endsection

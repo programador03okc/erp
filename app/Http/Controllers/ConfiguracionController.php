@@ -2678,5 +2678,24 @@ class ConfiguracionController extends Controller{
         ]);
         return response()->json($data);
     }
+
+    /**
+     * log actividad
+     */
+    public function view_log_actividad(){
+        return view('configuracion.log_actividad');
+
+    }
+
+    public function listar_log_actividad(){
+		$logActividad = DB::table('configuracion.log_actividades')
+        ->leftJoin('configuracion.sis_usua','sis_usua.id_usuario','=','log_actividades.usuario_id')
+        ->join('configuracion.log_tipo_acciones','log_tipo_acciones.id','=','log_actividades.log_tipo_accion_id')
+		->select('log_actividades.*','sis_usua.nombre_corto as nombre_usuario','log_tipo_acciones.descripcion as descripcion_tipo_accion')
+        ->orderBy('log_actividades.id','desc')
+		->get();
+        $output['data'] = $logActividad;
+        return response()->json($output);
+    }
 }
 

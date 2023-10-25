@@ -29,7 +29,7 @@
                 <td>{{ $item->nombre }}</td>
                 <td>{{ $item->codigo_req }}</td>
                 <td>{{ ($item->fecha_registro? date("d/m/Y H:i:s", strtotime($item->fecha_registro)):'-/-/-') }}</td>
-                <td>{{ ($item->fecha_inicio? date("d/m/Y H:i:s", strtotime($item->fecha_inicio)):'-/-/-') }}</td>
+                <td>{{ ($item->fecha_inicio? $item->fecha_inicio:'-/-/-') }}</td>
                 <td>{{ ($item->fecha_transformacion? date("d/m/Y H:i:s", strtotime($item->fecha_transformacion)):'-/-/-') }}</td>
                 <td>{{ $item->descripcion }}</td>
                 <td>{{ $item->nombre_responsable }}</td>

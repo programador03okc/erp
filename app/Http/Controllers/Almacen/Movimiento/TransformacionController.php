@@ -1493,6 +1493,7 @@ class TransformacionController extends Controller
         ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
 
         ->where('transfor_materia.estado',1)
+        ->orderBy('transformacion.fecha_inicio', 'asc')
         ->get();
 
         return Excel::download(new OrdenesTransFormacionesProcesadasDetalleExport(json_encode($data)), 'Ordenes_transformación_procesadas_detalle_'.date('d-m-Y H:i:s').'.xlsx');

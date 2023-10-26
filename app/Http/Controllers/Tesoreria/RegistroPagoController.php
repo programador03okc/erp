@@ -19,6 +19,7 @@ use App\Models\Almacen\AdjuntoDetalleRequerimiento;
 use App\Models\Almacen\AdjuntoRequerimiento;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Moneda;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
@@ -491,25 +492,24 @@ class RegistroPagoController extends Controller
 
             $id_usuario = Auth::user()->id_usuario;
 
-            $id_pago = DB::table('tesoreria.registro_pago')
-                ->insertGetId([
-                    'id_oc' => $request->id_oc,
-                    'id_requerimiento_pago' => $request->id_requerimiento_pago,
-                    'id_doc_com' => $request->id_doc_com,
-                    'fecha_pago' => $request->fecha_pago,
-                    'observacion' => $request->observacion,
-                    'total_pago' => round($request->total_pago, 2),
-                    'id_empresa' => $request->id_empresa,
-                    'id_cuenta_origen' => $request->id_cuenta_origen,
-                    'registrado_por' => $id_usuario,
-                    'estado' => 1,
-                    'fecha_registro' => date('Y-m-d H:i:s')
-                ], 'id_pago');
+            $registroPago= new RegistroPago();
+            $registroPago->id_oc = $request->id_oc;
+            $registroPago->id_requerimiento_pago = $request->id_requerimiento_pago;
+            $registroPago->id_doc_com = $request->id_doc_com;
+            $registroPago->fecha_pago = $request->fecha_pago;
+            $registroPago->observacion = $request->observacion;
+            $registroPago->total_pago = round($request->total_pago, 2);
+            $registroPago->id_empresa = $request->id_empresa;
+            $registroPago->id_cuenta_origen = $request->id_cuenta_origen;
+            $registroPago->registrado_por = $request->$id_usuario;
+            $registroPago->estado = 1;
+            $registroPago->fecha_registro = date('Y-m-d H:i:s');
+            $registroPago->save();
 
             if (isset($request->vincularCuotaARegistroDePago) && count($request->vincularCuotaARegistroDePago) > 0) {
                 foreach ($request->vincularCuotaARegistroDePago as $key => $value) {
                     $pagoCuotaDetalle = PagoCuotaDetalle::where('id_pago_cuota_detalle', $value)->first();
-                    $pagoCuotaDetalle->id_pago = $id_pago;
+                    $pagoCuotaDetalle->id_pago = $registroPago->id_pago;
                     $pagoCuotaDetalle->id_estado = 6; // pagado
                     $pagoCuotaDetalle->save();
                 }
@@ -522,7 +522,7 @@ class RegistroPagoController extends Controller
                 foreach ($archivos as $archivo) {
                     $id_adjunto = DB::table('tesoreria.registro_pago_adjuntos')
                         ->insertGetId([
-                            'id_pago' => $id_pago,
+                            'id_pago' => $registroPago->id_pago,
                             // 'adjunto' => $nombre,
                             'estado' => 1,
                         ], 'id_adjunto');
@@ -545,14 +545,19 @@ class RegistroPagoController extends Controller
             if (floatval($request->total_pago) >= floatval(round($request->total, 2))) {
 
                 if ($request->id_oc !== null) {
-                    DB::table('logistica.log_ord_compra')
-                        ->where('id_orden_compra', $request->id_oc)
-                        ->update(['estado_pago' => 6]); //pagada
+                    $ord = Orden::find($request->id_oc);
+                    $ord->estado_pago= 6;
+                    $ord->save(); //pagada
+                
 
                     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($request->id_oc, floatval($request->total_pago));
                     // Debugbar::info('completo orden');
 
-                    PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $id_pago, $detalleArray, 'R', $request->fecha_pago , "Registrar afectación regular");
+                    PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $registroPago->id_pago, $detalleArray, 'R', $request->fecha_pago , "Registrar afectación regular");
+
+                    $comentario='Registro de pago total de orden '.($ord->codigo??'');
+                    LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
+
                 } else if ($request->id_requerimiento_pago !== null) {
                     DB::table('tesoreria.requerimiento_pago')
                         ->where('id_requerimiento_pago', $request->id_requerimiento_pago)
@@ -566,7 +571,10 @@ class RegistroPagoController extends Controller
                         // Debugbar::info($detalleArray);
                         // Debugbar::info(floatval($request->total_pago),floatval($request->total));
 
-                        PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $id_pago, $detalleArray, 'R', $request->fecha_pago, 'Registrar afectación regular');
+                        PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R', $request->fecha_pago, 'Registrar afectación regular');
+
+                        $comentario='Registro de pago total de requerimiento de pago '.($requerimientoPago->codigo??'');
+                        LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
                     }
                 }
             } else {
@@ -576,15 +584,20 @@ class RegistroPagoController extends Controller
                     } else {
                         $nuevoEstado = 9;
                     }
-                    DB::table('logistica.log_ord_compra')
-                        ->where('id_orden_compra', $request->id_oc)
-                        ->update(['estado_pago' => $nuevoEstado]); //con saldo
+                    $or= Orden::find($request->id_oc);
+                    $or->estado_pago = $nuevoEstado;//con saldo
+                    $or->save(); 
+                    
 
                     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($request->id_oc, floatval($request->total_pago));
                     // Debugbar::info('prorrateo orden compra');
                     // Debugbar::info($detalleArray);
 
-                    PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $id_pago, $detalleArray, 'R',  $request->fecha_pago,  'Registrar afectación regular');
+                    PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $registroPago->id_pago, $detalleArray, 'R',  $request->fecha_pago,  'Registrar afectación regular');
+
+                    $comentario='Registro de pago parcial al total de la orden '.($or->codigo??'');
+                    LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
+
                 } else if ($request->id_requerimiento_pago !== null) {
                     DB::table('tesoreria.requerimiento_pago')
                         ->where('id_requerimiento_pago', $request->id_requerimiento_pago)
@@ -596,7 +609,11 @@ class RegistroPagoController extends Controller
                         $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($request->id_requerimiento_pago, floatval($request->total_pago));
                         // Debugbar::info('prorrateo requerimiento pago');
                         // Debugbar::info(floatval($request->total_pago),floatval($request->total));
-                        PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $id_pago, $detalleArray, 'R',$request->fecha_pago, 'Registrar afectación regular');
+                        PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R',$request->fecha_pago, 'Registrar afectación regular');
+
+                        $comentario='Registro de pago parcial al total de requerimiento de pago '.($requerimientoPago->codigo??'');
+                        LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
+
                     }
                 }
             }
@@ -630,7 +647,7 @@ class RegistroPagoController extends Controller
             }
 
 
-            return response()->json($id_pago);
+            return response()->json($registroPago->id_pago);
         } catch (\PDOException $e) {
             DB::rollBack();
         }

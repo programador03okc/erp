@@ -555,7 +555,7 @@ class RegistroPagoController extends Controller
 
                     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $registroPago->id_pago, $detalleArray, 'R', $request->fecha_pago , "Registrar afectación regular");
 
-                    $comentario='Registro de pago total de orden '.($ord->codigo??'');
+                    $comentario='Registro de pago total - orden '.($ord->codigo??'');
                     LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
 
                 } else if ($request->id_requerimiento_pago !== null) {
@@ -573,7 +573,7 @@ class RegistroPagoController extends Controller
 
                         PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R', $request->fecha_pago, 'Registrar afectación regular');
 
-                        $comentario='Registro de pago total de requerimiento de pago '.($requerimientoPago->codigo??'');
+                        $comentario='Registro de pago total - requerimiento de pago '.($requerimientoPago->codigo??'');
                         LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
                     }
                 }
@@ -595,7 +595,7 @@ class RegistroPagoController extends Controller
 
                     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $registroPago->id_pago, $detalleArray, 'R',  $request->fecha_pago,  'Registrar afectación regular');
 
-                    $comentario='Registro de pago parcial al total de la orden '.($or->codigo??'');
+                    $comentario='Registro de pago parcial - orden '.($or->codigo??'');
                     LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
 
                 } else if ($request->id_requerimiento_pago !== null) {
@@ -611,7 +611,7 @@ class RegistroPagoController extends Controller
                         // Debugbar::info(floatval($request->total_pago),floatval($request->total));
                         PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R',$request->fecha_pago, 'Registrar afectación regular');
 
-                        $comentario='Registro de pago parcial al total de requerimiento de pago '.($requerimientoPago->codigo??'');
+                        $comentario='Registro de pago parcial - requerimiento de pago '.($requerimientoPago->codigo??'');
                         LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
 
                     }

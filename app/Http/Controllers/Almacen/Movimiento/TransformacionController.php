@@ -1061,10 +1061,10 @@ class TransformacionController extends Controller
                         ]);
                 }
 
-                $item = ProgramacionDespacho::where('orden_despacho_id',$request->id_od)->first();
-                    $item->reprogramado   = true;
-                    $item->finalizado   = true;
-                $item->save();
+                // $item = ProgramacionDespacho::where('orden_despacho_id',$request->id_od)->first();
+                //     $item->reprogramado   = true;
+                //     $item->finalizado   = true;
+                // $item->save();
             }
             DB::commit();
             return response()->json('ok');

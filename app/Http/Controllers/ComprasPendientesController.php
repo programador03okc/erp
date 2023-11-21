@@ -1827,4 +1827,97 @@ class ComprasPendientesController extends Controller
         return Excel::download(new ListRequerimientosPendientesExport(), 'lista de requerimientos pendientes.xlsx');
     }
 
+    public function realizarResolverEstadoPorRegularizar(request $request){
+        DB::beginTransaction();
+        try {
+            $mensaje = '';
+            $tipoEstado = '';
+            $data = '';
+            $estadoOriginalRequerimiento =0;
+            $cantidadItemActualizados =0;
+            $idNuevoEstado=0;
+            if(intval($request->idRequerimiento) >0){
+                $requerimiento = Requerimiento::find($request->idRequerimiento);
+                $estadoOriginalRequerimiento =$requerimiento->estado;
+                if($estadoOriginalRequerimiento ==38){
+                    
+                    $detalleRequerimiento = DetalleRequerimiento::where([['id_requerimiento',$request->idRequerimiento],['estado','!=',7]])->get();
+                    foreach ($detalleRequerimiento as $key => $item) {
+                        if($item->estado ==38){
+                           $idNuevoEstado = $this->obtenerNuevoEstadoSegunTipoAtencionDeItem($item->id_detalle_requerimiento);
+                           if($idNuevoEstado > 0){
+                               $detalleParaActualizar = DetalleRequerimiento::find($item->id_detalle_requerimiento);
+                               $detalleParaActualizar->estado = $idNuevoEstado;
+                               $detalleParaActualizar->save();
+                               $cantidadItemActualizados++;
+                            }
+                        }
+                    }
+
+                    if($cantidadItemActualizados >0){
+
+                        $RequerimientoActualizar = Requerimiento::find($request->idRequerimiento);
+                        $RequerimientoActualizar->estado= 15;
+                        $RequerimientoActualizar->save();
+                        
+
+                        $tipoEstado='success';
+                        $mensaje='Se actualizó el requerimiento y '. $cantidadItemActualizados. ' items';
+                    }else{
+                        $tipoEstado='success';
+                        $mensaje='No se encontró items para actualizar';
+                    }
+                    
+
+                }else{
+                    $tipoEstado = 'info';
+                    $mensaje = "No se pudo actualizar, El estado de requerimiento debe ser por regularizar";
+                }
+
+
+            }else {
+                $tipoEstado = 'error';
+                $mensaje = "El ID enviado no es valido, que no fue posible realizar la actualización";
+            }
+
+            DB::commit();
+
+            return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => $mensaje]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['tipo_estado' => $tipoEstado ,'mensaje' => 'Hubo un problema al intentar actualizar. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+        }
+    }
+
+
+
+    public function obtenerNuevoEstadoSegunTipoAtencionDeItem($idDetalleRequerimiento){
+        $estadoAtencion=1;
+        $detalleRequerimiento = DetalleRequerimiento::find($idDetalleRequerimiento);
+        $detalleOrden = OrdenCompraDetalle::where([['id_detalle_requerimiento',$idDetalleRequerimiento],['estado','!=',7]])->get();
+        if($detalleOrden){
+            $cantidadAtendido =0;
+            foreach ($detalleOrden as $key => $itemOrden) {
+                $cantidadAtendido+=$itemOrden->cantidad;
+            }
+
+        }else{ //buscar en reservas
+            $reserva = Reserva::where([['id_detalle_requerimiento',$idDetalleRequerimiento],['estado','!=',7]])->get();
+            if($reserva){
+                $cantidadAtendido =0;
+                foreach ($reserva as $key => $itemReserva) {
+                    $cantidadAtendido+=$itemReserva->stock_comprometido;
+                }
+            }
+        }
+
+        if($cantidadAtendido >= $detalleRequerimiento->cantidad){
+            $estadoAtencion= 5;
+        }else{
+            $estadoAtencion= 15;
+        }
+
+        return $estadoAtencion;
+    }
+
 }

@@ -1443,6 +1443,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('mostrar_tipos_clasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar_tipos_clasificacion');
 					Route::get('por-regularizar-cabecera/{id}', [ComprasPendientesController::class, 'listarPorRegularizarCabecera'])->name('por-regularizar-cabecera');
 					Route::get('por-regularizar-detalle/{id}', [ComprasPendientesController::class, 'listarPorRegularizarDetalle'])->name('por-regularizar-detalle');
+					Route::post('realizar-resolver-estado-por-regularizar', [ComprasPendientesController::class, 'realizarResolverEstadoPorRegularizar'])->name('realizar-anular-item-en-toda-orden-y-reservas');
 					Route::post('realizar-remplazo-de-producto-comprometido-en-toda-orden', [ComprasPendientesController::class, 'realizarRemplazoDeProductoEnTodaOrden'])->name('realizar-remplazo-de-producto-comprometido-en-toda-orden');
 					Route::post('realizar-liberacion-de-producto-comprometido-en-toda-orden', [ComprasPendientesController::class, 'realizarLiberacionDeProductoEnTodaOrden'])->name('realizar-liberacion-de-producto-comprometido-en-toda-orden');
 					Route::post('realizar-anular-item-en-toda-orden-y-reservas', [ComprasPendientesController::class, 'realizarAnularItemEnTodaOrdenYReservas'])->name('realizar-anular-item-en-toda-orden-y-reservas');

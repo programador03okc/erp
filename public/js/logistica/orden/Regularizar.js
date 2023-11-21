@@ -84,10 +84,20 @@ function obtenerDataPorRegularlizar(id) {
 function listarItemsPorRegularizar(idRequerimiento) {
 
     let that = this;
+    const button_resolver_estado_por_regularizar = (document.querySelector("div[id='modal-por-regularizar'] input[name='idRequerimiento']").value > 0?{
+        text: '<span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> Resolver estado por regularizar',
+        attr: {
+            id: 'btnResolverEstadoPorRegularizar'
+        },
+        action: () => {
+            this.resolverEstadoPorRegularizar();
 
+        },
+        className: 'btn-warning btn-sm'
+    }:[]);
     $listaItemsPorRegularizar = $('#listaItemsPorRegularizar').DataTable({
         'dom': vardataTables[1],
-        'buttons': [],
+        'buttons': [button_resolver_estado_por_regularizar],
         'language': vardataTables[0],
         'order': [[10, 'asc']],
         'bLengthChange': false,
@@ -228,11 +238,13 @@ function listarItemsPorRegularizar(idRequerimiento) {
 
                     //     mensaje.push("Con reserva procesada");
                     // }
-                    let botoneraAccion= `<div class="btn-group" role="group">
+                    let botoneraAccion= ``;
+                    /*  
+                    botoneraAccion= `<div class="btn-group" role="group">
                     <button type="button" class="btn btn-default btn-xs handleClickDesplegarVerDetalleOrdenReserva" name="btnVerDetalleOrdenReserva" title="Ver detalle ordenes / reserva" data-id-detalle-requerimiento="${row.id_detalle_requerimiento}"><i class="fas fa-chevron-down fa-sm"></i></button>
                     `;
 
-                    if ((ordenes.length != 0) && (row.estado == 38)) {
+                   if ((ordenes.length != 0) && (row.estado == 38)) {
                         botoneraAccion+= `
                         <button type="button" class="btn btn-warning btn-xs handleClickRemplazarProductoComprometidoEnTodaOrden" data-id-detalle-requerimiento="${row.id_detalle_requerimiento}"  name="btnRemplazarTodoProductoComprometidoEnTodaOrden" title="Remplazar item en todas las ordenes"><i class="fas fa-paint-roller fa-sm"></i></button>
                         <button type="button" class="btn btn-info btn-xs handleClickLiberarProductoComprometidoEnTodaOrden" data-id-detalle-requerimiento="${row.id_detalle_requerimiento}"  name="btnLiberarTodoProductoComprometidoEnTodaOrden" title="Liberar el item en todas las ordenes"><i class="fas fa-parachute-box fa-sm"></i></button>
@@ -241,7 +253,7 @@ function listarItemsPorRegularizar(idRequerimiento) {
                     }
                     if ((ordenes.length == 0 && reservaHabilitada.length != 0) && (row.estado == 38)) {
                         botoneraAccion+= `<button type="button" class="btn btn-danger btn-xs handleClickAnularItemComprometidoEnTodaOrdenYReservas" data-id-detalle-requerimiento="${row.id_detalle_requerimiento}" name="btnAnularTodoItemComprometidoEnTodaOrdenYReservas" title="Anular todas las reservas comprometidas"><i class="fas fa-ban fa-sm"></i></button>`;
-                    }
+                    } */
                     
                     botoneraAccion+=`</div>`
 
@@ -268,6 +280,57 @@ function listarItemsPorRegularizar(idRequerimiento) {
 
         }
 
+    });
+}
+
+
+function resolverEstadoPorRegularizar(){
+    const idRequerimiento = document.querySelector("div[id='modal-por-regularizar'] input[name='idRequerimiento']").value;
+    realizarResolverEstadoPorRegularizar(idRequerimiento).then((res) => {
+        
+        Lobibox.notify(res.tipo_estado, {
+            title: false,
+            size: 'mini',
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: res.mensaje
+        });
+
+        $("#listaRequerimientosPendientes").DataTable().ajax.reload(null, false);
+       
+        $('#modal-por-regularizar').modal('hide');
+
+        
+    });
+}
+
+function realizarResolverEstadoPorRegularizar(idRequerimiento) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'POST',
+            url: `realizar-resolver-estado-por-regularizar`,
+            dataType: 'JSON',
+            data: { 'idRequerimiento': idRequerimiento },
+            success(response) {
+                resolve(response);
+            },
+            fail: (jqXHR, textStatus, errorThrown) => {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+
+                Swal.fire(
+                    '',
+                    'Lo sentimos hubo un error en el servidor al intentar remplazar todo los producto comprometidos, por favor vuelva a intentarlo',
+                    'error'
+                );
+            },
+            error: function (err) {
+                console.log(err);
+                reject(err)
+            }
+        });
     });
 }
 

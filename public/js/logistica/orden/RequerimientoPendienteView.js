@@ -89,6 +89,9 @@ class RequerimientoPendienteView {
         $('#listaRequerimientosAtendidos tbody').on("click", "button.handleClickVerDetalleRequerimiento", (e) => {
             this.verDetalleRequerimientoAtendidos(e.currentTarget);
         });
+        $('#listaRequerimientosPendientes tbody').on("click", "button.handleClickEnviarAListaAtendidos", (e) => {
+            this.enviarAListaAtendidos(e.currentTarget);
+        });
         $('#listaRequerimientosAtendidos tbody').on("click", "button.handleClickRetornarAListaPendientes", (e) => {
             this.retornarAListaPendientes(e.currentTarget);
         });
@@ -653,6 +656,8 @@ class RequerimientoPendienteView {
                         let btnObservarRequerimientoLogistico = '<button type="button" class="btn btn-warning btn-xs handleClickObservarRequerimientoLogistico" name="btnObservarRequerimientoLogistico" title="Observar requerimiento" data-codigo-requerimiento="' + row.codigo + '" data-id-requerimiento="' + row.id_requerimiento + '"  data-observacion-logistica-sin-sustento="' + observacionLogisticaSinSustento + '"  ><i class="fas fa-exclamation-circle"></i></button>';
                         let btnCrearOrdenServicio = (array_accesos.find(element => element === 224) ? '<button type="button" class="btn btn-warning btn-xs handleClickCrearOrdenServicioPorRequerimiento" name="btnCrearOrdenServicioPorRequerimiento" title="Crear Orden de Servicio" data-id-requerimiento="' + row.id_requerimiento + '"  >OS</button>' : '');
                         let btnExportarExcel = (array_accesos.find(element => element === 221) ? '<button type="button" class="btn btn-default btn-xs handleClickSolicitudCotizacionExcel" name="btnSolicitudCotizacionExcel" title="Solicitud cotización excel" data-id-requerimiento="' + row.id_requerimiento + '" style="color:green;" ><i class="far fa-file-excel"></i></button>' : '');
+                        let btnEnviarAListaAtendidos = '<button type="button" class="btn btn-default btn-xs handleClickEnviarAListaAtendidos" style="color:red;" name="btnEnviarAListaAtendidos" title="Enviar a lista de atendidos" data-id-requerimiento="' + row.id_requerimiento + '" data-codigo-requerimiento="' + row.codigo + '"><i class="fas fa-arrow-right fa-xs"></i></button>';
+
                         // if (row.cantidad_adjuntos_activos.cabecera > 0 || row.cantidad_adjuntos_activos.detalle > 0) {
                         // btnVerAdjuntosModal = '<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAgregarAdjuntosRequerimiento" data-id-requerimiento="' + row['id_requerimiento'] + '" data-codigo-requerimiento="' + row.codigo + '" title="Ver archivos adjuntos"><i class="fas fa-paperclip fa-xs"></i></button>';
 
@@ -696,10 +701,11 @@ class RequerimientoPendienteView {
                                 btnCrearOrdenCompra + btnVercuadroCostos + btnVerAdjuntosModal + btnGestionarEstadoRequerimiento;
 
                             if (row.cantidad_tipo_servicio > 0) {
-                                botones += btnCrearOrdenServicio + closeDiv;
-                            } else {
-                                botones += closeDiv;
+                                botones += btnCrearOrdenServicio;
                             }
+
+                            
+                            botones += btnEnviarAListaAtendidos+ closeDiv;
                         }
                         return botones;
                     }
@@ -1292,6 +1298,48 @@ class RequerimientoPendienteView {
         }
     }
 
+    enviarAListaAtendidos(obj) {
+        let tr = obj.closest('tr');
+        var idRequerimiento = obj.dataset.idRequerimiento;
+        var codigoRequerimiento = obj.dataset.codigoRequerimiento;
+
+        Swal.fire({
+            title: 'Esta seguro de enviar el requerimiento ' + codigoRequerimiento + ' a la lista de atendidos?',
+            text: "El nuevo estado de requerimiento sera: atención total",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, enviar'
+
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.requerimientoPendienteCtrl.enviarRequerimientoAListaAtendidos(idRequerimiento).then((res) => {
+                    if (res.estado == 'success') {
+                        tr.remove();
+                        Lobibox.notify('success', {
+                            title: false,
+                            size: 'mini',
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: res.mensaje
+                        });
+
+                    } else {
+                        Swal.fire(
+                            'Error en el servidor',
+                            res.mensaje,
+                            res.estado
+                        );
+                    }
+
+                });
+            }
+        })
+
+    }
     retornarAListaPendientes(obj) {
         let tr = obj.closest('tr');
         var idRequerimiento = obj.dataset.idRequerimiento;

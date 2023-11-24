@@ -1733,6 +1733,38 @@ class ComprasPendientesController extends Controller
             return response()->json(['estado'=>$tipoEstado, 'mensaje' => 'Hubo un problema al guardar la respuesta. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
     }
+    public function enviarRequerimientoAListaAtendidos($idRequerimiento){
+        DB::beginTransaction();
+        try {
+            $mensaje = '';
+            $tipoEstado = '';
+
+            $requerimiento= Requerimiento::find($idRequerimiento);
+            if($requerimiento){
+                $requerimiento->estado = 5; // atención total
+                $requerimiento->save();
+                $tipoEstado = 'success';
+                $mensaje = "El requerimiento se envió a lista de atendidos";
+
+                $comentarioCabecera = 'Enviar requerimiento a lista de atendidos (actualizar estado a atención total): ' . ($requerimiento->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Requerimiento pendientes', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Logistica');
+        
+
+            }else{
+                $tipoEstado = 'warning';
+                $mensaje = "Hubo un problema, no se pudo actualizar el requerimiento";
+
+            }
+
+            DB::commit();
+
+            return response()->json(['estado'=>$tipoEstado,  'mensaje'=>$mensaje]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['estado'=>$tipoEstado, 'mensaje' => 'Hubo un problema al guardar la respuesta. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+        }
+    }
+
     public function retornarRequerimientoAtendidoAListaPendientes($idRequerimiento){
         DB::beginTransaction();
         try {
@@ -1744,11 +1776,14 @@ class ComprasPendientesController extends Controller
                 $requerimiento->estado = 15; // atención parcial
                 $requerimiento->save();
                 $tipoEstado = 'success';
-                $mensaje = "El requerimiento se paso a pendientes";
+                $mensaje = "El requerimiento se envió a lista de pendientes";
+
+                $comentarioCabecera = 'Retornar requerimiento a lista de pendientes (actualizar estado a atención parcial): ' . ($requerimiento->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Requerimiento pendientes', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Logistica');
 
             }else{
                 $tipoEstado = 'warning';
-                $mensaje = "Hubo un problema, no se pudo actualziar el requerimiento";
+                $mensaje = "Hubo un problema, no se pudo actualizar el requerimiento";
 
             }
 

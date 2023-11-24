@@ -1463,6 +1463,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('guardar-observacion-logistica', [ComprasPendientesController::class, 'guardarObservacionLogistica'])->name('guardar-observacion-logistica');
 					Route::get('retornar-requerimiento-atendido-a-lista-pedientes/{id}', [ComprasPendientesController::class, 'retornarRequerimientoAtendidoAListaPendientes'])->name('retornar-requerimiento-atendido-a-lista-pedientes');
+					Route::get('enviar-requerimiento-a-lista-atendidos/{id}', [ComprasPendientesController::class, 'enviarRequerimientoAListaAtendidos'])->name('enviar-requerimiento-a-lista-atendidos');
 				});
 
 				Route::name('ordenes.')->prefix('ordenes')->group(function () {

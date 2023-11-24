@@ -406,6 +406,21 @@ class RequerimientoPendienteModel {
                 });
             });
     }
+    enviarRequerimientoAListaAtendidos(id){
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                type: 'GET',
+                url:`enviar-requerimiento-a-lista-atendidos/${id}`,
+                dataType: 'JSON',
+                success(response) {
+                    resolve(response);
+                },
+                error: function(err) {
+                reject(err)
+                }
+                });
+            });
+    }
 
 }
 

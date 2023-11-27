@@ -89,6 +89,14 @@ function openModalRequerimientoFlete(id_od) {
     });
     mostrarCamposSegunTipoDocumentoSeleccionado();
     llenarFormularioRequerimientoFlete(id_od);
+
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_persona']").value ="";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_trabajador']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_contribuyente']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='nombre_completo_destinatario']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='numero_documento_destinatario']").value ="";
+    document.querySelector("div[id='modal-requerimiento_flete'] select[name='id_cuenta_destinatario']").innerHTML = "";
+
 }
 
 

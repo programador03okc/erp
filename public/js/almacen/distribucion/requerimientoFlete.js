@@ -330,6 +330,7 @@ function getRequerimientoOrdenDespacho(id_od) {
 
 function llenarFormularioRequerimientoFlete(id_od) {
 
+    $("[name=id_od]").val(id_od);
     getRequerimientoOrdenDespacho(id_od).then((res) => {
         console.log(res);
         $("[name=empresa]").val(res.requerimiento[0].id_empresa);

@@ -10,6 +10,7 @@ use App\Http\Controllers\AlmacenController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Logistica\RequerimientoController;
+use App\Http\Controllers\Tesoreria\RequerimientoPagoController;
 use App\Http\ViewComposers\AuthToViewComposer;
 use App\Mail\EmailContactoDespacho;
 use App\Mail\EmailOrdenDespacho;
@@ -39,6 +40,8 @@ use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
 use App\Models\Proyectos\Proyecto;
 use App\Models\Rrhh\Trabajador;
+use App\Models\Tesoreria\RequerimientoPago;
+use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -569,41 +572,40 @@ class OrdenesDespachoExternoController extends Controller
 
                     foreach ($detalle as $d) {
 
-                            $ordenDepachoDetalle = new OrdenDespachoDetalle();
-                            $ordenDepachoDetalle->id_od = $ordenDespacho->id_od;
-                            $ordenDepachoDetalle->id_detalle_requerimiento = $d->id_detalle_requerimiento;
-                            $ordenDepachoDetalle->cantidad = $d->cantidad;
-                            $ordenDepachoDetalle->transformado = $d->tiene_transformacion;
-                            $ordenDepachoDetalle->estado = 1;
-                            $ordenDepachoDetalle->fecha_registro = $fechaRegistro;
-                            $ordenDepachoDetalle->save();
+                        $ordenDepachoDetalle = new OrdenDespachoDetalle();
+                        $ordenDepachoDetalle->id_od = $ordenDespacho->id_od;
+                        $ordenDepachoDetalle->id_detalle_requerimiento = $d->id_detalle_requerimiento;
+                        $ordenDepachoDetalle->cantidad = $d->cantidad;
+                        $ordenDepachoDetalle->transformado = $d->tiene_transformacion;
+                        $ordenDepachoDetalle->estado = 1;
+                        $ordenDepachoDetalle->fecha_registro = $fechaRegistro;
+                        $ordenDepachoDetalle->save();
 
-                            $comentario = 'Generar orden de despacho externo (detalle). '.'Id: '.$ordenDepachoDetalle->id_od_detalle.', Código OD: ' . ($ordenDespacho->codigo ?? '').', Generado por: ' . Auth::user()->nombre_corto;
-                            LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentario,'Logística');
+                        $comentario = 'Generar orden de despacho externo (detalle). ' . 'Id: ' . $ordenDepachoDetalle->id_od_detalle . ', Código OD: ' . ($ordenDespacho->codigo ?? '') . ', Generado por: ' . Auth::user()->nombre_corto;
+                        LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDepachoDetalle->getTable(), null, $ordenDepachoDetalle, $comentario, 'Logística');
 
-                            $detalleRequerimiento = DetalleRequerimiento::find($d->id_detalle_requerimiento);
-                            $detalleRequerimiento->estado = 23; // despacho entregado
-                            $detalleRequerimiento->save();
+                        $detalleRequerimiento = DetalleRequerimiento::find($d->id_detalle_requerimiento);
+                        $detalleRequerimiento->estado = 23; // despacho entregado
+                        $detalleRequerimiento->save();
 
-                            $comentariDetalleoRequerimientoActualizado = 'Actualizando estado detalle requerimiento ID: '.$d->id_detalle_requerimiento.' a estado (23) despacho entregado, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
-                            LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $detalleRequerimiento->getTable(), null, $detalleRequerimiento, $comentariDetalleoRequerimientoActualizado,'Logística');
-
+                        $comentariDetalleoRequerimientoActualizado = 'Actualizando estado detalle requerimiento ID: ' . $d->id_detalle_requerimiento . ' a estado (23) despacho entregado, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
+                        LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $detalleRequerimiento->getTable(), null, $detalleRequerimiento, $comentariDetalleoRequerimientoActualizado, 'Logística');
                     }
 
-                        $requerimiento = Requerimiento::find($requerimiento->id_requerimiento);
-                        $requerimiento->estado_despacho = 23; // despacho externo
-                        $requerimiento->save();
+                    $requerimiento = Requerimiento::find($requerimiento->id_requerimiento);
+                    $requerimiento->estado_despacho = 23; // despacho externo
+                    $requerimiento->save();
 
-                        $comentarioRequerimientoActualizado = 'Actualizando estado requerimiento ID: '.$requerimiento->id_requerimiento.' a estado (23) despacho externo, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
-                        LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioRequerimientoActualizado,'Logística');
+                    $comentarioRequerimientoActualizado = 'Actualizando estado requerimiento ID: ' . $requerimiento->id_requerimiento . ' a estado (23) despacho externo, Generado por sistema, iniciado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioRequerimientoActualizado, 'Logística');
 
 
                     $ordenDespacho->codigo = OrdenDespacho::ODnextId($requerimiento->id_almacen, false, $ordenDespacho->id_od, $request->fecha_documento_ode);
                     $ordenDespacho->fecha_documento = $request->fecha_documento_ode;
                     $ordenDespacho->save();
 
-                    $comentarioDespacho = 'Generar orden de despacho externo (cabecera). Id: ' . ($ordenDespacho->id_od ?? '').', Código OD: '. ($ordenDespacho->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
-                    LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDespacho->getTable(), null, $ordenDespacho, $comentarioDespacho,'Logística');
+                    $comentarioDespacho = 'Generar orden de despacho externo (cabecera). Id: ' . ($ordenDespacho->id_od ?? '') . ', Código OD: ' . ($ordenDespacho->codigo ?? '') . ', Agregado por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Orden de despacho externo', 2, $ordenDespacho->getTable(), null, $ordenDespacho, $comentarioDespacho, 'Logística');
 
 
                     //Agrega primera trazabilidad de envio (la generacion de la Orden de despacho)
@@ -647,7 +649,7 @@ class OrdenesDespachoExternoController extends Controller
                 $programacion_despachos->orden_despacho_id  = $ordenDespacho->id_od;
 
                 $programacion_despachos->titulo             = $requerimiento->codigo;
-                $programacion_despachos->descripcion        = $requerimiento->concepto.' - '.$requerimiento->observacion;
+                $programacion_despachos->descripcion        = $requerimiento->concepto . ' - ' . $requerimiento->observacion;
                 $programacion_despachos->fecha_programacion = $request->fecha_documento_ode;
                 $programacion_despachos->estado             = 1;
                 $programacion_despachos->requerimiento_id   = $requerimiento->id_requerimiento;
@@ -655,7 +657,7 @@ class OrdenesDespachoExternoController extends Controller
                 $programacion_despachos->save();
 
                 $comentario_programacion_despacho = 'Se realizo una programción de despacho';
-                LogActividad::registrar(Auth::user(), 'Programacion de Despacho Externo', 2, $programacion_despachos->getTable(), null, $ordenDespacho, $comentario_programacion_despacho,'Logística');
+                LogActividad::registrar(Auth::user(), 'Programacion de Despacho Externo', 2, $programacion_despachos->getTable(), null, $ordenDespacho, $comentario_programacion_despacho, 'Logística');
 
                 // ------------------
             }
@@ -1699,64 +1701,129 @@ class OrdenesDespachoExternoController extends Controller
             $montoSubtotal = $request->precio_unitario ?? null;
             $montoIgv = $request->importe_igv ?? null;
             $montoTotal = $request->importe_total ?? null;
+            $idDocumento = 0;
+            $codigoDocumento = '';
 
-            $requerimiento = new Requerimiento();
-            $requerimiento->id_tipo_requerimiento = 8; // por defecto Otros
-            $requerimiento->id_usuario = Auth::user()->id_usuario;
-            $requerimiento->fecha_requerimiento = new Carbon();
-            $requerimiento->id_periodo = $request->periodo;
-            $requerimiento->id_prioridad = $request->prioridad;
-            $requerimiento->concepto = strtoupper($request->concepto);
-            $requerimiento->observacion = $request->observacion;
-            $requerimiento->id_empresa = $request->empresa ? $request->empresa : null;
-            $requerimiento->id_sede = $request->sede > 0 ? $request->sede : null;
-            $requerimiento->id_grupo = $request->grupo > 0 ? $request->grupo : null;
-            $requerimiento->division_id = $request->division > 0 ?  $request->division : null;
-            $requerimiento->fecha_registro = new Carbon();
-            $requerimiento->id_almacen = $request->almacen > 0 ? $request->almacen : null;
-            $requerimiento->monto_subtotal = $montoSubtotal;
-            $requerimiento->monto_igv = $montoIgv;
-            $requerimiento->monto_total = $montoTotal;
-            $requerimiento->fecha_entrega = $request->fecha_entrega != null ? $request->fecha_entrega : null;
-            $requerimiento->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
-            $requerimiento->id_cc = $request->cdp > 0 ? $request->cdp : null;
-            $requerimiento->trabajador_id = $request->solicitado_por > 0 ? $request->solicitado_por : null;
-            $requerimiento->id_moneda = 1; // por defecto es en soles
-            $requerimiento->tiene_transformacion = false;
-            $requerimiento->confirmacion_pago = true;
-            $requerimiento->id_tipo_detalle = 2; // tipo servicio
-            $requerimiento->estado = 1;
-            $requerimiento->save();
+            if ($request->tipo_documento == 1) {
+                $requerimientoLogistico = new Requerimiento();
+                $requerimientoLogistico->id_tipo_requerimiento = 8; // por defecto Otros
+                $requerimientoLogistico->id_usuario = Auth::user()->id_usuario;
+                $requerimientoLogistico->fecha_requerimiento = new Carbon();
+                $requerimientoLogistico->id_periodo = $request->periodo;
+                $requerimientoLogistico->id_prioridad = $request->prioridad;
+                $requerimientoLogistico->concepto = strtoupper($request->concepto);
+                $requerimientoLogistico->observacion = $request->observacion;
+                $requerimientoLogistico->id_empresa = $request->empresa ? $request->empresa : null;
+                $requerimientoLogistico->id_sede = $request->sede > 0 ? $request->sede : null;
+                $requerimientoLogistico->id_grupo = $request->grupo > 0 ? $request->grupo : null;
+                $requerimientoLogistico->division_id = $request->division > 0 ?  $request->division : null;
+                $requerimientoLogistico->fecha_registro = new Carbon();
+                $requerimientoLogistico->id_almacen = $request->almacen > 0 ? $request->almacen : null;
+                $requerimientoLogistico->monto_subtotal = $montoSubtotal;
+                $requerimientoLogistico->monto_igv = $montoIgv;
+                $requerimientoLogistico->monto_total = $montoTotal;
+                $requerimientoLogistico->fecha_entrega = $request->fecha_entrega != null ? $request->fecha_entrega : null;
+                $requerimientoLogistico->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
+                $requerimientoLogistico->id_cc = $request->cdp > 0 ? $request->cdp : null;
+                $requerimientoLogistico->trabajador_id = $request->solicitado_por > 0 ? $request->solicitado_por : null;
+                $requerimientoLogistico->id_moneda = 1; // por defecto es en soles
+                $requerimientoLogistico->tiene_transformacion = false;
+                $requerimientoLogistico->confirmacion_pago = true;
+                $requerimientoLogistico->id_tipo_detalle = 2; // tipo servicio
+                $requerimientoLogistico->estado = 1;
+                $requerimientoLogistico->save();
+
+                $idDocumento = $requerimientoLogistico->id_requerimiento;
+                $codigoDocumento = $requerimientoLogistico->codigo;
+
+                $detalle = new DetalleRequerimiento();
+                $detalle->id_requerimiento = $idDocumento;
+                $detalle->id_tipo_item = 2; //servicio
+                $detalle->partida = null;
+                $detalle->centro_costo_id = (isset($request->centro_costo) && $request->centro_costo > 0) ? $request->centro_costo : null;
+                $detalle->tiene_transformacion = false;
+                $detalle->descripcion = Str::upper($request->descripcion_item);
+                $detalle->id_unidad_medida = 17; // servicio
+                $detalle->cantidad = 1;
+                $detalle->precio_unitario = $request->precio_unitario;
+                $detalle->subtotal = $request->precio_unitario;
+                $detalle->fecha_registro = new Carbon();
+                $detalle->estado = 1;
+                $detalle->save();
+                $detalle->idRegister = $request->id_item;
+                $detalleArray[] = $detalle;
+            } elseif ($request->tipo_documento == 11) {
+
+                $requerimientoPago = new RequerimientoPago();
+                $requerimientoPago->id_requerimiento_pago_tipo = 7; // por defecto Requerimiento de adelanto por rendir
+                $requerimientoPago->id_usuario = Auth::user()->id_usuario;
+                $requerimientoPago->id_periodo = $request->periodo;
+                $requerimientoPago->id_prioridad = $request->prioridad;
+                $requerimientoPago->concepto = strtoupper($request->concepto);
+                $requerimientoPago->comentario = $request->observacion;
+                $requerimientoPago->id_empresa = $request->empresa ? $request->empresa : null;
+                $requerimientoPago->id_sede = $request->sede > 0 ? $request->sede : null;
+                $requerimientoPago->id_grupo = $request->grupo > 0 ? $request->grupo : null;
+                $requerimientoPago->id_division = $request->division > 0 ?  $request->division : null;
+                $requerimientoPago->fecha_registro = new Carbon();
+                $requerimientoPago->monto_total = $montoTotal;
+                $requerimientoPago->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
+                $requerimientoPago->id_cc = $request->cdp > 0 ? $request->cdp : null;
+                $requerimientoPago->id_trabajador = $request->solicitado_por > 0 ? $request->solicitado_por : null;
+                $requerimientoPago->id_moneda = 1; // por defecto es en soles
+                $requerimientoPago->id_estado = 1;
+                //
+                $requerimientoPago->id_tipo_destinatario = $request->tipo_destinatario >0 ?$request->tipo_destinatario:null;
+                if($request->tipo_destinatario ==1){ // persona
+                    $requerimientoPago->id_persona = $request->id_persona >0 ? $request->id_persona:null;
+                    $requerimientoPago->id_cuenta_persona = $request->id_cuenta_destinatario >0 ? $request->id_cuenta_destinatario:null;
+                    $requerimientoPago->id_trabajador = null;
+                    $requerimientoPago->id_contribuyente = null;
+                    $requerimientoPago->id_cuenta_contribuyente = null;
+                    
+                }elseif($request->tipo_destinatario==2){ // contribuyente
+                    $requerimientoPago->id_persona = null;
+                    $requerimientoPago->id_cuenta_persona = null;
+                    $requerimientoPago->id_trabajador = $request->id_trabajador >0 ? $request->id_trabajador:null;
+                    $requerimientoPago->id_contribuyente = $request->id_contribuyente >0 ? $request->id_contribuyente:null;
+                    $requerimientoPago->id_cuenta_contribuyente = $request->id_cuenta_destinatario >0 ? $request->id_cuenta_destinatario:null;
+                }
+                
+                $requerimientoPago->save();
+
+                $idDocumento = $requerimientoPago->id_requerimiento_pago;
+
+                $detalle = new RequerimientoPagoDetalle();
+                $detalle->id_requerimiento_pago = $idDocumento;
+                $detalle->id_tipo_item = 2; //servicio
+                $detalle->id_partida = null;
+                $detalle->id_centro_costo = (isset($request->centro_costo) && $request->centro_costo > 0) ? $request->centro_costo : null;
+                $detalle->descripcion = Str::upper($request->descripcion_item);
+                $detalle->id_unidad_medida = 17; // servicio
+                $detalle->cantidad = 1;
+                $detalle->precio_unitario = $request->precio_unitario;
+                $detalle->subtotal = $request->precio_unitario;
+                $detalle->fecha_registro = new Carbon();
+                $detalle->id_estado = 1;
+                $detalle->save();
+                $detalle->idRegister = $request->id_item;
+                $detalleArray[] = $detalle;
+
+            }
 
 
-            $detalle = new DetalleRequerimiento();
-            $detalle->id_requerimiento = $requerimiento->id_requerimiento;
-            $detalle->id_tipo_item = 2; //servicio
-            $detalle->partida = null;
-            $detalle->centro_costo_id = (isset($request->centro_costo) && $request->centro_costo > 0) ? $request->centro_costo : null;
-            $detalle->tiene_transformacion = false;
-            $detalle->descripcion = Str::upper($request->descripcion_item);
-            $detalle->id_unidad_medida = 17; // servicio
-            $detalle->cantidad = 1;
-            $detalle->precio_unitario = $request->precio_unitario;
-            $detalle->subtotal = $request->precio_unitario;
-            $detalle->fecha_registro = new Carbon();
-            $detalle->estado = 1;
-            $detalle->save();
-            $detalle->idRegister = $request->id_item;
-            $detalleArray[] = $detalle;
-
-
-            $documento = new Documento();
-            $documento->id_tp_documento = 1;
-            $documento->codigo_doc = $requerimiento->codigo;
-            $documento->id_doc = $requerimiento->id_requerimiento;
-            $documento->save();
+        
 
 
             $ordenDespachoFlete = new OrdenDespachoFlete();
             $ordenDespachoFlete->id_od = $request->id_od;
-            $ordenDespachoFlete->id_requerimiento = $requerimiento->id_requerimiento;
+            if ($request->tipo_documento == 1) {
+                $ordenDespachoFlete->id_requerimiento = $idDocumento;
+                $ordenDespachoFlete->id_requerimiento_pago = null;
+            } elseif ($request->tipo_documento == 11) {
+                $ordenDespachoFlete->id_requerimiento_pago = $idDocumento;
+                $ordenDespachoFlete->id_requerimiento = null;
+            }
             $ordenDespachoFlete->estado = 1;
             $ordenDespachoFlete->id_usuario = Auth::user()->id_usuario;
             $ordenDespachoFlete->fecha_registro = new Carbon();
@@ -1765,39 +1832,103 @@ class OrdenesDespachoExternoController extends Controller
 
 
             DB::commit();
+            // creando codigo para requerimiento de flete logístico y guardando adjunto
+            if ($request->tipo_documento == 1) {
+                $codigo = Requerimiento::crearCodigo(7, $request->grupo, ($idDocumento), $request->periodo);
+                $req = Requerimiento::find($idDocumento);
+                $req->codigo = $codigo;
+                $req->save();
 
-            $codigo = Requerimiento::crearCodigo(7, $request->grupo, $requerimiento->id_requerimiento, $request->periodo);
-            $req = Requerimiento::find($requerimiento->id_requerimiento);
-            $req->codigo = $codigo;
-            $req->save();
+                $codigoDocumento= $codigo;
 
+                $documento = new Documento();
+                $documento->id_tp_documento = 1;
+                $documento->codigo_doc = $req->codigo;
+                $documento->id_doc = $idDocumento;
+                $documento->save();
 
-            //si existe nuevos adjuntos de nuevos item
-            $adjuntoDetelleRequerimiento = [];
-            if (isset($detalleArray) && count($detalleArray) > 0) {
-                for ($i = 0; $i < count($detalleArray); $i++) {
-                    $archivos = $request->{"archivoAdjuntoRequerimientoDetalleGuardar" . $detalleArray[$i]['idRegister']};
-                    if (isset($archivos)) {
-                        foreach ($archivos as $archivo) {
-                            if ($archivo != null) {
-                                $adjuntoDetelleRequerimiento[] = [
-                                    'id_detalle_requerimiento' => $detalleArray[$i]['id_detalle_requerimiento'],
-                                    // 'nombre_archivo' => $archivo->getClientOriginalName(),
-                                    'archivo' => $archivo
-                                ];
+                //si existe nuevos adjuntos de nuevos item
+                $adjuntoDetelleRequerimiento = [];
+                if (isset($detalleArray) && count($detalleArray) > 0) {
+                    for ($i = 0; $i < count($detalleArray); $i++) {
+                        $archivos = $request->{"archivoAdjuntoRequerimientoDetalleGuardar" . $detalleArray[$i]['idRegister']};
+                        if (isset($archivos)) {
+                            foreach ($archivos as $archivo) {
+                                if ($archivo != null) {
+                                    $adjuntoDetelleRequerimiento[] = [
+                                        'id_detalle_requerimiento' => $detalleArray[$i]['id_detalle_requerimiento'],
+                                        // 'nombre_archivo' => $archivo->getClientOriginalName(),
+                                        'archivo' => $archivo
+                                    ];
+                                }
                             }
                         }
                     }
                 }
+
+                if (count($adjuntoDetelleRequerimiento) > 0) {
+                    (new RequerimientoController)->guardarAdjuntoNivelDetalleItem($adjuntoDetelleRequerimiento, $codigo);
+                }
+
+                // creando codigo de requerimiento de flete de pago y guardand oadjunto
+            } elseif ($request->tipo_documento == 11) {
+                $codigo = RequerimientoPago::crearCodigo($request->grupo, ($idDocumento), $request->periodo);
+                $req = RequerimientoPago::find($idDocumento);
+                $req->codigo = $codigo;
+                $req->save();
+                $codigoDocumento= $codigo;
+
+                $documento = new Documento();
+                $documento->id_tp_documento = 11;
+                $documento->codigo_doc = $req->codigo;
+                $documento->id_doc = $idDocumento;
+                $documento->save();
+
+
+                //si existe nuevos adjuntos de nuevos item
+                // $adjuntoDetelleRequerimiento = [];
+                $adjuntoDetelleRequerimiento = collect();
+                if (isset($detalleArray) && count($detalleArray) > 0) {
+                    for ($i = 0; $i < count($detalleArray); $i++) {
+                        $archivos = $request->{"archivoAdjuntoRequerimientoDetalleGuardar" . $detalleArray[$i]['idRegister']};
+                        if (isset($archivos)) {
+                            foreach ($archivos as $key => $archivo) {
+                                if ($archivo != null) {
+
+ 
+                                    $adjuntoDetelleRequerimiento->push((object)[
+                                            'action' => 'GUARDAR',
+                                            'id_requerimiento_pago' => $detalleArray[$i]['id_requerimiento_pago'],
+                                            'id_requerimiento_pago_detalle' => $detalleArray[$i]['id_requerimiento_pago_detalle'],
+                                            'codigo' => $req->codigo,
+                                            'file' => $archivo
+                        
+                                        ]);
+                         
+                                    // $adjuntoDetelleRequerimiento[] = [
+                                    //     'action' => 'GUARDAR',
+                                    //     'id_requerimiento_pago' => $detalleArray[$i]['id_requerimiento_pago'],
+                                    //     'id_detalle_requerimiento_pago' => $detalleArray[$i]['id_detalle_requerimiento_pago'],
+                                    //     'codigo' => $req->codigo,
+                                    //     'file' => $archivo
+                                    // ];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (count($adjuntoDetelleRequerimiento) > 0) {
+                    (new RequerimientoPagoController)->guardarAdjuntoRequerimientoPagoDetalle($adjuntoDetelleRequerimiento);
+                }
             }
 
-            if (count($adjuntoDetelleRequerimiento) > 0) {
-                (new RequerimientoController)->guardarAdjuntoNivelDetalleItem($adjuntoDetelleRequerimiento, $codigo);
-            }
+
+
 
 
             if ($req) {
-                return response()->json(['status' => 'success', 'mensaje' => 'Requerimiento de flete ' . $req->codigo . ' fue creado.']);
+                return response()->json(['status' => 'success', 'mensaje' => 'Requerimiento de flete ' . $codigoDocumento . ' fue creado.']);
             } else {
                 return response()->json(['status' => 'error', 'mensaje' => 'Hubo un problema al generar el requerimiento de flete']);
             }
@@ -1806,4 +1937,7 @@ class OrdenesDespachoExternoController extends Controller
             return response()->json(['status' => 'error', 'mensaje' => $e->getMessage()]);
         }
     }
+
+
+   
 }

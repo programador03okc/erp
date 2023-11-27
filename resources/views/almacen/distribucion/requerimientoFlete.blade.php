@@ -14,13 +14,63 @@
                             <h5>Cabecera Requerimiento</h5>
                             <fieldset class="group-table" id="fieldsetRequerimiento">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <h5>Tipo documento a generar</h5>
+                                            <select id="tipo_documento" class="form-control" name="tipo_documento" onchange="mostrarCamposSegunTipoDocumentoSeleccionado();">
+                                                <option value="1">Requerimiento Logístico</option>
+                                                <option value="11">Requerimiento Pago</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
                                         <div class="form-group">
                                             <h5>Motivo/Concepto</h5>
                                             <input type="text" name="concepto" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row" id="contenedor-destinatario" hidden>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <h5>Tipo destinatario</h5>
+                                            <select id="tipo_destinatario" class="form-control" name="tipo_destinatario" onclick="cambiarTipoDestinatario();">
+                                                <option value="1">Persona</option>
+                                                <option value="2">Contribuyente</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h5>Nombre destinatario</h5>
+                                            <div class="input-group">
+                                                <input type="text" class="oculto" name="id_persona" />
+                                                <input type="text" class="oculto" name="id_trabajador" />
+                                                <input type="text" class="oculto" name="id_contribuyente" />
+                                                <input type="text" name="numero_documento_destinatario" class="form-control" style="width:30%;" placeholder="N° documento" readonly />
+                                                <input type="text" name="nombre_completo_destinatario" class="form-control" placeholder="Nombre destinatario" style="width:70%;" readonly />
+                                                <div class="input-group-btn">
+                                                    <button type="button" class="btn btn-sm btn-flat btn-primary" onclick="abrirModalBuscadorDeDestinatario();">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <h5>Cuenta destinatario</h5>
+                                            <select id="id_cuenta_destinatario" class="form-control" name="id_cuenta_destinatario">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">

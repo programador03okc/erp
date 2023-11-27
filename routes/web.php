@@ -1678,6 +1678,10 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('mostrar-centro-costos', [CentroCostoController::class, 'mostrarCentroCostosSegunGrupoUsuario'])->name('mostrar-centro-costos');
 				Route::get('mostrar-requerimiento-orden-despacho/{idOd?}', [OrdenesDespachoExternoController::class, 'mostrarRequerimientoOrdenDespacho'])->name('mostrar-requerimiento-orden-despacho');
 				Route::post('guardar-requerimiento-flete', [OrdenesDespachoExternoController::class, 'guardarRequerimientoFlete'])->name('guardar-requerimiento-flete');
+				Route::get('lista-destinatario-persona', [NecesidadesController::class, 'listaDestinatarioPersona'])->name('lista-destinatario-persona');
+				Route::get('lista-destinatario-contribuyente', [NecesidadesController::class, 'listaDestinatarioContribuyente'])->name('lista-destinatario-contribuyente');
+				Route::get('obtener-data-cuentas-de-persona/{idPersona}', [NecesidadesController::class, 'obtenerDataCuentasDePersona'])->name('obtener-data-cuentas-de-persona');
+				Route::get('obtener-data-cuentas-de-contribuyente/{idContribuyente}', [NecesidadesController::class, 'obtenerDataCuentasDeContribuyente'])->name('obtener-data-cuentas-de-contribuyente');
 
 
 			});

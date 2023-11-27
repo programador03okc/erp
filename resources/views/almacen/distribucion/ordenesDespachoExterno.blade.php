@@ -141,6 +141,7 @@ Gestión de Despachos
 @include('almacen.distribucion.agregarTransportista')
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
 @include('almacen.distribucion.requerimientoFlete')
+@include('necesidades.destinatarioModal')
 @include('logistica.requerimientos.modal_adjuntar_archivos_detalle_requerimiento')
 @include('logistica.requerimientos.modal_centro_costos')
 

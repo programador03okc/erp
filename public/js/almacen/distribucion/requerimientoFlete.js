@@ -36,6 +36,9 @@ $('#modal-centro-costos').on("click", "button.handleClickSelectCentroCosto", (e)
 $('#modal-requerimiento_flete').on("click", "button.handleClickAdjuntarArchivoItem", (e) => {
     this.modalAdjuntarArchivosDetalle(e.currentTarget);
 });
+$('#modal-requerimiento_flete').on("change", "select.cambiarTipoDestinatario", (e) => {
+    this.cambiarTipoDestinatario();
+});
 
 $('#modal-adjuntar-archivos-detalle-requerimiento').on("change", "input.handleChangeAgregarAdjuntoDetalle", (e) => {
     this.agregarAdjuntoRequerimientoPagoDetalle(e.currentTarget);
@@ -45,12 +48,12 @@ $('#modal-adjuntar-archivos-detalle-requerimiento').on("click", "button.handleCl
     this.eliminarArchivoRequerimientoDetalle(e.currentTarget);
 });
 
-var objBotonAdjuntoRequerimientoDetalleSeleccionado='';
-var tempArchivoAdjuntoItemsRequerimientoList=[];
- 
-function consultaGuardarRequerimientoFlete(id_od){
-    
-    if(id_od>0){
+var objBotonAdjuntoRequerimientoDetalleSeleccionado = '';
+var tempArchivoAdjuntoItemsRequerimientoList = [];
+
+function consultaGuardarRequerimientoFlete(id_od) {
+
+    if (id_od > 0) {
         Swal.fire({
             title: '¿Desea crear un requerimiento de flete?',
             text: "Se utilizará parte de la data del requerimiento base",
@@ -60,7 +63,7 @@ function consultaGuardarRequerimientoFlete(id_od){
             cancelButtonColor: '#d33',
             cancelButtonText: 'Cancelar',
             confirmButtonText: 'Si, generar'
-    
+
         }).then((result) => {
             if (result.isConfirmed) {
                 openModalRequerimientoFlete(id_od);
@@ -70,30 +73,238 @@ function consultaGuardarRequerimientoFlete(id_od){
     }
 }
 
-function openModalRequerimientoFlete(id_od){
+function cambiarTipoDestinatario(){
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_persona']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_trabajador']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_contribuyente']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='nombre_completo_destinatario']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='numero_documento_destinatario']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] select[name='id_cuenta_destinatario']").innerHTML = "";
+
+}
+
+function openModalRequerimientoFlete(id_od) {
     $('#modal-requerimiento_flete').modal({
         show: true
     });
-    llenarFormularioRequerimientoFlete(id_od);   
+    mostrarCamposSegunTipoDocumentoSeleccionado();
+    llenarFormularioRequerimientoFlete(id_od);
 }
 
 
+function mostrarCamposSegunTipoDocumentoSeleccionado() {
+    const tipoDocumento = document.querySelector("div[id='modal-requerimiento_flete'] select[name='tipo_documento']").value;
+    console.log(tipoDocumento);
+    if (tipoDocumento == 1) {
+        document.querySelector("div[id='modal-requerimiento_flete'] div[id='contenedor-destinatario']").setAttribute("hidden", true);
+    } else if (tipoDocumento == 11) {
+        document.querySelector("div[id='modal-requerimiento_flete'] div[id='contenedor-destinatario']").removeAttribute("hidden");
+    } else {
+        Lobibox.notify("warning", {
+            title: false,
+            size: "mini",
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: "Seleccione un tipo de documento"
+        });
+    }
+}
 
-function getRequerimientoOrdenDespacho(id_od){
 
-    return new Promise(function(resolve, reject) {
+function abrirModalBuscadorDeDestinatario() {
+    const tipoDestinatario = document.querySelector("div[id='modal-requerimiento_flete'] select[name='tipo_destinatario']").value;
+    $('#modal-destinatario').modal({
+        show: true
+    });
+
+    if (tipoDestinatario == 1) {
+        $("span[name='tipo_destinatario']").text("Persona");
+        listarDestinatariosTipoPersona();
+    } else if (tipoDestinatario == 2) {
+        $("span[name='tipo_destinatario']").text("Contribuyente");
+        listarDestinatariosTipoContribuyente();
+    }
+
+}
+
+
+function listarDestinatariosTipoPersona() {
+    var vardataTables = funcDatatables();
+    tableElaborado = $("#ListaDestinatario").DataTable({
+        dom: vardataTables[1],
+        buttons: [],
+        language: vardataTables[0],
+        destroy: true,
+        ajax: "lista-destinatario-persona",
+        // 'serverSide' : true,
+        columns: [
+            { data: "nro_documento",'className': 'text-left' },
+            { data: "nombre_completo", 'className': 'text-left'},
+            {
+                render: function (data, type, row) {
+                    return (
+                        '<button type="button" class="detalle btn btn-primary boton"' +
+                        'data-placement="bottom" title="Seleccionar" data-id-persona="' +row["id_persona"] +'" data-id-trabajador="' +(row["id_trabajador"] !=null ? row["id_trabajador"]:"") +'"  data-nombre-completo-destinatario="' +(row["nombre_completo"] !=null?row["nombre_completo"]:"") +'"  data-numero-documento-destinatario="' +(row["nro_documento"]!=null?row["nro_documento"]:"") +'" onClick="seleccionarPersona(event)">' +
+                        'Seleccionar</button>'
+                    );
+                },'className': 'text-center'
+            }
+        ],
+        columnDefs: [
+        ]
+    });
+}
+
+function seleccionarPersona(event){
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_persona']").value = event.currentTarget.dataset.idPersona;
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_trabajador']").value = event.currentTarget.dataset.idTrabajador;
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_contribuyente']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='nombre_completo_destinatario']").value = event.currentTarget.dataset.nombreCompletoDestinatario??"";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='numero_documento_destinatario']").value = event.currentTarget.dataset.numeroDocumentoDestinatario??"";
+    $('#modal-destinatario').modal('hide');
+    cargarCuentasDePersona(event.currentTarget.dataset.idPersona);
+
+}
+function seleccionarContribuyente(event){
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_persona']").value ="";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_trabajador']").value = "";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_contribuyente']").value = event.currentTarget.dataset.idContribuyente;
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='nombre_completo_destinatario']").value = event.currentTarget.dataset.nombreCompletoDestinatario??"";
+    document.querySelector("div[id='modal-requerimiento_flete'] input[name='numero_documento_destinatario']").value = event.currentTarget.dataset.numeroDocumentoDestinatario??"";
+    $('#modal-destinatario').modal('hide');
+    cargarCuentasDeContribuyente(event.currentTarget.dataset.idContribuyente);
+
+}
+
+function cargarCuentasDeContribuyente(idContribuyente){
+
+    $('#id_cuenta_destinatario').LoadingOverlay("show", {
+        imageAutoResize: true,
+        progress: true,
+        imageColor: "#3c8dbc"
+    });
+
+    getSelectCuentasDeContribuyente(idContribuyente).then((res) => {
+        $('#id_cuenta_destinatario').LoadingOverlay("hide", true);
+        // console.log(res);
+        let html='';
+        res.forEach(element => {
+            html+=`<option value="${element.id_cuenta_contribuyente}">${(element.nro_cuenta!=null && element.nro_cuenta!="") ? element.nro_cuenta:""} ${(element.nro_cuenta_interbancaria!=null && element.nro_cuenta_interbancaria!="") ? (', CCI: '+element.nro_cuenta_interbancaria):""}</option>`;
+        });
+
+        const selectCuentas = document.querySelector('div[id="modal-requerimiento_flete"] select[id="id_cuenta_destinatario"]');
+        selectCuentas.innerHTML = html;
+
+    });
+    
+}
+function cargarCuentasDePersona(idPersona){
+
+    $('#id_cuenta_destinatario').LoadingOverlay("show", {
+        imageAutoResize: true,
+        progress: true,
+        imageColor: "#3c8dbc"
+    });
+
+    getSelectCuentasDePersona(idPersona).then((res) => {
+        $('#id_cuenta_destinatario').LoadingOverlay("hide", true);
+        // console.log(res);
+        let html='';
+        res.forEach(element => {
+            html+=`<option value="${element.id_cuenta_bancaria}">${(element.nro_cuenta!=null && element.nro_cuenta!="") ? element.nro_cuenta:""} ${(element.nro_cci!=null && element.nro_cci!="") ? (', CCI: '+element.nro_cci):""}</option>`;
+        });
+
+        const selectCuentas = document.querySelector('div[id="modal-requerimiento_flete"] select[id="id_cuenta_destinatario"]');
+        selectCuentas.innerHTML = html;
+
+    });
+    
+}
+
+function getSelectCuentasDeContribuyente(idContribuyente){
+    return new Promise(function (resolve, reject) {
         $.ajax({
             type: 'GET',
-            url:`mostrar-requerimiento-orden-despacho/${id_od}`,
+            url: `obtener-data-cuentas-de-contribuyente/${idContribuyente}`,
             dataType: 'JSON',
-            beforeSend: function (data) { 
-    
+            beforeSend: function (data) {
+            },
+            success(response) {
+                resolve(response);
+
+            },
+            fail: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    });
+}
+function getSelectCuentasDePersona(idPersona){
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'GET',
+            url: `obtener-data-cuentas-de-persona/${idPersona}`,
+            dataType: 'JSON',
+            beforeSend: function (data) {
+            },
+            success(response) {
+                resolve(response);
+
+            },
+            fail: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    });
+}
+
+function listarDestinatariosTipoContribuyente() {
+    var vardataTables = funcDatatables();
+    tableElaborado = $("#ListaDestinatario").DataTable({
+        dom: vardataTables[1],
+        buttons: [],
+        language: vardataTables[0],
+        destroy: true,
+        ajax: "lista-destinatario-contribuyente",
+        columns: [
+            { data: "documento",'className': 'text-left' },
+            { data: "nombre", 'className': 'text-left'},
+            {
+                render: function (data, type, row) {
+                    return (
+                        '<button type="button" class="detalle btn btn-primary boton"' +
+                        'data-placement="bottom" title="Seleccionar" data-id-contribuyente="' +row["id_contribuyente"] +'" data-nombre-completo-destinatario="' +(row["nombre"] !=null?row["nombre"]:"") +'"  data-numero-documento-destinatario="' +(row["documento"]!=null?row["documento"]:"") +'" onClick="seleccionarContribuyente(event)">' +
+                        'Seleccionar</button>'
+                    );
+                },'className': 'text-center'
+            }
+        ],
+        columnDefs: [
+        ]
+    });
+}
+
+
+function getRequerimientoOrdenDespacho(id_od) {
+
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'GET',
+            url: `mostrar-requerimiento-orden-despacho/${id_od}`,
+            dataType: 'JSON',
+            beforeSend: function (data) {
+
                 $('#modal-requerimiento_flete .modal-content').LoadingOverlay("show", {
                     imageAutoResize: true,
                     progress: true,
                     imageColor: "#3c8dbc"
                 });
-                },
+            },
             success(response) {
                 resolve(response);
                 $('#modal-requerimiento_flete .modal-content').LoadingOverlay("hide", true);
@@ -105,11 +316,11 @@ function getRequerimientoOrdenDespacho(id_od){
                 console.log(textStatus);
                 console.log(errorThrown);
             }
-            });
         });
+    });
 }
 
-function llenarFormularioRequerimientoFlete(id_od){
+function llenarFormularioRequerimientoFlete(id_od) {
 
     getRequerimientoOrdenDespacho(id_od).then((res) => {
         console.log(res);
@@ -119,29 +330,29 @@ function llenarFormularioRequerimientoFlete(id_od){
         $("[name=grupo]").val(res.requerimiento[0].id_grupo);
         $("[name=division]").val(res.requerimiento[0].division_id);
         $("[name=cdp]").val(res.requerimiento[0].id_cc);
-        
+
         $('.selectpicker').selectpicker('refresh');
-        
+
         // $("[name=proyecto]").val(res.requerimiento[0].id_proyecto);
         // $("[name=partida]").val(res.det_req[0].id_partida);
         // document.querySelector("input[name='partida']").closest("td").querySelector("p[class='descripcion-partida']").textContent= res.det_req[0].codigo_partida;
         // document.querySelector("input[name='centro_costo']").closest("td").querySelector("p[class='descripcion-centro-costo']").textContent= res.det_req[0].codigo_centro_costo;
         // $("[name=descripcion_item]").val(res.det_req[0].descripcion);
-        if(fleteObject.hasOwnProperty('importe_total')){
+        if (fleteObject.hasOwnProperty('importe_total')) {
             console.log(fleteObject);
             $("[name=precio_unitario]").val(fleteObject.precio_unitario);
             $("[name=importe_igv]").val(fleteObject.importe_igv);
             $("[name=importe_total]").val(fleteObject.importe_total);
-            
+
             $("input[name=fecha_entrega]").val(fleteObject.fecha_entrega);
             $("span[id='precio_unitario']").text($.number(fleteObject.precio_unitario, 2, ".", ","));
             $("span[id='importe_igv']").text($.number(fleteObject.importe_igv, 2, ".", ","));
             $("span[id='importe_total']").text($.number(fleteObject.importe_total, 2, ".", ","));
-            let conceptoPersonalizado ='REQUERIMIENTO DE PAGO DE FLETE '+(res.requerimiento[0].codigo_oportunidad!="" && res.requerimiento[0].codigo_oportunidad!=null ?res.requerimiento[0].codigo_oportunidad:"")+(fleteObject.estado!="" && fleteObject.estado!=null?(', '+fleteObject.estado):"");
+            let conceptoPersonalizado = 'REQUERIMIENTO DE PAGO DE FLETE ' + (res.requerimiento[0].codigo_oportunidad != "" && res.requerimiento[0].codigo_oportunidad != null ? res.requerimiento[0].codigo_oportunidad : "") + (fleteObject.estado != "" && fleteObject.estado != null ? (', ' + fleteObject.estado) : "");
             $("[name=concepto]").val(conceptoPersonalizado.trim());
-            let observacionPersonalizado = res.requerimiento[0].concepto+' '+(fleteObject.transportista !="" && fleteObject.transportista !=null ? ("/ TRANSPORTISTA: "+fleteObject.transportista):"" );
+            let observacionPersonalizado = res.requerimiento[0].concepto + ' ' + (fleteObject.transportista != "" && fleteObject.transportista != null ? ("/ TRANSPORTISTA: " + fleteObject.transportista) : "");
             $("[name=observacion]").val(observacionPersonalizado.trim());
-            fleteObject={};
+            fleteObject = {};
 
         }
 
@@ -161,43 +372,43 @@ function llenarFormularioRequerimientoFlete(id_od){
 
 
 $("#form-requerimiento_flete").on("submit", function (e) {
-    e.preventDefault();    
-    let mensajeList=[];
+    e.preventDefault();
+    let mensajeList = [];
     let continuar = true;
 
     if (document.querySelector("div[id='modal-requerimiento_flete'] input[name='id_od']").value == '') {
         mensajeList.push("Orden de despacho");
         continuar = false;
     }
-    if (["","0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='empresa']").value)) {
+    if (["", "0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='empresa']").value)) {
         mensajeList.push("Empresa");
         continuar = false;
     }
-    if (["","0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='sede']").value)) {
+    if (["", "0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='sede']").value)) {
         mensajeList.push("Sede");
         continuar = false;
     }
-    if (["","0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='division']").value)) {
+    if (["", "0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='division']").value)) {
         mensajeList.push("Division");
         continuar = false;
     }
-    if (["","0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='cdp']").value)) {
+    if (["", "0"].includes(document.querySelector("div[id='modal-requerimiento_flete'] select[name='cdp']").value)) {
         mensajeList.push("CDP");
         continuar = false;
     }
 
-    if(continuar){
+    if (continuar) {
         guardarRequerimientoFlete();
-    }else{
+    } else {
         Swal.fire({
-            title:  'No seleccionó una '+mensajeList.toString()+', vuelva al listado y selecciona una opción valida',
+            title: 'No seleccionó una ' + mensajeList.toString() + ', vuelva al listado y selecciona una opción valida',
             icon: "warning",
         });
     }
-    
+
 });
 
-function guardarRequerimientoFlete(){
+function guardarRequerimientoFlete() {
     $('#submit_od_requerimiento_flete').attr('disabled', 'true');
 
     let formData = new FormData($('#form-requerimiento_flete')[0]);
@@ -229,9 +440,9 @@ function guardarRequerimientoFlete(){
                     msg: response.mensaje
                 });
 
-                tempArchivoAdjuntoItemsRequerimientoList=[];
-                objBotonAdjuntoRequerimientoDetalleSeleccionado='';
-            }else{
+                tempArchivoAdjuntoItemsRequerimientoList = [];
+                objBotonAdjuntoRequerimientoDetalleSeleccionado = '';
+            } else {
                 Lobibox.notify("error", {
                     title: false,
                     size: "mini",
@@ -246,7 +457,7 @@ function guardarRequerimientoFlete(){
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-    }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) { 
+    }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
         $('#submit_od_requerimiento_flete').removeAttr('disabled');
     });
 
@@ -305,7 +516,7 @@ function llenarSelectSede(array, idSede) {
         option.value = element.id_sede;
         if (element.id_sede == idSede) {
             option.setAttribute('selected', 'selected');
-            document.querySelector("input[name='almacen']").value=element.id_almacen;
+            document.querySelector("input[name='almacen']").value = element.id_almacen;
         }
         option.setAttribute('data-ubigeo', element.id_ubigeo);
         option.setAttribute('data-name-ubigeo', element.ubigeo_descripcion);
@@ -317,9 +528,9 @@ function llenarSelectSede(array, idSede) {
 
 }
 
-function handleChangeSede(obj){
+function handleChangeSede(obj) {
     var id_almacen = obj.options[obj.selectedIndex].getAttribute('data-id-almacen');
-    document.querySelector("input[name='almacen']").value=id_almacen;
+    document.querySelector("input[name='almacen']").value = id_almacen;
 }
 
 function handleChangeDivision(obj) {
@@ -542,9 +753,9 @@ function changeBtnIcon(obj) {
 //                 show: true,
 //                 backdrop: 'true'
 //             });
-    
+
 //             if (!$("select[name='id_presupuesto_interno']").val() > 0) { //* si presupuesto interno fue seleccionado, no cargar presupuesto antiguo.
-                
+
 //                 listarPartidas(id_grupo, (id_proyecto > 0 ? id_proyecto : 0));
 //             }
 //         }
@@ -705,7 +916,7 @@ function selectCentroCosto(idCentroCosto, codigo, descripcion) {
 
 
 function modalAdjuntarArchivosDetalle(obj) {
-    objBotonAdjuntoRequerimientoDetalleSeleccionado =obj;
+    objBotonAdjuntoRequerimientoDetalleSeleccionado = obj;
     $('#modal-adjuntar-archivos-detalle-requerimiento').modal({
         show: true,
         backdrop: 'true'
@@ -718,7 +929,7 @@ function modalAdjuntarArchivosDetalle(obj) {
 
 }
 
-function listarArchivosAdjuntosDetalle(idDetalleRequerimiento){
+function listarArchivosAdjuntosDetalle(idDetalleRequerimiento) {
     if (idDetalleRequerimiento.length > 0) {
         this.limpiarTabla('listaArchivos');
         let html = '';
@@ -740,11 +951,12 @@ function listarArchivosAdjuntosDetalle(idDetalleRequerimiento){
             </tr>`;
             }
         });
-        document.querySelector("tbody[id='body_archivos_item']").insertAdjacentHTML('beforeend', html);    }
+        document.querySelector("tbody[id='body_archivos_item']").insertAdjacentHTML('beforeend', html);
+    }
 }
 
 
-function agregarAdjuntoRequerimientoPagoDetalle(obj){
+function agregarAdjuntoRequerimientoPagoDetalle(obj) {
     if (obj.files != undefined && obj.files.length > 0) {
         Array.prototype.forEach.call(obj.files, (file) => {
             if (this.estaHabilitadoLaExtension(file) == true) {
@@ -807,7 +1019,7 @@ function estaHabilitadoLaExtension(file) {
     }
 }
 
-function agregarRegistroEnTablaAdjuntoRequerimientoDetalle(payload){
+function agregarRegistroEnTablaAdjuntoRequerimientoDetalle(payload) {
     let html = '';
     html = `<tr id="${payload.id}" style="text-align:center">
     <td style="text-align:left;">${payload.nameFile}</td>
@@ -821,8 +1033,8 @@ function agregarRegistroEnTablaAdjuntoRequerimientoDetalle(payload){
     document.querySelector("tbody[id='body_archivos_item']").insertAdjacentHTML('beforeend', html);
 }
 
-function eliminarArchivoRequerimientoDetalle(obj){
-    
+function eliminarArchivoRequerimientoDetalle(obj) {
+
     // tempIdArchivoAdjuntoRequerimientoPagoDetalleToDeleteList.push(obj.dataset.id);
     var regExp = /[a-zA-Z]/g; //expresión regular
     if ((regExp.test(obj.dataset.id) == true)) {

@@ -2337,7 +2337,7 @@ class OrdenController extends Controller
         $html .= '<br>
         <table width="100%" border=0>
         <tr>
-            <td nowrap  width="1%" class="verticalTop subtitle">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'F' : 'F') . ': </td>
+            <td nowrap  width="2%" class="verticalTop subtitle">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'F' : 'F') . ': </td>
             <td class="verticalTop">' . $ordenArray['head']['fecha_limite_oc'] . '</td> 
         </tr>
         </table>

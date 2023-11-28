@@ -1708,11 +1708,19 @@ class OrdenController extends Controller
             'adm_ctb_contac.direccion as direccion_contacto',
             'adm_ctb_contac.horario as horario_contacto',
             DB::raw("(dis_contac.descripcion) || ' ' || (prov_contac.descripcion) || ' ' || (dpto_contac.descripcion)  AS ubigeo_contacto"),
-            DB::raw("( select string_agg(distinct (concat(cv.nombre_entidad ,' (',cv.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc 
+            DB::raw("( SELECT string_agg(distinct (concat(cv.nombre_entidad ,' (',cv.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc 
             inner join almacen.alm_det_req adr on adr.id_detalle_requerimiento = ldoc.id_detalle_requerimiento
             inner join almacen.alm_req ar on ar.id_requerimiento = adr.id_requerimiento
             inner join mgcp_cuadro_costos.cc_view cv  on cv.id = ar.id_cc
-            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra) AS entidad")
+            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra) AS entidad"),
+            DB::raw("(SELECT string_agg(distinct (concat(opv.fecha_entrega ,' (',o.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc 
+            inner join almacen.alm_det_req adr on adr.id_detalle_requerimiento = ldoc.id_detalle_requerimiento
+            inner join almacen.alm_req ar on ar.id_requerimiento = adr.id_requerimiento
+            inner join mgcp_cuadro_costos.cc c on c.id = ar.id_cc
+            inner join mgcp_oportunidades.oportunidades o on o.id = c.id_oportunidad
+
+            inner join mgcp_ordenes_compra.oc_propias_view opv  on opv.id_oportunidad = c.id_oportunidad 
+            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra  GROUP BY opv.fecha_entrega ORDER BY opv.fecha_entrega DESC  LIMIT 1) AS fecha_limite_oc")
 
         )
             ->leftJoin('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'log_ord_compra.id_tp_documento')
@@ -1829,6 +1837,7 @@ class OrdenController extends Controller
                     'sustento_anulacion' => $data->sustento_anulacion,
                     'estado' => $data->estado,
                     'entidad'=>$data->entidad,
+                    'fecha_limite_oc'=>$data->fecha_limite_oc,
 
                     // 'monto_igv' => $data->monto_igv,
                     // 'monto_total' => $data->monto_total,
@@ -2322,6 +2331,15 @@ class OrdenController extends Controller
                 <td nowrap  width="15%" class="verticalTop">-' . ($ordenArray['head']['id_tp_documento'] == 12 ? '01 Copy of the purchase order' : '01 copia de la orden de compra.') . '</td>
 
             </tr>
+        </table>
+        <br>
+    ';
+        $html .= '<br>
+        <table width="100%" border=0>
+        <tr>
+            <td nowrap  width="15%" class="verticalTop subtitle">-' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Deadline OC' : 'Fecha limite entrega OC') . ': </td>
+            <td class="verticalTop">' . $ordenArray['head']['fecha_limite_oc'] . '</td> 
+        </tr>
         </table>
         <br>
     ';

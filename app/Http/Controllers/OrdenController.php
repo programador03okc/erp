@@ -1707,7 +1707,12 @@ class OrdenController extends Controller
             'adm_ctb_contac.cargo as cargo_contacto',
             'adm_ctb_contac.direccion as direccion_contacto',
             'adm_ctb_contac.horario as horario_contacto',
-            DB::raw("(dis_contac.descripcion) || ' ' || (prov_contac.descripcion) || ' ' || (dpto_contac.descripcion)  AS ubigeo_contacto")
+            DB::raw("(dis_contac.descripcion) || ' ' || (prov_contac.descripcion) || ' ' || (dpto_contac.descripcion)  AS ubigeo_contacto"),
+            DB::raw("( select string_agg(distinct (concat(cv.nombre_entidad ,' (',cv.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc 
+            inner join almacen.alm_det_req adr on adr.id_detalle_requerimiento = ldoc.id_detalle_requerimiento
+            inner join almacen.alm_req ar on ar.id_requerimiento = adr.id_requerimiento
+            inner join mgcp_cuadro_costos.cc_view cv  on cv.id = ar.id_cc
+            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra) AS entidad")
 
         )
             ->leftJoin('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'log_ord_compra.id_tp_documento')
@@ -1823,6 +1828,8 @@ class OrdenController extends Controller
                     'compra_local' => $data->compra_local,
                     'sustento_anulacion' => $data->sustento_anulacion,
                     'estado' => $data->estado,
+                    'entidad'=>$data->entidad,
+
                     // 'monto_igv' => $data->monto_igv,
                     // 'monto_total' => $data->monto_total,
                     // 'moneda_descripcion' => $data->moneda_descripcion
@@ -1887,7 +1894,7 @@ class OrdenController extends Controller
                         'email_empresa' => $data->email_empresa,
                         'sede' => $data->codigo_sede_empresa
                     ],
-                    'nombre_usuario' => $data->nombre_usuario
+                    'nombre_usuario' => $data->nombre_usuario,
                 ];
             }
         }
@@ -2247,6 +2254,11 @@ class OrdenController extends Controller
                 <tr>
                     <td width="15%" class="verticalTop subtitle">-Cod. Softlink: </td>
                     <td class="verticalTop">' .  ($ordenArray['head']['condicion_compra']['codigo_softlink'] ? $ordenArray['head']['condicion_compra']['codigo_softlink'] : '') . '</td
+
+                </tr>
+                <tr>
+                    <td width="15%" class="verticalTop subtitle">-Entidad: </td>
+                    <td class="verticalTop">' .  ($ordenArray['head']['entidad'] ? $ordenArray['head']['entidad'] : '') . '</td
 
                 </tr>
                 </table>

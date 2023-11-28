@@ -1718,9 +1718,8 @@ class OrdenController extends Controller
             inner join almacen.alm_req ar on ar.id_requerimiento = adr.id_requerimiento
             inner join mgcp_cuadro_costos.cc c on c.id = ar.id_cc
             inner join mgcp_oportunidades.oportunidades o on o.id = c.id_oportunidad
-
             inner join mgcp_ordenes_compra.oc_propias_view opv  on opv.id_oportunidad = c.id_oportunidad 
-            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra  GROUP BY opv.fecha_entrega ORDER BY opv.fecha_entrega DESC  LIMIT 1) AS fecha_limite_oc")
+            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra  GROUP BY opv.fecha_entrega ORDER BY opv.fecha_entrega DESC) AS fecha_limite_oc")
 
         )
             ->leftJoin('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'log_ord_compra.id_tp_documento')

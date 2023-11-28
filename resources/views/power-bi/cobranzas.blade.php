@@ -8,8 +8,7 @@
     <div class="box-body">
         <div class="row">
             <div class="col-md-12">
-                <iframe title="Reporte Cobranzas" width="100%" height="550px" src="https://app.powerbi.com/view?r=eyJrIjoiNDExMzk1OTItMzQ2ZS00MDNjLTkxNjUtZTc1ZTU3OTAxYTFiIiwidCI6ImU1Y2RhYTRkLTU1N2YtNDZjZC04MGVlLWZmNTg0ZjU5NjRhYyJ9"
-                frameborder="0" allowFullScreen="true"></iframe>
+                <iframe title="Reporte Cobranzas" width="100%" height="550px" src="https://app.powerbi.com/view?r=eyJrIjoiMzQ5NjJiMDAtNDEzZC00NjEzLWI1YTQtYzk3MjIzMzE3MmI4IiwidCI6ImU1Y2RhYTRkLTU1N2YtNDZjZC04MGVlLWZmNTg0ZjU5NjRhYyJ9" frameborder="0" allowFullScreen="true"></iframe>
             </div>
         </div>
     </div>

@@ -2249,6 +2249,7 @@ class OrdenController extends Controller
                 <td  class="verticalTop left">' . $ordenArray['head']['condicion_compra']['condicion_pago'] . ' ' . (($ordenArray['head']['condicion_compra']['id_condicion'] == 2) ? $ordenArray['head']['condicion_compra']['plazo_dias'] . ' días' : '') . '</td>';
 
 
+
         $html .= '
                     <td width="15%" class="verticalTop subtitle">-' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Delivery time' : 'Plazo de entrega') . ': </td>
                     <td class="verticalTop">' . $ordenArray['head']['condicion_compra']['plazo_entrega'] . ' Días</td>
@@ -2295,7 +2296,7 @@ class OrdenController extends Controller
             <br>
         ';
 
-        $html .= '
+        $html .= '<br>
             <table width="100%" border=0>
                 <caption class="left subtitle" style="padding-bottom:10px; font-size:0.7rem">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Invoice details' : 'Facturar a nombre') . ':</caption>
 

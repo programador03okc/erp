@@ -1024,7 +1024,7 @@ class ListarRequerimientoPagoView {
         $(":file").filestyle('clear');
 
         this.limpiarTabla('listaDestinatariosEncontrados');
-        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").value = "";
+        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").innerHTML = "";
         let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
         if (selectCuenta != null) {
             while (selectCuenta.children.length > 0) {
@@ -3769,6 +3769,7 @@ class ListarRequerimientoPagoView {
     buscarDestinatarioPorNumeroDeDocumento(obj) {
         let idTipoDestinatario = parseInt(document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_tipo_destinatario']").value);
         let option = '';
+        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").innerHTML="";
         let nroDocumento = (obj.value).trim();
         if (nroDocumento.length > 0 && idTipoDestinatario > 0) {
             $.ajax({
@@ -3810,7 +3811,18 @@ class ListarRequerimientoPagoView {
                                     }
                                 }
 
+                                let seleccionado="";
+
                                 (response.data[0].cuenta_persona).forEach(element => {
+                                    
+                                    if(idCuentaPreSeleccionada >0){
+                                        if(element.id_cuenta_bancaria == idCuentaPreSeleccionada){
+                                            seleccionado= "selected";
+                                        }
+                                    }else if(element.por_defecto==true){
+                                        seleccionado= "selected";
+                                    }
+
                                     option += `
                                     <option
                                         data-nro-cuenta="${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : ''}"
@@ -3818,13 +3830,11 @@ class ListarRequerimientoPagoView {
                                         data-tipo-cuenta="${element.tipo_cuenta != null ? element.tipo_cuenta.descripcion : ''}"
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
-                                        value="${element.id_cuenta_bancaria}"
-                                        ${idCuentaPreSeleccionada == element.id_cuenta_bancaria ? 'selected' : ''}
+                                        value="${element.id_cuenta_bancaria}" ${seleccionado}
                                         >
                                         ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cci != null && element.nro_cci != "" ? (element.nro_cci + " (CCI)") : "")}
                                     </option>`;
-
-                                });
+                                 });
                                 document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").insertAdjacentHTML('beforeend', option);
 
 

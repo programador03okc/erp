@@ -165,7 +165,9 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
     @endphp
 
     @foreach ($filasCuadro as $fila)
-
+    @if ($fila->es_ingreso_transformacion)
+    @continue
+    @endif
     <div class="producto-transformar">Producto {{ $contador++ }} ({{$fila->tieneTransformacion() ? 'con' : 'sin'}} transformación):</div>
     <div class="seccion-producto">- Producto base</div>
     <table class="bordered">
@@ -226,6 +228,7 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
     <table class="bordered" style="margin-bottom: 15px">
         <thead>
             <tr>
+                <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
                 <th class="text-center cabecera-producto" style="width: 12%">Cod. Agile</th>
                 <th class="text-center cabecera-producto" style="width: 12%">Cod. SoftLink</th>
                 <th class="text-center cabecera-producto" style="width: 33%">Ingresa</th>
@@ -236,9 +239,10 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
         <tbody>
             <?php
             $movimientos = CcFilaMovimientoTransformacion::leftjoin('almacen.alm_det_req','alm_det_req.id_cc_am_filas','=','cc_fila_movimientos_transformacion.id_fila_ingresa')
+->leftJoin('mgcp_cuadro_costos.cc_am_filas','cc_am_filas.id','=','alm_det_req.id_cc_am_filas')
 ->leftJoin('almacen.alm_prod','alm_prod.id_producto','=','alm_det_req.id_producto')
 ->select('cc_fila_movimientos_transformacion.*','alm_prod.codigo as codigo_agile','alm_prod.cod_softlink',
-'alm_prod.part_number','alm_prod.descripcion as producto_descripcion_agile')
+'alm_prod.part_number','alm_prod.descripcion as producto_descripcion_agile','cc_am_filas.cantidad')
             ->where('cc_fila_movimientos_transformacion.id_fila_base', $fila->id)
             ->orderBy('cc_fila_movimientos_transformacion.id', 'asc')->get();
             ?>
@@ -249,6 +253,7 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
             @endif
             @foreach ($movimientos as $movimiento)
             <tr>
+                <td class="text-center">{{$movimiento->cantidad}}</td>
                 <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->codigo_agile!==null?$movimiento->codigo_agile:'') : ''}}</td>
                 <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->cod_softlink!==null?$movimiento->cod_softlink:'') : ''}}</td>
                 <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->producto_descripcion_agile!==null?$movimiento->producto_descripcion_agile:'') : ''}}</td>

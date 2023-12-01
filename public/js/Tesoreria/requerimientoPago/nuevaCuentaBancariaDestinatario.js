@@ -88,10 +88,10 @@ function guardarCuentaBancariaDestinatario(data) {
             if (response.id_cuenta > 0) {
                 if (response.id_tipo_destinatario == 1) {
                     document.querySelector(nombreModalPadre+" input[name='id_cuenta_persona']").value = response.id_cuenta;
-                    obtenerCuentasBancariasPersona(document.querySelector(nombreModalPadre+" input[name='id_persona']").value);
+                    obtenerCuentasBancariasPersona(document.querySelector(nombreModalPadre+" input[name='id_persona']").value,response.id_cuenta);
                 } else if (response.id_tipo_destinatario == 2) {
                     document.querySelector(nombreModalPadre+" input[name='id_cuenta_contribuyente']").value = response.id_cuenta;
-                    obtenerCuentasBancariasContribuyente(document.querySelector(nombreModalPadre+" input[name='id_contribuyente']").value);
+                    obtenerCuentasBancariasContribuyente(document.querySelector(nombreModalPadre+" input[name='id_contribuyente']").value,response.id_cuenta);
                 }
 
 

@@ -45,7 +45,8 @@ class RequerimientoPagosExport implements FromView, WithColumnFormatting, WithSt
             'H' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'I' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'P' => NumberFormat::FORMAT_TEXT,
-            'Q' => NumberFormat::FORMAT_TEXT
+            'Q' => NumberFormat::FORMAT_TEXT,
+            'R' => NumberFormat::FORMAT_DATE_DMMINUS
         ];
     }
 

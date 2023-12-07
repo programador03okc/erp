@@ -1143,6 +1143,14 @@ class RequerimientoView {
         if (obj.target.value != 4) { // se seleccionó el tipo de requerimiento diferente a compras para stock
             this.actualizarEstadoBotonProductoTransformado('ACTIVAR');
         } else {
+            Lobibox.notify('info', {
+                title: false,
+                size: 'normal',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: "Al elegir este tipo de requerimiento, no se procesará reserva por su compra ni se podrá hacer el despacho de los items."
+            });
             this.actualizarEstadoBotonProductoTransformado('DESACTIVAR');
         }
     }

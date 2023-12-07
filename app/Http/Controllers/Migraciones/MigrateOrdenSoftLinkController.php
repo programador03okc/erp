@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Migraciones;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Configuracion\LogActividad;
+use App\Models\Logistica\Orden;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MigrateOrdenSoftLinkController extends Controller
@@ -91,6 +94,8 @@ class MigrateOrdenSoftLinkController extends Controller
     {
         try {
             DB::beginTransaction();
+
+
 
             $oc = DB::table('logistica.log_ord_compra')
                 ->select(
@@ -181,6 +186,26 @@ class MigrateOrdenSoftLinkController extends Controller
                 }
             }
 
+            $anho = date("y", strtotime($oc->fecha));
+            $hoy = date('Y-m-d'); //Carbon::now()
+            //igv por defecto
+            $igv = 18.00;
+            $fecha = date("Y-m-d", strtotime($oc->fecha));
+
+            //obtiene el tipo de cambio
+            $tp_cambio = DB::connection('soft')->table('tcambio')
+                ->where([['dfecha', '<=', new Carbon($oc->fecha)]])
+                ->orderBy('dfecha', 'desc')
+                ->first();
+
+            if ($oc->codvend_softlink == '000055' || $oc->codvend_softlink == '000022') { //si es deza o dorado
+                $yy = 'P0' . $anho;
+            } else {
+                //obtiene el año a 2 digitos y le aumenta 2 ceros adelante
+                $yy = $this->leftZero(4, intval(date('y', strtotime($hoy))));
+            }
+
+
             $arrayRspta = [];
 
             if ($oc !== null && count($detalles) > 0) {
@@ -217,49 +242,13 @@ class MigrateOrdenSoftLinkController extends Controller
                     }
                 }
 
-                //igv por defecto
-                $igv = 18.00;
-                //persona juridica x defecto
-                $doc_tipo = ($oc->id_tipo_contribuyente !== null
-                    ? ($oc->id_tipo_contribuyente <= 2 ? 2 : 1)
-                    : 1);
-                //por defecto ruc
-                $cod = ($oc->cod_di !== null ? $oc->cod_di : '06');
-                //obtiene o crea el proveedor
-                $cod_auxi = $this->obtenerProveedor($oc->ruc, $oc->razon_social, $doc_tipo, $cod);
-                //Calcular IGV
-                if ($oc->incluye_igv) {
-                    $mon_impto = (floatval($oc->total_precio) * ($igv / 100));
-                } else {
-                    $mon_impto = 0;
-                }
-
-                $fecha = date("Y-m-d", strtotime($oc->fecha));
-                $anho = date("y", strtotime($oc->fecha));
-
-                //obtiene el tipo de cambio
-                $tp_cambio = DB::connection('soft')->table('tcambio')
-                    ->where([['dfecha', '<=', new Carbon($oc->fecha)]])
-                    ->orderBy('dfecha', 'desc')
-                    ->first();
-
-                //si existe un id_softlink
+                // veriicar si existe un id_softlink para decidir si actualizar una orden en softlink o crear una nueva
                 if ($oc->id_softlink !== null) {
                     //obtiene oc softlink
                     $oc_softlink = DB::connection('soft')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
 
 
                     if ($oc_softlink !== null) {
-
-                        if ($oc_softlink->cod_docu != $cod_docu) {
-
-                            return  array(
-                                'tipo' => 'warning',
-                                'mensaje' => 'La orden Agile tiene distinta empresa o tipo orden a la migrada en Softlink',
-                                'ocSoftlink' => array('cabecera' => $oc_softlink),
-                                'ocAgile' => array('cabecera' => $oc),
-                            );
-                        }
 
                         //pregunta si fue referenciado
                         $guia_referen = DB::connection('soft')->table('movimien')
@@ -287,81 +276,8 @@ class MigrateOrdenSoftLinkController extends Controller
                                 'ocAgile' => array('cabecera' => $oc),
                             );
                         } else {
-                            //actualiza orden
-                            DB::connection('soft')->table('movimien')
-                                ->where('mov_id', $oc_softlink->mov_id)
-                                ->update(
-                                    [
-                                        'cod_suc' => $cod_suc,
-                                        'cod_alma' => $oc->codigo_almacen,
-                                        'fec_docu' => $fecha,
-                                        'fec_entre' => $fecha,
-                                        'fec_vcto' => $fecha,
-                                        'cod_auxi' => $cod_auxi,
-                                        'cod_vend' => $oc->codvend_softlink,
-                                        'tip_mone' => $oc->id_moneda,
-                                        'tip_codicion' => $oc->id_condicion_softlink,
-                                        'impto1' => $igv,
-                                        'mon_bruto' => $oc->total_precio,
-                                        'mon_impto1' => $mon_impto,
-                                        'mon_total' => ($oc->total_precio + $mon_impto),
-                                        'txt_observa' => ($oc->codigo) . ' / ' . ($oc->observacion !== null ? $oc->observacion : ''),
-                                        'cod_user' => $oc->codvend_softlink,
-                                        'tip_cambio' => $tp_cambio->cambio3, //tipo cambio venta
-                                        'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
-                                        'ndocu2' => ($oc->direccion_destino !== null ? $oc->direccion_destino . ' ' . ($oc->ubigeo_destino !== null ? $oc->ubigeo_destino : '') : ''),
-                                        'ndocu3' => ($oc->codigo) . '/' . implode(', ', $cuadros)
-                                    ]
-                                );
-
-                            $i = 0;
-                            foreach ($detalles as $det) {
-                                $i++;
-                                //Obtiene y/o crea el producto
-                                if ($det->id_producto !== null) {
-                                    $cod_prod = $this->obtenerProducto($det);
-                                } else {
-                                    $cod_prod = '005675'; //OTROS SERVICIOS - DEFAULT
-                                }
-
-                                if ($det->id_oc_det_softlink !== null) {
-                                    //actualiza el detalle
-                                    DB::connection('soft')->table('detmov')
-                                        ->where('unico', $det->id_oc_det_softlink)
-                                        ->update([
-                                            'fec_pedi' => $fecha,
-                                            'cod_auxi' => trim($det->abreviatura),
-                                            'cod_prod' => $cod_prod,
-                                            'nom_prod' => ($cod_prod == '005675' ? 'OTROS SERVICIOS - ' . $det->descripcion_adicional : $det->descripcion),
-                                            'can_pedi' => $det->cantidad,
-                                            'sal_pedi' => $det->cantidad,
-                                            'can_devo' => $i, //numeracion del item 
-                                            'pre_prod' => ($det->precio !== null ? $det->precio : 0),
-                                            'pre_neto' => ($det->precio !== null ? ($det->precio * $det->cantidad) : 0),
-                                            'impto1' => $igv,
-                                            'imp_item' => ($det->precio !== null ? ($det->precio * $det->cantidad) : 0),
-                                            'flg_serie' => ($cod_prod == '005675' ? 0 : ($det->series ? 1 : 0)),
-                                            // 'ok_serie' => ($det->series ? '1' : '0'),
-                                        ]);
-                                } else {
-                                    $this->agregarDetalleOrden($det, $oc->id_softlink, $cod_prod, $oc_softlink->cod_docu, $oc_softlink->num_docu, $fecha, $igv, $i);
-                                }
-                            }
-                            $arrayRspta = array(
-                                'tipo' => 'success',
-                                'mensaje' => 'Se actualizó ésta OC en softlink. Con Nro. ' . $oc_softlink->num_docu . ' con id ' . $oc_softlink->mov_id,
-                                'orden_softlink' => $oc_softlink->num_docu,
-                                'ocSoftlink' => array('cabecera' => $oc_softlink),
-                                'ocAgile' => array('cabecera' => $oc),
-                            );
-
-                            //Actualiza la oc softlink eb agile
-                            DB::table('logistica.log_ord_compra')
-                                ->where('id_orden_compra', $id_orden_compra)
-                                ->update([
-                                    'codigo_softlink' => $oc_softlink->num_docu,
-                                    'id_softlink' => $oc_softlink->mov_id
-                                ]);
+                            //* actualiza orden
+                            $arrayRspta = $this->actualizarOrdenEnSoftlink($oc_softlink, $id_orden_compra, $oc, $detalles, $cod_suc, $cod_docu, $cuadros, $yy, $fecha, $igv, $tp_cambio);
                         }
                     } else {
                         $arrayRspta = array(
@@ -372,60 +288,15 @@ class MigrateOrdenSoftLinkController extends Controller
                         );
                     }
                 } else {
-                    $count = DB::connection('soft')->table('movimien')->count();
-                    //codificar segun criterio x documento
-                    $mov_id = $this->leftZero(10, (intval($count) + 1));
-
-                    $hoy = date('Y-m-d'); //Carbon::now()
-
-                    if ($oc->codvend_softlink == '000055' || $oc->codvend_softlink == '000022') { //si es deza o dorado
-                        $yy = 'P0' . $anho;
-                    } else {
-                        //obtiene el año a 2 digitos y le aumenta 2 ceros adelante
-                        $yy = $this->leftZero(4, intval(date('y', strtotime($hoy))));
-                    }
-                    //obtiene el ultimo registro
-                    $ult_mov = DB::connection('soft')->table('movimien')
-                        ->where([
-                            ['num_docu', '>', $yy . '0000000'],
-                            ['num_docu', '<', $yy . '9999999'],
-                            ['cod_suc', '=', $cod_suc],
-                            ['tipo', '=', 1], //ingreso
-                            ['cod_docu', '=', $cod_docu]
-                        ])
-                        ->orderBy('num_docu', 'desc')->first();
-                    //obtiene el correlativo
-                    $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
-                    //crea el correlativo del documento
-                    $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
-                    //anida el anio con el numero de documento
-                    $num_docu = $yy . $nro_mov;
-
-                    $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
-
-                    $i = 0;
-                    foreach ($detalles as $det) {
-                        $cod_prod = null;
-                        //Obtiene y/o crea el producto
-                        if ($det->id_producto !== null) {
-                            $cod_prod = $this->obtenerProducto($det);
-                        } else {
-                            $cod_prod = '005675'; //OTROS SERVICIOS - DEFAULT
-                        }
-                        $this->agregarDetalleOrden($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i);
-                        $this->actualizaStockEnTransito($oc, $cod_prod, $det, $cod_suc);
-                    }
-                    $this->agregarAudita($oc, $yy, $nro_mov);
-
-                    $soc = DB::connection('soft')->table('movimien')->where('mov_id', $mov_id)->first();
-                    $sdet = DB::connection('soft')->table('detmov')->where('mov_id', $mov_id)->get();
+                    //* crear orden
+                    $ordenEnSoftlink =  $this->crearNuevaOrdenEnSoftlink($id_orden_compra, $oc, $detalles, $cod_suc, $cod_docu, $cuadros, $yy, $fecha, $igv, $tp_cambio);
 
                     $arrayRspta = array(
-                        'tipo' => 'success',
-                        'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
-                        'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
-                        'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
-                        'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
+                        'tipo' => $ordenEnSoftlink['tipo'],
+                        'mensaje' => $ordenEnSoftlink['mensaje'],
+                        'orden_softlink' => $ordenEnSoftlink['orden_softlink'],
+                        'ocSoftlink' => $ordenEnSoftlink['ocSoftlink'],
+                        'ocAgile' => $ordenEnSoftlink['ocAgile']
                     );
                 }
             } else {
@@ -439,7 +310,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
             // si existe uno o mas cod_docu con num_doc iguales entonces debe volver a contar para aumentar el contador y actualizar las tablas movimien y detmov
             if ($oc->id_softlink == null) {
-                $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $num_docu], ['cod_docu', $cod_docu]])->count();
+                $cantidadCodigosExistentes = DB::connection('soft')->table('movimien')->where([['num_docu', $ordenEnSoftlink['orden_softlink']], ['cod_docu', $cod_docu]])->count();
                 if ($cantidadCodigosExistentes > 1) {
                     //obtiene el ultimo registro
                     $ult_mov = DB::connection('soft')->table('movimien')
@@ -459,25 +330,25 @@ class MigrateOrdenSoftLinkController extends Controller
                     $num_docu = $yy . $nro_mov;
 
                     DB::connection('soft')->table('movimien')
-                        ->where('mov_id', $mov_id)
+                        ->where('mov_id', $ordenEnSoftlink['mov_id'])
                         ->update(['num_docu' => $num_docu]);
 
                     DB::connection('soft')->table('detmov')
-                        ->where('mov_id', $mov_id)
+                        ->where('mov_id', $ordenEnSoftlink['mov_id'])
                         ->update(['num_docu' => $num_docu]);
 
                     DB::table('logistica.log_ord_compra')
                         ->where('id_orden_compra', $id_orden_compra)
                         ->update([
                             'codigo_softlink' => $num_docu,
-                            'id_softlink' => $mov_id
+                            'id_softlink' => $ordenEnSoftlink['mov_id']
                         ]);
 
                     $arrayRspta = array(
                         'tipo' => 'success',
-                        'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
+                        'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $ordenEnSoftlink['mov_id'],
                         'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
-                        'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
+                        'ocSoftlink' => array('cabecera' => $ordenEnSoftlink['soc'], 'detalle' => $ordenEnSoftlink['sdet']),
                         'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
                     );
                 }
@@ -488,6 +359,259 @@ class MigrateOrdenSoftLinkController extends Controller
             DB::rollBack();
             return response()->json(array('tipo' => 'error', 'mensaje' => 'Hubo un problema al enviar la orden. Por favor intente de nuevo', 'error' => $e->getMessage()));
         }
+    }
+
+    public function crearNuevaOrdenEnSoftlink($id_orden_compra, $oc, $detalles, $cod_suc, $cod_docu, $cuadros, $yy, $fecha, $igv, $tp_cambio)
+    {
+
+
+        //persona juridica x defecto
+        $doc_tipo = ($oc->id_tipo_contribuyente !== null
+            ? ($oc->id_tipo_contribuyente <= 2 ? 2 : 1)
+            : 1);
+        //por defecto ruc
+        $cod = ($oc->cod_di !== null ? $oc->cod_di : '06');
+        //obtiene o crea el proveedor
+        $cod_auxi = $this->obtenerProveedor($oc->ruc, $oc->razon_social, $doc_tipo, $cod);
+        //Calcular IGV
+        if ($oc->incluye_igv) {
+            $mon_impto = (floatval($oc->total_precio) * ($igv / 100));
+        } else {
+            $mon_impto = 0;
+        }
+
+
+        $count = DB::connection('soft')->table('movimien')->count();
+        //codificar segun criterio x documento
+        $mov_id = $this->leftZero(10, (intval($count) + 1));
+
+        //obtiene el ultimo registro
+        $ult_mov = DB::connection('soft')->table('movimien')
+            ->where([
+                ['num_docu', '>', $yy . '0000000'],
+                ['num_docu', '<', $yy . '9999999'],
+                ['cod_suc', '=', $cod_suc],
+                ['tipo', '=', 1], //ingreso
+                ['cod_docu', '=', $cod_docu]
+            ])
+            ->orderBy('num_docu', 'desc')->first();
+        //obtiene el correlativo
+        $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
+        //crea el correlativo del documento
+        $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+        //anida el anio con el numero de documento
+        $num_docu = $yy . $nro_mov;
+
+        $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
+
+        $i = 0;
+        foreach ($detalles as $det) {
+            $cod_prod = null;
+            //Obtiene y/o crea el producto
+            if ($det->id_producto !== null) {
+                $cod_prod = $this->obtenerProducto($det);
+            } else {
+                $cod_prod = '005675'; //OTROS SERVICIOS - DEFAULT
+            }
+            $this->agregarDetalleOrden($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i);
+            $this->actualizaStockEnTransito($oc, $cod_prod, $det, $cod_suc);
+        }
+        $this->agregarAudita($oc, $yy, $nro_mov, 'NUEVO');
+
+        $soc = DB::connection('soft')->table('movimien')->where('mov_id', $mov_id)->first();
+        $sdet = DB::connection('soft')->table('detmov')->where('mov_id', $mov_id)->get();
+
+        $arrayRspta = array(
+            'tipo' => 'success',
+            'mov_id' => $mov_id,
+            'mensaje' => 'Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
+            'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
+            'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
+            'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
+            'soc' => $soc,
+            'sdet' => $sdet
+        );
+
+        return $arrayRspta;
+    }
+
+    public function actualizarOrdenEnSoftlink($oc_softlink, $id_orden_compra, $oc, $detalles, $cod_suc, $cod_docu, $cuadros, $yy, $fecha, $igv, $tp_cambio)
+    {
+
+        if ($oc_softlink->cod_docu != $cod_docu) { // si la empresa de agil es distinta a la empresa de softlink
+
+            $migrarOrdenSoftlink = $this->anularOrdenSoftlink($id_orden_compra)->original;
+
+            $respuestaAnularOrdenSoftlink =  array(
+                'tipo' => $migrarOrdenSoftlink['tipo'],
+                'mensaje' => $migrarOrdenSoftlink['mensaje'],
+                'ocSoftlink' => $migrarOrdenSoftlink['ocSoftlink'],
+                'ocAgile' => $migrarOrdenSoftlink['ocAgile'],
+            );
+
+            //persona juridica x defecto
+            $doc_tipo = ($oc->id_tipo_contribuyente !== null
+                ? ($oc->id_tipo_contribuyente <= 2 ? 2 : 1)
+                : 1);
+            //por defecto ruc
+            $cod = ($oc->cod_di !== null ? $oc->cod_di : '06');
+            //obtiene o crea el proveedor
+            $cod_auxi = $this->obtenerProveedor($oc->ruc, $oc->razon_social, $doc_tipo, $cod);
+            //Calcular IGV
+            if ($oc->incluye_igv) {
+                $mon_impto = (floatval($oc->total_precio) * ($igv / 100));
+            } else {
+                $mon_impto = 0;
+            }
+
+            $count = DB::connection('soft')->table('movimien')->count();
+            //codificar segun criterio x documento
+            $mov_id = $this->leftZero(10, (intval($count) + 1));
+
+            //obtiene el ultimo registro
+            $ult_mov = DB::connection('soft')->table('movimien')
+                ->where([
+                    ['num_docu', '>', $yy . '0000000'],
+                    ['num_docu', '<', $yy . '9999999'],
+                    ['cod_suc', '=', $cod_suc],
+                    ['tipo', '=', 1], //ingreso
+                    ['cod_docu', '=', $cod_docu]
+                ])
+                ->orderBy('num_docu', 'desc')->first();
+            //obtiene el correlativo
+            $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
+            //crea el correlativo del documento
+            $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+            //anida el anio con el numero de documento
+            $num_docu = $yy . $nro_mov;
+
+
+            $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
+
+            $i = 0;
+            foreach ($detalles as $det) {
+                $cod_prod = null;
+                //Obtiene y/o crea el producto
+                if ($det->id_producto !== null) {
+                    $cod_prod = $this->obtenerProducto($det);
+                } else {
+                    $cod_prod = '005675'; //OTROS SERVICIOS - DEFAULT
+                }
+                $this->agregarDetalleOrden($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i);
+                $this->actualizaStockEnTransito($oc, $cod_prod, $det, $cod_suc);
+            }
+            $this->agregarAudita($oc, $yy, $nro_mov, 'NUEVO');
+    
+            $soc = DB::connection('soft')->table('movimien')->where('mov_id', $mov_id)->first();
+            $sdet = DB::connection('soft')->table('detmov')->where('mov_id', $mov_id)->get();
+    
+            $arrayRspta = array(
+                'tipo' => 'success',
+                'mov_id' => $mov_id,
+                'mensaje' => $respuestaAnularOrdenSoftlink['mensaje'].'. Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
+                'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
+                'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
+                'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
+                'soc' => $soc,
+                'sdet' => $sdet
+            );
+
+
+        } else {
+
+            //persona juridica x defecto
+            $doc_tipo = ($oc->id_tipo_contribuyente !== null
+                ? ($oc->id_tipo_contribuyente <= 2 ? 2 : 1)
+                : 1);
+            //por defecto ruc
+            $cod = ($oc->cod_di !== null ? $oc->cod_di : '06');
+            $cod_auxi = $this->obtenerProveedor($oc->ruc, $oc->razon_social, $doc_tipo, $cod);
+            //Calcular IGV
+            if ($oc->incluye_igv) {
+                $mon_impto = (floatval($oc->total_precio) * ($igv / 100));
+            } else {
+                $mon_impto = 0;
+            }
+
+            DB::connection('soft')->table('movimien')
+                ->where('mov_id', $oc_softlink->mov_id)
+                ->update(
+                    [
+                        'cod_suc' => $cod_suc,
+                        'cod_alma' => $oc->codigo_almacen,
+                        'fec_docu' => $fecha,
+                        'fec_entre' => $fecha,
+                        'fec_vcto' => $fecha,
+                        'cod_auxi' => $cod_auxi,
+                        'cod_vend' => $oc->codvend_softlink,
+                        'tip_mone' => $oc->id_moneda,
+                        'tip_codicion' => $oc->id_condicion_softlink,
+                        'impto1' => $igv,
+                        'mon_bruto' => $oc->total_precio,
+                        'mon_impto1' => $mon_impto,
+                        'mon_total' => ($oc->total_precio + $mon_impto),
+                        'txt_observa' => ($oc->codigo) . ' / ' . ($oc->observacion !== null ? $oc->observacion : ''),
+                        'cod_user' => $oc->codvend_softlink,
+                        'tip_cambio' => $tp_cambio->cambio3, //tipo cambio venta
+                        'ndocu1' => ($oc->plazo_entrega !== null ? $oc->plazo_entrega . ' DIAS' : ''),
+                        'ndocu2' => ($oc->direccion_destino !== null ? $oc->direccion_destino . ' ' . ($oc->ubigeo_destino !== null ? $oc->ubigeo_destino : '') : ''),
+                        'ndocu3' => ($oc->codigo) . '/' . implode(', ', $cuadros)
+                    ]
+                );
+
+            $i = 0;
+            foreach ($detalles as $det) {
+                $i++;
+                //Obtiene y/o crea el producto
+                if ($det->id_producto !== null) {
+                    $cod_prod = $this->obtenerProducto($det);
+                } else {
+                    $cod_prod = '005675'; //OTROS SERVICIOS - DEFAULT
+                }
+
+                if ($det->id_oc_det_softlink !== null) {
+                    //actualiza el detalle
+                    DB::connection('soft')->table('detmov')
+                        ->where('unico', $det->id_oc_det_softlink)
+                        ->update([
+                            'fec_pedi' => $fecha,
+                            'cod_auxi' => trim($det->abreviatura),
+                            'cod_prod' => $cod_prod,
+                            'nom_prod' => ($cod_prod == '005675' ? 'OTROS SERVICIOS - ' . $det->descripcion_adicional : $det->descripcion),
+                            'can_pedi' => $det->cantidad,
+                            'sal_pedi' => $det->cantidad,
+                            'can_devo' => $i, //numeracion del item 
+                            'pre_prod' => ($det->precio !== null ? $det->precio : 0),
+                            'pre_neto' => ($det->precio !== null ? ($det->precio * $det->cantidad) : 0),
+                            'impto1' => $igv,
+                            'imp_item' => ($det->precio !== null ? ($det->precio * $det->cantidad) : 0),
+                            'flg_serie' => ($cod_prod == '005675' ? 0 : ($det->series ? 1 : 0)),
+                            // 'ok_serie' => ($det->series ? '1' : '0'),
+                        ]);
+                } else {
+                    $this->agregarDetalleOrden($det, $oc->id_softlink, $cod_prod, $oc_softlink->cod_docu, $oc_softlink->num_docu, $fecha, $igv, $i);
+                }
+            }
+            $arrayRspta = array(
+                'tipo' => 'success',
+                'mensaje' => 'Se actualizó ésta OC en softlink. Con Nro. ' . $oc_softlink->num_docu . ' con id ' . $oc_softlink->mov_id,
+                'orden_softlink' => $oc_softlink->num_docu,
+                'ocSoftlink' => array('cabecera' => $oc_softlink),
+                'ocAgile' => array('cabecera' => $oc),
+            );
+
+            //Actualiza la oc softlink eb agile
+            $ordenActualizada = Orden::find($id_orden_compra);
+            $ordenActualizada->codigo_softlink = $oc_softlink->num_docu;
+            $ordenActualizada->id_softlink = $oc_softlink->mov_id;
+            $ordenActualizada->save();
+
+            $this->agregarAudita($oc, $yy, $oc_softlink->num_docu, 'MODIFICO');
+
+            $this->agregarLogActividad('MODIFICO', $oc_softlink->mov_id, $oc_softlink->num_docu, $ordenActualizada);
+
+        }
+        return $arrayRspta;
     }
 
     public function agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros)
@@ -586,12 +710,13 @@ class MigrateOrdenSoftLinkController extends Controller
             ]
         );
         //Actualiza la oc softlink eb agile
-        DB::table('logistica.log_ord_compra')
-            ->where('id_orden_compra', $id_orden_compra)
-            ->update([
-                'codigo_softlink' => $num_docu, //($yy . '-' . $nro_mov),
-                'id_softlink' => $mov_id
-            ]);
+
+        $ordenActualizada = Orden::find($id_orden_compra);
+        $ordenActualizada->codigo_softlink = $num_docu;
+        $ordenActualizada->id_softlink = $mov_id;
+        $ordenActualizada->save();
+
+        $this->agregarLogActividad('NUEVO', $mov_id, $num_docu, $ordenActualizada);
     }
 
     public function agregarDetalleOrden($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i)
@@ -694,7 +819,7 @@ class MigrateOrdenSoftLinkController extends Controller
         }
     }
 
-    public function agregarAudita($oc, $yy, $nro_mov)
+    public function agregarAudita($oc, $yy, $nro_mov, $accion)
     {
         $vendedor = DB::connection('soft')->table('vendedor')
             ->select('usuario')
@@ -704,15 +829,50 @@ class MigrateOrdenSoftLinkController extends Controller
         $count = DB::connection('soft')->table('audita')->count();
 
         //Agrega registro de auditoria
-        DB::connection('soft')->table('audita')
-            ->insert([
-                'unico' => sprintf('%010d', $count + 1),
-                'usuario' => $oc->codvend_softlink,
-                'terminal' => $vendedor->usuario,
-                'fecha_hora' => new Carbon(),
-                'accion' => 'NUEVO : OC ' . $yy . '-' . $nro_mov
-            ]);
+        if ($accion == 'NUEVO') {
+            DB::connection('soft')->table('audita')
+                ->insert([
+                    'unico' => sprintf('%010d', $count + 1),
+                    'usuario' => $oc->codvend_softlink,
+                    'terminal' => $vendedor->usuario,
+                    'fecha_hora' => new Carbon(),
+                    'accion' => $accion . ': OC ' . $yy . '-' . $nro_mov
+                ]);
+        } elseif ($accion == 'MODIFICO') {
+            DB::connection('soft')->table('audita')
+                ->insert([
+                    'unico' => sprintf('%010d', $count + 1),
+                    'usuario' => $oc->codvend_softlink,
+                    'terminal' => $vendedor->usuario,
+                    'fecha_hora' => new Carbon(),
+                    'accion' => $accion . ': NUMERO DOC. ' . $nro_mov
+                ]);
+        }
     }
+
+    public function agregarLogActividad($accion, $mov_id, $num_docu, $tabla)
+    {
+        //Agrega registro de auditoria AGILE
+        switch ($accion) {
+            case 'NUEVO':
+                $comentario = 'Se creo y migro la orden a softlink: ' . $num_docu . ', ID: ' . $mov_id . ' Actualizado por: ' . Auth::user()->nombre_corto;
+                $tipoLog = 2;
+                break;
+
+            case 'MODIFICO':
+                $comentario = 'Se actualizó y migro la orden a softlink: ' . $num_docu . ', ID: ' . $mov_id . ' Actualizado por: ' . Auth::user()->nombre_corto;
+                $tipoLog = 3;
+                break;
+
+            default:
+                # code...
+                break;
+        }
+        if ($accion == 'NUEVO' || $accion == 'MODIFICO') {
+            LogActividad::registrar(Auth::user(), 'Orden de compra / servicio', $tipoLog, $tabla->getTable(), null, $tabla, $comentario, 'Logistica');
+        }
+    }
+
 
     public function obtenerProducto($det)
     {

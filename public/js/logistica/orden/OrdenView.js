@@ -209,7 +209,7 @@ class OrdenView {
 
                         Lobibox.notify(response.tipo, {
                             title: false,
-                            size: 'mini',
+                            size: 'normal',
                             rounded: true,
                             sound: false,
                             delayIndicator: false,

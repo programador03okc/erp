@@ -4984,11 +4984,13 @@ class OrdenController extends Controller
         foreach ($det_ord_compra as $key => $d) {
             $data[] = [
                 'codigo_orden' => $d['codigo_orden'] ?? '',
+                'codigo_oportunidad' => $d['codigo_oportunidad'] ?? '',
                 'codigo_requerimiento' => $d['codigo_requerimiento'] ?? '',
                 'codigo_softlink' => $d['codigo_softlink'] ?? '',
                 'nro_orden_mgc' => $d['nro_orden_mgc'] ?? '',
                 'concepto_requerimiento' => $d['concepto_requerimiento'] ?? '',
                 'razon_social_cliente' => $d['razon_social_cliente'] ?? '',
+                'fecha_aprobacion_cdp' => $d['fecha_aprobacion_cdp'] ?? '',
                 'razon_social_proveedor' => $d['razon_social_proveedor'] ?? '',
                 'codigo_am' => $d['codigo_am'] ?? '',
                 'nombre_am' => $d['nombre_am'] ?? '',
@@ -5004,6 +5006,7 @@ class OrdenController extends Controller
                 'simbolo_moneda_orden' => $d['simbolo_moneda_orden'] ?? '',
                 'precio' => $d['precio'] ?? '',
                 'cc_fila_precio' => $d['cc_fila_precio'] ?? '',
+                'condicion_pago' => $d['condicion_pago'] ?? '',
                 'fecha_emision' => $d['fecha_emision'] ?? '',
                 'fecha_llegada' => $d['fecha_llegada'] ?? '',
                 'fecha_ingreso_almacen' => $d['fecha_ingreso_almacen'] ?? '',
@@ -5316,9 +5319,11 @@ class OrdenController extends Controller
                 'emision_factura'          => ($d['emision_factura'] ?$d['emision_factura']:'-'),
                 'codigo_requerimiento'  => ($d['codigo_requerimiento'] ?$d['codigo_requerimiento']: '-'),
                 'codigo_softlink'       => ($d['codigo_softlink'] ?$d['codigo_softlink']: '-'),
+                'codigo_oportunidad'     => ($d['codigo_oportunidad'] ?$d['codigo_oportunidad']:'-'),
                 'nro_orden_mgc'         => ($d['nro_orden_mgc'] ?$d['nro_orden_mgc']: '-'),
                 'concepto_requerimiento'    => ($d['concepto_requerimiento'] ? $d['concepto_requerimiento'] : '-'),
                 'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
+                'fecha_aprobacion_cdp'      => ($d['fecha_aprobacion_cdp'] ? $d['fecha_aprobacion_cdp'] : '-'),
                 'razon_social_proveedor'    => ($d['razon_social_proveedor'] ?$d['razon_social_proveedor'] :'-'),
                 'codigo_am'                 => ($d['codigo_am'] ?$d['codigo_am']: '-'),
                 'nombre_am'                 => ($d['nombre_am'] ?$d['nombre_am']: '-'),
@@ -5334,6 +5339,7 @@ class OrdenController extends Controller
                 'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ?$d['simbolo_moneda_orden']: '-'),
                 'precio'                    => ($d['precio'] ?$d['precio']: '-'),
                 'cc_fila_precio'            => ($d['cc_fila_precio'] ?$d['cc_fila_precio']: '-'),
+                'condicion_pago'            => ($d['condicion_pago'] ?$d['condicion_pago']: '-'),
                 'fecha_emision'             => ($d['fecha_emision'] ?$d['fecha_emision']: '-'),
                 'fecha_llegada'             => ($d['fecha_llegada'] ?$d['fecha_llegada']: '-'),
                 'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ?$d['fecha_ingreso_almacen']: '-'),
@@ -5358,30 +5364,33 @@ class OrdenController extends Controller
             $activeWorksheet->setCellValue('C1','Cod. orden');
             $activeWorksheet->setCellValue('D1','Cod. req.');
             $activeWorksheet->setCellValue('E1','Cod. orden softlink');
-            $activeWorksheet->setCellValue('F1','Nro. Orden MGC');
-            $activeWorksheet->setCellValue('G1','Concepto');
-            $activeWorksheet->setCellValue('H1','Cliente');
-            $activeWorksheet->setCellValue('I1','Proveedor');
-            $activeWorksheet->setCellValue('J1','Cod.AM');
-            $activeWorksheet->setCellValue('K1','Nombre AM');
-            $activeWorksheet->setCellValue('L1','Marca');
-            $activeWorksheet->setCellValue('M1','Categoría');
-            $activeWorksheet->setCellValue('N1','Cod. producto');
-            $activeWorksheet->setCellValue('O1','Part number');
-            $activeWorksheet->setCellValue('P1','Cod. softlink');
-            $activeWorksheet->setCellValue('Q1','Descripción');
-            $activeWorksheet->setCellValue('R1','Lugar entrega MGC');
-            $activeWorksheet->setCellValue('S1','Cantidad');
-            $activeWorksheet->setCellValue('T1','Unitdad medida.');
-            $activeWorksheet->setCellValue('U1','Moneda');
-            $activeWorksheet->setCellValue('V1','Precio unit. Ord.');
-            $activeWorksheet->setCellValue('W1','Precio unit. CDP');
-            $activeWorksheet->setCellValue('X1','Fecha emisión orden');
-            $activeWorksheet->setCellValue('Y1','Plazo entrega');
-            $activeWorksheet->setCellValue('Z1','Fecha ingreso almacén');
-            $activeWorksheet->setCellValue('AA1','Tiempo atención proveedor');
-            $activeWorksheet->setCellValue('AB1','Empresa - sede');
-        $activeWorksheet->setCellValue('AC1','Estado');
+            $activeWorksheet->setCellValue('F1','Cod. Oportunidad');
+            $activeWorksheet->setCellValue('G1','Nro. Orden MGC');
+            $activeWorksheet->setCellValue('H1','Concepto');
+            $activeWorksheet->setCellValue('I1','Cliente');
+            $activeWorksheet->setCellValue('J1','Fecha aprobación CDP');
+            $activeWorksheet->setCellValue('K1','Proveedor');
+            $activeWorksheet->setCellValue('L1','Cod.AM');
+            $activeWorksheet->setCellValue('M1','Nombre AM');
+            $activeWorksheet->setCellValue('N1','Marca');
+            $activeWorksheet->setCellValue('O1','Categoría');
+            $activeWorksheet->setCellValue('P1','Cod. producto');
+            $activeWorksheet->setCellValue('Q1','Part number');
+            $activeWorksheet->setCellValue('R1','Cod. softlink');
+            $activeWorksheet->setCellValue('S1','Descripción');
+            $activeWorksheet->setCellValue('T1','Lugar entrega MGC');
+            $activeWorksheet->setCellValue('U1','Cantidad');
+            $activeWorksheet->setCellValue('V1','Unitdad medida.');
+            $activeWorksheet->setCellValue('W1','Moneda');
+            $activeWorksheet->setCellValue('X1','Precio unit. Ord.');
+            $activeWorksheet->setCellValue('Y1','Precio unit. CDP');
+            $activeWorksheet->setCellValue('Z1','Condición pago');
+            $activeWorksheet->setCellValue('AA1','Fecha emisión orden');
+            $activeWorksheet->setCellValue('AB1','Plazo entrega');
+            $activeWorksheet->setCellValue('AC1','Fecha ingreso almacén');
+            $activeWorksheet->setCellValue('AD1','Tiempo atención proveedor');
+            $activeWorksheet->setCellValue('AE1','Empresa - sede');
+        $activeWorksheet->setCellValue('AF1','Estado');
 
         foreach($data as $key => $item){
             $celda = $key+2;
@@ -5391,30 +5400,33 @@ class OrdenController extends Controller
             $activeWorksheet->setCellValue('C'.$celda,$item['codigo_orden']);
             $activeWorksheet->setCellValue('D'.$celda,$item['codigo_requerimiento']);
             $activeWorksheet->setCellValue('E'.$celda,$item['codigo_softlink']);
-            $activeWorksheet->setCellValue('F'.$celda,$item['nro_orden_mgc']);
-            $activeWorksheet->setCellValue('G'.$celda,$item['concepto_requerimiento']);
-            $activeWorksheet->setCellValue('H'.$celda,$item['razon_social_cliente']);
-            $activeWorksheet->setCellValue('I'.$celda,$item['razon_social_proveedor']);
-            $activeWorksheet->setCellValue('J'.$celda,$item['codigo_am']);
-            $activeWorksheet->setCellValue('K'.$celda,$item['nombre_am']);
-            $activeWorksheet->setCellValue('L'.$celda,$item['descripcion_subcategoria']);
-            $activeWorksheet->setCellValue('M'.$celda,$item['descripcion_categoria']);
-            $activeWorksheet->setCellValue('N'.$celda,$item['codigo_producto']);
-            $activeWorksheet->setCellValue('O'.$celda,$item['part_number_producto']);
-            $activeWorksheet->setCellValue('P'.$celda,$item['cod_softlink_producto']);
-            $activeWorksheet->setCellValue('Q'.$celda,$item['descripcion_producto']);
-            $activeWorksheet->setCellValue('R'.$celda,$item['lugar_entrega_cdp']);
-            $activeWorksheet->setCellValue('S'.$celda,$item['cantidad']);
-            $activeWorksheet->setCellValue('T'.$celda,$item['abreviatura_unidad_medida_producto']);
-            $activeWorksheet->setCellValue('U'.$celda,$item['simbolo_moneda_orden']);
-            $activeWorksheet->setCellValue('V'.$celda,$item['precio']);
-            $activeWorksheet->setCellValue('W'.$celda,$item['cc_fila_precio']);
-            $activeWorksheet->setCellValue('X'.$celda,$item['fecha_emision']);
-            $activeWorksheet->setCellValue('Y'.$celda,$item['fecha_llegada']);
-            $activeWorksheet->setCellValue('Z'.$celda,$item['fecha_ingreso_almacen']);
-            $activeWorksheet->setCellValue('AA'.$celda,$item['tiempo_atencion_proveedor']);
-            $activeWorksheet->setCellValue('AB'.$celda,$item['descripcion_sede_empresa']);
-            $activeWorksheet->setCellValue('AC'.$celda,$item['descripcion_estado']);
+            $activeWorksheet->setCellValue('F'.$celda,$item['codigo_oportunidad']);
+            $activeWorksheet->setCellValue('G'.$celda,$item['nro_orden_mgc']);
+            $activeWorksheet->setCellValue('H'.$celda,$item['concepto_requerimiento']);
+            $activeWorksheet->setCellValue('I'.$celda,$item['razon_social_cliente']);
+            $activeWorksheet->setCellValue('J'.$celda,$item['fecha_aprobacion_cdp']);
+            $activeWorksheet->setCellValue('K'.$celda,$item['razon_social_proveedor']);
+            $activeWorksheet->setCellValue('L'.$celda,$item['codigo_am']);
+            $activeWorksheet->setCellValue('M'.$celda,$item['nombre_am']);
+            $activeWorksheet->setCellValue('N'.$celda,$item['descripcion_subcategoria']);
+            $activeWorksheet->setCellValue('O'.$celda,$item['descripcion_categoria']);
+            $activeWorksheet->setCellValue('P'.$celda,$item['codigo_producto']);
+            $activeWorksheet->setCellValue('Q'.$celda,$item['part_number_producto']);
+            $activeWorksheet->setCellValue('R'.$celda,$item['cod_softlink_producto']);
+            $activeWorksheet->setCellValue('S'.$celda,$item['descripcion_producto']);
+            $activeWorksheet->setCellValue('T'.$celda,$item['lugar_entrega_cdp']);
+            $activeWorksheet->setCellValue('U'.$celda,$item['cantidad']);
+            $activeWorksheet->setCellValue('V'.$celda,$item['abreviatura_unidad_medida_producto']);
+            $activeWorksheet->setCellValue('W'.$celda,$item['simbolo_moneda_orden']);
+            $activeWorksheet->setCellValue('X'.$celda,$item['precio']);
+            $activeWorksheet->setCellValue('Y'.$celda,$item['cc_fila_precio']);
+            $activeWorksheet->setCellValue('Z'.$celda,$item['condicion_pago']);
+            $activeWorksheet->setCellValue('AA'.$celda,$item['fecha_emision']);
+            $activeWorksheet->setCellValue('AB'.$celda,$item['fecha_llegada']);
+            $activeWorksheet->setCellValue('AC'.$celda,$item['fecha_ingreso_almacen']);
+            $activeWorksheet->setCellValue('AD'.$celda,$item['tiempo_atencion_proveedor']);
+            $activeWorksheet->setCellValue('AE'.$celda,$item['descripcion_sede_empresa']);
+            $activeWorksheet->setCellValue('AF'.$celda,$item['descripcion_estado']);
         }
 
 

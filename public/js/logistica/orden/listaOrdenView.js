@@ -2057,7 +2057,7 @@ class ListaOrdenView {
         //         className: 'btn-default btn-sm'
         //     }:[]),
         const button_descargar_excel = (array_accesos.find(element => element === 251) ? {
-            text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar',
+            text: '<span class="far fa-file-excel" aria-hidden="true"></span> Descargar todo',
             attr: {
                 id: 'btnDescargarListaItemsOrdenesElaboradasExcel',
                 disabled: false
@@ -2081,7 +2081,7 @@ class ListaOrdenView {
             className: 'btn-default btn-sm'
         };
         const button_reporte = {
-            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte Items de orden extendido con Filtros',
+            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte Items completo',
             attr: {
                 id: 'btnReporteFiltros',
                 disabled: false
@@ -2099,7 +2099,7 @@ class ListaOrdenView {
             className: 'btn-default btn-sm'
         };
         const button_reporte_orden_item_cdp = {
-            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte Item de orden resumen con filtros ',
+            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte Item de orden resumen',
             attr: {
                 id: 'btnReporteFiltrosOrdenItemResumen',
                 disabled: false

@@ -1544,6 +1544,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::post('generar-filtros', [OrdenController::class, 'generarFiltros'])->name('generar-filtros');
 
 						Route::post('reporte-filtros', [OrdenController::class, 'reporteFiltros'])->name('reporte-filtros');
+						Route::post('reporte-item-orden-resumen-filtros', [OrdenController::class, 'reporteItemOrdenResumenFiltros'])->name('reporte-item-orden-resumen-filtros');
 					});
 				});
 			});

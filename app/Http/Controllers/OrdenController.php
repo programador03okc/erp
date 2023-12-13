@@ -1105,20 +1105,20 @@ class OrdenController extends Controller
 
         if (!empty($request->fecha_inicio)) {
             # code...
-            $itemsOrdenes = $itemsOrdenes->whereDate('fecha_emision','>=', $request->fecha_inicio);
+            $itemsOrdenes = $itemsOrdenes->whereDate('fecha_emision', '>=', $request->fecha_inicio);
         }
         if (!empty($request->fecha_final)) {
-            $itemsOrdenes = $itemsOrdenes->whereDate('fecha_emision','<=', $request->fecha_final);
+            $itemsOrdenes = $itemsOrdenes->whereDate('fecha_emision', '<=', $request->fecha_final);
         }
 
         return datatables($itemsOrdenes)
-        ->addColumn('numero_factura', function ($data) {
-            // concat(dc.serie, '-', dc.numero) AS nro_doc_com,
-            $serie = ($data->serie?$data->serie:'');
-            $numero = ($data->numero?$data->numero:'');
-            $factura = $serie.'-'.$numero;
-            return $factura;
-        })
+            ->addColumn('numero_factura', function ($data) {
+                // concat(dc.serie, '-', dc.numero) AS nro_doc_com,
+                $serie = ($data->serie ? $data->serie : '');
+                $numero = ($data->numero ? $data->numero : '');
+                $factura = $serie . '-' . $numero;
+                return $factura;
+            })
             ->toJson();
     }
     // public function listarOrdenes(Request $request)
@@ -1835,8 +1835,8 @@ class OrdenController extends Controller
                     'compra_local' => $data->compra_local,
                     'sustento_anulacion' => $data->sustento_anulacion,
                     'estado' => $data->estado,
-                    'entidad'=>$data->entidad,
-                    'fecha_limite_oc'=>$data->fecha_limite_oc,
+                    'entidad' => $data->entidad,
+                    'fecha_limite_oc' => $data->fecha_limite_oc,
 
                     // 'monto_igv' => $data->monto_igv,
                     // 'monto_total' => $data->monto_total,
@@ -3396,41 +3396,41 @@ class OrdenController extends Controller
                             } else {
 
                                 if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $id)) // es un id no tiene numeros con letras
-                                    {
-                                        $detalle = OrdenCompraDetalle::where("id_detalle_orden", $id)->first();
-                                        $detalle->id_producto = $request->idProducto[$i];
-                                        $detalle->id_detalle_requerimiento = $request->idDetalleRequerimiento[$i];
-                                        $detalle->cantidad = $request->cantidadAComprarRequerida[$i];
+                                {
+                                    $detalle = OrdenCompraDetalle::where("id_detalle_orden", $id)->first();
+                                    $detalle->id_producto = $request->idProducto[$i];
+                                    $detalle->id_detalle_requerimiento = $request->idDetalleRequerimiento[$i];
+                                    $detalle->cantidad = $request->cantidadAComprarRequerida[$i];
 
-                                        $subtotalOrigen = floatval($detalle->precio) * floatval($detalle->cantidad);
-                                        $subtotalNuevo =  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
-                                        if ($subtotalOrigen != $subtotalNuevo) {
-                                            if ($subtotalOrigen < $subtotalNuevo) {
-                                                $importeItemParaPresupuesto = $subtotalNuevo - $subtotalOrigen;
-                                                $tipoOperacionItemParaPresupuesto = 'resta';
-                                            } elseif ($subtotalOrigen > $subtotalNuevo) {
-                                                $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
-                                                $tipoOperacionItemParaPresupuesto = 'suma';
-                                                // Debugbar::info($importeItemParaPresupuesto);
-                                            }
+                                    $subtotalOrigen = floatval($detalle->precio) * floatval($detalle->cantidad);
+                                    $subtotalNuevo =  floatval($request->precioUnitario[$i]) * floatval($request->cantidadAComprarRequerida[$i]);
+                                    if ($subtotalOrigen != $subtotalNuevo) {
+                                        if ($subtotalOrigen < $subtotalNuevo) {
+                                            $importeItemParaPresupuesto = $subtotalNuevo - $subtotalOrigen;
+                                            $tipoOperacionItemParaPresupuesto = 'resta';
+                                        } elseif ($subtotalOrigen > $subtotalNuevo) {
+                                            $importeItemParaPresupuesto = $subtotalOrigen - $subtotalNuevo;
+                                            $tipoOperacionItemParaPresupuesto = 'suma';
+                                            // Debugbar::info($importeItemParaPresupuesto);
                                         }
-
-                                        $detalle->id_unidad_medida = $request->unidad[$i];
-                                        $detalle->precio = $request->precioUnitario[$i];
-                                        $detalle->descripcion_adicional = ($request->descripcion[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcion[$i]))) : null;
-                                        $detalle->descripcion_complementaria = ($request->descripcionComplementaria[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcionComplementaria[$i]))) : null;
-                                        $detalle->subtotal = floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
-                                        $detalle->tipo_item_id = $request->idTipoItem[$i];
-                                        $detalle->save();
-                                        $detalle->importe_item_para_presupuesto = $importeItemParaPresupuesto ?? 0;
-                                        $detalle->operacion_item_para_presupuesto = $tipoOperacionItemParaPresupuesto ?? '';
-                                        $detalleArray[] = $detalle;
-
-                                        $tipoOperacionItemParaPresupuesto = '';
-                                        $importeItemParaPresupuesto = 0;
-
-                                        $idDetalleProcesado[] = $detalle->id_detalle_orden;
                                     }
+
+                                    $detalle->id_unidad_medida = $request->unidad[$i];
+                                    $detalle->precio = $request->precioUnitario[$i];
+                                    $detalle->descripcion_adicional = ($request->descripcion[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcion[$i]))) : null;
+                                    $detalle->descripcion_complementaria = ($request->descripcionComplementaria[$i] != null) ? trim(strtoupper(utf8_encode($request->descripcionComplementaria[$i]))) : null;
+                                    $detalle->subtotal = floatval($request->cantidadAComprarRequerida[$i] * $request->precioUnitario[$i]);
+                                    $detalle->tipo_item_id = $request->idTipoItem[$i];
+                                    $detalle->save();
+                                    $detalle->importe_item_para_presupuesto = $importeItemParaPresupuesto ?? 0;
+                                    $detalle->operacion_item_para_presupuesto = $tipoOperacionItemParaPresupuesto ?? '';
+                                    $detalleArray[] = $detalle;
+
+                                    $tipoOperacionItemParaPresupuesto = '';
+                                    $importeItemParaPresupuesto = 0;
+
+                                    $idDetalleProcesado[] = $detalle->id_detalle_orden;
+                                }
                             }
                         }
                     }
@@ -5297,136 +5297,137 @@ class OrdenController extends Controller
 
         return ["data" => $payload, 'estado' => $estado, "mensaje" => $mensaje];
     }
-    public function reporteFiltros(Request $request){
+    public function reporteFiltros(Request $request)
+    {
 
         ini_set('memory_limit', '999999M');
 
         $data = [];
         $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
-        ->orderBy('items_ordenes_view.fecha_emision', 'desc');
+            ->orderBy('items_ordenes_view.fecha_emision', 'desc');
 
-        if (!empty($request->fecha_inicio) && $request->fecha_inicio!=="null") {
-            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','>=', $request->fecha_inicio);
+        if (!empty($request->fecha_inicio) && $request->fecha_inicio !== "null") {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision', '>=', $request->fecha_inicio);
         }
-        if (!empty($request->fecha_final) && $request->fecha_final!=="null") {
-            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','<=', $request->fecha_final);
+        if (!empty($request->fecha_final) && $request->fecha_final !== "null") {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision', '<=', $request->fecha_final);
         }
         $det_ord_compra = $det_ord_compra->get();
 
         foreach ($det_ord_compra as $key => $d) {
             $data[] = [
-                'codigo_orden'          => ($d['codigo_orden'] ?$d['codigo_orden']:'-'),
-                'emision_factura'          => ($d['emision_factura'] ?$d['emision_factura']:'-'),
-                'codigo_requerimiento'  => ($d['codigo_requerimiento'] ?$d['codigo_requerimiento']: '-'),
-                'codigo_softlink'       => ($d['codigo_softlink'] ?$d['codigo_softlink']: '-'),
-                'codigo_oportunidad'     => ($d['codigo_oportunidad'] ?$d['codigo_oportunidad']:'-'),
-                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ?$d['nro_orden_mgc']: '-'),
+                'codigo_orden'          => ($d['codigo_orden'] ? $d['codigo_orden'] : '-'),
+                'emision_factura'          => ($d['emision_factura'] ? $d['emision_factura'] : '-'),
+                'codigo_requerimiento'  => ($d['codigo_requerimiento'] ? $d['codigo_requerimiento'] : '-'),
+                'codigo_softlink'       => ($d['codigo_softlink'] ? $d['codigo_softlink'] : '-'),
+                'codigo_oportunidad'     => ($d['codigo_oportunidad'] ? $d['codigo_oportunidad'] : '-'),
+                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ? $d['nro_orden_mgc'] : '-'),
                 'concepto_requerimiento'    => ($d['concepto_requerimiento'] ? $d['concepto_requerimiento'] : '-'),
                 'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
                 'fecha_aprobacion_cdp'      => ($d['fecha_aprobacion_cdp'] ? $d['fecha_aprobacion_cdp'] : '-'),
-                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ?$d['razon_social_proveedor'] :'-'),
-                'codigo_am'                 => ($d['codigo_am'] ?$d['codigo_am']: '-'),
-                'nombre_am'                 => ($d['nombre_am'] ?$d['nombre_am']: '-'),
-                'descripcion_subcategoria'  => ($d['descripcion_subcategoria'] ?$d['descripcion_subcategoria']: '-'),
-                'descripcion_categoria'     => ($d['descripcion_categoria'] ?$d['descripcion_categoria']: '-'),
-                'codigo_producto'           => ($d['codigo_producto'] ?$d['codigo_producto']: '-'),
-                'part_number_producto'      => ($d['part_number_producto'] ?$d['part_number_producto']: '-'),
-                'cod_softlink_producto'     => ($d['cod_softlink_producto'] ?$d['cod_softlink_producto']: '-'),
+                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ? $d['razon_social_proveedor'] : '-'),
+                'codigo_am'                 => ($d['codigo_am'] ? $d['codigo_am'] : '-'),
+                'nombre_am'                 => ($d['nombre_am'] ? $d['nombre_am'] : '-'),
+                'descripcion_subcategoria'  => ($d['descripcion_subcategoria'] ? $d['descripcion_subcategoria'] : '-'),
+                'descripcion_categoria'     => ($d['descripcion_categoria'] ? $d['descripcion_categoria'] : '-'),
+                'codigo_producto'           => ($d['codigo_producto'] ? $d['codigo_producto'] : '-'),
+                'part_number_producto'      => ($d['part_number_producto'] ? $d['part_number_producto'] : '-'),
+                'cod_softlink_producto'     => ($d['cod_softlink_producto'] ? $d['cod_softlink_producto'] : '-'),
                 'descripcion_producto'      => ($d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional']),
-                'lugar_entrega_cdp'         => ($d['lugar_entrega_cdp'] ?$d['lugar_entrega_cdp']: '-'),
-                'cantidad'                  => ($d['cantidad'] ?$d['cantidad']: '-'),
-                'abreviatura_unidad_medida_producto' => ($d['abreviatura_unidad_medida_producto'] ?$d['abreviatura_unidad_medida_producto']: ($d['abreviatura_unidad_medida_det_orden'] ?$d['abreviatura_unidad_medida_det_orden']: '-')),
-                'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ?$d['simbolo_moneda_orden']: '-'),
-                'precio'                    => ($d['precio'] ?$d['precio']: '-'),
-                'cc_fila_precio'            => ($d['cc_fila_precio'] ?$d['cc_fila_precio']: '-'),
-                'condicion_pago'            => ($d['condicion_pago'] ?$d['condicion_pago']: '-'),
-                'fecha_emision'             => ($d['fecha_emision'] ?$d['fecha_emision']: '-'),
-                'fecha_llegada'             => ($d['fecha_llegada'] ?$d['fecha_llegada']: '-'),
-                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ?$d['fecha_ingreso_almacen']: '-'),
-                'tiempo_atencion_proveedor' => ($d['tiempo_atencion_proveedor'] ?$d['tiempo_atencion_proveedor']: '-'),
-                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ?$d['descripcion_sede_empresa']: '-'),
-                'descripcion_estado'        => ($d['descripcion_estado'] ?$d['descripcion_estado']: '-'),
-                'numero_factura'            => $d['serie'].'-'.$d['numero']
+                'lugar_entrega_cdp'         => ($d['lugar_entrega_cdp'] ? $d['lugar_entrega_cdp'] : '-'),
+                'cantidad'                  => ($d['cantidad'] ? $d['cantidad'] : '-'),
+                'abreviatura_unidad_medida_producto' => ($d['abreviatura_unidad_medida_producto'] ? $d['abreviatura_unidad_medida_producto'] : ($d['abreviatura_unidad_medida_det_orden'] ? $d['abreviatura_unidad_medida_det_orden'] : '-')),
+                'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ? $d['simbolo_moneda_orden'] : '-'),
+                'precio'                    => ($d['precio'] ? $d['precio'] : '-'),
+                'cc_fila_precio'            => ($d['cc_fila_precio'] ? $d['cc_fila_precio'] : '-'),
+                'condicion_pago'            => ($d['condicion_pago'] ? $d['condicion_pago'] : '-'),
+                'fecha_emision'             => ($d['fecha_emision'] ? $d['fecha_emision'] : '-'),
+                'fecha_llegada'             => ($d['fecha_llegada'] ? $d['fecha_llegada'] : '-'),
+                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ? $d['fecha_ingreso_almacen'] : '-'),
+                'tiempo_atencion_proveedor' => ($d['tiempo_atencion_proveedor'] ? $d['tiempo_atencion_proveedor'] : '-'),
+                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ? $d['descripcion_sede_empresa'] : '-'),
+                'descripcion_estado'        => ($d['descripcion_estado'] ? $d['descripcion_estado'] : '-'),
+                'numero_factura'            => $d['serie'] . '-' . $d['numero']
             ];
         }
 
         // return sizeof($det_ord_compra);exit;
 
-        $numero = sizeof($det_ord_compra) +1;
+        $numero = sizeof($det_ord_compra) + 1;
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
         // $spreadsheet->getActiveSheet()->setAutoFilter('A1:AC'.$numero);
 
 
-        $activeWorksheet->setCellValue('A1','Factura');
-            $activeWorksheet->setCellValue('B1','F. Fecha de Emision');
-            $activeWorksheet->setCellValue('C1','Cod. orden');
-            $activeWorksheet->setCellValue('D1','Cod. req.');
-            $activeWorksheet->setCellValue('E1','Cod. orden softlink');
-            $activeWorksheet->setCellValue('F1','Cod. Oportunidad');
-            $activeWorksheet->setCellValue('G1','Nro. Orden MGC');
-            $activeWorksheet->setCellValue('H1','Concepto');
-            $activeWorksheet->setCellValue('I1','Cliente');
-            $activeWorksheet->setCellValue('J1','Fecha aprobación CDP');
-            $activeWorksheet->setCellValue('K1','Proveedor');
-            $activeWorksheet->setCellValue('L1','Cod.AM');
-            $activeWorksheet->setCellValue('M1','Nombre AM');
-            $activeWorksheet->setCellValue('N1','Marca');
-            $activeWorksheet->setCellValue('O1','Categoría');
-            $activeWorksheet->setCellValue('P1','Cod. producto');
-            $activeWorksheet->setCellValue('Q1','Part number');
-            $activeWorksheet->setCellValue('R1','Cod. softlink');
-            $activeWorksheet->setCellValue('S1','Descripción');
-            $activeWorksheet->setCellValue('T1','Lugar entrega MGC');
-            $activeWorksheet->setCellValue('U1','Cantidad');
-            $activeWorksheet->setCellValue('V1','Unitdad medida.');
-            $activeWorksheet->setCellValue('W1','Moneda');
-            $activeWorksheet->setCellValue('X1','Precio unit. Ord.');
-            $activeWorksheet->setCellValue('Y1','Precio unit. CDP');
-            $activeWorksheet->setCellValue('Z1','Condición pago');
-            $activeWorksheet->setCellValue('AA1','Fecha emisión orden');
-            $activeWorksheet->setCellValue('AB1','Plazo entrega');
-            $activeWorksheet->setCellValue('AC1','Fecha ingreso almacén');
-            $activeWorksheet->setCellValue('AD1','Tiempo atención proveedor');
-            $activeWorksheet->setCellValue('AE1','Empresa - sede');
-        $activeWorksheet->setCellValue('AF1','Estado');
+        $activeWorksheet->setCellValue('A1', 'Factura');
+        $activeWorksheet->setCellValue('B1', 'F. Fecha de Emision');
+        $activeWorksheet->setCellValue('C1', 'Cod. orden');
+        $activeWorksheet->setCellValue('D1', 'Cod. req.');
+        $activeWorksheet->setCellValue('E1', 'Cod. orden softlink');
+        $activeWorksheet->setCellValue('F1', 'Cod. Oportunidad');
+        $activeWorksheet->setCellValue('G1', 'Nro. Orden MGC');
+        $activeWorksheet->setCellValue('H1', 'Concepto');
+        $activeWorksheet->setCellValue('I1', 'Cliente');
+        $activeWorksheet->setCellValue('J1', 'Fecha aprobación CDP');
+        $activeWorksheet->setCellValue('K1', 'Proveedor');
+        $activeWorksheet->setCellValue('L1', 'Cod.AM');
+        $activeWorksheet->setCellValue('M1', 'Nombre AM');
+        $activeWorksheet->setCellValue('N1', 'Marca');
+        $activeWorksheet->setCellValue('O1', 'Categoría');
+        $activeWorksheet->setCellValue('P1', 'Cod. producto');
+        $activeWorksheet->setCellValue('Q1', 'Part number');
+        $activeWorksheet->setCellValue('R1', 'Cod. softlink');
+        $activeWorksheet->setCellValue('S1', 'Descripción');
+        $activeWorksheet->setCellValue('T1', 'Lugar entrega MGC');
+        $activeWorksheet->setCellValue('U1', 'Cantidad');
+        $activeWorksheet->setCellValue('V1', 'Unitdad medida.');
+        $activeWorksheet->setCellValue('W1', 'Moneda');
+        $activeWorksheet->setCellValue('X1', 'Precio unit. Ord.');
+        $activeWorksheet->setCellValue('Y1', 'Precio unit. CDP');
+        $activeWorksheet->setCellValue('Z1', 'Condición pago');
+        $activeWorksheet->setCellValue('AA1', 'Fecha emisión orden');
+        $activeWorksheet->setCellValue('AB1', 'Plazo entrega');
+        $activeWorksheet->setCellValue('AC1', 'Fecha ingreso almacén');
+        $activeWorksheet->setCellValue('AD1', 'Tiempo atención proveedor');
+        $activeWorksheet->setCellValue('AE1', 'Empresa - sede');
+        $activeWorksheet->setCellValue('AF1', 'Estado');
 
-        foreach($data as $key => $item){
-            $celda = $key+2;
+        foreach ($data as $key => $item) {
+            $celda = $key + 2;
 
-            $activeWorksheet->setCellValue('A'.$celda,$item['numero_factura']);
-            $activeWorksheet->setCellValue('B'.$celda,$item['emision_factura']);
-            $activeWorksheet->setCellValue('C'.$celda,$item['codigo_orden']);
-            $activeWorksheet->setCellValue('D'.$celda,$item['codigo_requerimiento']);
-            $activeWorksheet->setCellValue('E'.$celda,$item['codigo_softlink']);
-            $activeWorksheet->setCellValue('F'.$celda,$item['codigo_oportunidad']);
-            $activeWorksheet->setCellValue('G'.$celda,$item['nro_orden_mgc']);
-            $activeWorksheet->setCellValue('H'.$celda,$item['concepto_requerimiento']);
-            $activeWorksheet->setCellValue('I'.$celda,$item['razon_social_cliente']);
-            $activeWorksheet->setCellValue('J'.$celda,$item['fecha_aprobacion_cdp']);
-            $activeWorksheet->setCellValue('K'.$celda,$item['razon_social_proveedor']);
-            $activeWorksheet->setCellValue('L'.$celda,$item['codigo_am']);
-            $activeWorksheet->setCellValue('M'.$celda,$item['nombre_am']);
-            $activeWorksheet->setCellValue('N'.$celda,$item['descripcion_subcategoria']);
-            $activeWorksheet->setCellValue('O'.$celda,$item['descripcion_categoria']);
-            $activeWorksheet->setCellValue('P'.$celda,$item['codigo_producto']);
-            $activeWorksheet->setCellValue('Q'.$celda,$item['part_number_producto']);
-            $activeWorksheet->setCellValue('R'.$celda,$item['cod_softlink_producto']);
-            $activeWorksheet->setCellValue('S'.$celda,$item['descripcion_producto']);
-            $activeWorksheet->setCellValue('T'.$celda,$item['lugar_entrega_cdp']);
-            $activeWorksheet->setCellValue('U'.$celda,$item['cantidad']);
-            $activeWorksheet->setCellValue('V'.$celda,$item['abreviatura_unidad_medida_producto']);
-            $activeWorksheet->setCellValue('W'.$celda,$item['simbolo_moneda_orden']);
-            $activeWorksheet->setCellValue('X'.$celda,$item['precio']);
-            $activeWorksheet->setCellValue('Y'.$celda,$item['cc_fila_precio']);
-            $activeWorksheet->setCellValue('Z'.$celda,$item['condicion_pago']);
-            $activeWorksheet->setCellValue('AA'.$celda,$item['fecha_emision']);
-            $activeWorksheet->setCellValue('AB'.$celda,$item['fecha_llegada']);
-            $activeWorksheet->setCellValue('AC'.$celda,$item['fecha_ingreso_almacen']);
-            $activeWorksheet->setCellValue('AD'.$celda,$item['tiempo_atencion_proveedor']);
-            $activeWorksheet->setCellValue('AE'.$celda,$item['descripcion_sede_empresa']);
-            $activeWorksheet->setCellValue('AF'.$celda,$item['descripcion_estado']);
+            $activeWorksheet->setCellValue('A' . $celda, $item['numero_factura']);
+            $activeWorksheet->setCellValue('B' . $celda, $item['emision_factura']);
+            $activeWorksheet->setCellValue('C' . $celda, $item['codigo_orden']);
+            $activeWorksheet->setCellValue('D' . $celda, $item['codigo_requerimiento']);
+            $activeWorksheet->setCellValue('E' . $celda, $item['codigo_softlink']);
+            $activeWorksheet->setCellValue('F' . $celda, $item['codigo_oportunidad']);
+            $activeWorksheet->setCellValue('G' . $celda, $item['nro_orden_mgc']);
+            $activeWorksheet->setCellValue('H' . $celda, $item['concepto_requerimiento']);
+            $activeWorksheet->setCellValue('I' . $celda, $item['razon_social_cliente']);
+            $activeWorksheet->setCellValue('J' . $celda, $item['fecha_aprobacion_cdp']);
+            $activeWorksheet->setCellValue('K' . $celda, $item['razon_social_proveedor']);
+            $activeWorksheet->setCellValue('L' . $celda, $item['codigo_am']);
+            $activeWorksheet->setCellValue('M' . $celda, $item['nombre_am']);
+            $activeWorksheet->setCellValue('N' . $celda, $item['descripcion_subcategoria']);
+            $activeWorksheet->setCellValue('O' . $celda, $item['descripcion_categoria']);
+            $activeWorksheet->setCellValue('P' . $celda, $item['codigo_producto']);
+            $activeWorksheet->setCellValue('Q' . $celda, $item['part_number_producto']);
+            $activeWorksheet->setCellValue('R' . $celda, $item['cod_softlink_producto']);
+            $activeWorksheet->setCellValue('S' . $celda, $item['descripcion_producto']);
+            $activeWorksheet->setCellValue('T' . $celda, $item['lugar_entrega_cdp']);
+            $activeWorksheet->setCellValue('U' . $celda, $item['cantidad']);
+            $activeWorksheet->setCellValue('V' . $celda, $item['abreviatura_unidad_medida_producto']);
+            $activeWorksheet->setCellValue('W' . $celda, $item['simbolo_moneda_orden']);
+            $activeWorksheet->setCellValue('X' . $celda, $item['precio']);
+            $activeWorksheet->setCellValue('Y' . $celda, $item['cc_fila_precio']);
+            $activeWorksheet->setCellValue('Z' . $celda, $item['condicion_pago']);
+            $activeWorksheet->setCellValue('AA' . $celda, $item['fecha_emision']);
+            $activeWorksheet->setCellValue('AB' . $celda, $item['fecha_llegada']);
+            $activeWorksheet->setCellValue('AC' . $celda, $item['fecha_ingreso_almacen']);
+            $activeWorksheet->setCellValue('AD' . $celda, $item['tiempo_atencion_proveedor']);
+            $activeWorksheet->setCellValue('AE' . $celda, $item['descripcion_sede_empresa']);
+            $activeWorksheet->setCellValue('AF' . $celda, $item['descripcion_estado']);
         }
 
 
@@ -5442,6 +5443,110 @@ class OrdenController extends Controller
 
         // return Excel::download(new OrdenesItemsFiltroExport(json_encode($data)), 'ordenes_items.xlsx');
     }
+
+    public function reporteItemOrdenResumenFiltros(Request $request)
+    {
+
+        ini_set('memory_limit', '999999M');
+
+        $data = [];
+        $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
+            ->orderBy('items_ordenes_view.fecha_emision', 'desc');
+
+        if (!empty($request->fecha_inicio) && $request->fecha_inicio !== "null") {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision', '>=', $request->fecha_inicio);
+        }
+        if (!empty($request->fecha_final) && $request->fecha_final !== "null") {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision', '<=', $request->fecha_final);
+        }
+        $det_ord_compra = $det_ord_compra->get();
+
+        foreach ($det_ord_compra as $key => $d) {
+            $data[] = [
+                'codigo_oportunidad'     => ($d['codigo_oportunidad'] ? $d['codigo_oportunidad'] : '-'),
+                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ? $d['nro_orden_mgc'] : '-'),
+                'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
+                'fecha_aprobacion_cdp'      => ($d['fecha_aprobacion_cdp'] ? $d['fecha_aprobacion_cdp'] : '-'),
+                'codigo_orden'          => ($d['codigo_orden'] ? $d['codigo_orden'] : '-'),
+                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ? $d['descripcion_sede_empresa'] : '-'),
+                'descripcion_estado'        => ($d['descripcion_estado'] ? $d['descripcion_estado'] : '-'),
+                'subtotal'                    => (intval($d['tipo_item_id']) == 1) ? number_format(($d['cantidad'] ? floatval($d['cantidad']) : 0) * ($d['precio'] ? floatval($d['precio']) : 0) * 1.18, 2) : number_format((($d['cantidad'] ? floatval($d['cantidad']) : 0) * ($d['precio'] ? floatval($d['precio']) : 0)), 2),
+                'condicion_pago'            => ($d['condicion_pago'] ? $d['condicion_pago'] : '-'),
+                'fecha_emision'             => ($d['fecha_emision'] ? $d['fecha_emision'] : '-'),
+                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ? $d['fecha_ingreso_almacen'] : '-'),
+                'fecha_llegada'             => ($d['fecha_llegada'] ? $d['fecha_llegada'] : '-'),
+                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ? $d['razon_social_proveedor'] : '-'),
+                'marca'                     => ($d['descripcion_subcategoria'] ? $d['descripcion_subcategoria'] : '-'),
+                'descripcion_producto'      => ($d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional']),
+                'part_number_producto'      => ($d['part_number_producto'] ? $d['part_number_producto'] : '-'),
+                'cantidad'                  => ($d['cantidad'] ? $d['cantidad'] : '-')
+            ];
+        }
+
+        // return sizeof($det_ord_compra);exit;
+
+        $numero = sizeof($det_ord_compra) + 1;
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+
+        // $spreadsheet->getActiveSheet()->setAutoFilter('A1:AC'.$numero);
+
+
+        $activeWorksheet->setCellValue('A1', 'OKC');
+        $activeWorksheet->setCellValue('B1', 'OCAM');
+        $activeWorksheet->setCellValue('C1', 'Cliente');
+        $activeWorksheet->setCellValue('D1', 'Fecha aprobación CDP');
+        $activeWorksheet->setCellValue('E1', 'Orden compra AGILE');
+        $activeWorksheet->setCellValue('F1', 'Empresa');
+        $activeWorksheet->setCellValue('G1', 'Estado');
+        $activeWorksheet->setCellValue('H1', 'Monto Orden (Inc IGV)');
+        $activeWorksheet->setCellValue('I1', 'Condición de pago');
+        $activeWorksheet->setCellValue('J1', 'Fecha de orden');
+        $activeWorksheet->setCellValue('K1', 'ETA'); // fecha ingreso almacen
+        $activeWorksheet->setCellValue('L1', 'Vencimiento'); //plazo entrega
+        $activeWorksheet->setCellValue('M1', 'Proveedor');
+        $activeWorksheet->setCellValue('N1', 'Marca');
+        $activeWorksheet->setCellValue('O1', 'Descripción');
+        $activeWorksheet->setCellValue('P1', 'Part number');
+        $activeWorksheet->setCellValue('Q1', 'Cantidad');
+
+        foreach ($data as $key => $item) {
+            $celda = $key + 2;
+
+            $activeWorksheet->setCellValue('A' . $celda, $item['codigo_oportunidad']);
+            $activeWorksheet->setCellValue('B' . $celda, $item['nro_orden_mgc']);
+            $activeWorksheet->setCellValue('C' . $celda, $item['razon_social_cliente']);
+            $activeWorksheet->setCellValue('D' . $celda, $item['fecha_aprobacion_cdp']);
+            $activeWorksheet->setCellValue('E' . $celda, $item['codigo_orden']);
+            $activeWorksheet->setCellValue('F' . $celda, $item['descripcion_sede_empresa']);
+            $activeWorksheet->setCellValue('G' . $celda, $item['descripcion_estado']);
+            $activeWorksheet->setCellValue('H' . $celda, $item['subtotal']);
+            $activeWorksheet->setCellValue('I' . $celda, $item['condicion_pago']);
+            $activeWorksheet->setCellValue('J' . $celda, $item['fecha_emision']);
+            $activeWorksheet->setCellValue('K' . $celda, $item['fecha_ingreso_almacen']);
+            $activeWorksheet->setCellValue('L' . $celda, $item['fecha_llegada']);
+            $activeWorksheet->setCellValue('M' . $celda, $item['razon_social_proveedor']);
+            $activeWorksheet->setCellValue('N' . $celda, $item['marca']);
+            $activeWorksheet->setCellValue('O' . $celda, $item['descripcion_producto']);
+            $activeWorksheet->setCellValue('P' . $celda, $item['part_number_producto']);
+            $activeWorksheet->setCellValue('Q' . $celda, $item['cantidad']);
+        }
+
+
+
+
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="items_orden_resumen.xls"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+        $writer->save('php://output');
+
+        // return Excel::download(new OrdenesItemsFiltroExport(json_encode($data)), 'ordenes_items.xlsx');
+    }
+
+
     public static function reporteListaItemsOrdenesFiltros($filtros)
     {
 
@@ -5449,48 +5554,48 @@ class OrdenController extends Controller
 
         $data = [];
         $det_ord_compra = ItemsOrdenesView::where('id_estado', '>=', 1)
-        ->orderBy('items_ordenes_view.fecha_emision', 'desc');
+            ->orderBy('items_ordenes_view.fecha_emision', 'desc');
 
-        if (!empty($filtros->fecha_inicio) && $filtros->fecha_inicio!=="null") {
+        if (!empty($filtros->fecha_inicio) && $filtros->fecha_inicio !== "null") {
             // return $filtros->fecha_final;exit;
-            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','>=', $filtros->fecha_inicio);
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision', '>=', $filtros->fecha_inicio);
         }
-        if (!empty($filtros->fecha_final) && $filtros->fecha_final!=="null") {
-            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision','<=', $filtros->fecha_final);
+        if (!empty($filtros->fecha_final) && $filtros->fecha_final !== "null") {
+            $det_ord_compra = $det_ord_compra->whereDate('fecha_emision', '<=', $filtros->fecha_final);
         }
         $det_ord_compra = $det_ord_compra->get();
 
         foreach ($det_ord_compra as $key => $d) {
             // return ;;
             $data[] = [
-                'codigo_orden'          => ($d['codigo_orden'] ?$d['codigo_orden']:'-'),
-                'codigo_requerimiento'  => ($d['codigo_requerimiento'] ?$d['codigo_requerimiento']: '-'),
-                'codigo_softlink'       => ($d['codigo_softlink'] ?$d['codigo_softlink']: '-'),
-                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ?$d['nro_orden_mgc']: '-'),
+                'codigo_orden'          => ($d['codigo_orden'] ? $d['codigo_orden'] : '-'),
+                'codigo_requerimiento'  => ($d['codigo_requerimiento'] ? $d['codigo_requerimiento'] : '-'),
+                'codigo_softlink'       => ($d['codigo_softlink'] ? $d['codigo_softlink'] : '-'),
+                'nro_orden_mgc'         => ($d['nro_orden_mgc'] ? $d['nro_orden_mgc'] : '-'),
                 'concepto_requerimiento'    => ($d['concepto_requerimiento'] ? $d['concepto_requerimiento'] : '-'),
                 'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
-                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ?$d['razon_social_proveedor'] :'-'),
-                'codigo_am'                 => ($d['codigo_am'] ?$d['codigo_am']: '-'),
-                'nombre_am'                 => ($d['nombre_am'] ?$d['nombre_am']: '-'),
-                'descripcion_subcategoria'  => ($d['descripcion_subcategoria'] ?$d['descripcion_subcategoria']: '-'),
-                'descripcion_categoria'     => ($d['descripcion_categoria'] ?$d['descripcion_categoria']: '-'),
-                'codigo_producto'           => ($d['codigo_producto'] ?$d['codigo_producto']: '-'),
-                'part_number_producto'      => ($d['part_number_producto'] ?$d['part_number_producto']: '-'),
-                'cod_softlink_producto'     => ($d['cod_softlink_producto'] ?$d['cod_softlink_producto']: '-'),
+                'razon_social_proveedor'    => ($d['razon_social_proveedor'] ? $d['razon_social_proveedor'] : '-'),
+                'codigo_am'                 => ($d['codigo_am'] ? $d['codigo_am'] : '-'),
+                'nombre_am'                 => ($d['nombre_am'] ? $d['nombre_am'] : '-'),
+                'descripcion_subcategoria'  => ($d['descripcion_subcategoria'] ? $d['descripcion_subcategoria'] : '-'),
+                'descripcion_categoria'     => ($d['descripcion_categoria'] ? $d['descripcion_categoria'] : '-'),
+                'codigo_producto'           => ($d['codigo_producto'] ? $d['codigo_producto'] : '-'),
+                'part_number_producto'      => ($d['part_number_producto'] ? $d['part_number_producto'] : '-'),
+                'cod_softlink_producto'     => ($d['cod_softlink_producto'] ? $d['cod_softlink_producto'] : '-'),
                 'descripcion_producto'      => ($d['descripcion_producto'] ? $d['descripcion_producto'] : $d['descripcion_adicional']),
-                'lugar_entrega_cdp'         => ($d['lugar_entrega_cdp'] ?$d['lugar_entrega_cdp']: '-'),
-                'cantidad'                  => ($d['cantidad'] ?$d['cantidad']: '-'),
-                'abreviatura_unidad_medida_producto' => ($d['abreviatura_unidad_medida_producto'] ?$d['abreviatura_unidad_medida_producto']: ($d['abreviatura_unidad_medida_det_orden'] ?$d['abreviatura_unidad_medida_det_orden']: '-')),
-                'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ?$d['simbolo_moneda_orden']: '-'),
-                'precio'                    => ($d['precio'] ?$d['precio']: '-'),
-                'cc_fila_precio'            => ($d['cc_fila_precio'] ?$d['cc_fila_precio']: '-'),
-                'fecha_emision'             => ($d['fecha_emision'] ?$d['fecha_emision']: '-'),
-                'fecha_llegada'             => ($d['fecha_llegada'] ?$d['fecha_llegada']: '-'),
-                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ?$d['fecha_ingreso_almacen']: '-'),
-                'tiempo_atencion_proveedor' => ($d['tiempo_atencion_proveedor'] ?$d['tiempo_atencion_proveedor']: '-'),
-                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ?$d['descripcion_sede_empresa']: '-'),
-                'descripcion_estado'        => ($d['descripcion_estado'] ?$d['descripcion_estado']: '-'),
-                'numero_factura'            => $d['serie'].'-'.$d['numero']
+                'lugar_entrega_cdp'         => ($d['lugar_entrega_cdp'] ? $d['lugar_entrega_cdp'] : '-'),
+                'cantidad'                  => ($d['cantidad'] ? $d['cantidad'] : '-'),
+                'abreviatura_unidad_medida_producto' => ($d['abreviatura_unidad_medida_producto'] ? $d['abreviatura_unidad_medida_producto'] : ($d['abreviatura_unidad_medida_det_orden'] ? $d['abreviatura_unidad_medida_det_orden'] : '-')),
+                'simbolo_moneda_orden'      => ($d['simbolo_moneda_orden'] ? $d['simbolo_moneda_orden'] : '-'),
+                'precio'                    => ($d['precio'] ? $d['precio'] : '-'),
+                'cc_fila_precio'            => ($d['cc_fila_precio'] ? $d['cc_fila_precio'] : '-'),
+                'fecha_emision'             => ($d['fecha_emision'] ? $d['fecha_emision'] : '-'),
+                'fecha_llegada'             => ($d['fecha_llegada'] ? $d['fecha_llegada'] : '-'),
+                'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ? $d['fecha_ingreso_almacen'] : '-'),
+                'tiempo_atencion_proveedor' => ($d['tiempo_atencion_proveedor'] ? $d['tiempo_atencion_proveedor'] : '-'),
+                'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ? $d['descripcion_sede_empresa'] : '-'),
+                'descripcion_estado'        => ($d['descripcion_estado'] ? $d['descripcion_estado'] : '-'),
+                'numero_factura'            => $d['serie'] . '-' . $d['numero']
             ];
         }
 

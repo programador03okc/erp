@@ -2081,7 +2081,7 @@ class ListaOrdenView {
             className: 'btn-default btn-sm'
         };
         const button_reporte = {
-            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte con Filtros',
+            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte Items de orden extendido con Filtros',
             attr: {
                 id: 'btnReporteFiltros',
                 disabled: false
@@ -2098,10 +2098,28 @@ class ListaOrdenView {
             },
             className: 'btn-default btn-sm'
         };
+        const button_reporte_orden_item_cdp = {
+            text: '<span class="fas fa-file-export" aria-hidden="true"></span> Reporte Item de orden resumen con filtros ',
+            attr: {
+                id: 'btnReporteFiltrosOrdenItemResumen',
+                disabled: false
+            },
+            action: () => {
+                let form = $('<form action="'+route('logistica.gestion-logistica.compras.ordenes.listado.reporte-item-orden-resumen-filtros')+'" method="POST" target="_blank"> '+
+                        '<input type="hidden" name="_token" value="'+token+'" >'+
+                        '<input type="hidden" name="fecha_final" value="'+filtrosItem.fecha_final+'" >'+
+                        '<input type="hidden" name="fecha_inicio" value="'+filtrosItem.fecha_inicio+'" >'+
+                    '</form>');
+                $('body').append(form);
+                form.submit();
+
+            },
+            className: 'btn-default btn-sm'
+        };
         // console.log(filtrosItem);
         $tablaListaItemsOrdenesElaborados = $('#listaItemsOrden').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_descargar_excel,button_filtros,button_reporte],
+            'buttons': [button_descargar_excel,button_filtros,button_reporte,button_reporte_orden_item_cdp],
             'language': vardataTables[0],
             'order': [[15, 'desc']],
             'bLengthChange': false,

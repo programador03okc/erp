@@ -607,7 +607,7 @@ class ListarRequerimientoView {
             that.requerimientoCtrl.getRequerimiento(idRequerimiento).then((res) => {
                 $('#modal-requerimiento .modal-content').LoadingOverlay("hide", true);
 
-                that.construirSeccionDatosGenerales(res['requerimiento'][0]);
+                that.construirSeccionDatosGenerales(res['requerimiento'][0], res['cdp_requerimiento']);
                 that.construirSeccionItemsDeRequerimiento(res['det_req'], res['requerimiento'][0]['simbolo_moneda'],res['requerimiento'][0]['id_presupuesto_interno']);
                 that.construirSeccionHistorialAprobacion(res['historial_aprobacion']);
                 that.construirSeccionFlujoAprobacion(res['flujo_aprobacion']);
@@ -646,7 +646,7 @@ class ListarRequerimientoView {
         }
     }
 
-    construirSeccionDatosGenerales(data) {
+    construirSeccionDatosGenerales(data,cdpRequerimiento) {
         // console.log(data);
         document.querySelector("div[id='modal-requerimiento'] input[name='id_requerimiento']").value = data.id_requerimiento;
         document.querySelector("div[id='modal-requerimiento'] input[name='id_moneda']").value = data.id_moneda;
@@ -700,8 +700,12 @@ class ListarRequerimientoView {
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] tr[id='contenedor_presupuesto_old']").classList.add("oculto");
 
         }
-        if (data.id_cc > 0) {
-            document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='codigo_cdp']").textContent = data.codigo_oportunidad ?? '';
+        if (cdpRequerimiento.length > 0) {
+            let codigosOportunidad= [];
+            (cdpRequerimiento).forEach(element => {
+                codigosOportunidad.push(element.codigo_oportunidad);
+            });
+            document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='codigo_cdp']").textContent = codigosOportunidad.toString() ?? '';
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] tr[id='contenedor_cdp']").classList.remove("oculto");
         } else {
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] tr[id='contenedor_cdp']").classList.add("oculto");

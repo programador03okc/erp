@@ -1,4 +1,3 @@
-
 var tempObjectBtnPartida;
 var tempObjectBtnCentroCostos;
 var tempIdRegisterActive;
@@ -162,8 +161,8 @@ class RequerimientoView {
 
         $('body').on("click", "button.handleClickLimpiarSeleccionCuadroDePresupuesto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_CDP', 0);
-            document.querySelector("input[name='id_cc']").value = '';
-            document.querySelector("input[name='codigo_oportunidad']").value = '';
+            // document.querySelector("input[name='id_cc']").value = '';
+            // document.querySelector("input[name='codigo_oportunidad']").value = '';
         });
 
     }
@@ -175,7 +174,8 @@ class RequerimientoView {
                     document.querySelector("select[name='id_proyecto']").setAttribute("disabled", true);
                     document.querySelector("select[name='id_proyecto']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
-                    document.querySelector("input[name='id_cc']").value = '';
+                    document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
+
 
                 } else {
                     document.querySelector("select[name='id_proyecto']").removeAttribute("disabled");
@@ -187,7 +187,7 @@ class RequerimientoView {
                 if (valor > 0) {
                     document.querySelector("select[name='id_presupuesto_interno']").setAttribute("disabled", true);
                     document.querySelector("select[name='id_presupuesto_interno']").value = '';
-                    document.querySelector("input[name='id_cc']").value = '';
+                    document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
                 } else {
                     document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
@@ -403,6 +403,12 @@ class RequerimientoView {
                 });
                 document.querySelector("select[name='division']").innerHTML = optionSelectDivisionHTML;
                 this.mostrarCabeceraRequerimiento(data['requerimiento'][0]);
+                if(data['cdp_requerimiento']!=null && data['cdp_requerimiento'].length>0){
+                    hiddeElement('mostrar', 'form-requerimiento', [
+                        'input-group-cdp'
+                    ]);
+                    this.mostrarCdpVinculado(data['cdp_requerimiento']);
+                }
 
                 if (data.hasOwnProperty('det_req')) {
                     if (data['requerimiento'][0].estado == 7 || data['requerimiento'][0].estado == 2) {
@@ -493,14 +499,11 @@ class RequerimientoView {
 
     mostrarCabeceraRequerimiento(data) {
 
-
         // console.log(auth_user);
         // document.querySelector("input[name='id_usuario_session']").value =data.
         document.querySelector("input[name='id_usuario_req']").value = data.id_usuario;
         document.querySelector("input[name='id_requerimiento']").value = data.id_requerimiento;
         document.querySelector("span[id='codigo_requerimiento']").textContent = data.codigo;
-        document.querySelector("input[name='id_cc']").value = data.id_cc ?? '';
-        document.querySelector("input[name='codigo_oportunidad']").value = data.codigo_oportunidad ?? '';
         document.querySelector("input[name='id_grupo']").value = data.id_grupo;
         document.querySelector("input[name='estado']").value = data.estado;
         document.querySelector("span[id='estado_doc']").textContent = data.estado_doc;
@@ -579,6 +582,11 @@ class RequerimientoView {
 
     }
 
+    mostrarCdpVinculado(array){
+        array.forEach(element => {
+            agregarEnTablaCuadroPresupuestoVinculados(element);
+        });
+    }
 
     mostrarHistorialRevisionAprobacion(data) {
         this.limpiarTabla('listaHistorialRevision');
@@ -1203,7 +1211,7 @@ class RequerimientoView {
 
         let tipoRequerimiento = document.querySelector("form[id='form-requerimiento'] select[name='tipo_requerimiento']").value;
         let idGrupo = document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value;
-        let tipoPptoCDP = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
+        let tipoPptoCDP = document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") !=null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount:0;
 
         const partidaTd = `<p class="descripcion-partida">(NO SELECCIONADO)</p><button type="button" class="btn btn-xs btn-info handleClickCargarModalPartidas" name="partida">Seleccionar</button>
         <div class="form-group">
@@ -1261,7 +1269,7 @@ class RequerimientoView {
     agregarFilaServicio() {
         vista_extendida();
         let idFila = this.makeId();
-        let tipoPptoCDP = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
+        let tipoPptoCDP = document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody tr") !=null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody tr").childElementCount:0;
 
         // fix unidad medida que toma el html de un select oculto y debe tener por defecto seleccionado el option que viene de data
         let um = document.querySelector("select[id='selectUnidadMedida']").getElementsByTagName('option');
@@ -1629,7 +1637,7 @@ class RequerimientoView {
 
 
         for (let index = 0; index < tbodyChildren.length; index++) {
-            if (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida > 0) {
+            if (tbodyChildren[index].querySelector("p[class='descripcion-partida']") !=null && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida > 0) {
                 if (!partidaAgregadas.includes(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida)) {
                     partidaAgregadas.push(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida);
                     tempPartidasActivas.push({
@@ -1694,7 +1702,7 @@ class RequerimientoView {
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
-        console.log(data);
+        // console.log(data);
         this.limpiarTabla('listaPartidasActivas');
         data.forEach(element => {
 
@@ -2419,7 +2427,7 @@ class RequerimientoView {
         let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento']").children;
         for (let index = 0; index < tbodyChildren.length; index++) {
 
-            if (document.querySelector("input[name='id_cc']").value == '' || document.querySelector("input[name='id_cc']").value == null) {
+            if ((document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") !=null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount:0) ==0) {
 
                 if (tbodyChildren[index].querySelector("input[class~='partida']").value == '') {
                     camposValidos = false;
@@ -2817,9 +2825,11 @@ class RequerimientoView {
         this.limpiarTabla('listaArchivosRequerimiento');
         this.limpiarTabla('listaArchivos');
         this.limpiarTabla('listaPartidasActivas');
+        this.limpiarTabla('tablaCuadroPresupuestoVinculados');
         this.limpiarMesajesValidacion();
         tempArchivoAdjuntoRequerimientoCabeceraList = [];
         tempArchivoAdjuntoRequerimientoDetalleList = [];
+        cdpVinculadoConRequerimientoList = [];
         objBotonAdjuntoRequerimientoDetalleSeleccionado = '';
         tempCentroCostoSelected = null;
         tempIdRegisterActive = null

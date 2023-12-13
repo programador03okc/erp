@@ -794,8 +794,12 @@ class RevisarAprobarDocumentoView {
         }
 
     
-        if(data.id_cc>0){
-            document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='codigo_cdp']").textContent = data.cuadro_presupuesto != null ? data.cuadro_presupuesto.codigo_oportunidad:'';;
+        if (data.cdp_requerimiento.length > 0) {
+            let codigosOportunidad= [];
+            (data.cdp_requerimiento).forEach(element => {
+                codigosOportunidad.push(element.codigo_oportunidad);
+            });
+            document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='codigo_cdp']").textContent = codigosOportunidad.toString()??'';
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] tr[id='contenedor_cdp']").classList.remove("oculto");
         }else{
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] tr[id='contenedor_cdp']").classList.add("oculto");
@@ -901,7 +905,7 @@ class RevisarAprobarDocumentoView {
                 });
     }
 
-    construirSeccionDatosGenerales(data) {
+    construirSeccionDatosGenerales(data,cdpRequerimiento) {
         // console.log(data);
         document.querySelector("div[id='modal-requerimiento'] input[name='id_requerimiento']").value = data.id_requerimiento;
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='codigo']").textContent = data.codigo;
@@ -944,8 +948,12 @@ class RevisarAprobarDocumentoView {
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] tr[id='contenedor_incidencia']").classList.add("oculto");
 
         }
-        if(data.id_cc>0){
-            document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='codigo_cdp']").textContent = data.codigo_oportunidad??'';
+        if (cdpRequerimiento.length > 0) {
+            let codigosOportunidad= [];
+            (cdpRequerimiento).forEach(element => {
+                codigosOportunidad.push(element.codigo_oportunidad);
+            });
+            document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='codigo_cdp']").textContent = codigosOportunidad.toString()??'';
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] tr[id='contenedor_cdp']").classList.remove("oculto");
         }else{
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] tr[id='contenedor_cdp']").classList.add("oculto");
@@ -1206,7 +1214,7 @@ class RevisarAprobarDocumentoView {
                 this.getRequerimiento(obj.dataset.idRequerimiento).then((res) => {
                     $('#modal-requerimiento .modal-content').LoadingOverlay("hide", true);
 
-                    this.construirSeccionDatosGenerales(res['requerimiento'][0]);
+                    this.construirSeccionDatosGenerales(res['requerimiento'][0],res['cdp_requerimiento']);
                     this.construirSeccionItemsDeRequerimiento(res['det_req'], res['requerimiento'][0]['simbolo_moneda']);
                     this.construirSeccionHistorialAprobacion(res['historial_aprobacion']);
                     $('#modal-requerimiento div.modal-body').LoadingOverlay("hide", true);

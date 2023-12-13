@@ -132,6 +132,7 @@ Listado de requerimientos de pago
 <script src="{{ asset('js/logistica/requerimiento/modal_lista_trabajadores.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modal_lista_trabajadores.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
 
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');

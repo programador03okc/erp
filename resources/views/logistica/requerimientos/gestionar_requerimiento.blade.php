@@ -305,23 +305,28 @@ Crear / editar requerimiento
 
                 <div class="row">
                     <div id="input-group-cdp">
-                        <div class="col-md-6">
-                            <h4 style="display:flex;justify-content: space-between;">Cuadro de presupuesto</h4>
-                            <fieldset class="group-table">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5>Código</h5>
-                                        <div style="display:flex;">
-                                            <input type="text" class="form-control oculto" name="id_cc">
-                                            <input type="text" class="form-control" name="codigo_oportunidad" readonly>
-
-                                            <button type="button" class="btn-primary handleClickModalListaCuadroDePresupuesto activation" title="Buscar cuadro de presupuesto" name="btnSearchCDP" disabled>
-                                                <i class=" fas fa-search"></i>
-                                            </button>
-
-                                            <button type="button" class="btn-primary handleClickLimpiarSeleccionCuadroDePresupuesto activation" title="Limpiar selección" name="btnCleanCDP" disabled>
-                                                <i class="fas fa-broom"></i>
-                                            </button>
+                        <div class="col-md-12">
+                            <h4 style="display:flex;justify-content: space-between;">Lista de Cuadros presupuestos vinculados</h4>
+                            <fieldset class="group-importes">
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn-primary btn-xs handleClickModalListaCuadroDePresupuesto activation" title="Buscar cuadro de presupuesto" name="btnSearchCDP" disabled>
+                                        <i class=" fas fa-search"></i> Seleccionar CDP
+                                    </button>
+                                </div>
+                                <div class="box box-widget">
+                                    <div class="box-body">
+                                        <div class="table-responsive" style="overflow: scroll; height: 30vh;">
+                                            <table class="mytable table table-condensed table-bordered table-okc-view no-footer dataTable" id="tablaCuadroPresupuestoVinculados">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:15%">Código</th>
+                                                        <th style="width:70%">Entidad</th>
+                                                        <th style="width:20%">Monto</th>
+                                                        <th style="width:5%">Acción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="body_cdp_vinculados"></tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>

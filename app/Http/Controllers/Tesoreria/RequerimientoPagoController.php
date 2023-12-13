@@ -20,10 +20,12 @@ use App\Models\Administracion\Periodo;
 use App\Models\Administracion\Prioridad;
 use App\Models\Administracion\Estado;
 use App\Models\Administracion\Sede;
+use App\Models\Almacen\CdpRequerimiento;
 use App\Models\almacen\DocumentoCompra;
 use App\Models\almacen\DocumentoCompraDetalle;
 use App\Models\Almacen\Trazabilidad;
 use App\Models\Almacen\UnidadMedida;
+use App\Models\Comercial\CuadroCosto\CuadroCosto;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Grupo;
 use App\Models\Configuracion\LogActividad;
@@ -310,6 +312,17 @@ class RequerimientoPagoController extends Controller
         return $registrosPago;
     }
 
+    public function getCodigoOportunidad($idCC){
+        $codigo_oportunidad=null;
+        $cc = CuadroCosto::with("oportunidad")->find($idCC)->first();
+        if($cc){
+            $codigo_oportunidad=  $cc->oportunidad !=null ? $cc->oportunidad->codigo_oportunidad:null;
+        }
+        
+        return $codigo_oportunidad;
+         
+    }
+
 
     function guardarRequerimientoPago(Request $request)
     {
@@ -362,9 +375,17 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->accion_adjunto = $request->accion_adjunto;
             // $requerimientoPago->fecha_emision = $request->fecha_emision;//fecha de emision de comprobsante del adjunto nivel cabecera
 
-            $count = count($request->descripcion);
+            $countDetalle = count($request->descripcion);
             $montoTotal = 0;
-            for ($i = 0; $i < $count; $i++) {
+
+            $tieneIdCdpVinculado = false;
+            if (isset($request->id_cpd_vinculado) == true) {
+                $tieneIdCdpVinculado = true;
+                $countIdCdpVinculado = count($request->id_cpd_vinculado);
+            }
+
+
+            for ($i = 0; $i < $countDetalle; $i++) {
                 if ($request->cantidad[$i] <= 0) {
                     return response()->json(['id_requerimiento_pago' => 0, 'codigo' => '', 'mensaje' => 'La cantidad solicitada debe ser mayor a 0']);
                 }
@@ -395,6 +416,18 @@ class RequerimientoPagoController extends Controller
             }
 
 
+            if ($tieneIdCdpVinculado == true) {
+                // recorrer input de cdp vinculados
+                for ($c = 0; $c < $countIdCdpVinculado; $c++) {
+                    $cdpRequerimiento = new CdpRequerimiento();
+                    $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
+                    $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
+                    $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
+                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->estado = 1;
+                    $cdpRequerimiento->save();
+                }
+            }
 
 
             DB::commit();
@@ -412,7 +445,7 @@ class RequerimientoPagoController extends Controller
 
             // guardar factura solo si existe vinculo
             // $documentoCompraArray=[];
-            $documentoCompraArray = $this->VincularFacturaRequerimientoPago($request, $count, $detalleArray, $codigo);
+            $documentoCompraArray = $this->VincularFacturaRequerimientoPago($request, $countDetalle, $detalleArray, $codigo);
 
             // Adjuntos Cabecera
             if (isset($request->archivo_adjunto_list)) {
@@ -883,7 +916,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $requerimientoPago->save();
 
-            $count = count($request->descripcion);
+            $countDetalle = count($request->descripcion);
 
             $detalleArray = [];
 
@@ -892,7 +925,7 @@ class RequerimientoPagoController extends Controller
             
             $valorAteriorDetalle = RequerimientoPagoDetalle::where("id_requerimiento_pago", $request->id_requerimiento_pago)->get();
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $countDetalle; $i++) {
                 $id = $request->idRegister[$i];
 
                 if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $id)) // es un id con numeros y letras => es nuevo, insertar
@@ -972,7 +1005,47 @@ class RequerimientoPagoController extends Controller
                 }
             }
 
-            $documentoCompraArray = $this->VincularFacturaRequerimientoPago($request, $count, $detalleArray, $requerimientoPago->codigo);
+            $documentoCompraArray = $this->VincularFacturaRequerimientoPago($request, $countDetalle, $detalleArray, $requerimientoPago->codigo);
+
+            $tieneIdCdpVinculado = false;
+            if (isset($request->id_cpd_vinculado) == true) {
+                $tieneIdCdpVinculado = true;
+                $countIdCdpVinculado = count($request->id_cpd_vinculado);
+            }
+
+            if ($tieneIdCdpVinculado == true) {
+
+                $todoCdpRequerimiento = CdpRequerimiento::where("id_requerimiento_pago", $requerimientoPago->id_requerimiento_pago)->get();
+                $idCdpRequerimientoProcesado = [];
+    
+                for ($c = 0; $c < $countIdCdpVinculado; $c++) {
+                    if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $request->id_cpd_vinculado[$c])) { // es un id con numeros y letras => es nuevo, insertar
+                        $cdpRequerimiento = new CdpRequerimiento();
+                        $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
+                        $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
+                        $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
+                        $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                        $cdpRequerimiento->estado = 1;
+                        $cdpRequerimiento->save();
+                    } else {
+                        $cdpRequerimiento = CdpRequerimiento::find($request->id_cpd_vinculado[$c]);
+                        $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
+                        $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
+                        $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
+                        $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                        $cdpRequerimiento->save();
+                    }
+                    $idCdpRequerimientoProcesado[] = $cdpRequerimiento->id_cdp_requerimiento;
+                }
+    
+                foreach ($todoCdpRequerimiento as $key => $value) {
+                    if (!in_array($value->id_cdp_requerimiento, $idCdpRequerimientoProcesado)) {
+                        $cdpRequerimiento = CdpRequerimiento::find($value->id_cdp_requerimiento);
+                        $cdpRequerimiento->estado = 7;
+                        $cdpRequerimiento->save();
+                    }
+                }
+            }
 
             //adjuntos cabecera
             if (isset($request->archivo_adjunto_list)) {
@@ -1117,6 +1190,13 @@ class RequerimientoPagoController extends Controller
                         'mensaje' => 'El requerimiento de pago ' . $requerimientoPago->codigo . ' fue anulado',
                     ];
 
+                    $cdpRequerimiento = CdpRequerimiento::where('id_requerimiento_pago',$idRequerimientoPago)->get();
+                    foreach ($cdpRequerimiento as $value) {
+                        $cdpReq = CdpRequerimiento::find($value->id_cdp_requerimiento);
+                        $cdpReq->estado=7;
+                        $cdpReq->save();
+                    }
+
                     $comentarioCabecera = 'Anular requerimiento de pago (cabecera): ' . ($requerimientoPago->codigo ?? '').', Anulado por: ' . Auth::user()->nombre_corto;
                     LogActividad::registrar(Auth::user(), 'Listado de requerimientos de pago', 4, $requerimientoPago->getTable(), null, $requerimientoPago, $comentarioCabecera,'Necesidades');
                     $comentarioDetalle = 'Anular requerimiento de pago (detalle): ' . ($requerimientoPago->codigo ?? '').', Anulado por: ' . Auth::user()->nombre_corto;
@@ -1204,6 +1284,12 @@ class RequerimientoPagoController extends Controller
             $aprobacion = [];
         }
         $requerimientoPago->setAttribute('aprobacion', $aprobacion);
+
+        $cdpRequerimiento = CdpRequerimiento::leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'cdp_requerimiento.id_cc')
+        ->select('cdp_requerimiento.*','cc_view.codigo_oportunidad','cc_view.nombre_entidad')
+        ->where([['id_requerimiento_pago',$requerimientoPago->id_requerimiento_pago],['estado','!=',7]])->get();
+
+        $requerimientoPago->setAttribute('cdp_requerimiento', $cdpRequerimiento);
 
 
 

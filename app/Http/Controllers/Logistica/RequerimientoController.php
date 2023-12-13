@@ -41,9 +41,11 @@ use App\Models\administracion\Sede;
 use App\Models\Almacen\AdjuntoDetalleRequerimiento;
 use App\Models\Almacen\AdjuntoRequerimiento;
 use App\Models\Almacen\Almacen;
+use App\Models\Almacen\CdpRequerimiento;
 use App\Models\Almacen\Producto;
 use App\Models\Almacen\RequerimientoLogisticoView;
 use App\Models\Almacen\Transferencia;
+use App\Models\Comercial\CuadroCosto\CuadroCosto;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Grupo;
 use App\Models\Configuracion\LogActividad;
@@ -126,25 +128,49 @@ class RequerimientoController extends Controller
 
         $presupuestoInternoList = (new PresupuestoInternoController)->comboPresupuestoInterno(0, 0);
 
-        return view('logistica.requerimientos.gestionar_requerimiento', compact('tipo_cambio', 'idTrabajador', 'nombreUsuario',
-            'categoria_adjunto', 'grupos', 'sis_identidad', 'tipo_requerimiento', 'monedas', 'prioridades', 'empresas', 'unidadesMedida',
-            'roles', 'periodos', 'bancos', 'tipos_cuenta', 'clasificaciones', 'subcategorias', 'categorias', 'unidades', 'fuentes',
-            'divisiones', 'array_accesos', 'array_accesos_botonera', 'modulo', 'presupuestoInternoList'));
+        return view('logistica.requerimientos.gestionar_requerimiento', compact(
+            'tipo_cambio',
+            'idTrabajador',
+            'nombreUsuario',
+            'categoria_adjunto',
+            'grupos',
+            'sis_identidad',
+            'tipo_requerimiento',
+            'monedas',
+            'prioridades',
+            'empresas',
+            'unidadesMedida',
+            'roles',
+            'periodos',
+            'bancos',
+            'tipos_cuenta',
+            'clasificaciones',
+            'subcategorias',
+            'categorias',
+            'unidades',
+            'fuentes',
+            'divisiones',
+            'array_accesos',
+            'array_accesos_botonera',
+            'modulo',
+            'presupuestoInternoList'
+        ));
     }
 
-    public function obtenerListaProyectos($idGrupo){
+    public function obtenerListaProyectos($idGrupo)
+    {
 
-        $tipoProyecto= 'INTERNO';
-        if($idGrupo==3){
-            $tipoProyecto= 'EXTERNO';
+        $tipoProyecto = 'INTERNO';
+        if ($idGrupo == 3) {
+            $tipoProyecto = 'EXTERNO';
         }
 
         $data = DB::table('proyectos.proy_proyecto')
-        ->select('proy_proyecto.*','centro_costo.descripcion as descripcion_centro_costo','centro_costo.codigo as codigo_centro_costo')
-        ->leftJoin('finanzas.centro_costo', 'centro_costo.id_centro_costo', '=', 'proy_proyecto.id_centro_costo')
-        ->where([['proy_proyecto.estado', 1],['proy_proyecto.tipo', $tipoProyecto]])
-        ->orderBy('id_proyecto')
-        ->get();
+            ->select('proy_proyecto.*', 'centro_costo.descripcion as descripcion_centro_costo', 'centro_costo.codigo as codigo_centro_costo')
+            ->leftJoin('finanzas.centro_costo', 'centro_costo.id_centro_costo', '=', 'proy_proyecto.id_centro_costo')
+            ->where([['proy_proyecto.estado', 1], ['proy_proyecto.tipo', $tipoProyecto]])
+            ->orderBy('id_proyecto')
+            ->get();
         return $data;
     }
 
@@ -249,12 +275,12 @@ class RequerimientoController extends Controller
     public function listaDetalleRequerimiento($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
     {
 
-        $soloAutorizadoGarantias=false;
+        $soloAutorizadoGarantias = false;
         $allRol = Auth::user()->getAllRol();
         foreach ($allRol as  $rol) {
-            if($rol->id_rol == 52) // autorizado garantias
+            if ($rol->id_rol == 52) // autorizado garantias
             {
-                $soloAutorizadoGarantias=true;
+                $soloAutorizadoGarantias = true;
             }
         }
 
@@ -388,7 +414,7 @@ class RequerimientoController extends Controller
                 return $query->whereRaw('alm_req.estado = ' . $idEstado);
             })
             ->where([['alm_req.flg_compras', '=', 0], ['alm_det_req.estado', '!=', 7], ['alm_req.estado', '!=', 7]])
-            ->when((($soloAutorizadoGarantias) ==true), function ($query) {
+            ->when((($soloAutorizadoGarantias) == true), function ($query) {
                 return $query->whereRaw('alm_req.id_tipo_requerimiento = 6');  // autorizado solo ver comercial divison CAS, tipo de requerimiento de garantias
             })
             // ->orderBy('alm_det_req.fecha_registro', 'desc')
@@ -624,8 +650,8 @@ class RequerimientoController extends Controller
                     'id_presupuesto_interno' => $data->id_presupuesto_interno,
                     'codigo_presupuesto_interno' => $data->codigo_presupuesto_interno,
                     'descripcion_presupuesto_interno' => $data->descripcion_presupuesto_interno,
-                    'tipo_impuesto' => $data->tipo_impuesto >0?$data->tipo_impuesto:'',
-                    'tipo_cambio' => $data->tipo_cambio >0?$data->tipo_cambio:'',
+                    'tipo_impuesto' => $data->tipo_impuesto > 0 ? $data->tipo_impuesto : '',
+                    'tipo_cambio' => $data->tipo_cambio > 0 ? $data->tipo_cambio : '',
                     'adjuntos' => []
 
                 ];
@@ -790,6 +816,10 @@ class RequerimientoController extends Controller
                 ->orderBy('alm_det_req.id_detalle_requerimiento', 'asc')
                 ->get();
 
+            
+            $cdpRequerimiento = CdpRequerimiento::leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'cdp_requerimiento.id_cc')
+            ->select('cdp_requerimiento.*','cc_view.codigo_oportunidad','cc_view.nombre_entidad')
+            ->where([['id_requerimiento_logistico',$requerimiento[0]['id_requerimiento']],['estado','!=',7]])->get();
 
             // Debugbar::info($alm_det_req);
 
@@ -906,23 +936,23 @@ class RequerimientoController extends Controller
 
 
 
-            $historialAprobacionList[] = [
-                'accion' => "Elaborado",
-                'descripcion_rol' => null,
-                'detalle_observacion' => null,
-                'fecha_vobo' => $requerimiento[0]['fecha_registro'],
-                'id_aprobacion' => 1,
-                'id_flujo' => null,
-                'id_operacion' => null,
-                'id_rol' => null,
-                'id_usuario' => $requerimiento[0]['id_usuario'],
-                'id_vobo' => 7,
-                'nombre_corto' => $requerimiento[0]['nombre_corto_usuario'],
-                'nombre_flujo' => null,
-                'nombre_usuario' => $requerimiento[0]['persona'],
-                'orden' => null,
-                'tiene_sustento' => false
-            ];
+        $historialAprobacionList[] = [
+            'accion' => "Elaborado",
+            'descripcion_rol' => null,
+            'detalle_observacion' => null,
+            'fecha_vobo' => $requerimiento[0]['fecha_registro'],
+            'id_aprobacion' => 1,
+            'id_flujo' => null,
+            'id_operacion' => null,
+            'id_rol' => null,
+            'id_usuario' => $requerimiento[0]['id_usuario'],
+            'id_vobo' => 7,
+            'nombre_corto' => $requerimiento[0]['nombre_corto_usuario'],
+            'nombre_flujo' => null,
+            'nombre_usuario' => $requerimiento[0]['persona'],
+            'orden' => null,
+            'tiene_sustento' => false
+        ];
 
         foreach ((Aprobacion::getVoBo($num_doc)['data']) as $key => $value) {
             $historialAprobacionList[] = $value;
@@ -936,6 +966,7 @@ class RequerimientoController extends Controller
         $data = [
             "requerimiento" => $requerimiento ? $requerimiento : [],
             "det_req" => $detalle_requerimiento ? $detalle_requerimiento : [],
+            "cdp_requerimiento"=>$cdpRequerimiento?$cdpRequerimiento:[],
             "observacion_requerimiento" => $req_observacion ? $req_observacion : [],
             "aprobaciones" => $cantidad_aprobados ? $cantidad_aprobados : 0,
             "historial_aprobacion" => $historialAprobacionList ? $historialAprobacionList : [],
@@ -950,6 +981,17 @@ class RequerimientoController extends Controller
         return Operacion::getOperacion($IdTipoDocumento, $idTipoRequerimientoCompra, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago, $idRolUsuarioDocList);
     }
 
+    public function getCodigoOportunidad($idCC){
+        $codigo_oportunidad=null;
+        $cc = CuadroCosto::with("oportunidad")->find($idCC)->first();
+        if($cc){
+            $codigo_oportunidad=  $cc->oportunidad !=null ? $cc->oportunidad->codigo_oportunidad:null;
+        }
+        
+        return $codigo_oportunidad;
+         
+    }
+
     public function guardarRequerimiento(Request $request)
     {
         // dd($request->all());
@@ -957,13 +999,18 @@ class RequerimientoController extends Controller
         DB::beginTransaction();
         try {
 
-            $count = count($request->descripcion);
+            $countDetalle = count($request->descripcion);
+            $tieneIdCdpVinculado = false;
+            if (isset($request->id_cpd_vinculado) == true) {
+                $tieneIdCdpVinculado = true;
+                $countIdCdpVinculado = count($request->id_cpd_vinculado);
+            }
             $montoTotal = 0;
             $cantidadItemConTransformacion = 0;
             $cantidadTipoDetalleProducto = 0;
             $cantidadTipoDetalleServicio = 0;
             $idTipoDetalle = null;
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $countDetalle; $i++) {
                 if (isset($request->conTransformacion[$i]) && $request->conTransformacion[$i] == 1) {
                     $cantidadItemConTransformacion++;
                 }
@@ -988,7 +1035,7 @@ class RequerimientoController extends Controller
             $añoPeriodo = Periodo::find($request->periodo)->descripcion;
             $idEmpresa = Sede::find($request->sede)->id_empresa;
             // $fechaPeriodo = Carbon::createFromFormat('Y-m-d', ($periodo->descripcion . '-01-01'));
-            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo,$idEmpresa);
+            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
             if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
                 return response()->json(['id_requerimiento' => 0, 'codigo' => '', 'mensaje' => 'No se puede generar el requerimiento cuando el periodo operativo está cerrado']);
             }
@@ -1046,7 +1093,7 @@ class RequerimientoController extends Controller
 
 
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $countDetalle; $i++) {
                 if ($request->cantidad[$i] <= 0) {
                     return response()->json(['id_requerimiento' => 0, 'codigo' => '', 'mensaje' => 'La cantidad solicitada debe ser mayor a 0']);
                 }
@@ -1054,10 +1101,10 @@ class RequerimientoController extends Controller
                 $detalle = new DetalleRequerimiento();
                 $detalle->id_requerimiento = $requerimiento->id_requerimiento;
                 $detalle->id_tipo_item = $request->tipoItem[$i];
-                if(intval($request->id_presupuesto_interno) > 0){
-                    $detalle->id_partida_pi = $request->idPartida[$i]??null;
-                }else{
-                    $detalle->partida = $request->idPartida[$i]??null;
+                if (intval($request->id_presupuesto_interno) > 0) {
+                    $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
+                } else {
+                    $detalle->partida = $request->idPartida[$i] ?? null;
                 }
                 $detalle->centro_costo_id = $request->idCentroCosto[$i];
                 $detalle->part_number = $request->partNumber[$i];
@@ -1074,6 +1121,19 @@ class RequerimientoController extends Controller
                 $detalle->idRegister = $request->idRegister[$i];
                 $detalleArray[] = $detalle;
                 $montoTotal += $detalle->cantidad * $detalle->precio_unitario;
+            }
+
+            if ($tieneIdCdpVinculado == true) {
+                // recorrer input de cdp vinculados
+                for ($c = 0; $c < $countIdCdpVinculado; $c++) {
+                    $cdpRequerimiento = new CdpRequerimiento();
+                    $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
+                    $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
+                    $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
+                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->estado = 1;
+                    $cdpRequerimiento->save();
+                }
             }
 
             $documento = new Documento();
@@ -1134,10 +1194,10 @@ class RequerimientoController extends Controller
             $req->save();
 
 
-            $comentarioCabecera = 'Nuevo requerimiento logístico (cabecera): ' . ($req->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
-            LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 2, $req->getTable(), null, $req, $comentarioCabecera,'Necesidades');
-            $comentarioDetalle = 'Nuevo requerimiento logístico (detalle): ' . ($req->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
-            LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+            $comentarioCabecera = 'Nuevo requerimiento logístico (cabecera): ' . ($req->codigo ?? '') . ', Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 2, $req->getTable(), null, $req, $comentarioCabecera, 'Necesidades');
+            $comentarioDetalle = 'Nuevo requerimiento logístico (detalle): ' . ($req->codigo ?? '') . ', Agregado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle, 'Necesidades');
 
             $this->guardarAdjuntoNivelRequerimiento($requerimiento, $codigo);
 
@@ -1370,14 +1430,20 @@ class RequerimientoController extends Controller
         $añoPeriodo = Periodo::find($requerimiento->id_periodo)->descripcion;
         $idEmpresa = Sede::find($requerimiento->id_sede)->id_empresa;
         // $fechaPeriodo = Carbon::createFromFormat('Y-m-d', ($periodo->descripcion . '-01-01'));
-        $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo,$idEmpresa);
+        $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
         if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
             return response()->json(['id_requerimiento' => 0, 'codigo' => '', 'mensaje' => 'No se puede actualizar el requerimiento cuando el periodo operativo está cerrado']);
         }
 
         $nombreCompletoUsuario = Usuario::find(Auth::user()->id_usuario)->trabajador->postulante->persona->nombre_completo;
 
-        $count = count($request->descripcion);
+        $countDetalle = count($request->descripcion);
+
+        $tieneIdCdpVinculado = false;
+        if (isset($request->id_cpd_vinculado) == true) {
+            $tieneIdCdpVinculado = true;
+            $countIdCdpVinculado = count($request->id_cpd_vinculado);
+        }
 
         $mensaje = '';
         $cantidadItemConTransformacion = 0;
@@ -1385,7 +1451,7 @@ class RequerimientoController extends Controller
         $cantidadTipoDetalleServicio = 0;
         $idTipoDetalle = null;
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $countDetalle; $i++) {
             if (isset($request->conTransformacion[$i]) && $request->conTransformacion[$i] == 1) {
                 $cantidadItemConTransformacion++;
             }
@@ -1450,7 +1516,7 @@ class RequerimientoController extends Controller
             $aprobacion->id_rol = null;
             $aprobacion->tiene_sustento = false;
             $aprobacion->save();
-            $mensaje ='Requerimiento sustentado';
+            $mensaje = 'Requerimiento sustentado';
 
 
             $idDocumento = Documento::getIdDocAprob($request->id_requerimiento, 1);
@@ -1465,9 +1531,8 @@ class RequerimientoController extends Controller
             }
             // $aprobacion = Aprobacion::where("id_aprobacion", $ultimoVoBo->id_aprobacion)->first();
 
-        }else{
-            $mensaje ='Requerimiento actualizado';
-
+        } else {
+            $mensaje = 'Requerimiento actualizado';
         }
         $requerimiento->id_tipo_requerimiento = $request->tipo_requerimiento;
         $requerimiento->id_usuario = Auth::user()->id_usuario;
@@ -1525,17 +1590,17 @@ class RequerimientoController extends Controller
         $todoDetalleRequerimiento = DetalleRequerimiento::where("id_requerimiento", $requerimiento->id_requerimiento)->get();
         $idDetalleRequerimientoProcesado = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $countDetalle; $i++) {
             $id = $request->idRegister[$i];
             if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $id)) // es un id con numeros y letras => es nuevo, insertar
             {
                 $detalle = new DetalleRequerimiento();
                 $detalle->id_requerimiento = $requerimiento->id_requerimiento;
                 $detalle->id_tipo_item = $request->tipoItem[$i];
-                if(intval($request->id_presupuesto_interno) > 0){
-                    $detalle->id_partida_pi = $request->idPartida[$i]??null;
-                }else{
-                    $detalle->partida = $request->idPartida[$i]??null;
+                if (intval($request->id_presupuesto_interno) > 0) {
+                    $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
+                } else {
+                    $detalle->partida = $request->idPartida[$i] ?? null;
                 }
                 $detalle->centro_costo_id = $request->idCentroCosto[$i];
                 $detalle->part_number = $request->partNumber[$i];
@@ -1554,10 +1619,10 @@ class RequerimientoController extends Controller
             } else { // es un id solo de numerico => actualiza
                 $detalle = DetalleRequerimiento::where("id_detalle_requerimiento", $id)->first();
                 $detalle->id_tipo_item = $request->tipoItem[$i];
-                if(intval($request->id_presupuesto_interno) > 0){
-                    $detalle->id_partida_pi = $request->idPartida[$i] ??null;
-                }else{
-                    $detalle->partida = $request->idPartida[$i]??null;
+                if (intval($request->id_presupuesto_interno) > 0) {
+                    $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
+                } else {
+                    $detalle->partida = $request->idPartida[$i] ?? null;
                 }
                 $detalle->centro_costo_id = $request->idCentroCosto[$i] > 0 ? $request->idCentroCosto[$i] : null;
                 $detalle->part_number = $request->partNumber[$i];
@@ -1578,10 +1643,44 @@ class RequerimientoController extends Controller
             }
         }
 
-        $comentarioCabecera = 'Actualizar requerimiento logístico (cabecera): ' . ($requerimiento->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
-        LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Necesidades');
-        $comentarioDetalle = 'Actualizar requerimiento logístico (detalle): ' . ($requerimiento->codigo ?? '').', Actualizado por: ' . Auth::user()->nombre_corto;
-        LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 3, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+        if ($tieneIdCdpVinculado == true) {
+
+            $todoCdpRequerimiento = CdpRequerimiento::where("id_requerimiento_logistico", $requerimiento->id_requerimiento)->get();
+            $idCdpRequerimientoProcesado = [];
+
+            for ($c = 0; $c < $countIdCdpVinculado; $c++) {
+                if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $request->id_cpd_vinculado[$c])) { // es un id con numeros y letras => es nuevo, insertar
+                    $cdpRequerimiento = new CdpRequerimiento();
+                    $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
+                    $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
+                    $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
+                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->estado = 1;
+                    $cdpRequerimiento->save();
+                } else {
+                    $cdpRequerimiento = CdpRequerimiento::find($request->id_cpd_vinculado[$c]);
+                    $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
+                    $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
+                    $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
+                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->save();
+                }
+                $idCdpRequerimientoProcesado[] = $cdpRequerimiento->id_cdp_requerimiento;
+            }
+
+            foreach ($todoCdpRequerimiento as $key => $value) {
+                if (!in_array($value->id_cdp_requerimiento, $idCdpRequerimientoProcesado)) {
+                    $cdpRequerimiento = CdpRequerimiento::find($value->id_cdp_requerimiento);
+                    $cdpRequerimiento->estado = 7;
+                    $cdpRequerimiento->save();
+                }
+            }
+        }
+
+        $comentarioCabecera = 'Actualizar requerimiento logístico (cabecera): ' . ($requerimiento->codigo ?? '') . ', Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera, 'Necesidades');
+        $comentarioDetalle = 'Actualizar requerimiento logístico (detalle): ' . ($requerimiento->codigo ?? '') . ', Actualizado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 3, $detalle->getTable(), null, $detalle, $comentarioDetalle, 'Necesidades');
 
 
         // detalle requerimientos para anular
@@ -1594,9 +1693,8 @@ class RequerimientoController extends Controller
                 AdjuntoDetalleRequerimiento::where('id_detalle_requerimiento', '=', $detalleRequerimiento->id_detalle_requerimiento)
                     ->update(['estado' => 7]);
 
-                    $comentarioDetalle = 'Anular item con id requerimiento:'.$detalleRequerimiento->id_detalle_requerimiento.', codigo: ' . ($requerimiento->codigo ?? '').', Anular por: ' . Auth::user()->nombre_corto;
-                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $detalleConAnulidad->getTable(), null, $detalleConAnulidad, $comentarioDetalle,'Necesidades');
-            
+                $comentarioDetalle = 'Anular item con id requerimiento:' . $detalleRequerimiento->id_detalle_requerimiento . ', codigo: ' . ($requerimiento->codigo ?? '') . ', Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $detalleConAnulidad->getTable(), null, $detalleConAnulidad, $comentarioDetalle, 'Necesidades');
             }
 
             // anular adjuntos de detalle requerimiento
@@ -1700,7 +1798,7 @@ class RequerimientoController extends Controller
         // }
 
 
-        return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'codigo' => $requerimiento->codigo, 'mensaje'=>$mensaje]);
+        return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'codigo' => $requerimiento->codigo, 'mensaje' => $mensaje]);
     }
 
     public function obtenerMontoTotalDocumento($tipoDocumento, $idDocumento)
@@ -1769,9 +1867,9 @@ class RequerimientoController extends Controller
             $añoPeriodo = Periodo::find($requerimiento->id_periodo)->descripcion;
             $idEmpresa = Sede::find($requerimiento->id_sede)->id_empresa;
             // $fechaPeriodo = Carbon::createFromFormat('Y-m-d', ($periodo->descripcion . '-01-01'));
-            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo,$idEmpresa);
+            $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
             if ($estadoOperativo != 1) { //1:abierto, 2:cerrado, 3:Declarado
-                return response()->json(['id_requerimiento' => 0, 'codigo' => '','tipo_mensaje' => 'warning', 'mensaje' => 'No se puede anular el requerimiento cuando el periodo operativo está cerrado']);
+                return response()->json(['id_requerimiento' => 0, 'codigo' => '', 'tipo_mensaje' => 'warning', 'mensaje' => 'No se puede anular el requerimiento cuando el periodo operativo está cerrado']);
             }
 
 
@@ -1798,12 +1896,10 @@ class RequerimientoController extends Controller
                     $mensaje = 'Se anulo el requerimiento ' . $requerimiento->codigo . ' y su transferencia fue anulada';
                     $tipoMensaje = 'success';
 
-                    $comentarioCabecera = 'Anular requerimiento logístico (cabecera). codigo: ' . ($requerimiento->codigo ?? '').'. Anular transferencia: '.$transferencia->codigo.',  Anular por: ' . Auth::user()->nombre_corto;
-                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Necesidades');
-                    $comentarioDetalle = 'Anular requerimiento logístico (detalle). codigo: ' . ($requerimiento->codigo ?? '').'. Anular transferencia: '.$transferencia->codigo.',  Anular por: ' . Auth::user()->nombre_corto;
-                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioDetalle,'Necesidades');
-
-                    
+                    $comentarioCabecera = 'Anular requerimiento logístico (cabecera). codigo: ' . ($requerimiento->codigo ?? '') . '. Anular transferencia: ' . $transferencia->codigo . ',  Anular por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera, 'Necesidades');
+                    $comentarioDetalle = 'Anular requerimiento logístico (detalle). codigo: ' . ($requerimiento->codigo ?? '') . '. Anular transferencia: ' . $transferencia->codigo . ',  Anular por: ' . Auth::user()->nombre_corto;
+                    LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioDetalle, 'Necesidades');
                 } else { // no se puede anular un requerimiento con transferencia procesada
                     $mensaje = 'No es posible anular el requerimiento ' . $requerimiento->codigo . ' tiene una transferencia procesada';
                     $tipoMensaje = 'warning';
@@ -1821,10 +1917,10 @@ class RequerimientoController extends Controller
                 $mensaje = 'Se anulo el requerimiento ' . $requerimiento->codigo;
                 $tipoMensaje = 'success';
 
-                $comentarioCabecera = 'Anular requerimiento (cabecera). codigo: ' . ($requerimiento->codigo ?? '').',  Anular por: ' . Auth::user()->nombre_corto;
-                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera,'Necesidades');
-                $comentarioDetalle = 'Anular requerimiento (detalle). codigo: ' . ($requerimiento->codigo ?? '').',  Anular por: ' . Auth::user()->nombre_corto;
-                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
+                $comentarioCabecera = 'Anular requerimiento (cabecera). codigo: ' . ($requerimiento->codigo ?? '') . ',  Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $requerimiento->getTable(), null, $requerimiento, $comentarioCabecera, 'Necesidades');
+                $comentarioDetalle = 'Anular requerimiento (detalle). codigo: ' . ($requerimiento->codigo ?? '') . ',  Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Crear / editar requerimiento', 4, $detalle->getTable(), null, $detalle, $comentarioDetalle, 'Necesidades');
 
 
                 if (intval($requerimiento->id_requerimiento) > 0) {
@@ -1842,7 +1938,13 @@ class RequerimientoController extends Controller
                 $aprobacion->save();
             }
 
- 
+            $cdpRequerimiento = CdpRequerimiento::where('id_requerimiento_logistico',$requerimiento->id_requerimiento)->get();
+            foreach ($cdpRequerimiento as $value) {
+                $cdpReq = CdpRequerimiento::find($value->id_cdp_requerimiento);
+                $cdpReq->estado=7;
+                $cdpReq->save();
+            }
+
 
             DB::commit();
             return response()->json(['estado' => $requerimiento->estado, 'mensaje' => $mensaje, 'tipo_mensaje' => $tipoMensaje]);
@@ -1855,12 +1957,12 @@ class RequerimientoController extends Controller
     public function obtenerRequerimientosElaborados($meOrAll, $idEmpresa, $idSede, $idGrupo, $idDivision, $fechaRegistroDesde, $fechaRegistroHasta, $idEstado)
     {
 
-        $soloAutorizadoGarantias=false;
+        $soloAutorizadoGarantias = false;
         $allRol = Auth::user()->getAllRol();
         foreach ($allRol as  $rol) {
-            if($rol->id_rol == 52) // autorizado garantias
+            if ($rol->id_rol == 52) // autorizado garantias
             {
-                $soloAutorizadoGarantias=true;
+                $soloAutorizadoGarantias = true;
             }
         }
 
@@ -1986,7 +2088,7 @@ class RequerimientoController extends Controller
                 return $query->whereRaw('alm_req.estado = ' . $idEstado);
             })
             ->where([['alm_req.flg_compras', '=', 0], ['adm_documentos_aprob.id_tp_documento', '=', 1]])
-            ->when((($soloAutorizadoGarantias) ==true), function ($query) {
+            ->when((($soloAutorizadoGarantias) == true), function ($query) {
                 return $query->whereRaw('alm_req.id_tipo_requerimiento = 6');  // autorizado solo ver comercial divison CAS, tipo de requerimiento de garantias
             });
 
@@ -2008,20 +2110,20 @@ class RequerimientoController extends Controller
         $idUsuarioEnSesion = Auth::user()->id_usuario;
         $GrupoDeUsuarioEnSesionList = Auth::user()->getAllGrupo();
         $idGrupoDeUsuarioEnSesionList = [];
-        $idTipoRequerimientoList=[1,2,3,4,5,6,7,8];
+        $idTipoRequerimientoList = [1, 2, 3, 4, 5, 6, 7, 8];
 
         foreach ($GrupoDeUsuarioEnSesionList as $grupo) {
             $idGrupoDeUsuarioEnSesionList[] = $grupo->id_grupo; // lista de id_rol del usuario en sesion
         }
 
-        $soloAutorizadoGarantias=false;
+        $soloAutorizadoGarantias = false;
         $allRol = Auth::user()->getAllRol();
         foreach ($allRol as  $rol) {
-            if($rol->id_rol == 52) // autorizado garantias
+            if ($rol->id_rol == 52) // autorizado garantias
             {
-                $soloAutorizadoGarantias=true;
-                $idGrupoDeUsuarioEnSesionList[]=2; // grupo comercial
-                $idTipoRequerimientoList=[6];
+                $soloAutorizadoGarantias = true;
+                $idGrupoDeUsuarioEnSesionList[] = 2; // grupo comercial
+                $idTipoRequerimientoList = [6];
             }
         }
 
@@ -2146,11 +2248,11 @@ class RequerimientoController extends Controller
             ->when((intval($idEstado) > 0), function ($query)  use ($idEstado) {
                 return $query->whereRaw('alm_req.estado = ' . $idEstado);
             })
-            ->whereRaw("alm_req.id_grupo IN (".implode(",",$idGrupoDeUsuarioEnSesionList).") and  (alm_req.id_tipo_requerimiento IN (".implode(",",$idTipoRequerimientoList).") OR alm_req.id_usuario = ".Auth::user()->id_usuario."  ) and alm_req.flg_compras =0 and adm_documentos_aprob.id_tp_documento =1");
+            ->whereRaw("alm_req.id_grupo IN (" . implode(",", $idGrupoDeUsuarioEnSesionList) . ") and  (alm_req.id_tipo_requerimiento IN (" . implode(",", $idTipoRequerimientoList) . ") OR alm_req.id_usuario = " . Auth::user()->id_usuario . "  ) and alm_req.flg_compras =0 and adm_documentos_aprob.id_tp_documento =1");
 
         return datatables($requerimientos)
             ->addColumn('nombre_solicitado_por', function ($requerimientos) {
-                return ($requerimientos->id_tipo_requerimiento == 1) ? ($requerimientos->nombre_solicitado_por!=null?$requerimientos->nombre_solicitado_por:'') : $requerimientos->nombre_usuario;
+                return ($requerimientos->id_tipo_requerimiento == 1) ? ($requerimientos->nombre_solicitado_por != null ? $requerimientos->nombre_solicitado_por : '') : $requerimientos->nombre_usuario;
             })
             ->filterColumn('nombre_usuario', function ($query, $keyword) {
                 $keywords = trim(strtoupper($keyword));
@@ -4052,6 +4154,12 @@ class RequerimientoController extends Controller
     public function imprimir_requerimiento_pdf($id, $codigo)
     {
         $requerimiento = $this->mostrarRequerimiento($id, $codigo);
+
+        $codigoOportunodadList=[];
+        foreach ($requerimiento['cdp_requerimiento'] as $value) {
+            $codigoOportunodadList[]=$value->codigo_oportunidad;
+        }
+
         $now = new \DateTime();
         $html = '
         <html>
@@ -4160,7 +4268,7 @@ class RequerimientoController extends Controller
                     <td class="verticalTop">' . $requerimiento['requerimiento'][0]['razon_social_empresa'] . ' - ' . $requerimiento['requerimiento'][0]['codigo_sede_empresa'] . '</td>
                     <td class="subtitle verticalTop">Tipo Impuesto</td>
                     <td class="subtitle verticalTop">:</td>
-                    <td>' . ($requerimiento['requerimiento'][0]['tipo_impuesto']==1?'Detracción':($requerimiento['requerimiento'][0]['tipo_impuesto']==2?'Renta':'No Aplica')) . '</td>
+                    <td>' . ($requerimiento['requerimiento'][0]['tipo_impuesto'] == 1 ? 'Detracción' : ($requerimiento['requerimiento'][0]['tipo_impuesto'] == 2 ? 'Renta' : 'No Aplica')) . '</td>
                 </tr>
                 <tr>
                     <td class="subtitle">Gerencia</td>
@@ -4171,6 +4279,11 @@ class RequerimientoController extends Controller
                     <td class="subtitle top">Proyecto</td>
                     <td class="subtitle verticalTop">:</td>
                     <td class="verticalTop justify" colspan="4" >' . $requerimiento['requerimiento'][0]['codigo_proyecto'] . ' - ' . $requerimiento['requerimiento'][0]['descripcion_proyecto'] . '</td>
+                </tr>
+                <tr>
+                    <td class="subtitle top">CDP</td>
+                    <td class="subtitle verticalTop">:</td>
+                    <td class="verticalTop justify" colspan="4" >'.(count($codigoOportunodadList)>0 ? implode(",",$codigoOportunodadList):' - ') . '</td>
                 </tr>
                 <tr>
                     <td class="subtitle">Presupuesto</td>
@@ -4287,7 +4400,7 @@ class RequerimientoController extends Controller
     {
         $detalleRequerimiento = DetalleRequerimiento::where("id_detalle_requerimiento", $idDetalleRequerimiento)
             ->with(['unidadMedida', 'producto', 'reserva' => function ($q) {
-                $q->whereIn('alm_reserva.estado', [1,5]);
+                $q->whereIn('alm_reserva.estado', [1, 5]);
             }, 'reserva.almacen', 'reserva.usuario', 'reserva.estado', 'estado'])
 
             ->first();
@@ -4725,109 +4838,110 @@ class RequerimientoController extends Controller
         }
         return $nombre_mes;
     }
-    public function requerimientoSustentado(Request $request)  {
+    public function requerimientoSustentado(Request $request)
+    {
         $requerimiento = Requerimiento::find($request->id);
         $requerimiento->requerimiento_sustentado = $request->requerimiento_sustentado;
         $requerimiento->save();
         $respuesta = array(
-            "status"=>'success'
+            "status" => 'success'
         );
-        return response()->json($respuesta,200);
+        return response()->json($respuesta, 200);
     }
 
 
     public function obtenerRequerimientosVinculadosConPartida(Request $request)
     {
 
-        $data=[];
-        $idRequerimientoList=[];
-        if($request->tipo_presupuesto =='INTERNO'){
+        $data = [];
+        $idRequerimientoList = [];
+        if ($request->tipo_presupuesto == 'INTERNO') {
 
-            $detalle = DetalleRequerimiento::where([['id_partida_pi',$request->id_partida],['estado','!=',7]])->distinct()->get();
+            $detalle = DetalleRequerimiento::where([['id_partida_pi', $request->id_partida], ['estado', '!=', 7]])->distinct()->get();
             foreach ($detalle as $key => $value) {
-                $idRequerimientoList[]=$value->id_requerimiento;
+                $idRequerimientoList[] = $value->id_requerimiento;
             }
         }
 
-        if(count($idRequerimientoList)>0){
+        if (count($idRequerimientoList) > 0) {
             $data = Requerimiento::join('almacen.alm_tp_req', 'alm_req.id_tipo_requerimiento', '=', 'alm_tp_req.id_tipo_requerimiento')
-            ->leftJoin('administracion.adm_prioridad', 'alm_req.id_prioridad', '=', 'adm_prioridad.id_prioridad')
-            ->leftJoin('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'alm_req.id_almacen')
-            ->leftJoin('almacen.tipo_cliente', 'tipo_cliente.id_tipo_cliente', '=', 'alm_req.tipo_cliente')
-            ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
-            ->leftJoin('configuracion.sis_usua', 'alm_req.id_usuario', '=', 'sis_usua.id_usuario')
-            ->leftJoin('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
-            ->leftJoin('rrhh.rrhh_postu', 'rrhh_postu.id_postulante', '=', 'rrhh_trab.id_postulante')
-            ->leftJoin('rrhh.rrhh_perso', 'rrhh_perso.id_persona', '=', 'rrhh_postu.id_persona')
-            ->leftJoin('rrhh.rrhh_rol', 'alm_req.id_rol', '=', 'rrhh_rol.id_rol')
-            ->leftJoin('rrhh.rrhh_rol_concepto', 'rrhh_rol_concepto.id_rol_concepto', '=', 'rrhh_rol.id_rol_concepto')
-            ->leftJoin('administracion.adm_area', 'alm_req.id_area', '=', 'adm_area.id_area')
-            ->leftJoin('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'alm_req.id_grupo')
-            ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_req.id_sede')
-            ->leftJoin('comercial.com_cliente', 'alm_req.id_cliente', '=', 'com_cliente.id_cliente')
-            ->leftJoin('contabilidad.adm_contri as contri_cliente', 'com_cliente.id_contribuyente', '=', 'contri_cliente.id_contribuyente')
-            ->leftJoin('rrhh.rrhh_perso as perso_natural', 'alm_req.id_persona', '=', 'perso_natural.id_persona')
-            ->leftJoin('configuracion.sis_moneda', 'alm_req.id_moneda', '=', 'sis_moneda.id_moneda')
-            ->leftJoin('rrhh.rrhh_trab as trab_solicitado_por', 'alm_req.trabajador_id', '=', 'trab_solicitado_por.id_trabajador')
-            ->leftJoin('rrhh.rrhh_postu as postu_solicitado_por', 'postu_solicitado_por.id_postulante', '=', 'trab_solicitado_por.id_postulante')
-            ->leftJoin('rrhh.rrhh_perso as perso_solicitado_por', 'perso_solicitado_por.id_persona', '=', 'postu_solicitado_por.id_persona')
-            ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
-            ->select(
-                'alm_req.id_requerimiento',
-                'alm_req.codigo',
-                'adm_prioridad.descripcion as descripcion_prioridad',
-                'alm_req.concepto',
-                'alm_req.observacion',
-                'alm_req.id_moneda',
-                'alm_req.id_almacen',
-                'alm_req.id_proyecto',
-                'alm_req.id_presupuesto_interno',
-                DB::raw("CONCAT(alm_almacen.codigo,'-',alm_almacen.descripcion) as almacen_requerimiento"),
-                'alm_req.fecha_entrega',
-                'sis_moneda.simbolo as simbolo_moneda',
-                'sis_moneda.descripcion as moneda',
-                'alm_req.fecha_requerimiento',
-                'alm_req.id_tipo_requerimiento',
-                'alm_tp_req.descripcion AS tipo_req_desc',
-                'alm_req.tipo_cliente',
-                'tipo_cliente.descripcion AS tipo_cliente_desc',
-                'sis_usua.usuario',
-                DB::raw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) as nombre_usuario"),
-                'rrhh_rol.id_area',
-                'adm_area.descripcion AS area_desc',
-                'rrhh_rol.id_rol',
-                'rrhh_rol.id_rol_concepto',
-                'rrhh_rol_concepto.descripcion AS rrhh_rol_concepto',
-                'alm_req.id_grupo',
-                'adm_grupo.descripcion AS adm_grupo_descripcion',
-                'alm_req.concepto AS alm_req_concepto',
-                'alm_req.id_cliente',
-                'contri_cliente.nro_documento as cliente_ruc',
-                'contri_cliente.razon_social as cliente_razon_social',
-                'alm_req.id_persona',
-                'perso_natural.nro_documento as dni_persona',
-                DB::raw("CONCAT(perso_natural.nombres,' ', perso_natural.apellido_paterno,' ', perso_natural.apellido_materno)  AS nombre_persona"),
-                'alm_req.id_prioridad',
-                'alm_req.fecha_registro',
-                'alm_req.trabajador_id',
-                DB::raw("(CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name 
+                ->leftJoin('administracion.adm_prioridad', 'alm_req.id_prioridad', '=', 'adm_prioridad.id_prioridad')
+                ->leftJoin('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'alm_req.id_almacen')
+                ->leftJoin('almacen.tipo_cliente', 'tipo_cliente.id_tipo_cliente', '=', 'alm_req.tipo_cliente')
+                ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
+                ->leftJoin('configuracion.sis_usua', 'alm_req.id_usuario', '=', 'sis_usua.id_usuario')
+                ->leftJoin('rrhh.rrhh_trab', 'sis_usua.id_trabajador', '=', 'rrhh_trab.id_trabajador')
+                ->leftJoin('rrhh.rrhh_postu', 'rrhh_postu.id_postulante', '=', 'rrhh_trab.id_postulante')
+                ->leftJoin('rrhh.rrhh_perso', 'rrhh_perso.id_persona', '=', 'rrhh_postu.id_persona')
+                ->leftJoin('rrhh.rrhh_rol', 'alm_req.id_rol', '=', 'rrhh_rol.id_rol')
+                ->leftJoin('rrhh.rrhh_rol_concepto', 'rrhh_rol_concepto.id_rol_concepto', '=', 'rrhh_rol.id_rol_concepto')
+                ->leftJoin('administracion.adm_area', 'alm_req.id_area', '=', 'adm_area.id_area')
+                ->leftJoin('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'alm_req.id_grupo')
+                ->leftJoin('administracion.sis_sede', 'sis_sede.id_sede', '=', 'alm_req.id_sede')
+                ->leftJoin('comercial.com_cliente', 'alm_req.id_cliente', '=', 'com_cliente.id_cliente')
+                ->leftJoin('contabilidad.adm_contri as contri_cliente', 'com_cliente.id_contribuyente', '=', 'contri_cliente.id_contribuyente')
+                ->leftJoin('rrhh.rrhh_perso as perso_natural', 'alm_req.id_persona', '=', 'perso_natural.id_persona')
+                ->leftJoin('configuracion.sis_moneda', 'alm_req.id_moneda', '=', 'sis_moneda.id_moneda')
+                ->leftJoin('rrhh.rrhh_trab as trab_solicitado_por', 'alm_req.trabajador_id', '=', 'trab_solicitado_por.id_trabajador')
+                ->leftJoin('rrhh.rrhh_postu as postu_solicitado_por', 'postu_solicitado_por.id_postulante', '=', 'trab_solicitado_por.id_postulante')
+                ->leftJoin('rrhh.rrhh_perso as perso_solicitado_por', 'perso_solicitado_por.id_persona', '=', 'postu_solicitado_por.id_persona')
+                ->leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'alm_req.id_cc')
+                ->select(
+                    'alm_req.id_requerimiento',
+                    'alm_req.codigo',
+                    'adm_prioridad.descripcion as descripcion_prioridad',
+                    'alm_req.concepto',
+                    'alm_req.observacion',
+                    'alm_req.id_moneda',
+                    'alm_req.id_almacen',
+                    'alm_req.id_proyecto',
+                    'alm_req.id_presupuesto_interno',
+                    DB::raw("CONCAT(alm_almacen.codigo,'-',alm_almacen.descripcion) as almacen_requerimiento"),
+                    'alm_req.fecha_entrega',
+                    'sis_moneda.simbolo as simbolo_moneda',
+                    'sis_moneda.descripcion as moneda',
+                    'alm_req.fecha_requerimiento',
+                    'alm_req.id_tipo_requerimiento',
+                    'alm_tp_req.descripcion AS tipo_req_desc',
+                    'alm_req.tipo_cliente',
+                    'tipo_cliente.descripcion AS tipo_cliente_desc',
+                    'sis_usua.usuario',
+                    DB::raw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) as nombre_usuario"),
+                    'rrhh_rol.id_area',
+                    'adm_area.descripcion AS area_desc',
+                    'rrhh_rol.id_rol',
+                    'rrhh_rol.id_rol_concepto',
+                    'rrhh_rol_concepto.descripcion AS rrhh_rol_concepto',
+                    'alm_req.id_grupo',
+                    'adm_grupo.descripcion AS adm_grupo_descripcion',
+                    'alm_req.concepto AS alm_req_concepto',
+                    'alm_req.id_cliente',
+                    'contri_cliente.nro_documento as cliente_ruc',
+                    'contri_cliente.razon_social as cliente_razon_social',
+                    'alm_req.id_persona',
+                    'perso_natural.nro_documento as dni_persona',
+                    DB::raw("CONCAT(perso_natural.nombres,' ', perso_natural.apellido_paterno,' ', perso_natural.apellido_materno)  AS nombre_persona"),
+                    'alm_req.id_prioridad',
+                    'alm_req.fecha_registro',
+                    'alm_req.trabajador_id',
+                    DB::raw("(CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name 
                 ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END) AS nombre_solicitado_por"),
-                'sis_usua.nombre_largo as nombre_usuario',
-                'alm_req.estado',
-                'alm_req.id_empresa',
-                'alm_req.id_sede',
-                'alm_req.tiene_transformacion',
-                'sis_sede.descripcion as empresa_sede',
-                'adm_estado_doc.estado_doc',
-                'adm_estado_doc.bootstrap_color',
-                DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc"),
-                DB::raw("(SELECT json_agg(DISTINCT nivel.unidad) FROM almacen.alm_det_req dr
+                    'sis_usua.nombre_largo as nombre_usuario',
+                    'alm_req.estado',
+                    'alm_req.id_empresa',
+                    'alm_req.id_sede',
+                    'alm_req.tiene_transformacion',
+                    'sis_sede.descripcion as empresa_sede',
+                    'adm_estado_doc.estado_doc',
+                    'adm_estado_doc.bootstrap_color',
+                    DB::raw("(CASE WHEN alm_req.estado = 1 THEN 'Habilitado' ELSE 'Deshabilitado' END) AS estado_desc"),
+                    DB::raw("(SELECT json_agg(DISTINCT nivel.unidad) FROM almacen.alm_det_req dr
                 INNER JOIN finanzas.cc_niveles_view nivel ON dr.centro_costo_id = nivel.id_centro_costo
                 WHERE dr.id_requerimiento = almacen.alm_req.id_requerimiento and dr.tiene_transformacion=false ) as division"),
-                DB::raw("(SELECT SUM(det.cantidad * det.precio_unitario ) FROM almacen.alm_det_req AS det
+                    DB::raw("(SELECT SUM(det.cantidad * det.precio_unitario ) FROM almacen.alm_det_req AS det
                 WHERE det.id_requerimiento = alm_req.id_requerimiento
-                AND det.estado != 7 and det.id_partida_pi=".$request->id_partida.") AS importe_item_por_partida"),
-                DB::raw("(SELECT
+                AND det.estado != 7 and det.id_partida_pi=" . $request->id_partida . ") AS importe_item_por_partida"),
+                    DB::raw("(SELECT
                 (CAST (replace(presupuesto_interno_detalle.enero, ',', '') AS NUMERIC(10,2))
                 + CAST (replace(presupuesto_interno_detalle.febrero, ',', '') AS NUMERIC(10,2))
                 + CAST (replace(presupuesto_interno_detalle.marzo, ',', '') AS NUMERIC(10,2))
@@ -4841,9 +4955,9 @@ class RequerimientoController extends Controller
                 + CAST (replace(presupuesto_interno_detalle.noviembre, ',', '') AS NUMERIC(10,2))
                 + CAST (replace(presupuesto_interno_detalle.diciembre, ',', '') AS NUMERIC(10,2)))
                 FROM finanzas.presupuesto_interno_detalle
-                WHERE  presupuesto_interno_detalle.id_presupuesto_interno_detalle = ".$request->id_partida." ) AS presupuesto_interno_total_partida"),
+                WHERE  presupuesto_interno_detalle.id_presupuesto_interno_detalle = " . $request->id_partida . " ) AS presupuesto_interno_total_partida"),
 
-                DB::raw("( SELECT
+                    DB::raw("( SELECT
                 CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero
                     WHEN (SELECT date_part('month', alm_req.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero
                     WHEN (SELECT date_part('month', alm_req.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo
@@ -4860,52 +4974,52 @@ class RequerimientoController extends Controller
                     END
                 FROM finanzas.presupuesto_interno_detalle
                 WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
-                and ".$request->id_partida."=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                and " . $request->id_partida . "=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
                 limit 1 ) AS presupuesto_interno_mes_partida ")
-            )
-            ->whereIn('alm_req.id_requerimiento',$idRequerimientoList)
-            ->where([['alm_req.estado',2],['alm_req.flg_compras', '=', 0]]);
+                )
+                ->whereIn('alm_req.id_requerimiento', $idRequerimientoList)
+                ->where([['alm_req.estado', 2], ['alm_req.flg_compras', '=', 0]]);
 
-        return datatables($data)
-            ->filterColumn('alm_req.fecha_entrega', function ($query, $keyword) {
-                try {
-                    $keywords = Carbon::createFromFormat('d-m-Y', trim($keyword));
-                    $query->where('alm_req.fecha_entrega', $keywords);
-                } catch (\Throwable $th) {
-                }
-            })
-            ->filterColumn('alm_req.fecha_registro', function ($query, $keyword) {
-                try {
-                    $desde = Carbon::createFromFormat('d-m-Y', trim($keyword))->hour(0)->minute(0)->second(0);
-                    $hasta = Carbon::createFromFormat('d-m-Y', trim($keyword));
-                    $query->whereBetween('alm_req.fecha_registro', [$desde, $hasta->addDay()->addSeconds(-1)]);
-                } catch (\Throwable $th) {
-                }
-            })
-            ->filterColumn('nombre_usuario', function ($query, $keyword) {
-                $keywords = trim(strtoupper($keyword));
-                $query->whereRaw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) LIKE ?", ["%{$keywords}%"]);
-            })
+            return datatables($data)
+                ->filterColumn('alm_req.fecha_entrega', function ($query, $keyword) {
+                    try {
+                        $keywords = Carbon::createFromFormat('d-m-Y', trim($keyword));
+                        $query->where('alm_req.fecha_entrega', $keywords);
+                    } catch (\Throwable $th) {
+                    }
+                })
+                ->filterColumn('alm_req.fecha_registro', function ($query, $keyword) {
+                    try {
+                        $desde = Carbon::createFromFormat('d-m-Y', trim($keyword))->hour(0)->minute(0)->second(0);
+                        $hasta = Carbon::createFromFormat('d-m-Y', trim($keyword));
+                        $query->whereBetween('alm_req.fecha_registro', [$desde, $hasta->addDay()->addSeconds(-1)]);
+                    } catch (\Throwable $th) {
+                    }
+                })
+                ->filterColumn('nombre_usuario', function ($query, $keyword) {
+                    $keywords = trim(strtoupper($keyword));
+                    $query->whereRaw("UPPER(CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno)) LIKE ?", ["%{$keywords}%"]);
+                })
 
-            ->filterColumn('nombre_solicitado_por', function ($query, $keyword) {
-                try {
-                    $query->where('cc_view.name', trim($keyword));
-                } catch (\Throwable $th) {
-                }
-            })
-            ->filterColumn('estado_doc', function ($query, $keyword) {
-                try {
-                    $query->where('adm_estado_doc.estado_doc', trim($keyword));
-                } catch (\Throwable $th) {
-                }
-            })
-            ->rawColumns(['termometro'])->toJson();
-        }else{
+                ->filterColumn('nombre_solicitado_por', function ($query, $keyword) {
+                    try {
+                        $query->where('cc_view.name', trim($keyword));
+                    } catch (\Throwable $th) {
+                    }
+                })
+                ->filterColumn('estado_doc', function ($query, $keyword) {
+                    try {
+                        $query->where('adm_estado_doc.estado_doc', trim($keyword));
+                    } catch (\Throwable $th) {
+                    }
+                })
+                ->rawColumns(['termometro'])->toJson();
+        } else {
             return datatables($data)->toJson();
         }
     }
 
-    public function obteneritemsRequerimientoConPartidaDePresupuestoInterno($id_requerimiento,$id_partida)
+    public function obteneritemsRequerimientoConPartidaDePresupuestoInterno($id_requerimiento, $id_partida)
     {
         $detalles = DetalleRequerimiento::select(
             'alm_req.codigo as codigo_requerimiento',
@@ -4944,6 +5058,4 @@ class RequerimientoController extends Controller
 
         return response()->json($detalles);
     }
-
-    
 }

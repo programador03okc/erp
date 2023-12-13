@@ -1,11 +1,16 @@
 $('#form-requerimiento').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
     this.modalListaCuadroDePresupuesto();
 });
-$('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
-    this.seleccionarCDP(e.currentTarget);
+$('#form-requerimiento-pago').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
+    this.modalListaCuadroDePresupuesto();
+});
+$('#listaCuadroPresupuesto').on("click", "button.handleClickAgregarCDP", (e) => {
+    this.agregarCDP(e.currentTarget);
 });
 
-function modalListaCuadroDePresupuesto(){
+var cdpVinculadoConRequerimientoList = [];
+
+function modalListaCuadroDePresupuesto() {
     $('#modal-lista-cuadro-presupuesto').modal({
         show: true
     });
@@ -52,7 +57,7 @@ function listarCuadroPresupuesto() {
                 'render': function (data, type, row) {
                     let containerOpenBrackets = '<center><div class="btn-group" role="group" style="margin-bottom: 5px;">';
                     let containerCloseBrackets = '</div></center>';
-                    let btnSeleccionar = `<button type="button" class="btn btn-xs btn-success handleClickSeleccionarCDP"  data-id-cc="${row.id}"  data-codigo-oportunidad="${row.codigo_oportunidad}" title="Seleccionar">Seleccionar</button>`;
+                    let btnSeleccionar = `<button type="button" class="btn btn-xs btn-success handleClickAgregarCDP"  data-id-cc="${row.id}"  data-codigo-oportunidad="${row.codigo_oportunidad}"  data-nombre-entidad="${row.nombre_entidad}" title="Agregar">Agregar</button>`;
                     return containerOpenBrackets + btnSeleccionar + containerCloseBrackets;
                 }, targets: 7
             },
@@ -104,12 +109,50 @@ function listarCuadroPresupuesto() {
 
 }
 
+function makeId() {
+    let ID = "";
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (let i = 0; i < 12; i++) {
+        ID += characters.charAt(Math.floor(Math.random() * 36));
+    }
+    return ID;
+}
 
-function seleccionarCDP(obj) {
-
+function agregarCDP(obj) {
     if (obj.dataset.idCc > 0) {
-        document.querySelector("input[name='id_cc']").value = obj.dataset.idCc;
-        document.querySelector("input[name='codigo_oportunidad']").value = obj.dataset.codigoOportunidad;
+
+        if (!cdpVinculadoConRequerimientoList.includes(obj.dataset.codigoOportunidad)) {
+            cdpVinculadoConRequerimientoList.push(obj.dataset.codigoOportunidad);
+            const element =
+            {
+                id_cdp_requerimiento: makeId(),
+                id_cc: obj.dataset.idCc,
+                codigo_oportunidad: obj.dataset.codigoOportunidad,
+                nombre_entidad: obj.dataset.nombreEntidad,
+                monto: 0
+            };
+            agregarEnTablaCuadroPresupuestoVinculados(element);
+
+            Lobibox.notify('success', {
+                title: false,
+                size: 'mini',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: "Se agrego a la lista el CDP: " + obj.dataset.codigoOportunidad
+            });
+
+        } else {
+            Lobibox.notify('warning', {
+                title: false,
+                size: 'mini',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: "El CDP: " + obj.dataset.codigoOportunidad + " ya fue agregado"
+            });
+        }
+
     } else {
         Swal.fire(
             '',
@@ -117,5 +160,69 @@ function seleccionarCDP(obj) {
             'error'
         );
     }
-    $('#modal-lista-cuadro-presupuesto').modal('hide');
+    // $('#modal-lista-cuadro-presupuesto').modal('hide');
+}
+
+
+function limpiarTabla(idElement) {
+    let nodeTbody = document.querySelector("table[id='" + idElement + "'] tbody");
+    if (nodeTbody != null) {
+        while (nodeTbody.children.length > 0) {
+            nodeTbody.removeChild(nodeTbody.lastChild);
+        }
+
+    }
+}
+
+function agregarEnTablaCuadroPresupuestoVinculados(element) {
+    console.log(element);
+    document.querySelector("tbody[id='body_cdp_vinculados']").insertAdjacentHTML('beforeend', `
+        <tr>
+            <td style="text-align:center;">
+                <input type="text" name="id_cpd_vinculado[]" value="${element.id_cdp_requerimiento}" hidden>
+                <input type="text" name="id_cc_cpd_vinculado[]" value="${element.id_cc}" hidden>
+                <input type="text" name="codigo_oportunidad_cpd_vinculado[]" value="${element.codigo_oportunidad}" hidden> ${element.codigo_oportunidad}</td>
+            <td style="text-align:left;"><input type="text" name="nombre_entidad_cpd_vinculado[]" value="${element.nombre_entidad}" hidden> ${element.nombre_entidad}</td>
+            <td style="text-align:right;"><span>S/</span> <input type="numeric" min="0" name="monto_cpd_vinculado[]" value="${parseFloat(element.monto)}"> </td>
+            <td style="text-align:center;">
+                <button type="button" class="btn btn-danger btn-xs activation" name="btnEliminarVinculoConCdp" data-id="${element.id}" data-codigo-oportunidad="${element.codigo_oportunidad}" onClick="eliminarVinculoConCdp(event);"title="Eliminar">
+                <i class="fas fa-trash"></i>
+                </button>
+            </td>
+            </tr>`);
+}
+
+function eliminarVinculoConCdp(e) {
+    const obj = e.currentTarget;
+    var regExp = /[a-zA-Z]/g; //expresión regular
+    if ((regExp.test(obj.dataset.id) == true)) {
+        obj.closest("tr").remove();
+        Lobibox.notify('info', {
+            title: false,
+            size: 'mini',
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: "Vínculo con " + e.currentTarget.dataset.codigoOportunidad + " eliminado"
+        });
+    } else {
+        obj.closest("tr").remove();
+
+        Lobibox.notify('info', {
+            title: false,
+            size: 'mini',
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: "Para hacer efecto los cambios se requeire guardar los cambios del formulario."
+        });
+    }
+
+    cdpVinculadoConRequerimientoList.forEach((element,key) => {
+        if(element ==e.currentTarget.dataset.codigoOportunidad){
+            cdpVinculadoConRequerimientoList.splice(key, 1);
+        }
+    });
+
+
 }

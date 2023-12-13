@@ -303,7 +303,7 @@ function calcularPresupuestoUtilizadoYSaldoPorPartida() {
 }
 
 function construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
-    console.log(data);
+    // console.log(data);
     limpiarTabla('listaPartidasActivas');
     data.forEach(element => {
 

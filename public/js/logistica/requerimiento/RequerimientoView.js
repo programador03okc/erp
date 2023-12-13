@@ -1461,7 +1461,7 @@ class RequerimientoView {
         tempObjectBtnPartida = obj.target;
         let id_grupo = document.querySelector("form[id='form-requerimiento'] input[name='id_grupo']").value;
         let id_proyecto = document.querySelector("form[id='form-requerimiento'] select[name='id_proyecto']").value;
-        let id_cc = document.querySelector("form[id='form-requerimiento'] input[name='id_cc']").value;
+        let tipoPptoCDP = document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") !=null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount:0;
 
         let usuarioProyectos = false;
         grupos.forEach(element => {
@@ -1479,7 +1479,7 @@ class RequerimientoView {
                         backdrop: 'true'
                     });
                     this.listarPartidas(id_grupo, id_proyecto > 0 ? id_proyecto : null);
-                } else if (id_cc > 0) {
+                } else if (tipoPptoCDP > 0) {
                     Swal.fire(
                         '',
                         'No es requerido completar la partida cuando selecciona un CDP. Puede omitir',

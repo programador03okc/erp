@@ -3814,7 +3814,7 @@ class ListarRequerimientoPagoView {
                                 let seleccionado="";
 
                                 (response.data[0].cuenta_persona).forEach(element => {
-                                    
+
                                     if(idCuentaPreSeleccionada >0){
                                         if(element.id_cuenta_bancaria == idCuentaPreSeleccionada){
                                             seleccionado= "selected";

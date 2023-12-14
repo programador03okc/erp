@@ -33,6 +33,7 @@ use App\Models\Contabilidad\Contribuyente;
 use App\Models\Contabilidad\CuentaContribuyente;
 use App\Models\Contabilidad\Identidad;
 use App\Models\Contabilidad\TipoCuenta;
+use App\Models\Logistica\CondicionSoftlink;
 use App\Models\Logistica\Proveedor;
 use App\Models\mgcp\CuadroCosto\CuadroCostoView;
 use App\Models\Rrhh\CuentaPersona;
@@ -101,6 +102,7 @@ class RequerimientoPagoController extends Controller
 
         $tipo_cambio = (new SaldosController)->tipo_cambio_compra(new Carbon());
 
+        $condiciones_softlink = CondicionSoftlink::mostrar();
 
         return view(
             'tesoreria.requerimiento_pago.lista',
@@ -126,7 +128,8 @@ class RequerimientoPagoController extends Controller
                 'array_accesos',
                 'presupuestoInternoList',
                 'tipoDocumentos',
-                'tipo_cambio'
+                'tipo_cambio',
+                'condiciones_softlink'
             )
         );
     }
@@ -313,6 +316,7 @@ class RequerimientoPagoController extends Controller
 
     function guardarRequerimientoPago(Request $request)
     {
+        // return $request;
         DB::beginTransaction();
         try {
 
@@ -354,12 +358,17 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
+            $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
+            $requerimientoPago->plazo_entrega = $request->plazo_entrega ? $request->plazo_entrega : null;
+
             $requerimientoPago->save();
 
             $requerimientoPago->archivo_adjunto = $request->archivo_adjunto;
             $requerimientoPago->fecha_emision_adjunto = $request->fecha_emision_adjunto;
             $requerimientoPago->categoria_adjunto = $request->categoria_adjunto;
             $requerimientoPago->accion_adjunto = $request->accion_adjunto;
+
+
             // $requerimientoPago->fecha_emision = $request->fecha_emision;//fecha de emision de comprobsante del adjunto nivel cabecera
 
             $count = count($request->descripcion);
@@ -487,7 +496,7 @@ class RequerimientoPagoController extends Controller
             $comentarioDetalle = 'Nuevo requerimiento de pago (detalle): ' . ($rp->codigo ?? '').', Agregado por: ' . Auth::user()->nombre_corto;
             LogActividad::registrar(Auth::user(), 'Nuevo requerimiento de pago', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
 
-            
+
             return response()->json(['id_requerimiento_pago' => $requerimientoPago->id_requerimiento_pago, 'mensaje' => 'Se guardó el requerimiento de pago ' . $codigo]);
         } catch (Exception $e) {
             DB::rollBack();
@@ -881,6 +890,9 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_trabajador = $request->id_trabajador > 0 ? $request->id_trabajador : null;
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
+
+            $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink > 0 ? $request->id_condicion_softlink : null;
+            $requerimientoPago->plazo_entrega = $request->plazo_entrega > 0 ? $request->plazo_entrega : null;
             $requerimientoPago->save();
 
             $count = count($request->descripcion);
@@ -889,7 +901,7 @@ class RequerimientoPagoController extends Controller
 
             $afectaPresupuestoInternoSuma = [];
             $afectaPresupuestoInternoResta = [];
-            
+
             $valorAteriorDetalle = RequerimientoPagoDetalle::where("id_requerimiento_pago", $request->id_requerimiento_pago)->get();
 
             for ($i = 0; $i < $count; $i++) {
@@ -1121,7 +1133,7 @@ class RequerimientoPagoController extends Controller
                     LogActividad::registrar(Auth::user(), 'Listado de requerimientos de pago', 4, $requerimientoPago->getTable(), null, $requerimientoPago, $comentarioCabecera,'Necesidades');
                     $comentarioDetalle = 'Anular requerimiento de pago (detalle): ' . ($requerimientoPago->codigo ?? '').', Anulado por: ' . Auth::user()->nombre_corto;
                     LogActividad::registrar(Auth::user(), 'Listado de requerimientos de pago', 4, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
-        
+
                 } else {
                     $output = [
                         'id_requerimiento_pago' => 0,

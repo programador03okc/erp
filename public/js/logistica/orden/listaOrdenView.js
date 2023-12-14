@@ -148,6 +148,7 @@ class ListaOrdenView {
         $(document).on('click', '.adjuntar-archivos', (e) => {
             tempArchivoAdjuntoRequerimientoCabeceraList = [];
             $(":file").filestyle('clear');
+            $('#modal-adjuntar-orden [name=enviar_pago]').val('');
             this.limpiarTabla('adjuntosCabecera');
             var data_id = e.currentTarget.dataset.id,
                 data_codigo = e.currentTarget.dataset.codigo,
@@ -158,6 +159,18 @@ class ListaOrdenView {
             $('#modal-adjuntar-orden .codigo').text(data_codigo);
             $('#modal-adjuntar-orden .codigo').css('color', 'cadetblue');
             $('#modal-adjuntar-orden').modal('show');
+            $('#modal-adjuntar-orden [name=credito_dias]').val(e.currentTarget.dataset.creditos);
+            let fecha_emision = e.currentTarget.dataset.fechaEmision;
+            ;
+            if (e.currentTarget.dataset.enviarPago) {
+                $('#modal-adjuntar-orden [name=enviar_pago]').val(moment(e.currentTarget.dataset.enviarPago).format('YYYY-MM-DD'));
+            }else{
+                if(parseInt(e.currentTarget.dataset.creditos)>0){
+                    $('#modal-adjuntar-orden [name=enviar_pago]').val(moment(fecha_emision).add(e.currentTarget.dataset.creditos, 'days').format('YYYY-MM-DD'));
+                }
+            }
+
+
             this.obteneAdjuntosOrden(data_id).then((res) => {
 
                 let htmlAdjunto = '';
@@ -247,6 +260,7 @@ class ListaOrdenView {
 
         $(document).on("change", "input.handleChangeAgregarAdjuntoRequerimientoCompraCabecera", (e) => {
             this.agregarAdjuntoRequerimientoCabeceraCompra(e.currentTarget);
+
         });
         $(document).on("click", "button.handleClickEliminarArchivoCabeceraRequerimientoCompra", (e) => {
             this.eliminarAdjuntoRequerimientoCompraCabecera(e.currentTarget);
@@ -1964,11 +1978,12 @@ class ListaOrdenView {
                                 data-id-cuenta-persona-pago="${row.id_cuenta_persona_pago ?? ''}"
                                 data-comentario-pago="${row.comentario_pago ?? ''}"
                                 data-lista-requerimientos-con-tipo-impuesto="${row.lista_requerimientos_con_tipo_impuesto ?? ''}"
+
                                 >
                                     <i class="fas fa-money-check-alt fa-xs"></i>
                                 </button>`: '');
 
-                            let btnAdjuntar = (array_accesos.find(element => element === 249) ? `<button type="button"  class="btn btn-default adjuntar-archivos" data-toggle="tooltip" title="Adjuntar archivos" data-codigo="${row.codigo}" data-id="${row.id}" data-codigo="${row.codigo}" data-id-moneda="${row.id_moneda}" ><i class="fas fa-paperclip fa-xs"></i></button>` : '');
+                            let btnAdjuntar = (array_accesos.find(element => element === 249) ? `<button type="button"  class="btn btn-default adjuntar-archivos" data-toggle="tooltip" title="Adjuntar archivos" data-codigo="${row.codigo}" data-id="${row.id}" data-codigo="${row.codigo}" data-id-moneda="${row.id_moneda}" data-creditos="${row.credito_dias ?? ''}" data-fecha-emision="${ moment(row.fecha_emision).format('YYYY/MM/DD')  ?? ''}" data-enviar-pago="${row.enviar_pago ?? ''}"><i class="fas fa-paperclip fa-xs"></i></button>` : '');
                             let containerCloseBrackets = '</div>';
                             return (containerOpenBrackets + btnVerDetalle + btnImprimirOrden + btnEnviarAPago + btnAnularOrden + btnAdjuntar + containerCloseBrackets);
 
@@ -2457,6 +2472,13 @@ class ListaOrdenView {
     }
     addToTablaArchivosRequerimientoCabecera(payload) {
         const simboloMonedaOrden = document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='simbolo_moneda']").value;
+        // let fecha = moment().format("YYYY-MM-DD")
+        // let fecha_enviar_pago = fecha.setDate(fecha.getDate() + creditos);
+        // console.log(fecha_enviar_pago);
+
+
+
+
         this.getcategoriaAdjunto().then((categoriaAdjuntoList) => {
             // console.log(payload);
             let html = '';
@@ -2496,6 +2518,8 @@ class ListaOrdenView {
         }).catch(function (err) {
             console.log(err)
         })
+
+
     }
     makeId() {
         let ID = "";
@@ -2551,7 +2575,7 @@ class ListaOrdenView {
                     formData.append(`accion[]`, element.accion);
 
                 });
-
+                // formData.append(`fecha_envio_pago`, $('#modal-adjuntar-orden #form-adjunto-orden [name="enviar_pago"]').val());
             }
 
             $.ajax({
@@ -2726,6 +2750,11 @@ class ListaOrdenView {
                 break;
             }
         }
+
+    }
+
+
+    calcularFechaEnviarPago(feha){
 
     }
 }

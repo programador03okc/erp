@@ -93,6 +93,13 @@ if($requerimientoPago->id_tipo_destinatario ==1){
     $numeroCuenta=$requerimientoPago->cuentaContribuyente !=null ?$requerimientoPago->cuentaContribuyente['nro_cuenta']:'';
     $numeroCci=$requerimientoPago->cuentaContribuyente !=null ?$requerimientoPago->cuentaContribuyente['nro_cuenta_interbancaria']:'';
 }
+
+$codigoOportunodadList=[];
+if($requerimientoPago->cdp_requerimiento != null &&  count($requerimientoPago->cdp_requerimiento) >0 ){
+    foreach ($requerimientoPago->cdp_requerimiento as $value) {
+        $codigoOportunodadList[]=$value->codigo_oportunidad;
+    }
+}
 ?>
 
 <body>
@@ -146,6 +153,10 @@ if($requerimientoPago->id_tipo_destinatario ==1){
                 <td style="width: 35%">{{$requerimientoPago->presupuestoInterno != null  ? ($requerimientoPago->presupuestoInterno['codigo'].' - '.$requerimientoPago->presupuestoInterno['descripcion']):'' }}</td>
                 <th style="width: 15%" class="text-right">Solicitado por:</th>
                 <td style="width: 35%">{{$requerimientoPago->nombre_trabajador!=null ? $requerimientoPago->nombre_trabajador:'' }}</td>
+            </tr>
+            <tr>
+                <th style="width: 15%" class="text-right">CDP:</th>
+                <td style="width: 35%">{{ (count($codigoOportunodadList)>0 ? implode(",",$codigoOportunodadList):' - ')  }}</td>
             </tr>
             <tr>
                 <th style="width: 15%" class="text-right">Tipo Impuesto:</th>

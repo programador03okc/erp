@@ -20,6 +20,8 @@
             <th style="background-color: #cccccc;text-align:center;" width="40">Banco</th>
             <th style="background-color: #cccccc;text-align:center;" width="30">Cuenta bancaria</th>
             <th style="background-color: #cccccc;text-align:center;" width="30">Cuenta CCI</th>
+            <th style="background-color: #cccccc;text-align:center;" width="30">Fecha registro de cuenta</th>
+
 
 
         </tr>
@@ -49,19 +51,46 @@
             <th>{{ $requerimiento->nombre_autorizado }}</th>
 
             @if($requerimiento->id_tipo_destinatario_pago ==2)
+
+            <?php 
+                $fechaRango = date('d-m-Y', strtotime("-15 days"));
+
+                $fechaCuentaContribuyente = date("d-m-Y", strtotime($requerimiento->fecha_registro_cuenta_contribuyente));
+                if(  strtotime($fechaCuentaContribuyente) >=strtotime($fechaRango)){
+                    $colorFechaCuentaContribuyente = "yellowgreen";
+                }else{
+                    $colorFechaCuentaContribuyente = "black";     
+                }
+             ?>
+
                 <td>{{ $requerimiento->nro_documento }}</td>
                 <td>{{ $requerimiento->razon_social }}</td>
                 <td>{{ $requerimiento->tipo_cuenta }}</td>
                 <td>{{ $requerimiento->banco_contribuyente }}</td>
                 <td>{{ $requerimiento->nro_cuenta }}</td>
                 <td>{{ $requerimiento->nro_cuenta_interbancaria }}</td>
+                <td style='color:<?php echo($colorFechaCuentaContribuyente) ?>' >{{ $fechaCuentaContribuyente}}</td>
+
             @elseif($requerimiento->id_tipo_destinatario_pago ==1)
+
+            <?php 
+                $fechaRango = date('d-m-Y', strtotime("-15 days"));
+                $fechaCuentaPersona=date("d-m-Y", strtotime($requerimiento->fecha_registro_cuenta_persona));
+                if( strtotime($fechaCuentaPersona) >=strtotime($fechaRango)){
+                    $colorFechaCuentaPersona = "yellowgreen";
+                }else{
+                    $colorFechaCuentaPersona = "black";     
+                }
+             ?>
+
                 <td>{{ $requerimiento->nro_documento_persona }}</td>
                 <td>{{ $requerimiento->nombre_completo_persona }}</td>
                 <td>{{ $requerimiento->tipo_cuenta_persona }}</td>
                 <td>{{ $requerimiento->banco_persona }}</td>
                 <td>{{ $requerimiento->nro_cuenta_persona }}</td>
                 <td>{{ $requerimiento->nro_cci_persona }}</td>
+                <td  style='color:<?php echo($colorFechaCuentaPersona) ?>' >{{ $fechaCuentaPersona }}</td>
+
             @endif
         </tr>
         @endforeach

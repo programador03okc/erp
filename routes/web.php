@@ -1544,7 +1544,8 @@ Route::middleware(['auth'])->group(function () {
 						Route::post('generar-filtros', [OrdenController::class, 'generarFiltros'])->name('generar-filtros');
 
 						Route::post('reporte-filtros', [OrdenController::class, 'reporteFiltros'])->name('reporte-filtros');
-						Route::get('enviar-pago-automatico', [OrdenController::class, 'enviarPagoAutomatico'])->name('enviar-pago-automatico');
+						Route::post('reporte-item-orden-resumen-filtros', [OrdenController::class, 'reporteItemOrdenResumenFiltros'])->name('reporte-item-orden-resumen-filtros');
+                        Route::get('enviar-pago-automatico', [OrdenController::class, 'enviarPagoAutomatico'])->name('enviar-pago-automatico');
 					});
 				});
 			});

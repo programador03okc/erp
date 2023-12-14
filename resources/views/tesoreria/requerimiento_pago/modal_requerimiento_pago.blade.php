@@ -117,22 +117,38 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 oculto" id="contenedor-cdp">
+                                    <div class="col-md-12 oculto" id="contenedor-cdp">
                                         <div class="form-group">
                                             <h5>CDP</h5>
-                                            <div style="display:flex;">
-                                                <input type="text" class="form-control oculto" name="id_cc">
-                                                <input type="text" class="form-control" name="codigo_oportunidad" readonly>
-
-                                                <button type="button" class="btn-primary handleClickModalListaCuadroDePresupuesto" title="Buscar cuadro de presupuesto" placeholder="Código CDP" name="btnSearchCDP">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                                <button type="button" class="btn-primary handleClickLimpiarSeleccionCuadroDePresupuesto" title="Limpiar selección" name="btnCleanCDP">
-                                                    <i class="fas fa-broom"></i>
-                                                </button>
-                                            </div>
+                                            <fieldset class="group-importes">
+                                                <div class="btn-group" role="group" aria-label="...">
+                                                    <button type="button" class="btn-primary btn-xs handleClickModalListaCuadroDePresupuesto activation" title="Buscar cuadro de presupuesto" name="btnSearchCDP">
+                                                        <i class=" fas fa-search"></i> Seleccionar CDP
+                                                    </button>
+                                                </div>
+                                                <div class="box box-widget">
+                                                    <div class="box-body">
+                                                        <div class="table-responsive" style="overflow: scroll; height: 20vh;">
+                                                            <table class="mytable table table-condensed table-bordered table-okc-view no-footer dataTable" id="tablaCuadroPresupuestoVinculados">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:15%">Código</th>
+                                                                        <th style="width:70%">Entidad</th>
+                                                                        <th style="width:20%">Monto</th>
+                                                                        <th style="width:5%">Acción</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="body_cdp_vinculados"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <h5>Comentario</h5>
@@ -155,7 +171,7 @@
 
                                     <div class="col-md-2" id="input-group-tipo-impuesto">
                                         <div class="form-group">
-                                        <h5>Tipo Impuesto</h5>
+                                            <h5>Tipo Impuesto</h5>
                                             <select class="form-control activation " name="tipo_impuesto">
                                                 <option value="0">No aplica</option>
                                                 <option value="1">Detracción</option>
@@ -174,7 +190,6 @@
                                             </button>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="row" id="input-group-presupuesto-interno">
@@ -288,7 +303,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                        <h5>Tipo cambio($):</h5>
+                                            <h5>Tipo cambio($):</h5>
                                             <span id="tipo_cambio_compra" style="font-size: 1.8rem;">{{$tipo_cambio}}</span>
                                         </div>
                                     </div>
@@ -346,26 +361,26 @@
                     </div>
 
                     <div class="row">
-                    <div class="col-md-8">
-                        <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
-                        <fieldset class="group-table">
-                            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th width="10">Codigo</th>
-                                        <th width="70">Descripción</th>
-                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
-                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
-                                        <th width="10" style="background-color: #fbdddd;">presupuesto a utilizar</th>
-                                        <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
-                                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="body_partidas_activas">
-                                </tbody>
-                            </table>
-                        </fieldset>
-                    </div>
+                        <div class="col-md-8">
+                            <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
+                            <fieldset class="group-table">
+                                <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th width="10">Codigo</th>
+                                            <th width="70">Descripción</th>
+                                            <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                                            <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
+                                            <th width="10" style="background-color: #fbdddd;">presupuesto a utilizar</th>
+                                            <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
+                                            <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="body_partidas_activas">
+                                    </tbody>
+                                </table>
+                            </fieldset>
+                        </div>
                     </div>
 
                 </div>

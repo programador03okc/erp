@@ -1247,10 +1247,12 @@ class RegistroPagoController extends Controller
                 'sis_sede.descripcion as sede_descripcion',
                 'adm_cta_contri.nro_cuenta',
                 'adm_cta_contri.nro_cuenta_interbancaria',
+                'adm_cta_contri.fecha_registro as fecha_registro_cuenta_contribuyente',
                 'adm_tp_cta.descripcion as tipo_cuenta',
                 'banco_contribuyente.razon_social as banco_contribuyente',
                 'rrhh_cta_banc.nro_cuenta as nro_cuenta_persona',
                 'rrhh_cta_banc.nro_cci as nro_cci_persona',
+                'rrhh_cta_banc.fecha_registro as fecha_registro_cuenta_persona',
                 'tp_cta_persona.descripcion as tipo_cuenta_persona',
                 'banco_persona.razon_social as banco_persona',
                 'sis_usua.nombre_corto',
@@ -1340,6 +1342,7 @@ class RegistroPagoController extends Controller
                 "banco_contribuyente"=>(!empty($value->banco_contribuyente)?$value->banco_contribuyente:'-'),
                 "nro_cuenta"=>(!empty($value->nro_cuenta)?$value->nro_cuenta:'-'),
                 "nro_cuenta_interbancaria"=>(!empty($value->nro_cuenta_interbancaria)?$value->nro_cuenta_interbancaria:'-'),
+                "fecha_registro_cuenta_contribuyente"=>(!empty($value->fecha_registro_cuenta_contribuyente)?$value->fecha_registro_cuenta_contribuyente:'-'),
 
                 //persona
                 "nro_documento_persona"=>(!empty($value->nro_documento_persona)?$value->nro_documento_persona:'-'),
@@ -1348,6 +1351,7 @@ class RegistroPagoController extends Controller
                 "banco_persona"=>(!empty($value->banco_persona)?$value->banco_persona:'-'),
                 "nro_cuenta_persona"=>(!empty($value->nro_cuenta_persona)?$value->nro_cuenta_persona:'-'),
                 "nro_cci_persona"=>(!empty($value->nro_cci_persona)?$value->nro_cci_persona:'-'),
+                "fecha_registro_cuenta_persona"=>(!empty($value->fecha_registro_cuenta_persona)?$value->fecha_registro_cuenta_persona:'-'),
                 
             ));
         }
@@ -1504,10 +1508,12 @@ class RegistroPagoController extends Controller
             'sis_sede.descripcion as sede_descripcion',
             'adm_cta_contri.nro_cuenta',
             'adm_cta_contri.nro_cuenta_interbancaria',
+            'adm_cta_contri.fecha_registro as fecha_registro_cuenta_contribuyente',
             'adm_tp_cta.descripcion as tipo_cuenta',
             'banco_contribuyente.razon_social as banco_contribuyente',
             'rrhh_cta_banc.nro_cuenta as nro_cuenta_persona',
             'rrhh_cta_banc.nro_cci as nro_cci_persona',
+            'rrhh_cta_banc.fecha_registro as fecha_registro_cuenta_persona',
             'tp_cta_persona.descripcion as tipo_cuenta_persona',
             'banco_persona.razon_social as banco_persona',
             DB::raw("CONCAT(rrhh_perso.nombres,' ',rrhh_perso.apellido_paterno,' ',rrhh_perso.apellido_materno) as nombre_completo_persona"),
@@ -1610,6 +1616,8 @@ class RegistroPagoController extends Controller
                 "banco_contribuyente"=>(!empty($value->banco_contribuyente)?$value->banco_contribuyente:'-'),
                 "nro_cuenta"=>(!empty($value->nro_cuenta)?$value->nro_cuenta:'-'),
                 "nro_cuenta_interbancaria"=>(!empty($value->nro_cuenta_interbancaria)?$value->nro_cuenta_interbancaria:'-'),
+                "fecha_registro_cuenta_contribuyente"=>(!empty($value->fecha_registro_cuenta_contribuyente)?$value->fecha_registro_cuenta_contribuyente:'-'),
+
                 //persona
                 "nro_documento_persona"=>(!empty($value->nro_documento_persona)?$value->nro_documento_persona:'-'),
                 "nombre_completo_persona"=>(!empty($value->nombre_completo_persona)?$value->nombre_completo_persona:'-'),
@@ -1617,6 +1625,8 @@ class RegistroPagoController extends Controller
                 "banco_persona"=>(!empty($value->banco_persona)?$value->banco_persona:'-'),
                 "nro_cuenta_persona"=>(!empty($value->nro_cuenta_persona)?$value->nro_cuenta_persona:'-'),
                 "nro_cci_persona"=>(!empty($value->nro_cci_persona)?$value->nro_cci_persona:'-'),
+                "fecha_registro_cuenta_persona"=>(!empty($value->fecha_registro_cuenta_persona)?$value->fecha_registro_cuenta_persona:'-'),
+
 
             ));
         }

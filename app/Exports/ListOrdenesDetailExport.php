@@ -21,11 +21,13 @@ class ListOrdenesDetailExport implements FromCollection, WithHeadings
     {
         return [
             "Cod. orden", 
+            "Cod. Oportunidad", 
             "Cod. req.", 
             "Cod. orden softlink", 
             "Nro. Orden MGC",
             "Concepto", 
             "Cliente", 
+            "Fecha Aprob. CDP", 
             "Proveedor", 
             "Cod.AM",
             "Nombre AM",
@@ -40,7 +42,8 @@ class ListOrdenesDetailExport implements FromCollection, WithHeadings
             "Unitdad medida", 
             "Moneda", 
             "Precio unit. Ord.", 
-            "Precio unit. CDP", 
+            "Precio unit. CDP",
+            "Condicion pago",
             "Fecha emisión orden", 
             "Plazo entrega", 
             "Fecha ingreso almacén", 

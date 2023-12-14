@@ -6,6 +6,7 @@
                 <input type="hidden" name="id_orden" value="">
                 <input type="hidden" name="id_moneda" value="">
                 <input type="hidden" name="codigo_orden" value="">
+                <input type="hidden" name="credito_dias" value="">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
                     <h3 class="modal-title">Adjuntar orden - <span class="codigo"></span></h3>
@@ -39,6 +40,7 @@
                     </fieldset>
                     <fieldset class="group-table">
                         <h5 style="display:flex;justify-content: space-between;"><strong>Adjuntos logísticos</strong></h5>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <table id="adjuntosDetalle" class="mytable table table-condensed table-bordered table-okc-view">
@@ -54,8 +56,17 @@
                             </div>
                         </div>
                     </fieldset>
+                    <br>
                     <fieldset class="group-table">
                         <h5 style="display:flex;justify-content: space-between;"><strong>Adjuntos Pago</strong></h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="fecha_enviar_pago">Enviar Pago :</label>
+                                    <input id="fecha_enviar_pago" class="form-control" type="date" name="enviar_pago">
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <table id="adjuntosPago" class="mytable table table-condensed table-bordered table-okc-view">

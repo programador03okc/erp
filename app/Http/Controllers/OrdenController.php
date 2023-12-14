@@ -1708,17 +1708,17 @@ class OrdenController extends Controller
             'adm_ctb_contac.direccion as direccion_contacto',
             'adm_ctb_contac.horario as horario_contacto',
             DB::raw("(dis_contac.descripcion) || ' ' || (prov_contac.descripcion) || ' ' || (dpto_contac.descripcion)  AS ubigeo_contacto"),
-            DB::raw("( SELECT string_agg(distinct (concat(cv.nombre_entidad ,' (',cv.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc 
+            DB::raw("( SELECT string_agg(distinct (concat(cv.nombre_entidad ,' (',cv.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc
             inner join almacen.alm_det_req adr on adr.id_detalle_requerimiento = ldoc.id_detalle_requerimiento
             inner join almacen.alm_req ar on ar.id_requerimiento = adr.id_requerimiento
             inner join mgcp_cuadro_costos.cc_view cv  on cv.id = ar.id_cc
             where ldoc.id_orden_compra =log_ord_compra.id_orden_compra) AS entidad"),
-            DB::raw("(SELECT string_agg(distinct (concat(opv.fecha_entrega ,' (',o.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc 
+            DB::raw("(SELECT string_agg(distinct (concat(opv.fecha_entrega ,' (',o.codigo_oportunidad,')'))::text, ', '::text)  from logistica.log_det_ord_compra ldoc
             inner join almacen.alm_det_req adr on adr.id_detalle_requerimiento = ldoc.id_detalle_requerimiento
             inner join almacen.alm_req ar on ar.id_requerimiento = adr.id_requerimiento
             inner join mgcp_cuadro_costos.cc c on c.id = ar.id_cc
             inner join mgcp_oportunidades.oportunidades o on o.id = c.id_oportunidad
-            inner join mgcp_ordenes_compra.oc_propias_view opv  on opv.id_oportunidad = c.id_oportunidad 
+            inner join mgcp_ordenes_compra.oc_propias_view opv  on opv.id_oportunidad = c.id_oportunidad
             where ldoc.id_orden_compra =log_ord_compra.id_orden_compra  ) AS fecha_limite_oc")
 
         )
@@ -2338,7 +2338,7 @@ class OrdenController extends Controller
         <table width="100%" border=0>
         <tr>
             <td nowrap  width="2%" class="verticalTop subtitle">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'F' : 'F') . ': </td>
-            <td class="verticalTop">' . $ordenArray['head']['fecha_limite_oc'] . '</td> 
+            <td class="verticalTop">' . $ordenArray['head']['fecha_limite_oc'] . '</td>
         </tr>
         </table>
         <br>
@@ -2763,6 +2763,8 @@ class OrdenController extends Controller
 
             $requerimientoHelper = new RequerimientoHelper();
             if ($requerimientoHelper->EstaHabilitadoRequerimiento($idDetalleRequerimientoList) == true) { // buscar el requerimiento de cada detalle requerimiento y devolver si esta habilitado para acción de guardar, estado en pausa y por regularizar no es posible realizar acción de guardar
+
+                // date("d-m-Y",strtotime($request->fecha_emision."+ 1 days"));
 
                 $orden = new Orden();
                 $tp_doc = ($request->id_tp_documento !== null ? $request->id_tp_documento : 2);
@@ -4632,12 +4634,12 @@ class OrdenController extends Controller
 
     function registrarSolicitudDePagar(Request $request)
     {
-        // return $request;exit;
+
         try {
             DB::beginTransaction();
 
             $orden = Orden::with('detalle.detalleRequerimiento.requerimiento')->find($request->id_orden_compra);
-
+            // return $orden;exit;
             if (!empty($orden)) {
                 //ya fue autorizado?
                 // Debugbar::info(isset($request->pagoEnCuotasCheckbox));
@@ -5035,6 +5037,7 @@ class OrdenController extends Controller
     public function guardarAdjuntoOrden(Request $request)
     {
         # code...
+
         DB::beginTransaction();
         try {
 
@@ -5087,6 +5090,9 @@ class OrdenController extends Controller
                 $mensaje = 'Hubo un problema y no se pudo guardo los adjuntos' . count($idAdjunto);
                 $estado_accion = 'warning';
             }
+            $data = Orden::find($request->id_orden);
+            $data->enviar_pago = $request->enviar_pago;
+            $data->save();
             DB::commit();
 
             return response()->json(['status' => $estado_accion, 'mensaje' => $mensaje]);
@@ -5601,5 +5607,60 @@ class OrdenController extends Controller
 
 
         return $data;
+    }
+    public function enviarPagoAutomatico(){
+        $data = OrdenesView::where([['id_estado', '>=', 1], ['id_tp_documento', '!=', 13]])->whereNotNull('enviar_pago');
+
+        $fecha = new Carbon();
+        $inicio = $fecha::now()->startOfYear();
+        $fin = $fecha::now()->endOfMonth();
+
+        $data = $data->whereBetween('fecha_emision', [$inicio, $fin]);
+        $data = $data->orderBy('id', 'desc')->limit(5)->get();
+
+        $data_enviada = array();
+        $data_espera = array();
+        foreach ($data as $key => $value) {
+            if($value->enviar_pago || $value->enviar_pago!==null || $value->enviar_pago!==''){
+                if(date('Y-m-d') === date("Y-m-d", strtotime($value->enviar_pago))){
+                    $contribuyente = CuentaContribuyente::with("banco.contribuyente", "moneda", "tipoCuenta")->where([["id_contribuyente", $value->id_contribuyente], ["estado", "!=", 7]])->first();
+
+                    // return $contribuyente;
+
+                    if($contribuyente){
+                        $orden = Orden::where('codigo',$value->codigo)->whereNotIn('estado_pago',[5,6])->where('enviado','f')->first();
+                        if($orden){
+                            // return $orden;
+                            $orden->estado_pago = 8; //enviado a pago
+                            $orden->id_tipo_destinatario_pago = 2;
+                            $orden->id_prioridad_pago = 3; // prioridad
+
+                            // if ($value->id_tipo_destinatario_pago == 2) {
+                                $orden->id_cta_principal = $contribuyente->id_cuenta_contribuyente;
+                            // } elseif ($value->id_tipo_destinatario_pago == 1) {
+                            //     $orden->id_cuenta_persona_pago = $request->id_cuenta;
+                            // }
+                            // $orden->id_persona_pago = $request->id_persona;
+                            $orden->comentario_pago = 'Enviado desde pago automática.';
+                            $orden->tiene_pago_en_cuotas = false;
+                            $orden->fecha_solicitud_pago = Carbon::now();
+                            $orden->tipo_impuesto = null;
+                            $orden->enviado = true;
+                            $orden->save();
+                        }
+
+
+                        array_push($data_enviada, $orden);
+                    }else{
+                        array_push($data_espera, $value);
+                    }
+                }
+
+            }else{
+                array_push($data_espera, $value);
+            }
+
+        }
+        return response()->json([$data_espera,$data_enviada],200);
     }
 }

@@ -203,7 +203,7 @@ class ListaOrdenView {
                         htmlAdjunto += '</td>'
 
                         htmlAdjunto += '<td class="text-center">'
-                        htmlAdjunto += '<span name="fecha_emision_text">' + element.fecha_vencimiento + '</span><input type="date" class="form-control oculto" name="fecha_vencimiento" placeholder="Fecha emisión"  value="' + element.fecha_vencimiento + '">'
+                        htmlAdjunto += '<span name="fecha_emision_text">' + (element.fecha_vencimiento?element.fecha_vencimiento:'') + '</span><input type="date" class="form-control oculto" name="fecha_vencimiento" placeholder="Fecha emisión"  value="' + element.fecha_vencimiento + '">'
                         htmlAdjunto += '</td>'
 
                         htmlAdjunto += '<td>'

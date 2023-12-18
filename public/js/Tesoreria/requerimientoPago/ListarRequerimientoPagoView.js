@@ -2693,7 +2693,7 @@ class ListarRequerimientoPagoView {
                     </p>
                         ${i + 1}
                 </td>
-                <td title="${data.detalle[i].id_partida > 0 ? (data.detalle[i].partida.descripcion).toUpperCase() : (data.detalle[i].id_partida_pi > 0 ? (data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].id_partida > 0 ? data.detalle[i].partida.codigo : (data.detalle[i].id_partida_pi > 0 ? data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
+                <td title="${data.detalle[i].partida !=null ? (data.detalle[i].partida.descripcion).toUpperCase() : (data.detalle[i].presupuesto_interno_detalle != null ? (data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].partida !=null ? data.detalle[i].partida.codigo : (data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
                 <td title="${data.detalle[i].id_centro_costo > 0 ? (data.detalle[i].centro_costo.descripcion).toUpperCase() : ''}">${data.detalle[i].centro_costo != null ? data.detalle[i].centro_costo.codigo : ''}</td>
                 <td name="descripcion_servicio">${data.detalle[i].descripcion != null ? data.detalle[i].descripcion : ''} </td>
                 <td>${data.detalle[i].unidad_medida != null ? data.detalle[i].unidad_medida.descripcion : ''}</td>

@@ -244,8 +244,8 @@ class ReporteGastoController extends Controller
             ->leftJoin('administracion.adm_empresa', 'alm_req.id_empresa', '=', 'adm_empresa.id_empresa')
             ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
             ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
-            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            // ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
+            // ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
             ->leftJoin('almacen.alm_tp_req', 'alm_tp_req.id_tipo_requerimiento', '=', 'alm_req.id_tipo_requerimiento')
             ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'alm_det_req.partida')
             ->leftJoin('finanzas.presup', 'presup.id_presup', '=', 'presup_par.id_presup')
@@ -275,7 +275,10 @@ class ReporteGastoController extends Controller
                 'adm_prioridad.descripcion as prioridad',
                 'alm_tp_req.descripcion AS tipo_requerimiento',
                 'alm_req.codigo',
-                'oportunidades.codigo_oportunidad',
+                DB::raw("(SELECT op.codigo_oportunidad FROM almacen.cdp_requerimiento cr 
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_logistico
+                JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
+                WHERE cdp.id = alm_req.id_requerimiento) AS codigo_oportunidad"),
                 'alm_req.concepto',
                 'alm_req.codigo',
                 'alm_req.observacion',
@@ -570,8 +573,8 @@ class ReporteGastoController extends Controller
             ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
 
             ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
-            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'requerimiento_pago.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            // ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'requerimiento_pago.id_cc')
+            // ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
             ->leftJoin('tesoreria.requerimiento_pago_tipo', 'requerimiento_pago_tipo.id_requerimiento_pago_tipo', '=', 'requerimiento_pago.id_requerimiento_pago_tipo')
 
             ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'requerimiento_pago_detalle.id_partida')
@@ -598,7 +601,10 @@ class ReporteGastoController extends Controller
                 'requerimiento_pago_tipo.descripcion AS tipo_requerimiento',
 
                 'requerimiento_pago.codigo',
-                'oportunidades.codigo_oportunidad',
+                DB::raw("(SELECT op.codigo_oportunidad FROM almacen.cdp_requerimiento cr 
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_pago
+                JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
+                WHERE cdp.id = requerimiento_pago.id_requerimiento_pago) AS codigo_oportunidad"),
                 'requerimiento_pago.concepto',
                 'requerimiento_pago.comentario',
                 'sis_moneda.simbolo as simbolo_moneda',

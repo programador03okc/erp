@@ -5630,6 +5630,7 @@ class OrdenController extends Controller
                     if($contribuyente){
                         $orden = Orden::where('codigo',$value->codigo)->whereNotIn('estado_pago',[5,6])->where('enviado','f')->first();
                         if($orden){
+                            $valor_anterior = $orden = Orden::where('codigo',$value->codigo)->whereNotIn('estado_pago',[5,6])->where('enviado','f')->first();
                             // return $orden;
                             $orden->estado_pago = 8; //enviado a pago
                             $orden->id_tipo_destinatario_pago = 2;
@@ -5647,20 +5648,18 @@ class OrdenController extends Controller
                             $orden->tipo_impuesto = null;
                             $orden->enviado = true;
                             $orden->save();
+
+                            LogActividad::registrar(Auth::user(), 'Gestion de ordenes', 3, $orden->getTable(), $valor_anterior, $orden, 'Se realizó el envío de modo automatico ', 'Logística');
+                            array_push($data_enviada, $orden);
                         }
-
-
-                        array_push($data_enviada, $orden);
                     }else{
                         array_push($data_espera, $value);
                     }
                 }
-
             }else{
                 array_push($data_espera, $value);
             }
-
         }
-        return response()->json([$data_espera,$data_enviada],200);
+        return response()->json(["no_enviado"=>$data_espera,"enviado"=>$data_enviada],200);
     }
 }

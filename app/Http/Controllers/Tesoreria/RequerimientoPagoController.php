@@ -321,9 +321,9 @@ class RequerimientoPagoController extends Controller
         if($cc){
             $codigo_oportunidad=  $cc->oportunidad !=null ? $cc->oportunidad->codigo_oportunidad:null;
         }
-        
+
         return $codigo_oportunidad;
-         
+
     }
 
 
@@ -371,8 +371,8 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
-            $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
-            $requerimientoPago->plazo_entrega = $request->plazo_entrega ? $request->plazo_entrega : null;
+            // $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
+            // $requerimientoPago->plazo_entrega = $request->plazo_entrega ? $request->plazo_entrega : null;
 
             $requerimientoPago->save();
 
@@ -1029,7 +1029,7 @@ class RequerimientoPagoController extends Controller
 
                 $todoCdpRequerimiento = CdpRequerimiento::where("id_requerimiento_pago", $requerimientoPago->id_requerimiento_pago)->get();
                 $idCdpRequerimientoProcesado = [];
-    
+
                 for ($c = 0; $c < $countIdCdpVinculado; $c++) {
                     if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $request->id_cpd_vinculado[$c])) { // es un id con numeros y letras => es nuevo, insertar
                         $cdpRequerimiento = new CdpRequerimiento();
@@ -1049,7 +1049,7 @@ class RequerimientoPagoController extends Controller
                     }
                     $idCdpRequerimientoProcesado[] = $cdpRequerimiento->id_cdp_requerimiento;
                 }
-    
+
                 foreach ($todoCdpRequerimiento as $key => $value) {
                     if (!in_array($value->id_cdp_requerimiento, $idCdpRequerimientoProcesado)) {
                         $cdpRequerimiento = CdpRequerimiento::find($value->id_cdp_requerimiento);

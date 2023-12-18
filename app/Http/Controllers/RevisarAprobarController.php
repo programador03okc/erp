@@ -162,14 +162,14 @@ class RevisarAprobarController extends Controller{
             $tipoDocumento = $documento->id_tp_documento;
             $idGrupo = $documento->id_grupo;
 
+            $idTipoRequerimiento=null;
+            $idTipoRequerimientoPago=null;
             if($documento->id_tp_documento ==1 ){
                 $idTipoRequerimiento = $documento->id_tipo_requerimiento;
                 if($idTipoRequerimiento ==1 ){ // los requerimiento tipo MPC no tiene flujo en Agil
                     return [];
                 }
-                $idTipoRequerimientoPago=null;
-            }elseif($documento->id_tp_documento ==2){
-                $idTipoRequerimiento=null;
+            }elseif($documento->id_tp_documento ==11){
                 $idTipoRequerimientoPago= $documento->id_tipo_requerimiento;
             }
             $idPrioridad = $documento->id_prioridad;
@@ -186,6 +186,8 @@ class RevisarAprobarController extends Controller{
             }
             
             $operaciones = $idDivision>0? $this->getOperacionSinConsiderarRol($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago):[];
+            // dd($tipoDocumento, $idTipoRequerimiento, $idGrupo, $idDivision, $idPrioridad, $idMoneda, $montoTotal, $idTipoRequerimientoPago);
+            // exit();
             // return $operaciones;
             if(isset($operaciones)){
                 $flujo = Flujo::with('rol')->where([['id_operacion',$operaciones[0]->id_operacion],['estado',1]])->get();

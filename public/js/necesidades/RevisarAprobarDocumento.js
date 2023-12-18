@@ -22,11 +22,14 @@ class RevisarAprobarDocumentoView {
     }
 
     limpiarTabla(idElement) {
-        let nodeTbody = document.querySelector("table[id='" + idElement + "'] tbody");
-        if (nodeTbody != null) {
-            while (nodeTbody.children.length > 0) {
-                nodeTbody.removeChild(nodeTbody.lastChild);
-            }
+        let nodeTbodyList = document.querySelectorAll("table[id='" + idElement + "'] tbody");
+        if (nodeTbodyList != null && nodeTbodyList.length>0) {
+            nodeTbodyList.forEach(nodeTbody => {
+                while (nodeTbody.children.length > 0) {
+                    nodeTbody.removeChild(nodeTbody.lastChild);
+                }
+                
+            });
 
         }
     }
@@ -865,6 +868,9 @@ class RevisarAprobarDocumentoView {
 
         }
 
+
+        this.llenar_tabla_flujo_aprobacion('modal-vista-rapida-requerimiento-pago',data.flujo_aprobacion??[]);
+
     }
     cargarDataRequerimientoPago(idRequerimientoPago) {
         
@@ -1061,6 +1067,7 @@ class RevisarAprobarDocumentoView {
     }
 
     construirSeccionHistorialAprobacion(data) {
+        
         this.limpiarTabla('listaHistorialRevision');
         let html = '';
         if (data.length > 0) {
@@ -1075,6 +1082,24 @@ class RevisarAprobarDocumentoView {
         }
         document.querySelector("tbody[id='body_historial_revision']").insertAdjacentHTML('beforeend', html)
 
+    }
+
+
+    llenar_tabla_flujo_aprobacion(modal,data) {
+        
+        this.limpiarTabla('listaFlujoAprobacion');
+        let html = '';
+        if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+                html += `<tr>
+                    <td style="text-align:center;">${data[i].orden ? data[i].orden : ''}</td>
+                    <td style="text-align:center;">${data[i].rol ? data[i].rol.descripcion : ''}</td>
+                    <td style="text-align:left;">${data[i].nombre_usuarios ? data[i].nombre_usuarios.toString() : ''}</td>
+                    <td style="text-align:center;">${data[i].aprobar_sin_respetar_orden =='true' ? 'SI' : 'NO'}</td>
+                </tr>`;
+            }
+        }
+        document.querySelector("div[id='"+modal+"'] tbody[id='body_flujo_aprobacion']").insertAdjacentHTML('beforeend', html)
     }
 
     verAdjuntosRequerimiento() {
@@ -1192,6 +1217,7 @@ class RevisarAprobarDocumentoView {
             });
             this.limpiarVistaRapidaRequerimientoPago();
             this.cargarDataRequerimientoPago(obj.dataset.idRequerimientoPago);
+            
 
         }else if(idTipoDocumento ==1){
 
@@ -1217,6 +1243,7 @@ class RevisarAprobarDocumentoView {
                     this.construirSeccionDatosGenerales(res['requerimiento'][0],res['cdp_requerimiento']);
                     this.construirSeccionItemsDeRequerimiento(res['det_req'], res['requerimiento'][0]['simbolo_moneda']);
                     this.construirSeccionHistorialAprobacion(res['historial_aprobacion']);
+                    this.llenar_tabla_flujo_aprobacion('modal-requerimiento',res['flujo_aprobacion']);
                     $('#modal-requerimiento div.modal-body').LoadingOverlay("hide", true);
         
                 }).catch(function (err) {

@@ -2726,10 +2726,26 @@ class ListarRequerimientoPagoView {
             // ### ==================== Partidas activas ====================== ###
             this.calcularPresupuestoUtilizadoYSaldoPorPartida();
             // ### ==================== /Partidas activas ====================== ###
-
+            this.llenar_tabla_flujo_aprobacion(data.flujo_aprobacion??[]);
 
         }
 
+    }
+
+    llenar_tabla_flujo_aprobacion(data) {
+        this.limpiarTabla('listaFlujoAprobacion');
+        let html = '';
+        if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+                html += `<tr>
+                    <td style="text-align:center;">${data[i].orden ? data[i].orden : ''}</td>
+                    <td style="text-align:center;">${data[i].rol ? data[i].rol.descripcion : ''}</td>
+                    <td style="text-align:left;">${data[i].nombre_usuarios ? data[i].nombre_usuarios.toString() : ''}</td>
+                    <td style="text-align:center;">${data[i].aprobar_sin_respetar_orden =='true' ? 'SI' : 'NO'}</td>
+                </tr>`;
+            }
+        }
+        document.querySelector("tbody[id='body_flujo_aprobacion']").insertAdjacentHTML('beforeend', html)
     }
 
     editarRequerimientoPago(obj) {

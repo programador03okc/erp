@@ -12,6 +12,7 @@ use App\Http\Controllers\ContabilidadController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\ProyectosController;
+use App\Http\Controllers\RevisarAprobarController;
 use App\Models\Administracion\Aprobacion;
 use App\Models\Administracion\Division;
 use App\Models\Administracion\Documento;
@@ -1303,6 +1304,10 @@ class RequerimientoPagoController extends Controller
 
         $requerimientoPago->setAttribute('cdp_requerimiento', $cdpRequerimiento);
 
+        if($documento->id_doc_aprob >0){
+            $flujoDeAprobacion = (new RevisarAprobarController)->mostrarTodoFlujoAprobacionDeDocumento($documento->id_doc_aprob);
+        }
+        $requerimientoPago->setAttribute('flujo_aprobacion', $flujoDeAprobacion??[]);
 
 
         return $requerimientoPago->setAttribute('detalle', $detalleRequerimientoPagoList);

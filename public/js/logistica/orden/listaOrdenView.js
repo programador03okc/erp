@@ -162,19 +162,19 @@ class ListaOrdenView {
             $('#modal-adjuntar-orden [name=credito_dias]').val(e.currentTarget.dataset.creditos);
             let fecha_emision = e.currentTarget.dataset.fechaEmision;
             ;
-            if (e.currentTarget.dataset.enviarPago) {
-                $('#modal-adjuntar-orden [name=enviar_pago]').val(moment(e.currentTarget.dataset.enviarPago).format('YYYY-MM-DD'));
-            }else{
-                if(parseInt(e.currentTarget.dataset.creditos)>0){
-                    $('#modal-adjuntar-orden [name=enviar_pago]').val(moment(fecha_emision).add(e.currentTarget.dataset.creditos, 'days').format('YYYY-MM-DD'));
-                }
-            }
+            // if (e.currentTarget.dataset.enviarPago) {
+            //     $('#modal-adjuntar-orden [name=enviar_pago]').val(moment(e.currentTarget.dataset.enviarPago).format('YYYY-MM-DD'));
+            // }else{
+            //     if(parseInt(e.currentTarget.dataset.creditos)>0){
+            //         $('#modal-adjuntar-orden [name=enviar_pago]').val(moment(fecha_emision).add(e.currentTarget.dataset.creditos, 'days').format('YYYY-MM-DD'));
+            //     }
+            // }
 
 
             this.obteneAdjuntosOrden(data_id).then((res) => {
 
                 let htmlAdjunto = '';
-                // console.log(res.length);
+                console.log(res);
                 if (res.length > 0) {
                     (res).forEach(element => {
 
@@ -188,7 +188,8 @@ class ListaOrdenView {
                                 'nro_comprobante': (element.nro_comprobante != null && element.nro_comprobante.length > 0 ? element.nro_comprobante : ""),
                                 'nameFile': element.archivo,
                                 'accion': '',
-                                'file': null
+                                'file': null,
+                                'fecha_vencimiento': element.fecha_vencimiento
                             }
                         );
 
@@ -197,8 +198,12 @@ class ListaOrdenView {
                         htmlAdjunto += '<a href="/files/logistica/comporbantes_proveedor/' + element.archivo + '" target="_blank">' + element.archivo + '</a>'
                         htmlAdjunto += '</td>'
 
-                        htmlAdjunto += '<td>'
+                        htmlAdjunto += '<td class="text-center">'
                         htmlAdjunto += '<span name="fecha_emision_text">' + element.fecha_emision + '</span><input type="date" class="form-control handleChangeFechaEmision oculto" name="fecha_emision" placeholder="Fecha emisión"  value="' + element.fecha_emision + '">'
+                        htmlAdjunto += '</td>'
+
+                        htmlAdjunto += '<td class="text-center">'
+                        htmlAdjunto += '<span name="fecha_emision_text">' + element.fecha_vencimiento + '</span><input type="date" class="form-control oculto" name="fecha_vencimiento" placeholder="Fecha emisión"  value="' + element.fecha_vencimiento + '">'
                         htmlAdjunto += '</td>'
 
                         htmlAdjunto += '<td>'
@@ -272,14 +277,15 @@ class ListaOrdenView {
         });
 
         $(document).on("change", "input.handleChangeFechaEmision", (e) => {
-            this.actualizarFechaEmisionDeAdjunto(e.currentTarget);
+
             let fecha_emision = $(e.currentTarget).val();
             let creditos = $('#form-adjunto-orden [name="credito_dias"]').val();
-            let fecha_enviar_pago = moment(fecha_emision).add(creditos, 'day').format("YYYY-MM-DD");
+            let fecha_enviar_pago = '';
             if (parseInt(creditos) > 0) {
-                $(e.currentTarget).closest('td').find('[name="enviar_pago"]').val(fecha_enviar_pago);
+                fecha_enviar_pago = moment(fecha_emision).add(creditos, 'day').format("YYYY-MM-DD");
             }
-
+            $(e.currentTarget).closest('td').find('[name="enviar_pago"]').val(fecha_enviar_pago);
+            this.actualizarFechaEmisionDeAdjunto(e.currentTarget, fecha_enviar_pago);
         });
         $(document).on("change", "input.handleChangeNroComprobante", (e) => {
             this.actualizarNroComprobanteDeAdjunto(e.currentTarget);
@@ -2310,6 +2316,14 @@ class ListaOrdenView {
             Array.prototype.forEach.call(obj.files, (file) => {
                 // console.log(file);
                 if (this.estaHabilitadoLaExtension(file) == true) {
+
+                    let fecha = moment().format("YYYY-MM-DD");
+                    let creditos = $('#form-adjunto-orden [name="credito_dias"]').val();
+                    let fecha_enviar_pago = '';
+                    if (parseInt(creditos)>0) {
+                        fecha_enviar_pago = moment(fecha).add(creditos, 'day').format("YYYY-MM-DD");
+                    }
+
                     let payload = {
                         id: this.makeId(),
                         category: 2, //default: factura
@@ -2319,7 +2333,8 @@ class ListaOrdenView {
                         monto_total: document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='monto_a_pagar']").value,
                         nameFile: file.name,
                         accion: 'GUARDAR',
-                        file: file
+                        file: file,
+                        fecha_vencimiento: fecha_enviar_pago
                     };
                     this.addToTablaArchivosRequerimientoCabecera(payload);
 
@@ -2345,11 +2360,13 @@ class ListaOrdenView {
 
     }
 
-    actualizarFechaEmisionDeAdjunto(obj) {
-
+    actualizarFechaEmisionDeAdjunto(obj, fecha_enviar_pago) {
+        // console.log(obj);
         if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
             let indice = tempArchivoAdjuntoRequerimientoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
             tempArchivoAdjuntoRequerimientoCabeceraList[indice].fecha_emision = obj.value;
+            tempArchivoAdjuntoRequerimientoCabeceraList[indice].fecha_vencimiento = fecha_enviar_pago;
+
             if (tempArchivoAdjuntoRequerimientoCabeceraList[indice].id > 0) {
 
             }
@@ -2497,12 +2514,7 @@ class ListaOrdenView {
     }
     addToTablaArchivosRequerimientoCabecera(payload) {
         const simboloMonedaOrden = document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='simbolo_moneda']").value;
-        let fecha = moment().format("YYYY-MM-DD");
-        let creditos = $('#form-adjunto-orden [name="credito_dias"]').val();
-        let fecha_enviar_pago = '';
-        if (parseInt(creditos)>0) {
-            fecha_enviar_pago = moment(fecha).add(creditos, 'day').format("YYYY-MM-DD");
-        }
+
 
         this.getcategoriaAdjunto().then((categoriaAdjuntoList) => {
             // console.log(payload);
@@ -2511,7 +2523,7 @@ class ListaOrdenView {
             <tr id="${payload.id}" style="text-align:center">
             <td style="text-align:left;">${payload.nameFile}</td>
             <td style="text-align:left;"><input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" placeholder="Fecha emisión"  value="${moment().format("YYYY-MM-DD")}">
-            <input type="date" class="form-control" name="enviar_pago" placeholder="Fecha de pago"  value="${fecha_enviar_pago}"></td>
+            <input type="date" class="form-control" name="enviar_pago" placeholder="Fecha de pago"  value="${payload.fecha_vencimiento}"></td>
             <td style="text-align:left;"><input type="text" class="form-control handleChangeNroComprobante" name="nro_comprobante"  placeholder="Nro comprobante"></td>
             <td>
                 <select class="form-control handleChangeCategoriaAdjunto" name="categoriaAdjunto">
@@ -2599,6 +2611,7 @@ class ListaOrdenView {
                     formData.append(`archivo_adjunto_list[]`, element.file);
                     formData.append(`nombre_real_adjunto[]`, element.nameFile);
                     formData.append(`accion[]`, element.accion);
+                    formData.append(`fecha_vencimiento[]`, element.fecha_vencimiento);
                     // formData.append(`fecha_pago[]`, element.accion);
                     console.log(element);
                 });

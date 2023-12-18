@@ -5037,7 +5037,7 @@ class OrdenController extends Controller
     public function guardarAdjuntoOrden(Request $request)
     {
         # code...
-        // return $request->enviar_pago;
+        // return $request;
         DB::beginTransaction();
         try {
 
@@ -5078,9 +5078,11 @@ class OrdenController extends Controller
             // Debugbar::info($idOrden,$codigoOrden,$idAdjuntoList,$archivoAdjuntoList,$fechaEmisionAdjuntoList,$nroComprobanteAdjuntoList,$idCategoriaAdjuntoList,$accionAdjunto);
 
             $idAdjunto = [];
+
             if ($adjuntoOtrosAdjuntosLength > 0) {
 
                 $idAdjunto[] = $this->subirYRegistrarArchivoLogistico($ObjectoAdjunto);
+                // return $idAdjunto;
             }
             $estado_accion = 'error';
             if (count($idAdjunto) > 0) {
@@ -5109,6 +5111,7 @@ class OrdenController extends Controller
         foreach ($ObjectoAdjunto as $key => $archivo) {
             // if ($archivo != null) {
 
+
             if ($archivo->accion == "GUARDAR") {
                 $fechaHoy = new Carbon();
                 $sufijo = $fechaHoy->format('YmdHis');
@@ -5132,12 +5135,14 @@ class OrdenController extends Controller
                         'monto_total'           => floatval($archivo->monto_total),
                         'id_pago_cuota_detalle' => (isset($archivo->id_pago_cuota_detalle) && $archivo->id_pago_cuota_detalle > 0 ? $archivo->id_pago_cuota_detalle : null),
                         'id_usuario'            => Auth::user()->id_usuario,
-                        'fecha_registro'        => $fechaHoy
+                        'fecha_registro'        => $fechaHoy,
+                        'fecha_vencimiento'        => $archivo->fecha_vencimiento
                     ],
                     'id_adjunto'
                 );
 
                 $idList[] = $idAdjunto;
+                // return $idList;
             } elseif ($archivo->accion == "ACTUALIZAR") {
 
                 $idAdjunto = DB::table('logistica.adjuntos_logisticos')
@@ -5147,7 +5152,8 @@ class OrdenController extends Controller
                             'estado'                => 1,
                             'categoria_adjunto_id'  => $archivo->category,
                             'fecha_emision'         => $archivo->fecha_emision,
-                            'nro_comprobante'       => $archivo->nro_comprobante
+                            'nro_comprobante'       => $archivo->nro_comprobante,
+
                         ]
                     );
 

@@ -5037,7 +5037,7 @@ class OrdenController extends Controller
     public function guardarAdjuntoOrden(Request $request)
     {
         # code...
-
+        // return $request->enviar_pago;
         DB::beginTransaction();
         try {
 

@@ -59,14 +59,14 @@
                     <br>
                     <fieldset class="group-table">
                         <h5 style="display:flex;justify-content: space-between;"><strong>Adjuntos Pago</strong></h5>
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="fecha_enviar_pago">Enviar Pago :</label>
                                     <input id="fecha_enviar_pago" class="form-control" type="date" name="enviar_pago">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="row">
                             <div class="col-md-12">
                                 <table id="adjuntosPago" class="mytable table table-condensed table-bordered table-okc-view">

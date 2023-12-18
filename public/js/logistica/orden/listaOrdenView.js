@@ -273,6 +273,13 @@ class ListaOrdenView {
 
         $(document).on("change", "input.handleChangeFechaEmision", (e) => {
             this.actualizarFechaEmisionDeAdjunto(e.currentTarget);
+            let fecha_emision = $(e.currentTarget).val();
+            let creditos = $('#form-adjunto-orden [name="credito_dias"]').val();
+            let fecha_enviar_pago = moment(fecha_emision).add(creditos, 'day').format("YYYY-MM-DD");
+            if (parseInt(creditos) > 0) {
+                $(e.currentTarget).closest('td').find('[name="enviar_pago"]').val(fecha_enviar_pago);
+            }
+
         });
         $(document).on("change", "input.handleChangeNroComprobante", (e) => {
             this.actualizarNroComprobanteDeAdjunto(e.currentTarget);
@@ -2490,12 +2497,12 @@ class ListaOrdenView {
     }
     addToTablaArchivosRequerimientoCabecera(payload) {
         const simboloMonedaOrden = document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='simbolo_moneda']").value;
-        // let fecha = moment().format("YYYY-MM-DD")
-        // let fecha_enviar_pago = fecha.setDate(fecha.getDate() + creditos);
-        // console.log(fecha_enviar_pago);
-
-
-
+        let fecha = moment().format("YYYY-MM-DD");
+        let creditos = $('#form-adjunto-orden [name="credito_dias"]').val();
+        let fecha_enviar_pago = '';
+        if (parseInt(creditos)>0) {
+            fecha_enviar_pago = moment(fecha).add(creditos, 'day').format("YYYY-MM-DD");
+        }
 
         this.getcategoriaAdjunto().then((categoriaAdjuntoList) => {
             // console.log(payload);
@@ -2503,7 +2510,8 @@ class ListaOrdenView {
             html = `
             <tr id="${payload.id}" style="text-align:center">
             <td style="text-align:left;">${payload.nameFile}</td>
-            <td style="text-align:left;"><input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" placeholder="Fecha emisión"  value="${moment().format("YYYY-MM-DD")}"></td>
+            <td style="text-align:left;"><input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" placeholder="Fecha emisión"  value="${moment().format("YYYY-MM-DD")}">
+            <input type="date" class="form-control" name="enviar_pago" placeholder="Fecha de pago"  value="${fecha_enviar_pago}"></td>
             <td style="text-align:left;"><input type="text" class="form-control handleChangeNroComprobante" name="nro_comprobante"  placeholder="Nro comprobante"></td>
             <td>
                 <select class="form-control handleChangeCategoriaAdjunto" name="categoriaAdjunto">
@@ -2591,7 +2599,8 @@ class ListaOrdenView {
                     formData.append(`archivo_adjunto_list[]`, element.file);
                     formData.append(`nombre_real_adjunto[]`, element.nameFile);
                     formData.append(`accion[]`, element.accion);
-
+                    // formData.append(`fecha_pago[]`, element.accion);
+                    console.log(element);
                 });
                 // formData.append(`fecha_envio_pago`, $('#modal-adjuntar-orden #form-adjunto-orden [name="enviar_pago"]').val());
             }

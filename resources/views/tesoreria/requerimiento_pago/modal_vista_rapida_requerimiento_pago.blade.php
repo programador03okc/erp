@@ -206,6 +206,30 @@
                                     </div>
                                 </div>
                             </fieldset>
+
+
+                            
+                        <fieldset class="group-importes">
+                            <legend>Flujo de aprobación</legend>
+                            <br>
+                            <div class="box box-widget">
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="listaFlujoAprobacion">
+                                            <thead>
+                                                <tr>
+                                                    <th>Secuencia <i class="fas fa-question-circle" title="Si la secuancia es repetida, implica que en ese orden caulquiere de esos usuarios puede intervenir." style="cursor:help;"></i></th>
+                                                    <th>Rol</th>
+                                                    <th>Usuarios</th>
+                                                    <th>Aprobación Salta el flujo? <i class="fas fa-question-circle" title="De ser 'SI' implica que el usuario puede aprobar en cualquier momento el documento saltandose el flujo." style="cursor:help;"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="body_flujo_aprobacion"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
                         </div>
                     </div>
 

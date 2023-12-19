@@ -105,6 +105,7 @@ use App\Http\Controllers\Tesoreria\RegistroPagoController;
 use App\Http\Controllers\Tesoreria\RequerimientoPagoController;
 use App\Http\Controllers\Tesoreria\TipoCambioController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\TraeasProgramadasController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -141,6 +142,7 @@ Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('tes
 // Route::get('test-ordenes-compra', [ReporteLogisticaController::class, 'listaOrdenesCompra'])->name('test-ordenes-compra');
 // Route::get('test-ordenes-servicio', [ReporteLogisticaController::class, 'listaOrdenesServicio'])->name('test-ordenes-servicio');
 Route::get('test-inicial-clave', [TestController::class, 'cargarClaves'])->name('test-lista-cliente');
+
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('cerrar-sesion', [LoginController::class, 'logout'])->name('cerrar-sesion');
@@ -1545,7 +1547,7 @@ Route::middleware(['auth'])->group(function () {
 
 						Route::post('reporte-filtros', [OrdenController::class, 'reporteFiltros'])->name('reporte-filtros');
 						Route::post('reporte-item-orden-resumen-filtros', [OrdenController::class, 'reporteItemOrdenResumenFiltros'])->name('reporte-item-orden-resumen-filtros');
-                        Route::get('enviar-pago-automatico', [OrdenController::class, 'enviarPagoAutomatico'])->name('enviar-pago-automatico');
+                        // Route::get('enviar-pago-automatico', [OrdenController::class, 'enviarPagoAutomatico'])->name('enviar-pago-automatico');
 					});
 				});
 			});
@@ -2503,4 +2505,8 @@ Route::middleware(['auth'])->group(function () {
 Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {
 	Route::get('tipo_cambio_masivo/{desde}/{hasta}', [ApiController::class, 'tipoCambioMasivo'])->name('tipo_cambio_masivo');
 	Route::get('tipo_cambio_actual', [ApiController::class, 'tipoCambioActual'])->name('tipo_cambio_actual');
+});
+
+Route::group(['as' => 'tareas-programadas.', 'prefix' => 'tareas-programadas'], function () {
+    Route::get('enviar-pago-automatico', [TraeasProgramadasController::class, 'enviarPagoAutomatico'])->name('enviar-pago-automatico');
 });

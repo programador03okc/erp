@@ -343,7 +343,7 @@ class Requerimiento extends Model
                     if (intval($det_req->estado) == 1) {
                         $total_estado_elaborado += 1;
                     }
-                    if (!in_array(intval($det_req->estado),array(1,15,28,27,7))) { // *atendidos total y posterior
+                    if (!in_array(intval($det_req->estado),array(1,15,28,27,7,38,39))) { // *atendidos total y posterior
                         $total_estado_atentido_total += 1;
                     }
                     if (intval($det_req->estado) == 15) {

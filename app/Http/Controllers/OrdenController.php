@@ -5136,7 +5136,7 @@ class OrdenController extends Controller
                         'id_pago_cuota_detalle' => (isset($archivo->id_pago_cuota_detalle) && $archivo->id_pago_cuota_detalle > 0 ? $archivo->id_pago_cuota_detalle : null),
                         'id_usuario'            => Auth::user()->id_usuario,
                         'fecha_registro'        => $fechaHoy,
-                        'fecha_vencimiento'        => $archivo->fecha_vencimiento
+                        'fecha_vencimiento'        => ($archivo->fecha_vencimiento?$archivo->fecha_vencimiento:null)
                     ],
                     'id_adjunto'
                 );

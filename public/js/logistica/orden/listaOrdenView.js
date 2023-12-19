@@ -287,6 +287,36 @@ class ListaOrdenView {
             $(e.currentTarget).closest('td').find('[name="enviar_pago"]').val(fecha_enviar_pago);
             this.actualizarFechaEmisionDeAdjunto(e.currentTarget, fecha_enviar_pago);
         });
+
+        $(document).on("change", "input.handleChangeFechaVencimientno", (e) => {
+
+            let obj = e.currentTarget;
+            let fecha_enviar_pago = $(e.currentTarget).val();
+
+            if (tempArchivoAdjuntoRequerimientoCabeceraList.length > 0) {
+                let indice = tempArchivoAdjuntoRequerimientoCabeceraList.findIndex(elemnt => elemnt.id == obj.closest('tr').id);
+                // tempArchivoAdjuntoRequerimientoCabeceraList[indice].fecha_emision = obj.value;
+                tempArchivoAdjuntoRequerimientoCabeceraList[indice].fecha_vencimiento = fecha_enviar_pago;
+
+                if (tempArchivoAdjuntoRequerimientoCabeceraList[indice].id > 0) {
+
+                }
+                var regExp = /[a-zA-Z]/g; //expresión regular
+                if (regExp.test(tempArchivoAdjuntoRequerimientoCabeceraList[indice].id) == false) {
+                    tempArchivoAdjuntoRequerimientoCabeceraList[indice].accion = 'ACTUALIZAR';
+                } else {
+                    tempArchivoAdjuntoRequerimientoCabeceraList[indice].accion = 'GUARDAR';
+                }
+
+            } else {
+                Swal.fire(
+                    '',
+                    'Hubo un error inesperado al intentar cambiar la categoría del adjunto, puede que no el objecto este vacio, elimine adjuntos y vuelva a seleccionar',
+                    'error'
+                );
+            }
+        });
+
         $(document).on("change", "input.handleChangeNroComprobante", (e) => {
             this.actualizarNroComprobanteDeAdjunto(e.currentTarget);
         });
@@ -2523,7 +2553,7 @@ class ListaOrdenView {
             <tr id="${payload.id}" style="text-align:center">
             <td style="text-align:left;">${payload.nameFile}</td>
             <td style="text-align:left;"><input type="date" class="form-control handleChangeFechaEmision" name="fecha_emision" placeholder="Fecha emisión"  value="${moment().format("YYYY-MM-DD")}">
-            <input type="date" class="form-control" name="enviar_pago" placeholder="Fecha de pago"  value="${payload.fecha_vencimiento}"></td>
+            <input type="date" class="form-control handleChangeFechaVencimientno" name="enviar_pago" placeholder="Fecha de pago"  value="${payload.fecha_vencimiento}"></td>
             <td style="text-align:left;"><input type="text" class="form-control handleChangeNroComprobante" name="nro_comprobante"  placeholder="Nro comprobante"></td>
             <td>
                 <select class="form-control handleChangeCategoriaAdjunto" name="categoriaAdjunto">

@@ -175,8 +175,7 @@ class RequerimientoView {
                     document.querySelector("select[name='id_proyecto']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
                     document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
-
-
+                    cdpVinculadoConRequerimientoList=[];
                 } else {
                     document.querySelector("select[name='id_proyecto']").removeAttribute("disabled");
                     document.querySelector("button[name='btnSearchCDP']").removeAttribute("disabled");
@@ -189,6 +188,7 @@ class RequerimientoView {
                     document.querySelector("select[name='id_presupuesto_interno']").value = '';
                     document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
+                    cdpVinculadoConRequerimientoList=[];
                 } else {
                     document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
                     document.querySelector("button[name='btnSearchCDP']").removeAttribute("disabled");

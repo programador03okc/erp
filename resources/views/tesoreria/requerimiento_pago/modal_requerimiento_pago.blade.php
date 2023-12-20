@@ -332,7 +332,7 @@
                                             <span id="tipo_cambio_compra" style="font-size: 1.8rem;">{{$tipo_cambio}}</span>
                                         </div>
                                     </div> --}}
-                                    <div class="col-md-2">
+                                    {{-- <div class="col-md-2">
                                         <h5>Forma de pago</h5>
                                         <div style="display:flex;">
                                             <select class="form-control activation handleChangeCondicion" name="id_condicion_softlink" style="width:100%; text-align:center;">
@@ -341,7 +341,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </fieldset>
                         </div>

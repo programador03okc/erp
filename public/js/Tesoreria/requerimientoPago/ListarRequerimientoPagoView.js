@@ -396,6 +396,8 @@ class ListarRequerimientoPagoView {
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
                     document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
                     cdpVinculadoConRequerimientoList=[];
+                    limpiarTabla("tablaCuadroPresupuestoVinculados");
+
 
                 } else {
                     document.querySelector("select[name='proyecto']").removeAttribute("disabled");
@@ -409,6 +411,8 @@ class ListarRequerimientoPagoView {
                     document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
                     cdpVinculadoConRequerimientoList=[];
+                    limpiarTabla("tablaCuadroPresupuestoVinculados");
+
 
                 } else {
                     document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
@@ -1012,6 +1016,11 @@ class ListarRequerimientoPagoView {
 
         tempArchivoAdjuntoRequerimientoPagoCabeceraList = [];
         tempArchivoAdjuntoRequerimientoPagoDetalleList = [];
+
+        cdpVinculadoConRequerimientoList=[];
+        document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
+
+
         // tempIdArchivoAdjuntoRequerimientoPagoCabeceraToDeleteList = [];
         // tempIdArchivoAdjuntoRequerimientoPagoDetalleToDeleteList = [];
         objBotonAdjuntoRequerimientoPagoDetalleSeleccionado = [];

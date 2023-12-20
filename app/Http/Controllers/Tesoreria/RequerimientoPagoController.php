@@ -372,7 +372,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
-            $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
+            // $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
             // $requerimientoPago->plazo_entrega = $request->plazo_entrega ? $request->plazo_entrega : null;
 
             $requerimientoPago->save();

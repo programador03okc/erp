@@ -5483,6 +5483,7 @@ class OrdenController extends Controller
                 'codigo_orden'          => ($d['codigo_orden'] ? $d['codigo_orden'] : '-'),
                 'descripcion_sede_empresa'  => ($d['descripcion_sede_empresa'] ? $d['descripcion_sede_empresa'] : '-'),
                 'descripcion_estado'        => ($d['descripcion_estado'] ? $d['descripcion_estado'] : '-'),
+                'moneda'                    => ($d['simbolo_moneda_orden']?$d['simbolo_moneda_orden']:'-'),
                 'subtotal'                    => (intval($d['tipo_item_id']) == 1) ? number_format(($d['cantidad'] ? floatval($d['cantidad']) : 0) * ($d['precio'] ? floatval($d['precio']) : 0) * 1.18, 2) : number_format((($d['cantidad'] ? floatval($d['cantidad']) : 0) * ($d['precio'] ? floatval($d['precio']) : 0)), 2),
                 'condicion_pago'            => ($d['condicion_pago'] ? $d['condicion_pago'] : '-'),
                 'fecha_emision'             => ($d['fecha_emision'] ? $d['fecha_emision'] : '-'),
@@ -5512,16 +5513,17 @@ class OrdenController extends Controller
         $activeWorksheet->setCellValue('E1', 'Orden compra AGILE');
         $activeWorksheet->setCellValue('F1', 'Empresa');
         $activeWorksheet->setCellValue('G1', 'Estado');
-        $activeWorksheet->setCellValue('H1', 'Monto Orden (Inc IGV)');
-        $activeWorksheet->setCellValue('I1', 'Condición de pago');
-        $activeWorksheet->setCellValue('J1', 'Fecha de orden');
-        $activeWorksheet->setCellValue('K1', 'ETA'); // fecha ingreso almacen
-        $activeWorksheet->setCellValue('L1', 'Vencimiento'); //plazo entrega
-        $activeWorksheet->setCellValue('M1', 'Proveedor');
-        $activeWorksheet->setCellValue('N1', 'Marca');
-        $activeWorksheet->setCellValue('O1', 'Descripción');
-        $activeWorksheet->setCellValue('P1', 'Part number');
-        $activeWorksheet->setCellValue('Q1', 'Cantidad');
+        $activeWorksheet->setCellValue('H1', 'moneda');
+        $activeWorksheet->setCellValue('I1', 'Monto Orden (Inc IGV)');
+        $activeWorksheet->setCellValue('J1', 'Condición de pago');
+        $activeWorksheet->setCellValue('K1', 'Fecha de orden');
+        $activeWorksheet->setCellValue('L1', 'ETA'); // fecha ingreso almacen
+        $activeWorksheet->setCellValue('M1', 'Vencimiento'); //plazo entrega
+        $activeWorksheet->setCellValue('N1', 'Proveedor');
+        $activeWorksheet->setCellValue('O1', 'Marca');
+        $activeWorksheet->setCellValue('P1', 'Descripción');
+        $activeWorksheet->setCellValue('Q1', 'Part number');
+        $activeWorksheet->setCellValue('R1', 'Cantidad');
 
         foreach ($data as $key => $item) {
             $celda = $key + 2;
@@ -5533,16 +5535,17 @@ class OrdenController extends Controller
             $activeWorksheet->setCellValue('E' . $celda, $item['codigo_orden']);
             $activeWorksheet->setCellValue('F' . $celda, $item['descripcion_sede_empresa']);
             $activeWorksheet->setCellValue('G' . $celda, $item['descripcion_estado']);
-            $activeWorksheet->setCellValue('H' . $celda, $item['subtotal']);
-            $activeWorksheet->setCellValue('I' . $celda, $item['condicion_pago']);
-            $activeWorksheet->setCellValue('J' . $celda, $item['fecha_emision']);
-            $activeWorksheet->setCellValue('K' . $celda, $item['fecha_ingreso_almacen']);
-            $activeWorksheet->setCellValue('L' . $celda, $item['fecha_llegada']);
-            $activeWorksheet->setCellValue('M' . $celda, $item['razon_social_proveedor']);
-            $activeWorksheet->setCellValue('N' . $celda, $item['marca']);
-            $activeWorksheet->setCellValue('O' . $celda, $item['descripcion_producto']);
-            $activeWorksheet->setCellValue('P' . $celda, $item['part_number_producto']);
-            $activeWorksheet->setCellValue('Q' . $celda, $item['cantidad']);
+            $activeWorksheet->setCellValue('H' . $celda, $item['moneda']);
+            $activeWorksheet->setCellValue('I' . $celda, $item['subtotal']);
+            $activeWorksheet->setCellValue('J' . $celda, $item['condicion_pago']);
+            $activeWorksheet->setCellValue('K' . $celda, $item['fecha_emision']);
+            $activeWorksheet->setCellValue('L' . $celda, $item['fecha_ingreso_almacen']);
+            $activeWorksheet->setCellValue('M' . $celda, $item['fecha_llegada']);
+            $activeWorksheet->setCellValue('N' . $celda, $item['razon_social_proveedor']);
+            $activeWorksheet->setCellValue('O' . $celda, $item['marca']);
+            $activeWorksheet->setCellValue('P' . $celda, $item['descripcion_producto']);
+            $activeWorksheet->setCellValue('Q' . $celda, $item['part_number_producto']);
+            $activeWorksheet->setCellValue('R' . $celda, $item['cantidad']);
         }
 
 

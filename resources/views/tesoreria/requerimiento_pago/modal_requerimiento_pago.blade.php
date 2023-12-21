@@ -308,6 +308,40 @@
                                         </div>
                                     </div>
 
+
+                                </div>
+                                <div class="row">
+                                    {{-- <div class="col-md-2">
+                                        <div class="form-group">
+                                            <h5>Monto Total:</h5>
+                                            <div style="display:flex;">
+                                                <!-- <div class="input-group-addon" name="montoMoneda" style="width: auto;">S/.</div> -->
+                                                <select class="form-control activation handleCheckStatusValue handleChangeUpdateMoneda handleChangeCalcularPresupuestoUtilizadoYSaldoPorPartida" name="moneda" style="width:50%;">
+                                                    @foreach ($monedas as $moneda)
+                                                    <option data-simbolo="{{$moneda->simbolo}}" value="{{$moneda->id_moneda}}">{{$moneda->simbolo}}</option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="text" class="form-control oculto" name="monto_total" style="text-align: right;">
+                                                <input type="text" class="form-control activation handleCheckStatusValue" name="monto_total_read_only" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <h5>Tipo cambio($):</h5>
+                                            <span id="tipo_cambio_compra" style="font-size: 1.8rem;">{{$tipo_cambio}}</span>
+                                        </div>
+                                    </div> --}}
+                                    {{-- <div class="col-md-2">
+                                        <h5>Forma de pago</h5>
+                                        <div style="display:flex;">
+                                            <select class="form-control activation handleChangeCondicion" name="id_condicion_softlink" style="width:100%; text-align:center;">
+                                                @foreach ($condiciones_softlink as $cond)
+                                                <option value="{{$cond->id_condicion_softlink}}" data-dias="{{$cond->dias}}">{{$cond->descripcion}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div> --}}
                                 </div>
                             </fieldset>
                         </div>

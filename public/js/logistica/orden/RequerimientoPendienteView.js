@@ -614,7 +614,7 @@ class RequerimientoPendienteView {
                 }},
                 { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por', 'className': 'text-center'},
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
-                { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-center' },
+                { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-left td-lg-300'},
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
                     return row['estado_doc'];
                 }},

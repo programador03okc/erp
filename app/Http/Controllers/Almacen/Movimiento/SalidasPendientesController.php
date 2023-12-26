@@ -13,9 +13,13 @@ use App\Http\Controllers\AlmacenController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Imports\ExcelSeriesImport;
+use App\Models\almacen\GuiaVentaDetalle;
 use App\Models\Almacen\Movimiento;
+use App\Models\Almacen\Transferencia;
+use App\Models\almacen\TransferenciaDetalle;
 use App\models\Configuracion\AccesosUsuarios;
 use App\models\contabilidad\Adjuntos;
+use App\Models\Distribucion\OrdenDespachoDetalle;
 use App\Models\Logistica\ProgramacionDespacho;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
@@ -713,6 +717,51 @@ class SalidasPendientesController extends Controller
                 ->first();
             //si la salida no esta revisada
             if ($sal->revisado == 0) {
+
+
+                // ? revisar si existe transferencia, 
+                $idTransList=[];
+                $mensajeEvaluarTransferencia="";
+                $movimiento = Movimiento::find($request->id_salida); 
+                if($movimiento->id_guia_ven >0){
+                    $guiaVenDet =GuiaVentaDetalle::where([['id_guia_ven',$movimiento->id_guia_ven],['estado','!=',7]])->get();
+                    
+                    foreach ($guiaVenDet as $det) {
+                        if($det->id_od_det > 0){
+                           $odDet = OrdenDespachoDetalle::find($det->id_od_det);
+                           if($odDet->estado !=7){
+                            if($odDet->id_detalle_requerimiento>0){
+                                $transDet = TransferenciaDetalle::where([['id_requerimiento_detalle',$odDet->id_detalle_requerimiento],['estado',14]])->get(); 
+
+                                if($transDet){
+                                    foreach ($transDet as $td) {
+                                        $idTransList[]=$td->id_transferencia;
+                                    }
+                                }
+                            }
+                           }
+                        }
+                    }
+                    $codigoTransferenciaVinculado=[];
+                    if(count($idTransList)>0){
+                        foreach ($idTransList as $idTransferencia) {
+                            $trans= Transferencia::find($idTransferencia);
+                            $codigoTransferenciaVinculado[]= $trans->codigo;
+                        }
+                        $mensajeEvaluarTransferencia="El movimiento ".$movimiento->codigo." tiene transferencia activa: ".(isset($codigoTransferenciaVinculado) && count($codigoTransferenciaVinculado)>0?implode(", ",$codigoTransferenciaVinculado):"");
+                    }
+
+                    if($mensajeEvaluarTransferencia !=""){
+                        return response()->json([
+                            'tipo' => 'warning',
+                            'mensaje' => $mensajeEvaluarTransferencia,
+                            200
+                        ]);
+                    }
+                }
+                //
+                
+
                 //si existe una orden
                 if ($request->id_od !== null) {
                     //Verifica si ya fue despachado

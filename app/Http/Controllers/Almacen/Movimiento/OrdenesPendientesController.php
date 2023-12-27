@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Almacen\Movimiento;
 
+use App\Exports\IngresosItemsProcesadosExport;
 use App\Exports\IngresosProcesadosExport;
 use App\Exports\OrdenesPendientesExport;
 use App\Exports\SeriesGuiaCompraDetalleExport;
@@ -340,7 +341,12 @@ class OrdenesPendientesController extends Controller
                     )
                     where   ing.id_mov_alm = mov_alm.id_mov_alm and
                             od.estado != 7 and
-                            od.estado != 1) AS count_despachos_oc")
+                            od.estado != 1) AS count_despachos_oc"),
+            // DB::raw("(SELECT string_agg(DISTINCT alm_prod_serie.serie::text, ', '::text) FROM almacen.mov_alm_det
+            // inner join almacen.alm_prod_serie on alm_prod_serie.id_guia_com_det = mov_alm_det.id_guia_com_det and alm_prod_serie.estado !=7
+            // where mov_alm_det.id_mov_alm = mov_alm.id_mov_alm
+            // and mov_alm_det.estado != 7) AS lista_series"),
+        
         )
             ->leftJoin('almacen.guia_com', 'guia_com.id_guia', '=', 'mov_alm.id_guia_com')
             ->leftJoin('cas.devolucion', 'devolucion.id_devolucion', '=', 'mov_alm.id_devolucion')
@@ -351,6 +357,108 @@ class OrdenesPendientesController extends Controller
             ->join('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'mov_alm.usuario')
             ->join('almacen.tp_ope', 'tp_ope.id_operacion', '=', 'mov_alm.id_operacion')
             ->where([['mov_alm.estado', '!=', 7], ['mov_alm.id_tp_mov', '=', 1]])
+            ->whereIn('mov_alm.id_operacion', [2, 26, 18, 21, 24]);
+
+        $array_sedes = [];
+        if ($request->ingreso_fecha_inicio !== null) {
+            $data = $data->whereDate('mov_alm.fecha_emision', '>=', (new Carbon($request->ingreso_fecha_inicio))->format('Y-m-d'));
+        }
+        if ($request->ingreso_fecha_fin !== null) {
+            $data = $data->whereDate('mov_alm.fecha_emision', '<=', (new Carbon($request->ingreso_fecha_fin))->format('Y-m-d'));
+        }
+        if ($request->ingreso_id_sede !== null) {
+            if ($request->ingreso_id_sede == 0) {
+                $array_sedes = $this->sedesPorUsuarioArray();
+            } else {
+                $array_sedes[] = [$request->ingreso_id_sede];
+            }
+            $data = $data->whereIn('alm_almacen.id_sede', $array_sedes);
+        }
+
+        return $data;
+    }
+
+    public function ingresosDetalleLista(Request $request)
+    {
+        $data = MovimientoDetalle::with('movimiento')->select(
+            'alm_prod.id_producto',
+            'alm_prod_serie.serie as serie_producto',
+            'alm_prod.codigo as codigo_producto',
+            'alm_prod.part_number as part_number_producto',
+            'alm_prod.descripcion as descripcion_producto',
+            'mov_alm_det.cantidad',
+            'mov_alm.*',
+            'guia_com.id_proveedor',
+            'adm_contri.nro_documento',
+            'adm_contri.razon_social',
+            'sis_usua.nombre_corto',
+            'sede_guia.descripcion as sede_guia_descripcion',
+            'sede_guia.id_empresa',
+            'alm_almacen.descripcion as almacen_descripcion',
+            'alm_almacen.id_sede',
+            'guia_com.serie',
+            'guia_com.numero',
+            'guia_com.fecha_emision as fecha_emision_guia',
+            'guia_com.fecha_almacen as fecha_almacen_guia',
+            'guia_com.comentario',
+            'tp_ope.descripcion as operacion_descripcion',
+            DB::raw("(SELECT count(distinct id_doc_com) FROM almacen.doc_com AS d
+                    INNER JOIN almacen.guia_com_det AS guia
+                        on(guia.id_guia_com = mov_alm.id_guia_com)
+                    INNER JOIN almacen.doc_com_det AS doc
+                        on(doc.id_guia_com_det = guia.id_guia_com_det)
+                    WHERE d.id_doc_com = doc.id_doc
+                      and doc.estado != 7) AS count_facturas"),
+
+            DB::raw("(SELECT distinct id_doc_com FROM almacen.doc_com AS d
+                    INNER JOIN almacen.guia_com_det AS guia on(
+                        guia.id_guia_com = mov_alm.id_guia_com)
+                    INNER JOIN almacen.doc_com_det AS doc on(
+                        doc.id_guia_com_det = guia.id_guia_com_det and
+                        doc.estado != 7)
+                    WHERE d.id_doc_com = doc.id_doc LIMIT 1) AS id_doc_com"),
+
+            DB::raw("(SELECT COUNT(*) FROM almacen.trans_detalle
+                    inner join almacen.mov_alm_det on(
+                        mov_alm_det.id_guia_com_det = trans_detalle.id_guia_com_det
+                    )
+                    where   mov_alm_det.id_mov_alm = mov_alm.id_mov_alm
+                            and trans_detalle.estado != 7) AS count_transferencias"),
+
+            DB::raw("(SELECT COUNT(*) FROM almacen.orden_despacho_det as od
+                    inner join almacen.alm_det_req as req on(
+                            req.id_detalle_requerimiento = od.id_detalle_requerimiento and
+                            req.estado != 7
+                    )
+                    inner join logistica.log_det_ord_compra as log on(
+                            log.id_detalle_requerimiento = req.id_detalle_requerimiento and
+                            log.estado != 7
+                    )
+                    inner join almacen.guia_com_det as guia on(
+                            guia.id_oc_det = log.id_detalle_orden and
+                            guia.estado != 7
+                    )
+                    inner join almacen.mov_alm_det as ing on(
+                            ing.id_guia_com_det = guia.id_guia_com_det and
+                            ing.estado != 7
+                    )
+                    where   ing.id_mov_alm = mov_alm.id_mov_alm and
+                            od.estado != 7 and
+                            od.estado != 1) AS count_despachos_oc")
+        
+        )
+            ->join('almacen.mov_alm', 'mov_alm.id_mov_alm', '=', 'mov_alm_det.id_mov_alm')
+            ->join('almacen.alm_prod_serie', 'alm_prod_serie.id_guia_com_det', '=', 'mov_alm_det.id_guia_com_det')
+            ->join('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_prod_serie.id_prod')
+            ->leftJoin('almacen.guia_com', 'guia_com.id_guia', '=', 'mov_alm.id_guia_com')
+            ->join('almacen.alm_almacen', 'alm_almacen.id_almacen', '=', 'mov_alm.id_almacen')
+            ->join('administracion.sis_sede as sede_guia', 'sede_guia.id_sede', '=', 'alm_almacen.id_sede')
+            ->leftJoin('logistica.log_prove', 'log_prove.id_proveedor', '=', 'guia_com.id_proveedor')
+            ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'log_prove.id_contribuyente')
+            ->join('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'mov_alm.usuario')
+            ->join('almacen.tp_ope', 'tp_ope.id_operacion', '=', 'mov_alm.id_operacion')
+            ->where([['mov_alm.estado', '!=', 7], ['mov_alm.id_tp_mov', '=', 1], ['alm_prod_serie.estado','!=',7],
+                ['mov_alm_det.estado','!=',7] ])
             ->whereIn('mov_alm.id_operacion', [2, 26, 18, 21, 24]);
 
         $array_sedes = [];
@@ -426,12 +534,23 @@ class OrdenesPendientesController extends Controller
 
     public function ingresosProcesadosExcel(Request $request)
     {
-        $data = $this->ingresosLista($request);
-        return Excel::download(new IngresosProcesadosExport(
-            $data,
-            $request->fecha_inicio,
-            $request->fecha_fin
-        ), 'Ingresos Procesados al ' . new Carbon() . '.xlsx');
+
+        if($request->nivel_reporte =='items'){
+            $data = $this->ingresosDetalleLista($request);
+            return Excel::download(new IngresosItemsProcesadosExport(
+                $data,
+                $request->fecha_inicio,
+                $request->fecha_fin
+            ), 'Detalle Ingresos Procesados al ' . new Carbon() . '.xlsx');
+        }else{
+            $data = $this->ingresosLista($request);
+            return Excel::download(new IngresosProcesadosExport(
+                $data,
+                $request->fecha_inicio,
+                $request->fecha_fin
+            ), 'Ingresos Procesados al ' . new Carbon() . '.xlsx');
+        }
+
     }
 
     public function detalleOrden($id_orden, $soloProductos=null)

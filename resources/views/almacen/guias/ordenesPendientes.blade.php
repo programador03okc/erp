@@ -136,6 +136,7 @@
                         <br>
                         <form id="formFiltrosIngresosProcesados" method="POST" target="_blank" action="{{route('almacen.movimientos.pendientes-ingreso.ingresosProcesadosExcel')}}">
                             @csrf()
+                            <input type="hidden" name="nivel_reporte" value="cebacera"/>
                             <input type="hidden" name="ingreso_fecha_fin" value="{{$fechaActual2->format('d-m-Y')}}"/>
                             <input type="hidden" name="ingreso_fecha_inicio" value="{{now()->format('01-01-Y')}}"/>
                             <!-- <input type="hidden" name="ingreso_fecha_inicio" value="{{$fechaActual2->addMonths(-3)->format('d-m-Y')}}"/> -->

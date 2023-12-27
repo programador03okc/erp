@@ -46,6 +46,11 @@ body .login-box {
     color: #fff;
 }
 
+.td-lg-300{
+    max-width: 300px;
+    overflow: auto;
+}
+
 @media (max-width: 768px) {
     .modal-xl, .modal-lg, .modal-md, .modal-sm, .modal-xs{
         max-width: 96%;

@@ -1089,7 +1089,7 @@ class RequerimientoPagoController extends Controller
                 }
             }
 
-            //adjuntos detalle
+            //adjuntos detalle            
             if (isset($request->archivo_adjunto_detalle_list)) {
 
                 // Debugbar::info(count($request->archivo_adjunto_detalle_list) );
@@ -1102,6 +1102,14 @@ class RequerimientoPagoController extends Controller
                     foreach ($ObjectoAdjuntoDetalle as $keyObj => $value) {
                         $ObjectoAdjuntoDetalle[$keyObj]->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
                         $ObjectoAdjuntoDetalle[$keyObj]->codigo = $requerimientoPago->codigo;
+
+                        // actualizar id_requerimiento_pago_detalle, cuando es un nuevo regsitro de fila y tiene adjunto.
+                        foreach ($detalleArray as $dr) {
+                            if($dr->idRegister == $value->id_requerimiento_pago_detalle){
+                                $ObjectoAdjuntoDetalle[$keyObj]->id_requerimiento_pago_detalle = $dr->id_requerimiento_pago_detalle;
+                            }
+                        }
+
                         if ($adjuntoOtrosAdjuntosDetalleLength > 0) {
                             foreach ($archivoAdjuntoDetalleList as $keyA => $archivo) {
                                 if (is_file($archivo)) {

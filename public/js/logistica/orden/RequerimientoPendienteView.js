@@ -614,7 +614,7 @@ class RequerimientoPendienteView {
                 }},
                 { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por', 'className': 'text-center'},
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
-                { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-center' },
+                { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-left td-lg-300'},
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
                     return row['estado_doc'];
                 }},
@@ -1303,6 +1303,8 @@ class RequerimientoPendienteView {
         var idRequerimiento = obj.dataset.idRequerimiento;
         var codigoRequerimiento = obj.dataset.codigoRequerimiento;
 
+
+
         Swal.fire({
             title: 'Esta seguro de enviar el requerimiento ' + codigoRequerimiento + ' a la lista de atendidos?',
             text: "El nuevo estado de requerimiento sera: atención total",
@@ -1317,6 +1319,14 @@ class RequerimientoPendienteView {
             if (result.isConfirmed) {
                 this.requerimientoPendienteCtrl.enviarRequerimientoAListaAtendidos(idRequerimiento).then((res) => {
                     if (res.estado == 'success') {
+
+                        var row = $tablaListaRequerimientosPendientes.row(tr);
+                        if (row.child.isShown()) {
+                            row.child.hide();
+                            tr.classList.remove('shown');
+                        }
+
+
                         tr.remove();
                         Lobibox.notify('success', {
                             title: false,
@@ -1359,6 +1369,13 @@ class RequerimientoPendienteView {
             if (result.isConfirmed) {
                 this.requerimientoPendienteCtrl.retornarRequerimientoAtendidoAListaPendientes(idRequerimiento).then((res) => {
                     if (res.estado == 'success') {
+
+                        var row = $tablaListaRequerimientosAtendidos.row(tr);
+                        if (row.child.isShown()) {
+                            row.child.hide();
+                            tr.classList.remove('shown');
+                        }
+
                         tr.remove();
                         Lobibox.notify('success', {
                             title: false,

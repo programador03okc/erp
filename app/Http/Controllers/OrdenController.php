@@ -5553,10 +5553,10 @@ class OrdenController extends Controller
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="items_orden_resumen.xls"');
+        header('Content-Disposition: attachment;filename="items_orden_resumen.xlsx"');
         header('Cache-Control: max-age=0');
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
 
         // return Excel::download(new OrdenesItemsFiltroExport(json_encode($data)), 'ordenes_items.xlsx');

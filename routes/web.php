@@ -740,7 +740,6 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::post('ordenesPendientesExcel', [OrdenesPendientesController::class, 'ordenesPendientesExcel'])->name('ordenesPendientesExcel');
 				Route::post('ingresosProcesadosExcel', [OrdenesPendientesController::class, 'ingresosProcesadosExcel'])->name('ingresosProcesadosExcel');
-				Route::post('detalleIngresosProcesadosExcel', [OrdenesPendientesController::class, 'detalleIngresosProcesadosExcel'])->name('detalleIngresosProcesadosExcel');
 				Route::get('seriesExcel/{id}', [OrdenesPendientesController::class, 'seriesExcel'])->name('series-excel');
 				Route::post('actualizarIngreso', [OrdenesPendientesController::class, 'actualizarIngreso'])->name('actualizar-ingreso');
 

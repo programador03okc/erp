@@ -1028,6 +1028,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-12 animate__animated {{(sizeof($gastos)>0?'':'d-none')}}">
                 <div class="box box-success">
                     <div class="box-body" data-presupuesto="interno-modelo">

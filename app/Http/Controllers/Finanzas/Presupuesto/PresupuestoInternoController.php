@@ -170,7 +170,9 @@ class PresupuestoInternoController extends Controller
 
             $division_codigo = DivisionCodigo::where('sede_id',$request->sede_id)->where('division_id',$request->id_area)->first();
 
-            $codigo = ($division_codigo?$division_codigo->codigo:$codigo);
+            $year =date("y");
+
+            $codigo = ($division_codigo?str_replace('-23', '-'.$year, $division_codigo->codigo):$codigo);
             $descripcion = $request->descripcion;
 
             $presupuesto_interno                        = new PresupuestoInterno();

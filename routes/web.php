@@ -697,6 +697,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('index', [OrdenesPendientesController::class, 'view_ordenesPendientes'])->name('index');
 				Route::post('listarOrdenesPendientes', [OrdenesPendientesController::class, 'listarOrdenesPendientes'])->name('listar-ordenes-pendientes');
 				Route::post('listarIngresos', [OrdenesPendientesController::class, 'listarIngresos'])->name('listar-ingresos');
+				Route::post('listarDetalleIngresos', [OrdenesPendientesController::class, 'listarDetalleIngresos'])->name('listar-detalle-ingresos');
 				Route::get('detalleOrden/{id}/{soloProductos}', [OrdenesPendientesController::class, 'detalleOrden'])->name('detalle-orden');
 				Route::post('guardar_guia_com_oc', [OrdenesPendientesController::class, 'guardar_guia_com_oc'])->name('guardar-guia-com-oc');
 				Route::get('verGuiasOrden/{id}', [OrdenesPendientesController::class, 'verGuiasOrden'])->name('ver-guias-orden');

@@ -633,7 +633,7 @@ class PresupuestoInterno extends Model
 
         $total = 0;
 
-        for ($i=1; $i <= $mes ; $i++) {
+        for ($i=1; $i <= 12 ; $i++) {
             $saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$id_presupuesto_interno)
             ->where([
                 ['mes',ConfiguracionHelper::leftZero(2,$i)],

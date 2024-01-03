@@ -2197,7 +2197,7 @@ class RequerimientoController extends Controller
 
                 // DB::raw("CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno) as solicitado_por"),
                 DB::raw(" CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
-                ELSE CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno)
+                ELSE INITCAP(CONCAT(pers_solicitado_por.nombres,' ',pers_solicitado_por.apellido_paterno,' ',pers_solicitado_por.apellido_materno))
                 END AS nombre_solicitado_por"),
                 DB::raw("(SELECT COUNT(adm_aprobacion.id_aprobacion)
                 FROM administracion.adm_aprobacion
@@ -2252,7 +2252,7 @@ class RequerimientoController extends Controller
 
         return datatables($requerimientos)
             ->addColumn('nombre_solicitado_por', function ($requerimientos) {
-                return ($requerimientos->id_tipo_requerimiento == 1) ? ($requerimientos->nombre_solicitado_por != null ? $requerimientos->nombre_solicitado_por : '') : $requerimientos->nombre_usuario;
+                return ($requerimientos->id_tipo_requerimiento != 1) ? ($requerimientos->nombre_solicitado_por != null ? $requerimientos->nombre_solicitado_por : '') : $requerimientos->nombre_usuario;
             })
             ->filterColumn('nombre_usuario', function ($query, $keyword) {
                 $keywords = trim(strtoupper($keyword));

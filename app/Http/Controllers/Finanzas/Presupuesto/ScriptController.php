@@ -129,8 +129,10 @@ class ScriptController extends Controller
             $sede = Sede::find($value['sede']);
             $division_codigo = DivisionCodigo::where('sede_id',$value['sede'])->where('division_id',$value['division'])->first();
 
+            $year =date("y");
+
             $presupuesto_interno = new PresupuestoInterno();
-            $presupuesto_interno->codigo                = $division_codigo->codigo;
+            $presupuesto_interno->codigo                = str_replace('-23', '-'.$year, $division_codigo->codigo);
             $presupuesto_interno->descripcion           = $division_codigo->descripcion.' '.date('Y');
             $presupuesto_interno->id_grupo              = $admDivision->grupo_id;
             $presupuesto_interno->id_area               = $admDivision->id_division;
@@ -199,6 +201,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '01';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -208,6 +211,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '02';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -217,6 +221,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '03';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -226,6 +231,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '04';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -235,6 +241,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '05';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -244,6 +251,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '06';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -253,6 +261,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '07';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -262,6 +271,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '08';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -271,6 +281,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '09';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -280,6 +291,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '10';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -289,6 +301,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '11';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
                 $historial = new HistorialPresupuestoInternoSaldo();
@@ -298,6 +311,7 @@ class ScriptController extends Controller
                     $historial->importe = floatval(str_replace(",", "", '0.00'));
                     $historial->mes = '12';
                     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    $historial->operacion = 'S';
                     $historial->estado = 3;
                 $historial->save();
 
@@ -513,8 +527,8 @@ class ScriptController extends Controller
     {
         $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$id)
             ->where('tipo','SALIDA')
-            ->where('estado',3)
-            ->orderBy('id','DESC')
+            // ->where('estado',3)
+            // ->orderBy('id','DESC')
         ->get();
         $suma_total = 0;
         foreach ($historial_saldo as $key => $value) {
@@ -536,10 +550,6 @@ class ScriptController extends Controller
                 $orden = Orden::where('id_orden_compra',$value->id_orden)
                 ->first();
                 $orden_detalle_logistica = ( $orden ? OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->first() : array());
-
-                // $requerimiento_detalle_necesidades = ( $orden_detalle_logistica ? DetalleRequerimiento::where('id_detalle_requerimiento',$orden_detalle_logistica->id_detalle_requerimiento)->first() : array());
-
-                // $requerimiento_necesidades = ($requerimiento_detalle_necesidades?Requerimiento::where('id_requerimiento',$requerimiento_detalle_necesidades->id_requerimiento)->first():array());
 
                 if($orden_detalle_logistica->estado !== 7){
                     $value->activo = 'activo';
@@ -766,6 +776,11 @@ class ScriptController extends Controller
             }
         }
         return response()->json($array,200);
+    }
+    public function ejecutado($id){
+        $historial_saldo = HistorialPresupuestoInternoSaldo::totalSalidas($id);
+
+        return response()->json(["tipo"=>true,"id"=>$id,"data"=>$historial_saldo],200);
     }
 
 }

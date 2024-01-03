@@ -1356,6 +1356,8 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('nivelar-partidas/{mes}', [ScriptController::class, 'nivelarPartidas'])->name('nivelar-partidas');
 					Route::get('actualizar-saldos', [ScriptController::class, 'actualizarSaldos'])->name('actualizar-saldos');
 
+                    Route::get('ejecutado/{id}', [ScriptController::class, 'ejecutado'])->name('actualizar-saldos');
+
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');
 			});

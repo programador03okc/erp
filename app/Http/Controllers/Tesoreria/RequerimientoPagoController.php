@@ -2170,4 +2170,36 @@ class RequerimientoPagoController extends Controller
         );
         return response()->json($respuesta,200);
     }
+
+    
+    public function obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno($id_requerimiento, $id_partida)
+    {
+        $detalles = RequerimientoPagoDetalle::select(
+            'requerimiento_pago.codigo as codigo_requerimiento',
+            'requerimiento_pago_detalle.*',
+            'presupuesto_interno_detalle.partida as codigo_partida_presupuesto_interno',
+            'presupuesto_interno_detalle.descripcion as descripcion_partida_presupuesto_interno',
+            'presup_par.codigo as codigo_partida',
+            'presup_par.descripcion as descripcion_partida',
+            'sis_moneda.simbolo as moneda_simbolo',
+            'sis_moneda.descripcion as moneda_descripcion',
+            'adm_estado_doc.estado_doc',
+            'adm_estado_doc.bootstrap_color',
+            'alm_und_medida.abreviatura'
+        )
+            ->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
+            ->leftJoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'requerimiento_pago_detalle.id_unidad_medida')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'requerimiento_pago_detalle.id_estado')
+            ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'requerimiento_pago.id_moneda')
+            ->leftJoin('finanzas.presupuesto_interno_detalle', 'presupuesto_interno_detalle.id_presupuesto_interno_detalle', '=', 'requerimiento_pago_detalle.id_partida_pi')
+            ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'requerimiento_pago_detalle.id_partida')
+
+            ->where([
+                ['requerimiento_pago_detalle.id_requerimiento_pago', '=', $id_requerimiento],
+                ['requerimiento_pago_detalle.id_partida_pi', '=', $id_partida],
+                ['requerimiento_pago_detalle.id_estado', '!=', 7]
+            ]);
+
+        return response()->json($detalles);
+    }
 }

@@ -37,6 +37,7 @@ use App\Models\Contabilidad\Identidad;
 use App\Models\Contabilidad\TipoCuenta;
 use App\Models\Administracion\Empresa;
 use App\Models\Administracion\Estado;
+use App\Models\Administracion\RequerimientosElaboradosOAprobadosView;
 use App\Models\administracion\Sede;
 use App\Models\Almacen\AdjuntoDetalleRequerimiento;
 use App\Models\Almacen\AdjuntoRequerimiento;
@@ -60,6 +61,7 @@ use App\Models\Tesoreria\OtrosAdjuntosTesoreria;
 use App\Models\Tesoreria\RegistroPago;
 use App\Models\Tesoreria\RegistroPagoAdjuntos;
 use App\Models\Tesoreria\RequerimientoPago;
+use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use App\Models\Tesoreria\TipoCambio;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -806,7 +808,18 @@ class RequerimientoController extends Controller
                     FROM finanzas.presupuesto_interno_detalle
                     WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
                     and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
-                    limit 1 ) AS presupuesto_interno_mes_partida ")
+                    limit 1 ) AS presupuesto_interno_mes_partida "),
+
+                    
+                    DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * 1.18,0)
+                    FROM almacen.alm_det_req as dr
+                    INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
+                    WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7
+                    limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    FROM tesoreria.requerimiento_pago_detalle as drp
+                    INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                    WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                    limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
                 )
                 ->where([
                     ['alm_det_req.estado', '!=', 7],
@@ -878,6 +891,7 @@ class RequerimientoController extends Controller
                         'presupuesto_old_total_partida'     => $data->presupuesto_old_total_partida,
                         'presupuesto_interno_total_partida'     => $data->presupuesto_interno_total_partida,
                         'presupuesto_interno_mes_partida'     => $data->presupuesto_interno_mes_partida,
+                        'total_consumido_hasta_fase_aprobacion_con_igv'     => $data->total_consumido_hasta_fase_aprobacion_con_igv,
                         'id_centro_costo'                => $data->id_centro_costo,
                         'codigo_centro_costo'            => $data->codigo_centro_costo,
                         'descripcion_centro_costo'       => $data->descripcion_centro_costo,
@@ -5057,5 +5071,92 @@ class RequerimientoController extends Controller
             ->get();
 
         return response()->json($detalles);
+    }
+
+    public function obteneritemsRequerimientoLogisticoConPartidaDePresupuestoInterno($id_requerimiento,$id_partida)
+    {
+        $detalles = DetalleRequerimiento::select(
+            'alm_req.codigo as codigo_requerimiento',
+            'alm_det_req.*',
+            'presupuesto_interno_detalle.partida as codigo_partida_presupuesto_interno',
+            'presupuesto_interno_detalle.descripcion as descripcion_partida_presupuesto_interno',
+            'presup_par.codigo as codigo_partida',
+            'presup_par.descripcion as descripcion_partida',
+            'sis_moneda.simbolo as moneda_simbolo',
+            'sis_moneda.descripcion as moneda_descripcion',
+            'adm_estado_doc.estado_doc',
+            'adm_estado_doc.bootstrap_color',
+            'alm_prod.descripcion as producto_descripcion',
+            'alm_prod.codigo as producto_codigo',
+            'alm_prod.cod_softlink as producto_codigo_softlink',
+            'alm_prod.part_number as producto_part_number',
+            'alm_prod.id_unidad_medida as producto_id_unidad_medida',
+            'alm_und_medida.abreviatura',
+            'unidad_medida_prod.abreviatura as unidad_medida_producto',
+            DB::raw("(SELECT cont_tp_cambio.venta
+            FROM contabilidad.cont_tp_cambio
+            WHERE TO_DATE(to_char(cont_tp_cambio.fecha,'YYYY-MM-DD'),'YYYY-MM-DD') = TO_DATE(to_char(alm_req.fecha_requerimiento,'YYYY-MM-DD'),'YYYY-MM-DD') limit 1) AS tipo_cambio"),
+
+        )
+            ->leftJoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+            ->leftJoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_det_req.id_unidad_medida')
+            ->leftJoin('almacen.alm_und_medida as unidad_medida_prod', 'unidad_medida_prod.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'alm_det_req.estado')
+            ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
+            ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'alm_req.id_moneda')
+            ->leftJoin('finanzas.presupuesto_interno_detalle', 'presupuesto_interno_detalle.id_presupuesto_interno_detalle', '=', 'alm_det_req.id_partida_pi')
+            ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'alm_det_req.partida')
+
+            ->where([
+                ['alm_det_req.id_requerimiento', '=', $id_requerimiento],
+                ['alm_det_req.id_partida_pi', '=', $id_partida],
+                ['alm_det_req.estado', '!=', 7]
+            ])
+            ->get();
+
+        return response()->json($detalles);
+    }
+
+
+    
+    public function requerimientosVinculadosConPartida(Request $request)
+    {
+        $data=[];
+        $idRequerimientoLogisticoList=[];
+        $idRequerimientoPagoList=[];
+        if($request->tipo_presupuesto =='INTERNO'){
+
+            $detalleRequerimientoLogistico = DetalleRequerimiento::where([['id_partida_pi',$request->id_partida],['estado','!=',7]])->distinct()->get();
+            foreach ($detalleRequerimientoLogistico as $key => $value) {
+                $idRequerimientoLogisticoList[]=$value->id_requerimiento;
+            }
+
+            $detalleRequerimientoPago = RequerimientoPagoDetalle::where([['id_partida_pi',$request->id_partida],['id_estado','!=',7]])->distinct()->get();
+            foreach ($detalleRequerimientoPago as $key => $value) {
+                $idRequerimientoPagoList[]=$value->id_requerimiento_pago;
+            }
+            
+
+            $data = RequerimientosElaboradosOAprobadosView::whereIn('id_requerimiento_logistico',$idRequerimientoLogisticoList)->orWhereIn('id_requerimiento_pago',$idRequerimientoPagoList);
+        }
+        return $data;
+
+    } 
+
+    public function DataRequerimientosVinculadosConPartida($tipoPresupuesto, $idPartida){
+        $content = new Request
+        ([
+            'tipo_presupuesto' => $tipoPresupuesto,
+            'id_partida' => $idPartida,
+        ]);
+        return  $this->requerimientosVinculadosConPartida($content)->get();
+    }
+
+    public function listarRequerimientosVinculadosConPartida(Request $request)
+    {
+
+        $data= $this->requerimientosVinculadosConPartida($request);
+        return datatables($data)
+        ->toJson();
     }
 }

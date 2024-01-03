@@ -414,7 +414,7 @@
                                                         <small>(<span id="mes_ppto"></span>)</small></th>
                                                     <th width="10" style="background-color: #fbdddd;">Presupuesto
                                                         Utilizado</th>
-                                                    <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
+                                                    <th width="10" style="display:none; background-color: #e5fbdd;">Saldo Total</th>
                                                     <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
                                                 </tr>
                                             </thead>

@@ -52,7 +52,7 @@
                                                 <th>Factura</th>
                                                 <th>Nombre contacto</th>
                                                 <th>Fecha reporte</th>
-                                                <th>Fecha documento</th>
+                                                <th>Serie</th>
                                                 <th>Fecha registro</th>
                                                 <th>Responsable</th>
                                                 <th>Falla</th>

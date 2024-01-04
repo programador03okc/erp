@@ -117,11 +117,11 @@ function listarIncidencias() {
                 }
             },
             {
-                data: 'fecha_documento',
-                'render': function (data, type, row) {
-                    return (row['fecha_documento'] != null ? formatDate(row['fecha_documento']) : '');
+                'data': 'inci_serie'
+                // 'render': function (data, type, row) {
+                //     return (row['fecha_documento'] != null ? formatDate(row['fecha_documento']) : '');
 
-                }
+                // }
             },
             { 'data': 'fecha_registro' },
             { 'data': 'nombre_corto', name: 'sis_usua.nombre_corto' },

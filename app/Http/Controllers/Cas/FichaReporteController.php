@@ -37,6 +37,7 @@ class FichaReporteController extends Controller
         $lista = DB::table('cas.incidencia')
             ->select(
                 'incidencia.*',
+                'incidencia.serie as inci_serie',
                 'guia_ven.serie',
                 'guia_ven.numero',
                 'guia_ven.id_od',

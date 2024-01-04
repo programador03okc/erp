@@ -117,7 +117,7 @@ function listarIncidencias() {
                 }
             },
             {
-                'data': 'inci_serie'
+                data: 'inci_serie', name: 'incidencia.serie'
                 // 'render': function (data, type, row) {
                 //     return (row['fecha_documento'] != null ? formatDate(row['fecha_documento']) : '');
 

@@ -12,7 +12,7 @@ class RequerimientoPagoDetalle extends Model
 {
     protected $table = 'tesoreria.requerimiento_pago_detalle';
     protected $primaryKey = 'id_requerimiento_pago_detalle';
-    protected $appends = ['presupuesto_interno_total_partida', 'presupuesto_interno_mes_partida'];
+    protected $appends = ['presupuesto_interno_total_partida', 'presupuesto_interno_mes_partida', 'total_consumido_hasta_fase_aprobacion_con_igv'];
 
     public $timestamps = false;
 
@@ -114,6 +114,30 @@ class RequerimientoPagoDetalle extends Model
         }else{
             return 0;
         }
+    }
+    public function getTotalConsumidoHastaFaseAprobacionConIgvAttribute()
+    {
+
+        if (isset($this->attributes['id_partida_pi'])) {
+            $totalConsumidoHastaFaseAprobacionConIgv = PresupuestoInternoDetalle::select(
+                DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * 1.18,0)
+                FROM almacen.alm_det_req as dr
+                INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
+                WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7
+                limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                FROM tesoreria.requerimiento_pago_detalle as drp
+                INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
+            )
+            ->where('id_presupuesto_interno_detalle', $this->attributes['id_partida_pi'])->first();
+         
+            return $totalConsumidoHastaFaseAprobacionConIgv->total_consumido_hasta_fase_aprobacion_con_igv;
+        }else{
+            return 0;
+
+        }
+
     }
 
     public function adjunto()

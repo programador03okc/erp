@@ -1344,7 +1344,7 @@ class PresupuestoInternoController extends Controller
                     $data=0;
                     $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionSoles = DB::table('almacen.alm_det_req')
                     ->select(
-                        DB::raw("((SUM(alm_det_req.cantidad * alm_det_req.precio_unitario )) ) AS total_por_consumido_con_igv"),
+                        DB::raw("((SUM(alm_det_req.cantidad * alm_det_req.precio_unitario * 1.18)) ) AS total_por_consumido_con_igv"),
                         )
                     ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
                     ->where([

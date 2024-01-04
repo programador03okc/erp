@@ -395,26 +395,27 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-8">
-                            <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
-                            <fieldset class="group-table">
-                                <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th width="10">Codigo</th>
-                                            <th width="70">Descripción</th>
-                                            <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
-                                            <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
-                                            <th width="10" style="background-color: #fbdddd;">presupuesto a utilizar</th>
-                                            <th width="10" style="background-color: #e5fbdd;">Saldo Total</th>
-                                            <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="body_partidas_activas">
-                                    </tbody>
-                                </table>
-                            </fieldset>
-                        </div>
+                    <div class="col-md-8">
+                        <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
+                        <fieldset class="group-table">
+                            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="10">Codigo</th>
+                                        <th width="70">Descripción</th>
+                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
+                                        <th width="10" style="background-color: #fbdddd;">Presupuesto a utilizar <small>(Req. actual)</small></th>
+                                        <th width="10" style="background-color: #fbdddd;">Presupuesto a utilizar <small>(Req. elaborado y aprobados)</small></th>
+                                        <th width="10" style="display:none; background-color: #e5fbdd;">Saldo Total</th>
+                                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="body_partidas_activas">
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </div>
                     </div>
 
                 </div>

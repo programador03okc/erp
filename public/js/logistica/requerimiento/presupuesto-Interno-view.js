@@ -55,6 +55,7 @@ class PresupuestoInternoView{
         tr.querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto = 'INTERNO';
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = obj.dataset.totalPresupuestoAño;
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = obj.dataset.totalPresupuestoMes;
+        tr.querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion = obj.dataset.totalPorConsumidoConIgvFaseAprobacion;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', obj.dataset.descripcion);
 
         this.updatePartidaItem(tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']"));
@@ -121,6 +122,7 @@ class PresupuestoInternoView{
             let totalConsumidoMes = 0; 
             let totalSaldoMes = 0; 
             let totalSaldoAño = 0; 
+            let totalPorConsumidoConIgvFaseAprobacion = 0; 
 
             presupuesto['detalle'].forEach(detalle => { 
                 
@@ -150,6 +152,7 @@ class PresupuestoInternoView{
                     totalConsumidoMes=$.number((parseFloat(detalle.total_consumido_mes)),2,".",",");
                     totalSaldoMes=$.number((parseFloat(detalle.total_saldo_mes)),2,".",",");
                     totalSaldoAño=$.number((parseFloat(detalle.total_saldo_año)),2,".",",");
+                    totalPorConsumidoConIgvFaseAprobacion=$.number((parseFloat(detalle.total_consumido_hasta_fase_aprobacion_con_igv)),2,".",",");
                     
                     //* buscar la divsión si es RRHH la familia de remuneraciones debe estar habilitada de lo contrario quedara bloqueada
                     let hasOpacity='';
@@ -199,6 +202,7 @@ class PresupuestoInternoView{
                             data-total-consumido-mes="${totalConsumidoMes}"
                             data-total-saldo-mes="${totalSaldoMes}"
                             data-total-saldo-año="${totalSaldoAño}"
+                            data-total-por-consumido-con-igv-fase-aprobacion="${totalPorConsumidoConIgvFaseAprobacion}"
                             title="Seleccionar partida">
                             <i class="fas fa-check"></button>`;
                         }else{

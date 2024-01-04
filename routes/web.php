@@ -396,8 +396,13 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
 				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
+				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+				// Route::get('data-requerimientos-vinculados-con-partida/{tipoPresupuesto}/{idPartida}', [RequerimientoController::class, 'dataRequerimientosVinculadosConPartida'])->name('data-requerimientos-vinculados-con-partida');
 				Route::post('obtener-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'obtenerRequerimientosVinculadosConPartida'])->name('obtener-requerimientos-vinculados-con-partida');
 				Route::get('obtener-items-requerimiento-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoConPartidaDePresupuestoInterno'])->name('obtener-items-requerimiento-con-partida-presupuesto-interno');
+
+				Route::get('listar-items-requerimiento-logistico-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoLogisticoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-logistico-con-partida-presupuesto-interno');
+				Route::get('listar-items-requerimiento-pago-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoPagoController::class, 'obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-pago-con-partida-presupuesto-interno');
 
 			});
 
@@ -432,8 +437,15 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
 				Route::get('listar-flujo/{idDocumento}', [RevisarAprobarController::class, 'mostrarTodoFlujoAprobacionDeDocumento'])->name('listar-flujo');
 				Route::post('requerimiento-sustentado', [RequerimientoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
+				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+				// Route::get('data-requerimientos-vinculados-con-partida/{tipoPresupuesto}/{idPartida}', [RequerimientoController::class, 'dataRequerimientosVinculadosConPartida'])->name('data-requerimientos-vinculados-con-partida');
+
 				Route::post('obtener-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'obtenerRequerimientosVinculadosConPartida'])->name('obtener-requerimientos-vinculados-con-partida');
 				Route::get('obtener-items-requerimiento-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoConPartidaDePresupuestoInterno'])->name('obtener-items-requerimiento-con-partida-presupuesto-interno');
+
+
+				Route::get('listar-items-requerimiento-logistico-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoLogisticoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-logistico-con-partida-presupuesto-interno');
+				Route::get('listar-items-requerimiento-pago-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoPagoController::class, 'obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-pago-con-partida-presupuesto-interno');
 
 			});
 

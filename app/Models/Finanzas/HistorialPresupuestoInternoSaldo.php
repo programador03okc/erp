@@ -44,7 +44,7 @@ class HistorialPresupuestoInternoSaldo extends Model
     public static function totalSalidas($id){
         $salidas = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$id)
             ->where('tipo','SALIDA')
-            // ->where('estado',3)
+            ->where('estado',3)
             // ->orderBy('id','DESC')
         ->get();
         $total = 0;

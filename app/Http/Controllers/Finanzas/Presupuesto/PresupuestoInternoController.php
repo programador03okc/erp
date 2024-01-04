@@ -84,7 +84,8 @@ class PresupuestoInternoController extends Controller
                 // $total_ejecutado = PresupuestoInterno::presupuestoEjecutado($data->id_presupuesto_interno,3);
 
                 $meses_numero = date('m');
-                $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
+                $total_ejecutado =  HistorialPresupuestoInternoSaldo::totalSalidas($data->id_presupuesto_interno);
+                // $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
             }
             return number_format(($total_ejecutado), 2, '.', ',');
         })

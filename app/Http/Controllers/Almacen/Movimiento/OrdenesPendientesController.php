@@ -219,7 +219,6 @@ class OrdenesPendientesController extends Controller
             })
             ->join('configuracion.sis_usua', function ($join) {
                 $join->on('sis_usua.id_usuario', '=', 'log_ord_compra.id_usuario');
-                $join->where('sis_usua.estado', '!=', 7);
             })
             // ->leftJoin('almacen.alm_det_req', function ($join) {
             //     $join->on('alm_det_req.id_detalle_requerimiento', '=', 'log_det_ord_compra.id_detalle_requerimiento');

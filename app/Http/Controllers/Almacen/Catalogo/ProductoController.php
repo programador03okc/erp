@@ -373,9 +373,13 @@ class ProductoController extends Controller
                     'mensaje' => 'El producto ya fue relacionado con otros documentos! No es posible dar de baja',
                 );
             } else {
-                DB::table('almacen.alm_prod')
-                    ->where('id_producto', $id)
-                    ->update(['estado' => 7]);
+                $producto = Producto::find($id);
+                $producto->estado= 7;
+                $producto->save();
+
+                // DB::table('almacen.alm_prod')
+                //     ->where('id_producto', $id)
+                //     ->update(['estado' => 7]);
 
                 $arrayRspta = array(
                     'tipo' => 'success',
@@ -383,6 +387,11 @@ class ProductoController extends Controller
                 );
             }
 
+            //registrar en log actividad
+            $comentario = 'Producto : ' . $producto->codigo . ', status: Anulado'. ', Realizado Por: '. Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Producto', 4, $producto->getTable(), null, $producto, $comentario, 'Almacén');
+
+            
             DB::commit();
             return response()->json($arrayRspta, 200);
         } catch (\PDOException $e) {

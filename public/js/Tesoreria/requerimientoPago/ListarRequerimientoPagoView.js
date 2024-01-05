@@ -319,7 +319,7 @@ class ListarRequerimientoPagoView {
                         'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
                         'presupuesto_utilizado_al_cambio': 0,
                         'presupuesto_utilizado': 0,
-                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion!="" && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion !=null ?(parseFloat(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion).replace(/,/gi, '')):0,
+                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion!="" && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion !=null ?((tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion).replace(/,/gi, '')):0,
                         'saldo_total': 0,
                         'saldo_mes': 0
                     });
@@ -2726,9 +2726,11 @@ class ListarRequerimientoPagoView {
                 document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
                 <td>
                     <p class="descripcion-partida"
+                        data-tipo-presupuesto="${data.id_partida_pi >0?'INTERNO':(data.id_partida >0 ?'ANTIGUO':'')}"
                         data-id-partida="${data.detalle[i].id_partida != null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
                         data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
                         data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"
+                        data-total-por-consumido-con-igv-fase-aprobacion="${data.total_consumido_hasta_fase_aprobacion_con_igv?data.total_consumido_hasta_fase_aprobacion_con_igv:0}"
                         title="${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.partida : ''}";
                         style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.descripcion : ''}
                     </p>

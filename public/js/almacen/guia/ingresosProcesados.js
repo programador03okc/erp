@@ -65,6 +65,20 @@ function listarIngresos() {
             const $form = $('#formFiltrosIngresosProcesados');
             (array_accesos.find(element => element === 108)?$('#listaIngresosAlmacen_wrapper .dt-buttons').append(
                 `<div style="display:flex">
+
+                <div class="radio" style="padding:5px;">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadiosNivelCabecera" value="cabecera" checked>
+                    Nivel cabecera
+                </label>
+                </div>
+                <div class="radio" style="padding:5px;">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadiosNivelItems" value="items">
+                    Nivel Item's
+                </label>
+                </div>
+
                 <input type="text" class="form-control date-picker" size="10" id="txtIngresoProcesadoFechaInicio"
                     value="${$form.find('input[name=ingreso_fecha_inicio]').val()}"/>
                 <input type="text" class="form-control date-picker" size="10" id="txtIngresoProcesadoFechaFin"
@@ -82,6 +96,10 @@ function listarIngresos() {
             });
             listarSedes('ingresos');
 
+            $("[name='optionsRadios']").on("click", function (e) {
+                var ini = $(this).val();
+                $form.find('input[name=nivel_reporte]').val(ini);
+            });
             $("#txtIngresoProcesadoFechaInicio").on("change", function (e) {
                 var ini = $(this).val();
                 $form.find('input[name=ingreso_fecha_inicio]').val(ini);

@@ -299,8 +299,8 @@ class RequerimientoController extends Controller
             ->leftJoin('administracion.adm_empresa', 'alm_req.id_empresa', '=', 'adm_empresa.id_empresa')
             ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
             ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
-            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            // ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
+            // ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
             ->leftJoin('almacen.alm_tp_req', 'alm_tp_req.id_tipo_requerimiento', '=', 'alm_req.id_tipo_requerimiento')
             ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'alm_det_req.partida')
             ->leftJoin('finanzas.presup', 'presup.id_presup', '=', 'presup_par.id_presup')
@@ -322,7 +322,12 @@ class RequerimientoController extends Controller
                 'adm_prioridad.descripcion as prioridad',
                 'alm_tp_req.descripcion AS tipo_requerimiento',
                 'alm_req.codigo',
-                'oportunidades.codigo_oportunidad',
+                // 'oportunidades.codigo_oportunidad',
+                DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_logistico
+                JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
+                WHERE cdp.id = alm_req.id_requerimiento) AS codigo_oportunidad"),
+
                 'alm_req.concepto',
                 'alm_req.codigo',
                 'alm_req.observacion',

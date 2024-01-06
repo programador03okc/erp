@@ -1995,8 +1995,8 @@ class RequerimientoPagoController extends Controller
             ->leftJoin('contabilidad.adm_contri', 'adm_empresa.id_contribuyente', '=', 'adm_contri.id_contribuyente')
 
             ->leftJoin('contabilidad.sis_identi', 'sis_identi.id_doc_identidad', '=', 'adm_contri.id_doc_identidad')
-            ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'requerimiento_pago.id_cc')
-            ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+            // ->leftJoin('mgcp_cuadro_costos.cc', 'cc.id', '=', 'requerimiento_pago.id_cc')
+            // ->leftJoin('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
             ->leftJoin('tesoreria.requerimiento_pago_tipo', 'requerimiento_pago_tipo.id_requerimiento_pago_tipo', '=', 'requerimiento_pago.id_requerimiento_pago_tipo')
 
             ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'requerimiento_pago_detalle.id_partida')
@@ -2017,7 +2017,11 @@ class RequerimientoPagoController extends Controller
                 'requerimiento_pago_tipo.descripcion AS tipo_requerimiento',
 
                 'requerimiento_pago.codigo',
-                'oportunidades.codigo_oportunidad',
+                // 'oportunidades.codigo_oportunidad',
+                DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_pago
+                JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
+                WHERE cdp.id = requerimiento_pago.id_requerimiento_pago) AS codigo_oportunidad"),
                 'requerimiento_pago.concepto',
                 'requerimiento_pago.comentario',
                 'sis_moneda.simbolo as simbolo_moneda',

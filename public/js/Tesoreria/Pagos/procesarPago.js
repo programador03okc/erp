@@ -127,15 +127,70 @@ function openRegistroPago(data) {
 $("#form-procesarPago").on("submit", function (e) {
     e.preventDefault();
     $('#submit_procesarPago').attr('disabled', 'true');
-    procesarPago();
+    
+        validarPresupuestoParaPago()     
+        //procesarPago();
+
+
 });
+
+function validarPresupuestoParaPago(){
+    var formData = new FormData($('#form-procesarPago')[0]);
+    // var id_oc = $('[name=id_oc]').val();
+    // var id_doc_com = $('[name=id_doc_com]').val();
+    // var id_requerimiento_pago = $('[name=id_requerimiento_pago]').val();
+    var mensajeConcatenado=[];
+    
+    $.ajax({
+        type: 'POST',
+        url: 'validarPresupuestoParaPago',
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'JSON',
+        success: function (response) {
+            console.log(response);
+
+            let cantidadPartidasSinPresupuesto=0;
+            if((response.data).length >0){
+                (response.data).forEach(element => {
+                    if(element.tiene_presupuesto ==false){
+                        cantidadPartidasSinPresupuesto++;
+                        mensajeConcatenado.push("La partida "+element.partida +"("+element.descripcion+") no dispone de saldo suficiente, dispone S/"+element.monto_aux);
+                    }
+                });
+            }
+
+            if(cantidadPartidasSinPresupuesto>0){
+                Lobibox.notify('warning', {
+                    title: false,
+                    size: "normal",
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: mensajeConcatenado.toString()
+                });
+
+            }else{
+                procesarPago();
+            }
+
+
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+}
 
 function procesarPago() {
     var formData = new FormData($('#form-procesarPago')[0]);
     var id_oc = $('[name=id_oc]').val();
     var id_doc_com = $('[name=id_doc_com]').val();
     var id_requerimiento_pago = $('[name=id_requerimiento_pago]').val();
-    console.log(formData);
+    // console.log(formData);
 
     $.ajax({
         type: 'POST',

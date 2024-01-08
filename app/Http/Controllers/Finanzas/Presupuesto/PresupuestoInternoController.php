@@ -1263,7 +1263,8 @@ class PresupuestoInternoController extends Controller
 
         $presupuestoInterno = PresupuestoInterno::with(['detalle' => function ($q) use ($idPresupuestoIterno) {
             $q->where([['id_presupuesto_interno', $idPresupuestoIterno], ['estado', '!=', 7]])->orderBy('partida', 'asc');
-        }])->where([['id_presupuesto_interno', $idPresupuestoIterno], ['estado', 2]])->get();
+        }])->where([['id_presupuesto_interno', $idPresupuestoIterno]])
+        ->whereIn('estado',[2])->get();
 
         // agregar campo totales e inicializar en 0
         foreach ($presupuestoInterno as $key => $Presup) {

@@ -1867,6 +1867,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('listarComprobantesPagos', [RegistroPagoController::class, 'listarComprobantesPagos'])->name('lista-comprobantes-pagos');
 				Route::post('listarOrdenesCompra', [RegistroPagoController::class, 'listarOrdenesCompra'])->name('lista-ordenes-compra');
 				Route::post('listarRequerimientosPago', [RegistroPagoController::class, 'listarRequerimientosPago'])->name('listar-requerimientos-pago');
+				Route::post('validarPresupuestoParaPago', [RegistroPagoController::class, 'validarPresupuestoParaPago'])->name('validar-presupuesto-para-pagos');
 				Route::post('procesarPago', [RegistroPagoController::class, 'procesarPago'])->name('procesar-pagos');
 				Route::get('listarPagos/{tp}/{id}', [RegistroPagoController::class, 'listarPagos'])->name('listar-pagos');
 				Route::get('listarPagosEnCuotas/{tp}/{id}', [RegistroPagoController::class, 'listarPagosEnCuotas'])->name('listar-pagos-en-cuotas');

@@ -147,7 +147,7 @@ class Usuario extends Authenticatable
 	{
 		$grupos = DB::table('configuracion.usuario_grupo')
 			->join('configuracion.sis_grupo', 'sis_grupo.id_grupo', '=', 'usuario_grupo.id_grupo')
-			->where('usuario_grupo.id_usuario', $this->id_usuario)
+			->where([['usuario_grupo.id_usuario', $this->id_usuario],['usuario_grupo.estado',1]])
 			->select('sis_grupo.*')
 			->distinct('id_grupo')->get();
 		// $grupo = Acceso::join('configuracion.sis_rol', 'sis_acceso.id_rol', '=', 'sis_rol.id_rol')

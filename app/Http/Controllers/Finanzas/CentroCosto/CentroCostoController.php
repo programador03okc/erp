@@ -48,10 +48,10 @@ class CentroCostoController extends Controller
                 $idGrupoList[] = strval($grupo->id_grupo);
         }
  
-       $maxPeriodo = CentroCosto::whereIn('id_grupo', $idGrupoList)->max('periodo');
+    //    $maxPeriodo = CentroCosto::whereIn('id_grupo', $idGrupoList)->max('periodo');
         $centroCostos = CentroCosto::orderBy('codigo', 'asc')
             ->where('estado', 1)
-            ->whereIn('id_grupo', $idGrupoList)->where('periodo', $maxPeriodo)
+            ->whereIn('id_grupo', $idGrupoList)->where('activo', true)
             // ->whereRaw('centro_costo.periodo = '.$maxPeriodo)
             ->select(['*', DB::raw("CASE WHEN (SELECT cc.codigo FROM finanzas.centro_costo AS cc WHERE centro_costo.codigo!=cc.codigo AND cc.codigo LIKE centro_costo.codigo || '.%' 
         AND cc.version=centro_costo.version LIMIT 1) IS NULL THEN true ELSE false END AS seleccionable")])->get();

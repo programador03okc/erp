@@ -3,6 +3,7 @@
         <tr>
             <th>Prioridad</th>
             <th>Código</th>
+            <th>CDP</th>
             <th>Concepto</th>
             <th>Tipo Req.</th>
             <th>Fecha Registro</th>
@@ -30,6 +31,7 @@
                 <tr>
                     <td>{{ $requerimiento["priori"] }}</td>
                     <td>{{ $requerimiento["codigo"] }}</td>
+                    <td>{{ $requerimiento["codigo_oportunidad"] }}</td>
                     <td>{{ $requerimiento["concepto"] }}</td>
                     <td>{{ $requerimiento["tipo_requerimiento"] }}</td>
                     <td>{{ $requerimiento["fecha_registro"] }}</td>

@@ -59,6 +59,7 @@ class ListadoRequerimientoPagoExport implements FromView,ShouldAutoSize
                     'id_requerimiento_pago'=>$element->id_requerimiento_pago,
                     'priori'=> $element->prioridad,
                     'codigo'=> $element->codigo,
+                    'codigo_oportunidad'=> $requerimientosDetalle->codigo_oportunidad,
                     'concepto'=> $element->concepto,
                     'fecha_registro'=> $element->fecha_registro,
                     // 'fecha_entrega'=> $element->fecha_entrega,

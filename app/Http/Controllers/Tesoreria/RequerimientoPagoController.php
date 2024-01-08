@@ -1926,7 +1926,13 @@ class RequerimientoPagoController extends Controller
             ->get();
 
         $requerimientoPago = DB::table('tesoreria.requerimiento_pago')
-            ->select('requerimiento_pago.id_requerimiento_pago', 'requerimiento_pago.fecha_autorizacion')
+            ->select('requerimiento_pago.id_requerimiento_pago',
+                    'requerimiento_pago.fecha_autorizacion',
+                    DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
+                    JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_cc
+                    JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
+                    WHERE cr.id_requerimiento_pago = requerimiento_pago.id_requerimiento_pago) AS codigo_oportunidad")
+                    )
             ->where('id_requerimiento_pago', $id_requerimiento_pago)
             ->first();
 

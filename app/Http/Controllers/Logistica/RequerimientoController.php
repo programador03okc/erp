@@ -324,9 +324,9 @@ class RequerimientoController extends Controller
                 'alm_req.codigo',
                 // 'oportunidades.codigo_oportunidad',
                 DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
-                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_logistico
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_cc
                 JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
-                WHERE cdp.id = alm_req.id_requerimiento) AS codigo_oportunidad"),
+                WHERE cr.id_requerimiento_logistico = alm_req.id_requerimiento) AS codigo_oportunidad"),
 
                 'alm_req.concepto',
                 'alm_req.codigo',
@@ -2035,9 +2035,9 @@ class RequerimientoController extends Controller
                 'alm_req.id_moneda',
                 'alm_req.*',
                 DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
-                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_logistico
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_cc
                 JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
-                WHERE cdp.id = alm_req.id_requerimiento) AS codigo_oportunidad"),
+                WHERE cr.id_requerimiento_logistico = alm_req.id_requerimiento) AS codigo_oportunidad"),
                 'adm_estado_doc.estado_doc',
                 'alm_tp_req.descripcion AS tipo_requerimiento',
                 'adm_prioridad.descripcion AS priori',

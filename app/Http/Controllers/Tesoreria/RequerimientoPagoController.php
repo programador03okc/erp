@@ -2019,9 +2019,9 @@ class RequerimientoPagoController extends Controller
                 'requerimiento_pago.codigo',
                 // 'oportunidades.codigo_oportunidad',
                 DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
-                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_requerimiento_pago
+                JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_cc
                 JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
-                WHERE cdp.id = requerimiento_pago.id_requerimiento_pago) AS codigo_oportunidad"),
+                WHERE cr.id_requerimiento_pago = requerimiento_pago.id_requerimiento_pago) AS codigo_oportunidad"),
                 'requerimiento_pago.concepto',
                 'requerimiento_pago.comentario',
                 'sis_moneda.simbolo as simbolo_moneda',

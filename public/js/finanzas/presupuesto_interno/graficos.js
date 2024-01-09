@@ -6,22 +6,26 @@ $('[name="presupuesto_id"]#presupuesto_id').change(function (e) {
     if ($graficaBarras) {
         $graficaBarras.destroy();
     }
-    $.ajax({
-        type: 'POST',
-        url: route('finanzas.presupuesto.presupuesto-interno.grafica', {id:presupuesto_id}),
-        data: {_token:token},
-        dataType: 'JSON',
-        beforeSend: (data) => {
+    if (presupuesto_id) {
 
-        }
-    }).done(function(response) {
-        console.log(response);
-        graficaBarrs(response.data);
-    }).fail( function( jqXHR, textStatus, errorThrown ){
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-    });
+        $.ajax({
+            type: 'POST',
+            url: route('finanzas.presupuesto.presupuesto-interno.grafica', {id:presupuesto_id}),
+            data: {_token:token},
+            dataType: 'JSON',
+            beforeSend: (data) => {
+
+            }
+        }).done(function(response) {
+            console.log(response);
+            graficaBarrs(response.data);
+        }).fail( function( jqXHR, textStatus, errorThrown ){
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+        });
+    }
+
 });
 function graficaBarrs(data) {
 

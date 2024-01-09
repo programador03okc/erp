@@ -55,4 +55,6 @@ class HistorialPresupuestoInternoSaldo extends Model
         return $total;
     }
 
+
+
 }

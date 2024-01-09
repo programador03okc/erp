@@ -527,8 +527,8 @@ class ScriptController extends Controller
     {
         $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$id)
             ->where('tipo','SALIDA')
-            ->where('estado',3)
-            ->orderBy('id','DESC')
+            // ->where('estado',3)
+            // ->orderBy('id','DESC')
         ->get();
         $suma_total = 0;
         foreach ($historial_saldo as $key => $value) {
@@ -550,10 +550,6 @@ class ScriptController extends Controller
                 $orden = Orden::where('id_orden_compra',$value->id_orden)
                 ->first();
                 $orden_detalle_logistica = ( $orden ? OrdenCompraDetalle::where('id_detalle_orden',$value->id_orden_detalle)->first() : array());
-
-                // $requerimiento_detalle_necesidades = ( $orden_detalle_logistica ? DetalleRequerimiento::where('id_detalle_requerimiento',$orden_detalle_logistica->id_detalle_requerimiento)->first() : array());
-
-                // $requerimiento_necesidades = ($requerimiento_detalle_necesidades?Requerimiento::where('id_requerimiento',$requerimiento_detalle_necesidades->id_requerimiento)->first():array());
 
                 if($orden_detalle_logistica->estado !== 7){
                     $value->activo = 'activo';
@@ -780,6 +776,11 @@ class ScriptController extends Controller
             }
         }
         return response()->json($array,200);
+    }
+    public function ejecutado($id){
+        $historial_saldo = HistorialPresupuestoInternoSaldo::totalSalidas($id);
+
+        return response()->json(["tipo"=>true,"id"=>$id,"data"=>$historial_saldo],200);
     }
 
 }

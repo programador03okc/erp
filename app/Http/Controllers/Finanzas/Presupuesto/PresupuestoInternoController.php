@@ -55,7 +55,8 @@ class PresupuestoInternoController extends Controller
             array_push($array_accesos, $value->id_acceso);
         }
 
-        return view('finanzas.presupuesto_interno.lista', compact('array_accesos'));
+        $dataPPTI = PresupuestoInterno::whereIn('estado',[10,2])->orderBy('codigo', 'asc')->get();
+        return view('finanzas.presupuesto_interno.lista', compact('array_accesos','dataPPTI'));
     }
     public function listaPresupuestoInterno()
     {
@@ -65,31 +66,36 @@ class PresupuestoInternoController extends Controller
             array_push($array_grupos_id, $value->id_grupo);
         }
         // return $grupos;exit;
-        $data = PresupuestoInterno::where('presupuesto_interno.estado', '!=', 7)
+        $data = PresupuestoInterno::whereIn('presupuesto_interno.estado',[1,2])
             ->whereIn('presupuesto_interno.id_grupo', $array_grupos_id)
-            ->select('presupuesto_interno.*', 'adm_grupo.descripcion as grupo', 'presupuesto_interno_estado.descripcion as estadopi', 'sis_sede.descripcion as sede')
+            ->select(
+                'presupuesto_interno.*',
+                'adm_grupo.descripcion as grupo',
+                'adm_estado_doc.estado_doc   as estadopi',
+                'sis_sede.descripcion as sede'
+            )
             ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'presupuesto_interno.id_grupo')
-            ->join('finanzas.presupuesto_interno_estado', 'presupuesto_interno_estado.id', '=', 'presupuesto_interno.estado')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'presupuesto_interno.estado')
             ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'presupuesto_interno.sede_id')
             ->get();
         return DataTables::of($data)
-            ->addColumn('total', function ($data) {
-                $total = ($data->gastos == '3' ? PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno, 3) : 0);
-                // $total = PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno,3);
-                // $total = ($total>0?$total:0);
-                // return floatval(str_replace(",", "", $total));
-                return round($total, 2);
-            })
-            ->addColumn('total_ejecutado', function ($data) {
-                $total_ejecutado = 0;
-                if ($data->estado == 2) {
-                    // $total_ejecutado = PresupuestoInterno::presupuestoEjecutado($data->id_presupuesto_interno,3);
-                    $meses_numero = date('m');
-                    $total_ejecutado =  HistorialPresupuestoInternoSaldo::totalSalidas($data->id_presupuesto_interno);
-                // $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
-                }
-                return number_format(($total_ejecutado), 2, '.', ',');
-            })
+        ->addColumn('total', function ($data) {
+            $total = ($data->gastos == '3' ? PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno, 3) : 0);
+            // $total = PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno,3);
+            // $total = ($total>0?$total:0);
+            // return floatval(str_replace(",", "", $total));
+            return round($total, 2);
+        })
+        ->addColumn('total_ejecutado', function ($data) {
+            $total_ejecutado = 0;
+            if ($data->estado == 2) {
+                // $total_ejecutado = PresupuestoInterno::presupuestoEjecutado($data->id_presupuesto_interno,3);
+                $meses_numero = date('m');
+                $total_ejecutado =  HistorialPresupuestoInternoSaldo::totalSalidas($data->id_presupuesto_interno);
+            // $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
+            }
+            return number_format(($total_ejecutado), 2, '.', ',');
+        })
         // ->toJson();
         ->make(true);
     }
@@ -171,8 +177,9 @@ class PresupuestoInternoController extends Controller
             $codigo = StringHelper::leftZero(2, $presupuesto_interno_count);
 
             $division_codigo = DivisionCodigo::where('sede_id', $request->sede_id)->where('division_id', $request->id_area)->first();
+            $year =date("y");
 
-            $codigo = ($division_codigo ? $division_codigo->codigo : $codigo);
+            $codigo = ($division_codigo?str_replace('-23', '-'.$year, $division_codigo->codigo):$codigo);
             $descripcion = $request->descripcion;
 
             $presupuesto_interno                        = new PresupuestoInterno();
@@ -1902,6 +1909,7 @@ class PresupuestoInternoController extends Controller
 
         $requerimiento_pago_array = array();
         $orden_detalle_logistico_array = array();
+        // return $historial_saldo;
         foreach ($historial_saldo as $key => $value) {
 
 
@@ -2067,5 +2075,172 @@ class PresupuestoInternoController extends Controller
             $item->total = $total;
         }
         return Excel::download(new PresupuestoInternoSaldoExport(json_encode($presupuesto_detalle)), '' . $presupuesto->codigo . '-' . date('Y-m-d') . '.xlsx');
+    }
+
+    public function listarFinalizados()
+    {
+        $array_grupos_id = [];
+        $grupos = UsuarioGrupo::where('id_usuario', Auth::user()->id_usuario)->where('estado', 1)->get();
+        foreach ($grupos as $key => $value) {
+            array_push($array_grupos_id, $value->id_grupo);
+        }
+        // return $grupos;exit;
+        $data = PresupuestoInterno::whereIn('presupuesto_interno.estado',[10])
+            ->whereIn('presupuesto_interno.id_grupo', $array_grupos_id)
+            ->select(
+                'presupuesto_interno.*',
+                'adm_grupo.descripcion as grupo',
+                'adm_estado_doc.estado_doc   as estadopi',
+                'sis_sede.descripcion as sede'
+            )
+            ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'presupuesto_interno.id_grupo')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'presupuesto_interno.estado')
+            ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'presupuesto_interno.sede_id')
+            ->get();
+        return DataTables::of($data)
+        ->addColumn('total', function ($data) {
+            $total = ($data->gastos == '3' ? PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno, 3) : 0);
+            // $total = PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno,3);
+            // $total = ($total>0?$total:0);
+            // return floatval(str_replace(",", "", $total));
+            return round($total, 2);
+        })
+        ->addColumn('total_ejecutado', function ($data) {
+            $total_ejecutado = 0;
+            if ($data->estado == 10) {
+                // $total_ejecutado = PresupuestoInterno::presupuestoEjecutado($data->id_presupuesto_interno,3);
+                $meses_numero = date('m');
+                $total_ejecutado =  HistorialPresupuestoInternoSaldo::totalSalidas($data->id_presupuesto_interno);
+            // $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
+            }
+            return number_format(($total_ejecutado), 2, '.', ',');
+        })
+        // ->toJson();
+        ->make(true);
+    }
+    public function grafica($id){
+        $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->where('estado',1)->orderBy('partida', 'asc')->get();
+        $data = array(
+            array(
+                "x"=>"ENE",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"FEB",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"MAR",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"ABR",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"MAY",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"JUN",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"JUL",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"AGO",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"SET",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"OCT",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"NOV",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            ),
+            array(
+                "x"=>"DIC",
+                "planificado"=>0,
+                "ejecutado"=>0,
+            )
+        );
+        foreach($presupuesto_detalle as $key=>$value){
+            // return $value->float_enero;
+            if( $value->registro == 2 ){
+                $data[0]['planificado'] = $data[0]['planificado'] + $value->float_enero;
+                $data[1]['planificado'] = $data[1]['planificado'] + $value->float_febrero;
+                $data[2]['planificado'] = $data[2]['planificado'] + $value->float_marzo;
+                $data[3]['planificado'] = $data[3]['planificado'] + $value->float_abril;
+                $data[4]['planificado'] = $data[4]['planificado'] + $value->float_mayo;
+                $data[5]['planificado'] = $data[5]['planificado'] + $value->float_junio;
+                $data[6]['planificado'] = $data[6]['planificado'] + $value->float_julio;
+                $data[7]['planificado'] = $data[7]['planificado'] + $value->float_agosto;
+                $data[8]['planificado'] = $data[8]['planificado'] + $value->float_setiembre;
+                $data[9]['planificado'] = $data[9]['planificado'] + $value->float_octubre;
+                $data[10]['planificado'] = $data[10]['planificado'] + $value->float_noviembre;
+                $data[11]['planificado'] = $data[11]['planificado'] + $value->float_diciembre;
+            }
+
+        }
+
+        $ejecucion_mensual =  HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$id)->where('estado',3)->where('tipo','SALIDA')->get();
+
+        foreach($ejecucion_mensual as $key=>$value){
+            if( $value->mes == "01" ){
+                $data[0]['ejecutado'] = $data[0]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "02" ){
+                $data[1]['ejecutado'] = $data[1]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "03" ){
+                $data[2]['ejecutado'] = $data[2]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "04" ){
+                $data[3]['ejecutado'] = $data[3]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "05" ){
+                $data[4]['ejecutado'] = $data[4]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "06" ){
+                $data[5]['ejecutado'] = $data[5]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "07" ){
+                $data[6]['ejecutado'] = $data[6]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "08" ){
+                $data[7]['ejecutado'] = $data[7]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "09" ){
+                $data[8]['ejecutado'] = $data[8]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "10" ){
+                $data[9]['ejecutado'] = $data[9]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "11" ){
+                $data[10]['ejecutado'] = $data[10]['ejecutado'] + (float) $value->importe;
+            }
+            if( $value->mes == "12" ){
+                $data[11]['ejecutado'] = $data[11]['ejecutado'] + (float) $value->importe;
+            }
+        }
+        return response()->json(["tipo"=>true, "data"=>$data],200);
     }
 }

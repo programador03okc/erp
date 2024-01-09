@@ -1356,6 +1356,8 @@ Route::middleware(['auth'])->group(function () {
                 //exportable de excel saldos ejecutado
 				Route::post('saldos-presupuesto', [PresupuestoInternoController::class, 'saldosPresupuesto'])->name('saldos-presupuesto');
 
+                Route::post('listar-finalizados', [PresupuestoInternoController::class, 'listarFinalizados'])->name('listar-finalizados');
+
 				Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
 					Route::get('generar-presupuesto-gastos', [ScriptController::class, 'generarPresupuestoGastos'])->name('generar-presupuesto-gastos');
 					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida'])->name('homologacion-partidas');
@@ -1369,8 +1371,11 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('nivelar-partidas/{mes}', [ScriptController::class, 'nivelarPartidas'])->name('nivelar-partidas');
 					Route::get('actualizar-saldos', [ScriptController::class, 'actualizarSaldos'])->name('actualizar-saldos');
 
+                    Route::get('ejecutado/{id}', [ScriptController::class, 'ejecutado'])->name('actualizar-saldos');
+
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');
+                Route::post('grafica/{id}', [PresupuestoInternoController::class, 'grafica'])->name('grafica');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {

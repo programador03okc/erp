@@ -1089,7 +1089,7 @@ class RequerimientoPagoController extends Controller
                 }
             }
 
-            //adjuntos detalle            
+            //adjuntos detalle
             if (isset($request->archivo_adjunto_detalle_list)) {
 
                 // Debugbar::info(count($request->archivo_adjunto_detalle_list) );
@@ -2181,7 +2181,7 @@ class RequerimientoPagoController extends Controller
         return response()->json($respuesta,200);
     }
 
-    
+
     public function obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno($id_requerimiento, $id_partida)
     {
         $detalles = RequerimientoPagoDetalle::select(

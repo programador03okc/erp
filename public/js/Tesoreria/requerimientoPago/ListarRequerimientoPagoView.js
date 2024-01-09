@@ -2953,7 +2953,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_estado']").value = data.id_estado;
         // document.querySelector("div[id='modal-requerimiento-pago'] input[name='codigo']").value = data.codigo;
         document.querySelector("div[id='modal-requerimiento-pago'] span[name='codigo']").textContent = data.codigo;
-     
+
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='concepto']").value = data.concepto;
 
         this.mostrarHistorialRevisionAprobacion(data.cdp_requerimiento);
@@ -3014,6 +3014,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='monto_total_read_only']").value = $.number(data.monto_total, 2);
         document.querySelector("div[id='modal-requerimiento-pago'] table[id='ListaDetalleRequerimientoPago'] label[name='total']").textContent = $.number(data.monto_total, 2);
 
+        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_condicion_softlink']").value = data.id_condicion_softlink;
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.id_division, data.id_presupuesto_interno);
 
         this.llenarComboProyectos(data.id_grupo, data.id_proyecto);

@@ -2,6 +2,7 @@
 
 $(document).ready(function () {
     lista();
+    listarFinalizados();
 });
 function vistaCrear() {
     window.location.href = "crear";
@@ -392,3 +393,72 @@ $(document).on('click','.saldos-presupuesto',function (e) {
     form.submit();
 
 });
+
+
+function listarFinalizados() {
+    var vardataTables = funcDatatables();
+    var tableRequerimientos = $("#data-table-finalizados").DataTable({
+        language: vardataTables[0],
+        destroy: true,
+        pageLength: 10,
+        serverSide: true,
+        lengthChange: false,
+        dom: vardataTables[1],
+        buttons:[],
+        ajax: {
+            url: route("finanzas.presupuesto.presupuesto-interno.listar-finalizados"),
+            type: "POST",
+            data:{
+                // filtros
+                _token:token
+            },
+            beforeSend: data => {
+                $("#lista-presupuesto-interno").LoadingOverlay("show", {
+                    imageAutoResize: true,
+                    progress: true,
+                    imageColor: "#3c8dbc"
+                });
+            }
+        },
+        columns: [
+            {data: 'id_presupuesto_interno', name:"id_presupuesto_interno" },
+            {data: 'codigo', name:"codigo" , class:"text-center"},
+            {data: 'descripcion', name:"descripcion" , class:"text-center"},
+            {data: 'fecha_registro', name:"fecha_registro" , class:"text-center"},
+            {data: 'grupo', name:"grupo" , class:"text-center"},
+            {data: 'estadopi', name:"estadopi" , class:"text-center"},
+            {data: 'sede', name:"sede" , class:"text-center"},
+            {data: 'total', name:"total" , class:"text-center"},
+            {
+                class:"text-center",
+                render: function (data, type, row) {
+                    return '<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'">'+row['total_ejecutado']+'</a>';
+                }
+            },
+            {
+                render: function (data, type, row) {
+                    html='';
+                        (array_accesos.find(element => element === 300)?
+                        html+='<button type="button" class="btn text-black btn-flat botonList ver-presupuesto-interno" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Exportar Excel" data-original-title="Ver"><i class="fa fa-file-excel"></i></button>'
+                        :'');
+                        // html+='<button type="button" class="btn btn-info btn-flat botonList editar-monto-partida" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Editar monto por partida" data-original-title="Editar"><i class="fas fa-pencil-alt"></i></button>';
+
+
+
+                        html+='<button type="button" class="btn btn-default text-black btn-flat botonList saldos-presupuesto" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Exportar Saldos" data-original-title="Exportar Saldos"><i class="fa fa-file-alt"></i></button>';
+
+                        html +='<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat botonList " title="Exportar Ejecutados" data-original-title="Exportar Ejecutados"><i class="fa fa-file"></i></a>';
+                    html+='';
+                    return html;
+                },
+                className: "text-center"
+            }
+        ],
+        order: [[0, "desc"]],
+        columnDefs: [{ aTargets: [0], sClass: "invisible" }],
+        "drawCallback": function (settings) {
+
+            $("#lista-presupuesto-interno").LoadingOverlay("hide", true);
+        }
+    });
+}

@@ -372,7 +372,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
-            $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
+            // $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
             // $requerimientoPago->plazo_entrega = $request->plazo_entrega ? $request->plazo_entrega : null;
 
             $requerimientoPago->save();
@@ -1089,7 +1089,7 @@ class RequerimientoPagoController extends Controller
                 }
             }
 
-            //adjuntos detalle            
+            //adjuntos detalle
             if (isset($request->archivo_adjunto_detalle_list)) {
 
                 // Debugbar::info(count($request->archivo_adjunto_detalle_list) );
@@ -2171,7 +2171,7 @@ class RequerimientoPagoController extends Controller
         return response()->json($respuesta,200);
     }
 
-    
+
     public function obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno($id_requerimiento, $id_partida)
     {
         $detalles = RequerimientoPagoDetalle::select(

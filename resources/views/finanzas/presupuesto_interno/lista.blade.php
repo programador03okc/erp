@@ -31,36 +31,73 @@
 
 @section('cuerpo')
     @if (in_array(303, $array_accesos))
-        <div class="box">
-            <div class="box-header">
-                <h3 class="box-title">Datos Generales</h3>
-            </div>
-            <div class="box-body">
-                {{-- <div class="row"> --}}
-                {{-- <div class="col-md-12"> --}}
-                <table class="mytable table table-condensed table-bordered table-okc-view" id="lista-presupuesto-interno">
-                    <thead>
-                        <tr>
-                            <th hidden></th>
-                            <th scope="col">Código</th>
-                            <th scope="col">Descripción</th>
-                            <th scope="col">Fecha Emisión</th>
-                            <th scope="col">Grupo</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Sede</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Total Ejecutado</th>
-                            <th scope="col">-</th>
-                        </tr>
-                    </thead>
-                    <tbody>
 
-                    </tbody>
-                </table>
-                {{-- </div>
-                </div> --}}
-            </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Custom Tabs -->
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab_1" data-toggle="tab">Elaborados/Aprobados</a></li>
+                        <li><a href="#tab_2" data-toggle="tab">Finalizados</a></li>
+                        <li><a href="#tab_3" data-toggle="tab">Grafica</a></li>
+                        <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_1">
+
+                            <table class="mytable table table-condensed table-bordered table-okc-view" id="lista-presupuesto-interno">
+                                <thead>
+                                    <tr>
+                                        <th hidden></th>
+                                        <th scope="col">Código</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Fecha Emisión</th>
+                                        <th scope="col">Grupo</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Sede</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Total Ejecutado</th>
+                                        <th scope="col">-</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_2">
+                            <table class="mytable table table-condensed table-bordered table-okc-view" id="data-table-finalizados">
+                                <thead>
+                                    <tr>
+                                        <th hidden></th>
+                                        <th scope="col">Código</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Fecha Emisión</th>
+                                        <th scope="col">Grupo</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Sede</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Total Ejecutado</th>
+                                        <th scope="col">-</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_3">
+                            <canvas id="barChart" style="height:230px"></canvas>
+                        </div>
+                        <!-- /.tab-pane -->
+                    </div>
+                    <!-- /.tab-content -->
+                </div>
+            <!-- nav-tabs-custom -->
         </div>
+    </div>
         {{-- // ver el presupuesto  --}}
         <div id="modal-presupuesto" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="my-modal-title"
             aria-hidden="true">
@@ -162,7 +199,8 @@
     </script>
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
 
-
+    <!-- ChartJS -->
+    <script src="{{ asset('template/adminlte2-4/plugins/chart.js/chart.js') }}"></script>
 
     {{-- <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
@@ -173,6 +211,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
     <script src="{{ asset('js/finanzas/presupuesto_interno/lista.js') }}"></script>
+    {{-- <script src="{{ asset('js/finanzas/presupuesto_interno/graficos.js') }}"></script> --}}
 
     <script>
         const route_editar = "{{ route('finanzas.presupuesto.presupuesto-interno.editar') }}";

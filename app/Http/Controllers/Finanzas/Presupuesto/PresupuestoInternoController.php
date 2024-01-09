@@ -65,11 +65,16 @@ class PresupuestoInternoController extends Controller
             array_push($array_grupos_id, $value->id_grupo);
         }
         // return $grupos;exit;
-        $data = PresupuestoInterno::where('presupuesto_interno.estado', '!=', 7)
+        $data = PresupuestoInterno::whereIn('presupuesto_interno.estado',[1,2])
             ->whereIn('presupuesto_interno.id_grupo', $array_grupos_id)
-            ->select('presupuesto_interno.*', 'adm_grupo.descripcion as grupo', 'presupuesto_interno_estado.descripcion as estadopi', 'sis_sede.descripcion as sede')
+            ->select(
+                'presupuesto_interno.*',
+                'adm_grupo.descripcion as grupo',
+                'adm_estado_doc.estado_doc   as estadopi',
+                'sis_sede.descripcion as sede'
+            )
             ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'presupuesto_interno.id_grupo')
-            ->join('finanzas.presupuesto_interno_estado', 'presupuesto_interno_estado.id', '=', 'presupuesto_interno.estado')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'presupuesto_interno.estado')
             ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'presupuesto_interno.sede_id')
             ->get();
         return DataTables::of($data)
@@ -1893,6 +1898,7 @@ class PresupuestoInternoController extends Controller
 
         $requerimiento_pago_array = array();
         $orden_detalle_logistico_array = array();
+        // return $historial_saldo;
         foreach ($historial_saldo as $key => $value) {
 
 
@@ -2058,5 +2064,47 @@ class PresupuestoInternoController extends Controller
             $item->total = $total;
         }
         return Excel::download(new PresupuestoInternoSaldoExport(json_encode($presupuesto_detalle)), '' . $presupuesto->codigo . '-' . date('Y-m-d') . '.xlsx');
+    }
+
+    public function listarFinalizados()
+    {
+        $array_grupos_id = [];
+        $grupos = UsuarioGrupo::where('id_usuario', Auth::user()->id_usuario)->where('estado', 1)->get();
+        foreach ($grupos as $key => $value) {
+            array_push($array_grupos_id, $value->id_grupo);
+        }
+        // return $grupos;exit;
+        $data = PresupuestoInterno::whereIn('presupuesto_interno.estado',[10])
+            ->whereIn('presupuesto_interno.id_grupo', $array_grupos_id)
+            ->select(
+                'presupuesto_interno.*',
+                'adm_grupo.descripcion as grupo',
+                'adm_estado_doc.estado_doc   as estadopi',
+                'sis_sede.descripcion as sede'
+            )
+            ->join('administracion.adm_grupo', 'adm_grupo.id_grupo', '=', 'presupuesto_interno.id_grupo')
+            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'presupuesto_interno.estado')
+            ->join('administracion.sis_sede', 'sis_sede.id_sede', '=', 'presupuesto_interno.sede_id')
+            ->get();
+        return DataTables::of($data)
+        ->addColumn('total', function ($data) {
+            $total = ($data->gastos == '3' ? PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno, 3) : 0);
+            // $total = PresupuestoInterno::calcularTotalPresupuestoAnual($data->id_presupuesto_interno,3);
+            // $total = ($total>0?$total:0);
+            // return floatval(str_replace(",", "", $total));
+            return round($total, 2);
+        })
+        ->addColumn('total_ejecutado', function ($data) {
+            $total_ejecutado = 0;
+            if ($data->estado == 10) {
+                // $total_ejecutado = PresupuestoInterno::presupuestoEjecutado($data->id_presupuesto_interno,3);
+                $meses_numero = date('m');
+                $total_ejecutado =  HistorialPresupuestoInternoSaldo::totalSalidas($data->id_presupuesto_interno);
+            // $total_ejecutado =  PresupuestoInterno::totalEjecutatoMonto($meses_numero,$data->id_presupuesto_interno);
+            }
+            return number_format(($total_ejecutado), 2, '.', ',');
+        })
+        // ->toJson();
+        ->make(true);
     }
 }

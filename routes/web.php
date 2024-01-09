@@ -1356,6 +1356,8 @@ Route::middleware(['auth'])->group(function () {
                 //exportable de excel saldos ejecutado
 				Route::post('saldos-presupuesto', [PresupuestoInternoController::class, 'saldosPresupuesto'])->name('saldos-presupuesto');
 
+                Route::post('listar-finalizados', [PresupuestoInternoController::class, 'listarFinalizados'])->name('listar-finalizados');
+
 				Route::group(['as' => 'script.', 'prefix' => 'script'], function () {
 					Route::get('generar-presupuesto-gastos', [ScriptController::class, 'generarPresupuestoGastos'])->name('generar-presupuesto-gastos');
 					Route::get('homologacion-partidas', [ScriptController::class, 'homologarPartida'])->name('homologacion-partidas');

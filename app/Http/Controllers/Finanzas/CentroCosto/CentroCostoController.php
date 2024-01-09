@@ -45,22 +45,18 @@ class CentroCostoController extends Controller
         $grupos = Auth::user()->getAllGrupo();
 
         foreach ($grupos as $grupo) {
-            $idGrupoList[] = $grupo->id_grupo;
+                $idGrupoList[] = strval($grupo->id_grupo);
         }
-
-        // $centro_costos = CentroCosto::orderBy('codigo','asc')
-        // ->where('estado',1)
-        // ->whereIn('id_grupo',$idGrupoList)
-        // ->whereRaw('centro_costo.version = (select max("version") from finanzas.centro_costo)')
-        // ->select(['*'])
-        // ->get();
+ 
+    //    $maxPeriodo = CentroCosto::whereIn('id_grupo', $idGrupoList)->max('periodo');
         $centroCostos = CentroCosto::orderBy('codigo', 'asc')
             ->where('estado', 1)
-            ->whereIn('id_grupo', $idGrupoList)
-            ->whereRaw('centro_costo.periodo = (select max("periodo") from finanzas.centro_costo)')
+            ->whereIn('id_grupo', $idGrupoList)->where('activo', true)
+            // ->whereRaw('centro_costo.periodo = '.$maxPeriodo)
             ->select(['*', DB::raw("CASE WHEN (SELECT cc.codigo FROM finanzas.centro_costo AS cc WHERE centro_costo.codigo!=cc.codigo AND cc.codigo LIKE centro_costo.codigo || '.%' 
         AND cc.version=centro_costo.version LIMIT 1) IS NULL THEN true ELSE false END AS seleccionable")])->get();
 
+        // return response()->json(array('datos'=>$centroCostos,'grupos'=>$idGrupoList));
         return response()->json($centroCostos);
     }
 

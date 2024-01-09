@@ -1375,6 +1375,7 @@ Route::middleware(['auth'])->group(function () {
 
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');
+                Route::post('grafica/{id}', [PresupuestoInternoController::class, 'grafica'])->name('grafica');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {

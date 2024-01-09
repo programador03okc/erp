@@ -1345,7 +1345,10 @@ class PresupuestoInternoController extends Controller
                     $data=0;
                     $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionSoles = DB::table('almacen.alm_det_req')
                     ->select(
-                        DB::raw("((SUM(alm_det_req.cantidad * alm_det_req.precio_unitario * 1.18)) ) AS total_por_consumido_con_igv"),
+                        // DB::raw("((SUM(alm_det_req.cantidad * alm_det_req.precio_unitario * 1.18)) ) AS total_por_consumido_con_igv"),
+                        DB::raw(" CASE WHEN almacen.alm_req.monto_igv >0 THEN (SUM(alm_det_req.cantidad * alm_det_req.precio_unitario * 1.18))
+                        ELSE (SUM(alm_det_req.cantidad * alm_det_req.precio_unitario ))
+                        END AS total_por_consumido_con_igv"),
                         )
                     ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
                     ->where([
@@ -1357,7 +1360,7 @@ class PresupuestoInternoController extends Controller
                     ->groupBy('alm_req.id_requerimiento')
                     ->get();
 
-                    $requerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=DetalleRequerimiento::select('alm_req.id_requerimiento','alm_req.fecha_registro','alm_det_req.cantidad','alm_det_req.precio_unitario')
+                    $requerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=DetalleRequerimiento::select('alm_req.id_requerimiento','alm_req.fecha_registro','alm_det_req.cantidad','alm_det_req.precio_unitario', 'alm_req.monto_igv')
                     ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
                     ->where([
                         ['alm_det_req.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
@@ -1369,7 +1372,13 @@ class PresupuestoInternoController extends Controller
                     $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=[];
 
                     foreach ($requerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio as $key => $value) {
-                        $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio[] =( $value->cantidad * $value->precio_unitario * 1.18 ) * $this->getTipoCambioVenta($value->fecha_registro);
+                        if(floatval($value->monto_igv) >0){
+                            $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio[] =( $value->cantidad * $value->precio_unitario * 1.18 ) * $this->getTipoCambioVenta($value->fecha_registro);
+                        }else{
+                            $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio[] =( $value->cantidad * $value->precio_unitario ) * $this->getTipoCambioVenta($value->fecha_registro);
+
+                        }
+
                         $test[] =
                         ['id_requerimiento'=> $value->id_requerimiento,
                         'cantidad'=> $value->cantidad,

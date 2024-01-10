@@ -816,16 +816,60 @@ class RequerimientoController extends Controller
                     limit 1 ) AS presupuesto_interno_mes_partida "),
 
                     
-                    DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * 1.18,0)
-                    FROM almacen.alm_det_req as dr
-                    INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
-                    WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7
-                    limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    DB::raw("( SELECT SUM(total) AS total
+                    FROM (
+                      SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) AS total
+                      FROM almacen.alm_det_req AS dr
+                      INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
+                      WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                      AND r.estado IN (1,2) AND dr.estado != 7
+                      GROUP BY r.monto_igv
+                    ) AS t LIMIT 1) 
+                    + 
+                    (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
                     FROM tesoreria.requerimiento_pago_detalle as drp
                     INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
                     WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
-                    limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
+                    limit 1)
+                    AS total_consumido_hasta_fase_aprobacion_con_igv")
+                    // DB::raw("(SELECT dr.cantidad * dr.precio_unitario * 1.18 AS total
+                    // FROM almacen.alm_det_req AS dr
+                    // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
+                    // WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                    // AND r.monto_igv > 0
+                    // AND r.estado IN (1,2) AND dr.estado != 7 LIMIT 1)
+                    // +
+                    // (SELECT dr.cantidad * dr.precio_unitario AS total
+                    // FROM almacen.alm_det_req AS dr
+                    // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
+                    // WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                    // AND r.monto_igv = 0
+                    // AND r.estado IN (1,2) AND dr.estado != 7
+                    // LIMIT 1) 
+                    // + (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    // FROM tesoreria.requerimiento_pago_detalle as drp
+                    // INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                    // WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                    // limit 1)
+                    // AS total_consumido_hasta_fase_aprobacion_con_igv")
+                    
+     
+
+
+
+
+
+                    // DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * 1.18,0)
+                    // FROM almacen.alm_det_req as dr
+                    // INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
+                    // WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7
+                    // limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    // FROM tesoreria.requerimiento_pago_detalle as drp
+                    // INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                    // WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                    // limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
                 )
+              
                 ->where([
                     ['alm_det_req.estado', '!=', 7],
                     ['alm_det_req.id_requerimiento', '=', $requerimiento[0]['id_requerimiento']]
@@ -5086,6 +5130,13 @@ class RequerimientoController extends Controller
         $detalles = DetalleRequerimiento::select(
             'alm_req.codigo as codigo_requerimiento',
             'alm_det_req.*',
+            DB::raw("( SELECT
+            CASE
+                WHEN (alm_req.monto_igv IS null or alm_req.monto_igv = 0) THEN sum(det.cantidad * det.precio_unitario)
+                ELSE sum(det.cantidad * det.precio_unitario) * 1.18::double precision
+            END AS c
+       FROM almacen.alm_det_req det
+      WHERE alm_det_req.id_requerimiento = det.id_requerimiento AND det.estado <> 7) AS subtotal"),
             'presupuesto_interno_detalle.partida as codigo_partida_presupuesto_interno',
             'presupuesto_interno_detalle.descripcion as descripcion_partida_presupuesto_interno',
             'presup_par.codigo as codigo_partida',

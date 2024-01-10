@@ -114,7 +114,7 @@ function construirDetalleRequerimientoListaRequerimientosPendientes(table_id, ro
                     <td style="border: none; text-align:center;">${element.unidad_medida_producto != null ? element.unidad_medida_producto : element.abreviatura}</td>
                     <td style="border: none; text-align:center;">${element.cantidad > 0 ? element.cantidad : ''}</td>
                     <td style="border: none; text-align:center;">${(element.precio_unitario > 0 ? ((element.moneda_simbolo ? element.moneda_simbolo : ((element.moneda_simbolo ? element.moneda_simbolo : '') + '0.00')) + $.number((element.precio_unitario), 2)) : (element.moneda_simbolo ? element.moneda_simbolo : '') + '0.00')}</td>
-                    <td style="border: none; text-align:center;">${(parseFloat(element.subtotal) > 0 ? ((element.moneda_simbolo ? element.moneda_simbolo : '') + $.number((element.subtotal*1.18), 2)) : ((element.moneda_simbolo ? element.moneda_simbolo : '') + $.number((element.cantidad * element.precio_unitario *1.18), 2)))}</td>
+                    <td style="border: none; text-align:center;">${element.moneda_simbolo} ${(parseFloat(element.subtotal) > 0 ? $.number(element.subtotal, 2, ".", ",") : '')}</td>
                     <td style="border: none; text-align:center;">${element.motivo != null ? element.motivo : ''}</td>
                     <td style="border: none; text-align:center;">${element.estado_doc != null && element.tiene_transformacion == false ? element.estado_doc : ''}</td>
                     </tr>`;

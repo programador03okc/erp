@@ -2726,7 +2726,7 @@ class ListarRequerimientoPagoView {
                 document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
                 <td>
                     <p class="descripcion-partida"
-                        data-tipo-presupuesto="${data.id_partida_pi >0?'INTERNO':(data.id_partida >0 ?'ANTIGUO':'')}"
+                        data-tipo-presupuesto="${data.detalle[i].id_partida_pi >0?'INTERNO':(data.detalle[i].id_partida >0 ?'ANTIGUO':'')}"
                         data-id-partida="${data.detalle[i].id_partida != null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
                         data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
                         data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"

@@ -168,7 +168,7 @@ function validarPresupuestoParaPago(){
                     size: "normal",
                     rounded: true,
                     sound: false,
-                    delayIndicator: false,
+                    delay: false,
                     msg: mensajeConcatenado.toString()
                 });
 

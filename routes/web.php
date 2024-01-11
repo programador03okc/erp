@@ -1910,6 +1910,8 @@ Route::middleware(['auth'])->group(function () {
 
                 Route::get('cuadro-comparativo-pagos', [RegistroPagoController::class, 'cuadroComparativoPagos'])->name('cuadro-comparativo-pagos');
                 Route::get('cuadro-comparativo-ordenes', [RegistroPagoController::class, 'cuadroComparativoOrdenes'])->name('cuadro-comparativo-ordenes');
+				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+
 			});
 
 			Route::name('confirmacion-pagos.')->prefix('confirmacion-pagos')->group(function () {

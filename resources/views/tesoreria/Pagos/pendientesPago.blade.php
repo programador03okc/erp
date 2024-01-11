@@ -414,6 +414,7 @@ Registro de pagos
 @include('tesoreria.pagos.verAdjuntosPago')
 @include('tesoreria.requerimiento_pago.modal_vista_rapida_requerimiento_pago')
 @include('logistica.reportes.modal_lista_adjuntos')
+@include('logistica.requerimientos.modal_requerimientos_vinculados_con_partida')
 
 @endsection
 
@@ -450,6 +451,8 @@ Registro de pagos
     <script src="{{ asset('js/tesoreria/pagos/modalVistaRapidaRequerimiento.js')}}?v={{filemtime(public_path('js/tesoreria/pagos/modalVistaRapidaRequerimiento.js'))}}"></script>
 
     <script src="{{ asset('js/Tesoreria/Pagos/cuadro-comparativo.js')}}"></script>
+    <script src="{{ asset('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js'))}}"></script>
+
     <script>
     $(document).ready(function(){
 

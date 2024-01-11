@@ -2,6 +2,7 @@
 
 namespace App\Models\Finanzas;
 
+use App\Helpers\ConfiguracionHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class PresupuestoInternoDetalle extends Model
@@ -132,5 +133,109 @@ class PresupuestoInternoDetalle extends Model
     public function getFloatDiciembreAuxAttribute()
     {
       return floatval(str_replace(",", "", $this->diciembre_aux));
+    }
+    public static function cierreMensual(){
+        $mes_actual = date("m");
+        $mes_siguiente = date('m', strtotime('+1 month'));
+        $año_actua = date('Y');
+
+
+        $presupuesto_interno = PresupuestoInterno::where('estado',2)
+        ->whereYear('fecha_registro',$año_actua)
+        ->where('id_presupuesto_interno',47)
+        ->get();
+
+        $nombre_mes = ConfiguracionHelper::mesNumero($mes_actual);
+        $nombre_mes_siguiente = ConfiguracionHelper::mesNumero($mes_siguiente);
+        // return $nombre_mes_siguiente;
+        $mes_aux = $nombre_mes.'_aux';
+        $mes_siguiente =  $nombre_mes_siguiente.'_aux';
+        foreach ($presupuesto_interno as $key => $value) {
+            $historial = PresupuestoInternoDetalle::where('id_presupuesto_interno',$value->id_presupuesto_interno)
+            // ->whereMonth('fecha_registro',$numero_mes)
+            ->where('estado','!=',7)
+            ->where('id_tipo_presupuesto',3)
+            ->orderBy('partida', 'asc')
+            ->get();
+
+            foreach ($historial as $k_h => $v_h) {
+                if ($v_h->registro == '2') {
+
+                    $saldo_mes_actual = floatval(str_replace(",", "", $v_h->$mes_aux)); // saldo del mes actual
+                    $saldo_mes_actual = ($saldo_mes_actual>0?$saldo_mes_actual:0); // valido que el saldo no sea negativo
+
+                    $inicio_mes_siguiente = ($nombre_mes!=='diciembre'?floatval(str_replace(",", "", $v_h->$nombre_mes_siguiente)):0) ;
+
+                    $saldo_mes_siguiente =  $saldo_mes_actual + $inicio_mes_siguiente;
+
+
+
+                    $mes_siguiente = ($nombre_mes!=='diciembre'?$mes_siguiente:'saldo_anual'); //
+
+                    // modifica el saldo del mes siguiente
+                    $presupuesto_interno_detalle= PresupuestoInternoDetalle::find($v_h->id_presupuesto_interno_detalle);
+                    // $presupuesto_interno_detalle->$nombre_mes_siguiente = number_format($saldo_mes_siguiente, 2, '.', ',');
+                    $presupuesto_interno_detalle->$mes_siguiente = number_format($saldo_mes_siguiente, 2, '.', ',');
+                    $presupuesto_interno_detalle->save();
+
+
+                    #historial de saldo
+                    // $historial = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$presupuesto_interno_detalle->id_presupuesto_interno)
+                    // ->where('id_partida',$presupuesto_interno_detalle->id_presupuesto_interno_detalle)
+                    // ->where('descripcion','saldo del mes anterior')->first();
+                    // if (!$historial) {
+                    //     $historial = new HistorialPresupuestoInternoSaldo();
+                    // }
+                    //     $historial->id_presupuesto_interno = $presupuesto_interno_detalle->id_presupuesto_interno;
+                    //     $historial->id_partida = $presupuesto_interno_detalle->id_presupuesto_interno_detalle;
+                    //     $historial->tipo = 'INGRESO';
+                    //     $historial->importe = floatval(str_replace(",", "", $saldo_mes_actual));
+                    //     $historial->mes = $mes_siguiente;
+                    //     $historial->fecha_registro = date('Y-m-d H:i:s');
+                    //     $historial->estado = 3;
+                    //     $historial->descripcion = 'saldo del mes anterior';
+                    //     $historial->operacion = 'S';
+                    // $historial->save();
+                    #-----
+                    PresupuestoInterno::calcularColumnaAuxMensual(
+                        $presupuesto_interno_detalle->id_presupuesto_interno,
+                        $presupuesto_interno_detalle->id_tipo_presupuesto,
+                        $presupuesto_interno_detalle->id_presupuesto_interno_detalle,
+                        $nombre_mes_siguiente
+                    );
+
+
+                }
+
+
+            }
+
+            foreach ($historial as $k_h => $v_h) {
+                PresupuestoInternoDetalle::replicaAux($v_h->id_presupuesto_interno_detalle);
+            }
+
+
+        }
+
+        return ["presupuesto_interno"=>$presupuesto_interno];
+    }
+    public static function replicaAux($id_presupuesto_interno_detalle)
+    {
+        $presupuesto_interno_destalle= PresupuestoInternoDetalle::find($id_presupuesto_interno_detalle);
+        $presupuesto_interno_destalle->enero                    = $presupuesto_interno_destalle->enero_aux;
+        $presupuesto_interno_destalle->febrero                  = $presupuesto_interno_destalle->febrero_aux;
+        $presupuesto_interno_destalle->marzo                    = $presupuesto_interno_destalle->marzo_aux;
+        $presupuesto_interno_destalle->abril                    = $presupuesto_interno_destalle->abril_aux;
+        $presupuesto_interno_destalle->mayo                     = $presupuesto_interno_destalle->mayo_aux;
+        $presupuesto_interno_destalle->junio                    = $presupuesto_interno_destalle->junio_aux;
+        $presupuesto_interno_destalle->julio                    = $presupuesto_interno_destalle->julio_aux;
+        $presupuesto_interno_destalle->agosto                   = $presupuesto_interno_destalle->agosto_aux;
+        $presupuesto_interno_destalle->setiembre                = $presupuesto_interno_destalle->setiembre_aux;
+        $presupuesto_interno_destalle->octubre                  = $presupuesto_interno_destalle->octubre_aux;
+        $presupuesto_interno_destalle->noviembre                = $presupuesto_interno_destalle->noviembre_aux;
+        $presupuesto_interno_destalle->diciembre                = $presupuesto_interno_destalle->diciembre_aux;
+        $presupuesto_interno_destalle->save();
+
+        return $presupuesto_interno_destalle;
     }
 }

@@ -1640,34 +1640,13 @@ class PresupuestoInternoController extends Controller
 
         // $nombre_mes = ConfiguracionHelper::mesNumero($numero_mes);
         // $nombre_mes_siguiente = ConfiguracionHelper::mesNumero($numero_mes_siguiente);
-        // return $numero_mes_siguiente;exit;
-        $nombre_mes = $this->mes($numero_mes);
-        $nombre_mes_siguiente = $this->mes($numero_mes_siguiente);
-        $saldo = PresupuestoInterno::cierreMensual(3, $numero_mes, $nombre_mes, $numero_mes_siguiente, $nombre_mes_siguiente);
-        // $saldo = PresupuestoInterno::cierreMensual(3,$numero_mes,$nombre_mes,$numero_mes_siguiente, $nombre_mes_siguiente);
-        // PresupuestoInterno::calcularColumnaAuxMensual(30, 3, 2960,'junio');
 
-        // $año_actua = date('Y');
 
-        // $presupuesto_interno = PresupuestoInterno::where('estado',2)
-        // ->whereYear('fecha_registro',$año_actua)
-        // ->get();
+        return response()->json(PresupuestoInternoDetalle::cierreMensual(), 200);
+        // $nombre_mes = $this->mes($numero_mes);
+        // $nombre_mes_siguiente = $this->mes($numero_mes_siguiente);
+        // $saldo = PresupuestoInterno::cierreMensual(3, $numero_mes, $nombre_mes, $numero_mes_siguiente, $nombre_mes_siguiente);
 
-        // foreach ($presupuesto_interno as $key => $value) {
-        //     foreach($value->detalle()->where('id_tipo_presupuesto',3)
-        //     ->orderBy('partida', 'asc')->get() as $key_detalle =>$v_detalle){
-        //         if ($key_detalle!==0 && $v_detalle->registro==='2') {
-        //             // return $v_detalle;exit;
-        //             PresupuestoInterno::calcularColumnaAuxMensual(
-        //                 $v_detalle->id_presupuesto_interno,
-        //                 $v_detalle->id_tipo_presupuesto,
-        //                 $v_detalle->id_presupuesto_interno_detalle,
-        //                 $nombre_mes_siguiente
-        //             );
-        //         }
-        //     }
-
-        // }
 
 
         return response()->json(["success" => true], 200);

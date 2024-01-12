@@ -11,6 +11,7 @@ use App\Http\Controllers\ConfiguracionController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
+use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\RevisarAprobarController;
 use App\Http\Controllers\Tesoreria\CierreAperturaController;
@@ -43,6 +44,7 @@ use App\Models\Almacen\AdjuntoDetalleRequerimiento;
 use App\Models\Almacen\AdjuntoRequerimiento;
 use App\Models\Almacen\Almacen;
 use App\Models\Almacen\CdpRequerimiento;
+use App\Models\Almacen\EstadoEnvio;
 use App\Models\Almacen\Producto;
 use App\Models\Almacen\RequerimientoLogisticoView;
 use App\Models\Almacen\Transferencia;
@@ -1188,14 +1190,22 @@ class RequerimientoController extends Controller
 
             if ($tieneIdCdpVinculado == true) {
                 // recorrer input de cdp vinculados
+                
                 for ($c = 0; $c < $countIdCdpVinculado; $c++) {
                     $cdpRequerimiento = new CdpRequerimiento();
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c] >0 ?$request->id_estado_envio[$c]:null;
+                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c]??null;
+                    $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
+
+
+                    if($request->id_estado_envio[$c] >0 ){
+                        (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                    }
                 }
             }
 
@@ -5217,5 +5227,10 @@ class RequerimientoController extends Controller
         $data= $this->requerimientosVinculadosConPartida($request);
         return datatables($data)
         ->toJson();
+    }
+
+
+    public function obtenerEstadosEnvioTrazabilidadDespacho(){
+        return EstadoEnvio::listaEstadosDespacho();
     }
 }

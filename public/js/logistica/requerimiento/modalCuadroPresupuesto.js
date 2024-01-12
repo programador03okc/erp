@@ -1,6 +1,9 @@
 $('#form-requerimiento').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
     this.modalListaCuadroDePresupuesto();
 });
+$('#form-requerimiento').on("change", "select.handleChangeEstadoEnvio", (e) => {
+    this.seleccionarEstadoEnvio(e.currentTarget);
+});
 $('#form-requerimiento-pago').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
     this.modalListaCuadroDePresupuesto();
 });
@@ -174,9 +177,44 @@ function limpiarTabla(idElement) {
     }
 }
 
+
+function obtenerEstadosEnvioTrazabilidadDespacho() {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'GET',
+            url: `obtener-estados-envio-trazabilidad-despacho`,
+            dataType: 'JSON',
+            success(response) {
+                resolve(response);
+            },
+            error: function (err) {
+                reject(err)
+            }
+        });
+    });
+}
+
+
+function seleccionarEstadoEnvio(obj){
+    if(obj.value >0){
+        Lobibox.notify('info', {
+            title: false,
+            size: 'mini',
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: `Al guardar los cambios en el requerimiento se agregara a la trazabilidad de la ODE`
+        });
+    }
+
+}
+
 function agregarEnTablaCuadroPresupuestoVinculados(element) {
-    console.log(element);
-    document.querySelector("tbody[id='body_cdp_vinculados']").insertAdjacentHTML('beforeend', `
+    // console.log(element);
+
+    let html='';
+    obtenerEstadosEnvioTrazabilidadDespacho().then((estadosEnvio) => {
+        html+= `
         <tr>
             <td style="text-align:center;">
                 <input type="text" name="id_cpd_vinculado[]" value="${element.id_cdp_requerimiento}" hidden>
@@ -184,12 +222,26 @@ function agregarEnTablaCuadroPresupuestoVinculados(element) {
                 <input type="text" name="codigo_oportunidad_cpd_vinculado[]" value="${element.codigo_oportunidad}" hidden> ${element.codigo_oportunidad}</td>
             <td style="text-align:left;"><input type="text" name="nombre_entidad_cpd_vinculado[]" value="${element.nombre_entidad}" hidden> ${element.nombre_entidad}</td>
             <td style="text-align:right;"><span>S/</span> <input type="numeric" min="0" name="monto_cpd_vinculado[]" value="${parseFloat(element.monto)}"> </td>
+            <td style="text-align:right;"> <select class="form-control handleChangeEstadoEnvio" name="id_estado_envio[]"><option value="0">Seleccione un estado para enviar a trazabilidad</option>`;
+            estadosEnvio.forEach(ee => {
+                if(element.id_estado_envio >0 && ee.id_estado == element.id_estado_envio){
+                        html += `<option value="${ee.id_estado}" selected>${ee.descripcion}</option>`;
+                }else{
+                    html += `<option value="${ee.id_estado}">${ee.descripcion}</option>`;
+                }
+            });
+            html+=`</select> </td>
+            <td style="text-align:right;"><input type="date" name="fecha_estado[]" value="${element.fecha_estado !=null ?element.fecha_estado:moment().format("YYYY-MM-DD")}"> </td>
             <td style="text-align:center;">
                 <button type="button" class="btn btn-danger btn-xs activation" name="btnEliminarVinculoConCdp" data-id="${element.id}" data-codigo-oportunidad="${element.codigo_oportunidad}" onClick="eliminarVinculoConCdp(event);"title="Eliminar">
                 <i class="fas fa-trash"></i>
                 </button>
             </td>
-            </tr>`);
+            </tr>`;
+
+            document.querySelector("tbody[id='body_cdp_vinculados']").insertAdjacentHTML('beforeend',html );
+    });
+ 
 }
 
 function eliminarVinculoConCdp(e) {

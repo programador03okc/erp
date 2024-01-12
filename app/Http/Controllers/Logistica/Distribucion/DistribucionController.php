@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\AlmacenController;
+use App\Models\Almacen\Requerimiento;
 use App\Models\Distribucion\OrdenDespacho;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -1805,6 +1806,124 @@ class DistribucionController extends Controller
             ->orderBy('orden_despacho_obs.fecha_estado')
             ->get();
         return response()->json($obs);
+    }
+
+    public function guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento)
+    {
+        $requerimiento = Requerimiento::where([['id_cc',$cdpRequerimiento->id_cc],['estado','!=',7]])->first();
+        if($requerimiento !=null && $requerimiento->id_requerimiento >0){
+            $ordenDespachoExterno = OrdenDespacho::where([['id_requerimiento',$requerimiento->id_requerimiento],['aplica_cambios',false],['estado','!=',7]])->first();
+            if($ordenDespachoExterno!=null && $ordenDespachoExterno->id_od >0){
+
+                // actualizar estado envio de orden de despacho
+                DB::table('almacen.orden_despacho')
+                ->where('id_od', $ordenDespachoExterno->id_od)
+                ->update([
+                    'id_estado_envio' => $cdpRequerimiento->id_estado_envio, 
+                    'fecha_actualizacion_od' => new Carbon()
+                ]);
+
+                if($cdpRequerimiento->id_estado_envio ==8){
+                    
+                    DB::table('almacen.alm_req_obs')
+                    ->insert([
+                        'id_requerimiento' => $requerimiento->id_requerimiento,
+                        'accion' => 'ENTREGADO',
+                        'descripcion' => 'Entregado al cliente',
+                        'id_usuario' =>  Auth::user()->id_usuario,
+                        'fecha_registro' => new Carbon()
+                    ]);
+
+                    $oc = DB::table('almacen.alm_req')
+                    ->select(
+                        'oc_propias_view.id',
+                        'oc_propias_view.tipo',
+                        'oc_directas.id_despacho as id_despacho_directa',
+                        'oc_propias.id_despacho as id_despacho_propia'
+                    )
+                    ->join('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
+                    ->join('mgcp_oportunidades.oportunidades', 'oportunidades.id', '=', 'cc.id_oportunidad')
+                    ->join('mgcp_ordenes_compra.oc_propias_view', 'oc_propias_view.id_oportunidad', '=', 'cc.id_oportunidad')
+                    ->leftJoin('mgcp_ordenes_compra.oc_directas', 'oc_directas.id', '=', 'oc_propias_view.id')
+                    ->leftJoin('mgcp_acuerdo_marco.oc_propias', 'oc_propias.id', '=', 'oc_propias_view.id')
+                    ->where('alm_req.id_requerimiento', $requerimiento->id_requerimiento)
+                    ->first();
+    
+                    if ($oc !== null) {
+                        //tiene un despacho
+                        $id_despacho = $oc->id_despacho_directa !== null ? $oc->id_despacho_directa
+                            : ($oc->id_despacho_propia !== null ? $oc->id_despacho_propia : null);
+        
+                        //si ya existe un despacho
+                        if ($id_despacho !== null) {
+        
+                            DB::table('mgcp_ordenes_compra.despachos')
+                                ->where('id', $id_despacho)
+                                ->update([
+                                    'flete_real' => (($ordenDespachoExterno->importe_flete !== null ? $ordenDespachoExterno->importe_flete : 0) + ($cdpRequerimiento->monto !== null ? $cdpRequerimiento->monto : 0)),
+                                    'fecha_llegada' => $cdpRequerimiento->fecha_estado,
+                                ]);
+                        } else {
+                            $id_despacho = DB::table('mgcp_ordenes_compra.despachos')
+                                ->insertGetId([
+                                    'flete_real' => (($ordenDespachoExterno->importe_flete !== null ? $ordenDespachoExterno->importe_flete : 0) + ($cdpRequerimiento->monto !== null ? $cdpRequerimiento->monto : 0)),
+                                    'fecha_llegada' => $cdpRequerimiento->fecha_estado,
+                                    'id_usuario' => Auth::user()->id_usuario,
+                                    'fecha_registro' => new Carbon(),
+                                ], 'id');
+                        }
+        
+                        if ($oc->tipo == 'am') {
+                            DB::table('mgcp_acuerdo_marco.oc_propias')
+                                ->where('oc_propias.id', $oc->id)
+                                ->update([
+                                    'despachada' => true,
+                                    'id_despacho' => $id_despacho
+                                ]);
+                        } else {
+                            DB::table('mgcp_ordenes_compra.oc_directas')
+                                ->where('oc_directas.id', $oc->id)
+                                ->update([
+                                    'despachada' => true,
+                                    'id_despacho' => $id_despacho
+                                ]);
+                        }
+        
+                    }
+                }
+
+                if($cdpRequerimiento->id_estado_envio ==7 || $cdpRequerimiento->id_estado_envio ==8 || $cdpRequerimiento->id_estado_envio ==6 ){
+                    $estado = new Carbon($cdpRequerimiento->fecha_estado);
+                    $entrega = new Carbon($ordenDespachoExterno->fecha_entrega);
+                    $plazo_excedido = $estado->gt($entrega) ? true : false;
+        
+                    DB::table('almacen.orden_despacho')
+                        ->where('id_od', $ordenDespachoExterno->id_od)
+                        ->update([
+                            'plazo_excedido' => $plazo_excedido,
+                            'fecha_entregada' => $cdpRequerimiento->fecha_estado,
+                            'fecha_actualizacion_od' => new Carbon()
+                        ]);
+                }
+
+
+                // guardar nuevo estado de trazabilidad
+                $id_obs = DB::table('almacen.orden_despacho_obs')
+                ->insertGetId([
+                    'id_od' => $ordenDespachoExterno->id_od,
+                    'accion' => $cdpRequerimiento->id_estado_envio,
+                    'observacion' => null,
+                    'fecha_estado' => $cdpRequerimiento->fecha_estado,
+                    'registrado_por' => Auth::user()->id_usuario,
+                    'gasto_extra' => $cdpRequerimiento->monto,
+                    'fecha_registro' => new Carbon()
+                ], 'id_obs');
+
+                
+
+            }
+        }
+        
     }
 
     public function guardarEstadoEnvio(Request $request)

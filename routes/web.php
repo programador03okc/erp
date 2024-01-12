@@ -403,6 +403,8 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('listar-items-requerimiento-logistico-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoLogisticoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-logistico-con-partida-presupuesto-interno');
 				Route::get('listar-items-requerimiento-pago-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoPagoController::class, 'obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-pago-con-partida-presupuesto-interno');
+				Route::get('obtener-estados-envio-trazabilidad-despacho', [RequerimientoController::class, 'obtenerEstadosEnvioTrazabilidadDespacho'])->name('obtener-estados-envio-trazabilidad-despacho');
+
 
 			});
 

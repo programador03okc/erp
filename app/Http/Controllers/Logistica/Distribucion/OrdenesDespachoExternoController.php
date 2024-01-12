@@ -21,6 +21,7 @@ use App\Models\Administracion\Periodo;
 use App\Models\Administracion\Prioridad;
 use App\models\almacen\AdjuntosDespacho;
 use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\Almacen\EstadoEnvio;
 use App\Models\Almacen\Requerimiento;
 use App\Models\Comercial\Cliente;
 use App\models\Configuracion\AccesosUsuarios;
@@ -62,13 +63,7 @@ class OrdenesDespachoExternoController extends Controller
 
     function view_ordenes_despacho_externo()
     {
-        $estados = DB::table('almacen.estado_envio')
-            // ->where([
-            //     ['id_estado', '>=', 3],
-            //     ['id_estado', '<=', 8]
-            // ])
-            ->whereIn('id_estado', [3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15])->orderBy('descripcion', 'asc')
-            ->get();
+        $estados = EstadoEnvio::listaEstadosDespacho();
 
         $periodos = Periodo::mostrar();
         $idPeriodoMayor = Periodo::obtenerIdPeriodoActual();

@@ -362,10 +362,13 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_grupo = $request->grupo > 0 ? $request->grupo : null;
             $requerimientoPago->id_division = $request->division;
             $requerimientoPago->id_tipo_destinatario = $request->id_tipo_destinatario;
-            $requerimientoPago->id_cuenta_persona = $request->id_cuenta_persona > 0 ? $request->id_cuenta_persona : null;
-            $requerimientoPago->id_persona = $request->id_persona > 0 ? $request->id_persona : null;
-            $requerimientoPago->id_contribuyente = $request->id_contribuyente > 0 ? $request->id_contribuyente : null;
-            $requerimientoPago->id_cuenta_contribuyente = $request->id_cuenta_contribuyente > 0 ? $request->id_cuenta_contribuyente : null;
+            if($request->id_tipo_destinatario ==1){
+                $requerimientoPago->id_persona = $request->id_persona > 0 ? $request->id_persona : null;
+                $requerimientoPago->id_cuenta_persona = $request->id_cuenta > 0 ? $request->id_cuenta : null;
+            }elseif($request->id_tipo_destinatario ==2){
+                $requerimientoPago->id_contribuyente = $request->id_contribuyente > 0 ? $request->id_contribuyente : null;
+                $requerimientoPago->id_cuenta_contribuyente = $request->id_cuenta > 0 ? $request->id_cuenta : null;
+            }
             // $requerimientoPago->confirmacion_pago = ($request->tipo_requerimiento == 2 ? ($request->fuente == 2 ? true : false) : true);
             $requerimientoPago->monto_total = $request->monto_total;
             $requerimientoPago->id_proyecto = $request->proyecto > 0 ? $request->proyecto : null;
@@ -895,10 +898,15 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_grupo = $request->grupo > 0 ? $request->grupo : null;
             $requerimientoPago->id_division = $request->division;
             $requerimientoPago->id_tipo_destinatario = $request->id_tipo_destinatario;
-            $requerimientoPago->id_cuenta_persona = $request->id_cuenta_persona > 0 ? $request->id_cuenta_persona : null;
-            $requerimientoPago->id_persona = $request->id_persona > 0 ? $request->id_persona : null;
-            $requerimientoPago->id_contribuyente = $request->id_contribuyente > 0 ? $request->id_contribuyente : null;
-            $requerimientoPago->id_cuenta_contribuyente = $request->id_cuenta_contribuyente > 0 ? $request->id_cuenta_contribuyente : null;
+            if($requerimientoPago->id_tipo_destinatario ==1){
+                $requerimientoPago->id_persona = $request->id_persona > 0 ? $request->id_persona : null;
+                $requerimientoPago->id_cuenta_persona = $request->id_cuenta > 0 ? $request->id_cuenta : null;
+                
+            }elseif($requerimientoPago->id_tipo_destinatario==2){
+                $requerimientoPago->id_contribuyente = $request->id_contribuyente > 0 ? $request->id_contribuyente : null;
+                $requerimientoPago->id_cuenta_contribuyente = $request->id_cuenta > 0 ? $request->id_cuenta : null;
+
+            }
             if ($request->id_estado == 3) { // levantar observación
                 $requerimientoPago->id_estado = 1;
                 // $trazabilidad = new Trazabilidad();
@@ -1380,9 +1388,13 @@ class RequerimientoPagoController extends Controller
         $mensaje = '';
 
         if ($idTipoDestinatario == 1) { // tipo persona
-            $destinatario = Persona::with("tipoDocumentoIdentidad", "cuentaPersona.banco.contribuyente", "cuentaPersona.tipoCuenta", "cuentaPersona.moneda")->where([["nro_documento", $nroDocumento], ["estado", "!=", 7]])->get();
+            $destinatario = Persona::with(["tipoDocumentoIdentidad","cuentaPersona" => function ($q) {
+                $q->where('rrhh_cta_banc.estado','!=', 7);
+            }, "cuentaPersona.banco.contribuyente", "cuentaPersona.tipoCuenta", "cuentaPersona.moneda"])->where([["nro_documento", $nroDocumento], ["estado", "!=", 7]])->get();
         } elseif ($idTipoDestinatario == 2) { // tipo contribuyente
-            $destinatario =  Contribuyente::with("tipoDocumentoIdentidad", "cuentaContribuyente.banco.contribuyente", "cuentaContribuyente.tipoCuenta")->where([["nro_documento", $nroDocumento], ["estado", "!=", 7]])->get();
+            $destinatario =  Contribuyente::with(["tipoDocumentoIdentidad","cuentaContribuyente"=> function ($q) {
+                $q->where('adm_cta_contri.estado','!=', 7);
+            }, "cuentaContribuyente.banco.contribuyente", "cuentaContribuyente.tipoCuenta"])->where([["nro_documento", $nroDocumento], ["estado", "!=", 7]])->get();
         } else {
             $tipo_estado = "error";
             $mensaje = 'no se recibio un valor valido para tipo de destinatario';

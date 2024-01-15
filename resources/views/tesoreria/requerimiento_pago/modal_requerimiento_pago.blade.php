@@ -269,9 +269,7 @@
                                         <div class="form-group">
                                             <h5>Cuenta bancaria *</h5>
                                             <div style="display:flex;">
-                                                <input class="oculto" name="id_cuenta_persona">
-                                                <input class="oculto" name="id_cuenta_contribuyente">
-                                                <select class="form-control activation handleCheckStatusValue handleChangeCuenta" name="id_cuenta">
+                                                <select class="form-control activation handleCheckStatusValue" name="id_cuenta">
 
                                                 </select>
                                                 <!-- <input type="text" class="form-control handleCheckStatusValue" name="nro_cuenta_principal_proveedor" placeholder="Nro cuenta seleccionada" readOnly> -->

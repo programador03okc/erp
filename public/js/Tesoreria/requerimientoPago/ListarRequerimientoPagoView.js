@@ -2281,6 +2281,18 @@ class ListarRequerimientoPagoView {
                             'error'
                         );
                     }
+
+                    if(response.memsaje_creacion_estado_trazabilidad!=''){
+                        
+                        Lobibox.notify('info', {
+                            title: false,
+                            size: 'normal',
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: response.memsaje_creacion_estado_trazabilidad
+                        });
+                    }
                 },
                 statusCode: {
                     404: function () {

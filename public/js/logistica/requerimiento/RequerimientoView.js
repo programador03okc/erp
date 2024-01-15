@@ -2606,6 +2606,18 @@ class RequerimientoView {
                                 delayIndicator: false,
                                 msg: response.mensaje
                             });
+
+                            if(response.memsaje_creacion_estado_trazabilidad !=''){
+
+                                Lobibox.notify('info', {
+                                    title: false,
+                                    size: 'normal',
+                                    rounded: true,
+                                    sound: false,
+                                    delayIndicator: false,
+                                    msg: response.memsaje_creacion_estado_trazabilidad
+                                });
+                            }
                             this.RestablecerFormularioRequerimiento();
                         } else {
                             $('#wrapper-okc').LoadingOverlay("hide", true);

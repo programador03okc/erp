@@ -11,6 +11,7 @@ use App\Http\Controllers\Almacen\Reporte\SaldosController;
 use App\Http\Controllers\ContabilidadController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
+use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\RevisarAprobarController;
 use App\Models\Administracion\Aprobacion;
@@ -318,13 +319,13 @@ class RequerimientoPagoController extends Controller
 
     public function getCodigoOportunidad($idCC){
         $codigo_oportunidad=null;
-        $cc = CuadroCosto::with("oportunidad")->find($idCC)->first();
+        $cc = CuadroCostoView::find($idCC);
         if($cc){
-            $codigo_oportunidad=  $cc->oportunidad !=null ? $cc->oportunidad->codigo_oportunidad:null;
+            $codigo_oportunidad=  $cc->codigo_oportunidad??null;
         }
-
+        
         return $codigo_oportunidad;
-
+         
     }
 
 
@@ -334,6 +335,8 @@ class RequerimientoPagoController extends Controller
         DB::beginTransaction();
         try {
 
+            $cantidadDeEstadosCreadosEnTrazabilidad=0;
+            $mensajeEstadoTrazabilidad='';
             // evaluar si el estado del cierre periodo
 
             $añoPeriodo = Periodo::find($request->periodo)->descripcion;
@@ -433,9 +436,19 @@ class RequerimientoPagoController extends Controller
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
+                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c] >0 ?$request->id_estado_envio[$c]:null;
                     $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
+
+                    if($request->id_estado_envio[$c] >0 ){
+                        $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+
+                        if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                            $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                        }
+                    }
                 }
             }
 
@@ -531,10 +544,10 @@ class RequerimientoPagoController extends Controller
             LogActividad::registrar(Auth::user(), 'Nuevo requerimiento de pago', 2, $detalle->getTable(), null, $detalle, $comentarioDetalle,'Necesidades');
 
 
-            return response()->json(['id_requerimiento_pago' => $requerimientoPago->id_requerimiento_pago, 'mensaje' => 'Se guardó el requerimiento de pago ' . $codigo]);
+            return response()->json(['id_requerimiento_pago' => $requerimientoPago->id_requerimiento_pago, 'mensaje' => 'Se guardó el requerimiento de pago ' . $codigo, 'memsaje_creacion_estado_trazabilidad'=>$mensajeEstadoTrazabilidad]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['id_requerimiento_pago' => 0, 'mensaje' => 'Hubo un problema al guardar el requerimiento de pago. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+            return response()->json(['id_requerimiento_pago' => 0, 'mensaje' => 'Hubo un problema al guardar el requerimiento de pago. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage(),'memsaje_creacion_estado_trazabilidad'=>'']);
         }
     }
 

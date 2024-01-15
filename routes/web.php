@@ -507,6 +507,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 				Route::post('requerimiento-sustentado', [RequerimientoPagoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+				Route::get('obtener-estados-envio-trazabilidad-despacho', [RequerimientoController::class, 'obtenerEstadosEnvioTrazabilidadDespacho'])->name('obtener-estados-envio-trazabilidad-despacho');
+
 
 			});
 		});

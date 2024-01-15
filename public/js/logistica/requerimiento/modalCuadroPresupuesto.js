@@ -1,11 +1,14 @@
 $('#form-requerimiento').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
     this.modalListaCuadroDePresupuesto();
 });
+$('#form-requerimiento-pago').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
+    this.modalListaCuadroDePresupuesto();
+});
 $('#form-requerimiento').on("change", "select.handleChangeEstadoEnvio", (e) => {
     this.seleccionarEstadoEnvio(e.currentTarget);
 });
-$('#form-requerimiento-pago').on("click", "button.handleClickModalListaCuadroDePresupuesto", () => {
-    this.modalListaCuadroDePresupuesto();
+$('#form-requerimiento-pago').on("change", "select.handleChangeEstadoEnvio", (e) => {
+    this.seleccionarEstadoEnvio(e.currentTarget);
 });
 $('#listaCuadroPresupuesto').on("click", "button.handleClickAgregarCDP", (e) => {
     this.agregarCDP(e.currentTarget);

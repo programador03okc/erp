@@ -56,6 +56,7 @@ use App\Models\Finanzas\PresupuestoInterno;
 use App\Models\Logistica\AdjuntosLogisticos;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\mgcp\CuadroCosto\CuadroCostoView;
 use App\Models\Presupuestos\Presupuesto;
 use App\Models\Rrhh\Persona;
 use App\Models\Rrhh\Postulante;
@@ -1048,9 +1049,9 @@ class RequerimientoController extends Controller
 
     public function getCodigoOportunidad($idCC){
         $codigo_oportunidad=null;
-        $cc = CuadroCosto::with("oportunidad")->find($idCC)->first();
+        $cc = CuadroCostoView::find($idCC);
         if($cc){
-            $codigo_oportunidad=  $cc->oportunidad !=null ? $cc->oportunidad->codigo_oportunidad:null;
+            $codigo_oportunidad=  $cc->codigo_oportunidad??null;
         }
         
         return $codigo_oportunidad;
@@ -1063,6 +1064,8 @@ class RequerimientoController extends Controller
         // exit();
         DB::beginTransaction();
         try {
+            $mensajeEstadoTrazabilidad ="";
+            $cantidadDeEstadosCreadosEnTrazabilidad=0;
 
             $countDetalle = count($request->descripcion);
             $tieneIdCdpVinculado = false;
@@ -1204,7 +1207,10 @@ class RequerimientoController extends Controller
 
 
                     if($request->id_estado_envio[$c] >0 ){
-                        (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                        $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                        if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                            $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                        }
                     }
                 }
             }
@@ -1295,10 +1301,10 @@ class RequerimientoController extends Controller
                 $this->guardarAdjuntoNivelDetalleItem($adjuntoDetelleRequerimiento, $codigo);
             }
 
-            return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'mensaje' => 'Se guardó el requerimiento ' . $codigo]);
+            return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'mensaje' => 'Se guardó el requerimiento ' . $codigo, 'memsaje_creacion_estado_trazabilidad'=>$mensajeEstadoTrazabilidad]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['id_requerimiento' => 0, 'mensaje' => 'Hubo un problema al guardar el requerimiento. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+            return response()->json(['id_requerimiento' => 0, 'mensaje' => 'Hubo un problema al guardar el requerimiento. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage(), 'memsaje_creacion_estado_trazabilidad'=>'']);
         }
     }
 

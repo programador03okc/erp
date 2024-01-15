@@ -177,9 +177,6 @@ class ListarRequerimientoPagoView {
         $('#modal-requerimiento-pago').on("click", "button.handleClickInfoAdicionalCuentaSeleccionada", (e) => {
             this.mostrarInfoAdicionalCuentaSeleccionada(e.currentTarget);
         });
-        $('#modal-requerimiento-pago').on("change", "select.handleChangeCuenta", (e) => {
-            this.actualizarIdCuentaBancariaDeInput(e.currentTarget);
-        });
         $('#modal-requerimiento-pago').on("change", "select.handleChangeTipoDestinatario", (e) => {
             this.changeTipoDestinatario(e.currentTarget);
         });
@@ -319,7 +316,7 @@ class ListarRequerimientoPagoView {
                         'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
                         'presupuesto_utilizado_al_cambio': 0,
                         'presupuesto_utilizado': 0,
-                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion!="" && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion !=null ?((tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion).replace(/,/gi, '')):0,
+                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion != "" && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion != null ? ((tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion).replace(/,/gi, '')) : 0,
                         'saldo_total': 0,
                         'saldo_mes': 0
                     });
@@ -349,20 +346,20 @@ class ListarRequerimientoPagoView {
             if (tempPartidasActivas[p].id_moneda_presupuesto_utilizado == 2) { // moneda dolares
                 let presupuesto_utilizado_alCambio = tempPartidasActivas[p].presupuesto_utilizado * actualTipoCambioCompra;
                 tempPartidasActivas[p].presupuesto_utilizado_al_cambio = presupuesto_utilizado_alCambio;
-                if(document.querySelector("input[name='id_requerimiento_pago']").value >0){
+                if (document.querySelector("input[name='id_requerimiento_pago']").value > 0) {
 
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado_al_cambio>0?tempPartidasActivas[p].presupuesto_utilizado_al_cambio:0));
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado_al_cambio>0?tempPartidasActivas[p].presupuesto_utilizado_al_cambio:0));
-                }else{
+                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
+                } else {
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                     tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
 
                 }
             } else {
-                if(document.querySelector("input[name='id_requerimiento_pago']").value >0){
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado>0?tempPartidasActivas[p].presupuesto_utilizado:0));
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado>0?tempPartidasActivas[p].presupuesto_utilizado:0));
-                }else{
+                if (document.querySelector("input[name='id_requerimiento_pago']").value > 0) {
+                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0));
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0));
+                } else {
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                     tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                 }
@@ -415,8 +412,8 @@ class ListarRequerimientoPagoView {
                     document.querySelector("select[name='proyecto']").setAttribute("disabled", true);
                     document.querySelector("select[name='proyecto']").value = '';
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
-                    document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
-                    cdpVinculadoConRequerimientoList=[];
+                    document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML = "";
+                    cdpVinculadoConRequerimientoList = [];
                     limpiarTabla("tablaCuadroPresupuestoVinculados");
 
 
@@ -429,9 +426,9 @@ class ListarRequerimientoPagoView {
                 if (valor > 0) {
                     document.querySelector("select[name='id_presupuesto_interno']").setAttribute("disabled", true);
                     document.querySelector("select[name='id_presupuesto_interno']").value = '';
-                    document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
+                    document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML = "";
                     document.querySelector("button[name='btnSearchCDP']").setAttribute("disabled", true);
-                    cdpVinculadoConRequerimientoList=[];
+                    cdpVinculadoConRequerimientoList = [];
                     limpiarTabla("tablaCuadroPresupuestoVinculados");
 
 
@@ -1038,8 +1035,8 @@ class ListarRequerimientoPagoView {
         tempArchivoAdjuntoRequerimientoPagoCabeceraList = [];
         tempArchivoAdjuntoRequerimientoPagoDetalleList = [];
 
-        cdpVinculadoConRequerimientoList=[];
-        document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML="";
+        cdpVinculadoConRequerimientoList = [];
+        document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").innerHTML = "";
 
 
         // tempIdArchivoAdjuntoRequerimientoPagoCabeceraToDeleteList = [];
@@ -1347,7 +1344,7 @@ class ListarRequerimientoPagoView {
                 descripcionPartida = data.presupuesto_interno_detalle != null ? data.presupuesto_interno_detalle.descripcion : '';
                 totalPartida = data.presupuesto_interno_total_partida != null ? data.presupuesto_interno_total_partida : 0;
                 totalPartidaMes = data.presupuesto_interno_mes_partida != null ? data.presupuesto_interno_mes_partida : 0;
-                totalPorConsumidoConIgvFaseAprobacion=data.total_consumido_hasta_fase_aprobacion_con_igv>0 ?(data.total_consumido_hasta_fase_aprobacion_con_igv):0;
+                totalPorConsumidoConIgvFaseAprobacion = data.total_consumido_hasta_fase_aprobacion_con_igv > 0 ? (data.total_consumido_hasta_fase_aprobacion_con_igv) : 0;
 
             }
         }
@@ -1499,7 +1496,7 @@ class ListarRequerimientoPagoView {
         tempObjectBtnPartida = obj.target;
         let id_grupo = document.querySelector("form[id='form-requerimiento-pago'] select[name='grupo']").value;
         let id_proyecto = document.querySelector("form[id='form-requerimiento-pago'] select[name='proyecto']").value;
-        let tipoPptoCDP = document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") !=null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount:0;
+        let tipoPptoCDP = document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") != null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount : 0;
         let usuarioProyectos = false;
         // console.log(gruposUsuario);
         gruposUsuario.forEach(element => {
@@ -1992,7 +1989,7 @@ class ListarRequerimientoPagoView {
             }
         }
         // console.log(document.querySelector("select[name='id_cuenta']").value);
-        if ((document.querySelector("select[name='id_cuenta']").value == '' || (document.querySelector("input[name='id_cuenta_persona']").value == '' && document.querySelector("input[name='id_cuenta_contribuyente']").value == ''))) {
+        if ((document.querySelector("select[name='id_cuenta']").value == '')) {
             continuar = false;
             if (document.querySelector("select[name='id_cuenta']").closest('div').parentElement.querySelector("span") == null) {
                 let newSpanInfo = document.createElement("span");
@@ -2018,7 +2015,7 @@ class ListarRequerimientoPagoView {
                         tbodyChildren[index].querySelector("input[class~='centroCosto']").closest('td').querySelector("div[class~='form-group']").classList.add('has-error');
                     }
                 }
-                if ((document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") !=null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount:0) ==0) {
+                if ((document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody") != null ? document.querySelector("table[id='tablaCuadroPresupuestoVinculados'] tbody").childElementCount : 0) == 0) {
 
                     if (!(tbodyChildren[index].querySelector("input[class~='partida']").value > 0)) {
                         continuar = false;
@@ -2280,6 +2277,18 @@ class ListarRequerimientoPagoView {
                             response.mensaje,
                             'error'
                         );
+                    }
+
+                    if (response.memsaje_creacion_estado_trazabilidad != '') {
+
+                        Lobibox.notify('info', {
+                            title: false,
+                            size: 'normal',
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: response.memsaje_creacion_estado_trazabilidad
+                        });
                     }
                 },
                 statusCode: {
@@ -2686,7 +2695,7 @@ class ListarRequerimientoPagoView {
         }
 
         if (data.cdp_requerimiento.length > 0) {
-            let codigosOportunidad= [];
+            let codigosOportunidad = [];
             (data.cdp_requerimiento).forEach(element => {
                 codigosOportunidad.push(element.codigo_oportunidad);
             });
@@ -2726,17 +2735,17 @@ class ListarRequerimientoPagoView {
                 document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
                 <td>
                     <p class="descripcion-partida"
-                        data-tipo-presupuesto="${data.detalle[i].id_partida_pi >0?'INTERNO':(data.detalle[i].id_partida >0 ?'ANTIGUO':'')}"
+                        data-tipo-presupuesto="${data.detalle[i].id_partida_pi > 0 ? 'INTERNO' : (data.detalle[i].id_partida > 0 ? 'ANTIGUO' : '')}"
                         data-id-partida="${data.detalle[i].id_partida != null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
                         data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
                         data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"
-                        data-total-por-consumido-con-igv-fase-aprobacion="${data.total_consumido_hasta_fase_aprobacion_con_igv?data.total_consumido_hasta_fase_aprobacion_con_igv:0}"
+                        data-total-por-consumido-con-igv-fase-aprobacion="${data.total_consumido_hasta_fase_aprobacion_con_igv ? data.total_consumido_hasta_fase_aprobacion_con_igv : 0}"
                         title="${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.partida : ''}";
                         style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.descripcion : ''}
                     </p>
                         ${i + 1}
                 </td>
-                <td title="${data.detalle[i].partida !=null ? (data.detalle[i].partida.descripcion).toUpperCase() : (data.detalle[i].presupuesto_interno_detalle != null ? (data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].partida !=null ? data.detalle[i].partida.codigo : (data.detalle[i].presupuesto_interno_detalle !=null ? data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
+                <td title="${data.detalle[i].partida != null ? (data.detalle[i].partida.descripcion).toUpperCase() : (data.detalle[i].presupuesto_interno_detalle != null ? (data.detalle[i].presupuesto_interno_detalle.descripcion).toUpperCase() : '')}" >${data.detalle[i].partida != null ? data.detalle[i].partida.codigo : (data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.partida : '')}</td>
                 <td title="${data.detalle[i].id_centro_costo > 0 ? (data.detalle[i].centro_costo.descripcion).toUpperCase() : ''}">${data.detalle[i].centro_costo != null ? data.detalle[i].centro_costo.codigo : ''}</td>
                 <td name="descripcion_servicio">${data.detalle[i].descripcion != null ? data.detalle[i].descripcion : ''} </td>
                 <td>${data.detalle[i].unidad_medida != null ? data.detalle[i].unidad_medida.descripcion : ''}</td>
@@ -2769,7 +2778,7 @@ class ListarRequerimientoPagoView {
             // ### ==================== Partidas activas ====================== ###
             this.calcularPresupuestoUtilizadoYSaldoPorPartida();
             // ### ==================== /Partidas activas ====================== ###
-            this.llenar_tabla_flujo_aprobacion(data.flujo_aprobacion??[]);
+            this.llenar_tabla_flujo_aprobacion(data.flujo_aprobacion ?? []);
 
         }
 
@@ -2784,7 +2793,7 @@ class ListarRequerimientoPagoView {
                     <td style="text-align:center;">${data[i].orden ? data[i].orden : ''}</td>
                     <td style="text-align:center;">${data[i].rol ? data[i].rol.descripcion : ''}</td>
                     <td style="text-align:left;">${data[i].nombre_usuarios ? data[i].nombre_usuarios.toString() : ''}</td>
-                    <td style="text-align:center;">${data[i].aprobar_sin_respetar_orden =='true' ? 'SI' : 'NO'}</td>
+                    <td style="text-align:center;">${data[i].aprobar_sin_respetar_orden == 'true' ? 'SI' : 'NO'}</td>
                 </tr>`;
             }
         }
@@ -2980,7 +2989,6 @@ class ListarRequerimientoPagoView {
             document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = data.persona != null && data.persona.tipo_documento_identidad != null ? data.persona.tipo_documento_identidad.descripcion : '';
             document.querySelector("div[id='modal-requerimiento-pago'] input[name='nro_documento']").value = data.persona != null && data.persona.nro_documento != null ? data.persona.nro_documento : '';
             document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_destinatario']").value = data.persona != null && data.persona.nombres != null ? ((data.persona.nombres).concat(' ', data.persona.apellido_paterno).concat(' ', data.persona.apellido_materno)) : '';
-            document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = data.id_cuenta_persona != null ? data.id_cuenta_persona : '';
 
             obtenerCuentasBancariasPersona(data.id_persona, (data.id_cuenta_persona != null ? data.id_cuenta_persona : null));
 
@@ -2990,9 +2998,8 @@ class ListarRequerimientoPagoView {
             document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = data.contribuyente != null && data.contribuyente.tipo_documento_identidad != null ? data.contribuyente.tipo_documento_identidad.descripcion : '';
             document.querySelector("div[id='modal-requerimiento-pago'] input[name='nro_documento']").value = data.contribuyente != null && data.contribuyente.nro_documento != null ? data.contribuyente.nro_documento : '';
             document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_destinatario']").value = data.contribuyente != null && data.contribuyente.razon_social != null ? data.contribuyente.razon_social : '';
-            document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = data.id_cuenta_contribuyente != null ? data.id_cuenta_contribuyente : '';
 
-            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (data.id_cuenta_contribuyente != null ? data.id_cuenta_contribuyente : null));
+            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (data.id_cuenta_contribuyente != null ? data.id_cuenta_contribuyente : null),false);
         }
 
         // document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_destinatario']").value = data.proveedor != null ? data.proveedor.razon_social : '';
@@ -3814,34 +3821,12 @@ class ListarRequerimientoPagoView {
 
     }
 
-    actualizarIdCuentaBancariaDeInput(obj) {
-        let idTipoDestinatario = parseInt(document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_tipo_destinatario']").value);
-        if (obj.value > 0) {
-            if (idTipoDestinatario == 1) {
-                document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = obj.value;
-            } else if (idTipoDestinatario == 2) {
-                document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = obj.value;
 
-            } else {
-                Swal.fire(
-                    '',
-                    'Hubo un problema al intentar obtener el tipo de destinatario, por favor vuelva a intentarlo refrescando la página',
-                    'error'
-                );
-            }
-        } else {
-            Swal.fire(
-                '',
-                'Hubo un problema al intentar obtener el id de la cuenta seleccionada, por favor vuelva a intentarlo refrescando la página',
-                'error'
-            );
-        }
-    }
 
     buscarDestinatarioPorNumeroDeDocumento(obj) {
         let idTipoDestinatario = parseInt(document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_tipo_destinatario']").value);
         let option = '';
-        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").innerHTML="";
+        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").innerHTML = "";
         let nroDocumento = (obj.value).trim();
         if (nroDocumento.length > 0 && idTipoDestinatario > 0) {
             $.ajax({
@@ -3875,7 +3860,6 @@ class ListarRequerimientoPagoView {
 
                                     idCuentaPreSeleccionada = response.data[0]['cuenta_persona'][0]['id_cuenta_bancaria'];
                                 }
-                                document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = idCuentaPreSeleccionada;
                                 let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
                                 if (selectCuenta != null) {
                                     while (selectCuenta.children.length > 0) {
@@ -3883,16 +3867,28 @@ class ListarRequerimientoPagoView {
                                     }
                                 }
 
-                                let seleccionado="";
+                                let seleccionado = "";
+                                let tieneCuentaPorDefecto = false;
 
                                 (response.data[0].cuenta_persona).forEach(element => {
+                                    if (element.por_defecto == true) {
+                                        tieneCuentaPorDefecto = true;
+                                    }
+                                });
+                                (response.data[0].cuenta_persona).forEach(element => {
 
-                                    if(idCuentaPreSeleccionada >0){
-                                        if(element.id_cuenta_bancaria == idCuentaPreSeleccionada){
-                                            seleccionado= "selected";
+                                    if (idCuentaPreSeleccionada > 0 && tieneCuentaPorDefecto == false) {
+                                        if (element.id_cuenta_bancaria == idCuentaPreSeleccionada) {
+                                            seleccionado = "selected";
+                                        } else {
+                                            seleccionado = "";
+
                                         }
-                                    }else if(element.por_defecto==true){
-                                        seleccionado= "selected";
+
+                                    } else if (element.por_defecto == true && tieneCuentaPorDefecto == true) {
+                                        seleccionado = "selected";
+                                    } else {
+                                        seleccionado = "";
                                     }
 
                                     option += `
@@ -3906,7 +3902,7 @@ class ListarRequerimientoPagoView {
                                         >
                                         ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cci != null && element.nro_cci != "" ? (element.nro_cci + " (CCI)") : "")}
                                     </option>`;
-                                 });
+                                });
                                 document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").insertAdjacentHTML('beforeend', option);
 
 
@@ -3917,8 +3913,8 @@ class ListarRequerimientoPagoView {
                                     document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = (response.data[0]['tipo_documento_identidad']['descripcion']) != null ? response.data[0]['tipo_documento_identidad']['descripcion'] : '';
                                 }
                                 // llenar cuenta bancaria
-                                idCuentaPreSeleccionada = response.data[0]['cuenta_contribuyente'][0]['id_cuenta_contribuyente'];
-
+                                // idCuentaPreSeleccionada = response.data[0]['cuenta_contribuyente'][0]['id_cuenta_contribuyente'];
+                                console.log(idCuentaPreSeleccionada);
                                 document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = idCuentaPreSeleccionada;
 
                                 let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
@@ -3927,7 +3923,33 @@ class ListarRequerimientoPagoView {
                                         selectCuenta.removeChild(selectCuenta.lastChild);
                                     }
                                 }
+
+                                let seleccionado = "";
+                                let tieneCuentaPorDefecto = false;
+                                console.log("as1ea");
+
+
                                 (response.data[0].cuenta_contribuyente).forEach(element => {
+                                    if (element.por_defecto == true) {
+                                        tieneCuentaPorDefecto = true;
+                                    }
+                                });
+
+                                (response.data[0].cuenta_contribuyente).forEach(element => {
+
+                                    if (idCuentaPreSeleccionada > 0 && tieneCuentaPorDefecto == false) {
+                                        if (element.id_cuenta_contribuyente == idCuentaPreSeleccionada) {
+                                            seleccionado = "selected";
+                                        } else {
+                                            seleccionado = "";
+                                        }
+
+                                    } else if (element.por_defecto == true && tieneCuentaPorDefecto == true) {
+                                        seleccionado = "selected";
+                                    } else {
+                                        seleccionado = "";
+                                    }
+
                                     option += `
                                     <option
                                         data-nro-cuenta="${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : ''}"
@@ -3935,8 +3957,7 @@ class ListarRequerimientoPagoView {
                                         data-tipo-cuenta="${element.tipo_cuenta != null ? element.tipo_cuenta.descripcion : ''}"
                                         data-banco="${element.banco != null && element.banco.contribuyente != null ? element.banco.contribuyente.razon_social : ''}"
                                         data-moneda="${element.moneda != null ? element.moneda.descripcion : ''}"
-                                        value="${element.id_cuenta_contribuyente}"
-                                        ${idCuentaPreSeleccionada == element.id_cuenta_contribuyente ? 'selected' : ''}
+                                        value="${element.id_cuenta_contribuyente}" ${seleccionado}
                                         >
                                         ${element.nro_cuenta != null && element.nro_cuenta != "" ? element.nro_cuenta : (element.nro_cuenta_interbancaria != null && element.nro_cuenta_interbancaria != "" ? (element.nro_cuenta_interbancaria + " (CCI)") : "")}
                                     </option>`;
@@ -3949,8 +3970,6 @@ class ListarRequerimientoPagoView {
                             document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_contribuyente']").value = "";
                             document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_destinatario']").value = "";
                             document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = "";
-                            document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = "";
-                            document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = "";
                             document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").value = "";
 
                             let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
@@ -3975,8 +3994,6 @@ class ListarRequerimientoPagoView {
                         document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_destinatario']").value = "";
                         document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = "";
                         document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']").value = "";
-                        document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = "";
-                        document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = "";
 
                         let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
                         if (selectCuenta != null) {
@@ -4013,8 +4030,6 @@ class ListarRequerimientoPagoView {
         this.limpiarTabla("listaDestinatariosEncontrados");
         document.querySelector("div[id='modal-requerimiento-pago'] span[id='cantidadDestinatariosEncontrados']").textContent = 0;
 
-        document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_persona']").value = "";
-        document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cuenta_contribuyente']").value = "";
         let selectCuenta = document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_cuenta']");
         if (selectCuenta != null) {
             while (selectCuenta.children.length > 0) {
@@ -4144,9 +4159,9 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='tipo_documento_identidad']").value = obj.dataset.tipoDocumentoIdentidad;
 
         if (obj.dataset.idPersona > 0) {
-            obtenerCuentasBancariasPersona(obj.dataset.idPersona);
+            obtenerCuentasBancariasPersona(obj.dataset.idPersona,null,true);
         } else if (obj.dataset.idContribuyente > 0) {
-            obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyente);
+            obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyente,null,true);
         } else {
 
             Swal.fire(

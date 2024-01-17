@@ -2728,9 +2728,12 @@ class OrdenController extends Controller
     public function guardar_orden_por_requerimiento(Request $request)
     {
 
+
         try {
             DB::beginTransaction();
 
+            $fecha_actual = new Carbon();
+            $fecha_enviar_pago = ((int)$request->plazo_dias > 0 ?date("Y-m-d",strtotime($fecha_actual."+ ".$request->plazo_dias." days")):null);
             // evaluar si el estado del cierre periodo
             $añoPeriodo = Periodo::find($request->id_periodo)->descripcion;
             $idEmpresa = Sede::find($request->id_sede)->id_empresa;
@@ -2765,6 +2768,7 @@ class OrdenController extends Controller
             if ($requerimientoHelper->EstaHabilitadoRequerimiento($idDetalleRequerimientoList) == true) { // buscar el requerimiento de cada detalle requerimiento y devolver si esta habilitado para acción de guardar, estado en pausa y por regularizar no es posible realizar acción de guardar
 
                 // date("d-m-Y",strtotime($request->fecha_emision."+ 1 days"));
+
 
                 $orden = new Orden();
                 $tp_doc = ($request->id_tp_documento !== null ? $request->id_tp_documento : 2);
@@ -2803,6 +2807,7 @@ class OrdenController extends Controller
                 $orden->observacion = $request->observacion != null ? trim(strtoupper($request->observacion)) : null;
                 $orden->tipo_cambio_compra = isset($request->tipo_cambio_compra) ? $request->tipo_cambio_compra : true;
                 $orden->compra_local = isset($request->compra_local) ? $request->compra_local : false;
+                $orden->enviar_pago = $fecha_enviar_pago;
                 $orden->save();
 
                 if ($request->id_proveedor > 0 && $request->id_rubro_proveedor != null && $request->id_rubro_proveedor > 0) {
@@ -3286,6 +3291,9 @@ class OrdenController extends Controller
 
             // evaluar si el estado del cierre periodo
 
+            $fecha_actual = new Carbon();
+            $fecha_enviar_pago = ((int)$request->plazo_dias > 0 ?date("Y-m-d",strtotime($fecha_actual."+ ".$request->plazo_dias." days")):null);
+
             $añoPeriodo = Periodo::find($request->id_periodo)->descripcion;
             $idEmpresa = Sede::find($request->id_sede)->id_empresa;
             $estadoOperativo = (new CierreAperturaController)->consultarPeriodoOperativo($añoPeriodo, $idEmpresa);
@@ -3352,6 +3360,11 @@ class OrdenController extends Controller
                 $orden->observacion = isset($request->observacion) ? $request->observacion : null;
                 $orden->tipo_cambio_compra = isset($request->tipo_cambio_compra) ? $request->tipo_cambio_compra : true;
                 $orden->compra_local = isset($request->compra_local) ? $request->compra_local : false;
+
+                if($orden->enviado === 'f'){
+                    $orden->enviar_pago = $fecha_enviar_pago;
+                }
+
                 $orden->save();
 
                 if ($request->id_proveedor > 0 && $request->id_rubro_proveedor != null && $request->id_rubro_proveedor > 0) {

@@ -68,8 +68,9 @@ function mostrar_sis_contrato(id) {
 function save_sis_contrato(data, action) {
     if (action == 'register') {
         baseUrl = route('proyectos.variables-entorno.sistemas-contrato.guardar');
+
     } else if (action == 'edition') {
-        baseUrl = 'actualizar_sis_contrato';
+        baseUrl = route('proyectos.variables-entorno.sistemas-contrato.actualizar');
     }
     $.ajax({
         type: 'POST',
@@ -78,8 +79,9 @@ function save_sis_contrato(data, action) {
         data: data,
         dataType: 'JSON',
         success: function (response) {
-            alert(response.mensaje);
-            if (response.id > 0) {
+            // alert(response.mensaje);
+            if (response > 0) {
+                alert('Sistema de Contrato '+(action=='register'?'registrado':'actualizado') +' con exito');
                 $('#listaSisContrato').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }

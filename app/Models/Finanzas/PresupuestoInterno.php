@@ -539,6 +539,7 @@ class PresupuestoInterno extends Model
     {
         // ini_set('max_execution_time', 50000);
         // return ;rexit;
+        $mes_siguente= $mes;
         $mes= $mes.'_aux';
         $presupuesto_interno_destalle= PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',$id_tipo_presupuesto)->where('estado', 1)->where('id_presupuesto_interno_detalle', $id_partida)->orderBy('partida')->first();
 
@@ -563,7 +564,7 @@ class PresupuestoInterno extends Model
 
             if ($presupuesto_interno_destalle) {
 
-                $presupuesto_interno_destalle->$mes = $total;
+                $presupuesto_interno_destalle->$mes = number_format($total, 2, '.', ',');
                 $presupuesto_interno_destalle->save();
                 $id_hijo = $presupuesto_interno_destalle->id_hijo;
                 $id_padre = $presupuesto_interno_destalle->id_padre;

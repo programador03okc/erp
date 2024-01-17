@@ -55,6 +55,21 @@ class HistorialPresupuestoInternoSaldo extends Model
         return $total;
     }
 
+    public static function totalSalidasMensual($mes, $presupuesto_id){
+        $salidas = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$presupuesto_id)
+            ->where('tipo','SALIDA')
+            ->where('estado',3)
+            ->where('mes',$mes)
+            // ->orderBy('id','DESC')
+        ->get();
+        $total = 0;
+        foreach ($salidas as $key => $value) {
+            $total = $total + $value->importe;
+        }
+
+        return $total;
+    }
+
 
 
 }

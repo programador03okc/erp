@@ -1,10 +1,3 @@
-var rutaLista, rutaMostrar, rutaGuardar;
-
-function inicializar(_rutaLista, _rutaMostrar, _rutaGuardar) {
-    rutaLista = _rutaLista;
-    rutaMostrar = _rutaMostrar;
-    rutaGuardar = _rutaGuardar;
-}
 
 function listar() {
     var vardataTables = funcDatatables();
@@ -13,7 +6,7 @@ function listar() {
         'dom': vardataTables[1],
         'buttons': vardataTables[2],
         'language': vardataTables[0],
-        'ajax': rutaLista,
+        'ajax': route('proyectos.variables-entorno.sistemas-contrato.listar'),
         'columns': [
             { 'data': 'id_sis_contrato' },
             { 'data': 'codigo' },
@@ -51,7 +44,7 @@ function listar() {
 
 
 function mostrar_sis_contrato(id) {
-    baseUrl = rutaMostrar + '/' + id;
+    baseUrl = route('proyectos.variables-entorno.sistemas-contrato.mostrar',id);
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': token },
@@ -74,9 +67,10 @@ function mostrar_sis_contrato(id) {
 
 function save_sis_contrato(data, action) {
     if (action == 'register') {
-        baseUrl = rutaGuardar;
+        baseUrl = route('proyectos.variables-entorno.sistemas-contrato.guardar');
+
     } else if (action == 'edition') {
-        baseUrl = 'actualizar_sis_contrato';
+        baseUrl = route('proyectos.variables-entorno.sistemas-contrato.actualizar');
     }
     $.ajax({
         type: 'POST',
@@ -85,8 +79,9 @@ function save_sis_contrato(data, action) {
         data: data,
         dataType: 'JSON',
         success: function (response) {
-            alert(response.mensaje);
-            if (response.id > 0) {
+            // alert(response.mensaje);
+            if (response > 0) {
+                alert('Sistema de Contrato '+(action=='register'?'registrado':'actualizado') +' con exito');
                 $('#listaSisContrato').DataTable().ajax.reload();
                 changeStateButton('guardar');
             }

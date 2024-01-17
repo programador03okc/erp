@@ -523,6 +523,7 @@ class RegistroPagoController extends Controller
         $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
         $nombreMes = $mesLista[$numeroMes];
         $nombreMesAux = $nombreMes . '_aux';
+        $montoPorUtilizarPorPartida=[];
         $data=[];
 
         if($idOrden>0){
@@ -532,16 +533,24 @@ class RegistroPagoController extends Controller
                 if($item->estado !=7 && $item->id_detalle_requerimiento >0){
                     $detalleRequerimiento = DetalleRequerimiento::find($item->id_detalle_requerimiento);
                     if($detalleRequerimiento->id_partida_pi >0){
-                        $tieneSaldoPartida= $this->TieneSaldoLaPartida($detalleRequerimiento->id_partida_pi, $nombreMesAux, $totalPago);
-                        if($tieneSaldoPartida!=[]){
-                            $data[]= $tieneSaldoPartida;
-                        }
+
+                        $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=+$item->subtotal;
                     }
+                }
+            }
+            foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
+                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto);
+                if($tieneSaldoPartida!=[]){
+                    $data[]= $tieneSaldoPartida;
                 }
             }
         }
 
         return $data;
+    }
+    
+    public function obtenerMontoPorUtilizarDePartida($idRequerimientoPagoDetalle, $idPartidaDePresupuestoInterno, $subtotal){
+
     }
 
 
@@ -584,6 +593,7 @@ class RegistroPagoController extends Controller
         $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
         $nombreMes = $mesLista[$numeroMes];
         $nombreMesAux = $nombreMes . '_aux';
+        $montoPorUtilizarPorPartida=[];
         $data=[];
 
         if($idRequerimientoPago>0){
@@ -591,11 +601,16 @@ class RegistroPagoController extends Controller
             foreach ($detalleRequerimientoPago as $item) {
                 if($item->id_estado !=7 && $item->id_requerimiento_pago_detalle >0){
                      if($item->id_partida_pi >0){
-                        $tieneSaldoPartida= $this->TieneSaldoLaPartida($item->id_partida_pi, $nombreMesAux, $totalPago);
-                        if($tieneSaldoPartida !=[]){
-                            $data[]=$tieneSaldoPartida;
-                        }
+                         // lista de item con monto y partida
+                        $montoPorUtilizarPorPartida[$item->id_partida_pi]=+$item->subtotal;
                     }
+                }
+            }
+
+            foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
+                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto);
+                if($tieneSaldoPartida !=[]){
+                    $data[]=$tieneSaldoPartida;
                 }
             }
 

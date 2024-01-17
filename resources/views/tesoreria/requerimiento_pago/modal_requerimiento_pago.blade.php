@@ -132,9 +132,11 @@
                                                             <table class="mytable table table-condensed table-bordered table-okc-view no-footer dataTable" id="tablaCuadroPresupuestoVinculados">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th style="width:15%">Código</th>
-                                                                        <th style="width:70%">Entidad</th>
-                                                                        <th style="width:20%">Monto</th>
+                                                                        <th style="width:5%">Código</th>
+                                                                        <th style="width:35%">Entidad</th>
+                                                                        <th style="width:15%">Monto</th>
+                                                                        <th style="width:30%">Estado de envio <small>(Trazabilidad Despachos)</small></th>
+                                                                        <th style="width:10%">Fecha estado</th>
                                                                         <th style="width:5%">Acción</th>
                                                                     </tr>
                                                                 </thead>
@@ -267,9 +269,7 @@
                                         <div class="form-group">
                                             <h5>Cuenta bancaria *</h5>
                                             <div style="display:flex;">
-                                                <input class="oculto" name="id_cuenta_persona">
-                                                <input class="oculto" name="id_cuenta_contribuyente">
-                                                <select class="form-control activation handleCheckStatusValue handleChangeCuenta" name="id_cuenta">
+                                                <select class="form-control activation handleCheckStatusValue" name="id_cuenta">
 
                                                 </select>
                                                 <!-- <input type="text" class="form-control handleCheckStatusValue" name="nro_cuenta_principal_proveedor" placeholder="Nro cuenta seleccionada" readOnly> -->
@@ -319,114 +319,114 @@
                                                 <select class="form-control activation handleCheckStatusValue handleChangeUpdateMoneda handleChangeCalcularPresupuestoUtilizadoYSaldoPorPartida" name="moneda" style="width:50%;">
                                                     @foreach ($monedas as $moneda)
                                                     <option data-simbolo="{{$moneda->simbolo}}" value="{{$moneda->id_moneda}}">{{$moneda->simbolo}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <input type="text" class="form-control oculto" name="monto_total" style="text-align: right;">
-                                                <input type="text" class="form-control activation handleCheckStatusValue" name="monto_total_read_only" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <h5>Tipo cambio($):</h5>
-                                            <span id="tipo_cambio_compra" style="font-size: 1.8rem;">{{$tipo_cambio}}</span>
-                                        </div>
-                                    </div> --}}
-                                    {{-- <div class="col-md-2">
+                                    @endforeach
+                                    </select>
+                                    <input type="text" class="form-control oculto" name="monto_total" style="text-align: right;">
+                                    <input type="text" class="form-control activation handleCheckStatusValue" name="monto_total_read_only" readonly>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <h5>Tipo cambio($):</h5>
+                            <span id="tipo_cambio_compra" style="font-size: 1.8rem;">{{$tipo_cambio}}</span>
+                        </div>
+                    </div> --}}
+                    {{-- <div class="col-md-2">
                                         <h5>Forma de pago</h5>
                                         <div style="display:flex;">
                                             <select class="form-control activation handleChangeCondicion" name="id_condicion_softlink" style="width:100%; text-align:center;">
                                                 @foreach ($condiciones_softlink as $cond)
                                                 <option value="{{$cond->id_condicion_softlink}}" data-dias="{{$cond->dias}}">{{$cond->descripcion}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div> --}}
-                                </div>
-                            </fieldset>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <fieldset class="group-table">
-                                <h5><strong>Detalle del Requerimiento</strong></h5>
-
-                                <div class="btn-group" role="group" aria-label="...">
-                                    <!-- <button type="button" class="btn btn-xs btn-success activation handleCheckStatusValue handleClickAgregarProducto" id="btnAddProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar Producto"><i class="fas fa-plus"></i> Producto
-                                    </button> -->
-                                    <button type="button" class="btn btn-xs btn-primary activation handleCheckStatusValue handleClickAgregarServicio" id="btnAddServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar Servicio"><i class="fas fa-plus"></i> Servicio
-                                    </button>
-                                </div>
-                                <div class="box box-widget">
-                                    <div class="box-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped table-condensed table-bordered" id="ListaDetalleRequerimientoPago" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width: 10%">Partida</th>
-                                                        <th style="width: 10%">C.Costo</th>
-                                                        <th>Descripción de item</th>
-                                                        <th style="width: 10%">Unidad</th>
-                                                        <th style="width: 6%">Cantidad</th>
-                                                        <th style="width: 8%">Precio Unit.<span name="simboloMoneda">S/</span></th>
-                                                        <th style="width: 6%">Subtotal</th>
-                                                        <th style="width: 10%">Motivo</th>
-                                                        <th style="width: 7%">Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="body_detalle_requerimiento_pago">
-
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="6" class="text-right"><strong>Total:</strong></td>
-                                                        <td class="text-right"><span name="simboloMoneda">S/</span><label name="total"> 0.00</label></td>
-                                                        <td></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                    <div class="col-md-8">
-                        <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
-                        <fieldset class="group-table">
-                            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th width="10">Codigo</th>
-                                        <th width="70">Descripción</th>
-                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
-                                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
-                                        <th width="10" style="background-color: #fbdddd;">Presupuesto a utilizar <small>(Req. actual)</small></th>
-                                        <th width="10" style="background-color: #fbdddd;">Presupuesto a utilizar <small>(Req. elaborado y aprobados)</small></th>
-                                        <th width="10" style="display:none; background-color: #e5fbdd;">Saldo Total</th>
-                                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="body_partidas_activas">
-                                </tbody>
-                            </table>
-                        </fieldset>
-                    </div>
-                    </div>
-
+                    @endforeach
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-primary" class="close" data-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-sm btn-success handleClickGuardarRequerimientoPago" id="btnGuardarRequerimientoPago" disabled>Guardar</button>
-                    <button type="button" class="btn btn-sm btn-success handleClickRequerimientoPago oculto" id="btnActualizarRequerimientoPago" disabled>Actualizar</button>
-                </div>
-            </form>
-        </div>
+        </div> --}}
     </div>
+    </fieldset>
+</div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <fieldset class="group-table">
+            <h5><strong>Detalle del Requerimiento</strong></h5>
+
+            <div class="btn-group" role="group" aria-label="...">
+                <!-- <button type="button" class="btn btn-xs btn-success activation handleCheckStatusValue handleClickAgregarProducto" id="btnAddProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar Producto"><i class="fas fa-plus"></i> Producto
+                                    </button> -->
+                <button type="button" class="btn btn-xs btn-primary activation handleCheckStatusValue handleClickAgregarServicio" id="btnAddServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar Servicio"><i class="fas fa-plus"></i> Servicio
+                </button>
+            </div>
+            <div class="box box-widget">
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-condensed table-bordered" id="ListaDetalleRequerimientoPago" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">Partida</th>
+                                    <th style="width: 10%">C.Costo</th>
+                                    <th>Descripción de item</th>
+                                    <th style="width: 10%">Unidad</th>
+                                    <th style="width: 6%">Cantidad</th>
+                                    <th style="width: 8%">Precio Unit.<span name="simboloMoneda">S/</span></th>
+                                    <th style="width: 6%">Subtotal</th>
+                                    <th style="width: 10%">Motivo</th>
+                                    <th style="width: 7%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="body_detalle_requerimiento_pago">
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" class="text-right"><strong>Total:</strong></td>
+                                    <td class="text-right"><span name="simboloMoneda">S/</span><label name="total"> 0.00</label></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h4 style="display:flex;justify-content: space-between;">Partidas activas</h4>
+        <fieldset class="group-table">
+            <table class="table table-striped table-bordered" id="listaPartidasActivas" width="100%">
+                <thead>
+                    <tr>
+                        <th width="10">Codigo</th>
+                        <th width="70">Descripción</th>
+                        <th width="10" style="background-color: #ddeafb;">Presupuesto Total</th>
+                        <th width="10" style="background-color: #ddeafb;">Presupuesto Mes <small>(<span id="mes_ppto"></span>)</small></th>
+                        <th width="10" style="background-color: #fbdddd;">Presupuesto a utilizar <small>(Req. actual)</small></th>
+                        <th width="10" style="background-color: #fbdddd;">Presupuesto a utilizar <small>(Req. elaborado y aprobados)</small></th>
+                        <th width="10" style="display:none; background-color: #e5fbdd;">Saldo Total</th>
+                        <th width="10" style="background-color: #e5fbdd;">Saldo Mes</th>
+                    </tr>
+                </thead>
+                <tbody id="body_partidas_activas">
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-primary" class="close" data-dismiss="modal">Cerrar</button>
+    <button type="button" class="btn btn-sm btn-success handleClickGuardarRequerimientoPago" id="btnGuardarRequerimientoPago" disabled>Guardar</button>
+    <button type="button" class="btn btn-sm btn-success handleClickRequerimientoPago oculto" id="btnActualizarRequerimientoPago" disabled>Actualizar</button>
+</div>
+</form>
+</div>
+</div>
 </div>
 
 

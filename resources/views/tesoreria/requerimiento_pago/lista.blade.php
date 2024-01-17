@@ -105,6 +105,7 @@ Listado de requerimientos de pago
 @include('logistica.requerimientos.modal_lista_trabajadores')
 
 @include('tesoreria.requerimiento_pago.modal_factura_requerimiento_pago')
+@include('logistica.requerimientos.modal_requerimientos_vinculados_con_partida')
 
 @endsection
 
@@ -133,6 +134,7 @@ Listado de requerimientos de pago
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-view.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-view.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
+<script src="{{ asset('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js'))}}"></script>
 
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');

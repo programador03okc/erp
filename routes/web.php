@@ -403,6 +403,8 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('listar-items-requerimiento-logistico-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoController::class, 'obteneritemsRequerimientoLogisticoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-logistico-con-partida-presupuesto-interno');
 				Route::get('listar-items-requerimiento-pago-con-partida-presupuesto-interno/{idRequerimiento?}/{idPartida?}', [RequerimientoPagoController::class, 'obteneritemsRequerimientoPagoConPartidaDePresupuestoInterno'])->name('listar-items-requerimiento-pago-con-partida-presupuesto-interno');
+				Route::get('obtener-estados-envio-trazabilidad-despacho', [RequerimientoController::class, 'obtenerEstadosEnvioTrazabilidadDespacho'])->name('obtener-estados-envio-trazabilidad-despacho');
+
 
 			});
 
@@ -504,6 +506,10 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 				Route::post('requerimiento-sustentado', [RequerimientoPagoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
+				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+				Route::get('obtener-estados-envio-trazabilidad-despacho', [RequerimientoController::class, 'obtenerEstadosEnvioTrazabilidadDespacho'])->name('obtener-estados-envio-trazabilidad-despacho');
+
+
 			});
 		});
 
@@ -1908,6 +1914,8 @@ Route::middleware(['auth'])->group(function () {
 
                 Route::get('cuadro-comparativo-pagos', [RegistroPagoController::class, 'cuadroComparativoPagos'])->name('cuadro-comparativo-pagos');
                 Route::get('cuadro-comparativo-ordenes', [RegistroPagoController::class, 'cuadroComparativoOrdenes'])->name('cuadro-comparativo-ordenes');
+				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+
 			});
 
 			Route::name('confirmacion-pagos.')->prefix('confirmacion-pagos')->group(function () {

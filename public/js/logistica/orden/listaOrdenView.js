@@ -933,7 +933,7 @@ class ListaOrdenView {
                 document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_contribuyente']").value = '';
                 document.querySelector("div[id='modal-enviar-solicitud-pago'] input[name='id_cuenta_contribuyente']").value = '';
                 obtenerPersona(obj.dataset.idPersonaPago);
-                obtenerCuentasBancariasPersona(obj.dataset.idPersonaPago);
+                obtenerCuentasBancariasPersona(obj.dataset.idPersonaPago,null,false);
 
 
             } else if (obj.dataset.idTipoDestinatarioPago == 2) {
@@ -945,7 +945,7 @@ class ListaOrdenView {
                 console.log(obj.dataset);
                 obtenerContribuyente(obj.dataset.idContribuyentePago);
 
-                obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyentePago, (parseInt(obj.dataset.idCuentaContribuyentePago) > 0 ? obj.dataset.idCuentaContribuyentePago : null));
+                obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyentePago, (parseInt(obj.dataset.idCuentaContribuyentePago) > 0 ? obj.dataset.idCuentaContribuyentePago : null),false);
             }
         } else {
             this.obtenerContribuyentePorIdProveedor(obj.dataset.idProveedor, obj.dataset.idCuentaContribuyentePago);
@@ -1287,7 +1287,7 @@ class ListaOrdenView {
 
 
         if (data.id_contribuyente > 0) {
-            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (idCuenta > 0 ? idCuenta : null));
+            obtenerCuentasBancariasContribuyente(data.id_contribuyente, (idCuenta > 0 ? idCuenta : null),false);
         }
     }
 
@@ -1811,9 +1811,9 @@ class ListaOrdenView {
 
 
         if (obj.dataset.idPersona > 0) {
-            obtenerCuentasBancariasPersona(obj.dataset.idPersona);
+            obtenerCuentasBancariasPersona(obj.dataset.idPersona,null,false);
         } else if (obj.dataset.idContribuyente > 0) {
-            obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyente, (idCuentaEnvioPago > 0 ? idCuentaEnvioPago : null));
+            obtenerCuentasBancariasContribuyente(obj.dataset.idContribuyente, (idCuentaEnvioPago > 0 ? idCuentaEnvioPago : null),false);
         } else {
 
             Swal.fire(

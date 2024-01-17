@@ -319,9 +319,11 @@ Crear / editar requerimiento
                                             <table class="mytable table table-condensed table-bordered table-okc-view no-footer dataTable" id="tablaCuadroPresupuestoVinculados">
                                                 <thead>
                                                     <tr>
-                                                        <th style="width:15%">Código</th>
-                                                        <th style="width:70%">Entidad</th>
-                                                        <th style="width:20%">Monto</th>
+                                                        <th style="width:5%">Código</th>
+                                                        <th style="width:35%">Entidad</th>
+                                                        <th style="width:15%">Monto</th>
+                                                        <th style="width:30%">Estado de envio <small>(Trazabilidad Despachos)</small></th>
+                                                        <th style="width:10%">Fecha estado</th>
                                                         <th style="width:5%">Acción</th>
                                                     </tr>
                                                 </thead>

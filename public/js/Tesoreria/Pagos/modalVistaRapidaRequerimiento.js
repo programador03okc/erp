@@ -172,26 +172,44 @@ function mostrarDataEnVistaRapidaRequerimientoPago(data) {
             // cantidadAdjuntosItem = data.detalle[i].adjunto.length;
 
             let idPartida= '';
+            let tipoPresupuesto = '';
             let codigoPartida= '';
             let descripcionPartida= '';
-            let presupuestoInternoTotalPartida= data.detalle[i].presupuesto_interno_total_partida;
-            let presupuestoInternoMesPartida= data.detalle[i].presupuesto_interno_mes_partida;
+            let totalPartida = 0;
+            let totalPartidaMes = 0;
+            let totalPorConsumidoConIgvFaseAprobacion = 0;
+            
             if(data.detalle[i].partida){
+                tipoPresupuesto = 'ANTIGUO';
+
                 idPartida =data.detalle[i].partida.id_partida;
                 codigoPartida =data.detalle[i].partida.codigo;
                 descripcionPartida =data.detalle[i].partida.descripcion;
+                totalPartida = data.detalle[i].presupuesto_old_total_partida ?? 0;
 
             }else if(data.detalle[i].presupuesto_interno_detalle){
+                tipoPresupuesto = 'INTERNO';
+
                 idPartida =data.detalle[i].presupuesto_interno_detalle.id_presupuesto_interno_detalle;
                 codigoPartida =data.detalle[i].presupuesto_interno_detalle.partida;
                 descripcionPartida =data.detalle[i].presupuesto_interno_detalle.descripcion;
+                totalPartida = data.detalle[i].presupuesto_interno_total_partida != null ? data.detalle[i].presupuesto_interno_total_partida : 0;
+                totalPartidaMes = data.detalle[i].presupuesto_interno_mes_partida != null ? data.detalle[i].presupuesto_interno_mes_partida : 0;
+                totalPorConsumidoConIgvFaseAprobacion=data.detalle[i].total_consumido_hasta_fase_aprobacion_con_igv>0 ?(data.detalle[i].total_consumido_hasta_fase_aprobacion_con_igv):0;
 
             }
 
             document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data.detalle[i].id_estado == '7' ? '#f1d7d7' : ''}">
             <td>${i + 1}</td>
             <td>
-                <p class="descripcion-partida" data-id-partida="${idPartida}" data-presupuesto-total="${presupuestoInternoTotalPartida}" data-presupuesto-mes="${presupuestoInternoMesPartida}" title="${descripcionPartida}">${codigoPartida}</p> 
+                <p class="descripcion-partida"
+                data-tipo-presupuesto="${tipoPresupuesto}"
+                data-id-partida="${idPartida}" 
+                data-presupuesto-total="${totalPartida}" 
+                data-presupuesto-mes="${totalPartidaMes}" 
+                data-total-por-consumido-con-igv-fase-aprobacion="${totalPorConsumidoConIgvFaseAprobacion}"
+
+                title="${descripcionPartida}">${codigoPartida}</p> 
             </td>
             <td>${data.detalle[i].centro_costo ? data.detalle[i].centro_costo.codigo : ''}</td>
             <td name="descripcion_servicio">${data.detalle[i].descripcion != null ? data.detalle[i].descripcion : ''} </td>
@@ -251,12 +269,14 @@ function calcularPresupuestoUtilizadoYSaldoPorPartida() {
                 partidaAgregadas.push(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida);
                 tempPartidasActivas.push({
                     'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
+                    'tipo_prespuesto': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto,
                     'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
                     'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
                     'presupuesto_mes': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes,
                     'presupuesto_total': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal,
                     'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
                     'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
+                    'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion,
                     'presupuesto_utilizado_al_cambio': 0,
                     'presupuesto_utilizado': 0,
                     'saldo_total': 0,
@@ -317,6 +337,13 @@ function construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
                 <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
+                <td style="text-align:right; background-color: #fbdddd;">
+                    <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 
+                    <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" 
+                    onClick="verRequerimientosVinculadosConPartida(${element.id_partida},'${element.codigo.trim()}','${element.descripcion.trim()}','${element.tipo_prespuesto}','${element.presupuesto_total}','${element.presupuesto_mes}');"title="Ver Requerimientos vinculados con partida">
+                    <i class="fas fa-eye"></i>
+                    </button>
+                </td>
                 <td style="display:none; text-align:right; color:${element.saldo_total >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;"><span>S/</span>${Util.formatoNumero(element.saldo_total, 2)}</td>
                 <td style="text-align:right; color:${element.saldo_mes >= 0 ? '#333' : '#dd4b39'}; background-color: #e5fbdd;  font-weight: bold; "><span>S/</span>${Util.formatoNumero(element.saldo_mes, 2)}</td>
             </tr>`);

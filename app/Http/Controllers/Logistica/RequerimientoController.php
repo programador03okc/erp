@@ -11,6 +11,7 @@ use App\Http\Controllers\ConfiguracionController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
+use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\RevisarAprobarController;
 use App\Http\Controllers\Tesoreria\CierreAperturaController;
@@ -43,6 +44,7 @@ use App\Models\Almacen\AdjuntoDetalleRequerimiento;
 use App\Models\Almacen\AdjuntoRequerimiento;
 use App\Models\Almacen\Almacen;
 use App\Models\Almacen\CdpRequerimiento;
+use App\Models\Almacen\EstadoEnvio;
 use App\Models\Almacen\Producto;
 use App\Models\Almacen\RequerimientoLogisticoView;
 use App\Models\Almacen\Transferencia;
@@ -54,6 +56,7 @@ use App\Models\Finanzas\PresupuestoInterno;
 use App\Models\Logistica\AdjuntosLogisticos;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\mgcp\CuadroCosto\CuadroCostoView;
 use App\Models\Presupuestos\Presupuesto;
 use App\Models\Rrhh\Persona;
 use App\Models\Rrhh\Postulante;
@@ -816,16 +819,60 @@ class RequerimientoController extends Controller
                     limit 1 ) AS presupuesto_interno_mes_partida "),
 
                     
-                    DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * 1.18,0)
-                    FROM almacen.alm_det_req as dr
-                    INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
-                    WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7
-                    limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    DB::raw("( SELECT SUM(total) AS total
+                    FROM (
+                      SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) AS total
+                      FROM almacen.alm_det_req AS dr
+                      INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
+                      WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                      AND r.estado IN (1,2) AND dr.estado != 7
+                      GROUP BY r.monto_igv
+                    ) AS t LIMIT 1) 
+                    + 
+                    (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
                     FROM tesoreria.requerimiento_pago_detalle as drp
                     INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
                     WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
-                    limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
+                    limit 1)
+                    AS total_consumido_hasta_fase_aprobacion_con_igv")
+                    // DB::raw("(SELECT dr.cantidad * dr.precio_unitario * 1.18 AS total
+                    // FROM almacen.alm_det_req AS dr
+                    // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
+                    // WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                    // AND r.monto_igv > 0
+                    // AND r.estado IN (1,2) AND dr.estado != 7 LIMIT 1)
+                    // +
+                    // (SELECT dr.cantidad * dr.precio_unitario AS total
+                    // FROM almacen.alm_det_req AS dr
+                    // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
+                    // WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                    // AND r.monto_igv = 0
+                    // AND r.estado IN (1,2) AND dr.estado != 7
+                    // LIMIT 1) 
+                    // + (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    // FROM tesoreria.requerimiento_pago_detalle as drp
+                    // INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                    // WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                    // limit 1)
+                    // AS total_consumido_hasta_fase_aprobacion_con_igv")
+                    
+     
+
+
+
+
+
+                    // DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * 1.18,0)
+                    // FROM almacen.alm_det_req as dr
+                    // INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
+                    // WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7
+                    // limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    // FROM tesoreria.requerimiento_pago_detalle as drp
+                    // INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                    // WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                    // limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
                 )
+              
                 ->where([
                     ['alm_det_req.estado', '!=', 7],
                     ['alm_det_req.id_requerimiento', '=', $requerimiento[0]['id_requerimiento']]
@@ -1002,9 +1049,9 @@ class RequerimientoController extends Controller
 
     public function getCodigoOportunidad($idCC){
         $codigo_oportunidad=null;
-        $cc = CuadroCosto::with("oportunidad")->find($idCC)->first();
+        $cc = CuadroCostoView::find($idCC);
         if($cc){
-            $codigo_oportunidad=  $cc->oportunidad !=null ? $cc->oportunidad->codigo_oportunidad:null;
+            $codigo_oportunidad=  $cc->codigo_oportunidad??null;
         }
         
         return $codigo_oportunidad;
@@ -1017,6 +1064,8 @@ class RequerimientoController extends Controller
         // exit();
         DB::beginTransaction();
         try {
+            $mensajeEstadoTrazabilidad ="";
+            $cantidadDeEstadosCreadosEnTrazabilidad=0;
 
             $countDetalle = count($request->descripcion);
             $tieneIdCdpVinculado = false;
@@ -1144,14 +1193,25 @@ class RequerimientoController extends Controller
 
             if ($tieneIdCdpVinculado == true) {
                 // recorrer input de cdp vinculados
+                
                 for ($c = 0; $c < $countIdCdpVinculado; $c++) {
                     $cdpRequerimiento = new CdpRequerimiento();
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c] >0 ?$request->id_estado_envio[$c]:null;
+                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c]??null;
+                    $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
+
+
+                    if($request->id_estado_envio[$c] >0 ){
+                        $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                        if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                            $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                        }
+                    }
                 }
             }
 
@@ -1241,10 +1301,10 @@ class RequerimientoController extends Controller
                 $this->guardarAdjuntoNivelDetalleItem($adjuntoDetelleRequerimiento, $codigo);
             }
 
-            return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'mensaje' => 'Se guardó el requerimiento ' . $codigo]);
+            return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'mensaje' => 'Se guardó el requerimiento ' . $codigo, 'memsaje_creacion_estado_trazabilidad'=>$mensajeEstadoTrazabilidad]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['id_requerimiento' => 0, 'mensaje' => 'Hubo un problema al guardar el requerimiento. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+            return response()->json(['id_requerimiento' => 0, 'mensaje' => 'Hubo un problema al guardar el requerimiento. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage(), 'memsaje_creacion_estado_trazabilidad'=>'']);
         }
     }
 
@@ -5086,6 +5146,13 @@ class RequerimientoController extends Controller
         $detalles = DetalleRequerimiento::select(
             'alm_req.codigo as codigo_requerimiento',
             'alm_det_req.*',
+            DB::raw("( SELECT
+            CASE
+                WHEN (alm_req.monto_igv IS null or alm_req.monto_igv = 0) THEN sum(det.cantidad * det.precio_unitario)
+                ELSE sum(det.cantidad * det.precio_unitario) * 1.18::double precision
+            END AS c
+       FROM almacen.alm_det_req det
+      WHERE alm_det_req.id_requerimiento = det.id_requerimiento AND det.estado <> 7) AS subtotal"),
             'presupuesto_interno_detalle.partida as codigo_partida_presupuesto_interno',
             'presupuesto_interno_detalle.descripcion as descripcion_partida_presupuesto_interno',
             'presup_par.codigo as codigo_partida',
@@ -5166,5 +5233,10 @@ class RequerimientoController extends Controller
         $data= $this->requerimientosVinculadosConPartida($request);
         return datatables($data)
         ->toJson();
+    }
+
+
+    public function obtenerEstadosEnvioTrazabilidadDespacho(){
+        return EstadoEnvio::listaEstadosDespacho();
     }
 }

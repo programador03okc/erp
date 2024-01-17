@@ -64,17 +64,17 @@ function openRegistroPago(data) {
         $('[name=titulo_motivo]').text('Forma de pago:');
 
         document.querySelector("div[id='modal-procesarPago'] div[id='contenedor_adjunto_logistica']").classList.remove("oculto");
-        document.querySelector("div[id='modal-procesarPago'] div[id='contenedor_adjunto_logistica'] label[name='adjuntoslogistica']").textContent=`Ver(${cantidadAdjuntosLogisticos})`;
+        document.querySelector("div[id='modal-procesarPago'] div[id='contenedor_adjunto_logistica'] label[name='adjuntoslogistica']").textContent = `Ver(${cantidadAdjuntosLogisticos})`;
 
-        if(tienePagoEnCuotas){
+        if (tienePagoEnCuotas) {
             document.querySelector("div[id='modal-procesarPago'] fieldset[id='fieldsetDatosPagoEnCuotas']").removeAttribute("hidden");
             document.querySelector("div[id='modal-procesarPago'] div[id='contenedorVinculoACuota']").removeAttribute("hidden");
-            listarPagoEnCuotas(tipo,id);
+            listarPagoEnCuotas(tipo, id);
             total_pago = formatDecimal(sumaCuotaConAutorizacion);
 
-        }else{
-            document.querySelector("div[id='modal-procesarPago'] fieldset[id='fieldsetDatosPagoEnCuotas']").setAttribute("hidden",true);
-            document.querySelector("div[id='modal-procesarPago'] div[id='contenedorVinculoACuota']").setAttribute("hidden",true);
+        } else {
+            document.querySelector("div[id='modal-procesarPago'] fieldset[id='fieldsetDatosPagoEnCuotas']").setAttribute("hidden", true);
+            document.querySelector("div[id='modal-procesarPago'] div[id='contenedorVinculoACuota']").setAttribute("hidden", true);
 
         }
 
@@ -107,7 +107,7 @@ function openRegistroPago(data) {
     $('[name=motivo]').text(motivo !== undefined ? decodeURIComponent(motivo) : '');
     $('[name=comentario_pago_logistica]').text(comentarioPagoLogistica ?? '');
     $('[name=observacion_requerimiento]').text(observacionRequerimiento ?? '');
-    $('[name=tipo_impuesto]').text(tipoImpuesto ==1? 'Detracción':(tipoImpuesto==2?'Renta':''));
+    $('[name=tipo_impuesto]').text(tipoImpuesto == 1 ? 'Detracción' : (tipoImpuesto == 2 ? 'Renta' : ''));
 
     if (comentarioPagoLogistica != undefined && comentarioPagoLogistica != '') {
         document.querySelector("div[id='modal-procesarPago'] div[id='contenedor_comentario_pago_logistica']").classList.remove("oculto");
@@ -127,63 +127,70 @@ function openRegistroPago(data) {
 $("#form-procesarPago").on("submit", function (e) {
     e.preventDefault();
     $('#submit_procesarPago').attr('disabled', 'true');
-    
-        validarPresupuestoParaPago()     
-        //procesarPago();
+
+    let id = '';
+    let tipo = '';
+    let idRequerimientoPago = document.querySelector("div[id='modal-procesarPago'] input[name='id_requerimiento_pago']").value;
+    let idOrden = document.querySelector("div[id='modal-procesarPago'] input[name='id_oc']").value;
+    if (idRequerimientoPago > 0) {
+        id = idRequerimientoPago;
+        tipo = 'requerimiento pago';
+    } else if (idOrden > 0) {
+        id = idOrden;
+        tipo = 'orden';
+    }
+
+    let monto_pago = document.querySelector("div[id='modal-procesarPago'] input[name='total_pago']").value;
+    let fecha_pago = document.querySelector("div[id='modal-procesarPago'] input[name='fecha_pago']").value;
+
+    validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
+
+        $('.page-main').LoadingOverlay("hide", true);
+
+
+        let mensajeConcatenado = [];
+        let cantidadPartidasSinPresupuesto = 0;
+        if ((response.data).length > 0) {
+            (response.data).forEach(element => {
+                if (element.tiene_presupuesto == false) {
+                    cantidadPartidasSinPresupuesto++;
+                    mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
+                }
+            });
+        }
+
+        if (cantidadPartidasSinPresupuesto > 0) {
+            Lobibox.notify('info', {
+                height:'auto',
+                sound:false,
+                delay: false,
+                msg: mensajeConcatenado.toString()
+            });
+
+        }  
+
+        Swal.fire({
+            title: "¿Está seguro que desea procesar el pago?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6", //"#00a65a",
+            cancelButtonColor: "#d33",
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Sí, procesar"
+        }).then(result => {
+            if (result.isConfirmed) {
+                procesarPago();
+            }
+        });
+
+    }).catch(function (err) {
+        console.log(err)
+    })
 
 
 });
 
-function validarPresupuestoParaPago(){
-    var formData = new FormData($('#form-procesarPago')[0]);
-    // var id_oc = $('[name=id_oc]').val();
-    // var id_doc_com = $('[name=id_doc_com]').val();
-    // var id_requerimiento_pago = $('[name=id_requerimiento_pago]').val();
-    var mensajeConcatenado=[];
-    
-    $.ajax({
-        type: 'POST',
-        url: 'validarPresupuestoParaPago',
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'JSON',
-        success: function (response) {
-            console.log(response);
 
-            let cantidadPartidasSinPresupuesto=0;
-            if((response.data).length >0){
-                (response.data).forEach(element => {
-                    if(element.tiene_presupuesto ==false){
-                        cantidadPartidasSinPresupuesto++;
-                        mensajeConcatenado.push("La partida "+element.partida +"("+element.descripcion+") no dispone de saldo suficiente, dispone S/"+element.monto_aux);
-                    }
-                });
-            }
-
-            if(cantidadPartidasSinPresupuesto>0){
-                Lobibox.notify('warning', {
-                    title: false,
-                    size: "normal",
-                    rounded: true,
-                    sound: false,
-                    delay: false,
-                    msg: mensajeConcatenado.toString()
-                });
-
-            }else{
-                procesarPago();
-            }
-
-
-        }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-    });
-}
 
 function procesarPago() {
     var formData = new FormData($('#form-procesarPago')[0]);
@@ -293,67 +300,127 @@ function listarCuentasOrigen() {
     });
 }
 
-function enviarAPago(tipo, id) {
 
-    console.log(tipo);
-
-    Swal.fire({
-        title: "¿Está seguro que desea autorizar el pago?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6", //"#00a65a",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Sí, Autorizar"
-    }).then(result => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST',
-                url: 'enviarAPago',// + tipo + '/' + id,
-                data: {
-                    'tipo': tipo,
-                    'id': id,
-                },
-                dataType: 'JSON',
-            }).done(function (response) {
-                console.log(response);
-                Lobibox.notify(response.tipo, {
-                    size: "mini",
-                    rounded: true,
-                    sound: false,
-                    delayIndicator: false,
-                    msg: response.mensaje
-                });
-                if (tipo == "orden") {
-                    tableOrdenes.ajax.reload(null, false);
-                }
-                else if (tipo == "requerimiento") {
-                    tableRequerimientos.ajax.reload(null, false);
-                }
-                else if (tipo == "orden") {
-                    tableComprobantes.ajax.reload(null, false);
-                }
-            }).always(function () {
-                // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
-            }).fail(function (jqXHR) {
-                Lobibox.notify('error', {
-                    size: "mini",
-                    rounded: true,
-                    sound: false,
-                    delayIndicator: false,
-                    msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
-                });
-                //Cerrar el modal
-                // $modal.modal('hide');
-                console.log('Error devuelto: ' + jqXHR.responseText);
-            });
-        }
+function validarPresupuesto(tipo, id, fecha_pago, monto_pago) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'POST',
+            url: `validarPresupuestoParaPago`,
+            dataType: 'JSON',
+            data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago },
+            success(response) {
+                resolve(response);
+            },
+            error: function (err) {
+                reject(err)
+            }
+        });
     });
 }
 
-function enviarPagoEnCuotas(id,idPagoCuotaDetalle,tipo,event) {
+function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
 
-    const obj= event.currentTarget;
+
+    $('.page-main').LoadingOverlay("show", {
+        imageAutoResize: true,
+        progress: true,
+        imageColor: "#3c8dbc"
+    });
+
+    if (obj != null) {
+        obj.setAttribute("disabled", true);
+    }
+    validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
+
+        $('.page-main').LoadingOverlay("hide", true);
+
+        if (obj != null) {
+            obj.removeAttribute("disabled");
+        }
+
+        let mensajeConcatenado = [];
+        let cantidadPartidasSinPresupuesto = 0;
+        if ((response.data).length > 0) {
+            (response.data).forEach(element => {
+                if (element.tiene_presupuesto == false) {
+                    cantidadPartidasSinPresupuesto++;
+                    mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
+                }
+            });
+        }
+
+        if (cantidadPartidasSinPresupuesto > 0) {
+            Lobibox.alert('warning', {
+                title: 'Validación de Presupuesto',
+                delay: false,
+                msg: mensajeConcatenado.toString()
+            });
+
+        } else {
+            Swal.fire({
+                title: "¿Está seguro que desea autorizar el pago?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6", //"#00a65a",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Sí, Autorizar"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'enviarAPago',// + tipo + '/' + id,
+                        data: {
+                            'tipo': tipo,
+                            'id': id,
+                        },
+                        dataType: 'JSON',
+                    }).done(function (response) {
+                        console.log(response);
+                        Lobibox.notify(response.tipo, {
+                            size: "mini",
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: response.mensaje
+                        });
+                        if (tipo == "orden") {
+                            tableOrdenes.ajax.reload(null, false);
+                        }
+                        else if (tipo == "requerimiento") {
+                            tableRequerimientos.ajax.reload(null, false);
+                        }
+                        else if (tipo == "orden") {
+                            tableComprobantes.ajax.reload(null, false);
+                        }
+                    }).always(function () {
+                        // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
+                    }).fail(function (jqXHR) {
+                        Lobibox.notify('error', {
+                            size: "mini",
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
+                        });
+                        //Cerrar el modal
+                        // $modal.modal('hide');
+                        console.log('Error devuelto: ' + jqXHR.responseText);
+                    });
+                }
+            });
+        }
+
+    }).catch(function (err) {
+        console.log(err)
+    })
+
+
+}
+
+function enviarPagoEnCuotas(id, idPagoCuotaDetalle, tipo, event) {
+
+    const obj = event.currentTarget;
 
     Swal.fire({
         title: "¿Está seguro que desea autorizar el pago?",
@@ -526,7 +593,7 @@ function anularPago(id_pago, tipo) {
 }
 
 
-function listarPagoEnCuotas(tipo,id){
+function listarPagoEnCuotas(tipo, id) {
     $.ajax({
         type: 'GET',
         url: 'listarPagosEnCuotas/' + tipo + '/' + id,
@@ -540,34 +607,34 @@ function listarPagoEnCuotas(tipo,id){
             let orden = response.orden;
             let numeroCuotas = response.numero_de_cuotas;
             let detalle = response.detalle;
-            let sumaMontoTotalMontoCuota=0;
+            let sumaMontoTotalMontoCuota = 0;
             if (response.hasOwnProperty('detalle') && detalle.length > 0) {
                 detalle.forEach(element => {
 
-                    if(element.id_estado !=7){
-                        sumaMontoTotalMontoCuota+=parseFloat(element.monto_cuota);
+                    if (element.id_estado != 7) {
+                        sumaMontoTotalMontoCuota += parseFloat(element.monto_cuota);
                     }
-                    enlaceAdjunto=[];
+                    enlaceAdjunto = [];
                     (element.adjuntos).forEach(element => {
-                        enlaceAdjunto.push('<a href="/files/logistica/comporbantes_proveedor/'+element.archivo+'" target="_blank">'+element.archivo+'</a>');
+                        enlaceAdjunto.push('<a href="/files/logistica/comporbantes_proveedor/' + element.archivo + '" target="_blank">' + element.archivo + '</a>');
                     });
 
                     html += '<tr id="' + element.id_pago_cuota_detalle + '">' +
                         '<td style="border: none; text-align: center">' + i + '</td>' +
                         '<td style="border: none; text-align: center; color: #8b3447 !important;font-weight: bold;">' + (element.monto_cuota !== null ? element.monto_cuota : '') + '</td>' +
-                        '<td style="border: none; text-align: center">' + ((element.observacion)?element.observacion:'') + '</td>' +
-                        '<td style="border: none; text-align: center">' + (numeroCuotas>1?(i+'/'+numeroCuotas):i)+ '</td>' +
-                        '<td style="border: none; text-align: center">' + enlaceAdjunto.toString().replace(",","<br>") + '</td>' +
-                        '<td style="border: none; text-align: center">' + (element.fecha_autorizacion !=null?element.fecha_autorizacion:'') + '</td>' +
-                        '<td style="border: none; text-align: center">' +element.estado.descripcion+'</td>' +
+                        '<td style="border: none; text-align: center">' + ((element.observacion) ? element.observacion : '') + '</td>' +
+                        '<td style="border: none; text-align: center">' + (numeroCuotas > 1 ? (i + '/' + numeroCuotas) : i) + '</td>' +
+                        '<td style="border: none; text-align: center">' + enlaceAdjunto.toString().replace(",", "<br>") + '</td>' +
+                        '<td style="border: none; text-align: center">' + (element.fecha_autorizacion != null ? element.fecha_autorizacion : '') + '</td>' +
+                        '<td style="border: none; text-align: center">' + element.estado.descripcion + '</td>' +
                         '</tr>';
                     i++;
                 });
 
                 // option vincular cuota con pago
-                detalle.forEach((element,index) => {
-                    if(element.id_estado ==5){
-                        htmlOptionVincularConPago+=`<option value="${element.id_pago_cuota_detalle}" selected>cuota #${index+1}</option>`
+                detalle.forEach((element, index) => {
+                    if (element.id_estado == 5) {
+                        htmlOptionVincularConPago += `<option value="${element.id_pago_cuota_detalle}" selected>cuota #${index + 1}</option>`
                     }
                 });
 
@@ -577,9 +644,9 @@ function listarPagoEnCuotas(tipo,id){
                 var html = `
                 <tr><td>No hay registros para mostrar</td></tr>`;
             }
-            document.querySelector("table[id='tablaDatosPagoEnCuotas'] tbody").insertAdjacentHTML('beforeend', html );
-            document.querySelector("select[name='vincularCuotaARegistroDePago[]']").insertAdjacentHTML('beforeend', htmlOptionVincularConPago );
-            document.querySelector("table[id='tablaDatosPagoEnCuotas'] span[name='sumaMontoTotalPagado']").textContent= sumaMontoTotalMontoCuota;
+            document.querySelector("table[id='tablaDatosPagoEnCuotas'] tbody").insertAdjacentHTML('beforeend', html);
+            document.querySelector("select[name='vincularCuotaARegistroDePago[]']").insertAdjacentHTML('beforeend', htmlOptionVincularConPago);
+            document.querySelector("table[id='tablaDatosPagoEnCuotas'] span[name='sumaMontoTotalPagado']").textContent = sumaMontoTotalMontoCuota;
 
 
         }

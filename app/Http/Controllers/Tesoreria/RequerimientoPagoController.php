@@ -440,7 +440,7 @@ class RequerimientoPagoController extends Controller
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
                     $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c] >0 ?$request->id_estado_envio[$c]:null;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->monto = floatval($request->monto_cpd_vinculado[$c]);
                     $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();

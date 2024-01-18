@@ -2693,7 +2693,6 @@ class ListarRequerimientoPagoView {
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] tr[id='contenedor_presupuesto_interno']").classList.add("oculto");
 
         }
-
         if (data.cdp_requerimiento.length > 0) {
             let codigosOportunidad = [];
             (data.cdp_requerimiento).forEach(element => {

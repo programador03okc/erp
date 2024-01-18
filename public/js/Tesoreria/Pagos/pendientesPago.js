@@ -1139,7 +1139,7 @@ $('#listaRequerimientos tbody').on('click', 'td button.detalle', function () {
         tr.removeClass('shown');
     }
     else {
-        formatPagos(iTableCounter, id, row, "requerimiento");
+        formatPagos(iTableCounter, id, row, "requerimiento pago");
         tr.addClass('shown');
         oInnerTableReq = $('#listaRequerimientos_' + iTableCounterReq).dataTable({
             //    data: sections,

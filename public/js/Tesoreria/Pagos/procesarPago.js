@@ -38,7 +38,7 @@ function openRegistroPago(data) {
     var tipoImpuesto = data.data('tipoImpuesto');
 
     var total_pago = formatDecimal(parseFloat(total) - pago);
-    console.log(data);
+    // console.log(id);
 
     const $modal = $('#modal-procesarPago');
     $modal.modal({
@@ -48,7 +48,7 @@ function openRegistroPago(data) {
     $modal.find('input[type=file]').val(null);
     $modal.find('div.bootstrap-filestyle').find('input[type=text]').val('');
 
-    if (tipo == 'requerimiento') {
+    if (tipo == 'requerimiento pago') {
         $('[name=id_requerimiento_pago]').val(id);
         $('[name=id_oc]').val('');
         $('[name=id_doc_com]').val('');
@@ -128,6 +128,25 @@ $("#form-procesarPago").on("submit", function (e) {
     e.preventDefault();
     $('#submit_procesarPago').attr('disabled', 'true');
 
+    var customElement = $("<div>", {
+        "css": {
+            "font-size": "24px",
+            "text-align": "center",
+            "padding": "0px",
+            "margin-top": "-600px"
+        },
+        "class": "your-custom-class",
+        "text": "Validando Presupuesto..."
+    });
+
+    $('#modal-procesarPago .modal-content').LoadingOverlay("show", {
+        imageAutoResize: true,
+        progress: true,
+        custom: customElement,
+        imageColor: "#3c8dbc"
+    });
+
+
     let id = '';
     let tipo = '';
     let idRequerimientoPago = document.querySelector("div[id='modal-procesarPago'] input[name='id_requerimiento_pago']").value;
@@ -146,6 +165,7 @@ $("#form-procesarPago").on("submit", function (e) {
     validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
 
         $('.page-main').LoadingOverlay("hide", true);
+        $('#modal-procesarPago .modal-content').LoadingOverlay("hide", true);
 
 
         let mensajeConcatenado = [];
@@ -160,28 +180,30 @@ $("#form-procesarPago").on("submit", function (e) {
         }
 
         if (cantidadPartidasSinPresupuesto > 0) {
-            Lobibox.notify('info', {
+            Lobibox.alert('warning', {
                 height:'auto',
                 sound:false,
                 delay: false,
                 msg: mensajeConcatenado.toString()
             });
 
-        }  
+        }else{
+            Swal.fire({
+                title: "¿Está seguro que desea realizar el pago?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6", //"#00a65a",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Sí, procesar"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    procesarPago();
+                }
+            });
+        }
 
-        Swal.fire({
-            title: "¿Está seguro que desea procesar el pago?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6", //"#00a65a",
-            cancelButtonColor: "#d33",
-            cancelButtonText: "Cancelar",
-            confirmButtonText: "Sí, procesar"
-        }).then(result => {
-            if (result.isConfirmed) {
-                procesarPago();
-            }
-        });
+  
 
     }).catch(function (err) {
         console.log(err)
@@ -320,10 +342,21 @@ function validarPresupuesto(tipo, id, fecha_pago, monto_pago) {
 
 function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
 
+    var customElement = $("<div>", {
+        "css": {
+            "font-size": "24px",
+            "text-align": "center",
+            "padding": "0px",
+            "margin-top": "-600px"
+        },
+        "class": "your-custom-class",
+        "text": "Validando Presupuesto..."
+    });
 
     $('.page-main').LoadingOverlay("show", {
         imageAutoResize: true,
         progress: true,
+        custom: customElement,
         imageColor: "#3c8dbc"
     });
 
@@ -387,7 +420,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
                         if (tipo == "orden") {
                             tableOrdenes.ajax.reload(null, false);
                         }
-                        else if (tipo == "requerimiento") {
+                        else if (tipo == "requerimiento pago") {
                             tableRequerimientos.ajax.reload(null, false);
                         }
                         else if (tipo == "orden") {
@@ -456,7 +489,7 @@ function enviarPagoEnCuotas(id, idPagoCuotaDetalle, tipo, event) {
 
 
                 }
-                else if (tipo == "requerimiento") {
+                else if (tipo == "requerimiento pago") {
                     tableRequerimientos.ajax.reload(null, false);
                 }
                 else if (tipo == "orden") {
@@ -514,7 +547,7 @@ function revertirEnvio(tipo, id) {
                 if (tipo == "orden") {
                     tableOrdenes.ajax.reload(null, false);
                 }
-                else if (tipo == "requerimiento") {
+                else if (tipo == "requerimiento pago") {
                     tableRequerimientos.ajax.reload(null, false);
                 }
                 else if (tipo == "orden") {
@@ -540,7 +573,7 @@ function revertirEnvio(tipo, id) {
 
 function anularPago(id_pago, tipo) {
 
-    console.log(tipo);
+    // console.log(tipo);
 
     Swal.fire({
         title: "¿Está seguro que anular éste pago?",
@@ -568,7 +601,7 @@ function anularPago(id_pago, tipo) {
                 if (tipo == "orden") {
                     tableOrdenes.ajax.reload(null, false);
                 }
-                else if (tipo == "requerimiento") {
+                else if (tipo == "requerimiento pago") {
                     tableRequerimientos.ajax.reload(null, false);
                 }
                 else if (tipo == "orden") {

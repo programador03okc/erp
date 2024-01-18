@@ -344,7 +344,7 @@ class RegistroPagoController extends Controller
                 ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'log_ord_compra.id_moneda')
                 ->where([['registro_pago.id_oc', '=', $id], ['registro_pago.estado', '!=', 7]])
                 ->get();
-        } else if ($tipo == "requerimiento") {
+        } else if ($tipo == "requerimiento pago") {
             $query = $detalles->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'registro_pago.id_requerimiento_pago')
                 ->join('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'requerimiento_pago.id_moneda')
                 ->where([['registro_pago.id_requerimiento_pago', '=', $id], ['registro_pago.estado', '!=', 7]])
@@ -715,7 +715,7 @@ class RegistroPagoController extends Controller
             $tipo = '';
             $id_usuario = Auth::user()->id_usuario;
 
-            if ($request->tipo == "requerimiento") {
+            if ($request->tipo == "requerimiento pago") {
                 $req = DB::table('tesoreria.requerimiento_pago')
                     ->where('id_requerimiento_pago', $request->id)->first();
                 //ya fue pagado?
@@ -795,7 +795,7 @@ class RegistroPagoController extends Controller
             $msj = '';
             $tipo = '';
 
-            if ($request->tipo == "requerimiento") {
+            if ($request->tipo == "requerimiento pago") {
                 $req = DB::table('tesoreria.requerimiento_pago')
                     ->where('id_requerimiento_pago', $request->id)->first();
 

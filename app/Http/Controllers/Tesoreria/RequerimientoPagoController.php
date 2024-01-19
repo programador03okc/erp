@@ -411,8 +411,10 @@ class RequerimientoPagoController extends Controller
                 $detalle->id_tipo_item = $request->tipoItem[$i];
                 if(intval($request->id_presupuesto_interno) > 0){
                     $detalle->id_partida_pi = $request->idPartida[$i]??null;
+                    $detalle->id_partida = null;
                 }else{
                     $detalle->id_partida = $request->idPartida[$i]??null;
+                    $detalle->id_partida_pi =null;
                 }
                 $detalle->id_centro_costo = $request->idCentroCosto[$i];
                 $detalle->descripcion = $request->descripcion[$i];

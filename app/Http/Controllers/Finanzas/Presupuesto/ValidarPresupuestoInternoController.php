@@ -5,14 +5,25 @@ namespace App\Http\Controllers\Finanzas\Presupuesto;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\Almacen\Requerimiento;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
+use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
+use App\Models\Tesoreria\TipoCambio;
 use Illuminate\Http\Request;
 
 class ValidarPresupuestoInternoController extends Controller
 {
     
+    public function getTipoCambioVenta($fecha)
+    {
+        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
+            ->orderBy('fecha', 'DESC')->first();
+
+        return ($tc !== null ? floatval($tc->venta) : 1);
+    }
 
     function validarPresupuestoParaPago(Request $request)
     {
@@ -33,15 +44,15 @@ class ValidarPresupuestoInternoController extends Controller
 
         if($tipo =='requerimiento pago'){ // id requerimiento de pago
             $idRequerimientoPago = $id;
-            $data =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago);
+            $data =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago, $fechaPago);
 
         }elseif($tipo =='orden'){ // id orden de compra o orden de servicio
             $idOrden = $id;
-            $data =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago);
+            $data =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago, $fechaPago);
 
         }elseif($tipo=='requerimiento logistico'){ // id de requerimiento logistico
             $idRequerimientoLogistio= $id;
-            $data =  $this->tienePresupuestoLasPartidasDelRequerimientoLogistico($idRequerimientoLogistio,$numeroMes,$totalPago);
+            $data =  $this->tienePresupuestoLasPartidasDelRequerimientoLogistico($idRequerimientoLogistio,$numeroMes,$totalPago, $fechaPago);
 
         }else{
             $estado='warning';
@@ -60,7 +71,7 @@ class ValidarPresupuestoInternoController extends Controller
 
     }
 
-    public function tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago){
+    public function tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago,$fechaPago){
 
         $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
         $nombreMes = $mesLista[$numeroMes];
@@ -71,12 +82,18 @@ class ValidarPresupuestoInternoController extends Controller
         if($idOrden>0){
             // $orden = Orden::find($idOrden);
             $detalleOrden = OrdenCompraDetalle::where('id_orden_compra',$idOrden)->get();
+            $orden = Orden::find($idOrden);
             foreach ($detalleOrden as $item) {
                 if($item->estado !=7 && $item->id_detalle_requerimiento >0){
                     $detalleRequerimiento = DetalleRequerimiento::find($item->id_detalle_requerimiento);
                     if($detalleRequerimiento->id_partida_pi >0){
 
-                        $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=+$item->subtotal;
+                        if($orden->id_moneda ==1){
+                            $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]= floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal);
+                            
+                        }elseif($orden->id_moneda ==2){
+                            $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=( (floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal)) * $this->getTipoCambioVenta($fechaPago));
+                        }
                     }
                 }
             }
@@ -107,14 +124,18 @@ class ValidarPresupuestoInternoController extends Controller
                         'tiene_presupuesto'=>true,
                         'partida'=>$detalle->partida,
                         'descripcion'=>$detalle->descripcion,
-                        'monto_aux'=>$detalle->$nombreMesAux
+                        'monto_aux'=>$detalle->$nombreMesAux,
+                        'monto_pago_calculado_soles'=>$monto,
+                        'monto_pago_ingresado'=>$totalPago
                     ];  
                 }else{
                     $data = [
                         'tiene_presupuesto'=>false,
                         'partida'=>$detalle->partida,
                         'descripcion'=>$detalle->descripcion,
-                        'monto_aux'=>$detalle->$nombreMesAux
+                        'monto_aux'=>$detalle->$nombreMesAux,
+                        'monto_pago_calculado_soles'=>$monto,
+                        'monto_pago_ingresado'=>$totalPago
                         ];  
                         
                     }
@@ -126,7 +147,7 @@ class ValidarPresupuestoInternoController extends Controller
 
     }
 
-    public function tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago){
+    public function tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago, $fechaPago){
 
         $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
         $nombreMes = $mesLista[$numeroMes];
@@ -136,11 +157,17 @@ class ValidarPresupuestoInternoController extends Controller
 
         if($idRequerimientoPago>0){
             $detalleRequerimientoPago = RequerimientoPagoDetalle::where('id_requerimiento_pago',$idRequerimientoPago)->get();
+            $requerimientoPago = RequerimientoPago::find($idRequerimientoPago);
             foreach ($detalleRequerimientoPago as $item) {
                 if($item->id_estado !=7 && $item->id_requerimiento_pago_detalle >0){
                      if($item->id_partida_pi >0){
                          // lista de item con monto y partida
-                        $montoPorUtilizarPorPartida[$item->id_partida_pi]=+$item->subtotal;
+                         if($requerimientoPago->id_moneda ==1){// soles
+                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]??0) + floatval($item->subtotal);
+                         }else if($requerimientoPago->id_moneda ==2){
+                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = ( (floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]??0) + floatval($item->subtotal)) *  $this->getTipoCambioVenta($fechaPago));
+
+                         }
                     }
                 }
             }
@@ -158,7 +185,7 @@ class ValidarPresupuestoInternoController extends Controller
         return $data;
     }
 
-    public function tienePresupuestoLasPartidasDelRequerimientoLogistico($idRequerimientoLogistico,$numeroMes,$totalPago){
+    public function tienePresupuestoLasPartidasDelRequerimientoLogistico($idRequerimientoLogistico,$numeroMes,$totalPago,$fechaPago){
 
         $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
         $nombreMes = $mesLista[$numeroMes];
@@ -168,11 +195,18 @@ class ValidarPresupuestoInternoController extends Controller
 
         if($idRequerimientoLogistico>0){
             $detalleRequerimientoLogistico = DetalleRequerimiento::where('id_requerimiento',$idRequerimientoLogistico)->get();
+            $requerimiento = Requerimiento::find($idRequerimientoLogistico);
             foreach ($detalleRequerimientoLogistico as $item) {
                 if($item->estado !=7 && $item->id_detalle_requerimiento >0){
                      if($item->id_partida_pi >0){
                          // lista de item con monto y partida
-                        $montoPorUtilizarPorPartida[$item->id_partida_pi]=+$item->subtotal;
+                         if($requerimiento->id_moneda==1){
+                             $montoPorUtilizarPorPartida[$item->id_partida_pi]= floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]??0) + floatval($item->subtotal);
+                             
+                            }elseif($requerimiento->id_moneda ==2){
+                             $montoPorUtilizarPorPartida[$item->id_partida_pi]= ( (floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]??0) + floatval($item->subtotal)) * $this->getTipoCambioVenta($fechaPago));
+
+                         }
                     }
                 }
             }

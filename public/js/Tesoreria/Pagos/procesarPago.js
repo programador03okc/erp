@@ -199,6 +199,8 @@ $("#form-procesarPago").on("submit", function (e) {
             }).then(result => {
                 if (result.isConfirmed) {
                     procesarPago();
+                }else{
+                    $('#submit_procesarPago').removeAttr('disabled');
                 }
             });
         }

@@ -1678,7 +1678,7 @@ class RequerimientoController extends Controller
                 $detalle->id_tipo_item = $request->tipoItem[$i];
                 if (intval($request->id_presupuesto_interno) > 0) {
                     $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
-                    $detalle->id_partida = null;
+                    $detalle->partida = null;
                 } else {
                     $detalle->partida = $request->idPartida[$i] ?? null;
                     $detalle->id_partida_pi = null;
@@ -1702,7 +1702,7 @@ class RequerimientoController extends Controller
                 $detalle->id_tipo_item = $request->tipoItem[$i];
                 if (intval($request->id_presupuesto_interno) > 0) {
                     $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
-                    $detalle->id_partida = null;
+                    $detalle->partida = null;
                 } else {
                     $detalle->id_partida_pi = null;
                     $detalle->partida = $request->idPartida[$i] ?? null;

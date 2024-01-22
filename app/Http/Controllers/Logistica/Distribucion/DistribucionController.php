@@ -1936,6 +1936,39 @@ class DistribucionController extends Controller
 
             return $cantidadDeEstadosCreadosEnTrazabilidad;
     }
+    
+    public function guardarMontoFleteEnDespacho($data)
+    {
+        $seFijoElMontoFleteTransportista =false;
+        $cdpRequerimiento = CdpRequerimiento::where([['id_cc', $data->id_cc], ['estado', '!=', 7]])->get();
+
+            foreach ($cdpRequerimiento as $key => $value) {
+
+                $requerimiento = Requerimiento::where([['id_tipo_requerimiento',1],['id_requerimiento', $value->id_requerimiento_logistico], ['estado', '!=', 7]])->first();
+
+                if ($requerimiento != null && $requerimiento->id_requerimiento > 0) {
+                    $ordenDespachoExterno = OrdenDespacho::where([['id_requerimiento', $requerimiento->id_requerimiento], ['aplica_cambios', false], ['estado', '!=', 7]])->first();
+                    if ($ordenDespachoExterno != null && $ordenDespachoExterno->id_od > 0) {
+
+                        // actualizar importe flete sin generar trazabilidad en estado
+
+                        $ode = OrdenDespacho::find($ordenDespachoExterno->id_od);
+                        $ode->importe_flete =  $data->monto;
+                        $ode->fecha_actualizacion_od =  new Carbon();
+                        $ode->save();
+
+                        if($ode){
+                            $seFijoElMontoFleteTransportista=true; 
+                        }
+ 
+                      
+                        
+                    }
+                }
+            }
+
+            return $seFijoElMontoFleteTransportista;
+    }
 
     public function guardarEstadoEnvio(Request $request)
     {

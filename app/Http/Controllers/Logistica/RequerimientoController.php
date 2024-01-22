@@ -1199,18 +1199,29 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
-                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c] >0 ?$request->id_estado_envio[$c]:null;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c]??null;
+                    $cdpRequerimiento->id_estado_envio = (isset($request->id_estado_envio[$c]) && $request->id_estado_envio[$c] >0) ?$request->id_estado_envio[$c]:null;
+                    $cdpRequerimiento->monto = (isset($request->monto_cpd_vinculado[$c]) && $request->monto_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->monto_cpd_vinculado[$c]))):null;
                     $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
 
 
-                    if($request->id_estado_envio[$c] >0 ){
-                        $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
-                        if($cantidadDeEstadosCreadosEnTrazabilidad>0){
-                            $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                    if(isset($request->id_estado_envio[$c])){
+                        if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){ // que sea mayor a cero y que no sea el estado monto flete transportista que no genera trazabilidad
+                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                            if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                            }
                         }
+                        
+                        if($request->id_estado_envio[$c] ==16){    
+                            $seFijoElMontoFleteTransportista= (new DistribucionController)->guardarMontoFleteEnDespacho($cdpRequerimiento);
+                            if($seFijoElMontoFleteTransportista){
+                                $mensajeEstadoTrazabilidad.='Se fijo el monto de transportista';
+                            }
+    
+                        }
+
                     }
                 }
             }
@@ -1678,8 +1689,10 @@ class RequerimientoController extends Controller
                 $detalle->id_tipo_item = $request->tipoItem[$i];
                 if (intval($request->id_presupuesto_interno) > 0) {
                     $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
+                    $detalle->partida = null;
                 } else {
                     $detalle->partida = $request->idPartida[$i] ?? null;
+                    $detalle->id_partida_pi = null;
                 }
                 $detalle->centro_costo_id = $request->idCentroCosto[$i];
                 $detalle->part_number = $request->partNumber[$i];
@@ -1700,7 +1713,9 @@ class RequerimientoController extends Controller
                 $detalle->id_tipo_item = $request->tipoItem[$i];
                 if (intval($request->id_presupuesto_interno) > 0) {
                     $detalle->id_partida_pi = $request->idPartida[$i] ?? null;
+                    $detalle->partida = null;
                 } else {
+                    $detalle->id_partida_pi = null;
                     $detalle->partida = $request->idPartida[$i] ?? null;
                 }
                 $detalle->centro_costo_id = $request->idCentroCosto[$i] > 0 ? $request->idCentroCosto[$i] : null;

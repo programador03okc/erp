@@ -149,13 +149,44 @@ function agregarCDP(obj) {
             });
 
         } else {
-            Lobibox.notify('warning', {
-                title: false,
-                size: 'mini',
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: "El CDP: " + obj.dataset.codigoOportunidad + " ya fue agregado"
+            // Lobibox.notify('warning', {
+            //     title: false,
+            //     size: 'mini',
+            //     rounded: true,
+            //     sound: false,
+            //     delayIndicator: false,
+            //     msg: "El CDP: " + obj.dataset.codigoOportunidad + " ya fue agregado"
+            // });
+
+            Swal.fire({
+                title: 'Ya se encuentra un CDP ' + obj.dataset.codigoOportunidad + ' en la lista, desea agregar nuevamente?',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Sí, agregar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const element =
+                    {
+                        id_cdp_requerimiento: makeId(),
+                        id_cc: obj.dataset.idCc,
+                        codigo_oportunidad: obj.dataset.codigoOportunidad,
+                        nombre_entidad: obj.dataset.nombreEntidad,
+                        monto: 0
+                    };
+                    agregarEnTablaCuadroPresupuestoVinculados(element);
+        
+                    Lobibox.notify('success', {
+                        title: false,
+                        size: 'mini',
+                        rounded: true,
+                        sound: false,
+                        delayIndicator: false,
+                        msg: "Se agrego a la lista el CDP: " + obj.dataset.codigoOportunidad
+                    });
+                }
             });
         }
 

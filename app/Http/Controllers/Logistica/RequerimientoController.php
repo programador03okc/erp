@@ -5252,6 +5252,6 @@ class RequerimientoController extends Controller
 
 
     public function obtenerEstadosEnvioTrazabilidadDespacho(){
-        return EstadoEnvio::listaEstadosDespacho();
+        return EstadoEnvio::listaEstadosDespachoParaSeleccionEnRequerimientoLogistico();
     }
 }

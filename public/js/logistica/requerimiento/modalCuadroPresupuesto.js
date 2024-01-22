@@ -235,7 +235,6 @@ function agregarEnTablaCuadroPresupuestoVinculados(element) {
                         html += `<option value="${ee.id_estado}">${ee.descripcion}</option>`;
                     }
                 });
-            html+=`<option value="16">FLETE DE TRANSPORTISTA (FIJAR MONTO)</option>`;
                 
             html+=`</select> </td>
             <td style="text-align:right;"><input type="date" name="fecha_estado[]" value="${element.fecha_estado !=null ?element.fecha_estado:moment().format("YYYY-MM-DD")}"> </td>

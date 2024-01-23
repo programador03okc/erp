@@ -52,6 +52,7 @@ function mostrar_iu(id){
             $('[name=id_iu]').val(response[0].id_iu);
             $('[name=descripcion]').val(response[0].descripcion);
             $('[name=codigo]').val(response[0].codigo);
+            $('[name=estado]').val(response[0].estado);
             // $('[name=estado]').val(response[0].estado);
             $('[id=fecha_registro] label').text('');
             $('[id=fecha_registro] label').append(formatDateHour(response[0].fecha_registro));

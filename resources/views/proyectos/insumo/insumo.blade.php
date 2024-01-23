@@ -72,8 +72,10 @@
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
+    
     <script src="{{ asset('js/proyectos/insumos/insumo.js')}}"></script>
     <script src="{{ asset('js/proyectos/insumos/insumoCreate.js')}}"></script>
     <script src="{{ asset('js/proyectos/variables/add_unid_med.js')}}"></script>
     <script src="{{ asset('js/proyectos/insumos/insumoPrecioModal.js')}}"></script>
+    <script src="{{ asset('js/proyectos/acus/acuPartidaCreate.js') }}"></script>
 @endsection

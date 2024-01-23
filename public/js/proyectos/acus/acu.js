@@ -193,13 +193,13 @@ function listar_presupuestos(id_cu){
             var html = '';
             response.forEach(element => {
                 html+='<div class="panel panel-default">'+
-                '<div class="panel-heading">'+element.des_tipo+' : '+element.codigo+'</div>'+
+                '<div class="panel-heading">'+(element.des_tipo??'')+' : '+(element.codigo??'')+'</div>'+
                 '<div class="panel-body">'+
-                '<div class="row"><div class="col-md-12"><label>Descripción: </label> <h5>'+element.descripcion+'</h5></div></div>'+
-                '<div class="row"><div class="col-md-12"><label>Cliente: </label> <h5>'+element.nro_documento+' - '+element.razon_social+'</h5></div></div>'+
+                '<div class="row"><div class="col-md-12"><label>Descripción: </label> <h5>'+(element.descripcion??'')+'</h5></div></div>'+
+                '<div class="row"><div class="col-md-12"><label>Cliente: </label> <h5>'+(element.nro_documento??'')+' - '+(element.razon_social??'')+'</h5></div></div>'+
                 '<div class="row"><div class="col-md-6"><label>Fecha Emisión: </label> <h5>'+formatDate(element.fecha_emision)+'</h5></div>'+
                 '<div class="col-md-6"><label>Sub Total: </label> <h5>'+formatNumber.decimal(element.sub_total, element.simbolo, -2)+'</h5></div></div>'+
-                '<div class="row"><div class="col-md-12"><label>Estado: </label> <h5>'+element.estado_doc+'</h5></div></div>'+
+                '<div class="row"><div class="col-md-12"><label>Estado: </label> <h5>'+(element.estado_doc??'')+'</h5></div></div>'+
                 '</div></div>';
             });
             $('#contenido').html(html);

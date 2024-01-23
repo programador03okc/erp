@@ -517,7 +517,7 @@ class ComponentesController extends Controller
             }
         }
 
-        $this->suma_partidas_ci($request->cod_compo, $request->id_pres);
+        (new PartidasController)->suma_partidas_ci($request->cod_compo, $request->id_pres);
 
         return response()->json($data);
     }

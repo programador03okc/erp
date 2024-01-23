@@ -50,6 +50,7 @@
                             <div class="col-md-4">
                                 <h5>Codigo</h5>
                                 <input type="hidden" name="id_iu" primary="ids">
+                                <input type="hidden" name="estado">
                                 <input type="text" class="form-control activation" name="codigo">
                             </div>
                             <div class="col-md-8">

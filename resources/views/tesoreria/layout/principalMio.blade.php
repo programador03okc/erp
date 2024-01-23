@@ -13,10 +13,10 @@
 	<link rel="stylesheet" href="{{ asset('template/dist/css/AdminLTE.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/dist/css/skins/_all-skins.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
-	<link rel="stylesheet" href="{{ asset('template/plugins/bootstrap-treeview/bootstrap-treeview.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/bootstrap-treeview/bootstrap-treeview.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
-	<link rel="stylesheet" href="{{ asset('template/plugins/select2/select2-bootstrap.css') }}">
-	<link rel="stylesheet" href="{{ asset('template/plugins/gantt/dhtmlxgantt.css') }}">
+	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/select2-bootstrap.css') }}">
+	<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/gantt/dhtmlxgantt.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/app_new_erp.css') }}">
 	<!-- ESTILOS -->
 @yield('styles_modulo')
@@ -127,8 +127,8 @@
 <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/js-xlsx/xlsx.full.min.js') }}"></script>
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-<script src="{{ asset('template/plugins/bootstrap-treeview/bootstrap-treeview.min.js') }}"></script>
-<script src="{{ asset('template/plugins/gantt/dhtmlxgantt.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/bootstrap-treeview/bootstrap-treeview.min.js') }}"></script>
+<script src="{{ asset('template/adminlte2-4/plugins/gantt/dhtmlxgantt.js') }}"></script>
 
 <script src="{{ asset('template/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
 

@@ -2219,6 +2219,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar_obs_gg/{id}', [PartidasController::class, 'listar_obs_gg']);
 				Route::get('anular_obs_partida/{id}', [PartidasController::class, 'anular_obs_partida']);
 				Route::post('guardar_obs_partida', [PartidasController::class, 'guardar_obs_partida']);
+
+				Route::get('ver_gant/{id}', [CronogramaInternoController::class, 'ver_gant']);
+
 			});
 
 			Route::group(['as' => 'cronogramas-internos.', 'prefix' => 'cronogramas-internos'], function () {

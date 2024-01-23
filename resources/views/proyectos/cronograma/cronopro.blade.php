@@ -18,7 +18,7 @@ Cronograma Propuesta
 @endsection
 
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/plugins/gantt/dhtmlxgantt.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/gantt/dhtmlxgantt.css') }}">
 @endsection
 
 @section('cuerpo')
@@ -127,7 +127,7 @@ Cronograma Propuesta
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
     
-    <script src="{{ asset('template/plugins/gantt/dhtmlxgantt.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/gantt/dhtmlxgantt.js') }}"></script>
 
     <script src="{{ asset('js/proyectos/cronograma/cronopro.js')}}"></script>
     <script src="{{ asset('js/proyectos/presupuesto/verAcu.js')}}"></script>

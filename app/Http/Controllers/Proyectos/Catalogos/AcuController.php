@@ -322,13 +322,12 @@ class AcuController extends Controller
             ->join('administracion.adm_estado_doc','adm_estado_doc.id_estado_doc','=','proy_presup.estado')
             ->join('proyectos.proy_op_com','proy_op_com.id_op_com','=','proy_presup.id_op_com')
             ->join('comercial.com_cliente','proy_op_com.cliente','=','com_cliente.id_cliente')
-            ->join('contabilidad.adm_contri','com_cliente.id_contribuyente','=','adm_contri.id_contribuyente')
+            ->leftjoin('contabilidad.adm_contri','com_cliente.id_contribuyente','=','adm_contri.id_contribuyente')
             ->join('proyectos.proy_tp_pres','proy_tp_pres.id_tp_pres','=','proy_presup.id_tp_presupuesto')
             ->join('configuracion.sis_moneda','sis_moneda.id_moneda','=','proy_presup.moneda')
                 ->where([['proy_cd_partida.id_cu_partida', '=', $id_cu],
                          ['proy_cd_partida.estado', '=', 1]])
                 ->distinct();
-
         $proy_ci = DB::table('proyectos.proy_ci_detalle')
             ->select('proy_presup.id_presupuesto', 'proy_presup.codigo', 'proy_presup.id_tp_presupuesto',
                      'proy_op_com.descripcion','adm_contri.nro_documento','adm_contri.razon_social',
@@ -339,7 +338,7 @@ class AcuController extends Controller
             ->join('administracion.adm_estado_doc','adm_estado_doc.id_estado_doc','=','proy_presup.estado')
             ->join('proyectos.proy_op_com','proy_op_com.id_op_com','=','proy_presup.id_op_com')
             ->join('comercial.com_cliente','proy_op_com.cliente','=','com_cliente.id_cliente')
-            ->join('contabilidad.adm_contri','com_cliente.id_contribuyente','=','adm_contri.id_contribuyente')
+            ->leftjoin('contabilidad.adm_contri','com_cliente.id_contribuyente','=','adm_contri.id_contribuyente')
             ->join('proyectos.proy_tp_pres','proy_tp_pres.id_tp_pres','=','proy_presup.id_tp_presupuesto')
             ->join('configuracion.sis_moneda','sis_moneda.id_moneda','=','proy_presup.moneda')
                 ->where([['proy_ci_detalle.id_cu_partida', '=', $id_cu],
@@ -357,7 +356,7 @@ class AcuController extends Controller
             ->join('administracion.adm_estado_doc','adm_estado_doc.id_estado_doc','=','proy_presup.estado')
             ->join('proyectos.proy_op_com','proy_op_com.id_op_com','=','proy_presup.id_op_com')
             ->join('comercial.com_cliente','proy_op_com.cliente','=','com_cliente.id_cliente')
-            ->join('contabilidad.adm_contri','com_cliente.id_contribuyente','=','adm_contri.id_contribuyente')
+            ->leftjoin('contabilidad.adm_contri','com_cliente.id_contribuyente','=','adm_contri.id_contribuyente')
             ->join('proyectos.proy_tp_pres','proy_tp_pres.id_tp_pres','=','proy_presup.id_tp_presupuesto')
             ->join('configuracion.sis_moneda','sis_moneda.id_moneda','=','proy_presup.moneda')
                 ->where([['proy_gg_detalle.id_cu_partida', '=', $id_cu],

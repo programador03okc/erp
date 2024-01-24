@@ -185,6 +185,10 @@ class RequerimientoPago {
                 {
                     'render':
                         function (data, type, row) {
+                            
+                            var pagado = formatDecimal(row['suma_pagado'] !== null ? row['suma_pagado'] : 0);
+                            var total = formatDecimal(row['monto_total']);
+                            var por_pagar = (total - pagado);
                             // <button type="button" class="autorizar btn btn-default boton" data-toggle="tooltip"
                             //     data-placement="bottom" data-id="${row['id_requerimiento_pago']}" data-tipo="requerimiento"
                             //     title="Ver requerimiento de pago"> <i class="fas fa-eye"></i></button>
@@ -196,13 +200,16 @@ class RequerimientoPago {
 
                             ${(row['id_estado'] == 2 && permisoEnviar == '1') ?
                                     `<button type="button" class="autorizar btn btn-info boton" data-toggle="tooltip"
-                                data-placement="bottom" data-id="${row['id_requerimiento_pago']}" data-tipo="requerimiento"
+                                data-placement="bottom" 
+                                data-id="${row['id_requerimiento_pago']}" 
+                                data-tipo="requerimiento pago"
+                                data-por-pagar="${por_pagar}"
                                 title="Autorizar pago"> <i class="fas fa-share"></i></button>`
                                     : ''}
                             ${row['id_estado'] == 5 ?
                                     `${permisoEnviar == '1' ?
                                         `<button type="button" class="revertir btn btn-danger boton" data-toggle="tooltip"
-                                        data-placement="bottom" data-id="${row['id_requerimiento_pago']}" data-tipo="requerimiento"
+                                        data-placement="bottom" data-id="${row['id_requerimiento_pago']}" data-tipo="requerimiento pago"
                                         title="Revertir autorización"><i class="fas fa-undo-alt"></i></button>`: ''}
                                     `
                                     : ''
@@ -210,7 +217,7 @@ class RequerimientoPago {
                                 ${row['id_estado'] == 5 || row['id_estado'] == 9 ?
                                     `${permisoRegistrar == '1' ?
                                         `<button type="button" class="pago btn btn-success boton" data-toggle="tooltip" data-placement="bottom"
-                                        data-id="${row['id_requerimiento_pago']}" data-cod="${row['codigo']}" data-tipo="requerimiento"
+                                        data-id="${row['id_requerimiento_pago']}" data-cod="${row['codigo']}" data-tipo="requerimiento pago"
                                         data-total="${row['monto_total']}" data-pago="${row['suma_pagado']}" data-moneda="${row['simbolo']}"
                                         data-nrodoc="${row['nro_documento'] !== null ? row['nro_documento'] : (row['dni_persona'] !== undefined ? row['dni_persona'] : '')}"
                                         data-prov="${encodeURIComponent(row['razon_social'] !== null ? row['razon_social'] : (row['persona'] !== undefined ? row['persona'] : ''))}"
@@ -462,11 +469,19 @@ class RequerimientoPago {
                                 default:
                                     break;
                             }
+
+                            var pagado = formatDecimal(row['suma_pagado'] !== null ? row['suma_pagado'] : 0);
+                            var total = formatDecimal(row['monto_total']);
+                            var por_pagar = (total - pagado);
+
                             // console.log(row['id_estado'] == 10  );
                             return `<div class="btn-group" role="group">
                 ${(row['estado_pago'] == 8 && permisoEnviar == '1' && row['tiene_pago_en_cuotas']===false) ?
                                     `<button type="button" class="autorizar btn btn-info boton" data-toggle="tooltip"
-                                data-placement="bottom" data-id="${row['id_orden_compra']}" data-tipo="orden"
+                                data-placement="bottom" 
+                                data-id="${row['id_orden_compra']}" 
+                                data-tipo="orden"
+                                data-por-pagar="${por_pagar}"
                                 title="Autorizar pago" >
                                 <i class="fas fa-share"></i></button>`: ''}
                 ${(permisoEnviar == '1' && row['tiene_pago_en_cuotas']===true) ?
@@ -618,16 +633,23 @@ $('#listaComprobantes tbody').on("click", "button.pago", function () {
     openRegistroPago($(this));
 });
 
-$('#listaRequerimientos tbody').on("click", "button.autorizar", function () {
+$('#listaRequerimientos tbody').on("click", "button.autorizar", function (e) {
+
+    var btn = e.currentTarget;
     var id = $(this).data('id');
     var tipo = $(this).data('tipo');
-    enviarAPago(tipo, id);
+    var monto_pago = $(this).data('por-pagar');
+    var fecha_pago = moment().format("YYYY-MM-DD");
+    enviarAPago(tipo, id ,fecha_pago, monto_pago, btn );
 });
 
-$('#listaOrdenes tbody').on("click", "button.autorizar", function () {
+$('#listaOrdenes tbody').on("click", "button.autorizar", function (e) {
+    var btn = e.currentTarget;
     var id = $(this).data('id');
     var tipo = $(this).data('tipo');
-    enviarAPago(tipo, id);
+    var monto_pago = $(this).data('por-pagar');
+    var fecha_pago = moment().format("YYYY-MM-DD");
+    enviarAPago(tipo, id ,fecha_pago, monto_pago,btn );
 });
 
 $('#listaRequerimientos tbody').on("click", "button.revertir", function () {
@@ -1117,7 +1139,7 @@ $('#listaRequerimientos tbody').on('click', 'td button.detalle', function () {
         tr.removeClass('shown');
     }
     else {
-        formatPagos(iTableCounter, id, row, "requerimiento");
+        formatPagos(iTableCounter, id, row, "requerimiento pago");
         tr.addClass('shown');
         oInnerTableReq = $('#listaRequerimientos_' + iTableCounterReq).dataTable({
             //    data: sections,

@@ -52,6 +52,7 @@ use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoController;
 use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\Finanzas\Presupuesto\ScriptController;
 use App\Http\Controllers\Finanzas\Presupuesto\TituloController;
+use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoController;
 use App\Http\Controllers\Finanzas\Reportes\ReporteGastoController;
 use App\Http\Controllers\Gerencial\Cobranza\ClienteController as CobranzaClienteController;
 use App\Http\Controllers\Gerencial\Cobranza\CobranzaController;
@@ -526,6 +527,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar-adjuntos-requerimiento-pago-detalle/{idRequerimentoPagoDetalle}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoDetalle'])->name('listar-adjuntos-requerimiento-pago-detalle');
 				Route::get('mostrar-requerimiento/{id?}/{codigo?}', [RequerimientoController::class, 'mostrarRequerimiento'])->name('mostrar-requerimiento');
 				Route::get('test-operacion/{idTipoDocumento}/{idTipoRequerimientoCompra}/{idGrupo}/{idDivision}/{idPrioridad}/{idMoneda}/{montoTotal}/{idTipoRequerimientoPago}/{idRolUsuarioDocList}', [RequerimientoController::class, 'getOperacion'])->name('test-operacion');
+				Route::post('validarPresupuestoParaPago', [ValidarPresupuestoInternoController::class, 'validarPresupuestoParaPago'])->name('validar-presupuesto-para-pagos');
+
 			});
 		});
 
@@ -1878,7 +1881,6 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('listarComprobantesPagos', [RegistroPagoController::class, 'listarComprobantesPagos'])->name('lista-comprobantes-pagos');
 				Route::post('listarOrdenesCompra', [RegistroPagoController::class, 'listarOrdenesCompra'])->name('lista-ordenes-compra');
 				Route::post('listarRequerimientosPago', [RegistroPagoController::class, 'listarRequerimientosPago'])->name('listar-requerimientos-pago');
-				Route::post('validarPresupuestoParaPago', [RegistroPagoController::class, 'validarPresupuestoParaPago'])->name('validar-presupuesto-para-pagos');
 				Route::post('procesarPago', [RegistroPagoController::class, 'procesarPago'])->name('procesar-pagos');
 				Route::get('listarPagos/{tp}/{id}', [RegistroPagoController::class, 'listarPagos'])->name('listar-pagos');
 				Route::get('listarPagosEnCuotas/{tp}/{id}', [RegistroPagoController::class, 'listarPagosEnCuotas'])->name('listar-pagos-en-cuotas');
@@ -1900,6 +1902,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('registro-pagos-exportar-excel', [RegistroPagoController::class, 'registroPagosExportarExcel'])->name('registro-pagos-exportar-excel');
 				Route::get('ordenes-compra-servicio-exportar-excel', [RegistroPagoController::class, 'ordenesCompraServicioExportarExcel'])->name('ordenes-compra-servicio-exportar-excel');
 				Route::get('listar-archivos-adjuntos-orden/{id_order}', [OrdenController::class, 'listarArchivosOrder'])->name('listar-archivos-adjuntos-orden');
+				Route::post('validarPresupuestoParaPago', [ValidarPresupuestoInternoController::class, 'validarPresupuestoParaPago'])->name('validar-presupuesto-para-pagos');
 
 				#exportar excel con los fltros aplicados
 				Route::post('exportar-requerimientos-pagos', [RegistroPagoController::class, 'exportarRequerimientosPagos'])->name('exportar-requerimientos-pagos');
@@ -2224,6 +2227,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar_obs_gg/{id}', [PartidasController::class, 'listar_obs_gg']);
 				Route::get('anular_obs_partida/{id}', [PartidasController::class, 'anular_obs_partida']);
 				Route::post('guardar_obs_partida', [PartidasController::class, 'guardar_obs_partida']);
+
+				Route::get('ver_gant/{id}', [CronogramaInternoController::class, 'ver_gant']);
+
 			});
 
 			Route::group(['as' => 'cronogramas-internos.', 'prefix' => 'cronogramas-internos'], function () {

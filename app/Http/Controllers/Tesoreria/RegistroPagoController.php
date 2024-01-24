@@ -344,7 +344,7 @@ class RegistroPagoController extends Controller
                 ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'log_ord_compra.id_moneda')
                 ->where([['registro_pago.id_oc', '=', $id], ['registro_pago.estado', '!=', 7]])
                 ->get();
-        } else if ($tipo == "requerimiento") {
+        } else if ($tipo == "requerimiento pago") {
             $query = $detalles->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'registro_pago.id_requerimiento_pago')
                 ->join('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'requerimiento_pago.id_moneda')
                 ->where([['registro_pago.id_requerimiento_pago', '=', $id], ['registro_pago.estado', '!=', 7]])
@@ -487,138 +487,6 @@ class RegistroPagoController extends Controller
         return response()->json($cuentas);
     }
 
-    function validarPresupuestoParaPago(Request $request)
-    {
-        $idOrden = $request->id_oc;
-        $idRequerimientoPago = $request->id_requerimiento_pago;
-        $fechaPago = $request->fecha_pago;
-        $totalPago = round($request->total_pago, 2);
-        $data=[];
-        $mensaje='';
-        $respuesta=[];
-
-        $numeroMes = strlen($fechaPago) == 2 ? intval($fechaPago) : intval(date('m', strtotime($fechaPago)));
-
-        if($idOrden >0){
-            $data =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago);
-        }elseif($idRequerimientoPago>0){
-            $data =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago);
-        }else{
-           $mensaje = 'El id de documento no corresponde a una orden o requerimiento de pago';
-        }
-
-        if(count($data)>0){
-            $respuesta =['tipo'=>'success','mensaje'=>'Se obtuvo data de la partidas','data'=>$data];
-        }else{
-            $respuesta =['tipo'=>'warning','mensaje'=>'No se encontró presupuesto interno o no al que hace referencia no esta aprobado','data'=>$data];
-
-        }
-
-        return $respuesta;
-
-    }
-
-    public function tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago){
-
-        $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
-        $nombreMes = $mesLista[$numeroMes];
-        $nombreMesAux = $nombreMes . '_aux';
-        $montoPorUtilizarPorPartida=[];
-        $data=[];
-
-        if($idOrden>0){
-            // $orden = Orden::find($idOrden);
-            $detalleOrden = OrdenCompraDetalle::where('id_orden_compra',$idOrden)->get();
-            foreach ($detalleOrden as $item) {
-                if($item->estado !=7 && $item->id_detalle_requerimiento >0){
-                    $detalleRequerimiento = DetalleRequerimiento::find($item->id_detalle_requerimiento);
-                    if($detalleRequerimiento->id_partida_pi >0){
-
-                        $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=+$item->subtotal;
-                    }
-                }
-            }
-            foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto);
-                if($tieneSaldoPartida!=[]){
-                    $data[]= $tieneSaldoPartida;
-                }
-            }
-        }
-
-        return $data;
-    }
-    
-    public function obtenerMontoPorUtilizarDePartida($idRequerimientoPagoDetalle, $idPartidaDePresupuestoInterno, $subtotal){
-
-    }
-
-
-    public function TieneSaldoLaPartida($idPartidaDePresupuestoInterno,$nombreMesAux,$totalPago){
-
-        $data=[];
-        $detallePresupuestoInterno = PresupuestoInternoDetalle::find($idPartidaDePresupuestoInterno);
-        $presupuesto = (new PresupuestoInternoController)->obtenerDetallePresupuestoInterno($detallePresupuestoInterno->id_presupuesto_interno);
- 
-        if(isset($presupuesto[0]->detalle)){
-           
-            foreach (($presupuesto[0]->detalle) as $detalle) {
-                if($detalle->id_presupuesto_interno_detalle ==$idPartidaDePresupuestoInterno){
-                    if($detalle->$nombreMesAux >=$totalPago ){
-                      $data = [
-                        'tiene_presupuesto'=>true,
-                        'partida'=>$detalle->partida,
-                        'descripcion'=>$detalle->descripcion,
-                        'monto_aux'=>$detalle->$nombreMesAux
-                    ];  
-                }else{
-                    $data = [
-                        'tiene_presupuesto'=>false,
-                        'partida'=>$detalle->partida,
-                        'descripcion'=>$detalle->descripcion,
-                        'monto_aux'=>$detalle->$nombreMesAux
-                        ];  
-                        
-                    }
-                }
-            }
-
-        }
-        return $data;
-
-    }
-
-    public function tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago){
-
-        $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
-        $nombreMes = $mesLista[$numeroMes];
-        $nombreMesAux = $nombreMes . '_aux';
-        $montoPorUtilizarPorPartida=[];
-        $data=[];
-
-        if($idRequerimientoPago>0){
-            $detalleRequerimientoPago = RequerimientoPagoDetalle::where('id_requerimiento_pago',$idRequerimientoPago)->get();
-            foreach ($detalleRequerimientoPago as $item) {
-                if($item->id_estado !=7 && $item->id_requerimiento_pago_detalle >0){
-                     if($item->id_partida_pi >0){
-                         // lista de item con monto y partida
-                        $montoPorUtilizarPorPartida[$item->id_partida_pi]=+$item->subtotal;
-                    }
-                }
-            }
-
-            foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto);
-                if($tieneSaldoPartida !=[]){
-                    $data[]=$tieneSaldoPartida;
-                }
-            }
-
-
-        }
-
-        return $data;
-    }
 
     function procesarPago(Request $request)
     {
@@ -847,7 +715,7 @@ class RegistroPagoController extends Controller
             $tipo = '';
             $id_usuario = Auth::user()->id_usuario;
 
-            if ($request->tipo == "requerimiento") {
+            if ($request->tipo == "requerimiento pago") {
                 $req = DB::table('tesoreria.requerimiento_pago')
                     ->where('id_requerimiento_pago', $request->id)->first();
                 //ya fue pagado?
@@ -927,7 +795,7 @@ class RegistroPagoController extends Controller
             $msj = '';
             $tipo = '';
 
-            if ($request->tipo == "requerimiento") {
+            if ($request->tipo == "requerimiento pago") {
                 $req = DB::table('tesoreria.requerimiento_pago')
                     ->where('id_requerimiento_pago', $request->id)->first();
 

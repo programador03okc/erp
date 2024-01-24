@@ -149,13 +149,44 @@ function agregarCDP(obj) {
             });
 
         } else {
-            Lobibox.notify('warning', {
-                title: false,
-                size: 'mini',
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: "El CDP: " + obj.dataset.codigoOportunidad + " ya fue agregado"
+            // Lobibox.notify('warning', {
+            //     title: false,
+            //     size: 'mini',
+            //     rounded: true,
+            //     sound: false,
+            //     delayIndicator: false,
+            //     msg: "El CDP: " + obj.dataset.codigoOportunidad + " ya fue agregado"
+            // });
+
+            Swal.fire({
+                title: 'Ya se encuentra un CDP ' + obj.dataset.codigoOportunidad + ' en la lista, desea agregar nuevamente?',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Sí, agregar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const element =
+                    {
+                        id_cdp_requerimiento: makeId(),
+                        id_cc: obj.dataset.idCc,
+                        codigo_oportunidad: obj.dataset.codigoOportunidad,
+                        nombre_entidad: obj.dataset.nombreEntidad,
+                        monto: 0
+                    };
+                    agregarEnTablaCuadroPresupuestoVinculados(element);
+        
+                    Lobibox.notify('success', {
+                        title: false,
+                        size: 'mini',
+                        rounded: true,
+                        sound: false,
+                        delayIndicator: false,
+                        msg: "Se agrego a la lista el CDP: " + obj.dataset.codigoOportunidad
+                    });
+                }
             });
         }
 
@@ -225,14 +256,17 @@ function agregarEnTablaCuadroPresupuestoVinculados(element) {
                 <input type="text" name="codigo_oportunidad_cpd_vinculado[]" value="${element.codigo_oportunidad}" hidden> ${element.codigo_oportunidad}</td>
             <td style="text-align:left;"><input type="text" name="nombre_entidad_cpd_vinculado[]" value="${element.nombre_entidad}" hidden> ${element.nombre_entidad}</td>
             <td style="text-align:right;"><span>S/</span> <input type="numeric" min="0" name="monto_cpd_vinculado[]" value="${parseFloat(element.monto)}"> </td>
-            <td style="text-align:right;"> <select class="form-control handleChangeEstadoEnvio" name="id_estado_envio[]"><option value="0">Seleccione un estado para enviar a trazabilidad</option>`;
-            estadosEnvio.forEach(ee => {
-                if(element.id_estado_envio >0 && ee.id_estado == element.id_estado_envio){
+            <td style="text-align:right;"> <select class="form-control handleChangeEstadoEnvio" name="id_estado_envio[]">
+                <option value="0">Seleccione un estado para enviar a trazabilidad</option>
+                `;
+                estadosEnvio.forEach(ee => {
+                    if(element.id_estado_envio >0 && ee.id_estado == element.id_estado_envio){
                         html += `<option value="${ee.id_estado}" selected>${ee.descripcion}</option>`;
-                }else{
-                    html += `<option value="${ee.id_estado}">${ee.descripcion}</option>`;
-                }
-            });
+                    }else{
+                        html += `<option value="${ee.id_estado}">${ee.descripcion}</option>`;
+                    }
+                });
+                
             html+=`</select> </td>
             <td style="text-align:right;"><input type="date" name="fecha_estado[]" value="${element.fecha_estado !=null ?element.fecha_estado:moment().format("YYYY-MM-DD")}"> </td>
             <td style="text-align:center;">

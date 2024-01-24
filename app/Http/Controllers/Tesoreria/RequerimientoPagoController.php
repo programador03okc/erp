@@ -411,8 +411,10 @@ class RequerimientoPagoController extends Controller
                 $detalle->id_tipo_item = $request->tipoItem[$i];
                 if(intval($request->id_presupuesto_interno) > 0){
                     $detalle->id_partida_pi = $request->idPartida[$i]??null;
+                    $detalle->id_partida = null;
                 }else{
                     $detalle->id_partida = $request->idPartida[$i]??null;
+                    $detalle->id_partida_pi =null;
                 }
                 $detalle->id_centro_costo = $request->idCentroCosto[$i];
                 $detalle->descripcion = $request->descripcion[$i];
@@ -439,17 +441,29 @@ class RequerimientoPagoController extends Controller
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
-                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c] >0 ?$request->id_estado_envio[$c]:null;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->id_estado_envio = (isset($request->id_estado_envio[$c]) && $request->id_estado_envio[$c] >0) ?$request->id_estado_envio[$c]:null;
+                    $cdpRequerimiento->monto = (isset($request->monto_cpd_vinculado[$c]) && $request->monto_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->monto_cpd_vinculado[$c]))):null;
                     $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
 
-                    if($request->id_estado_envio[$c] >0 ){
-                        $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
 
-                        if($cantidadDeEstadosCreadosEnTrazabilidad>0){
-                            $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                    if(isset($request->id_estado_envio[$c])){
+
+                        if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){
+                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+
+                            if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                            }
+                        }
+                        
+                        if($request->id_estado_envio[$c] ==16){    
+                            $seFijoElMontoFleteTransportista= (new DistribucionController)->guardarMontoFleteEnDespacho($cdpRequerimiento);
+                            if($seFijoElMontoFleteTransportista){
+                                $mensajeEstadoTrazabilidad.='Se fijo el monto de transportista';
+                            }
+
                         }
                     }
                 }

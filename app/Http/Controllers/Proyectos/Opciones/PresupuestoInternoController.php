@@ -10,6 +10,7 @@ use App\Http\Controllers\Proyectos\Variables\CategoriaAcuController;
 use App\Http\Controllers\Proyectos\Variables\IuController;
 use App\Http\Controllers\Proyectos\Variables\TipoInsumoController;
 use App\Http\Controllers\ProyectosController;
+use App\Models\Finanzas\Presupuesto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -25,17 +26,17 @@ class PresupuestoInternoController extends Controller
         return view('proyectos.presupuesto.presint', compact('monedas','sistemas','unidades','tipos','ius','categorias'));
     }
 
-    
+
     public function mostrar_presint($id)
     {
         $data = DB::table('proyectos.proy_presup')
-            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion', 
+            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion',
                      'proy_proyecto.descripcion as descripcion_proy',
-                     'proy_op_com.descripcion', 'proy_presup_importe.total_costo_directo', 
-                     'proy_presup_importe.total_ci', 'proy_presup_importe.porcentaje_ci', 
-                     'proy_presup_importe.total_gg', 'proy_presup_importe.porcentaje_gg', 
-                     'proy_presup_importe.sub_total', 'proy_presup_importe.porcentaje_utilidad', 
-                     'proy_presup_importe.total_utilidad', 'proy_presup_importe.porcentaje_igv', 
+                     'proy_op_com.descripcion', 'proy_presup_importe.total_costo_directo',
+                     'proy_presup_importe.total_ci', 'proy_presup_importe.porcentaje_ci',
+                     'proy_presup_importe.total_gg', 'proy_presup_importe.porcentaje_gg',
+                     'proy_presup_importe.sub_total', 'proy_presup_importe.porcentaje_utilidad',
+                     'proy_presup_importe.total_utilidad', 'proy_presup_importe.porcentaje_igv',
                      'proy_presup_importe.total_igv', 'proy_presup_importe.total_presupuestado',
                      'sis_moneda.simbolo','adm_contri.razon_social','adm_estado_doc.estado_doc as des_estado')
             ->join('proyectos.proy_tp_pres','proy_presup.id_tp_presupuesto','=','proy_tp_pres.id_tp_pres')
@@ -48,10 +49,10 @@ class PresupuestoInternoController extends Controller
             ->join('administracion.adm_estado_doc','adm_estado_doc.id_estado_doc','=','proy_presup.estado')
                 ->where([['proy_presup.id_presupuesto', '=', $id]])
                 ->first();
-        
+
         return response()->json($data);
     }
-    
+
     public function nextPresupuesto($tipo,$id_emp,$fecha)
     {
         // $mes = date('m',strtotime($fecha));
@@ -123,7 +124,7 @@ class PresupuestoInternoController extends Controller
                 ],
                     'id_presupuesto'
             );
-    
+
             $pres_imp = DB::table('proyectos.proy_presup_importe')->insert(
                 [
                     'id_presupuesto' => $id_pres,
@@ -149,7 +150,7 @@ class PresupuestoInternoController extends Controller
         return response()->json(['msj'=>$msj,'id_pres'=>$id_pres]);
     }
 
-    
+
     public function update_presint(Request $request){
 
         $version = DB::table('proyectos.proy_presup')
@@ -167,7 +168,7 @@ class PresupuestoInternoController extends Controller
                 'observacion' => $request->observacion,
                 'version' => ($version + 1)
             ]);
-            
+
         $imp = DB::table('proyectos.proy_presup_importe')
             ->where('id_presupuesto',$request->id_presupuesto)
             ->update([
@@ -259,12 +260,12 @@ class PresupuestoInternoController extends Controller
         }
         return response()->json(['msj'=>$msj,'update'=>$update]);
     }
-    
-    
+
+
     public function generar_estructura($id_presupuesto, $tipo){
 
-        try {
-            DB::beginTransaction();
+        // try {
+            // DB::beginTransaction();
 
             $presup = DB::table('proyectos.proy_presup')
             ->select('proy_presup.*','proy_op_com.descripcion',
@@ -273,11 +274,25 @@ class PresupuestoInternoController extends Controller
             ->where('id_presupuesto',$id_presupuesto)
             ->first();
 
+
             $id_grupo = 3;
             $codigo = (new ProyectosController)->nextCodigoPresupuesto($id_grupo, $presup->fecha_emision, $tipo);
 
 
             //Inserta Nuevo Presupuesto
+            // $presupuesto = new Presupuesto;
+            //     $presupuesto->id_empresa        = $presup->id_empresa;
+            //     $presupuesto->id_grupo          = $id_grupo;//Grupo: Proyectos
+            //     $presupuesto->fecha_emision     = $presup->fecha_emision;
+            //     $presupuesto->codigo            = $codigo;
+            //     $presupuesto->descripcion       = $presup->descripcion;
+            //     $presupuesto->moneda            = $presup->moneda;
+            //     $presupuesto->responsable       = $presup->elaborado_por;
+            //     $presupuesto->estado            = 1;
+            //     $presupuesto->fecha_registro    = date('Y-m-d H:i:s');
+            //     $presupuesto->tp_presup         = (int)$tipo;
+            // $presupuesto->save();
+
             $id_presup = DB::table('finanzas.presup')
             ->insertGetId([
                 'id_empresa' => $presup->id_empresa,
@@ -293,12 +308,12 @@ class PresupuestoInternoController extends Controller
             ],
                 'id_presup'
             );
-        
+
             $base = DB::table('finanzas.presup')
             ->where([['tp_presup','=',1],['estado','=',1]])
             ->orderBy('fecha_emision','desc')
             ->first();
-        
+
             $titulos = DB::table('finanzas.presup_titu')
             ->where([['id_presup','=',$base->id_presup],['estado','=',1]])
             ->get();
@@ -432,15 +447,15 @@ class PresupuestoInternoController extends Controller
             // $html = $this->html_presupuesto_proyecto($id_presup,'imprimir_padres');
 
             // return json_encode(['id_presup'=>$id_presup,'html'=>$html]);
-            DB::commit();
+            // DB::commit();
             return json_encode($id_presup);
-            
-        } catch (\PDOException $e) {
-            DB::rollBack();
-        }
+
+        // } catch (\PDOException $e) {
+        //     DB::rollBack();
+        // }
     }
 
-    
+
     public function listar_presupuesto_proyecto($id)
     {
         $html = $this->html_presupuesto_proyecto($id,'imprimir_padres');
@@ -457,14 +472,14 @@ class PresupuestoInternoController extends Controller
             ->orderBy('presup_par.codigo')
             ->get()
             ->toArray();
-            
+
         $titulos = DB::table('finanzas.presup_titu')
             ->select('presup_titu.*')
             ->where([['presup_titu.id_presup', '=', $id],
                      ['presup_titu.estado', '=', 1]])
             ->orderBy('presup_titu.codigo')
             ->get();
-    
+
         $html = '';
 
         foreach ($titulos as $titu){
@@ -504,13 +519,13 @@ class PresupuestoInternoController extends Controller
                             //si count es mayor a 0 color warning
                             if ($count_req > 0){
                                 $html .= '<td>
-                                <i class="fas fa-list-alt btn-warning visible boton" data-toggle="tooltip" data-placement="bottom" 
+                                <i class="fas fa-list-alt btn-warning visible boton" data-toggle="tooltip" data-placement="bottom"
                                 title="Ver Detalle Consumido" onClick="ver_detalle_partida('.$par->id_partida.','."'".$par->codigo.' '.$par->descripcion."'".','.$par->importe_total.');"></i>
                                 </td>';
                             } else {
                                 $html .= '<td></td>';
                             }
-                            
+
                         }
                     $html .='</tr>';
                 }
@@ -519,7 +534,7 @@ class PresupuestoInternoController extends Controller
         return $html;
     }
 
-    
+
     public function anular_estructura($id_pres)
     {
         $pres = DB::table('proyectos.proy_presup')
@@ -533,13 +548,13 @@ class PresupuestoInternoController extends Controller
             ->get();
             $tiene_req = false;
             $r = 0;
-            
+
             foreach($partidas as $par){
                 $req = DB::table('almacen.alm_det_req')
                 ->where([['partida','=',strval($par->id_partida)],
                          ['estado','!=',7]])
                 ->count();
-                
+
                 if ($req > 0){
                     $tiene_req = true;
                     $r++;
@@ -552,7 +567,7 @@ class PresupuestoInternoController extends Controller
                 $update = DB::table('finanzas.presup')
                 ->where('id_presup',$pres->id_presup)
                 ->update(['estado' => 7]);
-                //Anula titulos 
+                //Anula titulos
                 $update = DB::table('finanzas.presup_titu')
                 ->where('id_presup',$pres->id_presup)
                 ->update(['estado' => 7]);
@@ -583,14 +598,14 @@ class PresupuestoInternoController extends Controller
         return response()->json($data);
     }
 
-    
+
     public function download_presupuesto($id){
         $detalle = $this->html_presupuesto_proyecto($id,'');
         $data = '
         <html>
             <head>
             <style type="text/css">
-                *{ 
+                *{
                     font-family: Calibri;
                 }
                 body{
@@ -621,14 +636,14 @@ class PresupuestoInternoController extends Controller
             </body>
         </html>
         ';
-        // return $data;  //class="table table-condensed table-bordered table-hover sortable" 
+        // return $data;  //class="table table-condensed table-bordered table-hover sortable"
         return view('proyectos.reportes.presupuesto_excel', compact('data'));
     }
 
     public function mostrar_presupuestos($tp)
     {
         $data = DB::table('proyectos.proy_presup')
-            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion', 
+            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion',
                      'proy_op_com.descripcion', 'proy_presup_importe.sub_total',
                      'proy_presup_importe.total_presupuestado','sis_moneda.simbolo','adm_contri.razon_social')
             ->join('proyectos.proy_tp_pres','proy_presup.id_tp_presupuesto','=','proy_tp_pres.id_tp_pres')
@@ -644,11 +659,11 @@ class PresupuestoInternoController extends Controller
         return response()->json($output);
     }
 
-    
+
     public function listar_presupuestos_copia($tp,$menos_id)
     {
         $data = DB::table('proyectos.proy_presup')
-            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion', 
+            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion',
                      'proy_op_com.descripcion', 'proy_presup_importe.total_presupuestado',
                      'sis_moneda.simbolo','adm_contri.razon_social')
             ->join('proyectos.proy_tp_pres','proy_presup.id_tp_presupuesto','=','proy_tp_pres.id_tp_pres')
@@ -666,8 +681,8 @@ class PresupuestoInternoController extends Controller
         return response()->json($output);
     }
 
-    
-    //Generar un presupuesto en base a otro presupuesto 
+
+    //Generar un presupuesto en base a otro presupuesto
     //(ID del presupuesto que voy a copiar, # del tipo de presupuesto que voy a generar, ID del presupuesto actual)
     public function generar_partidas_presupuesto($id_presupuesto, $id_presupuesto_actual)
     {
@@ -863,11 +878,11 @@ class PresupuestoInternoController extends Controller
         }
 
         $this->actualiza_totales($id_presupuesto_actual);
-        
+
         return response()->json($id_presupuesto_actual);
     }
 
-    
+
     public function actualiza_moneda($id_pres)
     {
         $pres = DB::table('proyectos.proy_presup')
@@ -901,7 +916,7 @@ class PresupuestoInternoController extends Controller
                     $unitario = $p->precio_cu * $pres->tipo_cambio;
                 }
                 $parcial = $unitario * $p->cantidad;
-    
+
                 $update = DB::table('proyectos.proy_cd_partida')
                 ->where('id_partida',$p->id_partida)
                 ->update(['importe_unitario'=>$unitario,
@@ -940,14 +955,14 @@ class PresupuestoInternoController extends Controller
                 if (isset($det->cod_compo) && $det->cod_compo !== null){
                     $this->suma_padres_ci($det->cod_compo, $id_pres);
                 }
-            }        
+            }
         }
         $this->actualiza_totales($id_pres);
 
         return response()->json($update);
     }
 
-    
+
     //actualiza unitario de la partida
     public function update_unitario_partida_cd(Request $request)
     {

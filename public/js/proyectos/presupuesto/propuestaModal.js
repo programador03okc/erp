@@ -15,7 +15,7 @@ $(function(){
                 $('#codigo').text(cod);
                 $('[name=nombre_opcion]').val(des);
                 $('#modal-propuesta').modal('hide');
-                
+
                 if (crono_modal == 0){
                     $('[name=modo]').val('new');
                     $('[name=numero]').attr('disabled',false);
@@ -27,7 +27,7 @@ $(function(){
                     $('[name=unid_program]').attr('disabled',true);
                     $('[name=btn_actualizar]').attr('disabled',true);
                     mostrar_cronoval_propuesta();
-                } 
+                }
             }
             else if (formName == 'cronopro'){
                 if (crono_modal == 0){

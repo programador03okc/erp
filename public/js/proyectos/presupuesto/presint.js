@@ -23,7 +23,7 @@ $(function(){
     $('#listaEstructura tbody').html('');
 
     $("#tab-presint section:first form").attr('form', 'formulario');
-    
+
     /* Efecto para los tabs */
     $('ul.nav-tabs li a').click(function(){
         $('ul.nav-tabs li').removeClass('active');
@@ -55,7 +55,7 @@ function actualizar_tab(activeForm, id){
         else if (activeForm == "form-cd"){
             $('#listaCD tbody').html('');
             listar_cd(id);
-        } 
+        }
         else if (activeForm == "form-ci"){
             $('#listaCI tbody').html('');
             listar_ci(id);
@@ -105,7 +105,7 @@ function mostrar_presint(id){
             $('#version').text('Versión N° '+response.version);
             $('#des_estado').text(response.des_estado);
             $('#estado').text(response.estado);
-            
+
             var des='';
             if (response.estado == 1){
                 des = 'label label-primary';
@@ -117,8 +117,8 @@ function mostrar_presint(id){
             $('#des_estado').removeClass();
             $('#des_estado').addClass(des);
 
-            // document.getElementById("cronograma").style.visibility = (response.cronograma ? "visible" : "hidden"); 
-            // document.getElementById("cronoval").style.visibility = (response.cronoval ? "visible" : "hidden"); 
+            // document.getElementById("cronograma").style.visibility = (response.cronograma ? "visible" : "hidden");
+            // document.getElementById("cronoval").style.visibility = (response.cronoval ? "visible" : "hidden");
 
             var activeTab = $("#tab-presint #myTab li.active a").attr('type');
             var activeForm = "form-"+activeTab.substring(1);
@@ -167,7 +167,7 @@ function save_presint(data, action){
 
     if (msj.length > 0){
         alert(msj);
-    } 
+    }
     else {
         $.ajax({
             type: 'POST',
@@ -178,7 +178,7 @@ function save_presint(data, action){
                 console.log(response);
                 if (response['msj'].length > 0){
                     alert(response['msj']);
-                } 
+                }
                 if (response['id_pres'] > 0){
                     mostrar_presint(response['id_pres']);
                     changeStateButton('guardar');

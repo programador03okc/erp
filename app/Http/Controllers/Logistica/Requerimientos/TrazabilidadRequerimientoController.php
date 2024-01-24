@@ -12,17 +12,43 @@ class TrazabilidadRequerimientoController extends Controller
     public function mostrarDocumentosByRequerimiento($id_requerimiento)
     {
         $requerimiento = DB::table('almacen.alm_req')
-            ->select('alm_req.id_requerimiento', 'alm_req.codigo', 'alm_req.fecha_requerimiento', 'alm_req.concepto', 'alm_req.estado', 'adm_estado_doc.estado_doc AS estado_descripcion')
+            ->select('alm_req.id_requerimiento', 'alm_req.codigo', 'alm_req.fecha_requerimiento', 'alm_req.concepto', 'alm_req.estado', 'adm_estado_doc.estado_doc AS estado_descripcion', 'alm_req.fecha_registro')
             ->leftJoin('administracion.adm_estado_doc', 'alm_req.estado', '=', 'adm_estado_doc.id_estado_doc')
             ->where('id_requerimiento', $id_requerimiento)
             ->first();
 
+        $flujo_aprobacion = DB::table('administracion.adm_documentos_aprob')
+        ->select('adm_aprobacion.id_aprobacion','adm_vobo.descripcion as descripcion_vobo','adm_aprobacion.detalle_observacion','adm_aprobacion.fecha_vobo','sis_usua.nombre_corto as nombre_usuario')
+        ->leftJoin('almacen.alm_req', function ($join) {
+            $join->on('adm_documentos_aprob.id_doc', '=', 'alm_req.id_requerimiento');
+            $join->where('adm_documentos_aprob.id_tp_documento', '=', 1);
+        })
+        ->leftJoin('administracion.adm_aprobacion', 'adm_aprobacion.id_doc_aprob', '=', 'adm_documentos_aprob.id_doc_aprob')
+        ->leftJoin('administracion.adm_vobo', 'adm_vobo.id_vobo', '=', 'adm_aprobacion.id_vobo')
+        ->leftJoin('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'adm_aprobacion.id_usuario')
+        ->where('alm_req.id_requerimiento', $id_requerimiento)
+        ->orderBy('adm_aprobacion.fecha_vobo','asc')
+        ->get();
+
+
+
         $ordenes = DB::table('logistica.log_det_ord_compra')
-            ->select('log_ord_compra.*', 'estados_compra.descripcion AS estado_descripcion')
+            ->select(
+            'log_ord_compra.id_orden_compra',
+            'log_ord_compra.codigo',
+            'log_ord_compra.fecha_registro',
+            'log_ord_compra.fecha_autorizacion',
+            'log_ord_compra.fecha_solicitud_pago',
+            'log_ord_compra.estado',
+            'estados_compra.descripcion AS estado_descripcion',
+            'usu_autoriza_pago.nombre_corto as usuario_autoriza_pago',
+            'requerimiento_pago_estado.descripcion as descripcion_estado_pago')
             ->join('logistica.log_ord_compra', 'log_ord_compra.id_orden_compra', '=', 'log_det_ord_compra.id_orden_compra')
             ->join('almacen.alm_det_req', 'alm_det_req.id_detalle_requerimiento', '=', 'log_det_ord_compra.id_detalle_requerimiento')
             ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
             ->leftJoin('logistica.estados_compra', 'log_ord_compra.estado', '=', 'estados_compra.id_estado')
+            ->leftJoin('configuracion.sis_usua as usu_autoriza_pago', 'usu_autoriza_pago.id_usuario', '=', 'log_ord_compra.usuario_autorizacion')
+            ->leftJoin('tesoreria.requerimiento_pago_estado', 'requerimiento_pago_estado.id_requerimiento_pago_estado', '=', 'log_ord_compra.estado_pago')
 
             ->where([
                 ['alm_req.id_requerimiento', '=', $id_requerimiento],
@@ -32,11 +58,25 @@ class TrazabilidadRequerimientoController extends Controller
             ->get();
 
             $registoPago=[];
+            $flujoDeEnvioApago=[];
             foreach ($ordenes as $key => $orden) {
                 if($orden->estado !=7){
                     $registoPago = RegistroPago::with('adjunto')->where([['id_oc',$orden->id_orden_compra],['estado',1]])->get();
                 }
+                
+                if($orden->fecha_autorizacion){
+                    
+                    $flujoDeEnvioApago[]=[
+                        'fecha_solicitud_pago'=>$orden->fecha_solicitud_pago,
+                        'fecha_autorizacion'=>$orden->fecha_autorizacion,
+                        'usuario_autoriza_pago'=>$orden->usuario_autoriza_pago,
+                        'descripcion_estado_pago'=>$orden->descripcion_estado_pago,
+                    ];
+                }
+
             }
+
+
 
         $reservas = DB::table('almacen.alm_reserva')
             ->select('alm_reserva.*')
@@ -204,7 +244,9 @@ class TrazabilidadRequerimientoController extends Controller
 
         return response()->json([
             'requerimiento' => $requerimiento,
+            'flujo_aprobacion' => $flujo_aprobacion,
             'ordenes' => $ordenes,
+            'flujo_envio_pago' => $flujoDeEnvioApago,
             'pagos' => $registoPago,
             'reservado' => (count($reservas) > 0 ? true : false),
             // 'reservas' => $reservas,

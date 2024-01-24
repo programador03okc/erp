@@ -120,7 +120,7 @@ function construirModalTrazabilidad(data) {
             (data.flujo_envio_pago).forEach(element => {
                 htmlFlujoEnvioAPago += `
                 <div class="timeline-body">
-                <strong>Fecha de envio de envio a pago:</strong>
+                <strong>Fecha de envio a pago:</strong>
                 <p>${element.fecha_solicitud_pago}</p>
                 <strong>Fecha autorización de pago:</strong>
                 <p>${element.fecha_autorizacion}</p>

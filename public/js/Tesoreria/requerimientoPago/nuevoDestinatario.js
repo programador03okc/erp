@@ -106,7 +106,7 @@ function guardarContribuyente(data) {
                 document.querySelector(nombreModalPadre+" input[name='nombre_destinatario']").value = document.querySelector("div[id='modal-nuevo-contribuyente'] input[name='nuevo_razon_social']").value;
 
                 // limpiar cuenta bancaria
-                document.querySelector(nombreModalPadre+" input[name='id_cuenta_contribuyente']").value='';
+                // document.querySelector(nombreModalPadre+" input[name='id_cuenta_contribuyente']").value='';
                 document.querySelector(nombreModalPadre+" select[name='id_cuenta']").value = "";
                 let selectCuenta = document.querySelector(nombreModalPadre+" select[name='id_cuenta']");
                 if (selectCuenta != null) {

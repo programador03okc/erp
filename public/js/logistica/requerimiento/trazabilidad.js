@@ -47,6 +47,39 @@ function construirModalTrazabilidad(data) {
             </li>`);
 
         }
+
+        let htmlFlujoAprobacion = '';
+        if (data.flujo_aprobacion.length > 0) {
+
+            htmlFlujoAprobacion = `<li class="timeline-item">
+            <div class="timeline-badge default"><i class="glyphicon glyphicon-check"></i></div>
+            <div class="timeline-panel border-default">
+                <div class="timeline-heading">
+                    <h5 class="timeline-title">Flujo de aprobación</h5>
+                </div>
+                <div style="overflow-y: scroll;height: 108px;">
+                `;
+            
+            (data.flujo_aprobacion).forEach(element => {
+                htmlFlujoAprobacion += `
+                <div class="timeline-body">
+                <strong>Fecha de respuesta:</strong>
+                <p>${element.fecha_vobo}</p>
+                <strong>Usuario:</strong>
+                <p>${element.nombre_usuario}</p>
+                <strong>Tipo de respuesta:</strong>
+                <p><i class="label label-default">${element.descripcion_vobo}</i></p>
+                </div>`;
+            });
+
+            htmlFlujoAprobacion += `
+                </div>
+            </div>
+        </li>`;
+            document.querySelector("ul[id='stepperTrazabilidad']").insertAdjacentHTML('beforeend', htmlFlujoAprobacion);
+
+        }
+
         let htmlGestionLogistica = '';
         let OrdenesCodigo = [];
         if (data.ordenes.length > 0) {
@@ -75,6 +108,37 @@ function construirModalTrazabilidad(data) {
 
         }
 
+        let htmlFlujoEnvioAPago = '';
+        if (data.flujo_envio_pago.length > 0) {
+
+            htmlFlujoEnvioAPago = `<li class="timeline-item">
+            <div class="timeline-badge default"><i class="glyphicon glyphicon-check"></i></div>
+            <div class="timeline-panel border-default">
+                <div class="timeline-heading">
+                    <h5 class="timeline-title">Flujo de pago</h5>
+                </div>`;
+            (data.flujo_envio_pago).forEach(element => {
+                htmlFlujoEnvioAPago += `
+                <div class="timeline-body">
+                <strong>Fecha de envio a pago:</strong>
+                <p>${element.fecha_solicitud_pago}</p>
+                <strong>Fecha autorización de pago:</strong>
+                <p>${element.fecha_autorizacion}</p>
+                <strong>Estado de pago:</strong>
+                <p><i class="label label-default">${element.descripcion_estado_pago}</i></p>
+                
+                </div>`;
+            });
+
+            htmlFlujoEnvioAPago += `
+            </div>
+        </li>`;
+            document.querySelector("ul[id='stepperTrazabilidad']").insertAdjacentHTML('beforeend', htmlFlujoEnvioAPago);
+
+        }
+
+
+        
         let htmlTesoreriaPago = '';
         let adjuntoPagoList = [];
         if (data.pagos.length > 0) {

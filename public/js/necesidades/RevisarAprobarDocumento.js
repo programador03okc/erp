@@ -1411,7 +1411,7 @@ class RevisarAprobarDocumentoView {
                         msg: mensajeConcatenado.toString()
                     });
 
-                    accionGuardarRespuesta = false;
+                    accionGuardarRespuesta = true; //! cambiar a false para ser resctrictiva
 
                 } else {
                     accionGuardarRespuesta = true;

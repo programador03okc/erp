@@ -3020,7 +3020,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='monto_total_read_only']").value = $.number(data.monto_total, 2);
         document.querySelector("div[id='modal-requerimiento-pago'] table[id='ListaDetalleRequerimientoPago'] label[name='total']").textContent = $.number(data.monto_total, 2);
 
-        document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_condicion_softlink']").value = data.id_condicion_softlink;
+        // document.querySelector("div[id='modal-requerimiento-pago'] select[name='id_condicion_softlink']").value = data.id_condicion_softlink;
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.id_division, data.id_presupuesto_interno);
 
         this.llenarComboProyectos(data.id_grupo, data.id_proyecto);

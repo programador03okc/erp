@@ -116,6 +116,43 @@ $("[name=id_presup]").on('change', function () {
                             <td></td>
                             </tr>`;
                 });
+                response.devoluciones.forEach(element => {
+                    var sub_total = parseFloat(element.precio_unitario) * parseFloat(element.cantidad);
+                    var igv = sub_total * 0.18;
+
+                    total_sin_igv_req += parseFloat(sub_total);
+                    total_req += (sub_total + igv);
+
+                    html += `<tr>
+                            <td>${element.id_requerimiento_pago >0 ?'Pago':'Logístico'}</td>
+                            <td>${formatDate(element.fecha_registro)}</td>
+                            <td>${element.id_requerimiento_pago >0 ?element.codigo_requerimiento_pago: element.codigo_requerimiento_logistico}</td>
+                            <td>${element.titulo_descripcion ?? ''}</td>
+                            <td>${element.partida_descripcion ?? ''}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>DEVOLUCIÓN A PARTIDA</td>
+                            <td  style="text-align:center"></td>
+                            <td  style="text-align:center"></td>
+                            <td  style="text-align:center">${element.simbolo_moneda ?? ''}</td>
+                            <td style="text-align:right">-${formatNumber.decimal(element.monto ?? '', '', -2)}</td>
+                            <td style="text-align:right">-${formatNumber.decimal(element.monto ?? '', '', -2)}</td>
+                            <td style="text-align:right">${formatNumber.decimal(0, '', -2)}</td>
+                            <td style="text-align:right">${formatNumber.decimal(0, '', -2)}</td>
+                            <td  style="text-align:center">${element.descripcion_estado}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            </tr>`;
+                });
 
                 html += `<tr>
                         <td style="font-size: 14px; text-align:right;" colSpan="12"><strong>Total Consumido</strong></td>

@@ -1667,7 +1667,7 @@ class RequerimientoView {
 
                 subtotalItemList.push({
                     'id_partida': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida,
-                    'subtotal': subtotal
+                    'subtotal': $.number(subtotal,2,'.','')
                 });
 
             }
@@ -1678,7 +1678,10 @@ class RequerimientoView {
         for (let p = 0; p < tempPartidasActivas.length; p++) {
             for (let i = 0; i < subtotalItemList.length; i++) {
                 if (tempPartidasActivas[p].id_partida == subtotalItemList[i].id_partida) {
-                    tempPartidasActivas[p].presupuesto_utilizado += subtotalItemList[i].subtotal;
+                    // console.log(tempPartidasActivas[p].presupuesto_utilizado);
+                    // console.log(parseFloat(subtotalItemList[i].subtotal));
+                    // console.log(tempPartidasActivas[p].presupuesto_utilizado + parseFloat(subtotalItemList[i].subtotal));
+                    tempPartidasActivas[p].presupuesto_utilizado = tempPartidasActivas[p].presupuesto_utilizado + parseFloat(subtotalItemList[i].subtotal);
                 }
             }
         }

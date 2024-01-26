@@ -368,6 +368,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
     validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
 
         $('.page-main').LoadingOverlay("hide", true);
+        let accionProcesarPago = false;
 
         if (obj != null) {
             obj.removeAttribute("disabled");
@@ -385,6 +386,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
         }
 
         if (cantidadPartidasSinPresupuesto > 0) {
+            accionProcesarPago=true; // ! cambiar a false para ser restrictivo 
             Lobibox.alert('warning', {
                 title: 'Validación de Presupuesto',
                 delay: false,
@@ -392,6 +394,10 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
             });
 
         } else {
+            accionProcesarPago=true; 
+        }
+
+        if(accionProcesarPago){
             Swal.fire({
                 title: "¿Está seguro que desea autorizar el pago?",
                 icon: "warning",

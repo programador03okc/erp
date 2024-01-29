@@ -78,6 +78,7 @@ class ValidarPresupuestoInternoController extends Controller
         $nombreMesAux = $nombreMes . '_aux';
         $montoPorUtilizarPorPartida=[];
         $data=[];
+        $montoSinVinculoAPresupustoInterno=0;
 
         if($idOrden>0){
             // $orden = Orden::find($idOrden);
@@ -89,16 +90,34 @@ class ValidarPresupuestoInternoController extends Controller
                     if($detalleRequerimiento->id_partida_pi >0){
 
                         if($orden->id_moneda ==1){
-                            $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]= floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal);
+                            if($orden->incluye_igv ==true ){
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]= floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal * 1.18);
+                            }else{
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]= floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal);
+
+                            }
                             
                         }elseif($orden->id_moneda ==2){
-                            $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=( (floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal)) * $this->getTipoCambioVenta($fechaPago));
+                            if($orden->incluye_igv ==true){
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=( (floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal * 1.18)) * $this->getTipoCambioVenta($fechaPago));
+                            }else{
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]=( (floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi]??0) + floatval($item->subtotal)) * $this->getTipoCambioVenta($fechaPago));
+
+                            }
                         }
+                    }else{
+                        if($orden->incluye_igv ==true ){
+                            $montoSinVinculoAPresupustoInterno= floatval($montoSinVinculoAPresupustoInterno??0) + floatval($item->subtotal * 1.18);
+                        }else{
+                            $montoSinVinculoAPresupustoInterno= floatval($montoSinVinculoAPresupustoInterno??0) + floatval($item->subtotal);
+
+                        }
+                         
                     }
                 }
             }
             foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago);
+                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, number_format($monto,2,'.', ''), $totalPago, number_format($montoSinVinculoAPresupustoInterno,2,'.', ''));
                 if($tieneSaldoPartida!=[]){
                     $data[]= $tieneSaldoPartida;
                 }
@@ -109,7 +128,7 @@ class ValidarPresupuestoInternoController extends Controller
     }
     
 
-    public function TieneSaldoLaPartida($idPartidaDePresupuestoInterno,$nombreMesAux,$monto,$totalPago){
+    public function TieneSaldoLaPartida($idPartidaDePresupuestoInterno,$nombreMesAux,$monto,$totalPago, $montoSinVinculoAPresupustoInterno){
 
         $data=[];
         $detallePresupuestoInterno = PresupuestoInternoDetalle::find($idPartidaDePresupuestoInterno);
@@ -119,14 +138,15 @@ class ValidarPresupuestoInternoController extends Controller
            
             foreach (($presupuesto[0]->detalle) as $detalle) {
                 if($detalle->id_presupuesto_interno_detalle ==$idPartidaDePresupuestoInterno){
-                    if($detalle->$nombreMesAux >=$monto && $detalle->$nombreMesAux >=$totalPago ){ // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
+                    if($detalle->$nombreMesAux >=$monto && $detalle->$nombreMesAux >=(floatval($totalPago) - floatval($montoSinVinculoAPresupustoInterno) ) ){ // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
                       $data = [
                         'tiene_presupuesto'=>true,
                         'partida'=>$detalle->partida,
                         'descripcion'=>$detalle->descripcion,
                         'monto_aux'=>$detalle->$nombreMesAux,
                         'monto_pago_calculado_soles'=>$monto,
-                        'monto_pago_ingresado'=>$totalPago
+                        'monto_pago_ingresado'=>$totalPago,
+                        'monto_sin_vinculo_con_presupuesto_interno'=>$montoSinVinculoAPresupustoInterno
                     ];  
                 }else{
                     $data = [
@@ -135,7 +155,9 @@ class ValidarPresupuestoInternoController extends Controller
                         'descripcion'=>$detalle->descripcion,
                         'monto_aux'=>$detalle->$nombreMesAux,
                         'monto_pago_calculado_soles'=>$monto,
-                        'monto_pago_ingresado'=>$totalPago
+                        'monto_pago_ingresado'=>$totalPago,
+                        'monto_sin_vinculo_con_presupuesto_interno'=>$montoSinVinculoAPresupustoInterno
+
                         ];  
                         
                     }
@@ -173,7 +195,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
 
             foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago);
+                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago,0);
                 if($tieneSaldoPartida !=[]){
                     $data[]=$tieneSaldoPartida;
                 }
@@ -212,7 +234,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
 
             foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago);
+                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago,0);
                 if($tieneSaldoPartida !=[]){
                     $data[]=$tieneSaldoPartida;
                 }

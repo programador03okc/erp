@@ -423,6 +423,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('imprimir-requerimiento-pdf/{id}/{codigo}', [RequerimientoController::class, 'generar_requerimiento_pdf'])->name('imprimir-requerimiento-pdf');
 				Route::get('listar-sedes-por-empresa/{id?}', [RequerimientoController::class, 'listarSedesPorEmpresa'])->name('listar-sedes-por-empresa');
 				Route::get('mostrarDocumentosByRequerimiento/{id}', [TrazabilidadRequerimientoController::class, 'mostrarDocumentosByRequerimiento'])->name('mostrar-documentos-por-requerimiento');
+				Route::get('trazabilidad', [TrazabilidadRequerimientoController::class, 'viewTrazabilidad'])->name('trazabilidad');
 				Route::get('imprimir_transferencia/{id}', [TransferenciaController::class, 'imprimir_transferencia'])->name('imprimir-transferencia');
 				Route::get('imprimir_ingreso/{id}', [IngresoPdfController::class, 'imprimir_ingreso'])->name('imprimir-ingreso');
 				Route::get('imprimir_salida/{id}', [SalidaPdfController::class, 'imprimir_salida'])->name('imprimir-salida');

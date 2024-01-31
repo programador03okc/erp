@@ -510,9 +510,9 @@ class ListarRequerimientoView {
 
                 $('#ListaRequerimientosElaborados tbody').on("click", "button.handleClickVerTrazabilidadRequerimiento", function () {
                     let data = $('#ListaRequerimientosElaborados').DataTable().row($(this).parents("tr")).data();
-                    let idRequerimiento = data.id_requerimiento;
-                    mostrarTrazabilidad(idRequerimiento);
-                    // that.trazabilidadRequerimiento.verTrazabilidadRequerimientoModal(data, that);
+                    let url = "/necesidades/requerimiento/listado/trazabilidad?id="+data.id_requerimiento;
+                    var win = window.open(url, '_blank');
+                    win.focus();
                 });
 
                 $('#ListaRequerimientosElaborados tbody').on("click", "button.handleClickVerDetalleRequerimientoSoloLectura", function () {

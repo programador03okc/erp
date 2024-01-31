@@ -138,7 +138,8 @@ class ValidarPresupuestoInternoController extends Controller
            
             foreach (($presupuesto[0]->detalle) as $detalle) {
                 if($detalle->id_presupuesto_interno_detalle ==$idPartidaDePresupuestoInterno){
-                    if($detalle->$nombreMesAux >=$monto && $detalle->$nombreMesAux >=(floatval($totalPago) - floatval($montoSinVinculoAPresupustoInterno) ) ){ // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
+                    // if($detalle->$nombreMesAux >=$monto && $detalle->$nombreMesAux >=(floatval($totalPago) - floatval($montoSinVinculoAPresupustoInterno) ) ){ //? comprar en la suma de todas las partidas(distintas partidas) de ppt interno con el pago total ingresado ... valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
+                    if($detalle->$nombreMesAux >=$monto ){ // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
                       $data = [
                         'tiene_presupuesto'=>true,
                         'partida'=>$detalle->partida,
@@ -195,7 +196,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
 
             foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago,0);
+                $tieneSaldoPartida= $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, number_format($monto,2,'.', ''), number_format($totalPago,2,'.', ''),0);
                 if($tieneSaldoPartida !=[]){
                     $data[]=$tieneSaldoPartida;
                 }

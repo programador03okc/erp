@@ -215,13 +215,58 @@ class PresupuestoController extends Controller
             ->get();
         return $pagos;
     }
+    public function obtenerDevolucionesDePresupuesto($id_presupuesto)
+    {
+        $devoluciones = DB::table('finanzas.devolucion_partida_presup')
+            ->select(
+                'devolucion_partida_presup.id_devolucion_partida',
+                'devolucion_partida_presup.id_partida',
+                'devolucion_partida_presup.id_presup',
+                'devolucion_partida_presup.monto',
+                'devolucion_partida_presup.id_estado',
+                'requerimiento_pago_estado.descripcion as descripcion_estado',
+                'devolucion_partida_presup.fecha_registro',
+                'devolucion_partida_presup.id_usuario',
+                'devolucion_partida_presup.id_proyecto',
+                'devolucion_partida_presup.id_requerimiento_pago',
+                'requerimiento_pago.codigo as codigo_requerimiento_pago',
+                'devolucion_partida_presup.id_requerimiento_logistico',
+                'alm_req.codigo as codigo_requerimiento_logistico',
+                 
+                'sis_moneda.simbolo as simbolo_moneda',
+                'presup_par.descripcion as partida_descripcion',
+                DB::raw("(SELECT presup_titu.descripcion FROM finanzas.presup_titu
+                WHERE presup_titu.codigo = presup_par.cod_padre
+                and presup_titu.id_presup = presup_par.id_presup limit 1) AS titulo_descripcion"),
+                DB::raw("(SELECT (select venta from contabilidad.cont_tp_cambio 
+                where cont_tp_cambio.fecha<=registro_pago.fecha_pago limit 1) tipo_cambio_venta
+                            FROM tesoreria.registro_pago
+                                WHERE registro_pago.id_requerimiento_pago = requerimiento_pago.id_requerimiento_pago
+                                and registro_pago.estado !=7 limit 1 ) AS tipo_cambio"),
+            )
+            ->leftJoin('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'devolucion_partida_presup.id_requerimiento_pago')
+            ->leftJoin('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'devolucion_partida_presup.id_requerimiento_logistico')
+            ->leftJoin('tesoreria.registro_pago', 'registro_pago.id_pago', '=', 'devolucion_partida_presup.id_pago')
+            ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'devolucion_partida_presup.id_partida')
+            ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'devolucion_partida_presup.id_moneda')
+            ->leftJoin('tesoreria.requerimiento_pago_estado', 'requerimiento_pago_estado.id_requerimiento_pago_estado', '=', 'devolucion_partida_presup.id_estado')
+
+            ->where([
+                ['presup_par.id_presup', '=', $id_presupuesto],
+                ['devolucion_partida_presup.id_estado', '!=', 7]
+            ])
+            ->get();
+        return $devoluciones;
+    }
     public function mostrarGastosPorPresupuesto($id_presupuesto)
     {
         $detalle = $this->obtenerDetallePresupuesto($id_presupuesto);
 
         $pagos = $this->obtenerPagosPresupuesto($id_presupuesto);
 
-        return response()->json(['req_compras' => $detalle, 'req_pagos' => $pagos]);
+        $devoluciones = $this->obtenerDevolucionesDePresupuesto($id_presupuesto);
+
+        return response()->json(['req_compras' => $detalle, 'req_pagos' => $pagos, 'devoluciones'=>$devoluciones]);
     }
 
     public function cuadroGastosExcel(Request $request)
@@ -229,10 +274,12 @@ class PresupuestoController extends Controller
         $presup = DB::table('finanzas.presup')->where('id_presup', $request->id_presupuesto)->first();
         $detalle = $this->obtenerDetallePresupuesto($request->id_presupuesto);
         $pagos = $this->obtenerPagosPresupuesto($request->id_presupuesto);
+        $devoluciones = $this->obtenerDevolucionesDePresupuesto($request->id_presupuesto);
 
         return Excel::download(new CuadroGastosExport(
             $detalle,
-            $pagos
+            $pagos,
+            $devoluciones,
         ), $presup->descripcion . '.xlsx');
     }
 

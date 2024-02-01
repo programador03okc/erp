@@ -171,7 +171,6 @@ Listado de requerimientos logísticos
 @include('logistica.requerimientos.modal_adjuntar_archivos_requerimiento')
 @include('logistica.requerimientos.modal_adjuntar_archivos_detalle_requerimiento')
 @include('logistica.requerimientos.modal_filtro_requerimientos_elaborados')
-@include('logistica.requerimientos.trazabilidad.modal_trazabilidad')
 
 @endsection
 

@@ -439,8 +439,8 @@ class PresupuestoInterno extends Model
 
         return $respuesta;
     }
-    public static function cierreMensual($id_tipo_presupuesto_interno,$numero_mes='01',$nombre_mes,$numero_mes_siguiente,$nombre_mes_siguiente)
-    {
+    public static function cierreMensualOLD($id_tipo_presupuesto_interno,$numero_mes='01',$nombre_mes,$numero_mes_siguiente,$nombre_mes_siguiente)
+    {//QUITAR EL OLD
         $array_requerimiento_detalle = array();
         $array_id_presupuesto_interno = array();
         $array_id_presupuesto_interno_detalle = array();

@@ -1392,26 +1392,34 @@ class RevisarAprobarDocumentoView {
 
                 let mensajeConcatenado = [];
                 let cantidadPartidasSinPresupuesto = 0;
-                if ((response.data).length > 0) {
-                    (response.data).forEach(element => {
+                if (response.data && response.data.tiene_presupuesto ==false) {
+                    accionGuardarRespuesta=false;
+        
+                    (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
                         if (element.tiene_presupuesto == false) {
                             cantidadPartidasSinPresupuesto++;
                             mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
                         }
                     });
-                } else {// ! si no encuentre ppto o no esta aprobado o no esta a finalizado y se trata de un ppto anterior u otro tipo de ppto. entonces se puede aprobar. 
-                    // console.log(response);
-                    accionGuardarRespuesta = true;
                 }
+
+                if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
+                    Lobibox.notify('warning', {
+                        height:'auto',
+                        sound:false,
+                        msg: response.data.mensaje.toString()
+                    });
+        
+                }
+
                 // si la cantidad d partidas sin presupuesto es mayor a cero, se emite alerta y se establece la accionGuardarrespuesta como falso
                 if (cantidadPartidasSinPresupuesto > 0) {
+                    accionGuardarRespuesta = true; //! cambiar a false para ser resctrictiva
                     Lobibox.alert('warning', {
                         title: 'Validación de Presupuesto',
                         delay: false,
                         msg: mensajeConcatenado.toString()
                     });
-
-                    accionGuardarRespuesta = true; //! cambiar a false para ser resctrictiva
 
                 } else {
                     accionGuardarRespuesta = true;

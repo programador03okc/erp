@@ -2534,6 +2534,15 @@ Route::middleware(['auth'])->group(function () {
 			});
 		});
 	});
+
+    /*
+    *
+    * Control de guias modulo que esta desde
+    *
+    */
+    Route::name('control-guias.')->prefix('control-guias')->group(function () {
+        Route::get('index', [GuiasController::class, 'index'])->name('index');
+    });
 });
 Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {
 	Route::get('tipo_cambio_masivo/{desde}/{hasta}', [ApiController::class, 'tipoCambioMasivo'])->name('tipo_cambio_masivo');

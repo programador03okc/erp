@@ -47,25 +47,26 @@ class ValidarPresupuestoInternoController extends Controller
             $idRequerimientoPago = $id;
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago,$numeroMes,$totalPago, $fechaPago);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
-            $no_exceder_pago = (floatval($montoAcumuladoDePartida) >= floatval($totalPago))?true:false;
+            // $no_exceder_pago = (floatval($montoAcumuladoDePartida) >= floatval($totalPago))?true:false;
             $tienePresupuestoEnPartidas=true;
 
             foreach ($validacionDePartidaConPresupuestoInternoList as $key => $value) {
                 $tienePresupuestoEnPartidas= (boolval($tienePresupuestoEnPartidas) * boolval($value['tiene_presupuesto']));
             }
 
-            if(boolval($no_exceder_pago ==false)){
-                $mensajeValidacion[]='El monto ingresado es mayor al monto total del documento';
-            }
+            // if(boolval($no_exceder_pago ==false)){
+            //     $mensajeValidacion[]='El monto ingresado es mayor al monto total del documento';
+            // }
 
             if(boolval($tienePresupuestoEnPartidas)==false){
                 $mensajeValidacion[]='Hay partida(s) de presupuesto interno sin saldo suficiente '.$tienePresupuestoEnPartidas;
             }
 
             $data=[
-                'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
+                // 'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
+                'tiene_presupuesto'=> boolval($tienePresupuestoEnPartidas),
                 'mensaje'=>$mensajeValidacion,
-                'monto_acumulado_partidas_presupuesto_interno'=>0,
+                'monto_acumulado_partidas_presupuesto_interno'=>$montoAcumuladoDePartida,
                 'monto_sin_vinculo_con_presupuesto_interno'=>0,
                 'monto_pago_ingresado'=>floatval($totalPago),
                 'validacion_partidas_con_presupuesto_interno'=> $validacionDePartidaConPresupuestoInternoList
@@ -77,12 +78,12 @@ class ValidarPresupuestoInternoController extends Controller
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden,$numeroMes,$totalPago, $fechaPago);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
             $montoSinVinculoConPresupuestoInterno = $this->obtenerMontoSinVinculoConPresupuestoInterno($idOrden);
-            $no_exceder_pago = (floatval($montoAcumuladoDePartida) + floatval($montoSinVinculoConPresupuestoInterno)) >= floatval($totalPago)?true:false;
+            // $no_exceder_pago = (floatval($montoAcumuladoDePartida) + floatval($montoSinVinculoConPresupuestoInterno)) >= floatval($totalPago)?true:false;
             $mensajeValidacion=[];
 
-            if(boolval($no_exceder_pago ==false)){
-                $mensajeValidacion[]='El monto ingresado es mayor al monto total del documento';
-            }
+            // if(boolval($no_exceder_pago ==false)){
+            //     $mensajeValidacion[]='El monto ingresado es mayor al monto total del documento';
+            // }
 
             $tienePresupuestoEnPartidas=true;
             foreach ($validacionDePartidaConPresupuestoInternoList as $key => $value) {
@@ -95,7 +96,8 @@ class ValidarPresupuestoInternoController extends Controller
 
 
             $data=[
-                'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
+                // 'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
+                'tiene_presupuesto'=> boolval($tienePresupuestoEnPartidas),
                 'mensaje'=>$mensajeValidacion,
                 'monto_acumulado_partidas_presupuesto_interno'=>floatval($montoAcumuladoDePartida),
                 'monto_sin_vinculo_con_presupuesto_interno'=>floatval($montoSinVinculoConPresupuestoInterno),
@@ -142,7 +144,7 @@ class ValidarPresupuestoInternoController extends Controller
             $mensaje .= 'No se encontró presupuesto interno o no al que hace referencia no esta aprobado.';
         }
 
-        return ['tipo'=>$estado,'mensaje'=>$mensaje,'data'=>$data];;
+        return ['tipo'=>$estado,'mensaje'=>$mensaje,'data'=>$data];
 
     }
 

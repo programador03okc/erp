@@ -529,9 +529,8 @@ Control de Guías de Remisión
                 <input type="hidden" name="id_despacho_act" class="form-control" value="0">
 
                 <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">Actualización de datos del Transportista</h4>
-                    <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"><span
-                            aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-2">

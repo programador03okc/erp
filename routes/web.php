@@ -43,6 +43,8 @@ use App\Http\Controllers\ComprasPendientesController;
 use App\Http\Controllers\ComprobanteCompraController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ContabilidadController;
+use App\Http\Controllers\Control\DashboardController;
+use App\Http\Controllers\Control\GuiaController;
 use App\Http\Controllers\CorreoController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\Finanzas\CentroCosto\CentroCostoController;
@@ -2540,8 +2542,35 @@ Route::middleware(['auth'])->group(function () {
     * Control de guias modulo que esta desde
     *
     */
-    Route::name('control-guias.')->prefix('control-guias')->group(function () {
-        Route::get('index', [GuiasController::class, 'index'])->name('index');
+    Route::name('control.')->prefix('control')->group(function () {
+        Route::get('index', [DashboardController::class, 'index'])->name('index');
+
+        Route::name('guias.')->prefix('guias')->group(function () {
+            Route::get('index', [GuiaController::class, 'index'])->name('index');
+            Route::post('listar', [GuiaController::class, 'listar'])->name('listar');
+            Route::post('guardar-almacen', [GuiaController::class, 'guardarAlmacen'])->name('guardar-almacen');
+            Route::post('guardar-despacho', [GuiaController::class, 'guardarDespacho'])->name('guardar-despacho');
+            Route::post('actualizar-despacho', [GuiaController::class, 'actualizarDespacho'])->name('actualizar-despacho');
+            Route::post('guardar-archivador', [GuiaController::class, 'guardarArchivador'])->name('guardar-archivador');
+            Route::post('guardar-observacion', [GuiaController::class, 'guardarObservacion'])->name('guardar-observacion');
+            Route::post('busqueda', [GuiaController::class, 'buscarCuadro'])->name('busqueda');
+            Route::get('informacion-despacho/{id}', [GuiaController::class, 'informacionDespacho'])->name('informacion-despacho');
+            Route::get('historial/{id}', [GuiaController::class, 'historial'])->name('historial');
+            Route::put('anular/{id}', [GuiaController::class, 'anular'])->name('anular');
+            Route::put('eliminar/{id}', [GuiaController::class, 'eliminar'])->name('eliminar');
+            Route::post('exportar', [GuiaController::class, 'exportar'])->name('exportar');
+
+            Route::post('agencia-transportista', [GuiaController::class, 'agenciaTransportista'])->name('agencia-transportista');
+            Route::post('guardar-almacen-masivo', [GuiaController::class, 'guardarAlmacenMasivo'])->name('guardar-almacen-masivo');
+            Route::get('editar/{id}', [GuiaController::class, 'editar'])->name('editar');
+            Route::post('buscar-codigo', [GuiaController::class, 'buscarCodigo'])->name('buscar-codigo');
+
+            Route::post('buscar-codigo-orden-despacho', [GuiaController::class, 'buscarCodigoOrdenDespacho'])->name('buscar-codigo-orden-despacho');
+            Route::post('buscar-od', [GuiaController::class, 'buscarOD'])->name('buscar-od');
+            Route::post('enviar-gr-control', [GuiaController::class, 'enviarGRControl'])->name('enviar-gr-control');
+            Route::post('reporte-filtros', [GuiaController::class, 'reporteFiltros'])->name('reporte-filtros');
+        });
+
     });
 });
 Route::group(['as' => 'api-consulta.', 'prefix' => 'api-consulta'], function () {

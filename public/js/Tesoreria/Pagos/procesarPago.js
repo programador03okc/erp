@@ -167,19 +167,36 @@ $("#form-procesarPago").on("submit", function (e) {
         $('.page-main').LoadingOverlay("hide", true);
         $('#modal-procesarPago .modal-content').LoadingOverlay("hide", true);
 
+        let accionProcesarPago=true;
 
         let mensajeConcatenado = [];
         let cantidadPartidasSinPresupuesto = 0;
-        if ((response.data).length > 0) {
-            (response.data).forEach(element => {
+
+        if (response.data && response.data.tiene_presupuesto ==false) {
+            accionProcesarPago=false;
+
+            (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
                 if (element.tiene_presupuesto == false) {
                     cantidadPartidasSinPresupuesto++;
                     mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
                 }
             });
         }
+        if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
+            Lobibox.notify('warning', {
+                height:'auto',
+                sound:false,
+                msg: response.data.mensaje.toString()
+            });
+
+            $('#submit_procesarPago').removeAttr('disabled');
+
+
+        }
 
         if (cantidadPartidasSinPresupuesto > 0) {
+            accionProcesarPago=false;
+
             Lobibox.alert('warning', {
                 height:'auto',
                 sound:false,
@@ -187,7 +204,11 @@ $("#form-procesarPago").on("submit", function (e) {
                 msg: mensajeConcatenado.toString()
             });
 
-        }else{
+            $('#submit_procesarPago').removeAttr('disabled');
+
+        }
+
+        if(accionProcesarPago){
             Swal.fire({
                 title: "¿Está seguro que desea realizar el pago?",
                 icon: "warning",
@@ -205,7 +226,7 @@ $("#form-procesarPago").on("submit", function (e) {
             });
         }
 
-  
+
 
     }).catch(function (err) {
         console.log(err)
@@ -232,7 +253,7 @@ function procesarPago() {
         processData: false,
         dataType: 'JSON',
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             $('#modal-procesarPago').modal('hide');
 
             if (id_oc !== '') {
@@ -293,7 +314,7 @@ function listarCuentasOrigen() {
         url: 'cuentasOrigen/' + id_empresa,
         dataType: 'JSON',
     }).done(function (response) {
-        console.log(response);
+        // console.log(response);
         var option = '<option value="">Seleccione una cuenta</option>';
 
         if (response.length == 1) {
@@ -368,7 +389,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
     validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
 
         $('.page-main').LoadingOverlay("hide", true);
-        let accionProcesarPago = false;
+        let accionEnviarParaPago = false;
 
         if (obj != null) {
             obj.removeAttribute("disabled");
@@ -376,8 +397,11 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
 
         let mensajeConcatenado = [];
         let cantidadPartidasSinPresupuesto = 0;
-        if ((response.data).length > 0) {
-            (response.data).forEach(element => {
+
+        if (response.data && response.data.tiene_presupuesto ==false) {
+            accionEnviarParaPago=false;
+
+            (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
                 if (element.tiene_presupuesto == false) {
                     cantidadPartidasSinPresupuesto++;
                     mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
@@ -385,8 +409,17 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
             });
         }
 
+        if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
+            Lobibox.notify('warning', {
+                height:'auto',
+                sound:false,
+                msg: response.data.mensaje.toString()
+            });
+
+        }
+
         if (cantidadPartidasSinPresupuesto > 0) {
-            accionProcesarPago=true; // ! cambiar a false para ser restrictivo 
+            accionEnviarParaPago=true; // ! cambiar a false para ser restrictivo 
             Lobibox.alert('warning', {
                 title: 'Validación de Presupuesto',
                 delay: false,
@@ -394,10 +427,10 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
             });
 
         } else {
-            accionProcesarPago=true; 
+            accionEnviarParaPago=true; 
         }
 
-        if(accionProcesarPago){
+        if(accionEnviarParaPago){
             Swal.fire({
                 title: "¿Está seguro que desea autorizar el pago?",
                 icon: "warning",
@@ -417,7 +450,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
                         },
                         dataType: 'JSON',
                     }).done(function (response) {
-                        console.log(response);
+                        // console.log(response);
                         Lobibox.notify(response.tipo, {
                             size: "mini",
                             rounded: true,
@@ -483,7 +516,7 @@ function enviarPagoEnCuotas(id, idPagoCuotaDetalle, tipo, event) {
                 },
                 dataType: 'JSON',
             }).done(function (response) {
-                console.log(response);
+                // console.log(response);
                 Lobibox.notify(response.tipo, {
                     size: "mini",
                     rounded: true,
@@ -544,7 +577,7 @@ function revertirEnvio(tipo, id) {
                 },
                 dataType: 'JSON',
             }).done(function (response) {
-                console.log(response);
+                // console.log(response);
                 Lobibox.notify(response.tipo, {
                     size: "mini",
                     rounded: true,
@@ -598,7 +631,7 @@ function anularPago(id_pago, tipo) {
                 url: 'anularPago/' + id_pago,
                 dataType: 'JSON',
             }).done(function (response) {
-                console.log(response);
+                // console.log(response);
                 Lobibox.notify('success', {
                     size: "mini",
                     rounded: true,
@@ -640,7 +673,7 @@ function listarPagoEnCuotas(tipo, id) {
         url: 'listarPagosEnCuotas/' + tipo + '/' + id,
         dataType: 'JSON',
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             var html = '';
             var htmlOptionVincularConPago = '';
             var i = 1;

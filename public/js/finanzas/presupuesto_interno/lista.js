@@ -48,7 +48,7 @@ function lista() {
         }:
         []
     );
-    const button =[button_nuevo,button_cierrre_mes]
+    const button =[button_nuevo]
     var tableRequerimientos = $("#lista-presupuesto-interno").DataTable({
         language: vardataTables[0],
         destroy: true,

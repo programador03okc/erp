@@ -122,6 +122,33 @@
                 <td>{{$d->estado_pago}}</td>
             </tr>
             @endforeach
+            @foreach ($devoluciones as $d)
+            <tr>
+                <td>Pago</td>
+                <td>{{$meses[date('n', strtotime($d->fecha_registro) )]}}</td>
+                <td style="text-align:center;">{{date("Y", strtotime($d->fecha_registro))}}</td>
+                <td style="text-align:center;">{{date("d-m-Y", strtotime($d->fecha_registro))}}</td>
+                <td>{{$d->id_requerimiento_pago >0 ? $d->codigo_requerimiento_pago: $d->codigo_requerimiento_logistico }}</td>
+                <td>{{$d->titulo_descripcion}}</td>
+                <td>{{$d->partida_descripcion}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>DEVOLUCIÓN A PARTIDA</td>
+                <td>{{$d->simbolo_moneda}}</td>
+                <td>-{{$d->monto}}</td>
+                <td>-{{$d->monto}}</td>
+                <td>0</td>
+                <td>0</td>
+                <td>{{$d->tipo_cambio}}</td>
+                <td>{{$d->descripcion_estado}}</td>
+            </tr>
+            @endforeach
         </tbody>
     </table>
 </body>

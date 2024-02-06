@@ -56,6 +56,24 @@ function mostrarCuadroGastos(id) {
                             </tr>`;
                 });
 
+                response.devoluciones.forEach(element => {
+            
+                    html += `<tr>
+                            <td></td>
+                            <td>${element.fecha_registro !== null ? formatDate(element.fecha_registro) : ''}</td>
+                            <td>${element.id_requerimiento_pago >0  ?element.codigo_requerimiento_pago: element.codigo_requerimiento_logistico}</td>
+                            <td>${element.titulo_descripcion ?? ''}</td>
+                            <td>${element.partida_descripcion ?? ''}</td>
+                            <td> DEVOLUCIÓN A PARTIDA</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:right">-${formatNumber.decimal(element.monto ?? '', '', -2)}</td>
+                            <td style="text-align:right">-${formatNumber.decimal(element.monto ?? '', '', -2)}</td>
+                            <td style="text-align:right">${formatNumber.decimal(0, '', -2)}</td>
+                            <td style="text-align:right">${formatNumber.decimal(0, '', -2)}</td>
+                            </tr>`;
+                });
+
                 html += `<tr>
                         <td colSpan="8"></td>
                         <td style="font-size: 14px;"><strong>Total Consumido</strong></td>

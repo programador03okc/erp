@@ -1210,7 +1210,7 @@ class RequerimientoController extends Controller
                         if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){ // que sea mayor a cero y que no sea el estado monto flete transportista que no genera trazabilidad
                             $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequerimiento($cdpRequerimiento);
                             if($cantidadDeEstadosCreadosEnTrazabilidad>0){
-                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'.<br>';
                             }
                         }
                         

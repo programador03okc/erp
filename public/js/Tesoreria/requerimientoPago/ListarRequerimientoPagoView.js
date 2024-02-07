@@ -2464,8 +2464,8 @@ class ListarRequerimientoPagoView {
 
                         if (response.memsaje_creacion_estado_trazabilidad != '') {
 
-                            Lobibox.notify('info', {
-                                title: false,
+                            Lobibox.alert('info', {
+                                title: 'Información',
                                 size: 'normal',
                                 rounded: true,
                                 sound: false,

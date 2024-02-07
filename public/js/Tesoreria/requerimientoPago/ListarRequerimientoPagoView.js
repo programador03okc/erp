@@ -2338,124 +2338,183 @@ class ListarRequerimientoPagoView {
         }
     }
 
+    existeVinculoConCDPConEstadoDeEnvio(){
+        let cantidadDeEstadoEnvioAsignados=0;
+        if(document.querySelector("tbody[id='body_cdp_vinculados']").childElementCount >0){
+           let fila = document.querySelector("tbody[id='body_cdp_vinculados']").children;
+            for (var i = 0; i < fila.length; i++) {
+                if(parseInt(fila[i].querySelector("select[name='id_estado_envio[]']").value) >0){
+                    cantidadDeEstadoEnvioAsignados++;
+                }
+            };
+        }
+
+        return (cantidadDeEstadoEnvioAsignados >0?true:false);
+    }
+
 
     actualizarRequerimientoPago() {
+
+
         if (document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_requerimiento_pago']").value > 0) {
-            if (this.validarFormularioRequerimientoPago()) {
-                let formData = new FormData($('#form-requerimiento-pago')[0]);
 
-                if (tempArchivoAdjuntoRequerimientoPagoCabeceraList.length > 0) {
-                    formData.append(`archivoAdjuntoRequerimientoPagoObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoPagoCabeceraList));
-
-                    tempArchivoAdjuntoRequerimientoPagoCabeceraList.forEach(element => {
-                        formData.append(`archivo_adjunto_list[]`, element.file);
-                    });
-                }
-
-                if (facturaList.length > 0) { // agregar a formdata si existe lista facturas
-                    formData.append(`facturaObject`, JSON.stringify(facturaList));
-                };
-
-                if (tempArchivoAdjuntoRequerimientoPagoDetalleList.length > 0) {
-                    formData.append(`archivoAdjuntoRequerimientoPagoDetalleObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoPagoDetalleList));
-
-                    tempArchivoAdjuntoRequerimientoPagoDetalleList.forEach(element => {
-                        formData.append(`archivo_adjunto_detalle_list[]`, element.file);
-                    });
-                }
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'actualizar-requerimiento-pago',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'JSON',
-                    beforeSend: (data) => {
-
-                        var customElement = $("<div>", {
-                            "css": {
-                                "font-size": "24px",
-                                "text-align": "center",
-                                "padding": "0px",
-                                "margin-top": "-400px"
-                            },
-                            "class": "your-custom-class",
-                            "text": "Actualizando requerimiento de pago..."
-                        });
-
-                        $('#wrapper-okc').LoadingOverlay("show", {
-                            imageAutoResize: true,
-                            progress: true,
-                            custom: customElement,
-                            imageColor: "#3c8dbc"
-                        });
-                    },
-                    success: (response) => {
-                        // console.log(response);
-                        if (response.id_requerimiento_pago > 0) {
-                            $('#wrapper-okc').LoadingOverlay("hide", true);
-
-                            $('#modal-requerimiento-pago').modal('hide');
-
-                            Lobibox.notify('success', {
-                                title: false,
-                                size: 'mini',
-                                rounded: true,
-                                sound: false,
-                                delayIndicator: false,
-                                msg: response.mensaje
-                            });
-                            $("#ListaRequerimientoPago").DataTable().ajax.reload(null, false);
-
-                        } else {
-                            $('#wrapper-okc').LoadingOverlay("hide", true);
-                            Swal.fire(
-                                '',
-                                response.mensaje,
-                                'error'
-                            );
-                        }
-                    },
-                    statusCode: {
-                        404: function () {
-                            $('#wrapper-okc').LoadingOverlay("hide", true);
-                            Swal.fire(
-                                'Error 404',
-                                'Lo sentimos hubo un problema con el servidor, la ruta a la que se quiere acceder para actualizar no esta disponible, por favor vuelva a intentarlo más tarde.',
-                                'error'
-                            );
-                        }
-                    },
-                    fail: (jqXHR, textStatus, errorThrown) => {
-                        $('#wrapper-okc').LoadingOverlay("hide", true);
-                        Swal.fire(
-                            '',
-                            'Lo sentimos hubo un error en el servidor al intentar actualizar el requerimiento de pago, por favor vuelva a intentarlo',
-                            'error'
-                        );
-                        console.log(jqXHR);
-                        console.log(textStatus);
-                        console.log(errorThrown);
+            if(this.existeVinculoConCDPConEstadoDeEnvio()){
+                Swal.fire({
+                    title: `Desea que los CDP vinculados se cree estados en trazabilidad?`,
+                    text: "Si ignora esta accion, no se creara estados en trazabilidad en despachos externos",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'No',
+                    confirmButtonText: 'Si, crear'
+    
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.querySelector("input[name='al_actualizar_crear_estados_trazabilidad']").value='SI';
+                        this.accionActualizar();
+                    }else{
+                        document.querySelector("input[name='al_actualizar_crear_estados_trazabilidad']").value='NO';
+                        this.accionActualizar();
                     }
                 });
-
-            } else {
-                Lobibox.notify('warning', {
-                    title: false,
-                    size: 'mini',
-                    rounded: true,
-                    sound: false,
-                    delayIndicator: false,
-                    msg: 'Por favor ingrese los datos faltantes en el formulario'
-                });
+            }else{
+                this.accionActualizar();
             }
+
+
         } else {
             Swal.fire(
                 '',
                 'No se encontro un requerimiento de pago seleccionado, vuelva a intentarlo seleccionado un requerimiento de pago editable de la lista',
                 'warning'
             );
+        }
+    }
+
+    accionActualizar(){
+        if (this.validarFormularioRequerimientoPago()) {
+
+            let formData = new FormData($('#form-requerimiento-pago')[0]);
+
+            if (tempArchivoAdjuntoRequerimientoPagoCabeceraList.length > 0) {
+                formData.append(`archivoAdjuntoRequerimientoPagoObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoPagoCabeceraList));
+
+                tempArchivoAdjuntoRequerimientoPagoCabeceraList.forEach(element => {
+                    formData.append(`archivo_adjunto_list[]`, element.file);
+                });
+            }
+
+            if (facturaList.length > 0) { // agregar a formdata si existe lista facturas
+                formData.append(`facturaObject`, JSON.stringify(facturaList));
+            };
+
+            if (tempArchivoAdjuntoRequerimientoPagoDetalleList.length > 0) {
+                formData.append(`archivoAdjuntoRequerimientoPagoDetalleObject`, JSON.stringify(tempArchivoAdjuntoRequerimientoPagoDetalleList));
+
+                tempArchivoAdjuntoRequerimientoPagoDetalleList.forEach(element => {
+                    formData.append(`archivo_adjunto_detalle_list[]`, element.file);
+                });
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: 'actualizar-requerimiento-pago',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'JSON',
+                beforeSend: (data) => {
+
+                    var customElement = $("<div>", {
+                        "css": {
+                            "font-size": "24px",
+                            "text-align": "center",
+                            "padding": "0px",
+                            "margin-top": "-400px"
+                        },
+                        "class": "your-custom-class",
+                        "text": "Actualizando requerimiento de pago..."
+                    });
+
+                    $('#wrapper-okc').LoadingOverlay("show", {
+                        imageAutoResize: true,
+                        progress: true,
+                        custom: customElement,
+                        imageColor: "#3c8dbc"
+                    });
+                },
+                success: (response) => {
+                    // console.log(response);
+                    if (response.id_requerimiento_pago > 0) {
+                        $('#wrapper-okc').LoadingOverlay("hide", true);
+
+                        $('#modal-requerimiento-pago').modal('hide');
+
+                        Lobibox.notify('success', {
+                            title: false,
+                            size: 'mini',
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: response.mensaje
+                        });
+                        $("#ListaRequerimientoPago").DataTable().ajax.reload(null, false);
+
+
+                        if (response.memsaje_creacion_estado_trazabilidad != '') {
+
+                            Lobibox.notify('info', {
+                                title: false,
+                                size: 'normal',
+                                rounded: true,
+                                sound: false,
+                                delayIndicator: false,
+                                msg: response.memsaje_creacion_estado_trazabilidad
+                            });
+                        }
+
+                    } else {
+                        $('#wrapper-okc').LoadingOverlay("hide", true);
+                        Swal.fire(
+                            '',
+                            response.mensaje,
+                            'error'
+                        );
+                    }
+                },
+                statusCode: {
+                    404: function () {
+                        $('#wrapper-okc').LoadingOverlay("hide", true);
+                        Swal.fire(
+                            'Error 404',
+                            'Lo sentimos hubo un problema con el servidor, la ruta a la que se quiere acceder para actualizar no esta disponible, por favor vuelva a intentarlo más tarde.',
+                            'error'
+                        );
+                    }
+                },
+                fail: (jqXHR, textStatus, errorThrown) => {
+                    $('#wrapper-okc').LoadingOverlay("hide", true);
+                    Swal.fire(
+                        '',
+                        'Lo sentimos hubo un error en el servidor al intentar actualizar el requerimiento de pago, por favor vuelva a intentarlo',
+                        'error'
+                    );
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+
+        } else {
+            Lobibox.notify('warning', {
+                title: false,
+                size: 'mini',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: 'Por favor ingrese los datos faltantes en el formulario'
+            });
         }
     }
 

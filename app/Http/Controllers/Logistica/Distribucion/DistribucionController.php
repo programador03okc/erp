@@ -1810,7 +1810,7 @@ class DistribucionController extends Controller
         return response()->json($obs);
     }
 
-    public function guardarEstadoEnvioFuenteRequmiento($data)
+    public function guardarEstadoEnvioFuenteRequerimiento($data)
     {
 
         $cantidadDeEstadosCreadosEnTrazabilidad =0;

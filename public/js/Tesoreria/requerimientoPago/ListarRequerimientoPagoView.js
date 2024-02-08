@@ -358,20 +358,10 @@ class ListarRequerimientoPagoView {
             } else { // moneda soles
                 if (document.querySelector("input[name='id_requerimiento_pago']").value > 0) {
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0));
-            
-                    if(parseFloat((tempPartidasActivas[p].presupuesto_mes)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) > 0){
-                        tempPartidasActivas[p].saldo_mes =  parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    }else if(parseFloat(tempPartidasActivas[p].presupuesto_utilizado) > 0){
-                        tempPartidasActivas[p].saldo_mes=parseFloat(tempPartidasActivas[p].presupuesto_utilizado);
-                    }else{
-                        tempPartidasActivas[p].saldo_mes = 0;
-                    }
-
+                    tempPartidasActivas[p].saldo_mes=parseFloat(tempPartidasActivas[p].presupuesto_mes) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) -parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                 } else {
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado > 0 ? parseFloat(tempPartidasActivas[p].presupuesto_utilizado) : 0) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    if( parseFloat((tempPartidasActivas[p].presupuesto_mes)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) > 0 ){
-                        tempPartidasActivas[p].saldo_mes = parseFloat(tempPartidasActivas[p].presupuesto_utilizado) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    }
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                 }
 
             }
@@ -1177,8 +1167,8 @@ class ListarRequerimientoPagoView {
             document.querySelector("button[name='btnSearchCDP']").removeAttribute("disabled");
 
             if (idGrupo == 3 || descripcionGrupo == 'Proyectos') {
-                document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cc']").value = '';
-                document.querySelector("div[id='modal-requerimiento-pago'] input[name='codigo_oportunidad']").value = '';
+                // document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_cc']").value = '';
+                // document.querySelector("div[id='modal-requerimiento-pago'] input[name='codigo_oportunidad']").value = '';
                 document.querySelector("div[id='modal-requerimiento-pago'] div[id='contenedor-cdp']").classList.add("oculto");
             } else {
                 document.querySelector("div[id='modal-requerimiento-pago'] select[name='proyecto']").value = 0;
@@ -4350,7 +4340,7 @@ class ListarRequerimientoPagoView {
                 console.log(errorThrown);
             });
 
-            console.log(value);
+            // console.log(value);
         });
 
         $('[name="grupo"]').change(function (e) { // ? evaluar si usar mejor la func llenarSelectDivision

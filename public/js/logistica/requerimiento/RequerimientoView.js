@@ -1087,10 +1087,9 @@ class RequerimientoView {
         }
 
         if (currentIdGrupo == 3 && id_grupo_usuario_sesion_list.includes(3)) { // seleccion de una división que pertenece al grupo proyectos y debe el usuario tener acceso al grupo proyectos
-            document.querySelector("input[name='id_cc']").value = "";
-            document.querySelector("input[name='codigo_oportunidad']").value = '';
+            // document.querySelector("input[name='codigo_oportunidad']").value = '';
             document.querySelector("select[name='id_presupuesto_interno']").removeAttribute("disabled");
-            document.querySelector("input[name='id_cc']").removeAttribute("disabled");
+            // document.querySelector("input[name='id_cc']").removeAttribute("disabled");
             document.querySelector("select[name='id_proyecto']").removeAttribute("disabled");
 
             // hiddeElement('mostrar', 'form-requerimiento', [

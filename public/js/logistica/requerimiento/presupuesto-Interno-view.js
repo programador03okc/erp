@@ -61,6 +61,20 @@ class PresupuestoInternoView{
         this.updatePartidaItem(tempObjectBtnPartida.nextElementSibling.querySelector("input[class='partida']"));
         $('#modal-partidas').modal('hide');
 
+        // llamar al hacer clic en partida el calculo de detalle partida 
+        if(document.querySelector("div[class='page-main']").getAttribute("type")=='requerimiento'){
+            const requerimientoModel = new RequerimientoModel();
+            const requerimientoController = new RequerimientoCtrl(requerimientoModel);
+            const requerimientoView = new RequerimientoView(requerimientoController);
+           requerimientoView.calcularPresupuestoUtilizadoYSaldoPorPartida();
+        }else if(document.querySelector("div[class='page-main']").getAttribute("type")=='lista_requerimiento_pago'){
+            const presupuestoInternoView = new PresupuestoInternoView(new PresupuestoInternoModel('{{csrf_token()}}'));
+            const listarRequerimientoPagoView = new ListarRequerimientoPagoView(presupuestoInternoView);
+            listarRequerimientoPagoView.calcularPresupuestoUtilizadoYSaldoPorPartida();
+        }
+
+
+        
     }
 
     updatePartidaItem(obj) {
@@ -76,13 +90,20 @@ class PresupuestoInternoView{
     }
 
     cargarPresupuestoDetalle(idPresupuestoIterno){
-
+        $("#listaPresupuesto").LoadingOverlay("show", {
+            imageAutoResize: true,
+            progress: true,
+            imageColor: "#3c8dbc"
+        });
 
         this.model.obtenerListaDetallePrespuestoInterno(idPresupuestoIterno).then((res) => {
             this.construirListaDetallePrespuestoInterno(res);
+            $('#listaPresupuesto').LoadingOverlay("hide", true);
 
         }).catch(function (err) {
             console.log(err)
+            $('#listaPresupuesto').LoadingOverlay("hide", true);
+
         })
     }
 

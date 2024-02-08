@@ -451,7 +451,7 @@ class RequerimientoPagoController extends Controller
                     if(isset($request->id_estado_envio[$c])){
 
                         if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){
-                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequerimiento($cdpRequerimiento);
 
                             if($cantidadDeEstadosCreadosEnTrazabilidad>0){
                                 $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
@@ -889,6 +889,8 @@ class RequerimientoPagoController extends Controller
         DB::beginTransaction();
         try {
 
+            $mensajeEstadoTrazabilidad ="";
+
             // evaluar si el estado del cierre periodo
             $añoPeriodo = Periodo::find($request->periodo)->descripcion;
             $idEmpresa = Sede::find($request->sede)->id_empresa;
@@ -1074,6 +1076,7 @@ class RequerimientoPagoController extends Controller
                         $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
                         $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
                         $cdpRequerimiento->estado = 1;
+                        $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                         $cdpRequerimiento->save();
                     } else {
                         $cdpRequerimiento = CdpRequerimiento::find($request->id_cpd_vinculado[$c]);
@@ -1081,9 +1084,34 @@ class RequerimientoPagoController extends Controller
                         $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                         $cdpRequerimiento->id_requerimiento_pago = $requerimientoPago->id_requerimiento_pago;
                         $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                        $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                         $cdpRequerimiento->save();
                     }
                     $idCdpRequerimientoProcesado[] = $cdpRequerimiento->id_cdp_requerimiento;
+
+
+                    if(isset($request->al_actualizar_crear_estados_trazabilidad) && $request->al_actualizar_crear_estados_trazabilidad=='SI' ){
+                        if(isset($request->id_estado_envio[$c])){
+                            if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){ // que sea mayor a cero y que no sea el estado monto flete transportista que no genera trazabilidad
+                                $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequerimiento($cdpRequerimiento);
+                                if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                                    $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'.<br>';
+                                }
+                            }
+                            
+                            if($request->id_estado_envio[$c] ==16){    
+                                $seFijoElMontoFleteTransportista= (new DistribucionController)->guardarMontoFleteEnDespacho($cdpRequerimiento);
+                                if($seFijoElMontoFleteTransportista){
+                                    $mensajeEstadoTrazabilidad.='Se fijo el monto de transportista';
+                                }
+        
+                            }
+    
+                        }
+                    }
+
+
+
                 }
 
                 foreach ($todoCdpRequerimiento as $key => $value) {
@@ -1175,11 +1203,15 @@ class RequerimientoPagoController extends Controller
                 'id_requerimiento_pago' => $requerimientoPago->id_requerimiento_pago,
                 'mensaje' => 'Se actualizó el requerimiento de pago ' . $requerimientoPago->codigo,
                 'afecta_presupuesto_interno_suma' => $afectaPresupuestoInternoSuma ?? [],
-                'afecta_presupuesto_interno_resta' => $afectaPresupuestoInternoResta ?? []
+                'afecta_presupuesto_interno_resta' => $afectaPresupuestoInternoResta ?? [],
+                'memsaje_creacion_estado_trazabilidad'=>$mensajeEstadoTrazabilidad
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['id_requerimiento_pago' => 0, 'mensaje' => 'Hubo un problema al actualizar el requerimiento de pago. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+            return response()->json(['id_requerimiento_pago' => 0,
+            'mensaje' => 'Hubo un problema al actualizar el requerimiento de pago. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage(),
+            'memsaje_creacion_estado_trazabilidad'=>''
+        ]);
         }
     }
 

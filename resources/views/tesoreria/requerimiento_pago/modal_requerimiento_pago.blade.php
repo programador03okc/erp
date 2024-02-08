@@ -5,6 +5,7 @@
                 <input type="hidden" name="id_requerimiento_pago" primary="ids">
                 <input type="text" class="oculto" name="id_usuario">
                 <input type="text" class="oculto" name="id_estado">
+                <input type="text" class="oculto" name="al_actualizar_crear_estados_trazabilidad" value="NO">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
                     <h3 class="modal-title" id="modal-title">

@@ -2359,6 +2359,20 @@ class RequerimientoView {
         }
         this.updateContadorTotalAdjuntosRequerimientoDetalle();
     }
+
+    existeVinculoConCDPConEstadoDeEnvio(){
+        let cantidadDeEstadoEnvioAsignados=0;
+        if(document.querySelector("tbody[id='body_cdp_vinculados']").childElementCount >0){
+           let fila = document.querySelector("tbody[id='body_cdp_vinculados']").children;
+            for (var i = 0; i < fila.length; i++) {
+                if(parseInt(fila[i].querySelector("select[name='id_estado_envio[]']").value) >0){
+                    cantidadDeEstadoEnvioAsignados++;
+                }
+            };
+        }
+
+        return (cantidadDeEstadoEnvioAsignados >0?true:false);
+    }
     // guardar requerimiento
 
     actionGuardarEditarRequerimiento() {
@@ -2567,7 +2581,7 @@ class RequerimientoView {
 
             let typeActionForm = document.querySelector("form[id='form-requerimiento']").getAttribute("type"); //  register | edition
             let sustento = '';
-
+            console.log(typeActionForm);
             if (typeActionForm == 'register') {
                 $.ajax({
                     type: 'POST',
@@ -2647,8 +2661,7 @@ class RequerimientoView {
             }
             if (typeActionForm == 'edition') {
 
-                if (parseInt(document.querySelector("form[id='form-requerimiento'] input[name='estado']").value) == 3
-                    && parseInt(document.querySelector("form[id='form-requerimiento'] input[name='id_usuario_req']").value) == auth_user.id_usuario) {
+                if (parseInt(document.querySelector("form[id='form-requerimiento'] input[name='estado']").value) == 3 && parseInt(document.querySelector("form[id='form-requerimiento'] input[name='id_usuario_req']").value) == auth_user.id_usuario) {
                     Swal.fire({
                         title: 'Sustente la observación',
                         input: 'textarea',
@@ -2679,7 +2692,33 @@ class RequerimientoView {
                     });
 
                 } else {
-                    this.actualizarRequerimiento(formData);
+
+                    if(this.existeVinculoConCDPConEstadoDeEnvio()){
+                        Swal.fire({
+                            title: `Desea que los CDP vinculados se cree estados en trazabilidad?`,
+                            text: "Si ignora esta accion, no se creara estados en trazabilidad en despachos externos",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'No',
+                            confirmButtonText: 'Si, crear'
+            
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                formData.append(`al_actualizar_crear_estados_trazabilidad`, 'SI')
+                                this.actualizarRequerimiento(formData);
+                                
+                            }else{
+                                formData.append(`al_actualizar_crear_estados_trazabilidad`, 'SI')
+                                this.actualizarRequerimiento(formData);
+
+                            }
+                        });
+                    }else{
+                        this.actualizarRequerimiento(formData);
+
+                    }
 
                 }
             }
@@ -2750,6 +2789,19 @@ class RequerimientoView {
                         msg: response.mensaje
                     });
                     this.cargarRequerimiento(response.id_requerimiento);
+
+                    if(response.memsaje_creacion_estado_trazabilidad !=''){
+
+                        Lobibox.alert('info', {
+                            title: 'Información',
+                            size: 'normal',
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: response.memsaje_creacion_estado_trazabilidad
+                        });
+                    }
+
                 } else {
                     $('#wrapper-okc').LoadingOverlay("hide", true);
                     console.log(response.mensaje);

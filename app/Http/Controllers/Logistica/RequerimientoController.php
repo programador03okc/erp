@@ -1208,9 +1208,9 @@ class RequerimientoController extends Controller
 
                     if(isset($request->id_estado_envio[$c])){
                         if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){ // que sea mayor a cero y que no sea el estado monto flete transportista que no genera trazabilidad
-                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequmiento($cdpRequerimiento);
+                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequerimiento($cdpRequerimiento);
                             if($cantidadDeEstadosCreadosEnTrazabilidad>0){
-                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'.<br>';
                             }
                         }
                         
@@ -1514,6 +1514,7 @@ class RequerimientoController extends Controller
     {
         // dd($request->all());
         // exit();
+        $mensajeEstadoTrazabilidad='';
         $requerimiento = Requerimiento::where("id_requerimiento", $request->id_requerimiento)->first();
 
         // evaluar si el estado del cierre periodo
@@ -1750,16 +1751,41 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
                     $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
                     $cdpRequerimiento->estado = 1;
+                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                     $cdpRequerimiento->save();
                 } else {
                     $cdpRequerimiento = CdpRequerimiento::find($request->id_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
-                    $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
                     $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
+                    $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                     $cdpRequerimiento->save();
                 }
                 $idCdpRequerimientoProcesado[] = $cdpRequerimiento->id_cdp_requerimiento;
+
+
+                if(isset($request->al_actualizar_crear_estados_trazabilidad) && $request->al_actualizar_crear_estados_trazabilidad=='SI' ){
+                    if(isset($request->id_estado_envio[$c])){
+                        if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){ // que sea mayor a cero y que no sea el estado monto flete transportista que no genera trazabilidad
+                          
+                            $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequerimiento($cdpRequerimiento);
+                           
+                            if($cantidadDeEstadosCreadosEnTrazabilidad>0){
+                                $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
+                            }
+                        }
+                        
+                        if($request->id_estado_envio[$c] ==16){    
+                            $seFijoElMontoFleteTransportista= (new DistribucionController)->guardarMontoFleteEnDespacho($cdpRequerimiento);
+                            if($seFijoElMontoFleteTransportista){
+                                $mensajeEstadoTrazabilidad.='Se fijo el monto de transportista';
+                            }
+
+                        }
+
+                    }
+                }
             }
 
             foreach ($todoCdpRequerimiento as $key => $value) {
@@ -1892,7 +1918,7 @@ class RequerimientoController extends Controller
         // }
 
 
-        return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'codigo' => $requerimiento->codigo, 'mensaje' => $mensaje]);
+        return response()->json(['id_requerimiento' => $requerimiento->id_requerimiento, 'codigo' => $requerimiento->codigo, 'mensaje' => $mensaje,'memsaje_creacion_estado_trazabilidad'=>$mensajeEstadoTrazabilidad ]);
     }
 
     public function obtenerMontoTotalDocumento($tipoDocumento, $idDocumento)

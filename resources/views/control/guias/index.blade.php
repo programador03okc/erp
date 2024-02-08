@@ -974,7 +974,7 @@ Control de Guías de Remisión
 <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script>
 
 <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
-
+<script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
 <script src="{{ asset('js/control/guias/guias.js') }}"></script>
 
     <script src="{{ asset('js/control/guias/guias-model.js') }}"></script>

@@ -410,7 +410,10 @@ function listar() {
             url: route('control.guias.listar'),
             method: 'POST',
             // headers: {'X-CSRF-TOKEN': token},
-            data: data_filtros
+            data: data_filtros,
+            beforeSend: data => {
+                $('#tabla').LoadingOverlay('show', { imageAutoResize: true, progress: true, imageColor: '#3c8dbc' });
+            }
         },
         columns: [
             {data: 'empresa_codigo', className: 'text-center'},
@@ -505,6 +508,17 @@ function listar() {
     $tabla.on('search.dt', function() {
         $('#tabla_filter input').attr('disabled', true);
         $('#btnBuscar').html('<i class="fa fa-stop-circle" aria-hidden="true"></i>').prop('disabled', true);
+    });
+    $tabla.on('init.dt', function(e, settings, processing) {
+        // $('#tabla-data_length label').addClass('select2-sm');
+        $('#tabla').LoadingOverlay('show', { imageAutoResize: true, progress: true, imageColor: '#3c8dbc' });
+    });
+    $tabla.on('processing.dt', function(e, settings, processing) {
+        if (processing) {
+            $('#tabla').LoadingOverlay('show', { imageAutoResize: true, progress: true, imageColor: '#3c8dbc' });
+        } else {
+            $('#tabla').LoadingOverlay("hide", true);
+        }
     });
 }
 

@@ -47,6 +47,7 @@ use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\GuiaController;
 use App\Http\Controllers\CorreoController;
 use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\EcommerceController;
 use App\Http\Controllers\Finanzas\CentroCosto\CentroCostoController;
 use App\Http\Controllers\Finanzas\Normalizar\NormalizarController;
 use App\Http\Controllers\Finanzas\Presupuesto\PartidaController;
@@ -55,6 +56,8 @@ use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\Finanzas\Presupuesto\ScriptController;
 use App\Http\Controllers\Finanzas\Presupuesto\TituloController;
 use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoController;
+use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoEnFaseAprobacionController;
+use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoEnFaseEjecutadoController;
 use App\Http\Controllers\Finanzas\Reportes\ReporteGastoController;
 use App\Http\Controllers\Gerencial\Cobranza\ClienteController as CobranzaClienteController;
 use App\Http\Controllers\Gerencial\Cobranza\CobranzaController;
@@ -98,8 +101,8 @@ use App\Http\Controllers\Proyectos\Variables\IuController;
 use App\Http\Controllers\Proyectos\Variables\SistemasContratoController;
 use App\Http\Controllers\Proyectos\Variables\TipoInsumoController;
 use App\Http\Controllers\ProyectosController;
+use App\Http\Controllers\RecursosHumanosController;
 use App\Http\Controllers\ReporteLogisticaController;
-use App\Http\Controllers\RequerimientoController as ControllersRequerimientoController;
 use App\Http\Controllers\RevisarAprobarController;
 use App\Http\Controllers\Tesoreria\CierreAperturaController;
 use App\Http\Controllers\Tesoreria\Facturacion\PendientesFacturacionController;
@@ -235,6 +238,12 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardar-documento', [ConfiguracionController::class, 'guardar_documento'])->name('guardar-documento');
 			Route::post('actualizar-documento', [ConfiguracionController::class, 'actualizar_documento'])->name('actualizar-documento');
 			Route::get('anular-documento/{id}', [ConfiguracionController::class, 'anular_documento'])->name('anular-documento');
+
+			Route::group(['as' => 'requerimientos-sin-atender.', 'prefix' => 'requerimientos-sin-atender'], function () {
+				Route::get('index', [ConfiguracionController::class, 'view_requerimientos_sin_atender'])->name('index');
+				Route::get('lista', [ConfiguracionController::class, 'listar_requerimientos_sin_atender'])->name('lista');
+				Route::post('anular', [ConfiguracionController::class, 'anular_requerimiento_sin_atender'])->name('anular');
+			});
 		});
 
 		Route::group(['as' => 'roles.', 'prefix' => 'roles'], function () {

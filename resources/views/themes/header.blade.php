@@ -13,9 +13,12 @@
                 <li>
                     <a href="{{ route('inicio') }}">Módulos</a>
                 </li>
-                <li>
-                    <a href="{{ route('configuracion.dashboard') }}">Configuración</a>
-                </li>
+                @foreach(Auth::user()->getAllRol() as $rol)
+                    @if($rol->id_rol == 6)
+                    <li><a href="{{route('configuracion.dashboard')}}">Configuración</a></li>
+                    @endif
+                @endforeach  
+           
                 {{-- <li>
                     <a href="#">Sobre Agile</a>
                 </li> --}}

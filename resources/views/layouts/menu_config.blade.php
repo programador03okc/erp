@@ -42,4 +42,13 @@
         <li><a href="{{ route('configuracion.reportes.log-actividad.index') }}"><i class="far fa-circle fa-xs"></i> Log de actividad </a></li>
     </ul>
 </li>
+
+<li class="treeview">
+    <a href="#">
+        <i class="fas fa-folder-open"></i> <span> Administración de documentos</span> <i class="fa fa-angle-left pull-right"></i>
+    </a>
+    <ul class="treeview-menu">
+        <li><a href="{{ route('configuracion.documentos.requerimientos-sin-atender.index') }}"><i class="far fa-circle fa-xs"></i> Requerimientos sin atender</a></li>
+    </ul>
+</li>
 @endsection

@@ -128,23 +128,7 @@ $("#form-procesarPago").on("submit", function (e) {
     e.preventDefault();
     $('#submit_procesarPago').attr('disabled', 'true');
 
-    var customElement = $("<div>", {
-        "css": {
-            "font-size": "24px",
-            "text-align": "center",
-            "padding": "0px",
-            "margin-top": "-600px"
-        },
-        "class": "your-custom-class",
-        "text": "Validando Presupuesto..."
-    });
 
-    $('#modal-procesarPago .modal-content').LoadingOverlay("show", {
-        imageAutoResize: true,
-        progress: true,
-        custom: customElement,
-        imageColor: "#3c8dbc"
-    });
 
 
     let id = '';
@@ -162,75 +146,22 @@ $("#form-procesarPago").on("submit", function (e) {
     let monto_pago = document.querySelector("div[id='modal-procesarPago'] input[name='total_pago']").value;
     let fecha_pago = document.querySelector("div[id='modal-procesarPago'] input[name='fecha_pago']").value;
 
-    validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
-
-        $('.page-main').LoadingOverlay("hide", true);
-        $('#modal-procesarPago .modal-content').LoadingOverlay("hide", true);
-
-        let accionProcesarPago=true;
-
-        let mensajeConcatenado = [];
-        let cantidadPartidasSinPresupuesto = 0;
-
-        if (response.data && response.data.tiene_presupuesto ==false) {
-            accionProcesarPago=false;
-
-            (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
-                if (element.tiene_presupuesto == false) {
-                    cantidadPartidasSinPresupuesto++;
-                    mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
-                }
-            });
-        }
-        if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
-            Lobibox.notify('warning', {
-                height:'auto',
-                sound:false,
-                msg: response.data.mensaje.toString()
-            });
-
+    Swal.fire({
+        title: "¿Está seguro que desea realizar el pago?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6", //"#00a65a",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sí, procesar"
+    }).then(result => {
+        if (result.isConfirmed) {
+            procesarPago();
+        }else{
             $('#submit_procesarPago').removeAttr('disabled');
-
-
         }
+    });
 
-        if (cantidadPartidasSinPresupuesto > 0) {
-            accionProcesarPago=false;
-
-            Lobibox.alert('warning', {
-                height:'auto',
-                sound:false,
-                delay: false,
-                msg: mensajeConcatenado.toString()
-            });
-
-            $('#submit_procesarPago').removeAttr('disabled');
-
-        }
-
-        if(accionProcesarPago){
-            Swal.fire({
-                title: "¿Está seguro que desea realizar el pago?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6", //"#00a65a",
-                cancelButtonColor: "#d33",
-                cancelButtonText: "Cancelar",
-                confirmButtonText: "Sí, procesar"
-            }).then(result => {
-                if (result.isConfirmed) {
-                    procesarPago();
-                }else{
-                    $('#submit_procesarPago').removeAttr('disabled');
-                }
-            });
-        }
-
-
-
-    }).catch(function (err) {
-        console.log(err)
-    })
 
 
 });
@@ -244,6 +175,25 @@ function procesarPago() {
     var id_requerimiento_pago = $('[name=id_requerimiento_pago]').val();
     // console.log(formData);
 
+
+    var customElement = $("<div>", {
+        "css": {
+            "font-size": "24px",
+            "text-align": "center",
+            "padding": "0px",
+            "margin-top": "-600px"
+        },
+        "class": "your-custom-class",
+        "text": "Procesando..."
+    });
+
+    $('#modal-procesarPago .modal-content').LoadingOverlay("show", {
+        imageAutoResize: true,
+        progress: true,
+        custom: customElement,
+        imageColor: "#3c8dbc"
+    });
+
     $.ajax({
         type: 'POST',
         url: 'procesarPago',
@@ -255,6 +205,7 @@ function procesarPago() {
         success: function (response) {
             // console.log(response);
             $('#modal-procesarPago').modal('hide');
+            $('#modal-procesarPago .modal-content').LoadingOverlay("hide", true);
 
             if (id_oc !== '') {
                 $('#listaOrdenes').DataTable().ajax.reload(null, false);
@@ -346,13 +297,13 @@ function listarCuentasOrigen() {
 }
 
 
-function validarPresupuesto(tipo, id, fecha_pago, monto_pago) {
+function validarPresupuesto(tipo, id, fecha_pago, monto_pago, fase) {
     return new Promise(function (resolve, reject) {
         $.ajax({
             type: 'POST',
             url: `validarPresupuestoParaPago`,
             dataType: 'JSON',
-            data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago },
+            data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago, 'fase':fase },
             success(response) {
                 resolve(response);
             },
@@ -386,7 +337,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
     if (obj != null) {
         obj.setAttribute("disabled", true);
     }
-    validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
+    validarPresupuesto(tipo, id, fecha_pago, monto_pago,'FASE_AUTORIZACION').then((response) => {
 
         $('.page-main').LoadingOverlay("hide", true);
         let accionEnviarParaPago = false;
@@ -404,22 +355,29 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
             (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
                 if (element.tiene_presupuesto == false) {
                     cantidadPartidasSinPresupuesto++;
-                    mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
-                }
+                    let saldoFaltante= parseFloat(element.monto_soles_documento_actual) + parseFloat(element.monto_soles_comprometido_otros_documentos) -parseFloat(element.monto_aux)
+                    mensajeConcatenado.push(element.mensaje+" <br>Monto de documento actual: S/"+element.monto_soles_documento_actual+
+                    " <br>Monto de otros documentos comprometidos: S/"+element.monto_soles_comprometido_otros_documentos +
+                    "<br>Saldo(mes) disponible: S/"+element.monto_aux+ ", necesita +S/"+($.number(saldoFaltante,2,'.',','))
+                    );                }
             });
         }
 
         if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
-            Lobibox.notify('warning', {
-                height:'auto',
-                sound:false,
-                msg: response.data.mensaje.toString()
+        //     Lobibox.notify('warning', {
+        //         height:'auto',
+        //         sound:false,
+        //         msg: response.data.mensaje.toString()
+        //     });
+            Lobibox.notify('info', {
+            height:'auto',
+            sound:false,
+            msg: "Se requiere resolver la falta de presupuesto"
             });
-
         }
 
         if (cantidadPartidasSinPresupuesto > 0) {
-            accionEnviarParaPago=true; // ! cambiar a false para ser restrictivo 
+            accionEnviarParaPago=false;
             Lobibox.alert('warning', {
                 title: 'Validación de Presupuesto',
                 delay: false,

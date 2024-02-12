@@ -1306,13 +1306,13 @@ class RevisarAprobarDocumentoView {
 
 
 
-    validarPresupuesto(tipo, id, fecha_pago, monto_pago) {
+    validarPresupuesto(tipo, id, fecha_pago, monto_pago,fase) {
         return new Promise(function (resolve, reject) {
             $.ajax({
                 type: 'POST',
                 url: `validarPresupuestoParaPago`,
                 dataType: 'JSON',
-                data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago },
+                data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago,'fase':fase },
                 success(response) {
                     resolve(response);
                 },
@@ -1386,7 +1386,7 @@ class RevisarAprobarDocumentoView {
             }
 
             // Validar presupuesto interno
-            this.validarPresupuesto(tipo, id, fecha_pago, monto_pago).then((response) => {
+            this.validarPresupuesto(tipo, id, fecha_pago, monto_pago,'FASE_APROBACION').then((response) => {
 
                 $('#lista_documentos_para_revisar_aprobar').LoadingOverlay("hide", true);
 
@@ -1398,23 +1398,31 @@ class RevisarAprobarDocumentoView {
                     (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
                         if (element.tiene_presupuesto == false) {
                             cantidadPartidasSinPresupuesto++;
-                            mensajeConcatenado.push("La partida " + element.partida + "(" + element.descripcion + ") no dispone de saldo suficiente, dispone S/" + element.monto_aux);
+                            let saldoFaltante= parseFloat(element.monto_soles_documento_actual) + parseFloat(element.monto_soles_comprometido_otros_documentos) -parseFloat(element.monto_aux)
+                            mensajeConcatenado.push(element.mensaje+" <br>Monto de documento actual: S/"+element.monto_soles_documento_actual+
+                            " <br>Monto de otros documentos comprometidos: S/"+element.monto_soles_comprometido_otros_documentos +
+                            "<br>Saldo(mes) disponible: S/"+element.monto_aux+ ", necesita +S/"+($.number(saldoFaltante,2,'.',','))
+                            );
                         }
                     });
                 }
 
                 if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
-                    Lobibox.notify('warning', {
-                        height:'auto',
-                        sound:false,
-                        msg: response.data.mensaje.toString()
+                //     Lobibox.notify('warning', {
+                //         height:'auto',
+                //         sound:false,
+                //         msg: response.data.mensaje.toString()
+                //     });
+                    Lobibox.notify('info', {
+                    height:'auto',
+                    sound:false,
+                    msg: "Se requiere resolver la falta de presupuesto"
                     });
-        
                 }
 
                 // si la cantidad d partidas sin presupuesto es mayor a cero, se emite alerta y se establece la accionGuardarrespuesta como falso
                 if (cantidadPartidasSinPresupuesto > 0) {
-                    accionGuardarRespuesta = true; //! cambiar a false para ser resctrictiva
+                    accionGuardarRespuesta = false;
                     Lobibox.alert('warning', {
                         title: 'Validación de Presupuesto',
                         delay: false,

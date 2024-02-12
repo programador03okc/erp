@@ -38,8 +38,8 @@ function ordenes() {
     }).done(function({empresas, estados, monedas}) {
     // }).done(function(respuesta) {
 
-        console.log(empresas);
-        console.log(estados);
+        // console.log(empresas);
+        // console.log(estados);
         renderizarCuadro(empresas, estados, monedas,'cuadro-ordenes')
         // return response
     }).fail( function( jqXHR, textStatus, errorThrown ){

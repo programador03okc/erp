@@ -24,6 +24,19 @@ class Documento extends Model
         return $id_doc;
     }
 
+    public static function getIdTipoDocumento($id_doc_aprob){
+        $documentos_aprob =  Documento::where('id_doc_aprob', $id_doc_aprob)
+        ->get();
+        if($documentos_aprob->count()>0){
+            $idTipoDoc=  $documentos_aprob->first()->id_tp_documento;
+        }else{
+            $idTipoDoc =0;
+        }
+
+        return $idTipoDoc;
+    }
+
+
     public static function getIdDocAprob($id_doc,$tp_doc)
     {
         $sql = DB::table('administracion.adm_documentos_aprob')->where([['id_tp_documento', '=', $tp_doc], ['id_doc', '=', $id_doc]])->get();

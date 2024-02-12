@@ -59,8 +59,36 @@ class PresupuestoInternoHistorialHelper
         }
     }
 
+
+    public static function validarSaldoAntesDeAfectarPresupuestoPorRequerimientoLogistico($idOrden, $detalleItemList, $operacion, $fechaAfectacion)
+    {
+        $saldoPostAfecto = 0;
+        $presupuestoInternoDetalle = [];
+
+        $orden = Orden::find($idOrden);
+        foreach ($detalleItemList as $detOrd) {
+            if ($detOrd->id_detalle_requerimiento > 0) {
+
+                if ($detOrd->detalleRequerimiento->id_partida_pi > 0) {
+           
+                    $saldoPostAfecto =   PresupuestoInternoHistorialHelper::obtenerSaldoPostAfectoDePresupuesto(
+                        $detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
+                        $detOrd->detalleRequerimiento->id_partida_pi,
+                        $fechaAfectacion,
+                        $detOrd->importe_item_para_presupuesto,
+                        $operacion
+                    );
+                }
+            }
+        }
+        return $saldoPostAfecto;
+    }
+
     public static function registrarEstadoGastoAfectadoDeRequerimientoLogistico($idOrden, $idPago, $detalleItemList, $operacion, $fechaAfectacion, $descripcion)
     {
+
+        $saldoPostAfecto= PresupuestoInternoHistorialHelper::validarSaldoAntesDeAfectarPresupuestoPorRequerimientoLogistico($idOrden, $detalleItemList, $operacion, $fechaAfectacion);
+
         $orden = Orden::find($idOrden);
         $presupuestoInternoDetalle = [];
         foreach ($detalleItemList as $detOrd) {
@@ -79,28 +107,30 @@ class PresupuestoInternoHistorialHelper
                     // $detOrd->id_detalle_orden,
                     // $idPago,
                     // $descripcion);
+                    
+                        PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoLogistico(
+                            $detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
+                            $detOrd->detalleRequerimiento->id_partida_pi,
+                            $detOrd->importe_item_para_presupuesto,
+                            3,//* EJECUTADO
+                            $detOrd->detalleRequerimiento->requerimiento->id_requerimiento,
+                            $detOrd->id_detalle_requerimiento,
+                            $fechaAfectacion,
+                            $idOrden,
+                            $detOrd->id_detalle_orden,
+                            $idPago,
+                            ($descripcion.($saldoPostAfecto<0?'Generó saldo negativo':''))
+                        );
+    
+                        $presupuestoInternoDetalle =   PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                            $detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
+                            $detOrd->detalleRequerimiento->id_partida_pi,
+                            $fechaAfectacion,
+                            $detOrd->importe_item_para_presupuesto,
+                            $operacion
+                        );
 
-                    PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoLogistico(
-                        $detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
-                        $detOrd->detalleRequerimiento->id_partida_pi,
-                        $detOrd->importe_item_para_presupuesto,
-                        3,
-                        $detOrd->detalleRequerimiento->requerimiento->id_requerimiento,
-                        $detOrd->id_detalle_requerimiento,
-                        $fechaAfectacion,
-                        $idOrden,
-                        $detOrd->id_detalle_orden,
-                        $idPago,
-                        $descripcion
-                    );
-
-                    $presupuestoInternoDetalle =   PresupuestoInternoHistorialHelper::afectarPresupuesto(
-                        $detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
-                        $detOrd->detalleRequerimiento->id_partida_pi,
-                        $fechaAfectacion,
-                        $detOrd->importe_item_para_presupuesto,
-                        $operacion
-                    );
+                    
                 }
             }
         }
@@ -248,6 +278,25 @@ class PresupuestoInternoHistorialHelper
         return $historial;
     }
 
+    public static function obtenerSaldoPostAfectoDePresupuesto($idPresupuesto, $idPartida, $fechaOMes, $importe)
+    {
+
+        $saldoPostAfecto=0;
+        $mesLista = ['1' => 'enero', '2' => 'febrero', '3' => 'marzo', '4' => 'abril', '5' => 'mayo', '6' => 'junio', '7' => 'julio', '8' => 'agosto', '9' => 'setiembre', '10' => 'octubre', '11' => 'noviembre', '12' => 'diciembre'];
+        $mes = strlen($fechaOMes) == 2 ? intval($fechaOMes) : intval(date('m', strtotime($fechaOMes)));
+        $nombreMes = $mesLista[$mes];
+        $nombreMesAux = $nombreMes . '_aux';
+        // $mesEnDosDigitos =str_pad($mes, 2, "0", STR_PAD_LEFT);
+        $presupuestoInternoDetalle = PresupuestoInternoDetalle::where([
+            ['id_presupuesto_interno', $idPresupuesto],
+            ['estado', 1], ['id_presupuesto_interno_detalle', $idPartida]
+        ])->first();
+
+        if ($presupuestoInternoDetalle) {
+            $saldoPostAfecto = floatval($presupuestoInternoDetalle->$nombreMesAux) -  (isset($importe) && ($importe > 0) ? floatval($importe) : 0);
+        }
+        return $saldoPostAfecto;
+    }
 
     public static function afectarPresupuesto($idPresupuesto, $idPartida, $fechaOMes, $importe, $operacion)
     {
@@ -368,34 +417,59 @@ class PresupuestoInternoHistorialHelper
         return $detalleArray;
     }
 
-    public static function registrarEstadoGastoAfectadoDeRequerimientoPago($idRequerimientoPago, $idPago, $detalleItemList, $operacion, $fechaAfectacion, $descripcion)
+    public static function validarSaldoAntesDeAfectarPresupuestoPorRequerimientoPago($detalleItemList, $operacion, $fechaAfectacion)
     {
 
-        $presupuestoInternoDetalle = [];
+        $saldoPostAfecto = 0;
 
         foreach ($detalleItemList as $item) {
             if ($item->id_requerimiento_pago_detalle > 0) {
                 if ($item->id_partida_pi > 0) {
                     $requerimientoPago = RequerimientoPago::find($item->id_requerimiento_pago);
-                    PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoPago(
+           
+                    $saldoPostAfecto = PresupuestoInternoHistorialHelper::obtenerSaldoPostAfectoDePresupuesto(
                         $requerimientoPago->id_presupuesto_interno,
                         $item->id_partida_pi,
-                        $item->importe_item_para_presupuesto,
-                        3,
-                        $idRequerimientoPago,
-                        $item->id_requerimiento_pago_detalle,
-                        $fechaAfectacion,//$requerimientoPago->fecha_registro,
-                        $idPago,
-                        $descripcion
-                    );
-
-                    $presupuestoInternoDetalle = PresupuestoInternoHistorialHelper::afectarPresupuesto(
-                        $requerimientoPago->id_presupuesto_interno,
-                        $item->id_partida_pi,
-                        $fechaAfectacion,//$requerimientoPago->fecha_registro,
+                        $fechaAfectacion,
                         $item->importe_item_para_presupuesto,
                         $operacion
                     );
+                }
+            }
+        }
+        return $saldoPostAfecto;
+    }
+
+    public static function registrarEstadoGastoAfectadoDeRequerimientoPago($idRequerimientoPago, $idPago, $detalleItemList, $operacion, $fechaAfectacion, $descripcion)
+    {
+
+        $presupuestoInternoDetalle = [];
+        $saldoPostAfecto= PresupuestoInternoHistorialHelper::validarSaldoAntesDeAfectarPresupuestoPorRequerimientoPago($detalleItemList, $operacion, $fechaAfectacion);
+
+        foreach ($detalleItemList as $item) {
+            if ($item->id_requerimiento_pago_detalle > 0) {
+                if ($item->id_partida_pi > 0) {
+                        $requerimientoPago = RequerimientoPago::find($item->id_requerimiento_pago);
+                        PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoPago(
+                            $requerimientoPago->id_presupuesto_interno,
+                            $item->id_partida_pi,
+                            $item->importe_item_para_presupuesto,
+                            3,//* EJECUTADO
+                            $idRequerimientoPago,
+                            $item->id_requerimiento_pago_detalle,
+                            $fechaAfectacion,//$requerimientoPago->fecha_registro,
+                            $idPago,
+                            ($descripcion.($saldoPostAfecto <0?'Generó saldo negativo':''))
+                        );
+                        $presupuestoInternoDetalle = PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                            $requerimientoPago->id_presupuesto_interno,
+                            $item->id_partida_pi,
+                            $fechaAfectacion,//$requerimientoPago->fecha_registro,
+                            $item->importe_item_para_presupuesto,
+                            $operacion
+                        );
+                
+
                 }
             }
         }
@@ -474,42 +548,110 @@ class PresupuestoInternoHistorialHelper
         }
     }
 
-    public static function registrarRetornoDePresupuesto($idPago)
+    public static function registrarRetornoDePresupuestoPorRequerimientoPago($idRequerimientoPago,$mes)
     {
-        $historialList = HistorialPresupuestoInternoSaldo::where([['id_pago', '=', $idPago], ['estado', 3]])->get();
+        $cantidadItemsConRetornoDePresupuesto =0;
+        $requerimientoPago = RequerimientoPago::find($idRequerimientoPago);
+        if($requerimientoPago->id_presupuesto_interno >0){
+            $requerimientoPagoDetalle = RequerimientoPagoDetalle::where([['id_estado','!=',7],['id_requerimiento_pago','=',$idRequerimientoPago]])->get();
+            foreach ($requerimientoPagoDetalle as $fila) {
+                if ($fila->id_partida_pi > 0) {
+                    $nuevoHistorial = new HistorialPresupuestoInternoSaldo();
+                    $nuevoHistorial->id_presupuesto_interno = $requerimientoPago->id_presupuesto_interno;
+                    $nuevoHistorial->id_partida = $fila->id_partida_pi;
+                    $nuevoHistorial->id_requerimiento = null;
+                    $nuevoHistorial->id_requerimiento_detalle = null;
+                    $nuevoHistorial->id_orden = null;
+                    $nuevoHistorial->id_orden_detalle = null;
+                    $nuevoHistorial->id_requerimiento_pago = $fila->id_requerimiento_pago;
+                    $nuevoHistorial->id_requerimiento_pago_detalle = $fila->id_requerimiento_pago_detalle;
+                    $nuevoHistorial->tipo = 'RETORNO';
+                    $nuevoHistorial->descripcion = 'Retorno de presupuesto';
+                    $nuevoHistorial->operacion = 'S';
+                    if($requerimientoPago->id_moneda ==2){
 
-        foreach ($historialList as $fila) {
-            if ($fila->tipo == 'SALIDA') {
-                $nuevoHistorial = new HistorialPresupuestoInternoSaldo();
-                $nuevoHistorial->id_presupuesto_interno = $fila->id_presupuesto_interno;
-                $nuevoHistorial->id_partida = $fila->id_partida;
-                $nuevoHistorial->id_requerimiento = $fila->id_requerimiento;
-                $nuevoHistorial->id_requerimiento_detalle = $fila->id_requerimiento_detalle;
-                $nuevoHistorial->id_orden = $fila->id_orden;
-                $nuevoHistorial->id_orden_detalle = $fila->id_orden_detalle;
-                $nuevoHistorial->id_requerimiento_pago = $fila->id_requerimiento_pago;
-                $nuevoHistorial->id_requerimiento_pago_detalle = $fila->id_requerimiento_pago_detalle;
-                $nuevoHistorial->tipo = 'RETORNO';
-                $nuevoHistorial->descripcion = 'Retorno de presupuesto';
-                $nuevoHistorial->operacion = 'S';
-                $nuevoHistorial->importe = $fila->importe;
-                $nuevoHistorial->mes = $fila->mes;
-                $nuevoHistorial->fecha_registro = new Carbon();
-                $nuevoHistorial->estado = 3;
-                $nuevoHistorial->id_pago = $fila->id_pago;
-                $nuevoHistorial->save();
-
-                PresupuestoInternoHistorialHelper::afectarPresupuesto(
-                    $fila->id_presupuesto_interno,
-                    $fila->id_partida,
-                    $fila->mes,
-                    $fila->importe,
-                    'S'
-                );
+                        $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoPago->fecha_registro,floatval($fila->subtotal));
+                    }else{
+                        $subtotalMoneda=floatval($fila->subtotal);
+                    }
+                    $nuevoHistorial->importe = $subtotalMoneda;
+                    $nuevoHistorial->mes = $mes;
+                    $nuevoHistorial->fecha_registro = new Carbon();
+                    $nuevoHistorial->estado = 3;
+                    $nuevoHistorial->id_pago = null;
+                    $nuevoHistorial->save();
+                    $cantidadItemsConRetornoDePresupuesto ++;
+                    PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                        $requerimientoPago->id_presupuesto_interno,
+                        $fila->id_partida_pi,
+                        $mes,
+                        $subtotalMoneda,
+                        'S'
+                    );
+                }
             }
         }
 
-        return $historialList;
+        return $cantidadItemsConRetornoDePresupuesto;
+    }
+    public static function registrarRetornoDePresupuestoPorOrden($idORden, $mes)
+    {
+        $orden=Orden::find($idORden);
+        $ordenDetalle = OrdenCompraDetalle::where([['estado','!=',7],['id_orden_compra','=',$idORden]])->get();
+        $cantidadItemsConRetornoDePresupuesto=0;
+        foreach ($ordenDetalle as $detItemOrden) {
+            if($detItemOrden->id_detalle_requerimiento>0){
+                $requerimientoDetalle=DetalleRequerimiento::find($detItemOrden->id_detalle_requerimiento);
+                if($requerimientoDetalle->id_partida_pi >0){
+                    $requerimiento= Requerimiento::find($requerimientoDetalle->id_requerimiento);
+
+                    $nuevoHistorial = new HistorialPresupuestoInternoSaldo();
+                    $nuevoHistorial->id_presupuesto_interno = $requerimiento->id_presupuesto_interno;
+                    $nuevoHistorial->id_partida = $detItemOrden->id_partida_pi;
+                    $nuevoHistorial->id_requerimiento = $requerimientoDetalle->id_requerimiento;
+                    $nuevoHistorial->id_requerimiento_detalle = $requerimientoDetalle->id_requerimiento_detalle;
+                    $nuevoHistorial->id_orden = $ordenDetalle->id_orden_compra;
+                    $nuevoHistorial->id_orden_detalle = $ordenDetalle->id_detalle_orden;
+                    $nuevoHistorial->id_requerimiento_pago = null;
+                    $nuevoHistorial->id_requerimiento_pago_detalle = null;
+                    $nuevoHistorial->tipo = 'RETORNO';
+                    $nuevoHistorial->descripcion = 'Retorno de presupuesto';
+                    $nuevoHistorial->operacion = 'S';
+
+                    if($orden->id_moneda ==2){
+
+                        $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha,floatval($detItemOrden->subtotal));
+                    }else{
+                        $subtotalMoneda=floatval($detItemOrden->subtotal);
+                    }
+
+                    if($orden->incluye_igv !=null){
+                        $subtotal = $subtotalMoneda * 1.18;
+                    }else{
+                        $subtotal = $subtotalMoneda;
+
+                    }
+                    $nuevoHistorial->importe = $subtotal;
+                    $nuevoHistorial->mes = $mes;
+                    $nuevoHistorial->fecha_registro = new Carbon();
+                    $nuevoHistorial->estado = 3;
+                    $nuevoHistorial->id_pago = null;
+                    $nuevoHistorial->save();
+    
+                    $cantidadItemsConRetornoDePresupuesto++;
+                    PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                        $requerimiento->id_presupuesto_interno,
+                        $detItemOrden->id_partida_pi,
+                        $mes,
+                        $subtotal,
+                        'S'
+                    );
+                }
+            }
+        }
+ 
+
+        return $cantidadItemsConRetornoDePresupuesto;
     }
 
     public static function normalizarRequerimientoDePago($idRequerimientoPago, $idDetalleRequerimientoPago)

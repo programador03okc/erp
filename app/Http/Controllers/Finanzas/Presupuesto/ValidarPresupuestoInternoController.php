@@ -357,16 +357,17 @@ class ValidarPresupuestoInternoController extends Controller
 
 
         
-        if($fase=='FASE_APROBACION' || $fase=="FASE_AUTORIZACION"){
+        // if($fase=='FASE_APROBACION' || $fase=="FASE_AUTORIZACION"){
+        if($fase=='FASE_APROBACION'){
             foreach($mesLista as $keyMes => $mesAux) {
                 if($mesAux ==$nombreMesAux ){
                     $numeroMes = str_pad($keyMes,2,"0",STR_PAD_LEFT); 
     
                     if($fase=='FASE_APROBACION'){
                         $historialPresupuestoInternoComprometido = HistorialPresupuestoInternoSaldo::where([['id_partida',$idPartida],['mes',$numeroMes],['tipo','SALIDA'],['estado','=',2]])->get();
-                    }elseif($fase =='FASE_AUTORIZACION'){
-                        $historialPresupuestoInternoComprometido = HistorialPresupuestoInternoSaldo::where([['id_partida',$idPartida],['mes',$numeroMes],['tipo','SALIDA'],['estado','=',2]])->get();
-                    }
+                    // }elseif($fase =='FASE_AUTORIZACION'){
+                    //     $historialPresupuestoInternoComprometido = HistorialPresupuestoInternoSaldo::where([['id_partida',$idPartida],['mes',$numeroMes],['tipo','SALIDA'],['estado','=',2]])->get();
+                    // }
                 
     
                     if(isset($historialPresupuestoInternoComprometido)){

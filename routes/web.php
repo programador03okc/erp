@@ -114,6 +114,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
+
+use App\Http\Controllers\Proyectos\Opciones\PresupuestoInternoController as PresupuestoInternoControllerProy;
 // use App\Http\Controllers\ApiController;
 /*
 |--------------------------------------------------------------------------
@@ -1388,6 +1390,8 @@ Route::middleware(['auth'])->group(function () {
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');
                 Route::post('grafica/{id}', [PresupuestoInternoController::class, 'grafica'])->name('grafica');
+
+                Route::get('reporte-anual/{year}', [PresupuestoInternoController::class, 'reporteAnual'])->name('reporte-anual');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {
@@ -2233,6 +2237,7 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('ver_gant/{id}', [CronogramaInternoController::class, 'ver_gant']);
 
+                Route::get('anular_estructura/{id}', [PresupuestoInternoControllerProy::class, 'anular_estructura']);
 			});
 
 			Route::group(['as' => 'cronogramas-internos.', 'prefix' => 'cronogramas-internos'], function () {

@@ -2222,4 +2222,50 @@ class PresupuestoInternoController extends Controller
         }
         return response()->json(["tipo"=>true, "data"=>$data],200);
     }
+    public function reporteAnual($year){
+        $presupuestos = PresupuestoInterno::whereYear('fecha_registro',$year)
+        ->whereIn('id_presupuesto_interno',[47,50])
+        ->get();
+
+        $modelo_partidas =  PresupuestoInternoModelo::where("id_tipo_presupuesto" ,3)->orderBy('partida', 'asc')->get();
+        foreach ( $modelo_partidas as $key_modelo => $value_modelo ) {
+
+            $value_modelo->total = 0;
+            $value_modelo->total_ejecutado = 0;
+            $value_modelo->total_saldo = 0;
+        }
+        $reporte_total = array();
+        foreach($presupuestos as $key=>$value){
+            $filas_totales = PresupuestoInterno::calcularTotalPresupuestoFilas($value->id_presupuesto_interno, 3, 1);
+
+            foreach ($modelo_partidas as $key_modelo => $value_modelo) {
+                foreach ($filas_totales as $key_fila => $value_fila) {
+                    if($value_modelo->partida == $value_fila['partida']){
+                        $value_modelo->total = $value_modelo->total + $value_fila['total'];
+                    }
+                }
+            }
+
+            $detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno', $value->id_presupuesto_interno)->orderBy('partida')->get();
+
+            foreach ($detalle as $key => $item) {
+                $monto = 0;
+                if ($item->registro == 2) {
+                    $monto = HistorialPresupuestoInternoSaldo::totalEjecutadoPartida($item->id_presupuesto_interno_detalle);
+                }
+                $item->ejecutado = $monto;
+                return $item->ejecutado;
+            }
+
+
+            return $detalle;
+        }
+        return $modelo_partidas;
+        // return [$modelo_partidas];
+
+        return response()->json([
+            "presupuestos"=>$presupuestos,
+            "reporte"=>$modelo_partidas,
+        ], 200);
+    }
 }

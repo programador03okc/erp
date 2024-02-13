@@ -13,7 +13,7 @@ class CronogramaInternoController extends Controller
         $unid_program = GenericoController::mostrar_unid_program_cbo();
         return view('proyectos.cronograma.cronoint', compact('unid_program'));
     }
-    
+
     public function nuevo_cronograma($id_presupuesto)
     {
         $part_cd = DB::table('proyectos.proy_cd_partida')
@@ -234,7 +234,7 @@ class CronogramaInternoController extends Controller
                 ['proy_cd_compo.estado', '!=', 7]])
         ->orderBy('proy_cd_compo.codigo')
         ->get();
-        
+
         return response()->json(['partidas'=>$part_cd,'titulos'=>$compo_cd]);
     }
 
@@ -272,7 +272,7 @@ class CronogramaInternoController extends Controller
             } else if ($ini < $fecha_inicio_crono){
                 $fecha_inicio_crono = $ini;
             }
-
+            return $request->all();exit;
             if ($request->modo === 'new'){
                 $id_crono = DB::table('proyectos.proy_cd_pcronog')
                 ->insert([
@@ -289,7 +289,7 @@ class CronogramaInternoController extends Controller
                     'fecha_registro'=>date('Y-m-d'),
                     'estado'=>1
                 ]);
-            } 
+            }
             else {
                 $crono = DB::table('proyectos.proy_cd_pcronog')
                 ->where([['id_partida','=',$id],['tipo','=',$tipo]])
@@ -346,7 +346,7 @@ class CronogramaInternoController extends Controller
                     ->first();
 
                 if ($par_crono !== null){
-                    
+
                     $fecha_inicio = $par_crono->fecha_inicio;
                     $duracion = round(($par_crono->cantidad / $par_crono->rendimiento),2,PHP_ROUND_HALF_UP);
                     $fecha_fin = date("Y-m-d",strtotime($fecha_inicio."+ ".round($duracion,0,PHP_ROUND_HALF_UP)." days"));
@@ -388,7 +388,7 @@ class CronogramaInternoController extends Controller
             }
             DB::commit();
             return response()->json($id_presupuesto);
-            
+
         } catch (\PDOException $e) {
             DB::rollBack();
         }
@@ -420,7 +420,7 @@ class CronogramaInternoController extends Controller
     public function listar_pres_crono($tiene_crono, $tp_presup)
     {
         $data = DB::table('proyectos.proy_presup')
-            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion', 
+            ->select('proy_presup.*', 'proy_tp_pres.descripcion as tipo_descripcion',
                      'proy_op_com.descripcion', 'proy_presup_importe.sub_total',
                      'sis_moneda.simbolo','adm_contri.razon_social')
             ->join('proyectos.proy_tp_pres','proy_presup.id_tp_presupuesto','=','proy_tp_pres.id_tp_pres')

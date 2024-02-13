@@ -396,7 +396,7 @@ class ProductoController extends Controller
             return response()->json($arrayRspta, 200);
         } catch (\PDOException $e) {
             DB::rollBack();
-            return response()->json(array('tipo' => 'error', 'mensaje' => 'Hubo un problema al anular la orden. Por favor intente de nuevo', 'error' => $e->getMessage()));
+            return response()->json(array('tipo' => 'error', 'mensaje' => 'Hubo un problema al anular. Por favor intente de nuevo', 'error' => $e->getMessage()));
         }
     }
 

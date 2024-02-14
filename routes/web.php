@@ -117,6 +117,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
+
+use App\Http\Controllers\Proyectos\Opciones\PresupuestoInternoController as PresupuestoInternoControllerProy;
 // use App\Http\Controllers\ApiController;
 /*
 |--------------------------------------------------------------------------
@@ -1397,6 +1399,8 @@ Route::middleware(['auth'])->group(function () {
 				});
 				Route::get('actualizaEstadoHistorial/{id}/{est}', [PresupuestoInternoController::class, 'actualizaEstadoHistorial'])->name('actualiza-estado-historial');
                 Route::post('grafica/{id}', [PresupuestoInternoController::class, 'grafica'])->name('grafica');
+
+                Route::get('reporte-anual/{year}', [PresupuestoInternoController::class, 'reporteAnual'])->name('reporte-anual');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {
@@ -2242,6 +2246,7 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('ver_gant/{id}', [CronogramaInternoController::class, 'ver_gant']);
 
+                Route::get('anular_estructura/{id}', [PresupuestoInternoControllerProy::class, 'anular_estructura']);
 			});
 
 			Route::group(['as' => 'cronogramas-internos.', 'prefix' => 'cronogramas-internos'], function () {
@@ -2394,7 +2399,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('update_preseje', [ProyectosController::class, 'update_preseje']);
 				Route::get('anular_presint/{id}', [ProyectosController::class, 'anular_presint']);
 
-				Route::get('generar_estructura/{id}/{tp}', [ProyectosController::class, 'generar_estructura']);
+				Route::get('generar_estructura/{id}/{tp}', [OpcionesPresupuestoInternoController::class, 'generar_estructura']);
 				Route::get('listar_presupuesto_proyecto/{id}', [OpcionesPresupuestoInternoController::class, 'listar_presupuesto_proyecto'])->name('listar-presupuesto-proyecto');
 				Route::get('anular_estructura/{id}', [ProyectosController::class, 'anular_estructura']);
 				Route::get('totales/{id}', [ProyectosController::class, 'totales']);

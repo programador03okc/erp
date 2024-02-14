@@ -320,7 +320,7 @@ class RequerimientoHelper
     private function obtenerIdUsuario($idUsuario): int
     {
         //Usuario por defecto en el sistema Agile en caso que no exista el usuario buscado
-        $usuarioMgcp = User::find($idUsuario);
+        $usuarioMgcp = User::withTrashed()->find($idUsuario);
         $usuarioAgil = Usuario::where('email', $usuarioMgcp->email)->first();
         if ($usuarioAgil == null) {
             return self::ID_USUARIO_MGCP; //Usuario MGCP

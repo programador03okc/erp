@@ -12,6 +12,7 @@ use App\Models\Configuracion\Acceso;
 use App\models\Configuracion\Accesos;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Grupo;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Modulo;
 use App\Models\Configuracion\Pais as ConfiguracionPais;
 use App\Models\Configuracion\Rol;
@@ -2730,6 +2731,7 @@ class ConfiguracionController extends Controller{
             $afectado=0;
             $idRequerimiento = Documento::getIdDocByIdDocAprob($idDocumento);
             $tipoDocumento = Documento::getIdTipoDocumento($idDocumento);
+            $codigo='';
 
             if($tipoDocumento>0){
                 if($tipoDocumento==1){ // requerimiento logístico
@@ -2738,13 +2740,15 @@ class ConfiguracionController extends Controller{
                     $requerimientoLogistico->save();
                     
                     $mensaje='Se anulo el requerimiento logistico '.$requerimientoLogistico->codigo;
+                    $codigo=$requerimientoLogistico->codigo;
                     $afectado++;
                 }elseif($tipoDocumento==11){ //requerimiento de pago
                     $requerimientoPago = RequerimientoPago::find($idRequerimiento);
                     $requerimientoPago->id_estado=7;
                     $requerimientoPago->save();
-                    $afectado++;
                     $mensaje='Se anulo el requerimiento de pago '.$requerimientoPago->codigo;
+                    $codigo=$requerimientoPago->codigo;
+                    $afectado++;
                     
                 }
                 
@@ -2764,6 +2768,10 @@ class ConfiguracionController extends Controller{
                 $aprobaciones->fecha_vobo = new Carbon();
                 $aprobaciones->detalle_observacion = $sustento != null ? trim(strtoupper($sustento)) : null;
                 $aprobaciones->save();
+
+                $comentarioDetalle = 'Anular / rechazar requerimiento, código: ' . ($codigo ?? '') . ', Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Anular / rechazar requerimiento', 4, $aprobaciones->getTable(), null, $aprobaciones, $comentarioDetalle, 'Configuración');
+
                 
             }else{
                 return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'No se encontro el ID de documento']);

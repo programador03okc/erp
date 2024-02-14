@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PartidasController extends Controller
 {
-    
+
     public function guardar_partida_cd(Request $request)
     {
         $rspta = DB::table('proyectos.proy_cd_partida')
@@ -182,7 +182,7 @@ class PartidasController extends Controller
         return response()->json($data);
     }
 
-    
+
     public function crear_titulos_ci($id_presupuesto){
         $pres = DB::table('finanzas.presup')
         ->where([['tp_presup','=',1],['estado','=',1]])
@@ -197,7 +197,7 @@ class PartidasController extends Controller
             ->where([['id_presup','=',$pres->id_presup],['relacionado','like','CI%']])
             ->orderBy('relacionado','asc')
             ->get();
-
+            // return $titulos;exit;
             // $data = DB::table('proyectos.proy_ci_compo')
             // ->insertGetId([
             //     'id_ci' => $id_presupuesto,
@@ -211,10 +211,10 @@ class PartidasController extends Controller
             //     'id_ci_compo'
             // );
 
-            foreach($titulos as $d){
-                $codigo = substr($d->relacionado, 2, (strlen($d->relacionado)-2));
-                $tiene = strstr($d->relacionado, '.', true);
-                $padre = (strlen($tiene) > 0 ? substr($tiene, 2, strlen($tiene)) : '');
+            foreach($titulos as $d){//CI01
+                $codigo = substr($d->relacionado, 2, (strlen($d->relacionado)-2));// 01
+                $tiene = strstr($d->relacionado, '.', true);//CI
+                $padre = (strlen($tiene) > 0 ? substr($tiene, 2, strlen($tiene)) : '');//''
 
                 $data = DB::table('proyectos.proy_ci_compo')
                 ->insertGetId([
@@ -283,7 +283,7 @@ class PartidasController extends Controller
         $update = $this->actualiza_totales($id_ci);
         return $update;
     }
-    
+
     public function suma_partidas_gg($padre, $id_gg)
     {
         $this->suma_padres_gg($padre, $id_gg);
@@ -291,7 +291,7 @@ class PartidasController extends Controller
         return $update;
     }
 
-    
+
     public function suma_padres_cd($cod_padre, $id_cd)
     {
         $part = DB::table('proyectos.proy_cd_partida')
@@ -317,7 +317,7 @@ class PartidasController extends Controller
 
         //copia el padre
         $actualizar_padre = (isset($abuelo) ? $abuelo->cod_padre : null);
-        
+
         while ($actualizar_padre !== null){
             //Suma los totales del abuelo
             $sum = DB::table('proyectos.proy_cd_compo')
@@ -377,13 +377,13 @@ class PartidasController extends Controller
                     ['id_ci','=',$id_ci],
                     ['estado','=',1]])
             ->first();
-    
+
             $data = DB::table('proyectos.proy_ci_compo')
             ->where([['codigo',$actualizar_padre],
                     ['id_ci','=',$id_ci],
                     ['estado','=',1]])
             ->update(['total_comp'=>$sum->suma]);
-            
+
             //busca bisabuelo
             $bisabuelo = DB::table('proyectos.proy_ci_compo')
             ->select('cod_padre')//<-bisabuelo
@@ -405,7 +405,7 @@ class PartidasController extends Controller
                     ['proy_gg_detalle.id_gg', '=', $id_gg],
                     ['proy_gg_detalle.estado', '!=', 7]])
             ->first();
-        
+
         $update = DB::table('proyectos.proy_gg_compo')
             ->where([['proy_gg_compo.codigo','=',$padre],
                     ['proy_gg_compo.id_gg', '=', $id_gg]])
@@ -430,13 +430,13 @@ class PartidasController extends Controller
                     ['id_gg','=',$id_gg],
                     ['estado','=',1]])
             ->first();
-    
+
             $data = DB::table('proyectos.proy_gg_compo')
             ->where([['codigo',$actualizar_padre],
                     ['id_gg','=',$id_gg],
                     ['estado','=',1]])
             ->update(['total_comp'=>$sum->suma]);
-            
+
             //busca bisabuelo
             $bisabuelo = DB::table('proyectos.proy_gg_compo')
             ->select('cod_padre')//<-bisabuelo
@@ -449,7 +449,7 @@ class PartidasController extends Controller
         }
     }
 
-    
+
     public function actualiza_totales($id_pres)
     {
         $part_cd_todo = DB::table('proyectos.proy_cd_partida')
@@ -473,11 +473,11 @@ class PartidasController extends Controller
         $total_cd = $part_cd_todo->suma_partidas;
         $total_ci = $part_ci_todo->suma_partidas;
         $total_gg = $part_gg_todo->suma_partidas;
-            
+
         $imp = DB::table('proyectos.proy_presup_importe')
             ->where([['id_presupuesto','=',$id_pres]])
             ->first();
-                   
+
         if (isset($imp)){
             if ($total_ci == 0){
                 $total_ci = $total_cd * $imp->porcentaje_ci;
@@ -488,7 +488,7 @@ class PartidasController extends Controller
 
             if ($imp->porcentaje_igv > 0){
                 $porcentaje_igv = $imp->porcentaje_igv;
-            } 
+            }
             else {
                 $igv = DB::table('contabilidad.cont_impuesto')
                 ->where('codigo','IGV')
@@ -496,7 +496,7 @@ class PartidasController extends Controller
                 ->first();
                 $porcentaje_igv = $igv->porcentaje;
             }
-        
+
             $subtotal = $total_cd + $total_ci + $total_gg;
             $total_uti = (($subtotal / (1 - ($imp->porcentaje_utilidad / 100))) - $subtotal);
             $total_igv = ($porcentaje_igv / 100) * ($subtotal + $total_uti);
@@ -505,13 +505,13 @@ class PartidasController extends Controller
             $pres = DB::table('proyectos.proy_presup_importe')
             ->where([['id_presupuesto','=',$id_pres]])
             ->update([
-                'total_costo_directo' => $total_cd, 
+                'total_costo_directo' => $total_cd,
                 'total_ci' => $total_ci,
                 'total_gg' => $total_gg,
-                'sub_total' => $subtotal, 
-                'total_utilidad' => $total_uti, 
-                'porcentaje_igv' => $porcentaje_igv, 
-                'total_igv' => $total_igv, 
+                'sub_total' => $subtotal,
+                'total_utilidad' => $total_uti,
+                'porcentaje_igv' => $porcentaje_igv,
+                'total_igv' => $total_igv,
                 'total_presupuestado' => $total_pres,
             ]);
         }
@@ -531,7 +531,7 @@ class PartidasController extends Controller
             //obtiene el codigo
             $padre = substr($cid->codigo,0,strlen($cid->codigo)-2);
             $nuevo_codigo = $padre.GenericoController::leftZero(2,$nuevo);
-            
+
             //obtener el anterior y restarle una posicion
             $ant = DB::table('proyectos.proy_cd_partida')
             ->where([['id_cd','=',$cid->id_cd],
@@ -549,7 +549,7 @@ class PartidasController extends Controller
                 ->where('id_partida',$id_partida)
                 ->update(['codigo' => $nuevo_codigo]);
             }
-        } 
+        }
         else {
             $anterior = intval(substr($cid->codigo,-5,2));
             //resta ultimo numero
@@ -581,7 +581,7 @@ class PartidasController extends Controller
                 ->where([['cod_compo','=',$padre_anterior],['estado','=',1],['id_cd','=',$cid->id_cd]])
                 ->orderBy('codigo','asc')
                 ->get();
-                
+
                 $i = 0;
                 foreach($hijos as $h){
                     $i++;
@@ -603,7 +603,7 @@ class PartidasController extends Controller
         ->first();
         //codigo actual
         $codigo = $cid->codigo;
-        //obtiene ultimo numero 
+        //obtiene ultimo numero
         $ultimo = intval(substr($cid->codigo,-2,2));
         $update = 0;
         $padre = substr($cid->codigo,0,strlen($cid->codigo)-3);
@@ -634,7 +634,7 @@ class PartidasController extends Controller
                 ->where('id_partida',$id_partida)
                 ->update(['codigo' => $nuevo_codigo]);
             }
-        } 
+        }
         else {
             //obtiene padre actual
             $padre_actual = intval(substr($cid->codigo,-5,2));
@@ -655,7 +655,7 @@ class PartidasController extends Controller
                 ->where([['cod_compo','=',$nuevo_padre],['estado','=',1],['id_cd','=',$cid->id_cd]])
                 ->orderBy('codigo','asc')
                 ->get();
-                
+
                 $i = 1;
                 foreach($hijos as $h){
                     $i++;
@@ -692,7 +692,7 @@ class PartidasController extends Controller
                     ->where([['cod_compo','=',$nuevo_abuelo],['estado','=',1],['id_cd','=',$cid->id_cd]])
                     ->orderBy('codigo','asc')
                     ->get();
-                    
+
                     $i = 1;
                     foreach($hijos as $h){
                         $i++;
@@ -727,7 +727,7 @@ class PartidasController extends Controller
             //obtiene el codigo
             $padre = substr($cid->codigo,0,strlen($cid->codigo)-2);
             $nuevo_codigo = $padre.GenericoController::leftZero(2,$nuevo);
-            
+
             //obtener el anterior y restarle una posicion
             $ant = DB::table('proyectos.proy_ci_detalle')
             ->where([['id_ci','=',$cid->id_ci],
@@ -745,7 +745,7 @@ class PartidasController extends Controller
                 ->where('id_ci_detalle',$id_ci_detalle)
                 ->update(['codigo' => $nuevo_codigo]);
             }
-        } 
+        }
         else {
             $anterior = intval(substr($cid->codigo,-5,2));
             //resta ultimo numero
@@ -777,7 +777,7 @@ class PartidasController extends Controller
                 ->where([['cod_compo','=',$padre_anterior],['estado','=',1],['id_ci','=',$cid->id_ci]])
                 ->orderBy('codigo','asc')
                 ->get();
-                
+
                 $i = 0;
                 foreach($hijos as $h){
                     $i++;
@@ -799,7 +799,7 @@ class PartidasController extends Controller
         ->first();
         //codigo actual
         $codigo = $cid->codigo;
-        //obtiene ultimo numero 
+        //obtiene ultimo numero
         $ultimo = intval(substr($cid->codigo,-2,2));
         $update = 0;
         $padre = substr($cid->codigo,0,strlen($cid->codigo)-3);
@@ -830,7 +830,7 @@ class PartidasController extends Controller
                 ->where('id_ci_detalle',$id_ci_detalle)
                 ->update(['codigo' => $nuevo_codigo]);
             }
-        } 
+        }
         else {
             //obtiene padre actual
             $padre_actual = intval(substr($cid->codigo,-5,2));
@@ -851,7 +851,7 @@ class PartidasController extends Controller
                 ->where([['cod_compo','=',$nuevo_padre],['estado','=',1],['id_ci','=',$cid->id_ci]])
                 ->orderBy('codigo','asc')
                 ->get();
-                
+
                 $i = 1;
                 foreach($hijos as $h){
                     $i++;
@@ -888,7 +888,7 @@ class PartidasController extends Controller
                     ->where([['cod_compo','=',$nuevo_abuelo],['estado','=',1],['id_ci','=',$cid->id_ci]])
                     ->orderBy('codigo','asc')
                     ->get();
-                    
+
                     $i = 1;
                     foreach($hijos as $h){
                         $i++;
@@ -923,7 +923,7 @@ class PartidasController extends Controller
             //obtiene el codigo
             $padre = substr($cid->codigo,0,strlen($cid->codigo)-2);
             $nuevo_codigo = $padre.GenericoController::leftZero(2,$nuevo);
-            
+
             //obtener el anterior y sumarle una posicion
             $ant = DB::table('proyectos.proy_gg_detalle')
             ->where([['id_gg','=',$cid->id_gg],
@@ -941,7 +941,7 @@ class PartidasController extends Controller
                 ->where('id_gg_detalle',$id_gg_detalle)
                 ->update(['codigo' => $nuevo_codigo]);
             }
-        } 
+        }
         else {
             $anterior = intval(substr($cid->codigo,-5,2));
             //resta ultimo numero
@@ -955,13 +955,13 @@ class PartidasController extends Controller
             ->where([['codigo','like',$nue_padre.'%'],['estado','=',1],['id_gg','=',$cid->id_gg]])
             ->orderBy('codigo','desc')
             ->first();
-            
+
             if (isset($titulo)){
                 //obtener el anterior y sumarle una posicion
                 $count = DB::table('proyectos.proy_gg_detalle')
                 ->where([['cod_compo','=',$titulo->codigo],['estado','=',1],['id_gg','=',$cid->id_gg]])
                 ->count();
-                
+
                 $cod = $titulo->codigo.'.'.GenericoController::leftZero(2,($count+1));
                 // actualiza el codigo actual
                 $update = DB::table('proyectos.proy_gg_detalle')
@@ -995,7 +995,7 @@ class PartidasController extends Controller
         ->first();
         //codigo actual
         $codigo = $cid->codigo;
-        //obtiene ultimo numero 
+        //obtiene ultimo numero
         $ultimo = intval(substr($cid->codigo,-2,2));
         $update = 0;
         $padre = substr($cid->codigo,0,strlen($cid->codigo)-3);
@@ -1026,7 +1026,7 @@ class PartidasController extends Controller
                 ->where('id_gg_detalle',$id_gg_detalle)
                 ->update(['codigo' => $nuevo_codigo]);
             }
-        } 
+        }
         else {
             //obtiene padre actual
             $padre_actual = intval(substr($cid->codigo,-5,2));
@@ -1038,7 +1038,7 @@ class PartidasController extends Controller
             $count_nuevo_padre = DB::table('proyectos.proy_gg_compo')
             ->where([['codigo','=',$nuevo_padre],['estado','=',1],['id_gg','=',$cid->id_gg]])
             ->count();
-            
+
             if ($count_nuevo_padre > 0){
                 //genera nuevo codigo hijo
                 $nuevo_codigo = $nuevo_padre.'.01';
@@ -1047,7 +1047,7 @@ class PartidasController extends Controller
                 ->where([['cod_compo','=',$nuevo_padre],['estado','=',1],['id_gg','=',$cid->id_gg]])
                 ->orderBy('codigo','asc')
                 ->get();
-                
+
                 $i = 1;
                 foreach($hijos as $h){
                     $i++;
@@ -1084,7 +1084,7 @@ class PartidasController extends Controller
                     ->where([['cod_compo','=',$nuevo_abuelo],['estado','=',1],['id_gg','=',$cid->id_gg]])
                     ->orderBy('codigo','asc')
                     ->get();
-                    
+
                     $i = 1;
                     foreach($hijos as $h){
                         $i++;
@@ -1128,7 +1128,7 @@ class PartidasController extends Controller
                 <td>'.$o->fecha_registro.'</td>
                 <td><a href="'.$file.'" target="_blank">'.$o->archivo_adjunto.'</a></td>
                 <td>
-                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom"
                     title="Anular" onClick="anular_obs('.$o->id_obs.');"></i>
                 </td>
             </tr>';
@@ -1155,7 +1155,7 @@ class PartidasController extends Controller
                 <td>'.$o->fecha_registro.'</td>
                 <td><a href="abrir_adjunto_partida/'.$o->archivo_adjunto.'">'.$o->archivo_adjunto.'</a></td>
                 <td>
-                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom"
                     title="Anular" onClick="anular_obs('.$o->id_obs.');"></i>
                 </td>
             </tr>';
@@ -1182,7 +1182,7 @@ class PartidasController extends Controller
                 <td>'.$o->fecha_registro.'</td>
                 <td><a href="abrir_adjunto_partida/'.$o->archivo_adjunto.'">'.$o->archivo_adjunto.'</a></td>
                 <td>
-                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom"
                     title="Anular" onClick="anular_obs('.$o->id_obs.');"></i>
                 </td>
             </tr>';
@@ -1217,10 +1217,10 @@ class PartidasController extends Controller
             //indicamos que queremos guardar un nuevo archivo en el disco local
             File::delete(public_path('proyectos/presupuestos/partidas_adjunto/'.$nombre));
             Storage::disk('archivos')->put('proyectos/presupuestos/partidas_adjunto/'.$nombre,File::get($file));
-            
+
             $update = DB::table('proyectos.proy_obs')
                 ->where('id_obs', $id_obs)
-                ->update(['archivo_adjunto' => $nombre]); 
+                ->update(['archivo_adjunto' => $nombre]);
         } else {
             $nombre = null;
         }

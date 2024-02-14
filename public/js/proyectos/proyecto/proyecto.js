@@ -323,8 +323,8 @@ function validaCabecera(){
 function guardar_proyecto(){
     var id_pro = $('[name=id_proyecto]').val();
     var formData = new FormData($('#form-proyecto')[0]);
-    console.log(formData);
-    console.log('id_pro:'+id_pro);
+    // console.log(formData);
+    // console.log('id_pro:'+id_pro);
     var url = '';
     if (id_pro == ''){
         url = 'guardar_proyecto';

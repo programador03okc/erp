@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Comercial\ClienteController;
 use App\Http\Controllers\Proyectos\Catalogos\GenericoController;
 use App\Http\Controllers\Proyectos\Opciones\ComponentesController;
+use App\Http\Controllers\Proyectos\Opciones\PresupuestoInternoController;
 use App\Http\Controllers\Proyectos\Variables\CategoriaAcuController;
 use App\Http\Controllers\Proyectos\Variables\IuController;
 use App\Http\Controllers\Proyectos\Variables\TipoInsumoController;
@@ -583,7 +584,7 @@ class ProyectosController extends Controller
     {
         try {
             DB::beginTransaction();
-
+          
             $codigo = $this->nextProyecto($request->id_empresa, $request->fecha_inicio);
             $id_usuario = Auth::user()->id_usuario;
 
@@ -625,7 +626,7 @@ class ProyectosController extends Controller
                 ],
                     'id_proyecto'
                 );
-
+               
             $id_contrato = DB::table('proyectos.proy_contrato')->insertGetId(
                 [
                     'nro_contrato' => $request->nro_contrato_proy,
@@ -2249,7 +2250,7 @@ class ProyectosController extends Controller
                 ->first();
 
             if (isset($presint)){
-                $cod = $this->nextPresupuesto(
+                $cod =  (new PresupuestoInternoController)->nextPresupuesto(
                     2,//Presupuesto Ejecucion
                     $presint->id_empresa,
                     $fecha_emision

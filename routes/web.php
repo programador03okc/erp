@@ -2399,7 +2399,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('update_preseje', [ProyectosController::class, 'update_preseje']);
 				Route::get('anular_presint/{id}', [ProyectosController::class, 'anular_presint']);
 
-				Route::get('generar_estructura/{id}/{tp}', [ProyectosController::class, 'generar_estructura']);
+				Route::get('generar_estructura/{id}/{tp}', [OpcionesPresupuestoInternoController::class, 'generar_estructura']);
 				Route::get('listar_presupuesto_proyecto/{id}', [OpcionesPresupuestoInternoController::class, 'listar_presupuesto_proyecto'])->name('listar-presupuesto-proyecto');
 				Route::get('anular_estructura/{id}', [ProyectosController::class, 'anular_estructura']);
 				Route::get('totales/{id}', [ProyectosController::class, 'totales']);

@@ -11,6 +11,11 @@
 /public/files/*.jpg
 /public/files/*.zip
 /public/files/*.rar
+/public/js/control/documentos/guias_remision/gr_adjuntos/*
+/public/js/control/documentos/guias_remision/gr_selladas/*
+/public/js/control/documentos/guias_remision/permisos/sustentos/*
+/public/js/control/documentos/guias_remision/permisos_old/sustentos/*
+/public/js/control/documentos_old/*
 /storage/*.key
 /vendor
 .env

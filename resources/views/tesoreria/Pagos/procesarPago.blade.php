@@ -15,7 +15,7 @@
                     <input type="text" class="oculto" name="codigo" />
                     <input type="text" class="oculto" name="total" />
 
-                    <fieldset class="group-table" id="fieldsetDatosProveedor">
+                    <fieldset class="group-table" id="fieldsetDatosDocumento">
                         <h5 style="display:flex;justify-content: space-between;"><strong>Datos del documento</strong></h5>
                         <div class="row">
                             <div class="col-md-2">
@@ -56,7 +56,7 @@
                     </fieldset>
                     <br>
 
-                    <fieldset class="group-table" id="fieldsetDatosProveedor">
+                    <fieldset class="group-table" id="fieldsetDatosDestinatario">
                         <h5 style="display:flex;justify-content: space-between;"><strong>Datos del destinatario</strong></h5>
                         <div class="row">
                             <div class="col-md-2">

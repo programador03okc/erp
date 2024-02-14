@@ -3,11 +3,16 @@ namespace App\Http\Controllers;
 
 use App\Helpers\StringHelper;
 use App\Models\administracion\AdmGrupo;
+use App\Models\Administracion\Aprobacion;
 use App\Models\Administracion\Division;
+use App\Models\Administracion\Documento;
+use App\Models\administracion\RequerimientosSinAntenderView;
+use App\Models\Almacen\Requerimiento;
 use App\Models\Configuracion\Acceso;
 use App\models\Configuracion\Accesos;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Grupo;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Modulo;
 use App\Models\Configuracion\Pais as ConfiguracionPais;
 use App\Models\Configuracion\Rol;
@@ -25,6 +30,8 @@ use App\models\rrhh\rrhh_tipo_planilla;
 use App\Models\rrhh\rrhh_tp_trab;
 use App\Models\rrhh\rrhh_trab;
 use App\Models\sistema\pais;
+use App\Models\Tesoreria\RequerimientoPago;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +40,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 ini_set('max_execution_time', 3600);
 date_default_timezone_set('America/Lima');
@@ -2696,6 +2704,88 @@ class ConfiguracionController extends Controller{
 		->get();
         $output['data'] = $logActividad;
         return response()->json($output);
+    }
+
+
+    public function view_requerimientos_sin_atender(){
+        return view('configuracion.requerimientos_sin_atender');
+    }
+
+    public function listar_requerimientos_sin_atender(){
+       
+        $requerimientosSinAtender = RequerimientosSinAntenderView::all();
+        
+        return DataTables::of($requerimientosSinAtender)->toJson();
+    }
+
+ 
+    public function anular_requerimiento_sin_atender(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $idDocumento= $request->id_documento;
+            $sustento = $request->sustento;
+            $idUsuario= Auth::user()->id_usuario;
+            $mensaje ='';
+            $tipoEstado='info';
+            $afectado=0;
+            $idRequerimiento = Documento::getIdDocByIdDocAprob($idDocumento);
+            $tipoDocumento = Documento::getIdTipoDocumento($idDocumento);
+            $codigo='';
+
+            if($tipoDocumento>0){
+                if($tipoDocumento==1){ // requerimiento logístico
+                    $requerimientoLogistico = Requerimiento::find($idRequerimiento);
+                    $requerimientoLogistico->estado=7;
+                    $requerimientoLogistico->save();
+                    
+                    $mensaje='Se anulo el requerimiento logistico '.$requerimientoLogistico->codigo;
+                    $codigo=$requerimientoLogistico->codigo;
+                    $afectado++;
+                }elseif($tipoDocumento==11){ //requerimiento de pago
+                    $requerimientoPago = RequerimientoPago::find($idRequerimiento);
+                    $requerimientoPago->id_estado=7;
+                    $requerimientoPago->save();
+                    $mensaje='Se anulo el requerimiento de pago '.$requerimientoPago->codigo;
+                    $codigo=$requerimientoPago->codigo;
+                    $afectado++;
+                    
+                }
+                
+                if($afectado >0){
+                    $tipoEstado='success';
+                }else{
+                    $tipoEstado='warning';
+                    $mensaje='No se pudo anular el requerimiento';
+
+                }
+
+                Aprobacion::where('id_doc_aprob',$idDocumento)->get();
+                $aprobaciones = new Aprobacion();
+                $aprobaciones->id_doc_aprob = $idDocumento;
+                $aprobaciones->id_vobo = 2; // rechazar
+                $aprobaciones->id_usuario = $idUsuario;
+                $aprobaciones->fecha_vobo = new Carbon();
+                $aprobaciones->detalle_observacion = $sustento != null ? trim(strtoupper($sustento)) : null;
+                $aprobaciones->save();
+
+                $comentarioDetalle = 'Anular / rechazar requerimiento, código: ' . ($codigo ?? '') . ', Anular por: ' . Auth::user()->nombre_corto;
+                LogActividad::registrar(Auth::user(), 'Anular / rechazar requerimiento', 4, $aprobaciones->getTable(), null, $aprobaciones, $comentarioDetalle, 'Configuración');
+
+                
+            }else{
+                return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'No se encontro el ID de documento']);
+
+            }
+            DB::commit();
+
+            return response()->json(['id_documento' => $idDocumento, 'tipo_estado' => $tipoEstado,  'mensaje' => $mensaje]);
+
+
+        } catch (\PDOException $e) {
+            DB::rollBack();
+            return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'Hubo un problema al anular la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+        }
     }
 }
 

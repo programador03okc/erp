@@ -272,8 +272,9 @@ class CronogramaInternoController extends Controller
             } else if ($ini < $fecha_inicio_crono){
                 $fecha_inicio_crono = $ini;
             }
-            return $request->all();exit;
+
             if ($request->modo === 'new'){
+
                 $id_crono = DB::table('proyectos.proy_cd_pcronog')
                 ->insert([
                     'id_partida'=>$id,
@@ -289,6 +290,7 @@ class CronogramaInternoController extends Controller
                     'fecha_registro'=>date('Y-m-d'),
                     'estado'=>1
                 ]);
+                // return [$tipo,$no,$ini,$fin,$dia,$tp_pre,$dpos,$pre, $id_crono];exit;
             }
             else {
                 $crono = DB::table('proyectos.proy_cd_pcronog')

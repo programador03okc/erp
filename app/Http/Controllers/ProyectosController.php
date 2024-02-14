@@ -296,7 +296,7 @@ class ProyectosController extends Controller
                 presup.id_presup = presup_totales.id_presup
             )
             WHERE presup.id_op_com = proy_op_com.id_op_com
-              AND presup.tp_presup = 3) AS sub_total_propuesta'))
+              AND presup.tp_presup = 3 limit 1) AS sub_total_propuesta'))
             // DB::raw('(SELECT proy_presup_importe.sub_total FROM proyectos.proy_presup
             // INNER JOIN proyectos.proy_presup_importe ON(
             //     proy_presup.id_presupuesto = proy_presup_importe.id_presupuesto

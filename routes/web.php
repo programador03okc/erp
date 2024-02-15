@@ -2444,7 +2444,7 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::post('add_unid_med', [InsumoController::class, 'add_unid_med']);
 				Route::post('update_unitario_partida_cd', [ProyectosController::class, 'update_unitario_partida_cd']);
-				Route::get('listar_acus_sin_presup', [ProyectosController::class, 'listar_acus_sin_presup']);
+				Route::get('listar_acus_sin_presup', [AcuController::class, 'listar_acus_sin_presup']);
 
 				Route::get('mostrar_acu/{id}', [AcuController::class, 'mostrar_acu']);
 				Route::get('partida_insumos_precio/{id}/{ins}', [ProyectosController::class, 'partida_insumos_precio']);

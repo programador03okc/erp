@@ -293,19 +293,28 @@ class ListarRequerimientoPagoView {
         tempPartidasActivas = [];
         let partidaAgregadas = [];
         let subtotalItemList = [];
-        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount > 0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
 
         let idMonedaPresupuestoUtilizado = '';
         let simboloMonedaPresupuestoUtilizado = '';
+
+        let divPadre= '';
+        let tbodyChildren ='';
         if (document.querySelector("div[id='modal-requerimiento-pago']").classList.contains("in")){
+            divPadre="div[id='modal-requerimiento-pago'] ";
             idMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").value;
             simboloMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").options[document.querySelector("select[name='moneda']").selectedIndex].dataset.simbolo;
-    
+            tbodyChildren =  document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children;
+            
         }
         if(document.querySelector("div[id='modal-vista-rapida-requerimiento-pago']").classList.contains("in")){
+            divPadre="div[id='modal-vista-rapida-requerimiento-pago'] ";
             idMonedaPresupuestoUtilizado = document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_moneda']").value
             simboloMonedaPresupuestoUtilizado = idMonedaPresupuestoUtilizado =='1'?'S/':(idMonedaPresupuestoUtilizado==2?'$':'') ;
+            tbodyChildren =  document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
         }
+        
+        // let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount > 0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
+
         let actualTipoCambioCompra = document.querySelector("span[id='tipo_cambio_compra']").textContent;
 
 
@@ -378,7 +387,7 @@ class ListarRequerimientoPagoView {
 
 
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
-        // console.log(tempPartidasActivas);
+        console.log(tempPartidasActivas);
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {

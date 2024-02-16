@@ -355,8 +355,10 @@ class ValidarPresupuestoInternoController extends Controller
         $montoTotal=0;
         $mesLista = ['1' => 'enero_aux', '2' => 'febrero_aux', '3' => 'marzo_aux', '4' => 'abril_aux', '5' => 'mayo_aux', '6' => 'junio_aux', '7' => 'julio_aux', '8' => 'agosto_aux', '9' => 'setiembre_aux', '10' => 'octubre_aux', '11' => 'noviembre_aux', '12' => 'diciembre_aux'];
 
-
-        
+        $arrayDescarteDetalleRequerimientoLog=[];
+        $arrayDescarteDetalleRequerimientoPag=[];
+        $arrSoloAprobado=[];
+        $contador=0;
         // if($fase=='FASE_APROBACION' || $fase=="FASE_AUTORIZACION"){
         if($fase=='FASE_APROBACION'){
             foreach($mesLista as $keyMes => $mesAux) {
@@ -364,22 +366,56 @@ class ValidarPresupuestoInternoController extends Controller
                     $numeroMes = str_pad($keyMes,2,"0",STR_PAD_LEFT); 
     
                     if($fase=='FASE_APROBACION'){
-                        $historialPresupuestoInternoComprometido = HistorialPresupuestoInternoSaldo::where([['id_partida',$idPartida],['mes',$numeroMes],['tipo','SALIDA'],['estado','=',2]])->get();
-                    // }elseif($fase =='FASE_AUTORIZACION'){
-                    //     $historialPresupuestoInternoComprometido = HistorialPresupuestoInternoSaldo::where([['id_partida',$idPartida],['mes',$numeroMes],['tipo','SALIDA'],['estado','=',2]])->get();
+                        $historialPresupuestoInternoComprometido = HistorialPresupuestoInternoSaldo::where([['id_partida',$idPartida],['mes',$numeroMes],['tipo','SALIDA']])->whereIn('estado',[2,3])->get();
+                        
                     }
-                
-    
+
                     if(isset($historialPresupuestoInternoComprometido)){
+
+
+                        foreach ($historialPresupuestoInternoComprometido as $keyAprob => $valueDetReqAprob) {
+                            if($valueDetReqAprob->estado==2){
+                                foreach ($historialPresupuestoInternoComprometido as $keyEjec => $valueDetReqEjec) {
+                                    if($valueDetReqEjec->estado==3){
+                                        if(($valueDetReqAprob->id_requerimiento_detalle >0) && ($valueDetReqAprob->id_requerimiento_detalle == $valueDetReqEjec->id_requerimiento_detalle) ){
+                                            $arrayDescarteDetalleRequerimientoLog[]=$valueDetReqEjec->id_requerimiento_detalle;
+                                        }
+                                        if(($valueDetReqAprob->id_requerimiento_pago_detalle>0) && ($valueDetReqAprob->id_requerimiento_pago_detalle == $valueDetReqEjec->id_requerimiento_pago_detalle) ){
+                                            $arrayDescarteDetalleRequerimientoPag[]=$valueDetReqEjec->id_requerimiento_pago_detalle;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+
+                        $arrayDescarteDetalleRequerimientoLog= array_unique($arrayDescarteDetalleRequerimientoLog);
+                        $arrayDescarteDetalleRequerimientoPag= array_unique($arrayDescarteDetalleRequerimientoPag);
+                       
                         foreach ($historialPresupuestoInternoComprometido as $valueHistorial) {
-                            $montoTotal = $montoTotal + floatval($valueHistorial->importe);
+                            if(($valueHistorial->id_requerimiento_detalle > 0) && !in_array($valueHistorial->id_requerimiento_detalle, $arrayDescarteDetalleRequerimientoLog)){
+                                if($valueHistorial->estado ==2){
+                                    $arrSoloAprobado[]=$valueHistorial;
+                                }
+                            }
+                            if(($valueHistorial->id_requerimiento_pago_detalle>0) && !in_array($valueHistorial->id_requerimiento_pago_detalle, $arrayDescarteDetalleRequerimientoPag)){
+                                if($valueHistorial->estado ==2){
+                                    $arrSoloAprobado[]=$valueHistorial;
+                                }
+                            }   
                         }
                     }
                 }
             }
-    
         }
 
+        if(count($arrSoloAprobado)>0){
+            foreach ($arrSoloAprobado as $valueHistorial) {
+                $montoTotal = $montoTotal + floatval($valueHistorial->importe);
+            }
+        }
+
+        
         return number_format($montoTotal,2,'.','');
 
     }

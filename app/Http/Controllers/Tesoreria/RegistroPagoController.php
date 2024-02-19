@@ -566,16 +566,6 @@ class RegistroPagoController extends Controller
                         ->where('id_requerimiento_pago', $request->id_requerimiento_pago)
                         ->update(['id_estado' => 6]); //pagada
 
-                    //  aplicar afectación de presupuesto
-                    // $requerimientoPago =  RequerimientoPago::find($request->id_requerimiento_pago);
-                    // if ($requerimientoPago->id_presupuesto_interno > 0) {
-                    //     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($request->id_requerimiento_pago, floatval($request->total_pago));
-
-                    //     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R', $request->fecha_pago, 'Registrar afectación regular');
-
-                    //     $comentario='Registro de pago total - requerimiento de pago '.($requerimientoPago->codigo??'');
-                    //     LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
-                    // }
                 }
             } else {
                 if ($request->id_oc !== null) {
@@ -588,33 +578,16 @@ class RegistroPagoController extends Controller
                     $or->estado_pago = $nuevoEstado;//con saldo
                     $or->save(); 
                     
-
-                    $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($request->id_oc, floatval($request->total_pago));
-                    // Debugbar::info('prorrateo orden compra');
-                    // Debugbar::info($detalleArray);
-
-                    PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $registroPago->id_pago, $detalleArray, 'R',  $request->fecha_pago,  'Registrar afectación regular');
-
-                    $comentario='Registro de pago parcial - orden '.($or->codigo??'');
-                    LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
+ 
+                    // $comentario='Registro de pago parcial - orden '.($or->codigo??'');
+                    // LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
 
                 } else if ($request->id_requerimiento_pago !== null) {
                     DB::table('tesoreria.requerimiento_pago')
                         ->where('id_requerimiento_pago', $request->id_requerimiento_pago)
                         ->update(['id_estado' => 9]); //con saldo
 
-                    //  aplicar afectación de presupuesto
-                    // $requerimientoPago =  RequerimientoPago::find($request->id_requerimiento_pago);
-                    // if ($requerimientoPago->id_presupuesto_interno > 0) {
-                    //     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($request->id_requerimiento_pago, floatval($request->total_pago));
-                    //     // Debugbar::info('prorrateo requerimiento pago');
-                    //     // Debugbar::info(floatval($request->total_pago),floatval($request->total));
-                    //     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R',$request->fecha_pago, 'Registrar afectación regular');
 
-                    //     $comentario='Registro de pago parcial - requerimiento de pago '.($requerimientoPago->codigo??'');
-                    //     LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
-
-                    // }
                 }
             }
 

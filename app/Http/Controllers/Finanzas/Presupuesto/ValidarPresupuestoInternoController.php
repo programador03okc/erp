@@ -245,13 +245,13 @@ class ValidarPresupuestoInternoController extends Controller
                     if ($item->id_partida_pi > 0) {
                         // lista de item con monto y partida
                         if ($requerimiento->id_moneda == 1) {
-                            if ($requerimiento->monto_igv >= 0) {
+                            if ($requerimiento->monto_igv > 0) {
                                 $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + (floatval($item->subtotal) * 1.18);
                             } else {
                                 $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + floatval($item->subtotal);
                             }
                         } elseif ($requerimiento->id_moneda == 2) {
-                            if ($requerimiento->monto_igv >= 0) {
+                            if ($requerimiento->monto_igv > 0) {
                                 $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + ((floatval($item->subtotal) * 1.18) *  floatval($this->getTipoCambioVenta($fechaPago)));
                             } else {
                                 $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));

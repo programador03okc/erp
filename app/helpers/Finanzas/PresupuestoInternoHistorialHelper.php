@@ -610,8 +610,8 @@ class PresupuestoInternoHistorialHelper
                     $nuevoHistorial->id_partida = $detItemOrden->id_partida_pi;
                     $nuevoHistorial->id_requerimiento = $requerimientoDetalle->id_requerimiento;
                     $nuevoHistorial->id_requerimiento_detalle = $requerimientoDetalle->id_requerimiento_detalle;
-                    $nuevoHistorial->id_orden = $ordenDetalle->id_orden_compra;
-                    $nuevoHistorial->id_orden_detalle = $ordenDetalle->id_detalle_orden;
+                    $nuevoHistorial->id_orden = $detItemOrden->id_orden_compra;
+                    $nuevoHistorial->id_orden_detalle = $detItemOrden->id_detalle_orden;
                     $nuevoHistorial->id_requerimiento_pago = null;
                     $nuevoHistorial->id_requerimiento_pago_detalle = null;
                     $nuevoHistorial->tipo = 'RETORNO';

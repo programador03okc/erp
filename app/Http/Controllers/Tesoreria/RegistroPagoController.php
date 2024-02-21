@@ -871,6 +871,7 @@ class RegistroPagoController extends Controller
         try {
             DB::beginTransaction();
 
+            $mensaje="";
             $pago = DB::table('tesoreria.registro_pago')
                 ->select(
                     'registro_pago.id_requerimiento_pago',
@@ -919,8 +920,11 @@ class RegistroPagoController extends Controller
             $registroPago->save();
            
 
-            if($registroPago && $registroPago->estdo==7){
+            if($registroPago){
                 $mensaje = 'Se anulo correctamente';
+            }else{
+                $mensaje = 'No se pudo anular, Hubo un problama';
+
             }
 
             DB::commit();

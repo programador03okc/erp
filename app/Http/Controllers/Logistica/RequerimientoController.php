@@ -816,25 +816,46 @@ class RequerimientoController extends Controller
                     FROM finanzas.presupuesto_interno_detalle
                     WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
                     and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
-                    limit 1 ) AS presupuesto_interno_mes_partida "),
+                    limit 1 ) AS presupuesto_interno_mes_partida"),
+                    DB::raw("( SELECT
+                    CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =4 THEN presupuesto_interno_detalle.abril_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =5 THEN presupuesto_interno_detalle.mayo_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =6 THEN presupuesto_interno_detalle.junio_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =7 THEN presupuesto_interno_detalle.julio_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =8 THEN presupuesto_interno_detalle.agosto_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =9 THEN presupuesto_interno_detalle.setiembre_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =10 THEN presupuesto_interno_detalle.octubre_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =11 THEN presupuesto_interno_detalle.noviembre_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =12 THEN presupuesto_interno_detalle.diciembre_aux
+                        ELSE ''
+                        END
+                    FROM finanzas.presupuesto_interno_detalle
+                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
+                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                    limit 1 ) AS presupuesto_interno_saldo_mes_disponible_partida"),
 
                     
-                    DB::raw("( SELECT SUM(total) AS total
+                    DB::raw("( SELECT COALESCE(SUM(total),0) AS total
                     FROM (
-                      SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) AS total
+                      SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) * (CASE WHEN r.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= r.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)  AS total
                       FROM almacen.alm_det_req AS dr
                       INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
                       WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
                       AND r.estado IN (1,2) AND dr.estado != 7
-                      GROUP BY r.monto_igv
+                      GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro
                     ) AS t LIMIT 1) 
                     + 
-                    (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario * (CASE WHEN rp.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= rp.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)),0)
                     FROM tesoreria.requerimiento_pago_detalle as drp
                     INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
                     WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
                     limit 1)
+                    
                     AS total_consumido_hasta_fase_aprobacion_con_igv")
+                
                     // DB::raw("(SELECT dr.cantidad * dr.precio_unitario * 1.18 AS total
                     // FROM almacen.alm_det_req AS dr
                     // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
@@ -943,6 +964,7 @@ class RequerimientoController extends Controller
                         'presupuesto_old_total_partida'     => $data->presupuesto_old_total_partida,
                         'presupuesto_interno_total_partida'     => $data->presupuesto_interno_total_partida,
                         'presupuesto_interno_mes_partida'     => $data->presupuesto_interno_mes_partida,
+                        'presupuesto_interno_saldo_mes_disponible_partida'     => $data->presupuesto_interno_saldo_mes_disponible_partida,
                         'total_consumido_hasta_fase_aprobacion_con_igv'     => $data->total_consumido_hasta_fase_aprobacion_con_igv,
                         'id_centro_costo'                => $data->id_centro_costo,
                         'codigo_centro_costo'            => $data->codigo_centro_costo,

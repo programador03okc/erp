@@ -53,6 +53,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/iCheck/icheck.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/es.js"></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
     <script src="{{ asset('js/ini.js') }}?v={{ filemtime(public_path('js/ini.js')) }}"></script>
     <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>

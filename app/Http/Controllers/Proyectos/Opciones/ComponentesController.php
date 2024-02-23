@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class ComponentesController extends Controller
 {
-    
+
     public function listar_acus_cd($id)
     {
         $part_cd = DB::table('proyectos.proy_cd_partida')
@@ -25,14 +25,14 @@ class ComponentesController extends Controller
             ->orderBy('proy_cd_partida.codigo')
             ->get()
             ->toArray();
-        
+
         $compo_cd = DB::table('proyectos.proy_cd_compo')
             ->select('proy_cd_compo.*')
             ->where([['proy_cd_compo.id_cd', '=', $id],
                     ['proy_cd_compo.estado', '!=', 7]])
             ->orderBy('proy_cd_compo.codigo')
             ->get();
-        
+
         $html = '';
         $total = 0;
         $sistemas = GenericoController::mostrar_sis_contrato_cbo();
@@ -45,7 +45,7 @@ class ComponentesController extends Controller
                 <td></td>
                 <td>'.$comp->codigo.'</td>
                 <td>
-                    <input type="text" class="input-data" name="descripcion" 
+                    <input type="text" class="input-data" name="descripcion"
                     value="'.$comp->descripcion.'" disabled="true"/>
                 </td>
                 <td></td>
@@ -54,20 +54,20 @@ class ComponentesController extends Controller
                 <td class="right">'.number_format($comp->total_comp,2,".",",").'</td>
                 <td></td>
                 <td style="display:flex;">
-                    <i class="fas fa-plus-square icon-tabla green boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-plus-square icon-tabla green boton" data-toggle="tooltip" data-placement="bottom"
                         title="Agregar Título" onClick="agregar_compo_cd('.$codigo.')"></i>
-                    <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom"
                         title="Agregar Partida" onClick="agrega_partida_cd('.$codigo.','.$desc.');"></i>
-                    <i class="fas fa-pen-square icon-tabla blue visible boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-pen-square icon-tabla blue visible boton" data-toggle="tooltip" data-placement="bottom"
                         title="Editar Título" onClick="editar_compo_cd('.$comp->id_cd_compo.');"></i>
-                    <i class="fas fa-save icon-tabla green oculto boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-save icon-tabla green oculto boton" data-toggle="tooltip" data-placement="bottom"
                         title="Guardar Título" onClick="update_compo_cd('.$comp->id_cd_compo.');"></i>
-                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom"
                         title="Anular Título" onClick="anular_compo_cd('.$comp->id_cd_compo.','.$codigo.');"></i>
                 </td>
                 <td hidden>'.$comp->cod_padre.'</td>
             </tr>';
-            
+
             foreach($part_cd as $partida){
                 if ($comp->codigo == $partida->cod_compo){
                     $total += $partida->importe_parcial;
@@ -109,7 +109,7 @@ class ComponentesController extends Controller
                 }
             }
         }
-        
+
         return json_encode(['html'=>$html,'total'=>$total]);
     }
 
@@ -126,7 +126,7 @@ class ComponentesController extends Controller
         'proy_insumo.descripcion','alm_und_medida.abreviatura','proy_insumo.id_categoria',
         DB::raw('SUM(proy_cd_partida.cantidad * proy_cu_detalle.cantidad) as cantidad'),
         'proy_cu_detalle.precio_unit as precio_unitario',
-        DB::raw('SUM(proy_cu_detalle.precio_total * proy_cd_partida.cantidad) as importe_parcial'), 
+        DB::raw('SUM(proy_cu_detalle.precio_total * proy_cd_partida.cantidad) as importe_parcial'),
         DB::raw('count(proy_cu_detalle.precio_unit) as count_precio'))
         ->join('proyectos.proy_cd_partida','proy_cd_partida.id_cd','=','proy_presup.id_presupuesto')
         ->join('proyectos.proy_cu_detalle','proy_cu_detalle.id_cu_partida','=','proy_cd_partida.id_cu_partida')
@@ -145,7 +145,7 @@ class ComponentesController extends Controller
         'proy_insumo.descripcion','alm_und_medida.abreviatura','proy_insumo.id_categoria',
         // DB::raw('SUM(proy_cd_partida.cantidad * proy_cu_detalle.cantidad) as cantidad'),
         // 'proy_cu_detalle.precio_unit as precio_unitario',
-        DB::raw('SUM(proy_cu_detalle.precio_total * proy_cd_partida.cantidad) as importe_parcial'), 
+        DB::raw('SUM(proy_cu_detalle.precio_total * proy_cd_partida.cantidad) as importe_parcial'),
         DB::raw('count(proy_cu_detalle.precio_unit) as count_precio'))
         ->join('proyectos.proy_cd_partida','proy_cd_partida.id_cd','=','proy_presup.id_presupuesto')
         ->join('proyectos.proy_cu_detalle','proy_cu_detalle.id_cu_partida','=','proy_cd_partida.id_cu_partida')
@@ -158,12 +158,12 @@ class ComponentesController extends Controller
                     ['proy_cu_detalle.estado','=',1],
                     ['proy_insumo.id_categoria','=',1]])//categoria=aproximados
             ->get();
-    
+
         $tipos = DB::table('proyectos.proy_tp_insumo')
         ->select('proy_tp_insumo.id_tp_insumo','proy_tp_insumo.codigo','proy_tp_insumo.descripcion')
         ->where('estado',1)
             ->get();
-            
+
         $sum = 0;
         $array = [];
         $total = 0;
@@ -183,7 +183,7 @@ class ComponentesController extends Controller
                 }
             }
             if ($sum > 0){
-                $nuevo = array( 'id_tp_insumo'=>$tipo->id_tp_insumo, 
+                $nuevo = array( 'id_tp_insumo'=>$tipo->id_tp_insumo,
                                 'codigo'=>$tipo->codigo,
                                 'descripcion'=>$tipo->descripcion,
                                 'suma'=>round($sum,6,PHP_ROUND_HALF_UP),
@@ -195,7 +195,7 @@ class ComponentesController extends Controller
         }
         return ['array'=>$array,'total'=>$total];
     }
-    
+
     public function listar_ci($id)
     {
         $part_ci = DB::table('proyectos.proy_ci_detalle')
@@ -209,14 +209,14 @@ class ComponentesController extends Controller
             ->orderBy('proy_ci_detalle.codigo')
             ->get()
             ->toArray();
-            
+
         $compo_ci = DB::table('proyectos.proy_ci_compo')
             ->select('proy_ci_compo.*')
             ->where([['proy_ci_compo.id_ci', '=', $id],
                      ['proy_ci_compo.estado', '=', 1]])
             ->orderBy('proy_ci_compo.codigo')
             ->get();
-    
+
         $componentes_ci = [];
         $array = [];
         $html = '';
@@ -231,7 +231,7 @@ class ComponentesController extends Controller
                 <td></td>
                 <td>'.$comp->codigo.'</td>
                 <td>
-                    <input type="text" class="input-data" name="descripcion" 
+                    <input type="text" class="input-data" name="descripcion"
                     value="'.$comp->descripcion.'" disabled="true"/>
                 </td>
                 <td></td>
@@ -243,15 +243,15 @@ class ComponentesController extends Controller
                 <td></td>
                 <td class="right">'.number_format($comp->total_comp,2,".",",").'</td>
                 <td style="display:flex;">
-                    <i class="fas fa-plus-square icon-tabla green boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-plus-square icon-tabla green boton" data-toggle="tooltip" data-placement="bottom"
                         title="Agregar Componente" onClick="agregar_compo_ci('.$codigo.')"></i>
-                    <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom"
                         title="Agregar Partida" onClick="agrega_partida_ci('.$codigo.','.$desc.');"></i>
-                    <i class="fas fa-pen-square icon-tabla blue visible boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-pen-square icon-tabla blue visible boton" data-toggle="tooltip" data-placement="bottom"
                         title="Editar Componente" onClick="editar_compo_ci('.$comp->id_ci_compo.');"></i>
-                    <i class="fas fa-save icon-tabla green oculto boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-save icon-tabla green oculto boton" data-toggle="tooltip" data-placement="bottom"
                         title="Guardar Componente" onClick="update_compo_ci('.$comp->id_ci_compo.');"></i>
-                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom"
                         title="Anular Componente" onClick="anular_compo_ci('.$comp->id_ci_compo.','.$codigo.');"></i>
                 </td>
                 <td hidden>'.$comp->cod_padre.'</td>
@@ -307,14 +307,14 @@ class ComponentesController extends Controller
             ->orderBy('proy_gg_detalle.codigo')
             ->get()
             ->toArray();
-            
+
         $compo_gg = DB::table('proyectos.proy_gg_compo')
             ->select('proy_gg_compo.*')
             ->where([['proy_gg_compo.id_gg', '=', $id],
                     ['proy_gg_compo.estado', '=', 1]])
             ->orderBy('proy_gg_compo.codigo')
             ->get();
-    
+
         $componentes_gg = [];
         $array = [];
         $html = '';
@@ -329,7 +329,7 @@ class ComponentesController extends Controller
                 <td></td>
                 <td>'.$comp->codigo.'</td>
                 <td>
-                    <input type="text" class="input-data" name="descripcion" 
+                    <input type="text" class="input-data" name="descripcion"
                     value="'.$comp->descripcion.'" disabled="true"/>
                 </td>
                 <td></td>
@@ -341,15 +341,15 @@ class ComponentesController extends Controller
                 <td></td>
                 <td class="right">'.number_format($comp->total_comp,2,".",",").'</td>
                 <td style="display:flex;">
-                    <i class="fas fa-plus-square icon-tabla green boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-plus-square icon-tabla green boton" data-toggle="tooltip" data-placement="bottom"
                         title="Agregar Componente" onClick="agregar_compo_gg('.$codigo.')"></i>
-                    <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-bars icon-tabla boton" data-toggle="tooltip" data-placement="bottom"
                         title="Agregar Partida" onClick="agrega_partida_gg('.$codigo.','.$desc.');"></i>
-                    <i class="fas fa-pen-square icon-tabla blue visible boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-pen-square icon-tabla blue visible boton" data-toggle="tooltip" data-placement="bottom"
                         title="Editar Componente" onClick="editar_compo_gg('.$comp->id_gg_compo.');"></i>
-                    <i class="fas fa-save icon-tabla green boton oculto" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-save icon-tabla green boton oculto" data-toggle="tooltip" data-placement="bottom"
                         title="Guardar Componente" onClick="update_compo_gg('.$comp->id_gg_compo.');"></i>
-                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom" 
+                    <i class="fas fa-trash icon-tabla red boton" data-toggle="tooltip" data-placement="bottom"
                         title="Anular Componente" onClick="anular_compo_gg('.$comp->id_gg_compo.','.$codigo.');"></i>
                 </td>
                 <td hidden>'.$comp->cod_padre.'</td>
@@ -386,7 +386,7 @@ class ComponentesController extends Controller
         return json_encode($html);
     }
 
-    
+
     public function guardar_componente_cd(Request $request)
     {
         $data = DB::table('proyectos.proy_cd_compo')
@@ -434,7 +434,7 @@ class ComponentesController extends Controller
         return response()->json($data);
     }
     public function update_componente_cd(Request $request){
-        
+
         $data = DB::table('proyectos.proy_cd_compo')
             ->where('id_cd_compo', $request->id_cd_compo)
             ->update(['descripcion' => strtoupper($request->descripcion)]);
@@ -442,7 +442,7 @@ class ComponentesController extends Controller
         return response()->json($data);
     }
     public function update_componente_ci(Request $request){
-        
+
         $data = DB::table('proyectos.proy_ci_compo')
             ->where('id_ci_compo', $request->id_ci_compo)
             ->update(['descripcion' => strtoupper($request->descripcion)]);
@@ -450,7 +450,7 @@ class ComponentesController extends Controller
         return response()->json($data);
     }
     public function update_componente_gg(Request $request){
-        
+
         $data = DB::table('proyectos.proy_gg_compo')
             ->where('id_gg_compo', $request->id_gg_compo)
             ->update(['descripcion' => strtoupper($request->descripcion)]);
@@ -486,7 +486,7 @@ class ComponentesController extends Controller
         }
 
         $this->suma_partidas_cd($request->cod_compo, $request->id_pres);
-
+        // return 'ss';
         return response()->json($data);
     }
     public function anular_compo_ci(Request $request){
@@ -553,5 +553,130 @@ class ComponentesController extends Controller
 
         return response()->json($data);
     }
+    public function suma_partidas_cd($cod_padre, $id_cd)
+    {
+        $this->suma_padres_cd($cod_padre, $id_cd);
+        $update = $this->actualiza_totales($id_cd);
+        return $update;
+    }
+    public function suma_padres_cd($cod_padre, $id_cd)
+    {
+        $part = DB::table('proyectos.proy_cd_partida')
+        ->select(DB::raw('SUM(proy_cd_partida.importe_parcial) as suma_partidas'))
+        ->where([['proy_cd_partida.cod_compo', '=', $cod_padre],
+                ['proy_cd_partida.id_cd', '=', $id_cd],
+                ['proy_cd_partida.estado', '!=', 7]])
+        ->first();
 
+        //Actualiza totales de los padres
+        $update = DB::table('proyectos.proy_cd_compo')
+            ->where([['proy_cd_compo.codigo','=',$cod_padre],
+                    ['proy_cd_compo.id_cd', '=', $id_cd]])
+            ->update(['total_comp'=>$part->suma_partidas]);
+
+        //Obtiene el abuelo
+        $abuelo = DB::table('proyectos.proy_cd_compo')
+            ->select('cod_padre')//<-abuelo
+            ->where([['codigo','=',$cod_padre],
+                    ['id_cd','=',$id_cd],
+                    ['estado','=',1]])
+            ->first();
+
+        //copia el padre
+        $actualizar_padre = (isset($abuelo) ? $abuelo->cod_padre : null);
+
+        while ($actualizar_padre !== null){
+            //Suma los totales del abuelo
+            $sum = DB::table('proyectos.proy_cd_compo')
+            ->select(DB::raw('SUM(proy_cd_compo.total_comp) as suma'))
+            ->where([['cod_padre',$actualizar_padre],
+                    ['id_cd','=',$id_cd],
+                    ['estado','=',1]])
+            ->first();
+
+            $data = DB::table('proyectos.proy_cd_compo')
+            ->where([['codigo',$actualizar_padre],
+                    ['id_cd','=',$id_cd],
+                    ['estado','=',1]])
+            ->update(['total_comp'=>$sum->suma]);
+
+            //busca bisabuelo
+            $bisabuelo = DB::table('proyectos.proy_cd_compo')
+            ->select('cod_padre')//<-bisabuelo
+            ->where([['codigo','=',$actualizar_padre],
+                    ['id_cd','=',$id_cd],
+                    ['estado','=',1]])
+            ->first();
+            //copia el bisabuelo
+            $actualizar_padre = (isset($bisabuelo) ? $bisabuelo->cod_padre : null);
+        }
+    }
+
+    public function actualiza_totales($id_pres)
+    {
+        $part_cd_todo = DB::table('proyectos.proy_cd_partida')
+            ->select(DB::raw('SUM(proy_cd_partida.importe_parcial) as suma_partidas'))
+            ->where([['proy_cd_partida.id_cd', '=', $id_pres],
+                    ['proy_cd_partida.estado', '=', 1]])
+            ->first();
+
+        $part_ci_todo = DB::table('proyectos.proy_ci_detalle')
+            ->select(DB::raw('SUM(proy_ci_detalle.importe_parcial) as suma_partidas'))
+            ->where([['proy_ci_detalle.id_ci', '=', $id_pres],
+                    ['proy_ci_detalle.estado', '=', 1]])
+            ->first();
+
+        $part_gg_todo = DB::table('proyectos.proy_gg_detalle')
+            ->select(DB::raw('SUM(proy_gg_detalle.importe_parcial) as suma_partidas'))
+            ->where([['proy_gg_detalle.id_gg', '=', $id_pres],
+                    ['proy_gg_detalle.estado', '=', 1]])
+            ->first();
+
+        $total_cd = $part_cd_todo->suma_partidas;
+        $total_ci = $part_ci_todo->suma_partidas;
+        $total_gg = $part_gg_todo->suma_partidas;
+
+        $imp = DB::table('proyectos.proy_presup_importe')
+            ->where([['id_presupuesto','=',$id_pres]])
+            ->first();
+
+        if (isset($imp)){
+            if ($total_ci == 0){
+                $total_ci = $total_cd * $imp->porcentaje_ci;
+            }
+            if ($total_gg == 0){
+                $total_gg = $total_cd * $imp->porcentaje_gg;
+            }
+
+            if ($imp->porcentaje_igv > 0){
+                $porcentaje_igv = $imp->porcentaje_igv;
+            }
+            else {
+                $igv = DB::table('contabilidad.cont_impuesto')
+                ->where('codigo','IGV')
+                ->orderBy('fecha_inicio','desc')
+                ->first();
+                $porcentaje_igv = $igv->porcentaje;
+            }
+
+            $subtotal = $total_cd + $total_ci + $total_gg;
+            $total_uti = (($subtotal / (1 - ($imp->porcentaje_utilidad / 100))) - $subtotal);
+            $total_igv = ($porcentaje_igv / 100) * ($subtotal + $total_uti);
+            $total_pres = $subtotal + $total_uti + $total_igv;
+
+            $pres = DB::table('proyectos.proy_presup_importe')
+            ->where([['id_presupuesto','=',$id_pres]])
+            ->update([
+                'total_costo_directo' => $total_cd,
+                'total_ci' => $total_ci,
+                'total_gg' => $total_gg,
+                'sub_total' => $subtotal,
+                'total_utilidad' => $total_uti,
+                'porcentaje_igv' => $porcentaje_igv,
+                'total_igv' => $total_igv,
+                'total_presupuestado' => $total_pres,
+            ]);
+        }
+        return response()->json($pres);
+    }
 }

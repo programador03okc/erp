@@ -11,6 +11,7 @@ use App\Http\Controllers\Proyectos\Variables\IuController;
 use App\Http\Controllers\Proyectos\Variables\TipoInsumoController;
 use App\Http\Controllers\ProyectosController;
 use App\Models\Finanzas\Presupuesto;
+use App\Models\proyectos\ProyCdPartida;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -758,6 +759,7 @@ class PresupuestoInternoController extends Controller
                 );
             }
         }
+
         $presint_cd_par = DB::table('proyectos.proy_cd_partida')
             ->where([['id_cd','=',$id_presupuesto],
                     ['estado','!=',7]])
@@ -772,6 +774,7 @@ class PresupuestoInternoController extends Controller
             ->get();
 
         if (isset($presint_cd_par)){
+
             foreach($presint_cd_par as $par)
             {
                 $cu = DB::table('proyectos.proy_cu_partida')
@@ -793,6 +796,7 @@ class PresupuestoInternoController extends Controller
                 $cu_det = DB::table('proyectos.proy_cu_detalle')
                 ->where([['id_cu_partida','=',$par->id_cu_partida],['estado','!=',7]])
                 ->get();
+
                 //Crea los cu detalles
                 foreach($cu_det as $det)
                 {
@@ -812,22 +816,52 @@ class PresupuestoInternoController extends Controller
                     );
                 }
                 //Crea la partida
-                DB::table('proyectos.proy_cd_partida')->insertGetId([
-                        'id_cd' => $id_presupuesto_actual,
-                        'id_cu_partida' => $id_cu_partida,
-                        'codigo' => $par->codigo,
-                        'descripcion' => $par->descripcion,
-                        'unid_medida' => $par->unid_medida,
-                        'cantidad' => $par->cantidad,
-                        'importe_unitario' => $par->importe_unitario,
-                        'importe_parcial' => $par->importe_parcial,
-                        'id_sistema' => $par->id_sistema,
-                        'cod_compo' => $par->cod_compo,
-                        'fecha_registro' => $fecha_hora,
-                        'estado' => 1
-                    ],
-                        'id_partida'
-                    );
+                // return array(
+                //     'id_cd' => (int) $id_presupuesto_actual,
+                //     'id_cu_partida' => (int)$id_cu_partida,
+                //     'codigo' => $par->codigo,
+                //     'descripcion' => $par->descripcion,
+                //     'unid_medida' => $par->unid_medida,
+                //     'cantidad' => (float) $par->cantidad,
+                //     'importe_unitario' => (float) $par->importe_unitario,
+                //     'importe_parcial' => (float) $par->importe_parcial,
+                //     'id_sistema' => $par->id_sistema,
+                //     'cod_compo' => $par->cod_compo,
+                //     'fecha_registro' => $fecha_hora,
+                //     'estado' => 1
+                // );
+
+                $proy_cd_partida = new ProyCdPartida();
+                    $proy_cd_partida->id_cd = (int) $id_presupuesto_actual;
+                    $proy_cd_partida->id_cu_partida = (int) $id_cu_partida;
+                    $proy_cd_partida->codigo = $par->codigo;
+                    $proy_cd_partida->descripcion = $par->descripcion;
+                    $proy_cd_partida->unid_medida = (int) $par->unid_medida;
+                    $proy_cd_partida->cantidad = (float) $par->cantidad;
+                    $proy_cd_partida->importe_unitario = (float) $par->importe_unitario;
+                    $proy_cd_partida->importe_parcial = (float) $par->importe_parcial;
+                    $proy_cd_partida->id_sistema = (int) $par->id_sistema;
+                    $proy_cd_partida->cod_compo = $par->cod_compo;
+                    $proy_cd_partida->fecha_registro = $fecha_hora;
+                    $proy_cd_partida->estado = 1;
+                $proy_cd_partida->save();
+                // DB::table('proyectos.proy_cd_partida')->insertGetId([
+                //         'id_cd' => (int) $id_presupuesto_actual,
+                //         'id_cu_partida' => $id_cu_partida,
+                //         'codigo' => (float) $par->codigo,
+                //         'descripcion' => $par->descripcion,
+                //         'unid_medida' => $par->unid_medida,
+                //         'cantidad' => $par->cantidad,
+                //         'importe_unitario' => (float) $par->importe_unitario,
+                //         'importe_parcial' => (float) $par->importe_parcial,
+                //         'id_sistema' => $par->id_sistema,
+                //         'cod_compo' => $par->cod_compo,
+                //         'fecha_registro' => $fecha_hora,
+                //         'estado' => 1
+                //     ],
+                //         'id_partida'
+                //     );
+
             }
         }
         if (isset($presint_ci_par)){
@@ -1068,5 +1102,71 @@ class PresupuestoInternoController extends Controller
         return response()->json(['data'=>$data,'totales'=>$totales]);
     }
 
+    public function actualiza_totales($id_pres)
+    {
+        $part_cd_todo = DB::table('proyectos.proy_cd_partida')
+            ->select(DB::raw('SUM(proy_cd_partida.importe_parcial) as suma_partidas'))
+            ->where([['proy_cd_partida.id_cd', '=', $id_pres],
+                    ['proy_cd_partida.estado', '=', 1]])
+            ->first();
 
+        $part_ci_todo = DB::table('proyectos.proy_ci_detalle')
+            ->select(DB::raw('SUM(proy_ci_detalle.importe_parcial) as suma_partidas'))
+            ->where([['proy_ci_detalle.id_ci', '=', $id_pres],
+                    ['proy_ci_detalle.estado', '=', 1]])
+            ->first();
+
+        $part_gg_todo = DB::table('proyectos.proy_gg_detalle')
+            ->select(DB::raw('SUM(proy_gg_detalle.importe_parcial) as suma_partidas'))
+            ->where([['proy_gg_detalle.id_gg', '=', $id_pres],
+                    ['proy_gg_detalle.estado', '=', 1]])
+            ->first();
+
+        $total_cd = $part_cd_todo->suma_partidas;
+        $total_ci = $part_ci_todo->suma_partidas;
+        $total_gg = $part_gg_todo->suma_partidas;
+
+        $imp = DB::table('proyectos.proy_presup_importe')
+            ->where([['id_presupuesto','=',$id_pres]])
+            ->first();
+
+        if (isset($imp)){
+            if ($total_ci == 0){
+                $total_ci = $total_cd * $imp->porcentaje_ci;
+            }
+            if ($total_gg == 0){
+                $total_gg = $total_cd * $imp->porcentaje_gg;
+            }
+
+            if ($imp->porcentaje_igv > 0){
+                $porcentaje_igv = $imp->porcentaje_igv;
+            }
+            else {
+                $igv = DB::table('contabilidad.cont_impuesto')
+                ->where('codigo','IGV')
+                ->orderBy('fecha_inicio','desc')
+                ->first();
+                $porcentaje_igv = $igv->porcentaje;
+            }
+
+            $subtotal = $total_cd + $total_ci + $total_gg;
+            $total_uti = (($subtotal / (1 - ($imp->porcentaje_utilidad / 100))) - $subtotal);
+            $total_igv = ($porcentaje_igv / 100) * ($subtotal + $total_uti);
+            $total_pres = $subtotal + $total_uti + $total_igv;
+
+            $pres = DB::table('proyectos.proy_presup_importe')
+            ->where([['id_presupuesto','=',$id_pres]])
+            ->update([
+                'total_costo_directo' => $total_cd,
+                'total_ci' => $total_ci,
+                'total_gg' => $total_gg,
+                'sub_total' => $subtotal,
+                'total_utilidad' => $total_uti,
+                'porcentaje_igv' => $porcentaje_igv,
+                'total_igv' => $total_igv,
+                'total_presupuestado' => $total_pres,
+            ]);
+        }
+        return response()->json($pres);
+    }
 }

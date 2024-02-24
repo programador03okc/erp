@@ -607,7 +607,7 @@ class PresupuestoInternoHistorialHelper
 
                     $nuevoHistorial = new HistorialPresupuestoInternoSaldo();
                     $nuevoHistorial->id_presupuesto_interno = $requerimiento->id_presupuesto_interno;
-                    $nuevoHistorial->id_partida = $detItemOrden->id_partida_pi;
+                    $nuevoHistorial->id_partida = $requerimientoDetalle->id_partida_pi;
                     $nuevoHistorial->id_requerimiento = $requerimientoDetalle->id_requerimiento;
                     $nuevoHistorial->id_requerimiento_detalle = $requerimientoDetalle->id_requerimiento_detalle;
                     $nuevoHistorial->id_orden = $detItemOrden->id_orden_compra;
@@ -641,7 +641,7 @@ class PresupuestoInternoHistorialHelper
                     $cantidadItemsConRetornoDePresupuesto++;
                     PresupuestoInternoHistorialHelper::afectarPresupuesto(
                         $requerimiento->id_presupuesto_interno,
-                        $detItemOrden->id_partida_pi,
+                        $requerimientoDetalle->id_partida_pi,
                         $mes,
                         $subtotal,
                         'S'

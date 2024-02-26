@@ -180,6 +180,42 @@ class RequerimientoView {
            'codigo':codigoCentroCosto !="" ?codigoCentroCosto:'',
            'descripcion':descripcionCentroCosto !="" ?descripcionCentroCosto:'',
         }
+
+        if(idCentroCosto>0){
+            this.autoLlenarCentroCosto();
+        }else{
+            Swal.fire(
+                '',
+                'No se detectó un centro de costo para este proyecto, debería establecer manualmente el centro de costo',
+                'info'
+            ); 
+        }
+    }
+
+    autoLlenarCentroCosto(){
+        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento']").children;
+        if (tbodyChildren.length > 0) {
+            
+            Swal.fire({
+                title: 'Establecer el centro de costo seleccionado para todos los ítem ingresados?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Si'
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    for (let i = 0; i < tbodyChildren.length; i++) {
+                        tbodyChildren[i].querySelector("input[class='centroCosto']").value = tempCentroCostoSelected.id;
+                        tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").title = tempCentroCostoSelected.descripcion;
+                        tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").textContent = tempCentroCostoSelected.codigo;
+    
+                    }
+                }
+            });           
+        }
     }
 
     deshabilitarOtrosTiposDePresupuesto(origen, valor) {

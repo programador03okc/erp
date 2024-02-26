@@ -382,16 +382,15 @@ Crear / editar requerimiento
                     </div>
                 </div>
 
-                <div class="row" id="input-group-proyecto">
-                    <div class="col-md-12">
+                <div class="row">
+                <div id="input-group-proyecto">
+                    <div class="col-md-8">
                         <h4 style="display:flex;justify-content: space-between;">Proyecto</h4>
                         <fieldset class="group-table">
                             <div class="row">
                                 <div class="col-md-12">
                                     <h5>Nombre</h5>
                                     <div style="display:flex;">
-                                        <input type="text" class="form-control oculto" name="descripcion_grupo">
-                                        <input type="text" name="codigo_proyecto" class="form-control group-elemento" style="width:130px; text-align:center;" readonly>
                                         <div class="input-group-okc">
                                             <select class="form-control activation handleChangeProyecto" name="id_proyecto">
                                                 <option value="0">Seleccione un Proyecto</option>
@@ -402,6 +401,23 @@ Crear / editar requerimiento
                             </div>
                         </fieldset>
                     </div>
+                </div>
+                <div id="input-group-centro-costo">
+                    <div class="col-md-4">
+                        <h4 style="display:flex;justify-content: space-between;">Centro costo</h4>
+                        <fieldset class="group-table">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Nombre</h5>
+                                    <div style="display:flex;">
+                                         <input type="text" class="oculto" name="id_centro_costo">
+                                         <input type="text" class="form-control" name="descripcion_centro_costo" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
                 </div>
 
                 <div class="row" id="seccion-cliente">

@@ -457,6 +457,7 @@ class RequerimientoController extends Controller
             ->leftJoin('rrhh.rrhh_rol', 'alm_req.id_rol', '=', 'rrhh_rol.id_rol')
             ->leftJoin('administracion.adm_area', 'rrhh_rol.id_area', '=', 'adm_area.id_area')
             ->leftJoin('proyectos.proy_proyecto', 'alm_req.id_proyecto', '=', 'proy_proyecto.id_proyecto')
+            ->leftJoin('finanzas.centro_costo', 'centro_costo.id_centro_costo', '=', 'proy_proyecto.id_centro_costo')
             ->leftJoin('proyectos.proy_presup', 'alm_req.id_presupuesto', '=', 'proy_presup.id_presupuesto')
             ->leftJoin('rrhh.rrhh_perso as perso_natural', 'alm_req.id_persona', '=', 'perso_natural.id_persona')
             ->leftJoin('comercial.com_cliente', 'alm_req.id_cliente', '=', 'com_cliente.id_cliente')
@@ -488,6 +489,9 @@ class RequerimientoController extends Controller
                 'alm_req.id_proyecto',
                 'proy_proyecto.codigo as codigo_proyecto',
                 'proy_proyecto.descripcion as descripcion_proyecto',
+                'centro_costo.id_centro_costo as id_centro_costo',
+                'centro_costo.codigo as codigo_centro_costo',
+                'centro_costo.descripcion as descripcion_centro_costo',
                 'alm_req.id_periodo',
                 'adm_periodo.descripcion as periodo',
                 'alm_req.id_prioridad',
@@ -593,6 +597,9 @@ class RequerimientoController extends Controller
                     'id_proyecto' => $data->id_proyecto,
                     'codigo_proyecto' => $data->codigo_proyecto,
                     'descripcion_proyecto' => $data->descripcion_proyecto,
+                    'id_centro_costo' => $data->id_centro_costo,
+                    'codigo_centro_costo' => $data->codigo_centro_costo,
+                    'descripcion_centro_costo' => $data->descripcion_centro_costo,
                     'id_periodo' => $data->id_periodo,
                     'periodo' => $data->periodo,
                     'estado_doc' => $data->estado_doc,

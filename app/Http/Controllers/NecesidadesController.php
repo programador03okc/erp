@@ -25,6 +25,10 @@ class NecesidadesController extends Controller
     {
         return view('necesidades.main');
     }
+    function view_dashboard_seguimiento()
+    {
+        return view('necesidades.dashboard.seguimiento');
+    }
 
 
     public function listaDestinatarioPersona(){

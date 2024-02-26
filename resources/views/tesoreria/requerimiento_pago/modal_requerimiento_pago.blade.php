@@ -103,19 +103,32 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-12" id="contenedor-proyecto">
-                                        <div class="form-group">
-
-                                            <h5>Proyecto</h5>
-                                            <div style="display:flex;">
-                                                <input type="text" name="codigo_proyecto" class="form-control group-elemento" style="width:130px; text-align:center;" readonly>
-                                                <div class="input-group-okc">
-                                                    <select class="form-control activation handleCheckStatusValue handleChangeProyecto" name="proyecto">
-                                                        <option value="0">Seleccione un Proyecto</option>
-                                                    </select>
+                                    <div class="" id="contenedor-proyecto">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <h5>Proyecto</h5>
+                                                <div style="display:flex;">
+                                                    <div class="input-group-okc">
+                                                        <select class="form-control activation handleCheckStatusValue handleChangeProyecto" name="proyecto">
+                                                            <option value="0">Seleccione un Proyecto</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
 
+                                        </div>
+                                    </div>
+                                    <div class="" id="contenedor-centro-costo">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <h5>Centro costo</h5>
+                                                <div style="display:flex;">
+                                                    <div class="input-group-okc">
+                                                    <input type="text" class="oculto" name="id_centro_costo">
+                                                    <input type="text" class="form-control" name="descripcion_centro_costo" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 oculto" id="contenedor-cdp">

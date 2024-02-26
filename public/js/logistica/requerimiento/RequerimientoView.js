@@ -152,6 +152,7 @@ class RequerimientoView {
 
         $('#form-requerimiento').on("change", "select.handleChangeProyecto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            this.obtenerCentroCostoDeProyecto();
         });
 
         $('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
@@ -165,6 +166,20 @@ class RequerimientoView {
             // document.querySelector("input[name='codigo_oportunidad']").value = '';
         });
 
+    }
+
+    obtenerCentroCostoDeProyecto(){
+       let idCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.idCentroCosto;
+       let codigoCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.codigoCentroCosto;
+       let descripcionCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.descripcionCentroCosto;
+       document.querySelector("input[name='id_centro_costo']").value= idCentroCosto >0 ?idCentroCosto:'';
+       document.querySelector("input[name='descripcion_centro_costo']").value=(codigoCentroCosto+' - '+descripcionCentroCosto);
+
+       tempCentroCostoSelected={
+           'id':idCentroCosto !="" ?idCentroCosto:'',
+           'codigo':codigoCentroCosto !="" ?codigoCentroCosto:'',
+           'descripcion':descripcionCentroCosto !="" ?descripcionCentroCosto:'',
+        }
     }
 
     deshabilitarOtrosTiposDePresupuesto(origen, valor) {
@@ -588,6 +603,11 @@ class RequerimientoView {
 
         this.llenarComboProyectos(data.id_grupo, data.id_proyecto);
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.division_id, data.id_presupuesto_interno);
+
+        document.querySelector("input[name='id_centro_costo']").value = data.id_centro_costo != null ? data.id_centro_costo : '';
+        document.querySelector("input[name='descripcion_centro_costo']").value = data.descripcion_centro_costo != null ? (data.codigo_centro_costo+' - ' +data.descripcion_centro_costo) : '';
+
+
 
     }
 
@@ -1135,10 +1155,10 @@ class RequerimientoView {
             let option = document.createElement("option");
             option.text = element.codigo + ' - ' + element.descripcion;
             option.value = element.id_proyecto;
-            option.setAttribute('data-codigo', element.codigo);
-            option.setAttribute('data-id-centro-costo', element.id_centro_costo);
-            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo);
-            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo);
+            option.setAttribute('data-codigo', element.codigo !=null?element.codigo:'');
+            option.setAttribute('data-id-centro-costo', element.id_centro_costo!=null?element.id_centro_costo:'');
+            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo!=null ?element.codigo_centro_costo:'');
+            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo !=null ?element.descripcion_centro_costo:'');
             if (element.id_proyecto == idProyecto) {
                 option.selected = true;
             }
@@ -1238,7 +1258,7 @@ class RequerimientoView {
         <td>
             ${tipoPptoCDP > 0 ? '' : partidaTd}
         </td>
-        <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
+        <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : ''}" hidden>
             </div>
@@ -1307,7 +1327,7 @@ class RequerimientoView {
         <td>
             ${tipoPptoCDP > 0 ? '' : partidaTd}
         </td>
-            <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
+            <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : ''}" hidden>
             </div>

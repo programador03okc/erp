@@ -265,6 +265,8 @@ class ListarRequerimientoPagoView {
 
         $('#modal-requerimiento-pago').on("change", "select.handleChangeProyecto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            this.obtenerCentroCostoDeProyecto();
+
         });
         $('#modal-requerimiento-pago').on("change", "select.handleChangePresupuestoInterno", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
@@ -432,6 +434,19 @@ class ListarRequerimientoPagoView {
 
     }
 
+    obtenerCentroCostoDeProyecto(){
+        let idCentroCosto= document.querySelector("select[name='proyecto']").options[document.querySelector("select[name='proyecto']").selectedIndex].dataset.idCentroCosto;
+        let codigoCentroCosto= document.querySelector("select[name='proyecto']").options[document.querySelector("select[name='proyecto']").selectedIndex].dataset.codigoCentroCosto;
+        let descripcionCentroCosto= document.querySelector("select[name='proyecto']").options[document.querySelector("select[name='proyecto']").selectedIndex].dataset.descripcionCentroCosto;
+        document.querySelector("input[name='id_centro_costo']").value= idCentroCosto >0 ?idCentroCosto:'';
+        document.querySelector("input[name='descripcion_centro_costo']").value=(codigoCentroCosto+' - '+descripcionCentroCosto);
+ 
+        tempCentroCostoSelected={
+            'id':idCentroCosto !="" ?idCentroCosto:'',
+            'codigo':codigoCentroCosto !="" ?codigoCentroCosto:'',
+            'descripcion':descripcionCentroCosto !="" ?descripcionCentroCosto:'',
+         }
+    }
 
     deshabilitarOtrosTiposDePresupuesto(origen, valor) {
         switch (origen) {
@@ -1269,10 +1284,10 @@ class ListarRequerimientoPagoView {
             let option = document.createElement("option");
             option.text = element.codigo + ' - ' + element.descripcion;
             option.value = element.id_proyecto;
-            option.setAttribute('data-codigo', element.codigo);
-            option.setAttribute('data-id-centro-costo', element.id_centro_costo);
-            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo);
-            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo);
+            option.setAttribute('data-codigo', element.codigo !=null ?element.codigo:'');
+            option.setAttribute('data-id-centro-costo', element.id_centro_costo !=null ?element.id_centro_costo:'');
+            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo !=null ?element.codigo_centro_costo:'');
+            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo !=null ? element.descripcion_centro_costo:'');
             if (element.id_proyecto == idProyecto) {
                 option.selected = true;
             }
@@ -1401,7 +1416,7 @@ class ListarRequerimientoPagoView {
         </td>
         <td>
             <p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : data != null && data.centro_costo != null ? data.centro_costo.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : (data != null && data.centro_costo != null ? data.centro_costo.codigo : '(NO SELECCIONADO)')}</p>
-            <button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${data != null && data.centro_costo != null ? data.centro_costo.codigo : ''}" >Seleccionar</button>
+            <button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  title="${data != null && data.centro_costo != null ? data.centro_costo.codigo : ''}" >Seleccionar</button>
             <div class="form-group">
                 <h5></h5>
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : (data != null && data.centro_costo != null ? data.centro_costo.id_centro_costo : '')}" hidden>
@@ -3125,6 +3140,10 @@ class ListarRequerimientoPagoView {
 
         this.llenarComboProyectos(data.id_grupo, data.id_proyecto);
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='proyecto']").value = data.id_proyecto;
+
+        document.querySelector("input[name='id_centro_costo']").value = data.proyecto!=null?data.proyecto.id_centro_costo: '';
+        document.querySelector("input[name='descripcion_centro_costo']").value = data.proyecto !=null && data.proyecto.centro_costo !=null ? (data.proyecto.centro_costo.codigo +' - '+data.proyecto.centro_costo.descripcion) : '';
+
 
         this.limpiarTabla('ListaDetalleRequerimientoPago');
         this.limpiarTabla('listaPartidasActivas');

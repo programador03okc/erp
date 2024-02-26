@@ -172,13 +172,13 @@ class RequerimientoView {
        let idCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.idCentroCosto;
        let codigoCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.codigoCentroCosto;
        let descripcionCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.descripcionCentroCosto;
-       document.querySelector("input[name='id_centro_costo']").value= idCentroCosto >0 ?idCentroCosto:'';
-       document.querySelector("input[name='descripcion_centro_costo']").value=(codigoCentroCosto+' - '+descripcionCentroCosto);
+       document.querySelector("input[name='id_centro_costo']").value= idCentroCosto!=undefined && idCentroCosto >0 ?idCentroCosto:'';
+       document.querySelector("input[name='descripcion_centro_costo']").value=((codigoCentroCosto !=undefined?codigoCentroCosto:'')+' - '+(descripcionCentroCosto!=undefined?descripcionCentroCosto:''));
 
        tempCentroCostoSelected={
-           'id':idCentroCosto !="" ?idCentroCosto:'',
-           'codigo':codigoCentroCosto !="" ?codigoCentroCosto:'',
-           'descripcion':descripcionCentroCosto !="" ?descripcionCentroCosto:'',
+           'id':idCentroCosto!=undefined && idCentroCosto !="" ?idCentroCosto:'',
+           'codigo':codigoCentroCosto !=undefined && codigoCentroCosto !="" ?codigoCentroCosto:'',
+           'descripcion':descripcionCentroCosto !=undefined && descripcionCentroCosto !="" ?descripcionCentroCosto:'',
         }
 
         if(idCentroCosto>0){

@@ -43,6 +43,7 @@
     <script src="{{ asset('template/adminlte2-4/plugins/sweetalert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/lobibox/dist/js/lobibox.min.js') }}"></script>
     <script src='{{ asset("template/adminlte2-4/plugins/moment/moment.min.js?v=1") }}'></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/es.js"></script>
 	<script src="{{ asset('template/adminlte2-4/plugins/jquery-number/jquery.number.min.js') }}"></script>
     <script src="{{ asset('js/function.js') }}?v={{ filemtime(public_path('js/function.js')) }}"></script>
     <script src="{{ asset('js/myjava.js') }}?v={{ filemtime(public_path('js/myjava.js')) }}"></script>
@@ -53,6 +54,8 @@
     </script>
     @routes
     <script>
+        moment.locale('es');
+
         $(document).ready(function() {
             validarClave();
 			notificacionesNoLeidas();

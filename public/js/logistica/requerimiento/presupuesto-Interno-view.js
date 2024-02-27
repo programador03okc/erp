@@ -55,6 +55,7 @@ class PresupuestoInternoView{
         tr.querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto = 'INTERNO';
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = obj.dataset.totalPresupuestoAño;
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = obj.dataset.totalPresupuestoMes;
+        tr.querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes = obj.dataset.totalSaldoMes;
         tr.querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion = obj.dataset.totalPorConsumidoConIgvFaseAprobacion;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', obj.dataset.descripcion);
 

@@ -4,6 +4,7 @@ namespace App\Models\Almacen;
 
 use App\Models\Comercial\CuadroCosto\CcAmFila;
 use App\Models\Finanzas\CentroCostosView;
+use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Logistica\OrdenCompraDetalle;
 use App\Models\Presupuestos\CentroCosto;
 use Illuminate\Database\Eloquent\Model;

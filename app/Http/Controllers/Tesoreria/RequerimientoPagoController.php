@@ -1355,7 +1355,7 @@ class RequerimientoPagoController extends Controller
                 'cuentaContribuyente.moneda',
                 'cuentaContribuyente.tipoCuenta',
                 'cuadroCostos',
-                'proyecto',
+                'proyecto.centroCosto',
                 'adjunto.documentoCompra.DocumentoCompraDetalle',
                 'presupuestoInterno',
                 // 'id_condicion_softlink'

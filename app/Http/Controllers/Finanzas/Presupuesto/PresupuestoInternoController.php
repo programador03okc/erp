@@ -2300,9 +2300,6 @@ class PresupuestoInternoController extends Controller
 
         } while ($tamano_array != 1);
 
-
-
-
         // return $modelo_partidas;
         return Excel::download(new PresupuesInternoReporteAnualExport($modelo_partidas), 'presupuesto_interno.xlsx');
     }

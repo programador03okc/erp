@@ -48,7 +48,25 @@ function lista() {
         }:
         []
     );
-    const button =[button_nuevo]
+    const button_reporte_total = (array_accesos.find(
+        element => element === 302)?
+            {
+            text: '<i class="fa fa-calendar-times"></i> Reporte General',
+            attr: {
+                id: 'btn-reporte-general',
+            },
+            action: () => {
+                // vistaCrear();
+                window.open(route('finanzas.presupuesto.presupuesto-interno.reporte-anual', {year:2024}));
+            },
+            init: function(api, node, config) {
+                $(node).removeClass('btn-default')
+            },
+            className: 'btn-default btn-sm'
+        }:
+        []
+    );
+    const button =[button_nuevo,button_reporte_total]
     var tableRequerimientos = $("#lista-presupuesto-interno").DataTable({
         language: vardataTables[0],
         destroy: true,

@@ -293,10 +293,28 @@ class ListarRequerimientoPagoView {
         tempPartidasActivas = [];
         let partidaAgregadas = [];
         let subtotalItemList = [];
-        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount > 0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
 
-        let idMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").value;
-        let simboloMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").options[document.querySelector("select[name='moneda']").selectedIndex].dataset.simbolo;
+        let idMonedaPresupuestoUtilizado = '';
+        let simboloMonedaPresupuestoUtilizado = '';
+
+        let divPadre= '';
+        let tbodyChildren ='';
+        if (document.querySelector("div[id='modal-requerimiento-pago']").classList.contains("in")){
+            divPadre="div[id='modal-requerimiento-pago'] ";
+            idMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").value;
+            simboloMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").options[document.querySelector("select[name='moneda']").selectedIndex].dataset.simbolo;
+            tbodyChildren =  document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children;
+            
+        }
+        if(document.querySelector("div[id='modal-vista-rapida-requerimiento-pago']").classList.contains("in")){
+            divPadre="div[id='modal-vista-rapida-requerimiento-pago'] ";
+            idMonedaPresupuestoUtilizado = document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_moneda']").value
+            simboloMonedaPresupuestoUtilizado = idMonedaPresupuestoUtilizado =='1'?'S/':(idMonedaPresupuestoUtilizado==2?'$':'') ;
+            tbodyChildren =  document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
+        }
+        
+        // let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount > 0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
+
         let actualTipoCambioCompra = document.querySelector("span[id='tipo_cambio_compra']").textContent;
 
 
@@ -369,7 +387,7 @@ class ListarRequerimientoPagoView {
 
 
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
-        // console.log(tempPartidasActivas);
+        console.log(tempPartidasActivas);
     }
 
     construirTablaPresupuestoUtilizadoYSaldoPorPartida(data) {
@@ -2718,6 +2736,7 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_requerimiento_pago']").value = data.id_requerimiento_pago;
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_estado']").value = data.id_estado;
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_usuario']").value = data.id_usuario;
+        document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_moneda']").value = data.moneda != null && data.moneda.id_moneda != undefined ? data.moneda.id_moneda : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='codigo']").textContent = data.codigo;
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='concepto']").textContent = data.concepto;
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='razon_social_empresa']").textContent = data.sede != null ? data.sede.descripcion : '';

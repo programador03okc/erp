@@ -135,14 +135,16 @@ class PresupuestoInternoDetalle extends Model
       return floatval(str_replace(",", "", $this->diciembre_aux));
     }
     public static function cierreMensual(){
-        $mes_actual = date("m");
-        $mes_siguiente = date('m', strtotime('+1 month'));
+        // $mes_actual = date("m");
+        // $mes_siguiente = date('m', strtotime('+1 month'));
+        $mes_actual = "01";
+        $mes_siguiente = "02";
         $año_actua = date('Y');
 
-
+        // return [$mes_actual, $mes_siguiente, $año_actua];
         $presupuesto_interno = PresupuestoInterno::where('estado',2)
         ->whereYear('fecha_registro',$año_actua)
-        ->where('id_presupuesto_interno',47)
+        ->where('id_presupuesto_interno',51)
         ->get();
 
         $nombre_mes = ConfiguracionHelper::mesNumero($mes_actual);
@@ -150,6 +152,8 @@ class PresupuestoInternoDetalle extends Model
         // return $nombre_mes_siguiente;
         $mes_aux = $nombre_mes.'_aux';
         $mes_siguiente =  $nombre_mes_siguiente.'_aux';
+        // return [$mes_aux, $mes_siguiente];exit;
+        // return $presupuesto_interno;
         foreach ($presupuesto_interno as $key => $value) {
             $historial = PresupuestoInternoDetalle::where('id_presupuesto_interno',$value->id_presupuesto_interno)
             // ->whereMonth('fecha_registro',$numero_mes)
@@ -165,13 +169,13 @@ class PresupuestoInternoDetalle extends Model
                     $saldo_mes_actual = ($saldo_mes_actual>0?$saldo_mes_actual:0); // valido que el saldo no sea negativo
 
                     $inicio_mes_siguiente = ($nombre_mes!=='diciembre'?floatval(str_replace(",", "", $v_h->$nombre_mes_siguiente)):0) ;
-
+                    // return [$inicio_mes_siguiente,$saldo_mes_actual];
                     $saldo_mes_siguiente =  $saldo_mes_actual + $inicio_mes_siguiente;
 
 
 
                     $mes_siguiente = ($nombre_mes!=='diciembre'?$mes_siguiente:'saldo_anual'); //
-
+                    // return [$mes_siguiente, number_format($saldo_mes_siguiente, 2, '.', ',')];
                     // modifica el saldo del mes siguiente
                     $presupuesto_interno_detalle= PresupuestoInternoDetalle::find($v_h->id_presupuesto_interno_detalle);
                     // $presupuesto_interno_detalle->$nombre_mes_siguiente = number_format($saldo_mes_siguiente, 2, '.', ',');
@@ -203,18 +207,12 @@ class PresupuestoInternoDetalle extends Model
                         $presupuesto_interno_detalle->id_presupuesto_interno_detalle,
                         $nombre_mes_siguiente
                     );
-
-
                 }
-
-
             }
 
             foreach ($historial as $k_h => $v_h) {
                 PresupuestoInternoDetalle::replicaAux($v_h->id_presupuesto_interno_detalle);
             }
-
-
         }
 
         return ["presupuesto_interno"=>$presupuesto_interno];

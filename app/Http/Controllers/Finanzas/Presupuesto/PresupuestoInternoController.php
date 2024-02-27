@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Finanzas\Presupuesto;
 
 use App\Exports\PresupuestoInternoEjecutadoExport;
 use App\Exports\PresupuestoInternoExport;
+use App\Exports\PresupuesInternoReporteAnualExport;
 use App\Exports\PresupuestoInternoSaldoExport;
 use App\Helpers\ConfiguracionHelper;
 use App\Helpers\StringHelper;
@@ -2224,7 +2225,7 @@ class PresupuestoInternoController extends Controller
     }
     public function reporteAnual($year){
         $presupuestos = PresupuestoInterno::whereYear('fecha_registro',$year)
-        ->whereIn('id_presupuesto_interno',[47,50])
+        // ->whereIn('id_presupuesto_interno',[47,50])
         ->get();
 
         $modelo_partidas =  PresupuestoInternoModelo::where("id_tipo_presupuesto" ,3)->orderBy('partida', 'asc')->get();
@@ -2234,38 +2235,75 @@ class PresupuestoInternoController extends Controller
             $value_modelo->total_ejecutado = 0;
             $value_modelo->total_saldo = 0;
         }
+        // return $presupuestos;
         $reporte_total = array();
         foreach($presupuestos as $key=>$value){
             $filas_totales = PresupuestoInterno::calcularTotalPresupuestoFilas($value->id_presupuesto_interno, 3, 1);
 
             foreach ($modelo_partidas as $key_modelo => $value_modelo) {
+
                 foreach ($filas_totales as $key_fila => $value_fila) {
+
                     if($value_modelo->partida == $value_fila['partida']){
+
                         $value_modelo->total = $value_modelo->total + $value_fila['total'];
+
+                        $detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno', $value->id_presupuesto_interno)->where('partida',$value_fila['partida'])->where('registro','2')->first();
+
+
+                        if($detalle){
+                            $monto_ejecutado = 0;
+
+                            $ejecutados = HistorialPresupuestoInternoSaldo::where('id_partida',$detalle->id_presupuesto_interno_detalle)
+                            ->where('tipo','SALIDA')
+                            ->where('estado',3)
+                            ->where('documento_anulado','f')
+                            ->get();
+
+                            if(sizeof($ejecutados)>0){
+
+                                foreach ($ejecutados as $key_ejecutado => $value_ejecutado) {
+                                    $monto_ejecutado = $monto_ejecutado + (float) $value_ejecutado->importe;
+
+                                }
+                                $value_modelo->total_ejecutado = $value_modelo->total_ejecutado + $monto_ejecutado;
+                            }
+
+                            // return [$monto_ejecutado, $value_modelo];
+                        }
+                    }
+
+
+                }
+            }
+        }
+        $array_partida = '';
+        $tamano_array = 4;
+        do {
+
+            foreach ($modelo_partidas as $key => $value) {
+                $array_partida = explode('.',$value['partida']);
+                if(sizeof($array_partida) == $tamano_array){
+
+                    $padre = substr($value['partida'], 0, -3);
+
+                    foreach ($modelo_partidas as $key_sumar => $value_sumar) {
+
+                        if($padre == $value_sumar['partida']){
+                            $value_sumar['total_ejecutado'] = $value_sumar['total_ejecutado'] + $value['total_ejecutado'];
+                        }
                     }
                 }
+
             }
+            $tamano_array = $tamano_array - 1;
 
-            $detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno', $value->id_presupuesto_interno)->orderBy('partida')->get();
-
-            foreach ($detalle as $key => $item) {
-                $monto = 0;
-                if ($item->registro == 2) {
-                    $monto = HistorialPresupuestoInternoSaldo::totalEjecutadoPartida($item->id_presupuesto_interno_detalle);
-                }
-                $item->ejecutado = $monto;
-                return $item->ejecutado;
-            }
+        } while ($tamano_array != 1);
 
 
-            return $detalle;
-        }
-        return $modelo_partidas;
-        // return [$modelo_partidas];
 
-        return response()->json([
-            "presupuestos"=>$presupuestos,
-            "reporte"=>$modelo_partidas,
-        ], 200);
+
+        // return $modelo_partidas;
+        return Excel::download(new PresupuesInternoReporteAnualExport($modelo_partidas), 'presupuesto_interno.xlsx');
     }
 }

@@ -51,6 +51,8 @@ class IncidenciasExport implements FromView
                         'fecha_registro'=>$value->fecha_registro,
                         'nombre_corto'=>$value->nombre_corto,
                         'falla_reportada'=>$value->falla_reportada,
+                        'fecha_cierre'=>$value->fecha_cierre,
+                        'fecha_cancelado'=>$value->fecha_cancelacion,
 
                         'serie'=>$incidencias->serie,
                         'marca'=>$incidencias->marca,
@@ -74,7 +76,8 @@ class IncidenciasExport implements FromView
                         'distrito_text'=>$incidencias->distrito_text,
                         'importe_gastado'=>$incidencias->importe_gastado,
                         'parte_reemplazada'=>$incidencias->parte_reemplazada,
-                        'comentarios_cierre'=>$incidencias->comentarios_cierre
+                        'comentarios_cierre'=>$incidencias->comentarios_cierre,
+
                     )
                 );
 

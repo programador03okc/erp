@@ -51,6 +51,9 @@
                 <th style="background-color: #cccccc;" width="18"><b>PARTE REEMPLAZADO</b></th>
                 <th style="background-color: #cccccc;" width="18"><b>PARTE FALLADA</b></th>
 
+                <th style="background-color: #cccccc;" width="18"><b>FECHA CIERRE</b></th>
+                <th style="background-color: #cccccc;" width="18"><b>FECHA CANCELADO</b></th>
+
 
             </tr>
         </thead>
@@ -96,6 +99,9 @@
                 <td>{{ $d->importe_gastado }}</td>
                 <td>{{ $d->parte_reemplazada }}</td>
                 <td>{{ $d->comentarios_cierre }}</td>
+
+                <td>{{ $d->fecha_cierre }}</td>
+                <td>{{ $d->fecha_cancelado }}</td>
             </tr>
 
             @endforeach

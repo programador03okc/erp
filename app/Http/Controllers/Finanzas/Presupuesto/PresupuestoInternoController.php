@@ -2231,52 +2231,115 @@ class PresupuestoInternoController extends Controller
         $modelo_partidas =  PresupuestoInternoModelo::where("id_tipo_presupuesto" ,3)->orderBy('partida', 'asc')->get();
         foreach ( $modelo_partidas as $key_modelo => $value_modelo ) {
 
+            $value_modelo->registro = 0;
             $value_modelo->total = 0;
             $value_modelo->total_ejecutado = 0;
             $value_modelo->total_saldo = 0;
+            $value_modelo->historial = array();
         }
         // return $presupuestos;
         $reporte_total = array();
+        // recorremos los presupuesto
         foreach($presupuestos as $key=>$value){
+            // Sacamos el total en filas por presupuesto
             $filas_totales = PresupuestoInterno::calcularTotalPresupuestoFilas($value->id_presupuesto_interno, 3, 1);
-
+            // recorremos el modelo donde se almacenara los valores en general
             foreach ($modelo_partidas as $key_modelo => $value_modelo) {
 
+
+
+                // recorremos el array de filas calculadas ara obtener el monto y almacenarlo en el json principal
                 foreach ($filas_totales as $key_fila => $value_fila) {
 
+                    // igualamos partidas ara identificar el indice para guardar los valores en el json principal
                     if($value_modelo->partida == $value_fila['partida']){
 
                         $value_modelo->total = $value_modelo->total + $value_fila['total'];
 
+                        // buscamos la partida en el detalle del presupuesto para obtener su id
                         $detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno', $value->id_presupuesto_interno)->where('partida',$value_fila['partida'])->where('registro','2')->first();
 
 
                         if($detalle){
+                            $value_modelo->registro = $detalle->registro;
                             $monto_ejecutado = 0;
 
+                            // buscamos el historial de la partida y sus gastos ejecutados
                             $ejecutados = HistorialPresupuestoInternoSaldo::where('id_partida',$detalle->id_presupuesto_interno_detalle)
                             ->where('tipo','SALIDA')
                             ->where('estado',3)
                             ->where('documento_anulado','f')
                             ->get();
+                            $historial_ejecutado = array();
 
                             if(sizeof($ejecutados)>0){
 
                                 foreach ($ejecutados as $key_ejecutado => $value_ejecutado) {
                                     $monto_ejecutado = $monto_ejecutado + (float) $value_ejecutado->importe;
 
+                                    if($value_ejecutado->id_orden){
+                                        $registro = Orden::where('id_orden_compra',$value_ejecutado->id_orden)->first();
+                                        if($registro){
+
+                                            array_push($historial_ejecutado,array(
+                                                "codigo"=>$registro->codigo,
+                                                "monto"=>$value_ejecutado->importe,
+                                                "id"=>$value_ejecutado->id,
+                                                "presupuesto"=>$value_ejecutado->id_presupuesto_interno
+                                            ));
+                                        }
+
+                                    }
+                                    if($value_ejecutado->id_requerimiento_pago){
+                                        $registro = RequerimientoPago::where('id_requerimiento_pago',$value_ejecutado->id_requerimiento_pago)->first();
+                                        // return $value_ejecutado;
+                                        if($registro){
+                                            array_push($historial_ejecutado,array(
+                                                "codigo"=>$registro->codigo,
+                                                "monto"=>$value_ejecutado->importe,
+                                                "id"=>$value_ejecutado->id,
+                                                "presupuesto"=>$value_ejecutado->id_presupuesto_interno
+                                            ));
+
+                                        }
+
+                                    }
                                 }
                                 $value_modelo->total_ejecutado = $value_modelo->total_ejecutado + $monto_ejecutado;
+
                             }
 
+                            if(sizeof($historial_ejecutado)>0){
+                                $array_tenporal = $value_modelo->historial;
+                                if(sizeof($array_tenporal)>0){
+
+                                    foreach($array_tenporal as $key_historia => $val_historia){
+
+                                        array_push($historial_ejecutado, array(
+                                            "codigo"=>$val_historia['codigo'],
+                                            "monto"=>$val_historia['monto'],
+                                            "id"=>$val_historia['id'],
+                                            "presupuesto"=>$val_historia['presupuesto']
+                                        ));
+
+                                    }
+                                }
+
+
+                                $value_modelo->historial = $historial_ejecutado;
+                            }
                             // return [$monto_ejecutado, $value_modelo];
                         }
                     }
 
 
                 }
+
+
             }
         }
+
+        // return $modelo_partidas;
         $array_partida = '';
         $tamano_array = 4;
         do {
@@ -2300,7 +2363,7 @@ class PresupuestoInternoController extends Controller
 
         } while ($tamano_array != 1);
 
-        // return $modelo_partidas;
+
         return Excel::download(new PresupuesInternoReporteAnualExport($modelo_partidas), 'presupuesto_interno.xlsx');
     }
 }

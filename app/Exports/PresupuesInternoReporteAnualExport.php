@@ -31,69 +31,46 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
 
     public function styles(Worksheet $sheet)
     {
-        // $sheet->getStyle($index)->getQuotePrefix(true);
-        $sheet->getDefaultColumnDimension()->setWidth(12);
 
-        // $sheet
-        // ->getStyle("A1")
-        // ->getNumberFormat()
-        // ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+        // $sheet->getDefaultColumnDimension()->setWidth('1',20);
         return [
-            'A1' => [
+            'A' => [
                 'font' => [
-                    'size' => 9
+                    'size' => 9,
+                    'width'=>15
                 ],
                 'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
             ],
-            'A2:A'.$this->cantidad => [
+
+            'A1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+
+                ],
+            ],
+
+            // -------------------------
+            'B' => [
                 'font' => [
                     'size' => 9
                 ],
                 'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_LEFT,
                     'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
             ],
             'B1' => [
-                'font' => [
-                    'size' => 9
-                ],
                 'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
+                    'horizontal' => Alignment::VERTICAL_CENTER,
+
                 ],
-                'quotePrefix'    => true
             ],
-            'B2:B'.$this->cantidad => [
-                'font' => [
-                    'size' => 9
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_LEFT,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-                'quotePrefix'    => true
-            ],
-            'C1' => [
-                'font' => [
-                    'size' => 9
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-                'quotePrefix'    => true
-            ],
+
             'D1' => [
                 'font' => [
                     'size' => 9
@@ -116,25 +93,59 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                 ],
                 'quotePrefix'    => true
             ],
-
-            'C2:E'.$this->cantidad =>
-            [
+            'C' => [
                 'font' => [
                     'size' => 9
                 ],
                 'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
-                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
+            ],
+            'C1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
+            ],
+            'D' => [
+                'font' => [
+                    'size' => 9
+                ],
+                'alignment' => [
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'D1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
+            ],
+            'E' => [
+                'font' => [
+                    'size' => 9
+                ],
+                'alignment' => [
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'E1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
             ],
         ];
     }
     public function columnFormats(): array
     {
         return [
-            'C2:E'.$this->cantidad => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'C' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'D' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

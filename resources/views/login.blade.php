@@ -31,7 +31,7 @@ Iniciar sesión
                 <h3>{{strtoupper(config('global.nombreSistema'))}} </h3>
             </div>
             <div class="login-img">
-                <img class="img-responsive" src="{{ asset('images/logo_okc.png') }}">
+                <img class="img-responsive" src="{{ asset('images/AGILE-icono.png') }}"  style="width:auto; height:150px">
             </div>
             <form id="formLogin" action="{{ route('login') }}">
                 @csrf

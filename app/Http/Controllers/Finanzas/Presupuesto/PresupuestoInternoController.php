@@ -1345,6 +1345,7 @@ class PresupuestoInternoController extends Controller
 
         $test=[];
         foreach ($presupuestoInterno as $key => $presup){
+            
             foreach ($Presup['detalle'] as $keyd => $detPresup) {
 
                 if ($detPresup['id_presupuesto_interno_detalle'] > 0) {
@@ -1436,16 +1437,14 @@ class PresupuestoInternoController extends Controller
                             $totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio[] =( $value->cantidad * $value->precio_unitario );
 
                         }
-
-                        foreach ($totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio as $key => $value) {
-                            $data+=$value!=null && $value !=null ?floatval($value):0;
-                        }
-                        // $data+=$value!=null && $value->total_por_consumido_con_igv !=null ?floatval($value->total_por_consumido_con_igv):0;
+                    }
+                    foreach ($totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio as $key => $value) {
+                        $data+=$value!=null && $value !=null ?floatval($value):0;
                     }
                     $detPresup['total_consumido_hasta_fase_aprobacion_con_igv'] = floatval($data);
-
                 }
             }
+            
 
         }
 

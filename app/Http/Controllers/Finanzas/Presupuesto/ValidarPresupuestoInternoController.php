@@ -263,7 +263,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
 
             foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida = $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago,$fase);
+                $tieneSaldoPartida = $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, number_format($monto, 2, '.', ''), $totalPago,$fase);
                 if ($tieneSaldoPartida != []) {
                     $data[] = $tieneSaldoPartida;
                 }

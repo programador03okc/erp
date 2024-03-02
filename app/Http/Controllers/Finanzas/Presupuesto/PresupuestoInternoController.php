@@ -1264,9 +1264,15 @@ class PresupuestoInternoController extends Controller
     }
 
 
-    public function obtenerDetallePresupuestoInterno($idPresupuestoIterno)
+ 
+
+    public function obtenerDetallePresupuestoInterno($idPresupuestoIterno,$mesAfectacion=null)
     {
 
+        $mesAfetacion =date("m") ;
+        if($mesAfectacion!=null){
+            $mesAfetacion = $mesAfectacion;
+        }
 
         $presupuestoInterno = PresupuestoInterno::with(['detalle' => function ($q) use ($idPresupuestoIterno) {
             $q->where([['id_presupuesto_interno', $idPresupuestoIterno], ['estado', '!=', 7]])->orderBy('partida', 'asc');
@@ -1288,7 +1294,7 @@ class PresupuestoInternoController extends Controller
         $totalFilas = PresupuestoInterno::calcularTotalPresupuestoFilas($idPresupuestoIterno, 3); // para requerimiento enviar 3= gastos
         $detalleRequerimiento = PresupuestoInterno::calcularConsumidoPresupuestoFilas($idPresupuestoIterno, 3); // para requerimiento enviar 3= gastos
 
-        $numero_mes = date("m");
+        $numero_mes = $mesAfetacion;
         $nombre_mes = $this->mes($numero_mes);
 
 
@@ -1448,7 +1454,7 @@ class PresupuestoInternoController extends Controller
 
         }
 
-        // dd($test);
+        // dd($mesAfetacion);
         // exit();
         return $presupuestoInterno;
     }

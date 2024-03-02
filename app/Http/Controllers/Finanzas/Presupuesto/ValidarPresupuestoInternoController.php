@@ -13,6 +13,7 @@ use App\Models\Logistica\OrdenCompraDetalle;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use App\Models\Tesoreria\TipoCambio;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ValidarPresupuestoInternoController extends Controller
@@ -45,6 +46,12 @@ class ValidarPresupuestoInternoController extends Controller
 
         $numeroMes = strlen($fechaPago) == 2 ? intval($fechaPago) : intval(date('m', strtotime($fechaPago)));
 
+        $requerimientoPago = RequerimientoPago::find($id);
+        if($requerimientoPago->mes_afectacion!=null){
+            $numeroMes=intval($requerimientoPago->mes_afectacion);
+        }
+
+
         if ($tipo == 'requerimiento pago') { // id requerimiento de pago
             $idRequerimientoPago = $id;
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago, $numeroMes, $totalPago, $fechaPago,$fase);
@@ -76,6 +83,35 @@ class ValidarPresupuestoInternoController extends Controller
             ];
         } elseif ($tipo == 'orden') { // id orden de compra o orden de servicio
             $idOrden = $id;
+        
+            // validar si tiene el requeirmiento definido un mes de afectacion 
+            $idRequerimientoList=[];
+            $detalleOrde=OrdenCompraDetalle::where([['id_orden_compra',$idOrden],['estado','!=',7]])->get();
+            foreach ($detalleOrde as $key => $value) {
+                if($value->id_detalle_requerimiento>0){
+                    $detalleRequerimiento = DetalleRequerimiento::find($value->id_detalle_requerimiento);
+
+                    if(!in_array($detalleRequerimiento->id_requerimiento,$idRequerimientoList)){
+                        $idRequerimientoList[]=$detalleRequerimiento->id_requerimiento;
+                    }
+                }
+            }
+
+            $mesAfectacionList =[];
+            foreach ($idRequerimientoList as $id) {
+                $requerimiento = Requerimiento::find($id);
+                if($requerimiento->mes_afectacion !=null){
+                    if(!in_array($requerimiento->mes_afectacion,$mesAfectacionList)){
+                        $mesAfectacionList[]=$requerimiento->mes_afectacion;
+                    }
+                }
+            }
+
+            if(count($mesAfectacionList)==1){ // solo tomar uno el primero del array, la orden deberia solo tener un requerimiento para tomar su campo de mes afectacion, si tiene mas requerimientos vinculados no considerar
+                $numeroMes=intval($mesAfectacionList[0]);
+            }
+
+            // 
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden, $numeroMes, $totalPago, $fechaPago,$fase);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
             $montoSinVinculoConPresupuestoInterno = $this->obtenerMontoSinVinculoConPresupuestoInterno($idOrden);
@@ -106,8 +142,14 @@ class ValidarPresupuestoInternoController extends Controller
                 'validacion_partidas_con_presupuesto_interno' => $validacionDePartidaConPresupuestoInternoList
             ];
         } elseif ($tipo == 'requerimiento logistico') { // id de requerimiento logistico
+
+
             $idRequerimientoLogistio = $id;
             $mensajeValidacion = [];
+            $requerimiento = Requerimiento::find($idRequerimientoLogistio);
+            if($requerimiento->mes_afectacion!=null){
+                $numeroMes=intval($requerimiento->mes_afectacion);
+            }
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoLogistico($idRequerimientoLogistio, $numeroMes, $totalPago, $fechaPago, $fase);
 
             $tienePresupuestoEnPartidas = true;
@@ -330,6 +372,7 @@ class ValidarPresupuestoInternoController extends Controller
                             'id_partida' => $detalle->id_presupuesto_interno_detalle ,
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
+                            'nombre_mes_aux' => $nombreMesAux,
                             'monto_aux' => $detalle->$nombreMesAux,
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,
@@ -349,6 +392,7 @@ class ValidarPresupuestoInternoController extends Controller
                             'id_partida' => $detalle->id_presupuesto_interno_detalle ,
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
+                            'nombre_mes_aux' => $nombreMesAux,
                             'monto_aux' => $detalle->$nombreMesAux,
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,

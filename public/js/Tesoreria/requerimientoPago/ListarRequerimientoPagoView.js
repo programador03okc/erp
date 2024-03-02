@@ -266,14 +266,23 @@ class ListarRequerimientoPagoView {
         $('#modal-requerimiento-pago').on("change", "select.handleChangeProyecto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
             this.obtenerCentroCostoDeProyecto();
+            this.habilitarInputMesAfectacion(false);
+
 
         });
         $('#modal-requerimiento-pago').on("change", "select.handleChangePresupuestoInterno", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            if(e.currentTarget.value>0){
+                this.habilitarInputMesAfectacion(true);
+            }else{
+                this.habilitarInputMesAfectacion(false);
+            }
         });
         $('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
             // console.log(e.currentTarget.dataset.idCc);
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_CDP', e.currentTarget.dataset.idCc);
+            this.habilitarInputMesAfectacion(false);
+
         });
 
         // $('#modal-requerimiento-pago').on("click", "button.handleClickLimpiarSeleccionCuadroDePresupuesto", (e) => {
@@ -481,6 +490,15 @@ class ListarRequerimientoPagoView {
                     }
                 }
             });           
+        }
+    }
+
+    habilitarInputMesAfectacion(esActivo){
+        if(esActivo){
+            document.querySelector("div[id='input-mes-afectacion']").removeAttribute("hidden");
+        }else{
+            document.querySelector("div[id='input-mes-afectacion']").setAttribute("hidden",true);
+
         }
     }
 
@@ -3124,6 +3142,15 @@ class ListarRequerimientoPagoView {
         // }
 
         $("select[name='id_presupuesto_interno']").val(data.id_presupuesto_interno);
+        
+        if(data.mes_afectacion!=null){
+            this.habilitarInputMesAfectacion(true);
+            $("select[name='mes_afectacion']").val(data.mes_afectacion);
+
+        }else{
+            this.habilitarInputMesAfectacion(false);
+            $("select[name='mes_afectacion']").val('');
+        }
 
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_trabajador']").value = data.id_trabajador;
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_trabajador']").value = data.nombre_trabajador;

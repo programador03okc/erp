@@ -86,6 +86,33 @@ class PresupuestoInternoHistorialHelper
 
     public static function registrarEstadoGastoAfectadoDeRequerimientoLogistico($idOrden, $idPago, $detalleItemList, $operacion, $fechaAfectacion, $descripcion)
     {
+        // validar si tiene el requeirmiento definido un mes de afectacion 
+        $idRequerimientoList=[];
+        $detalleOrde=OrdenCompraDetalle::where([['id_orden_compra',$idOrden],['estado','!=',7]])->get();
+        foreach ($detalleOrde as $key => $value) {
+            if($value->id_detalle_requerimiento>0){
+                $detalleRequerimiento = DetalleRequerimiento::find($value->id_detalle_requerimiento);
+
+                if(!in_array($detalleRequerimiento->id_requerimiento,$idRequerimientoList)){
+                    $idRequerimientoList[]=$detalleRequerimiento->id_requerimiento;
+                }
+            }
+        }
+
+        $mesAfectacionList =[];
+        foreach ($idRequerimientoList as $id) {
+            $requerimiento = Requerimiento::find($id);
+            if($requerimiento->mes_afectacion !=null){
+                if(!in_array($requerimiento->mes_afectacion,$mesAfectacionList)){
+                    $mesAfectacionList[]=$requerimiento->mes_afectacion;
+                }
+            }
+        }
+
+        if(count($mesAfectacionList)==1){ // solo tomar uno el primero del array, la orden deberia solo tener un requerimiento para tomar su campo de mes afectacion, si tiene mas requerimientos vinculados no considerar
+            $fechaAfectacion= Carbon::now()->month($mesAfectacionList[0])->format('d-m-Y');
+        }
+        // 
 
         $saldoPostAfecto= PresupuestoInternoHistorialHelper::validarSaldoAntesDeAfectarPresupuestoPorRequerimientoLogistico($idOrden, $detalleItemList, $operacion, $fechaAfectacion);
 
@@ -442,6 +469,15 @@ class PresupuestoInternoHistorialHelper
 
     public static function registrarEstadoGastoAfectadoDeRequerimientoPago($idRequerimientoPago, $idPago, $detalleItemList, $operacion, $fechaAfectacion, $descripcion)
     {
+
+         // validar si tiene el requerimiento definido un mes de afectacion 
+
+        $req=RequerimientoPago::find($idRequerimientoPago);
+ 
+         if($req->mes_afectacion!=null){
+             $fechaAfectacion= Carbon::now()->month($req->mes_afectacion)->format('d-m-Y');
+         }
+         // 
 
         $presupuestoInternoDetalle = [];
         $saldoPostAfecto= PresupuestoInternoHistorialHelper::validarSaldoAntesDeAfectarPresupuestoPorRequerimientoPago($detalleItemList, $operacion, $fechaAfectacion);

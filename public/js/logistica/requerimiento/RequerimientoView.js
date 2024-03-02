@@ -148,16 +148,25 @@ class RequerimientoView {
 
         $('body').on("change", "select.handleChangePresupuestoInterno", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            if(e.currentTarget.value>0){
+                this.habilitarInputMesAfectacion(true);
+            }else{
+                this.habilitarInputMesAfectacion(false);
+            }
         });
 
         $('#form-requerimiento').on("change", "select.handleChangeProyecto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
             this.obtenerCentroCostoDeProyecto();
+            this.habilitarInputMesAfectacion(false);
+
         });
 
         $('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
             // console.log(e.currentTarget.dataset.idCc);
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_CDP', e.currentTarget.dataset.idCc);
+            this.habilitarInputMesAfectacion(false);
+
         });
 
         $('body').on("click", "button.handleClickLimpiarSeleccionCuadroDePresupuesto", (e) => {
@@ -215,6 +224,17 @@ class RequerimientoView {
                     }
                 }
             });           
+        }
+    }
+
+    habilitarInputMesAfectacion(esActivo){
+        if(esActivo){
+            document.querySelector("div[id='input-mes-afectacion']").removeAttribute("hidden");
+        }else{
+            document.querySelector("div[id='input-mes-afectacion']").setAttribute("hidden",true);
+            $("select[name='mes_afectacion']").val('')
+
+
         }
     }
 
@@ -595,6 +615,9 @@ class RequerimientoView {
         document.querySelector("input[name='email_cliente']").value = data.email;
         document.querySelector("input[name='direccion_entrega']").value = data.direccion_entrega;
         document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto != null ? data.tipo_impuesto : 0;
+        if(data.mes_afectacion!=null){
+            document.querySelector("select[name='mes_afectacion']").value = data.mes_afectacion;
+        }
 
         let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
         allMesPpto.forEach(element => {

@@ -364,15 +364,35 @@ Crear / editar requerimiento
                         <h4 style="display:flex;justify-content: space-between;">Presupuesto Interno</h4>
                         <fieldset class="group-table">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <h5>Nombre</h5>
+                                <div class="col-md-8">
+                                    <h5>Nombre presupuesto</h5>
                                     <div style="display:flex;">
-                                        <input type="text" name="codigo_presupuesto_interno" class="form-control group-elemento" style="width:130px; text-align:center;" readonly>
                                         <div class="input-group-okc">
                                             <select class="form-control activation handleChangePresupuestoInterno" name="id_presupuesto_interno">
                                                 @foreach ($presupuestoInternoList as $presupuestoInterno)
                                                 <option value="{{$presupuestoInterno->id_presupuesto_interno}}" data-codigo="{{$presupuestoInterno->codigo}}">{{$presupuestoInterno->codigo}} - {{$presupuestoInterno->descripcion}}</option>
                                                 @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" id="input-mes-afectacion" hidden>
+                                    <h5>Mes afectación</h5>
+                                    <div style="display:flex;">
+                                        <div class="input-group-okc">
+                                            <select class="form-control activation" name="mes_afectacion">
+                                            @for ($i = 0; $i < (date("m")); $i++)
+                                                <?php 
+                                                $numeroMes=$i+1;
+                                                $dateTimeObj   = DateTime::createFromFormat('!m',$numeroMes );
+                                                $monthName = IntlDateFormatter::formatObject($dateTimeObj, 'MMMM', 'es');
+                                                ?>
+                                                @if($numeroMes == date("m"))
+                                                <option value="{{str_pad($numeroMes,2,'0',STR_PAD_LEFT) }}" selected>{{  $monthName }}</option>
+                                                @else
+                                                <option value="{{str_pad($numeroMes,2,'0',STR_PAD_LEFT) }}">{{  $monthName }}</option>
+                                                @endif
+                                            @endfor
                                             </select>
                                         </div>
                                     </div>

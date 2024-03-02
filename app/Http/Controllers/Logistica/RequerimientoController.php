@@ -556,6 +556,7 @@ class RequerimientoController extends Controller
                 'presup.codigo as codigo_presupuesto_old',
                 'presup.descripcion as descripcion_presupuesto_old',
                 'alm_req.id_presupuesto_interno',
+                'alm_req.mes_afectacion',
                 'presupuesto_interno.codigo as codigo_presupuesto_interno',
                 'presupuesto_interno.descripcion as descripcion_presupuesto_interno',
                 'incidencia.codigo as codigo_incidencia',
@@ -665,6 +666,7 @@ class RequerimientoController extends Controller
                     'division' => $data->division,
                     'nombre_trabajador' => $data->nombre_trabajador,
                     'id_presupuesto_interno' => $data->id_presupuesto_interno,
+                    'mes_afectacion' => $data->mes_afectacion,
                     'codigo_presupuesto_interno' => $data->codigo_presupuesto_interno,
                     'descripcion_presupuesto_interno' => $data->descripcion_presupuesto_interno,
                     'tipo_impuesto' => $data->tipo_impuesto > 0 ? $data->tipo_impuesto : '',
@@ -1181,6 +1183,7 @@ class RequerimientoController extends Controller
             $requerimiento->id_incidencia = isset($request->id_incidencia) && $request->id_incidencia != null ? $request->id_incidencia : null;
             $requerimiento->id_tipo_detalle = $idTipoDetalle;
             $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
             $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $requerimiento->save();
             $requerimiento->adjuntoOtrosAdjuntos = $request->archivoAdjuntoRequerimiento1;
@@ -1696,6 +1699,7 @@ class RequerimientoController extends Controller
         $requerimiento->id_incidencia = $request->id_incidencia > 0 ? $request->id_incidencia : null;
         $requerimiento->id_tipo_detalle = $idTipoDetalle;
         $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+        $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
         $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
         $requerimiento->save();
@@ -5048,6 +5052,7 @@ class RequerimientoController extends Controller
                     'alm_req.id_almacen',
                     'alm_req.id_proyecto',
                     'alm_req.id_presupuesto_interno',
+                    'alm_req.mes_afectacion',
                     DB::raw("CONCAT(alm_almacen.codigo,'-',alm_almacen.descripcion) as almacen_requerimiento"),
                     'alm_req.fecha_entrega',
                     'sis_moneda.simbolo as simbolo_moneda',

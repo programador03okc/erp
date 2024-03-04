@@ -2225,7 +2225,7 @@ class PresupuestoInternoController extends Controller
     }
     public function reporteAnual($year){
         $presupuestos = PresupuestoInterno::whereYear('fecha_registro',$year)
-        // ->whereIn('id_presupuesto_interno',[47,50])
+        ->whereIn('id_presupuesto_interno',[47,50])
         ->get();
 
         $modelo_partidas =  PresupuestoInternoModelo::where("id_tipo_presupuesto" ,3)->orderBy('partida', 'asc')->get();
@@ -2282,10 +2282,12 @@ class PresupuestoInternoController extends Controller
                                         if($registro){
 
                                             array_push($historial_ejecutado,array(
-                                                "codigo"=>$registro->codigo,
-                                                "monto"=>$value_ejecutado->importe,
-                                                "id"=>$value_ejecutado->id,
-                                                "presupuesto"=>$value_ejecutado->id_presupuesto_interno
+                                                "codigo"        => $registro->codigo,
+                                                "monto"         => $value_ejecutado->importe,
+                                                "id"            => $value_ejecutado->id,
+                                                "presupuesto"   => $value_ejecutado->id_presupuesto_interno,
+                                                "soles"         => ($registro->id_moneda == 1 ? $registro->monto_total : 0 ),
+                                                "dolares"       => ($registro->id_moneda == 2 ? $registro->monto_total : 0 ),
                                             ));
                                         }
 
@@ -2298,7 +2300,9 @@ class PresupuestoInternoController extends Controller
                                                 "codigo"=>$registro->codigo,
                                                 "monto"=>$value_ejecutado->importe,
                                                 "id"=>$value_ejecutado->id,
-                                                "presupuesto"=>$value_ejecutado->id_presupuesto_interno
+                                                "presupuesto"=>$value_ejecutado->id_presupuesto_interno,
+                                                "soles"         => ($registro->id_moneda == 1 ? $registro->monto_total : 0 ),
+                                                "dolares"       => ($registro->id_moneda == 2 ? $registro->monto_total : 0 ),
                                             ));
 
                                         }
@@ -2319,7 +2323,9 @@ class PresupuestoInternoController extends Controller
                                             "codigo"=>$val_historia['codigo'],
                                             "monto"=>$val_historia['monto'],
                                             "id"=>$val_historia['id'],
-                                            "presupuesto"=>$val_historia['presupuesto']
+                                            "presupuesto"=>$val_historia['presupuesto'],
+                                            "soles"         => $val_historia['soles'],
+                                            "dolares"       => $val_historia['dolares'],
                                         ));
 
                                     }

@@ -4,6 +4,8 @@
             <th style="border: 1 solid #000; background-color: #00b0f0;">PARTIDA</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">DESCRIPCIÓN</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
+            <td style="border: 1 solid #000; background-color: #00b0f0;">S/.</td>
+            <td style="border: 1 solid #000; background-color: #00b0f0;">$</td>
             <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
         </tr>
@@ -12,6 +14,7 @@
         @foreach ($data as $value)
         @php
             $saldo = $value->total - $value->total_ejecutado;
+            $saldo = ($saldo>0 ? $saldo : 0);
         @endphp
             <tr>
                 <td style="border: 1 solid #000; {{$value->registro==2?'background-color: #b8cce4;':''}} ">
@@ -36,6 +39,8 @@
                     {{ $value->total }}
                     @endif
                 </td>
+                <td style="border: 1 solid #000;{{$value->registro==2?'background-color: #b8cce4;':''}}"></td>
+                <td style="border: 1 solid #000;{{$value->registro==2?'background-color: #b8cce4;':''}}"></td>
                 <td style="border: 1 solid #000;{{$value->registro==2?'background-color: #b8cce4;':''}}">
                     @if ($value->registro==2)
                     <strong> {{ $value->total_ejecutado }} </strong>
@@ -43,12 +48,13 @@
                     {{ $value->total_ejecutado }}
                     @endif
                 </td>
+
                 <td style="border: 1 solid #000;{{$value->registro==2?'background-color: #b8cce4;':''}}">
 
                     @if ($value->registro==2)
-                    <strong> {{ $value->saldo }} </strong>
+                    <strong> {{ $saldo }} </strong>
                     @else
-                    {{ $value->saldo }}
+                    {{ $saldo }}
                     @endif
                 </td>
             </tr>
@@ -58,8 +64,14 @@
                         <td style="border-bottom: 1 solid #000;border-left: 1 solid #000; background-color: #d9d9d9;"><i>{{ $value->partida }}</i></td>
                         <td style="border-bottom: 1 solid #000;background-color: #d9d9d9;"><i>{{ $historia['codigo'] }}</i></td>
                         <td style="border-bottom: 1 solid #000;background-color: #d9d9d9;"></td>
+
+                        <td style="border-bottom: 1 solid #000; sbackground-color: #d9d9d9;"><i>{{ $historia['soles'] }}</i></td>
+                        <td style="border-bottom: 1 solid #000; background-color: #d9d9d9;"><i>{{ $historia['dolares'] }}</i></td>
+
                         <td style="border-bottom: 1 solid #000;background-color: #d9d9d9;"><i>{{ $historia['monto'] }}</i></td>
                         <td style="border-bottom: 1 solid #000; border-right: 1 solid #000;background-color: #d9d9d9;"></td>
+
+
                     </tr>
                 @endforeach
             @endif

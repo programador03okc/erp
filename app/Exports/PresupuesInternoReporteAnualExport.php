@@ -138,6 +138,36 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ]
             ],
+            'F' => [
+                'font' => [
+                    'size' => 9
+                ],
+                'alignment' => [
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'F1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
+            ],
+            'G' => [
+                'font' => [
+                    'size' => 9
+                ],
+                'alignment' => [
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'G1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
+            ],
         ];
     }
     public function columnFormats(): array
@@ -146,6 +176,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
             'C' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'D' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

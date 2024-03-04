@@ -13,15 +13,14 @@
                 <li>
                     <a href="{{ route('inicio') }}">Módulos</a>
                 </li>
+                <li><a href="{{route('necesidades.dashboard.seguimiento')}}">Dashboard Seguimiento</a></li>
                 @foreach(Auth::user()->getAllRol() as $rol)
                     @if($rol->id_rol == 6)
                     <li><a href="{{route('configuracion.dashboard')}}">Configuración</a></li>
                     @endif
                 @endforeach  
            
-                {{-- <li>
-                    <a href="#">Sobre Agile</a>
-                </li> --}}
+            
                 <li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle">
                         <i class="fa fa-bell"></i>

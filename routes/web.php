@@ -339,6 +339,10 @@ Route::middleware(['auth'])->group(function () {
 	 */
 	Route::name('necesidades.')->prefix('necesidades')->group(function () {
 		Route::get('index', [NecesidadesController::class, 'view_main_necesidades'])->name('index');
+		Route::name('dashboard.')->prefix('dashboard')->group(function () {
+			Route::get('seguimiento', [NecesidadesController::class, 'view_dashboard_seguimiento'])->name('seguimiento');
+			Route::get('listar', [NecesidadesController::class, 'listarSeguimiento'])->name('listar');
+		});
 		Route::name('requerimiento.')->prefix('requerimiento')->group(function () {
 
 			Route::name('elaboracion.')->prefix('elaboracion')->group(function () {

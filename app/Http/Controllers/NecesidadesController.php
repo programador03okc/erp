@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\administracion\DashboardSeguimientoView;
 use App\Models\contabilidad\ContribuyenteView;
 use App\Models\Contabilidad\CuentaContribuyente;
 use App\Models\Rrhh\CuentaPersona;
@@ -30,6 +31,12 @@ class NecesidadesController extends Controller
         return view('necesidades.dashboard.seguimiento');
     }
 
+
+    public function listarSeguimiento(){
+        $data= DashboardSeguimientoView::orderBy('fecha_publicacion_orden','DESC')->paginate(15);
+ 
+        return response()->json($data,200);
+    }
 
     public function listaDestinatarioPersona(){
         $data= PersonaView::all();

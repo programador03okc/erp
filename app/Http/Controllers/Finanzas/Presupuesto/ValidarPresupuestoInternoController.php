@@ -46,14 +46,16 @@ class ValidarPresupuestoInternoController extends Controller
 
         $numeroMes = strlen($fechaPago) == 2 ? intval($fechaPago) : intval(date('m', strtotime($fechaPago)));
 
-        $requerimientoPago = RequerimientoPago::find($id);
-        if($requerimientoPago->mes_afectacion!=null){
-            $numeroMes=intval($requerimientoPago->mes_afectacion);
-        }
 
 
         if ($tipo == 'requerimiento pago') { // id requerimiento de pago
             $idRequerimientoPago = $id;
+
+            $requerimientoPago = RequerimientoPago::find($id);
+            if($requerimientoPago->mes_afectacion!=null){
+                $numeroMes=intval($requerimientoPago->mes_afectacion);
+            }
+    
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago, $numeroMes, $totalPago, $fechaPago,$fase);
             // $tipoCambioUtilizado= $this->getTipoCambioVenta($fechaPago);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);

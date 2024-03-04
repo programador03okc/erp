@@ -30,7 +30,7 @@ class DashboardSeguimientoView extends Model
             $minutosParaEntrega = $diferencia->i;
 
             if($fechaHoy > $fecha_entrega){
-                $result = '(Vecido)';
+                $result = '(Plazo Vencido)';
             }else{
                 
                 $result = $diasParaEntrega . 'd ' . $horasParaEntrega . 'h ' . $minutosParaEntrega . 'm';

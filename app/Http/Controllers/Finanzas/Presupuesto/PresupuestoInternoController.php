@@ -2225,7 +2225,7 @@ class PresupuestoInternoController extends Controller
     }
     public function reporteAnual($year){
         $presupuestos = PresupuestoInterno::whereYear('fecha_registro',$year)
-        ->whereIn('id_presupuesto_interno',[47,50])
+        // ->whereIn('id_presupuesto_interno',[47,50])
         ->get();
 
         $modelo_partidas =  PresupuestoInternoModelo::where("id_tipo_presupuesto" ,3)->orderBy('partida', 'asc')->get();

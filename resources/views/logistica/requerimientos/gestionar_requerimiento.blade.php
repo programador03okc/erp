@@ -376,11 +376,13 @@ Crear / editar requerimiento
                                         </div>
                                     </div>
                                 </div>
+                                @foreach($roles as $rol)
+                                        @if($rol->id_rol == 24 || $rol->id_rol == 64 ) <!--si el usuario en sesión es jefe de RRHH o asistente de RRHH -->
                                 <div class="col-md-4" id="input-mes-afectacion" hidden>
                                     <h5>Mes afectación</h5>
                                     <div style="display:flex;">
                                         <div class="input-group-okc">
-                                            <select class="form-control activation" name="mes_afectacion">
+                                            <select class="form-control activation" name="mes_afectacion" >
                                             @for ($i = 0; $i < (date("m")); $i++)
                                                 <?php 
                                                 $numeroMes=$i+1;
@@ -397,6 +399,8 @@ Crear / editar requerimiento
                                         </div>
                                     </div>
                                 </div>
+                                @endif
+                                    @endforeach
                             </div>
                         </fieldset>
                     </div>

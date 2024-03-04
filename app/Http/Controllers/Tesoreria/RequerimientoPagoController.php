@@ -81,6 +81,7 @@ class RequerimientoPagoController extends Controller
         $tiposDestinatario = RequerimientoPagoTipoDestinatario::mostrar();
         $empresas = Empresa::mostrar();
         $grupos = Grupo::mostrar();
+        $roles = Auth::user()->getAllRol();
         $divisiones = Division::mostrar();
         $monedas = Moneda::mostrar();
         $unidadesMedida = UnidadMedida::mostrar();
@@ -114,6 +115,7 @@ class RequerimientoPagoController extends Controller
                 'prioridades',
                 'empresas',
                 'grupos',
+                'roles',
                 'tiposRequerimientoPago',
                 'periodos',
                 'monedas',

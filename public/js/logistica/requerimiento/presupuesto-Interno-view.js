@@ -116,7 +116,7 @@ class PresupuestoInternoView{
         let idDivision = document.querySelector("select[name='division']").value;
         let partidaRemuneraciones = '';
         const selectMesAfectacion = document.querySelector("select[name='mes_afectacion']");
-        const mesAfectacionText = selectMesAfectacion.options[selectMesAfectacion.selectedIndex].textContent;
+        const mesAfectacionText = selectMesAfectacion?selectMesAfectacion.options[selectMesAfectacion.selectedIndex].textContent:'mes';
         data.forEach(presupuesto => {
             html += `
             <div id='${presupuesto.codigo}' class="panel panel-primary" style="width:100%; overflow: auto;">

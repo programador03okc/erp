@@ -1306,9 +1306,9 @@ class PresupuestoInternoController extends Controller
 
 
                     $detPresup['total_presupuesto_año'] = $this->obtenerTotalPrespuestoAñoDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo']);
-                    $detPresup['total_presupuesto_mes'] = $this->obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo']);
-                    $detPresup['total_consumido_mes'] =   $this->obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo']);
-                    $detPresup['total_saldo_mes'] =   $this->obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo']);
+                    $detPresup['total_presupuesto_mes'] = $this->obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo'],$mesAfectacion);
+                    $detPresup['total_consumido_mes'] =   $this->obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo'],$mesAfectacion);
+                    $detPresup['total_saldo_mes'] =   $this->obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo'],$mesAfectacion);
                     $detPresup['total_saldo_año'] =   $this->obtenerSaldoPrespuestoAñoDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo']);
                 }
 
@@ -1490,9 +1490,13 @@ class PresupuestoInternoController extends Controller
         return $totalPresupuestoAño;
     }
 
-    public function obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo)
+    public function obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo, $mesAfectacion=null)
     {
         $numero_mes = date("m");
+        if($mesAfectacion!=null){
+            $numero_mes = $mesAfectacion;
+        }
+
         $nombre_mes = $this->mes($numero_mes);
         $totalPresupuestoMes = 0;
         foreach ($presupuestoInterno as $key => $Presup) {
@@ -1506,10 +1510,13 @@ class PresupuestoInternoController extends Controller
         return $totalPresupuestoMes;
     }
 
-    public function obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, $tipo, $presupuestoInterno, $idHijo)
+    public function obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, $tipo, $presupuestoInterno, $idHijo, $mesAfectacion=null)
     {
 
         $numero_mes = date("m");
+        if($mesAfectacion!=null){
+            $numero_mes = $mesAfectacion;
+        }
         $totalConsumidoMesFilaList = PresupuestoInterno::calcularTotalConsumidoMesFilas($idPresupuestoIterno, $tipo, $numero_mes);
 
         $totalConsumidoMes = 0;
@@ -1527,9 +1534,12 @@ class PresupuestoInternoController extends Controller
         return $totalConsumidoMes;
     }
 
-    public function obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo)
+    public function obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo,$mesAfectacion=null)
     {
         $numero_mes = date("m");
+        if($mesAfectacion!=null){
+            $numero_mes = $mesAfectacion;
+        }
         $nombre_mes = $this->mes($numero_mes);
         $totalSaldoMes = 0;
         foreach ($presupuestoInterno as $key => $Presup) {

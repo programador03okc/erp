@@ -495,9 +495,9 @@ class ListarRequerimientoPagoView {
 
     habilitarInputMesAfectacion(esActivo){
         if(esActivo){
-            document.querySelector("div[id='input-mes-afectacion']").removeAttribute("hidden");
+            document.querySelector("div[id='input-mes-afectacion']")?document.querySelector("div[id='input-mes-afectacion']").removeAttribute("hidden"):false;
         }else{
-            document.querySelector("div[id='input-mes-afectacion']").setAttribute("hidden",true);
+            document.querySelector("div[id='input-mes-afectacion']")? document.querySelector("div[id='input-mes-afectacion']").setAttribute("hidden",true):false;
 
         }
     }

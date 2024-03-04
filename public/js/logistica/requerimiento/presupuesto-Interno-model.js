@@ -8,7 +8,7 @@ class PresupuestoInternoModel {
 
     obtenerListaDetallePrespuestoInterno(idPresupuestoIterno){
 
-        const mesAfectacion = document.querySelector("select[name='mes_afectacion']")?document.querySelector("select[name='mes_afectacion']").value:'';
+        const mesAfectacion = document.querySelector("select[name='mes_afectacion']") && document.querySelector("select[name='mes_afectacion']").value!=''?document.querySelector("select[name='mes_afectacion']").value:0;
         return new Promise(function(resolve, reject) {
             $.ajax({
                 type: 'GET',

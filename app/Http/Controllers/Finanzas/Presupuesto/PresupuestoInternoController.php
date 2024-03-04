@@ -1270,7 +1270,7 @@ class PresupuestoInternoController extends Controller
     {
 
         $mesAfetacion =date("m") ;
-        if($mesAfectacion!=null){
+        if($mesAfectacion!=null && $mesAfectacion!=0){
             $mesAfetacion = $mesAfectacion;
         }
 

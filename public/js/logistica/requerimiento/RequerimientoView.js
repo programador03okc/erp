@@ -1773,7 +1773,7 @@ class RequerimientoView {
                     // console.log(tempPartidasActivas[p].presupuesto_utilizado);
                     // console.log(parseFloat(subtotalItemList[i].subtotal));
                     // console.log(tempPartidasActivas[p].presupuesto_utilizado + parseFloat(subtotalItemList[i].subtotal));
-                    tempPartidasActivas[p].presupuesto_utilizado = tempPartidasActivas[p].presupuesto_utilizado + parseFloat(subtotalItemList[i].subtotal);
+                    tempPartidasActivas[p].presupuesto_utilizado = Util.formatoNumero((parseFloat(tempPartidasActivas[p].presupuesto_utilizado) + parseFloat(subtotalItemList[i].subtotal)), 2);
                 }
             }
         }
@@ -1793,11 +1793,11 @@ class RequerimientoView {
                 }
             } else {
                 if(document.querySelector("input[name='id_requerimiento']").value >0){
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion:0) -  (tempPartidasActivas[p].presupuesto_utilizado>0?tempPartidasActivas[p].presupuesto_utilizado:0);
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: 0)- (tempPartidasActivas[p].presupuesto_utilizado>0?tempPartidasActivas[p].presupuesto_utilizado:0);
+                    tempPartidasActivas[p].saldo_total = ( Util.formatoNumero(tempPartidasActivas[p].presupuesto_total,2))  - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) >0 ? Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2):0) -  (parseFloat(tempPartidasActivas[p].presupuesto_utilizado)>0? Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado,2):0);
+                    tempPartidasActivas[p].saldo_mes = ( Util.formatoNumero(tempPartidasActivas[p].total_saldo_mes_disponible,2))  - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) >0 ?Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2): 0) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado)>0? Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado,2):0);
                 }else{
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible)) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
+                    tempPartidasActivas[p].saldo_total = ( Util.formatoNumero(tempPartidasActivas[p].presupuesto_total,2)) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado) > 0 ? Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado) : 0) - Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2);
+                    tempPartidasActivas[p].saldo_mes = (Util.formatoNumero(tempPartidasActivas[p].total_saldo_mes_disponible,2)) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado) > 0 ? Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado) : 0) - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion)>0? Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2):0);
                 }
 
             }

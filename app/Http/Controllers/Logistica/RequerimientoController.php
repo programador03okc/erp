@@ -89,7 +89,7 @@ class RequerimientoController extends Controller
         $grupos = Auth::user()->getAllGrupo();
         $idTrabajador = Auth::user()->id_trabajador;
         $idUsuario = Auth::user()->id_usuario;
-        $nombreUsuario = Auth::user()->trabajador->postulante->persona->nombre_completo;
+        $nombreUsuario = Auth::user()->nombre_corto;
         $monedas = Moneda::mostrar();
         $prioridades = Prioridad::mostrar();
         $tipo_requerimiento = TipoRequerimiento::mostrar();

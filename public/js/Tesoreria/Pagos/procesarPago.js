@@ -303,7 +303,7 @@ function validarPresupuesto(tipo, id, fecha_pago, monto_pago, fase) {
             type: 'POST',
             url: `validarPresupuestoParaPago`,
             dataType: 'JSON',
-            data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago, 'fase':fase },
+            data: { 'tipo': tipo, 'id': id, 'fecha_pago': fecha_pago, 'monto_pago': monto_pago, 'fase':fase},
             success(response) {
                 resolve(response);
             },
@@ -314,7 +314,7 @@ function validarPresupuesto(tipo, id, fecha_pago, monto_pago, fase) {
     });
 }
 
-function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
+function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null, idPagoCuotaDetalle=null) {
 
     var customElement = $("<div>", {
         "css": {
@@ -405,6 +405,7 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
                         data: {
                             'tipo': tipo,
                             'id': id,
+                            'idPagoCuotaDetalle': idPagoCuotaDetalle
                         },
                         dataType: 'JSON',
                     }).done(function (response) {
@@ -418,6 +419,9 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
                         });
                         if (tipo == "orden") {
                             tableOrdenes.ajax.reload(null, false);
+                            if(idPagoCuotaDetalle>0){
+                                formatPagosEnCuotas(iTableCounter, id, tableOrdenes.row($(this).closest('tr')), "orden");
+                            }
                         }
                         else if (tipo == "requerimiento pago") {
                             tableRequerimientos.ajax.reload(null, false);
@@ -450,67 +454,67 @@ function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null) {
 
 }
 
-function enviarPagoEnCuotas(id, idPagoCuotaDetalle, tipo, event) {
+// function enviarPagoEnCuotas(id, idPagoCuotaDetalle, tipo, event) {
 
-    const obj = event.currentTarget;
+//     const obj = event.currentTarget;
 
-    Swal.fire({
-        title: "¿Está seguro que desea autorizar el pago?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6", //"#00a65a",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Sí, Autorizar"
-    }).then(result => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST',
-                url: 'enviarAPago',
-                data: {
-                    'tipo': tipo,
-                    'id': id,
-                    'idPagoCuotaDetalle': idPagoCuotaDetalle
-                },
-                dataType: 'JSON',
-            }).done(function (response) {
-                // console.log(response);
-                Lobibox.notify(response.tipo, {
-                    size: "mini",
-                    rounded: true,
-                    sound: false,
-                    delayIndicator: false,
-                    msg: response.mensaje
-                });
-                if (tipo == "orden") {
-                    tableOrdenes.ajax.reload(null, false);
-                    formatPagosEnCuotas(iTableCounter, id, tableOrdenes.row($(this).closest('tr')), "orden");
+//     Swal.fire({
+//         title: "¿Está seguro que desea autorizar el pago?",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#3085d6", //"#00a65a",
+//         cancelButtonColor: "#d33",
+//         cancelButtonText: "Cancelar",
+//         confirmButtonText: "Sí, Autorizar"
+//     }).then(result => {
+//         if (result.isConfirmed) {
+//             $.ajax({
+//                 type: 'POST',
+//                 url: 'enviarAPago',
+//                 data: {
+//                     'tipo': tipo,
+//                     'id': id,
+//                     'idPagoCuotaDetalle': idPagoCuotaDetalle
+//                 },
+//                 dataType: 'JSON',
+//             }).done(function (response) {
+//                 // console.log(response);
+//                 Lobibox.notify(response.tipo, {
+//                     size: "mini",
+//                     rounded: true,
+//                     sound: false,
+//                     delayIndicator: false,
+//                     msg: response.mensaje
+//                 });
+//                 if (tipo == "orden") {
+//                     tableOrdenes.ajax.reload(null, false);
+//                     formatPagosEnCuotas(iTableCounter, id, tableOrdenes.row($(this).closest('tr')), "orden");
 
 
-                }
-                else if (tipo == "requerimiento pago") {
-                    tableRequerimientos.ajax.reload(null, false);
-                }
-                else if (tipo == "orden") {
-                    tableComprobantes.ajax.reload(null, false);
-                }
-            }).always(function () {
-                // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
-            }).fail(function (jqXHR) {
-                Lobibox.notify('error', {
-                    size: "mini",
-                    rounded: true,
-                    sound: false,
-                    delayIndicator: false,
-                    msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
-                });
-                //Cerrar el modal
-                // $modal.modal('hide');
-                console.log('Error devuelto: ' + jqXHR.responseText);
-            });
-        }
-    });
-}
+//                 }
+//                 else if (tipo == "requerimiento pago") {
+//                     tableRequerimientos.ajax.reload(null, false);
+//                 }
+//                 else if (tipo == "orden") {
+//                     tableComprobantes.ajax.reload(null, false);
+//                 }
+//             }).always(function () {
+//                 // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
+//             }).fail(function (jqXHR) {
+//                 Lobibox.notify('error', {
+//                     size: "mini",
+//                     rounded: true,
+//                     sound: false,
+//                     delayIndicator: false,
+//                     msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
+//                 });
+//                 //Cerrar el modal
+//                 // $modal.modal('hide');
+//                 console.log('Error devuelto: ' + jqXHR.responseText);
+//             });
+//         }
+//     });
+// }
 
 function revertirEnvio(tipo, id) {
 

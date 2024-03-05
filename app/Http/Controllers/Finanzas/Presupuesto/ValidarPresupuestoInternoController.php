@@ -94,7 +94,7 @@ class ValidarPresupuestoInternoController extends Controller
                 $pagoCuota = PagoCuota::where('id_orden',$idOrden)->first();
                 $pagoCuotaDetalle =PagoCuotaDetalle::where('id_pago_cuota',$pagoCuota->id_pago_cuota)->get();
                 foreach ($pagoCuotaDetalle as $value) {
-                    if($value->id_estado ==6){
+                    if($value->id_estado ==6 || $value->id_estado ==5){
                         $tieneUnPagoEfectuado=true;
                     }
                 }
@@ -156,7 +156,9 @@ class ValidarPresupuestoInternoController extends Controller
                     'monto_acumulado_partidas_presupuesto_interno' => floatval($montoAcumuladoDePartida),
                     'monto_sin_vinculo_con_presupuesto_interno' => floatval($montoSinVinculoConPresupuestoInterno),
                     'monto_pago_ingresado' => floatval($totalPago),
+                    'tiene_pago_efectuado_en_cuotas' => ($tieneUnPagoEfectuado),
                     'validacion_partidas_con_presupuesto_interno' => $validacionDePartidaConPresupuestoInternoList
+                    
                 ];
             }else{
                 $data = [
@@ -166,6 +168,7 @@ class ValidarPresupuestoInternoController extends Controller
                     'monto_acumulado_partidas_presupuesto_interno' => 0,
                     'monto_sin_vinculo_con_presupuesto_interno' => 0,
                     'monto_pago_ingresado' => floatval($totalPago),
+                    'tiene_pago_efectuado_en_cuotas' => ($tieneUnPagoEfectuado),
                     'validacion_partidas_con_presupuesto_interno' => []
                 ];  
             }

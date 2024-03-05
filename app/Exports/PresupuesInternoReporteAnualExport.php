@@ -71,33 +71,13 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                 ],
             ],
 
-            'D1' => [
-                'font' => [
-                    'size' => 9
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-                'quotePrefix'    => true
-            ],
-            'E1' => [
-                'font' => [
-                    'size' => 9
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-                'quotePrefix'    => true
-            ],
             'C' => [
                 'font' => [
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -113,6 +93,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -128,6 +110,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -143,6 +127,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -158,6 +144,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true

@@ -94,7 +94,7 @@ class ValidarPresupuestoInternoController extends Controller
                 $pagoCuota = PagoCuota::where('id_orden',$idOrden)->first();
                 $pagoCuotaDetalle =PagoCuotaDetalle::where('id_pago_cuota',$pagoCuota->id_pago_cuota)->get();
                 foreach ($pagoCuotaDetalle as $value) {
-                    if($value->id_estado ==6 || $value->id_estado ==5){
+                    if($value->id_estado ==6){
                         $tieneUnPagoEfectuado=true;
                     }
                 }

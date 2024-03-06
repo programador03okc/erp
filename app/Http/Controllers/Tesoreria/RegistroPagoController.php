@@ -22,6 +22,7 @@ use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
 use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Moneda;
+use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
@@ -590,6 +591,28 @@ class RegistroPagoController extends Controller
 
                 }
             }
+
+            //* buscar en tabla de historial finanzas.historial_presupuesto_interno_saldo y actualizar el campo id_pago (si es en cuotas solo se registra una vez el id_pago, ya que se afecta por el total en el primer envio a pago)
+            if($request->id_requerimiento_pago >0){
+               $historialPresupuestoInternoSaldo= HistorialPresupuestoInternoSaldo::where([['id_requerimiento_pago',$request->id_requerimiento_pago],['tipo','SALIDA'],['estado',3]])->get();
+               foreach ($historialPresupuestoInternoSaldo as  $value) {
+                    if($value->id_pago == null){
+                        $actualiarHistorial = HistorialPresupuestoInternoSaldo::find($value->id);
+                        $actualiarHistorial->id_pago = $registroPago->id_pago;
+                        $actualiarHistorial->save();
+                    }
+               }
+            }elseif($request->id_oc > 0){
+                $historialPresupuestoInternoSaldo= HistorialPresupuestoInternoSaldo::where([['id_orden',$request->id_oc],['tipo','SALIDA'],['estado',3]])->get();
+                foreach ($historialPresupuestoInternoSaldo as  $value) {
+                    if($value->id_pago == null){
+                        $actualiarHistorial = HistorialPresupuestoInternoSaldo::find($value->id);
+                        $actualiarHistorial->id_pago = $registroPago->id_pago;
+                        $actualiarHistorial->save();
+                    }
+                }
+            }
+            // 
 
             DB::commit();
 

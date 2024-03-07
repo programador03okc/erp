@@ -164,7 +164,10 @@ class PresupuestoInternoDetalle extends Model
             ->get();
 
             foreach ($historial as $k_h => $v_h) {
-                if ($v_h->registro == '2' || ($v_h->partida!= '03.01.01.01' && $v_h->id_presupuesto_interno != 39) ) {
+                if (
+                    $v_h->registro == '2'
+                    // || ($v_h->partida!= '03.01.01.01' && $v_h->id_presupuesto_interno != 39)
+                    ) {
 
                     // if ($v_h->partida!= '03.01.01.01' && $v_h->id_presupuesto_interno != 39){
 
@@ -219,27 +222,27 @@ class PresupuestoInternoDetalle extends Model
             }
 
             foreach ($historial as $k_h => $v_h) {
-                PresupuestoInternoDetalle::replicaAux($v_h->id_presupuesto_interno_detalle);
+                PresupuestoInternoDetalle::replicaAux($v_h->id_presupuesto_interno_detalle, $nombre_mes_siguiente, $mes_siguiente);
             }
         }
 
         return ["presupuesto_interno"=>$presupuesto_interno];
     }
-    public static function replicaAux($id_presupuesto_interno_detalle)
+    public static function replicaAux($id_presupuesto_interno_detalle, $mes, $mes_siguiente)
     {
         $presupuesto_interno_destalle= PresupuestoInternoDetalle::find($id_presupuesto_interno_detalle);
-        $presupuesto_interno_destalle->enero                    = $presupuesto_interno_destalle->enero_aux;
-        $presupuesto_interno_destalle->febrero                  = $presupuesto_interno_destalle->febrero_aux;
-        $presupuesto_interno_destalle->marzo                    = $presupuesto_interno_destalle->marzo_aux;
-        $presupuesto_interno_destalle->abril                    = $presupuesto_interno_destalle->abril_aux;
-        $presupuesto_interno_destalle->mayo                     = $presupuesto_interno_destalle->mayo_aux;
-        $presupuesto_interno_destalle->junio                    = $presupuesto_interno_destalle->junio_aux;
-        $presupuesto_interno_destalle->julio                    = $presupuesto_interno_destalle->julio_aux;
-        $presupuesto_interno_destalle->agosto                   = $presupuesto_interno_destalle->agosto_aux;
-        $presupuesto_interno_destalle->setiembre                = $presupuesto_interno_destalle->setiembre_aux;
-        $presupuesto_interno_destalle->octubre                  = $presupuesto_interno_destalle->octubre_aux;
-        $presupuesto_interno_destalle->noviembre                = $presupuesto_interno_destalle->noviembre_aux;
-        $presupuesto_interno_destalle->diciembre                = $presupuesto_interno_destalle->diciembre_aux;
+        $presupuesto_interno_destalle->$mes = $presupuesto_interno_destalle->$mes_siguiente;
+        // $presupuesto_interno_destalle->febrero                  = $presupuesto_interno_destalle->febrero_aux;
+        // $presupuesto_interno_destalle->marzo                    = $presupuesto_interno_destalle->marzo_aux;
+        // $presupuesto_interno_destalle->abril                    = $presupuesto_interno_destalle->abril_aux;
+        // $presupuesto_interno_destalle->mayo                     = $presupuesto_interno_destalle->mayo_aux;
+        // $presupuesto_interno_destalle->junio                    = $presupuesto_interno_destalle->junio_aux;
+        // $presupuesto_interno_destalle->julio                    = $presupuesto_interno_destalle->julio_aux;
+        // $presupuesto_interno_destalle->agosto                   = $presupuesto_interno_destalle->agosto_aux;
+        // $presupuesto_interno_destalle->setiembre                = $presupuesto_interno_destalle->setiembre_aux;
+        // $presupuesto_interno_destalle->octubre                  = $presupuesto_interno_destalle->octubre_aux;
+        // $presupuesto_interno_destalle->noviembre                = $presupuesto_interno_destalle->noviembre_aux;
+        // $presupuesto_interno_destalle->diciembre                = $presupuesto_interno_destalle->diciembre_aux;
         $presupuesto_interno_destalle->save();
 
         return $presupuesto_interno_destalle;

@@ -71,33 +71,13 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                 ],
             ],
 
-            'D1' => [
-                'font' => [
-                    'size' => 9
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-                'quotePrefix'    => true
-            ],
-            'E1' => [
-                'font' => [
-                    'size' => 9
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-                'quotePrefix'    => true
-            ],
             'C' => [
                 'font' => [
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -113,6 +93,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -128,11 +110,47 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
                     'size' => 9
                 ],
                 'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
             ],
             'E1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
+            ],
+            'F' => [
+                'font' => [
+                    'size' => 9
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'F1' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ]
+            ],
+            'G' => [
+                'font' => [
+                    'size' => 9
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'G1' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
@@ -146,6 +164,8 @@ class PresupuesInternoReporteAnualExport implements FromView, WithStyles, WithCo
             'C' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'D' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

@@ -135,18 +135,19 @@ class PresupuestoInternoDetalle extends Model
       return floatval(str_replace(",", "", $this->diciembre_aux));
     }
     public static function cierreMensual(){
-        // $mes_actual = date("m");
-        // $mes_siguiente = date('m', strtotime('+1 month'));
-        $mes_actual = "01";
-        $mes_siguiente = "02";
+        $mes_actual = date("m", strtotime('-1 month'));
+        $mes_siguiente = date('m');
+        // $mes_actual = "01";
+        // $mes_siguiente = "02";
         $año_actua = date('Y');
 
         // return [$mes_actual, $mes_siguiente, $año_actua];
         $presupuesto_interno = PresupuestoInterno::where('estado',2)
         ->whereYear('fecha_registro',$año_actua)
-        ->where('id_presupuesto_interno',51)
+        // ->where('id_presupuesto_interno',37)39
+        ->whereIn('id_presupuesto_interno',[37,39])
         ->get();
-
+        // return $presupuesto_interno;
         $nombre_mes = ConfiguracionHelper::mesNumero($mes_actual);
         $nombre_mes_siguiente = ConfiguracionHelper::mesNumero($mes_siguiente);
         // return $nombre_mes_siguiente;
@@ -163,19 +164,26 @@ class PresupuestoInternoDetalle extends Model
             ->get();
 
             foreach ($historial as $k_h => $v_h) {
-                if ($v_h->registro == '2') {
+                if ($v_h->registro == '2' || ($v_h->partida!= '03.01.01.01' && $v_h->id_presupuesto_interno != 39) ) {
 
-                    $saldo_mes_actual = floatval(str_replace(",", "", $v_h->$mes_aux)); // saldo del mes actual
-                    $saldo_mes_actual = ($saldo_mes_actual>0?$saldo_mes_actual:0); // valido que el saldo no sea negativo
+                    // if ($v_h->partida!= '03.01.01.01' && $v_h->id_presupuesto_interno != 39){
 
-                    $inicio_mes_siguiente = ($nombre_mes!=='diciembre'?floatval(str_replace(",", "", $v_h->$nombre_mes_siguiente)):0) ;
+                    // }
+                    $saldo_mes_actual = floatval(str_replace(",", "", $v_h->$mes_aux)); // saldo del mes actual (febrero)
+                    $saldo_mes_actual = ($saldo_mes_actual>0?$saldo_mes_actual:0); // valido que el saldo no sea negativo (febrero)
+
+                    $inicio_mes_siguiente = ($nombre_mes!=='diciembre'?floatval(str_replace(",", "", $v_h->$nombre_mes_siguiente)):0) ; // mes de (marzo)
                     // return [$inicio_mes_siguiente,$saldo_mes_actual];
-                    $saldo_mes_siguiente =  $saldo_mes_actual + $inicio_mes_siguiente;
+                    $saldo_mes_siguiente =  $saldo_mes_actual + $inicio_mes_siguiente; // campo de mes el que visualiza el usuario
 
 
 
                     $mes_siguiente = ($nombre_mes!=='diciembre'?$mes_siguiente:'saldo_anual'); //
-                    // return [$mes_siguiente, number_format($saldo_mes_siguiente, 2, '.', ',')];
+                    // return [
+                    //     $mes_siguiente,
+                    //     number_format($saldo_mes_siguiente, 2, '.', ','),
+                    //     $mes_siguiente
+                    // ];
                     // modifica el saldo del mes siguiente
                     $presupuesto_interno_detalle= PresupuestoInternoDetalle::find($v_h->id_presupuesto_interno_detalle);
                     // $presupuesto_interno_detalle->$nombre_mes_siguiente = number_format($saldo_mes_siguiente, 2, '.', ',');

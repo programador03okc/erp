@@ -1049,9 +1049,9 @@ class RequerimientoPendienteView {
                             let closeDiv = '</div>';
 
                             if (row.cantidad_tipo_servicio > 0) {
-                                return (openDiv + btnVerDetalleRequerimiento + btnAtenderAlmacen + btnVercuadroCostos + btnVerAdjuntosModal + (([17, 27, 1, 3, 77, 78,194].includes(auth_user.id_usuario)) ? (btnRetornarAListaPendientes) : '') + closeDiv);
+                                return (openDiv + btnVerDetalleRequerimiento + btnAtenderAlmacen + btnVercuadroCostos + btnVerAdjuntosModal + (([17, 27, 1, 3, 77, 78,194].includes(auth_user.id_usuario)) || auth_user.roles.map(item => item.id_rol).includes(17) ? (btnRetornarAListaPendientes) : '') + closeDiv);
                             } else {
-                                return (openDiv + btnVerDetalleRequerimiento + btnAtenderAlmacen + btnVercuadroCostos + btnVerAdjuntosModal + (([17, 27, 1, 3, 77,78,194].includes(auth_user.id_usuario)) ? (btnRetornarAListaPendientes) : '') + closeDiv);
+                                return (openDiv + btnVerDetalleRequerimiento + btnAtenderAlmacen + btnVercuadroCostos + btnVerAdjuntosModal + (([17, 27, 1, 3, 77,78,194].includes(auth_user.id_usuario)) || auth_user.roles.map(item => item.id_rol).includes(17) ? (btnRetornarAListaPendientes) : '') + closeDiv);
                             }
                         }
 

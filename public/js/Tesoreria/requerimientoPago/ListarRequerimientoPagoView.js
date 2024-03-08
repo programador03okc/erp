@@ -396,6 +396,18 @@ class ListarRequerimientoPagoView {
 
             }
         }
+        
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            tempPartidasActivas[p].presupuesto_mes = Util.formatoNumero(tempPartidasActivas[p].presupuesto_mes,2,'.','');
+            tempPartidasActivas[p].presupuesto_total= Util.formatoNumero(tempPartidasActivas[p].presupuesto_total,2,'.','');
+            tempPartidasActivas[p].presupuesto_utilizado= Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado,2,'.','');
+            tempPartidasActivas[p].presupuesto_utilizado_al_cambio= Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado_al_cambio,2,'.','');
+            tempPartidasActivas[p].saldo_mes= Util.formatoNumero(tempPartidasActivas[p].saldo_mes,2,'.','');
+            tempPartidasActivas[p].saldo_total= Util.formatoNumero(tempPartidasActivas[p].saldo_total,2,'.','');
+            tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion= Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2,'.','');
+            tempPartidasActivas[p].total_saldo_mes_disponible= Util.formatoNumero(tempPartidasActivas[p].total_saldo_mes_disponible,2,'.','');
+
+        }
 
 
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);

@@ -11,6 +11,7 @@ use App\Models\Almacen\Producto;
 use App\Models\Almacen\Requerimiento;
 use App\Models\Configuracion\LogActividad;
 use App\Models\Rrhh\Persona;
+use Carbon\Carbon;
 use Dotenv\Regex\Success;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -181,6 +182,7 @@ class MapeoProductosController extends Controller
             $valorAtenrior = DetalleRequerimiento::find($idDetalleRequerimiento);
             $detalle = DetalleRequerimiento::find($idDetalleRequerimiento);
             $detalle->id_producto =$nuevoIdProducto;
+            $detalle->fecha_mapeo =Carbon::now();
             $detalle->save();
 
             $this->actualizarUnidadMedidaDetalleRequerimiento($idDetalleRequerimiento,$nuevoIdProducto);
@@ -232,6 +234,7 @@ class MapeoProductosController extends Controller
             $duplicaDetalleRequerimiento->motivo = $detalleOrigen->motivo;
             $duplicaDetalleRequerimiento->id_partida_pi = $detalleOrigen->id_partida_pi;
             $duplicaDetalleRequerimiento->fecha_registro = date('Y-m-d H:i:s');
+            $duplicaDetalleRequerimiento->fecha_mapeo = $nuevoIdProducto>0?date('Y-m-d H:i:s'):null;
             $duplicaDetalleRequerimiento->save();
 
 

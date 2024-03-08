@@ -1089,6 +1089,14 @@ class RequerimientoController extends Controller
          
     }
 
+    public function getTipoCambioVenta($fecha)
+    {
+        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
+            ->orderBy('fecha', 'DESC')->first();
+
+        return ($tc !== null ? $tc->venta : 0);
+    }
+
     public function guardarRequerimiento(Request $request)
     {
         // dd($request->all());
@@ -1185,6 +1193,7 @@ class RequerimientoController extends Controller
             $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
             $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
             $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
+            $requerimiento->tipo_cambio = $this->getTipoCambioVenta(new Carbon());
             $requerimiento->save();
             $requerimiento->adjuntoOtrosAdjuntos = $request->archivoAdjuntoRequerimiento1;
             $requerimiento->adjuntoOrdenes = $request->archivoAdjuntoRequerimiento2;

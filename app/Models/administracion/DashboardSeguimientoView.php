@@ -30,7 +30,7 @@ class DashboardSeguimientoView extends Model
             $minutosParaEntrega = $diferencia->i;
 
             if($fechaHoy > $fecha_entrega){
-                $result = '(Plazo Vencido)';
+                $result = '<span class="text-danger">(Plazo Vencido)<span>';
             }else{
                 
                 $result = $diasParaEntrega . 'd ' . $horasParaEntrega . 'h ' . $minutosParaEntrega . 'm';
@@ -91,14 +91,21 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">APROBACIÓN</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaAprobacionCdp != null ? $fechaAprobacionCdp : '') . '</div>
             
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+
             <div class="tiempo-ingreso-area">' . ($fechaAprobacionCdp != null ? $fechaAprobacionCdp : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-left fa-lg azul"></i>
+                        <i class="fas fa-long-arrow-alt-left fa-lg azul" style="font-size:5em;"></i>
                     </div>
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-right fa-lg rojo"></i>
+                        <i class="fas fa-long-arrow-alt-right fa-lg rojo" style="font-size:5em;"></i>
                     </div>
                 </div>
             </div>
@@ -189,10 +196,10 @@ class DashboardSeguimientoView extends Model
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-left fa-lg azul"></i>
+                        <i class="fas fa-long-arrow-alt-left fa-lg azul" style="font-size:5em;"></i>
                     </div>
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-right fa-lg rojo"></i>
+                        <i class="fas fa-long-arrow-alt-right fa-lg rojo" style="font-size:5em;"></i>
                     </div>
                 </div>
             </div>
@@ -258,14 +265,25 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">SALIDA ODE</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
             
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+
+
             <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-left fa-lg azul"></i>
+                        <i class="fas fa-long-arrow-alt-left fa-lg azul" style="font-size:5em;"></i>
                     </div>
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-right fa-lg rojo"></i>
+                        <i class="fas fa-long-arrow-alt-right fa-lg rojo" style="font-size:5em;"></i>
                     </div>
                 </div>
             </div>
@@ -319,14 +337,24 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">FIN TRANSFORMACIÓN</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
         
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            
             <div class="tiempo-ingreso-area">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-left fa-lg azul"></i>
+                        <i class="fas fa-long-arrow-alt-left fa-lg azul" style="font-size:5em;"></i>
                     </div>
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-right fa-lg rojo"></i>
+                        <i class="fas fa-long-arrow-alt-right fa-lg rojo" style="font-size:5em;"></i>
                     </div>
                 </div>
             </div>
@@ -386,14 +414,22 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">RETORNO DE GUIA CELLADA</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaCellada != null ? $fechaRetornioGuiaCellada : '') . '</div>
         
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            <div class="indicador-semaforo"></div>
+            <div class="actividad">&nbsp;</div>
+            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+
+
             <div class="tiempo-ingreso-area">' . ($fechaEntregadoConforme != null ? $fechaEntregadoConforme : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-left fa-lg azul"></i>
+                        <i class="fas fa-long-arrow-alt-left fa-lg azul" style="font-size:5em;"></i>
                     </div>
                     <div style="display:block; width: 70px;">
-                        <i class="fas fa-long-arrow-alt-right fa-lg rojo"></i>
+                        <i class="fas fa-long-arrow-alt-right fa-lg rojo" style="font-size:5em;"></i>
                     </div>
                 </div>
             </div>

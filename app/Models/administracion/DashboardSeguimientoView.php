@@ -11,7 +11,7 @@ class DashboardSeguimientoView extends Model
     protected $table = 'administracion.dashboard_seguimiento_view';
     protected $primaryKey = 'id';
     public $timestamps = false;
-    protected $appends = ['dias_para_entrega','comercial','compras','almacen','cas'];
+    protected $appends = ['dias_para_entrega','comercial','compras','almacen','cas','despacho'];
 
 
 
@@ -320,6 +320,73 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
         
             <div class="tiempo-ingreso-area">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
+            <div class="flechas">
+                <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
+                    <div style="display:block; width: 70px;">
+                        <i class="fas fa-long-arrow-alt-left fa-lg azul"></i>
+                    </div>
+                    <div style="display:block; width: 70px;">
+                        <i class="fas fa-long-arrow-alt-right fa-lg rojo"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="tiempo-salida-area">' . $tiempoTotalSalida . '</div>
+
+        </div>
+        ';
+
+        return $html;
+    }
+
+    
+    public function getDespachoAttribute()
+    {
+
+        
+        if ($this->attributes['fecha_salida_despacho'] != null) {
+            $fechaSalidaDespacho = Carbon::parse($this->attributes['fecha_salida_despacho'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaSalidaDespacho = Carbon::make(null);
+        }
+
+        if ($this->attributes['fecha_entregado_conforme'] != null) {
+            $fechaEntregadoConforme = Carbon::parse($this->attributes['fecha_entregado_conforme'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaEntregadoConforme = Carbon::make(null);
+        }
+
+        $fechaRetornioGuiaCellada='';
+
+        // obtener tiempo total salida
+        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme);
+
+        // obtener tiempo global de area
+        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme];
+        for ($i = 0; $i < count($fechas) - 1; $i++) {
+            $carbonFecha1 = Carbon::parse($fechas[$i]);
+            $carbonFecha2 = Carbon::parse($fechas[$i+1]);
+            $diferencia = $carbonFecha1->diff($carbonFecha2);
+        }
+        $horasGlobalArea = $diferencia->h;
+        $minutosGlobalArea = $diferencia->i;
+
+
+        $html= '
+        <div class="grid">
+            <div class="tiempo-global-area">' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaDespacho != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">SALIDA DESPACHO</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaSalidaDespacho != null ? $fechaSalidaDespacho : '') . '</div>
+            
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaEntregadoConforme != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">ENTREGADO CONFORME</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaEntregadoConforme != null ? $fechaEntregadoConforme : '') . '</div>
+        
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaRetornioGuiaCellada != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">RETORNO DE GUIA CELLADA</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaCellada != null ? $fechaRetornioGuiaCellada : '') . '</div>
+        
+            <div class="tiempo-ingreso-area">' . ($fechaEntregadoConforme != null ? $fechaEntregadoConforme : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">

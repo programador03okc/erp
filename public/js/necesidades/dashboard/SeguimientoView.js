@@ -84,7 +84,7 @@ class SeguimientoView {
                 <td class="text-center">${element.compras}</td>
                 <td class="text-center">${element.almacen}</td>
                 <td class="text-center">${element.cas}</td>
-                <td class="text-center"></td>
+                <td class="text-center">${element.despacho}</td>
             </tr>
                 `;
             });

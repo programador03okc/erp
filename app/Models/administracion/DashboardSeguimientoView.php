@@ -71,6 +71,7 @@ class DashboardSeguimientoView extends Model
             $carbonFecha2 = Carbon::parse($fechas[$i+1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
+        $diasGlobalArea = $diferencia->d;
         $horasGlobalArea = $diferencia->h;
         $minutosGlobalArea = $diferencia->i;
 
@@ -78,7 +79,7 @@ class DashboardSeguimientoView extends Model
 
         return '
         <div class="grid">
-            <div class="tiempo-global-area">' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaPublicacionOrden != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">PUBLICACION</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaPublicacionOrden != null ? $fechaPublicacionOrden : '') . '</div>
@@ -159,13 +160,14 @@ class DashboardSeguimientoView extends Model
             $carbonFecha2 = Carbon::parse($fechas[$i+1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
+        $diasGlobalArea = $diferencia->d;
         $horasGlobalArea = $diferencia->h;
         $minutosGlobalArea = $diferencia->i;
 
 
         $html= '
         <div class="grid">
-            <div class="tiempo-global-area">' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimoMapeo != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">MAPEO PRODUCTOS</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaUltimoMapeo != null ? $fechaUltimoMapeo : '') . '</div>
@@ -243,14 +245,15 @@ class DashboardSeguimientoView extends Model
             $carbonFecha2 = Carbon::parse($fechas[$i+1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
+        $diasGlobalArea = $diferencia->d;
         $horasGlobalArea = $diferencia->h;
         $minutosGlobalArea = $diferencia->i;
 
 
         $html= '
         <div class="grid">
-            <div class="tiempo-global-area">' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
-            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimoIngresoAlmacen != null ? 'verde' : 'rojo') . '"></i></div>
+        <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+        <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimoIngresoAlmacen != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">INGRESO PRODUCTO</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaUltimoIngresoAlmacen != null ? $fechaUltimoIngresoAlmacen : '') . '</div>
             ';
@@ -322,13 +325,14 @@ class DashboardSeguimientoView extends Model
             $carbonFecha2 = Carbon::parse($fechas[$i+1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
+        $diasGlobalArea = $diferencia->d;
         $horasGlobalArea = $diferencia->h;
         $minutosGlobalArea = $diferencia->i;
 
 
         $html= '
         <div class="grid">
-            <div class="tiempo-global-area">' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaInicioCAS != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">INICIO TRANSFORMACIÓN</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaInicioCAS != null ? $fechaInicioCAS : '') . '</div>
@@ -395,13 +399,14 @@ class DashboardSeguimientoView extends Model
             $carbonFecha2 = Carbon::parse($fechas[$i+1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
+        $diasGlobalArea = $diferencia->d;
         $horasGlobalArea = $diferencia->h;
         $minutosGlobalArea = $diferencia->i;
 
 
         $html= '
         <div class="grid">
-            <div class="tiempo-global-area">' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaDespacho != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">SALIDA DESPACHO</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaSalidaDespacho != null ? $fechaSalidaDespacho : '') . '</div>

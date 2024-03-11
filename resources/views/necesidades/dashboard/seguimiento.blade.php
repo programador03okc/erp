@@ -11,13 +11,40 @@
 
     }
 
-    thead{
+    thead {
         background-color: lightgray;
     }
 
-    table.table tbody tr td{
+    table.table tbody tr td {
         vertical-align: top;
     }
+
+    .tableFixHead {
+        overflow: auto;
+        height: 85vh;
+    }
+
+    .tableFixHead thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    /* Just common table stuff. Really. */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 8px 16px;
+    }
+
+    th {
+        background: #eee;
+    }
+
 
     .rojo {
         color: #e66363;
@@ -100,9 +127,9 @@
 <div class="contenedor">
     <div class="row">
         <div class="col-md-12">
-            <div class="box box-widget">
-                <div class="box-body">
-                    <div class="table-responsive">
+            <div class="">
+                <div class="">
+                    <div class="table-responsive tableFixHead">
                         <table class="table table-condensed table-bordered" id="tablaSeguimiento" width="100%">
                             <thead>
                                 <tr>
@@ -119,14 +146,15 @@
                             <tbody>
                             </tbody>
                         </table>
-
-                        <nav aria-label="Page navigation" class="text-center">
+                        <nav aria-label="Page navigation" class="text-center" style="height: 50px;">
                             <ul class="pagination" id="paginadorSeguimiento">
-      
                             </ul>
                         </nav>
                     </div>
+
                 </div>
+
+
             </div>
         </div>
     </div>
@@ -151,12 +179,8 @@
 
 
 
-            
+
 
         });
-
-
-
-
     </script>
     @endsection

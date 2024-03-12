@@ -341,6 +341,10 @@ Route::middleware(['auth'])->group(function () {
 	 */
 	Route::name('necesidades.')->prefix('necesidades')->group(function () {
 		Route::get('index', [NecesidadesController::class, 'view_main_necesidades'])->name('index');
+		Route::name('dashboard.')->prefix('dashboard')->group(function () {
+			Route::get('seguimiento', [NecesidadesController::class, 'view_dashboard_seguimiento'])->name('seguimiento');
+			Route::get('listar', [NecesidadesController::class, 'listarSeguimiento'])->name('listar');
+		});
 		Route::name('requerimiento.')->prefix('requerimiento')->group(function () {
 
 			Route::name('elaboracion.')->prefix('elaboracion')->group(function () {
@@ -410,7 +414,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('lista-cuadro-presupuesto', [RequerimientoPagoController::class, 'listaCuadroPresupuesto'])->name('lista-cuadro-presupuesto');
 				Route::post('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
-				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
+				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}/{mesAfectacion}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
 				// Route::get('data-requerimientos-vinculados-con-partida/{tipoPresupuesto}/{idPartida}', [RequerimientoController::class, 'dataRequerimientosVinculadosConPartida'])->name('data-requerimientos-vinculados-con-partida');
@@ -520,7 +524,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('anular-adjunto-requerimiento-pago-detalle', [RequerimientoPagoController::class, 'anularAdjuntoRequerimientoPagoDetalle'])->name('anular-adjunto-requerimiento-pago-detalle');
 				Route::get('listar_trabajadores', [ProyectosController::class, 'listar_trabajadores'])->name('listar-trabajadores');
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
-				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
+				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}/{mesAfectacion}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 				Route::post('requerimiento-sustentado', [RequerimientoPagoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');

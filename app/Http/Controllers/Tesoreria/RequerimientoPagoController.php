@@ -81,6 +81,7 @@ class RequerimientoPagoController extends Controller
         $tiposDestinatario = RequerimientoPagoTipoDestinatario::mostrar();
         $empresas = Empresa::mostrar();
         $grupos = Grupo::mostrar();
+        $roles = Auth::user()->getAllRol();
         $divisiones = Division::mostrar();
         $monedas = Moneda::mostrar();
         $unidadesMedida = UnidadMedida::mostrar();
@@ -114,6 +115,7 @@ class RequerimientoPagoController extends Controller
                 'prioridades',
                 'empresas',
                 'grupos',
+                'roles',
                 'tiposRequerimientoPago',
                 'periodos',
                 'monedas',
@@ -376,6 +378,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_estado = 1;
             $requerimientoPago->id_trabajador = $request->id_trabajador > 0 ? $request->id_trabajador : null;
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimientoPago->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
             // $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
@@ -960,6 +963,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_cc = $request->id_cc > 0 ? $request->id_cc : null;
             $requerimientoPago->id_trabajador = $request->id_trabajador > 0 ? $request->id_trabajador : null;
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimientoPago->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
             $requerimientoPago->id_condicion_softlink = (isset($request->id_condicion_softlink) && $request->id_condicion_softlink > 0) ? $request->id_condicion_softlink : null;
@@ -1355,7 +1359,7 @@ class RequerimientoPagoController extends Controller
                 'cuentaContribuyente.moneda',
                 'cuentaContribuyente.tipoCuenta',
                 'cuadroCostos',
-                'proyecto',
+                'proyecto.centroCosto',
                 'adjunto.documentoCompra.DocumentoCompraDetalle',
                 'presupuestoInterno',
                 // 'id_condicion_softlink'
@@ -2268,9 +2272,9 @@ class RequerimientoPagoController extends Controller
             'adm_estado_doc.bootstrap_color',
             'alm_und_medida.abreviatura'
         )
-            ->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
+            ->leftJoin('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
             ->leftJoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'requerimiento_pago_detalle.id_unidad_medida')
-            ->join('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'requerimiento_pago_detalle.id_estado')
+            ->leftJoin('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'requerimiento_pago_detalle.id_estado')
             ->leftJoin('configuracion.sis_moneda', 'sis_moneda.id_moneda', '=', 'requerimiento_pago.id_moneda')
             ->leftJoin('finanzas.presupuesto_interno_detalle', 'presupuesto_interno_detalle.id_presupuesto_interno_detalle', '=', 'requerimiento_pago_detalle.id_partida_pi')
             ->leftJoin('finanzas.presup_par', 'presup_par.id_partida', '=', 'requerimiento_pago_detalle.id_partida')
@@ -2279,7 +2283,7 @@ class RequerimientoPagoController extends Controller
                 ['requerimiento_pago_detalle.id_requerimiento_pago', '=', $id_requerimiento],
                 ['requerimiento_pago_detalle.id_partida_pi', '=', $id_partida],
                 ['requerimiento_pago_detalle.id_estado', '!=', 7]
-            ]);
+            ])->get();
 
         return response()->json($detalles);
     }

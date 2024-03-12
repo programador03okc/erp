@@ -21,4 +21,9 @@ class Proyecto extends Model
             ->get();
         return $data;
     }
+
+    public function centroCosto()
+    {
+        return $this->hasOne('App\Models\Finanzas\CentroCosto', 'id_centro_costo', 'id_centro_costo');
+    }
 }

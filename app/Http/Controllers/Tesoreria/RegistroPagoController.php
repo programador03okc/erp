@@ -22,6 +22,7 @@ use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
 use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Moneda;
+use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
@@ -566,16 +567,6 @@ class RegistroPagoController extends Controller
                         ->where('id_requerimiento_pago', $request->id_requerimiento_pago)
                         ->update(['id_estado' => 6]); //pagada
 
-                    //  aplicar afectación de presupuesto
-                    // $requerimientoPago =  RequerimientoPago::find($request->id_requerimiento_pago);
-                    // if ($requerimientoPago->id_presupuesto_interno > 0) {
-                    //     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($request->id_requerimiento_pago, floatval($request->total_pago));
-
-                    //     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R', $request->fecha_pago, 'Registrar afectación regular');
-
-                    //     $comentario='Registro de pago total - requerimiento de pago '.($requerimientoPago->codigo??'');
-                    //     LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
-                    // }
                 }
             } else {
                 if ($request->id_oc !== null) {
@@ -588,35 +579,40 @@ class RegistroPagoController extends Controller
                     $or->estado_pago = $nuevoEstado;//con saldo
                     $or->save(); 
                     
-
-                    $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($request->id_oc, floatval($request->total_pago));
-                    // Debugbar::info('prorrateo orden compra');
-                    // Debugbar::info($detalleArray);
-
-                    PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($request->id_oc, $registroPago->id_pago, $detalleArray, 'R',  $request->fecha_pago,  'Registrar afectación regular');
-
-                    $comentario='Registro de pago parcial - orden '.($or->codigo??'');
-                    LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
+ 
+                    // $comentario='Registro de pago parcial - orden '.($or->codigo??'');
+                    // LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
 
                 } else if ($request->id_requerimiento_pago !== null) {
                     DB::table('tesoreria.requerimiento_pago')
                         ->where('id_requerimiento_pago', $request->id_requerimiento_pago)
                         ->update(['id_estado' => 9]); //con saldo
 
-                    //  aplicar afectación de presupuesto
-                    // $requerimientoPago =  RequerimientoPago::find($request->id_requerimiento_pago);
-                    // if ($requerimientoPago->id_presupuesto_interno > 0) {
-                    //     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($request->id_requerimiento_pago, floatval($request->total_pago));
-                    //     // Debugbar::info('prorrateo requerimiento pago');
-                    //     // Debugbar::info(floatval($request->total_pago),floatval($request->total));
-                    //     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($request->id_requerimiento_pago, $registroPago->id_pago, $detalleArray, 'R',$request->fecha_pago, 'Registrar afectación regular');
 
-                    //     $comentario='Registro de pago parcial - requerimiento de pago '.($requerimientoPago->codigo??'');
-                    //     LogActividad::registrar(Auth::user(), 'Nuevo registro de pago', 4, $registroPago->getTable(), null, $registroPago, $comentario,'Tesorería');
-
-                    // }
                 }
             }
+
+            //* buscar en tabla de historial finanzas.historial_presupuesto_interno_saldo y actualizar el campo id_pago (si es en cuotas solo se registra una vez el id_pago, ya que se afecta por el total en el primer envio a pago)
+            if($request->id_requerimiento_pago >0){
+               $historialPresupuestoInternoSaldo= HistorialPresupuestoInternoSaldo::where([['id_requerimiento_pago',$request->id_requerimiento_pago],['tipo','SALIDA'],['estado',3]])->get();
+               foreach ($historialPresupuestoInternoSaldo as  $value) {
+                    if($value->id_pago == null){
+                        $actualiarHistorial = HistorialPresupuestoInternoSaldo::find($value->id);
+                        $actualiarHistorial->id_pago = $registroPago->id_pago;
+                        $actualiarHistorial->save();
+                    }
+               }
+            }elseif($request->id_oc > 0){
+                $historialPresupuestoInternoSaldo= HistorialPresupuestoInternoSaldo::where([['id_orden',$request->id_oc],['tipo','SALIDA'],['estado',3]])->get();
+                foreach ($historialPresupuestoInternoSaldo as  $value) {
+                    if($value->id_pago == null){
+                        $actualiarHistorial = HistorialPresupuestoInternoSaldo::find($value->id);
+                        $actualiarHistorial->id_pago = $registroPago->id_pago;
+                        $actualiarHistorial->save();
+                    }
+                }
+            }
+            // 
 
             DB::commit();
 
@@ -750,6 +746,7 @@ class RegistroPagoController extends Controller
             } else if ($request->tipo == "orden") {
                 $oc = DB::table('logistica.log_ord_compra')
                     ->where('id_orden_compra', $request->id)->first();
+                $tieneUnPagoEfectuado=false;
                 //fue pagada?
                 if ($oc->estado_pago !== 6) {
                     //fue anulado?
@@ -762,21 +759,37 @@ class RegistroPagoController extends Controller
 
                         $msj = 'Se autorizó el pago de la orden exitosamente';
 
-                        // * aplicar afectación de presupuesto de requerimiento de logistico (Orden)
-                        $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($orden->id_orden_compra, floatval($orden->monto_total));
-                        PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($orden->id_orden_compra, null, $detalleArray, 'R',  $orden->fecha,  'Registrar afectación regular');
-                        $comentario='Autorizacion de pago - orden '.($orden->codigo??'');
-                        LogActividad::registrar(Auth::user(), 'Nueva autorizacion de pago', 4, $orden->getTable(), null, $orden, $comentario,'Tesorería');    
+                        $montoAfectar=floatval($orden->monto_total);
 
-                        if (isset($request->idPagoCuotaDetalle) && ($request->idPagoCuotaDetalle > 0)) {
-                            $pagoCuotaDetalle = PagoCuotaDetalle::where('id_pago_cuota_detalle', $request->idPagoCuotaDetalle)->first();
-                            $pagoCuotaDetalle->fecha_autorizacion = new Carbon();
-                            $pagoCuotaDetalle->id_estado = 5;
-                            $pagoCuotaDetalle->save();
-
-                            $msj = 'Se autorizó el pago de la cuota exitosamente';
+                        // evaluar si tiene pago en cuotas
+                        if($orden->tiene_pago_en_cuotas ==true){ // la orden tiene pago en cuotas
+                            $pagoCuota = PagoCuota::where('id_orden',$orden->id_orden_compra)->first();
+                            $pagoCuotaDetalle =PagoCuotaDetalle::where('id_pago_cuota',$pagoCuota->id_pago_cuota)->get();
+                            foreach ($pagoCuotaDetalle as $value) {
+                                if($value->id_estado ==6){
+                                    $tieneUnPagoEfectuado=true;
+                                }
+                            }
                         }
+                         
+                        if($tieneUnPagoEfectuado ==false){
+                            // no tiene ningun pago, debe pasar por registrar el gasto afectando al ppto interno
 
+                            // * aplicar afectación de presupuesto de requerimiento de logistico (Orden)
+                            $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($orden->id_orden_compra, $montoAfectar);
+                            PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($orden->id_orden_compra, null, $detalleArray, 'R',  $orden->fecha_autorizacion,  'Registrar afectación regular');
+                            $comentario='Autorizacion de pago - orden '.($orden->codigo??'');
+                            LogActividad::registrar(Auth::user(), 'Nueva autorizacion de pago', 4, $orden->getTable(), null, $orden, $comentario,'Tesorería');    
+
+                            if (isset($request->idPagoCuotaDetalle) && ($request->idPagoCuotaDetalle > 0)) {
+                                $pagoCuotaDetalle = PagoCuotaDetalle::where('id_pago_cuota_detalle', $request->idPagoCuotaDetalle)->first();
+                                $pagoCuotaDetalle->fecha_autorizacion = new Carbon();
+                                $pagoCuotaDetalle->id_estado = 5;
+                                $pagoCuotaDetalle->save();
+
+                                $msj = 'Se autorizó el pago de la cuota exitosamente';
+                            }
+                        }
                         $tipo = 'success';
                     } else {
                         $msj = 'La orden fue anulada';
@@ -847,7 +860,7 @@ class RegistroPagoController extends Controller
                         if ($orden->tiene_pago_en_cuotas == true) {
                             $pagoCuota = PagoCuota::where('id_orden', $request->id)->first();
                             if (isset($pagoCuota->id_pago_cuota)) {
-                                $pagoCuotaDetalle = PagoCuotaDetalle::where([['id_pago_cuota', $pagoCuota->id_pago_cuota], ['id_estado', 5]])->get();
+                                $pagoCuotaDetalle = PagoCuotaDetalle::where([['id_pago_cuota', $pagoCuota->id_pago_cuota]])->whereIn('id_estado', [1,5])->get();
                                 foreach ($pagoCuotaDetalle as $keyPcd => $pcd) {
                                     $updatePagoCuotaDetalle = PagoCuotaDetalle::find($pcd->id_pago_cuota_detalle);
                                     $updatePagoCuotaDetalle->id_estado = 7;
@@ -898,6 +911,7 @@ class RegistroPagoController extends Controller
         try {
             DB::beginTransaction();
 
+            $mensaje="";
             $pago = DB::table('tesoreria.registro_pago')
                 ->select(
                     'registro_pago.id_requerimiento_pago',
@@ -944,10 +958,20 @@ class RegistroPagoController extends Controller
             $registroPago = RegistroPago::find($id_pago);
             $registroPago->estado=7;
             $registroPago->save();
+
+            $pagoCuotaDetalle = PagoCuotaDetalle::where('id_pago',$id_pago)->get();
+            foreach ($pagoCuotaDetalle as $value) {
+                $pagoCuotaDetalleUpdate= PagoCuotaDetalle::find($value->id_pago_cuota_detalle);
+                $pagoCuotaDetalleUpdate->estado=7;
+                $pagoCuotaDetalleUpdate->save();
+            }
            
 
-            if($registroPago && $registroPago->estdo==7){
+            if($registroPago){
                 $mensaje = 'Se anulo correctamente';
+            }else{
+                $mensaje = 'No se pudo anular, Hubo un problama';
+
             }
 
             DB::commit();

@@ -89,7 +89,7 @@ class RequerimientoController extends Controller
         $grupos = Auth::user()->getAllGrupo();
         $idTrabajador = Auth::user()->id_trabajador;
         $idUsuario = Auth::user()->id_usuario;
-        $nombreUsuario = Auth::user()->trabajador->postulante->persona->nombre_completo;
+        $nombreUsuario = Auth::user()->nombre_corto;
         $monedas = Moneda::mostrar();
         $prioridades = Prioridad::mostrar();
         $tipo_requerimiento = TipoRequerimiento::mostrar();
@@ -457,6 +457,7 @@ class RequerimientoController extends Controller
             ->leftJoin('rrhh.rrhh_rol', 'alm_req.id_rol', '=', 'rrhh_rol.id_rol')
             ->leftJoin('administracion.adm_area', 'rrhh_rol.id_area', '=', 'adm_area.id_area')
             ->leftJoin('proyectos.proy_proyecto', 'alm_req.id_proyecto', '=', 'proy_proyecto.id_proyecto')
+            ->leftJoin('finanzas.centro_costo', 'centro_costo.id_centro_costo', '=', 'proy_proyecto.id_centro_costo')
             ->leftJoin('proyectos.proy_presup', 'alm_req.id_presupuesto', '=', 'proy_presup.id_presupuesto')
             ->leftJoin('rrhh.rrhh_perso as perso_natural', 'alm_req.id_persona', '=', 'perso_natural.id_persona')
             ->leftJoin('comercial.com_cliente', 'alm_req.id_cliente', '=', 'com_cliente.id_cliente')
@@ -488,6 +489,9 @@ class RequerimientoController extends Controller
                 'alm_req.id_proyecto',
                 'proy_proyecto.codigo as codigo_proyecto',
                 'proy_proyecto.descripcion as descripcion_proyecto',
+                'centro_costo.id_centro_costo as id_centro_costo',
+                'centro_costo.codigo as codigo_centro_costo',
+                'centro_costo.descripcion as descripcion_centro_costo',
                 'alm_req.id_periodo',
                 'adm_periodo.descripcion as periodo',
                 'alm_req.id_prioridad',
@@ -552,6 +556,7 @@ class RequerimientoController extends Controller
                 'presup.codigo as codigo_presupuesto_old',
                 'presup.descripcion as descripcion_presupuesto_old',
                 'alm_req.id_presupuesto_interno',
+                'alm_req.mes_afectacion',
                 'presupuesto_interno.codigo as codigo_presupuesto_interno',
                 'presupuesto_interno.descripcion as descripcion_presupuesto_interno',
                 'incidencia.codigo as codigo_incidencia',
@@ -593,6 +598,9 @@ class RequerimientoController extends Controller
                     'id_proyecto' => $data->id_proyecto,
                     'codigo_proyecto' => $data->codigo_proyecto,
                     'descripcion_proyecto' => $data->descripcion_proyecto,
+                    'id_centro_costo' => $data->id_centro_costo,
+                    'codigo_centro_costo' => $data->codigo_centro_costo,
+                    'descripcion_centro_costo' => $data->descripcion_centro_costo,
                     'id_periodo' => $data->id_periodo,
                     'periodo' => $data->periodo,
                     'estado_doc' => $data->estado_doc,
@@ -658,6 +666,7 @@ class RequerimientoController extends Controller
                     'division' => $data->division,
                     'nombre_trabajador' => $data->nombre_trabajador,
                     'id_presupuesto_interno' => $data->id_presupuesto_interno,
+                    'mes_afectacion' => $data->mes_afectacion,
                     'codigo_presupuesto_interno' => $data->codigo_presupuesto_interno,
                     'descripcion_presupuesto_interno' => $data->descripcion_presupuesto_interno,
                     'tipo_impuesto' => $data->tipo_impuesto > 0 ? $data->tipo_impuesto : '',
@@ -816,25 +825,46 @@ class RequerimientoController extends Controller
                     FROM finanzas.presupuesto_interno_detalle
                     WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
                     and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
-                    limit 1 ) AS presupuesto_interno_mes_partida "),
+                    limit 1 ) AS presupuesto_interno_mes_partida"),
+                    DB::raw("( SELECT
+                    CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =2 THEN presupuesto_interno_detalle.febrero_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =3 THEN presupuesto_interno_detalle.marzo_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =4 THEN presupuesto_interno_detalle.abril_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =5 THEN presupuesto_interno_detalle.mayo_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =6 THEN presupuesto_interno_detalle.junio_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =7 THEN presupuesto_interno_detalle.julio_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =8 THEN presupuesto_interno_detalle.agosto_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =9 THEN presupuesto_interno_detalle.setiembre_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =10 THEN presupuesto_interno_detalle.octubre_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =11 THEN presupuesto_interno_detalle.noviembre_aux
+                        WHEN (SELECT date_part('month', alm_req.fecha_registro)) =12 THEN presupuesto_interno_detalle.diciembre_aux
+                        ELSE ''
+                        END
+                    FROM finanzas.presupuesto_interno_detalle
+                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
+                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                    limit 1 ) AS presupuesto_interno_saldo_mes_disponible_partida"),
 
                     
-                    DB::raw("( SELECT SUM(total) AS total
+                    DB::raw("( SELECT COALESCE(SUM(total),0) AS total
                     FROM (
-                      SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) AS total
+                      SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) * (CASE WHEN r.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= r.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)  AS total
                       FROM almacen.alm_det_req AS dr
                       INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
                       WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
                       AND r.estado IN (1,2) AND dr.estado != 7
-                      GROUP BY r.monto_igv
+                      GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro
                     ) AS t LIMIT 1) 
                     + 
-                    (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
+                    (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario * (CASE WHEN rp.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= rp.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)),0)
                     FROM tesoreria.requerimiento_pago_detalle as drp
                     INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
                     WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
                     limit 1)
+                    
                     AS total_consumido_hasta_fase_aprobacion_con_igv")
+                
                     // DB::raw("(SELECT dr.cantidad * dr.precio_unitario * 1.18 AS total
                     // FROM almacen.alm_det_req AS dr
                     // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
@@ -943,6 +973,7 @@ class RequerimientoController extends Controller
                         'presupuesto_old_total_partida'     => $data->presupuesto_old_total_partida,
                         'presupuesto_interno_total_partida'     => $data->presupuesto_interno_total_partida,
                         'presupuesto_interno_mes_partida'     => $data->presupuesto_interno_mes_partida,
+                        'presupuesto_interno_saldo_mes_disponible_partida'     => $data->presupuesto_interno_saldo_mes_disponible_partida,
                         'total_consumido_hasta_fase_aprobacion_con_igv'     => $data->total_consumido_hasta_fase_aprobacion_con_igv,
                         'id_centro_costo'                => $data->id_centro_costo,
                         'codigo_centro_costo'            => $data->codigo_centro_costo,
@@ -1152,6 +1183,7 @@ class RequerimientoController extends Controller
             $requerimiento->id_incidencia = isset($request->id_incidencia) && $request->id_incidencia != null ? $request->id_incidencia : null;
             $requerimiento->id_tipo_detalle = $idTipoDetalle;
             $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+            $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
             $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $requerimiento->save();
             $requerimiento->adjuntoOtrosAdjuntos = $request->archivoAdjuntoRequerimiento1;
@@ -1667,6 +1699,7 @@ class RequerimientoController extends Controller
         $requerimiento->id_incidencia = $request->id_incidencia > 0 ? $request->id_incidencia : null;
         $requerimiento->id_tipo_detalle = $idTipoDetalle;
         $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
+        $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
         $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
         $requerimiento->save();
@@ -5019,6 +5052,7 @@ class RequerimientoController extends Controller
                     'alm_req.id_almacen',
                     'alm_req.id_proyecto',
                     'alm_req.id_presupuesto_interno',
+                    'alm_req.mes_afectacion',
                     DB::raw("CONCAT(alm_almacen.codigo,'-',alm_almacen.descripcion) as almacen_requerimiento"),
                     'alm_req.fecha_entrega',
                     'sis_moneda.simbolo as simbolo_moneda',

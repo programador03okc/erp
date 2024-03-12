@@ -17,7 +17,7 @@
         <div class="login-box">
             <div class="login-box-body">
                 <div class="login-box-logo">
-                    <img src="{{ asset('images/logo_okc.png') }}" alt="">
+                    <img  src="{{ asset('images/AGILE-icono.png') }}" style="width:auto; height:150px">
                 </div>
                 <p class="login-box-msg">¡Bienvenido al Sistema AGILE! <br> Ingrese sus credenciales!</p>
 

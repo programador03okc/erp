@@ -1265,9 +1265,15 @@ class PresupuestoInternoController extends Controller
     }
 
 
-    public function obtenerDetallePresupuestoInterno($idPresupuestoIterno)
+ 
+
+    public function obtenerDetallePresupuestoInterno($idPresupuestoIterno,$mesAfectacion=null)
     {
 
+        $mesAfetacion =date("m") ;
+        if($mesAfectacion!=null && $mesAfectacion!=0){
+            $mesAfetacion = $mesAfectacion;
+        }
 
         $presupuestoInterno = PresupuestoInterno::with(['detalle' => function ($q) use ($idPresupuestoIterno) {
             $q->where([['id_presupuesto_interno', $idPresupuestoIterno], ['estado', '!=', 7]])->orderBy('partida', 'asc');
@@ -1289,7 +1295,7 @@ class PresupuestoInternoController extends Controller
         $totalFilas = PresupuestoInterno::calcularTotalPresupuestoFilas($idPresupuestoIterno, 3); // para requerimiento enviar 3= gastos
         $detalleRequerimiento = PresupuestoInterno::calcularConsumidoPresupuestoFilas($idPresupuestoIterno, 3); // para requerimiento enviar 3= gastos
 
-        $numero_mes = date("m");
+        $numero_mes = $mesAfetacion;
         $nombre_mes = $this->mes($numero_mes);
 
 
@@ -1301,9 +1307,9 @@ class PresupuestoInternoController extends Controller
 
 
                     $detPresup['total_presupuesto_año'] = $this->obtenerTotalPrespuestoAñoDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo']);
-                    $detPresup['total_presupuesto_mes'] = $this->obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo']);
-                    $detPresup['total_consumido_mes'] =   $this->obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo']);
-                    $detPresup['total_saldo_mes'] =   $this->obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo']);
+                    $detPresup['total_presupuesto_mes'] = $this->obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo'],$mesAfectacion);
+                    $detPresup['total_consumido_mes'] =   $this->obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo'],$mesAfectacion);
+                    $detPresup['total_saldo_mes'] =   $this->obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $detPresup['id_hijo'],$mesAfectacion);
                     $detPresup['total_saldo_año'] =   $this->obtenerSaldoPrespuestoAñoDelPadrePartida($idPresupuestoIterno, 3, $presupuestoInterno, $detPresup['id_hijo']);
                 }
 
@@ -1346,6 +1352,7 @@ class PresupuestoInternoController extends Controller
 
         $test=[];
         foreach ($presupuestoInterno as $key => $presup){
+            
             foreach ($Presup['detalle'] as $keyd => $detPresup) {
 
                 if ($detPresup['id_presupuesto_interno_detalle'] > 0) {
@@ -1396,27 +1403,19 @@ class PresupuestoInternoController extends Controller
                     }
 
 
-
-
-
-                    // $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio = DB::table('almacen.alm_det_req')
+                    // $totalRequerimientoPagoPorConsumirHastaFaseAprobacion = DB::table('tesoreria.requerimiento_pago_detalle')->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
                     // ->select(
-                    //     DB::raw("((SUM(alm_det_req.cantidad * alm_det_req.precio_unitario )) * (1.18)::decimal * (SELECT tp.venta FROM contabilidad.cont_tp_cambio tp WHERE tp.moneda=2 and tp.fecha::date <= alm_req.fecha_registro::date and alm_det_req.id_requerimiento = alm_req.id_requerimiento  ORDER BY tp.fecha desc LIMIT 1) ) AS total_por_consumido_con_igv"),
+                    //     DB::raw("SUM(requerimiento_pago_detalle.cantidad * requerimiento_pago_detalle.precio_unitario ) AS total_por_consumido_con_igv"),
                     //     )
-                    // ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
-
                     // ->where([
-                    //     ['alm_det_req.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
-                    //     ['alm_det_req.estado','!=',7],
-                    //     ['alm_req.id_moneda',2]
+                    //     ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
+                    //     ['requerimiento_pago_detalle.id_estado','!=',7]
                     // ])
-                    // ->whereIn('alm_req.estado',[1,2])
-                    // ->groupBy('alm_det_req.id_requerimiento','alm_req.id_moneda', 'alm_req.id_requerimiento')
+                    // ->whereIn('requerimiento_pago.id_estado',[1,2])
                     // ->get();
-
                     $totalRequerimientoPagoPorConsumirHastaFaseAprobacion = DB::table('tesoreria.requerimiento_pago_detalle')->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
-                    ->select(
-                        DB::raw("SUM(requerimiento_pago_detalle.cantidad * requerimiento_pago_detalle.precio_unitario ) AS total_por_consumido_con_igv"),
+                    ->select( 'requerimiento_pago_detalle.cantidad','requerimiento_pago_detalle.precio_unitario', 'requerimiento_pago.id_moneda', 'requerimiento_pago.fecha_registro'
+                        // DB::raw("SUM(requerimiento_pago_detalle.cantidad * requerimiento_pago_detalle.precio_unitario ) AS total_por_consumido_con_igv"),
                         )
                     ->where([
                         ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
@@ -1435,17 +1434,28 @@ class PresupuestoInternoController extends Controller
                     foreach ($totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionSoles as $key => $value) {
                         $data+=$value!=null && $value->total_por_consumido_con_igv !=null ?floatval($value->total_por_consumido_con_igv):0;
                     }
+
+                    $totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio =[];
                     foreach ($totalRequerimientoPagoPorConsumirHastaFaseAprobacion as $key => $value) {
-                        $data+=$value!=null && $value->total_por_consumido_con_igv !=null ?floatval($value->total_por_consumido_con_igv):0;
+
+                        if(floatval($value->id_moneda) ==2){
+                            $totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio[] =( $value->cantidad * $value->precio_unitario ) * $this->getTipoCambioVenta($value->fecha_registro);
+                        }else{
+                            $totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio[] =( $value->cantidad * $value->precio_unitario );
+
+                        }
+                    }
+                    foreach ($totalRequerimientoPagoPorConsumirHastaFaseAprobacionTipoCambio as $key => $value) {
+                        $data+=$value!=null && $value !=null ?floatval($value):0;
                     }
                     $detPresup['total_consumido_hasta_fase_aprobacion_con_igv'] = floatval($data);
-
                 }
             }
+            
 
         }
 
-        // dd($test);
+        // dd($mesAfetacion);
         // exit();
         return $presupuestoInterno;
     }
@@ -1481,9 +1491,13 @@ class PresupuestoInternoController extends Controller
         return $totalPresupuestoAño;
     }
 
-    public function obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo)
+    public function obtenerTotalPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo, $mesAfectacion=null)
     {
         $numero_mes = date("m");
+        if($mesAfectacion!=null){
+            $numero_mes = $mesAfectacion;
+        }
+
         $nombre_mes = $this->mes($numero_mes);
         $totalPresupuestoMes = 0;
         foreach ($presupuestoInterno as $key => $Presup) {
@@ -1497,10 +1511,13 @@ class PresupuestoInternoController extends Controller
         return $totalPresupuestoMes;
     }
 
-    public function obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, $tipo, $presupuestoInterno, $idHijo)
+    public function obtenerConsumidoPrespuestoMesDelPadrePartida($idPresupuestoIterno, $tipo, $presupuestoInterno, $idHijo, $mesAfectacion=null)
     {
 
         $numero_mes = date("m");
+        if($mesAfectacion!=null){
+            $numero_mes = $mesAfectacion;
+        }
         $totalConsumidoMesFilaList = PresupuestoInterno::calcularTotalConsumidoMesFilas($idPresupuestoIterno, $tipo, $numero_mes);
 
         $totalConsumidoMes = 0;
@@ -1518,9 +1535,12 @@ class PresupuestoInternoController extends Controller
         return $totalConsumidoMes;
     }
 
-    public function obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo)
+    public function obtenerSaldoPrespuestoMesDelPadrePartida($presupuestoInterno, $idHijo,$mesAfectacion=null)
     {
         $numero_mes = date("m");
+        if($mesAfectacion!=null){
+            $numero_mes = $mesAfectacion;
+        }
         $nombre_mes = $this->mes($numero_mes);
         $totalSaldoMes = 0;
         foreach ($presupuestoInterno as $key => $Presup) {

@@ -12,7 +12,7 @@
                         <div id="alertaRequerimientoVinculadosConPartida"></div>
                     </div>
                     <div class="col-md-12">
-                        <table class="table table table-condensed table-bordered" id="tablaResumenRequerimientoVinculadosConPartida">
+                        <table class="table table table-condensed table-bordered oculto" id="tablaResumenRequerimientoVinculadosConPartida">
                             <thead>
                                 <tr>
                                     <th>Presupuesto partida anual</th>

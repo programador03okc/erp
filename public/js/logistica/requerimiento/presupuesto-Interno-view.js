@@ -55,6 +55,7 @@ class PresupuestoInternoView{
         tr.querySelector("p[class='descripcion-partida']").dataset.tipoPresupuesto = 'INTERNO';
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal = obj.dataset.totalPresupuestoAño;
         tr.querySelector("p[class='descripcion-partida']").dataset.presupuestoMes = obj.dataset.totalPresupuestoMes;
+        tr.querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes = obj.dataset.totalSaldoMes;
         tr.querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion = obj.dataset.totalPorConsumidoConIgvFaseAprobacion;
         tr.querySelector("p[class='descripcion-partida']").setAttribute('title', obj.dataset.descripcion);
 
@@ -114,7 +115,8 @@ class PresupuestoInternoView{
         let maximoNivel=0;
         let idDivision = document.querySelector("select[name='division']").value;
         let partidaRemuneraciones = '';
-
+        const selectMesAfectacion = document.querySelector("select[name='mes_afectacion']");
+        const mesAfectacionText = selectMesAfectacion?selectMesAfectacion.options[selectMesAfectacion.selectedIndex].textContent:'mes';
         data.forEach(presupuesto => {
             html += `
             <div id='${presupuesto.codigo}' class="panel panel-primary" style="width:100%; overflow: auto;">
@@ -133,9 +135,9 @@ class PresupuestoInternoView{
             <td><strong>PARTIDA</strong></td>
             <td><strong>DESCRIPCIÓN</strong></td>
             <td style="background-color: #ddeafb;"><strong>Total ppto (anual)</strong></td>
-            <td style="background-color: #ddeafb;"><strong>Total ppto (mes)</strong></td>
-            <td style="background-color: #fbdddd;"><strong>Consumido (mes)</strong></td>
-            <td style="background-color: #e5fbdd;"><strong>Saldo (mes)</strong></td>
+            <td style="background-color: #ddeafb;"><strong>Total ppto (${mesAfectacionText})</strong></td>
+            <td style="background-color: #fbdddd;"><strong>Consumido (${mesAfectacionText})</strong></td>
+            <td style="background-color: #e5fbdd;"><strong>Saldo (${mesAfectacionText})</strong></td>
             <td style="background-color: #e5fbdd;"><strong>Saldo (anual)</strong></td>
             </tr> `;
             let totalPresupuestoAño = 0; 

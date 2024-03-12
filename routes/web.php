@@ -67,6 +67,8 @@ use App\Http\Controllers\Gerencial\Cobranza\RegistroController;
 use App\Http\Controllers\Gerencial\GerencialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HynoTechController;
+use App\Http\Controllers\Kardex\DashboardController as KardexDashboardController;
+use App\Http\Controllers\Kardex\ProductosController;
 use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
@@ -339,6 +341,10 @@ Route::middleware(['auth'])->group(function () {
 	 */
 	Route::name('necesidades.')->prefix('necesidades')->group(function () {
 		Route::get('index', [NecesidadesController::class, 'view_main_necesidades'])->name('index');
+		Route::name('dashboard.')->prefix('dashboard')->group(function () {
+			Route::get('seguimiento', [NecesidadesController::class, 'view_dashboard_seguimiento'])->name('seguimiento');
+			Route::get('listar', [NecesidadesController::class, 'listarSeguimiento'])->name('listar');
+		});
 		Route::name('requerimiento.')->prefix('requerimiento')->group(function () {
 
 			Route::name('elaboracion.')->prefix('elaboracion')->group(function () {
@@ -408,7 +414,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('lista-cuadro-presupuesto', [RequerimientoPagoController::class, 'listaCuadroPresupuesto'])->name('lista-cuadro-presupuesto');
 				Route::post('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
-				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
+				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}/{mesAfectacion}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
 				// Route::get('data-requerimientos-vinculados-con-partida/{tipoPresupuesto}/{idPartida}', [RequerimientoController::class, 'dataRequerimientosVinculadosConPartida'])->name('data-requerimientos-vinculados-con-partida');
@@ -518,7 +524,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('anular-adjunto-requerimiento-pago-detalle', [RequerimientoPagoController::class, 'anularAdjuntoRequerimientoPagoDetalle'])->name('anular-adjunto-requerimiento-pago-detalle');
 				Route::get('listar_trabajadores', [ProyectosController::class, 'listar_trabajadores'])->name('listar-trabajadores');
 				Route::get('combo-presupuesto-interno/{idGrupo?}/{idArea?}', [PresupuestoInternoController::class, 'comboPresupuestoInterno'])->name('combo-presupuesto-interno');
-				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
+				Route::get('obtener-detalle-presupuesto-interno/{idPresupuesto?}/{mesAfectacion}', [PresupuestoInternoController::class, 'obtenerDetallePresupuestoInterno'])->name('obtener-detalle-presupuesto-interno');
 				Route::get('obtener-lista-proyectos/{idGrupo?}', [RequerimientoController::class, 'obtenerListaProyectos'])->name('obtener-lista-proyectos');
 				Route::post('requerimiento-sustentado', [RequerimientoPagoController::class, 'requerimientoSustentado'])->name('requerimiento-sustentado');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
@@ -2585,6 +2591,17 @@ Route::middleware(['auth'])->group(function () {
             Route::post('enviar-gr-control', [GuiaController::class, 'enviarGRControl'])->name('enviar-gr-control');
             Route::post('reporte-filtros', [GuiaController::class, 'reporteFiltros'])->name('reporte-filtros');
         });
+
+    });
+    Route::name('kardex.')->prefix('kardex')->group(function () {
+        Route::get('index', [KardexDashboardController::class, 'index'])->name('index');
+        Route::name('productos.')->prefix('productos')->group(function () {
+            Route::get('lista', [ProductosController::class, 'lista'])->name('lista');
+            Route::post('listar', [ProductosController::class, 'listar'])->name('listar');
+            Route::post('carga-inicial', [ProductosController::class, 'cargaInicial'])->name('carga-inicial');
+            Route::post('listar-series', [ProductosController::class, 'listarSeries'])->name('listar-series');
+        });
+
 
     });
 });

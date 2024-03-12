@@ -4767,6 +4767,9 @@ class OrdenController extends Controller
             $orden->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $orden->save();
 
+            $comentario = 'Enviado a pago en cuotas, orden:' .$orden->codigo. ', enviado por: ' . Auth::user()->nombre_corto;
+            LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $orden->getTable(), null, $orden, $comentario, 'Logística');
+
             if ((isset($request->pagoEnCuotasCheckbox) == true)) {
                 $findPagoCuota = PagoCuota::where('id_orden', $request->id_orden_compra)->first();
                 if (empty($findPagoCuota) == false && ($findPagoCuota) != null) {
@@ -4870,6 +4873,11 @@ class OrdenController extends Controller
         $orden->fecha_solicitud_pago = Carbon::now();
         $orden->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
         $orden->save();
+
+
+        
+        $comentario = 'Enviado a pago directo, orden:' .$orden->codigo. ', enviado por: ' . Auth::user()->nombre_corto;
+        LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $orden->getTable(), null, $orden, $comentario, 'Logística');
 
 
         if (isset($request->archivoAdjuntoRequerimientoObject)) {

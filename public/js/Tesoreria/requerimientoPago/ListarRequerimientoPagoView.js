@@ -265,13 +265,24 @@ class ListarRequerimientoPagoView {
 
         $('#modal-requerimiento-pago').on("change", "select.handleChangeProyecto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            this.obtenerCentroCostoDeProyecto();
+            this.habilitarInputMesAfectacion(false);
+
+
         });
         $('#modal-requerimiento-pago').on("change", "select.handleChangePresupuestoInterno", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            if(e.currentTarget.value>0){
+                this.habilitarInputMesAfectacion(true);
+            }else{
+                this.habilitarInputMesAfectacion(false);
+            }
         });
         $('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
             // console.log(e.currentTarget.dataset.idCc);
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_CDP', e.currentTarget.dataset.idCc);
+            this.habilitarInputMesAfectacion(false);
+
         });
 
         // $('#modal-requerimiento-pago').on("click", "button.handleClickLimpiarSeleccionCuadroDePresupuesto", (e) => {
@@ -329,12 +340,13 @@ class ListarRequerimientoPagoView {
                         'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
                         'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
                         'presupuesto_mes': (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes).replace(/,/gi, ''),
+                        'total_saldo_mes_disponible': (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes)!=null ?(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes).replace(/,/gi, ''):0,
                         'presupuesto_total': (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal).replace(/,/gi, ''),
                         'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
                         'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
                         'presupuesto_utilizado_al_cambio': 0,
                         'presupuesto_utilizado': 0,
-                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion != "" && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion != null ? ((tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion).replace(/,/gi, '')) : 0,
+                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion != null && tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion != null ? ((tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion).replace(/,/gi, '')) : 0,
                         'saldo_total': 0,
                         'saldo_mes': 0
                     });
@@ -367,22 +379,34 @@ class ListarRequerimientoPagoView {
                 if (document.querySelector("input[name='id_requerimiento_pago']").value > 0) {
 
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
                 } else {
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - parseFloat(presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible)) - parseFloat(presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
 
                 }
             } else { // moneda soles
                 if (document.querySelector("input[name='id_requerimiento_pago']").value > 0) {
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0));
-                    tempPartidasActivas[p].saldo_mes=parseFloat(tempPartidasActivas[p].presupuesto_mes) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) -parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
+                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : 0) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
+                    tempPartidasActivas[p].saldo_mes=parseFloat(tempPartidasActivas[p].total_saldo_mes_disponible) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) -parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                 } else {
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado > 0 ? parseFloat(tempPartidasActivas[p].presupuesto_utilizado) : 0) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
+                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado > 0 ? parseFloat(tempPartidasActivas[p].presupuesto_utilizado) : 0) - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion>0?parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion):0));
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible)) - parseFloat(tempPartidasActivas[p].presupuesto_utilizado) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
                 }
 
             }
+        }
+        
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            tempPartidasActivas[p].presupuesto_mes = Util.formatoNumero(tempPartidasActivas[p].presupuesto_mes,2,'.','');
+            tempPartidasActivas[p].presupuesto_total= Util.formatoNumero(tempPartidasActivas[p].presupuesto_total,2,'.','');
+            tempPartidasActivas[p].presupuesto_utilizado= Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado,2,'.','');
+            tempPartidasActivas[p].presupuesto_utilizado_al_cambio= Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado_al_cambio,2,'.','');
+            tempPartidasActivas[p].saldo_mes= Util.formatoNumero(tempPartidasActivas[p].saldo_mes,2,'.','');
+            tempPartidasActivas[p].saldo_total= Util.formatoNumero(tempPartidasActivas[p].saldo_total,2,'.','');
+            tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion= Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2,'.','');
+            tempPartidasActivas[p].total_saldo_mes_disponible= Util.formatoNumero(tempPartidasActivas[p].total_saldo_mes_disponible,2,'.','');
+
         }
 
 
@@ -397,6 +421,14 @@ class ListarRequerimientoPagoView {
 
             let bodyPartidaActivasList = document.querySelectorAll("tbody[id='body_partidas_activas']");
 
+            let displayMontoUtilizadoActual = "";
+            if (document.querySelector("div[id='modal-requerimiento-pago']").classList.contains("in")){
+                displayMontoUtilizadoActual = "";
+            }
+            if(document.querySelector("div[id='modal-vista-rapida-requerimiento-pago']").classList.contains("in")){
+                displayMontoUtilizadoActual = "hidden";
+            }
+
             bodyPartidaActivasList.forEach(bodyPartidaActiva => {
                 // console.log(bodyPartidaActiva);
                 bodyPartidaActiva.insertAdjacentHTML('beforeend', `<tr style="text-align:center">
@@ -404,7 +436,8 @@ class ListarRequerimientoPagoView {
                     <td>${element.descripcion}</td>
                     <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
                     <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
-                    <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
+                    <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.total_saldo_mes_disponible, 2)}</td>
+                    <td style="text-align:right; background-color: #fbdddd;" ${displayMontoUtilizadoActual}><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
                     <td style="text-align:right; background-color: #fbdddd;">
                         <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 
                         <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" 
@@ -422,6 +455,64 @@ class ListarRequerimientoPagoView {
 
     }
 
+    obtenerCentroCostoDeProyecto(){
+        let idCentroCosto= document.querySelector("select[name='proyecto']").options[document.querySelector("select[name='proyecto']").selectedIndex].dataset.idCentroCosto;
+        let codigoCentroCosto= document.querySelector("select[name='proyecto']").options[document.querySelector("select[name='proyecto']").selectedIndex].dataset.codigoCentroCosto;
+        let descripcionCentroCosto= document.querySelector("select[name='proyecto']").options[document.querySelector("select[name='proyecto']").selectedIndex].dataset.descripcionCentroCosto;
+        document.querySelector("input[name='id_centro_costo']").value= idCentroCosto!=undefined && idCentroCosto >0 ?idCentroCosto:'';
+        document.querySelector("input[name='descripcion_centro_costo']").value=((codigoCentroCosto !=undefined?codigoCentroCosto:'')+' - '+(descripcionCentroCosto!=undefined?descripcionCentroCosto:''));
+
+        tempCentroCostoSelected={
+           'id':idCentroCosto!=undefined && idCentroCosto !="" ?idCentroCosto:'',
+           'codigo':codigoCentroCosto !=undefined && codigoCentroCosto !="" ?codigoCentroCosto:'',
+           'descripcion':descripcionCentroCosto !=undefined && descripcionCentroCosto !="" ?descripcionCentroCosto:'',
+         }
+
+         if(idCentroCosto>0){
+            this.autoLlenarCentroCosto();
+        }else{
+            Swal.fire(
+                '',
+                'No se detectó un centro de costo para este proyecto, debería establecer manualmente el centro de costo',
+                'info'
+            ); 
+        }
+    }
+
+    autoLlenarCentroCosto(){
+        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children;
+        if (tbodyChildren.length > 0) {
+            
+            Swal.fire({
+                title: 'Establecer el centro de costo seleccionado para todos los ítem ingresados?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Si'
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    for (let i = 0; i < tbodyChildren.length; i++) {
+                        tbodyChildren[i].querySelector("input[class='centroCosto']").value = tempCentroCostoSelected.id;
+                        tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").title = tempCentroCostoSelected.descripcion;
+                        tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").textContent = tempCentroCostoSelected.codigo;
+    
+                    }
+                }
+            });           
+        }
+    }
+
+    habilitarInputMesAfectacion(esActivo){
+        if(esActivo){
+            document.querySelector("div[id='input-mes-afectacion']")?document.querySelector("div[id='input-mes-afectacion']").removeAttribute("hidden"):false;
+        }else{
+            document.querySelector("div[id='input-mes-afectacion']")? document.querySelector("div[id='input-mes-afectacion']").setAttribute("hidden",true):false;
+
+        }
+    }
 
     deshabilitarOtrosTiposDePresupuesto(origen, valor) {
         switch (origen) {
@@ -1259,10 +1350,10 @@ class ListarRequerimientoPagoView {
             let option = document.createElement("option");
             option.text = element.codigo + ' - ' + element.descripcion;
             option.value = element.id_proyecto;
-            option.setAttribute('data-codigo', element.codigo);
-            option.setAttribute('data-id-centro-costo', element.id_centro_costo);
-            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo);
-            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo);
+            option.setAttribute('data-codigo', element.codigo !=null ?element.codigo:'');
+            option.setAttribute('data-id-centro-costo', element.id_centro_costo !=null ?element.id_centro_costo:'');
+            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo !=null ?element.codigo_centro_costo:'');
+            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo !=null ? element.descripcion_centro_costo:'');
             if (element.id_proyecto == idProyecto) {
                 option.selected = true;
             }
@@ -1343,6 +1434,7 @@ class ListarRequerimientoPagoView {
         let descripcionPartida = '';
         let totalPartida = 0;
         let totalPartidaMes = 0;
+        let totalSaldoMes = 0;
         let totalPorConsumidoConIgvFaseAprobacion = 0;
 
         // console.log(data);
@@ -1362,13 +1454,14 @@ class ListarRequerimientoPagoView {
                 descripcionPartida = data.presupuesto_interno_detalle != null ? data.presupuesto_interno_detalle.descripcion : '';
                 totalPartida = data.presupuesto_interno_total_partida != null ? data.presupuesto_interno_total_partida : 0;
                 totalPartidaMes = data.presupuesto_interno_mes_partida != null ? data.presupuesto_interno_mes_partida : 0;
-                totalPorConsumidoConIgvFaseAprobacion = data.total_consumido_hasta_fase_aprobacion_con_igv > 0 ? (data.total_consumido_hasta_fase_aprobacion_con_igv) : 0;
+                totalSaldoMes = data.presupuesto_interno_saldo_mes_disponible_partida != null ? data.presupuesto_interno_saldo_mes_disponible_partida : 0;
+                totalPorConsumidoConIgvFaseAprobacion = data.total_consumido_hasta_fase_aprobacion_con_igv !=null ? (data.total_consumido_hasta_fase_aprobacion_con_igv) : 0;
 
             }
         }
 
 
-        // console.log(data);
+        console.log(data);
         document.querySelector("tbody[id='body_detalle_requerimiento_pago']").insertAdjacentHTML('beforeend', `<tr style="background-color:${data != null && data.id_estado == '7' ? '#f1d7d7' : ''}; text-align:center">
         <td>
             <input type="hidden"  class="idEstado" name="idEstado[]" value="${data != null && data.id_estado}">
@@ -1377,6 +1470,7 @@ class ListarRequerimientoPagoView {
             data-id-partida="${idPartida}"
             data-presupuesto-total="${totalPartida}"
             data-presupuesto-mes="${totalPartidaMes}"
+            data-total-saldo-mes="${totalSaldoMes}"
             data-total-por-consumido-con-igv-fase-aprobacion="${totalPorConsumidoConIgvFaseAprobacion}"
 
             title="${(descripcionPartida != '' ? descripcionPartida : '(NO SELECCIONADO)')}">${(codigoPartida != '' ? codigoPartida : '(NO SELECCIONADO)')}</p>
@@ -1388,7 +1482,7 @@ class ListarRequerimientoPagoView {
         </td>
         <td>
             <p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : data != null && data.centro_costo != null ? data.centro_costo.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : (data != null && data.centro_costo != null ? data.centro_costo.codigo : '(NO SELECCIONADO)')}</p>
-            <button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${data != null && data.centro_costo != null ? data.centro_costo.codigo : ''}" >Seleccionar</button>
+            <button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  title="${data != null && data.centro_costo != null ? data.centro_costo.codigo : ''}" >Seleccionar</button>
             <div class="form-group">
                 <h5></h5>
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : (data != null && data.centro_costo != null ? data.centro_costo.id_centro_costo : '')}" hidden>
@@ -2761,8 +2855,16 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] span[name='simboloMoneda']").textContent = data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='listaDetalleRequerimientoPago'] span[name='simbolo_moneda']").textContent = data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='listaDetalleRequerimientoPago'] label[name='total']").textContent = $.number(data.monto_total, 2);
-        document.querySelector("span[id='mes_ppto']").textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+            if(data && data.fecha_registro !=null){
+                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+            }else{
+                element.textContent =  moment().format('MMMM');
 
+            }
+        });
+ 
 
         if (data.id_presupuesto_interno > 0) {
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='presupuesto_interno']").textContent = (data.presupuesto_interno != null ? data.presupuesto_interno.codigo : '') + ' - ' + (data.presupuesto_interno != null ? data.presupuesto_interno.descripcion : '');
@@ -2802,7 +2904,7 @@ class ListarRequerimientoPagoView {
 
         this.limpiarTabla('listaDetalleRequerimientoPago');
         if (data.detalle.length > 0) {
-            console.log(data.detalle);
+            // console.log(data.detalle);
             for (let i = 0; i < data.detalle.length; i++) {
                 let cantidadAdjuntosItem = 0;
                 cantidadAdjuntosItem = (data.detalle[i].adjunto).filter((element, i) => element.id_estado != 7).length;
@@ -2816,7 +2918,8 @@ class ListarRequerimientoPagoView {
                         data-id-partida="${data.detalle[i].id_partida != null ? data.detalle[i].id_partida : data.detalle[i].id_partida_pi}"
                         data-presupuesto-total="${data.detalle[i].presupuesto_interno_total_partida}"
                         data-presupuesto-mes="${data.detalle[i].presupuesto_interno_mes_partida}"
-                        data-total-por-consumido-con-igv-fase-aprobacion="${data.total_consumido_hasta_fase_aprobacion_con_igv ? data.total_consumido_hasta_fase_aprobacion_con_igv : 0}"
+                        data-total-saldo-mes="${data.detalle[i].presupuesto_interno_saldo_mes_disponible_partida}"
+                        data-total-por-consumido-con-igv-fase-aprobacion="${data.detalle[i].total_consumido_hasta_fase_aprobacion_con_igv !=null? data.detalle[i].total_consumido_hasta_fase_aprobacion_con_igv : 0}"
                         title="${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.partida : ''}";
                         style="display:none;"> ${data.detalle[i].presupuesto_interno_detalle != null ? data.detalle[i].presupuesto_interno_detalle.descripcion : ''}
                     </p>
@@ -3051,6 +3154,15 @@ class ListarRequerimientoPagoView {
         // }
 
         $("select[name='id_presupuesto_interno']").val(data.id_presupuesto_interno);
+        
+        if(data.mes_afectacion!=null){
+            this.habilitarInputMesAfectacion(true);
+            $("select[name='mes_afectacion']").val(data.mes_afectacion);
+
+        }else{
+            this.habilitarInputMesAfectacion(false);
+            $("select[name='mes_afectacion']").val('');
+        }
 
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_trabajador']").value = data.id_trabajador;
         document.querySelector("div[id='modal-requerimiento-pago'] input[name='nombre_trabajador']").value = data.nombre_trabajador;
@@ -3103,6 +3215,10 @@ class ListarRequerimientoPagoView {
 
         this.llenarComboProyectos(data.id_grupo, data.id_proyecto);
         document.querySelector("div[id='modal-requerimiento-pago'] select[name='proyecto']").value = data.id_proyecto;
+
+        document.querySelector("input[name='id_centro_costo']").value = data.proyecto!=null?data.proyecto.id_centro_costo: '';
+        document.querySelector("input[name='descripcion_centro_costo']").value = data.proyecto !=null && data.proyecto.centro_costo !=null ? (data.proyecto.centro_costo.codigo +' - '+data.proyecto.centro_costo.descripcion) : '';
+
 
         this.limpiarTabla('ListaDetalleRequerimientoPago');
         this.limpiarTabla('listaPartidasActivas');

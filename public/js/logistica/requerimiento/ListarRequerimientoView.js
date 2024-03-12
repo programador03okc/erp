@@ -666,9 +666,17 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='tipo_cambio']").textContent = data.tipo_cambio??'';
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='simbolo_moneda']").textContent = data.simbolo_moneda;
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = data.simbolo_moneda;
-
         
-        document.querySelector("div[id='modal-requerimiento'] span[id='mes_ppto']").textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+            if(data && data.fecha_registro !=null){
+                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+            }else{
+                element.textContent =  moment().format('MMMM');
+
+            }
+        });
+
 
         if (data.id_incidencia > 0) {
             document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='incidencia']").textContent = data.codigo_incidencia;
@@ -783,6 +791,7 @@ class ListarRequerimientoView {
                         'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
                         'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
                         'presupuesto_mes': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes,
+                        'total_saldo_mes_disponible': (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes).replace(/,/gi, ''),
                         'presupuesto_total': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal,
                         'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
                         'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
@@ -823,10 +832,10 @@ class ListarRequerimientoView {
                 let presupuesto_utilizado_alCambio = tempPartidasActivas[p].presupuesto_utilizado * actualTipoCambioCompra;
                 tempPartidasActivas[p].presupuesto_utilizado_al_cambio = presupuesto_utilizado_alCambio;
                 tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
-                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0));
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible).replace(/,/gi, '')) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : 0) - (tempPartidasActivas[p].presupuesto_utilizado_al_cambio > 0 ? tempPartidasActivas[p].presupuesto_utilizado_al_cambio : 0);
             } else {
                 tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total).replace(/,/gi, '')) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0));
-                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes).replace(/,/gi, '')) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0));
+                tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible).replace(/,/gi, ''))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion > 0 ? tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion : 0)- (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0);
 
             }
         }
@@ -852,7 +861,7 @@ class ListarRequerimientoView {
                 <td>${element.descripcion}</td>
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
-                <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
+                <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.total_saldo_mes_disponible, 2)}</td>
                 <td style="text-align:right; background-color: #fbdddd;">
                     <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 
                     <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" 
@@ -961,6 +970,7 @@ class ListarRequerimientoView {
                         data-id-partida="${data[i].id_partida !=null ? data[i].id_partida : data[i].id_partida_pi}" 
                         data-presupuesto-total="${data[i].presupuesto_interno_total_partida != null ?data[i].presupuesto_interno_total_partida: data[i].presupuesto_old_total_partida}" 
                         data-presupuesto-mes="${data[i].presupuesto_interno_mes_partida}" 
+                        data-total-saldo-mes="${data[i].presupuesto_interno_saldo_mes_disponible_partida}" 
                         data-total-por-consumido-con-igv-fase-aprobacion="${data[i].total_consumido_hasta_fase_aprobacion_con_igv}"
                         title="${data[i].id_partida !=null ? data[i].descripcion_partida.toUpperCase() :(data[i].id_partida_pi >0?data[i].descripcion_partida_presupuesto_interno.toUpperCase() : '') }";
                         style="display:none;"> ${data[i].id_partida >0 ?data[i].codigo_partida :(data[i].id_partida_pi >0?data[i].codigo_partida_presupuesto_interno : '')}

@@ -1440,7 +1440,7 @@ function formatPagosEnCuotas(table_id, id, row, tipo) {
                             '<td style="border: none; text-align: center">' +
                             `<button type = "button" class= "btn btn-${element.fecha_autorizacion !=null?'success':'info'} boton" data-toggle="tooltip"
                                 data - placement="bottom"
-                                onClick = "enviarPagoEnCuotas(${orden.id_orden_compra},${element.id_pago_cuota_detalle},'${tipo}',event)" title = "${element.fecha_autorizacion !=null?'Pago Autorizado':'Autorizar pago'}" ${element.fecha_autorizacion !=null?'disabled':''}>
+                                onClick = "enviarAPago('${tipo}',${orden.id_orden_compra},'${moment().format("DD-MM-YYYY")}','${element.monto_cuota}',event.currentTarget,${element.id_pago_cuota_detalle})" title = "${element.fecha_autorizacion !=null?'Pago Autorizado':'Autorizar pago'}" ${element.fecha_autorizacion !=null?'disabled':''}>
                                 ${element.fecha_autorizacion !=null?'<i class="fas fa-check-double"></i> Autorizado':'<i class="fas fa-check"></i> Autorizar'}
                                 </button>` +
                                 // (element.estado.id_requerimiento_pago_estado==5?`

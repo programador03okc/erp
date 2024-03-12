@@ -148,15 +148,25 @@ class RequerimientoView {
 
         $('body').on("change", "select.handleChangePresupuestoInterno", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PRESUPUESTO_INTERNO', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            if(e.currentTarget.value>0){
+                this.habilitarInputMesAfectacion(true);
+            }else{
+                this.habilitarInputMesAfectacion(false);
+            }
         });
 
         $('#form-requerimiento').on("change", "select.handleChangeProyecto", (e) => {
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_PROYECTOS', e.currentTarget.value); // deshabilitar el poder afectar otro presupuesto ejemplo: selector de proyectos, selctor de cdp
+            this.obtenerCentroCostoDeProyecto();
+            this.habilitarInputMesAfectacion(false);
+
         });
 
         $('#listaCuadroPresupuesto').on("click", "button.handleClickSeleccionarCDP", (e) => {
             // console.log(e.currentTarget.dataset.idCc);
             this.deshabilitarOtrosTiposDePresupuesto('SELECCION_CDP', e.currentTarget.dataset.idCc);
+            this.habilitarInputMesAfectacion(false);
+
         });
 
         $('body').on("click", "button.handleClickLimpiarSeleccionCuadroDePresupuesto", (e) => {
@@ -165,6 +175,67 @@ class RequerimientoView {
             // document.querySelector("input[name='codigo_oportunidad']").value = '';
         });
 
+    }
+
+    obtenerCentroCostoDeProyecto(){
+       let idCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.idCentroCosto;
+       let codigoCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.codigoCentroCosto;
+       let descripcionCentroCosto= document.querySelector("select[name='id_proyecto']").options[document.querySelector("select[name='id_proyecto']").selectedIndex].dataset.descripcionCentroCosto;
+       document.querySelector("input[name='id_centro_costo']").value= idCentroCosto!=undefined && idCentroCosto >0 ?idCentroCosto:'';
+       document.querySelector("input[name='descripcion_centro_costo']").value=((codigoCentroCosto !=undefined?codigoCentroCosto:'')+' - '+(descripcionCentroCosto!=undefined?descripcionCentroCosto:''));
+
+       tempCentroCostoSelected={
+           'id':idCentroCosto!=undefined && idCentroCosto !="" ?idCentroCosto:'',
+           'codigo':codigoCentroCosto !=undefined && codigoCentroCosto !="" ?codigoCentroCosto:'',
+           'descripcion':descripcionCentroCosto !=undefined && descripcionCentroCosto !="" ?descripcionCentroCosto:'',
+        }
+
+        if(idCentroCosto>0){
+            this.autoLlenarCentroCosto();
+        }else{
+            Swal.fire(
+                '',
+                'No se detectó un centro de costo para este proyecto, debería establecer manualmente el centro de costo',
+                'info'
+            ); 
+        }
+    }
+
+    autoLlenarCentroCosto(){
+        let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento']").children;
+        if (tbodyChildren.length > 0) {
+            
+            Swal.fire({
+                title: 'Establecer el centro de costo seleccionado para todos los ítem ingresados?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Si'
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    for (let i = 0; i < tbodyChildren.length; i++) {
+                        tbodyChildren[i].querySelector("input[class='centroCosto']").value = tempCentroCostoSelected.id;
+                        tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").title = tempCentroCostoSelected.descripcion;
+                        tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").textContent = tempCentroCostoSelected.codigo;
+    
+                    }
+                }
+            });           
+        }
+    }
+
+    habilitarInputMesAfectacion(esActivo){
+        if(esActivo){
+            document.querySelector("div[id='input-mes-afectacion']")? document.querySelector("div[id='input-mes-afectacion']").removeAttribute("hidden"):false;
+        }else{
+            document.querySelector("div[id='input-mes-afectacion']")?document.querySelector("div[id='input-mes-afectacion']").setAttribute("hidden",true):false;
+            $("select[name='mes_afectacion']").val('')
+
+
+        }
     }
 
     deshabilitarOtrosTiposDePresupuesto(origen, valor) {
@@ -544,7 +615,19 @@ class RequerimientoView {
         document.querySelector("input[name='email_cliente']").value = data.email;
         document.querySelector("input[name='direccion_entrega']").value = data.direccion_entrega;
         document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto != null ? data.tipo_impuesto : 0;
-        document.querySelector("span[id='mes_ppto']").textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+        if(data.mes_afectacion!=null){
+            document.querySelector("select[name='mes_afectacion']").value = data.mes_afectacion;
+        }
+
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+            if(data && data.fecha_registro !=null){
+                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+            }else{
+                element.textContent =  moment().format('MMMM');
+
+            }
+        });
 
         // document.querySelector("input[name='nombre_contacto']").value =data.
         // document.querySelector("input[name='cargo_contacto']").value =data.
@@ -579,6 +662,11 @@ class RequerimientoView {
 
         this.llenarComboProyectos(data.id_grupo, data.id_proyecto);
         this.presupuestoInternoView.llenarComboPresupuestoInterno(data.id_grupo, data.division_id, data.id_presupuesto_interno);
+
+        document.querySelector("input[name='id_centro_costo']").value = data.id_centro_costo != null ? data.id_centro_costo : '';
+        document.querySelector("input[name='descripcion_centro_costo']").value = data.descripcion_centro_costo != null ? (data.codigo_centro_costo+' - ' +data.descripcion_centro_costo) : '';
+
+
 
     }
 
@@ -651,6 +739,8 @@ class RequerimientoView {
             let descripcionPartida = '';
             let totalPartida = 0;
             let totalPartidaMes = 0;
+            let totalSaldoMes=0;
+
             let totalPorConsumidoConIgvFaseAprobacion = 0;
             if (dataDetalleRequerimiento[i].id_partida > 0) {
                 tipoPresupuesto = 'ANTIGUO';
@@ -665,6 +755,7 @@ class RequerimientoView {
                 descripcionPartida = dataDetalleRequerimiento[i].descripcion_partida_presupuesto_interno;
                 totalPartida = dataDetalleRequerimiento[i].presupuesto_interno_total_partida;
                 totalPartidaMes = dataDetalleRequerimiento[i].presupuesto_interno_mes_partida;
+                totalSaldoMes = dataDetalleRequerimiento[i].presupuesto_interno_saldo_mes_disponible_partida != null ? dataDetalleRequerimiento[i].presupuesto_interno_saldo_mes_disponible_partida : 0;
                 totalPorConsumidoConIgvFaseAprobacion=dataDetalleRequerimiento[i].total_consumido_hasta_fase_aprobacion_con_igv>0 ?(dataDetalleRequerimiento[i].total_consumido_hasta_fase_aprobacion_con_igv):0;
             }
 
@@ -674,6 +765,7 @@ class RequerimientoView {
             data-id-partida="${idPartida}"
             data-presupuesto-total="${totalPartida}"
             data-presupuesto-mes="${totalPartidaMes}"
+            data-total-saldo-mes="${totalSaldoMes}"
             data-total-por-consumido-con-igv-fase-aprobacion="${totalPorConsumidoConIgvFaseAprobacion}"
             title="${descripcionPartida != '' || descripcionPartida != null ? descripcionPartida : '(NO SELECCIONADO)'}" >${codigoPartida != null || codigoPartida != '' ? codigoPartida : '(NO SELECCIONADO)'}</p>
             <button type="button" class="btn btn-xs btn-info activation handleClickCargarModalPartidas" name="partida" ${hasDisabledInput}>Seleccionar</button>
@@ -1122,10 +1214,10 @@ class RequerimientoView {
             let option = document.createElement("option");
             option.text = element.codigo + ' - ' + element.descripcion;
             option.value = element.id_proyecto;
-            option.setAttribute('data-codigo', element.codigo);
-            option.setAttribute('data-id-centro-costo', element.id_centro_costo);
-            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo);
-            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo);
+            option.setAttribute('data-codigo', element.codigo !=null?element.codigo:'');
+            option.setAttribute('data-id-centro-costo', element.id_centro_costo!=null?element.id_centro_costo:'');
+            option.setAttribute('data-codigo-centro-costo', element.codigo_centro_costo!=null ?element.codigo_centro_costo:'');
+            option.setAttribute('data-descripcion-centro-costo', element.descripcion_centro_costo !=null ?element.descripcion_centro_costo:'');
             if (element.id_proyecto == idProyecto) {
                 option.selected = true;
             }
@@ -1225,7 +1317,7 @@ class RequerimientoView {
         <td>
             ${tipoPptoCDP > 0 ? '' : partidaTd}
         </td>
-        <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
+        <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : ''}" hidden>
             </div>
@@ -1294,7 +1386,7 @@ class RequerimientoView {
         <td>
             ${tipoPptoCDP > 0 ? '' : partidaTd}
         </td>
-            <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  ${tempCentroCostoSelected != undefined ? 'disabled' : ''} title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
+            <td><p class="descripcion-centro-costo" title="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.descripcion : '(NO SELECCIONADO)'}">${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.codigo : '(NO SELECCIONADO)'}</p><button type="button" class="btn btn-xs btn-primary handleClickCargarModalCentroCostos" name="centroCostos"  title="${tempCentroCostoSelected != undefined ? 'El centro de costo esta asignado a un proyecto' : ''}" >Seleccionar</button>
             <div class="form-group">
                 <input type="text" class="centroCosto" name="idCentroCosto[]" value="${tempCentroCostoSelected != undefined ? tempCentroCostoSelected.id : ''}" hidden>
             </div>
@@ -1648,12 +1740,13 @@ class RequerimientoView {
                         'codigo': tbodyChildren[index].querySelector("p[class='descripcion-partida']").textContent,
                         'descripcion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").title,
                         'presupuesto_mes': (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoMes).replace(/,/gi, ''),
+                        'total_saldo_mes_disponible': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes !=null ?(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalSaldoMes).replace(/,/gi, ''):0,
                         'presupuesto_total': (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.presupuestoTotal).replace(/,/gi, ''),
                         'id_moneda_presupuesto_utilizado': idMonedaPresupuestoUtilizado,
                         'simbolo_moneda_presupuesto_utilizado': simboloMonedaPresupuestoUtilizado,
                         'presupuesto_utilizado_al_cambio': 0,
                         'presupuesto_utilizado': 0,
-                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion!=""?parseFloat(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion.replace(/,/gi, '')):0,
+                        'total_por_consumido_con_igv_fase_aprobacion': tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion!=null?parseFloat(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.totalPorConsumidoConIgvFaseAprobacion.replace(/,/gi, '')):0,
                         'saldo_total': 0,
                         'saldo_mes': 0
                     });
@@ -1680,7 +1773,7 @@ class RequerimientoView {
                     // console.log(tempPartidasActivas[p].presupuesto_utilizado);
                     // console.log(parseFloat(subtotalItemList[i].subtotal));
                     // console.log(tempPartidasActivas[p].presupuesto_utilizado + parseFloat(subtotalItemList[i].subtotal));
-                    tempPartidasActivas[p].presupuesto_utilizado = tempPartidasActivas[p].presupuesto_utilizado + parseFloat(subtotalItemList[i].subtotal);
+                    tempPartidasActivas[p].presupuesto_utilizado = Util.formatoNumero((parseFloat(tempPartidasActivas[p].presupuesto_utilizado) + parseFloat(subtotalItemList[i].subtotal)), 2);
                 }
             }
         }
@@ -1691,28 +1784,36 @@ class RequerimientoView {
                 tempPartidasActivas[p].presupuesto_utilizado_al_cambio = presupuesto_utilizado_alCambio;
                 if(document.querySelector("input[name='id_requerimiento']").value >0){
 
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado_al_cambio>0?tempPartidasActivas[p].presupuesto_utilizado_al_cambio:0));
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado_al_cambio>0?tempPartidasActivas[p].presupuesto_utilizado_al_cambio:0));
+                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) >0 ? parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion): (parseFloat(tempPartidasActivas[p].presupuesto_utilizado_al_cambio)>0? parseFloat(tempPartidasActivas[p].presupuesto_utilizado_al_cambio):0));
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible)) - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) >0 ? parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion): 0) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado_al_cambio)>0? parseFloat(tempPartidasActivas[p].presupuesto_utilizado_al_cambio):0);
                 }else{
                     tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
+                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].total_saldo_mes_disponible)) - (presupuesto_utilizado_alCambio > 0 ? presupuesto_utilizado_alCambio : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
 
                 }
             } else {
                 if(document.querySelector("input[name='id_requerimiento']").value >0){
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado>0?tempPartidasActivas[p].presupuesto_utilizado:0));
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes))  - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion >0 ?tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion: (tempPartidasActivas[p].presupuesto_utilizado>0?tempPartidasActivas[p].presupuesto_utilizado:0));
+                    tempPartidasActivas[p].saldo_total = ( parseFloat(tempPartidasActivas[p].presupuesto_total,2))  - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) >0 ? parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2):0) -  (parseFloat(tempPartidasActivas[p].presupuesto_utilizado)>0? parseFloat(tempPartidasActivas[p].presupuesto_utilizado,2):0);
+                    tempPartidasActivas[p].saldo_mes = ( parseFloat(tempPartidasActivas[p].total_saldo_mes_disponible,2))  - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion) >0 ?parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2): 0) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado)>0? parseFloat(tempPartidasActivas[p].presupuesto_utilizado,2):0);
                 }else{
-                    tempPartidasActivas[p].saldo_total = parseFloat((tempPartidasActivas[p].presupuesto_total)) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
-                    tempPartidasActivas[p].saldo_mes = parseFloat((tempPartidasActivas[p].presupuesto_mes)) - (tempPartidasActivas[p].presupuesto_utilizado > 0 ? tempPartidasActivas[p].presupuesto_utilizado : 0) - (tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion);
+                    tempPartidasActivas[p].saldo_total = ( parseFloat(tempPartidasActivas[p].presupuesto_total,2)) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado) > 0 ? parseFloat(tempPartidasActivas[p].presupuesto_utilizado) : 0) - parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2);
+                    tempPartidasActivas[p].saldo_mes = (parseFloat(tempPartidasActivas[p].total_saldo_mes_disponible,2)) - (parseFloat(tempPartidasActivas[p].presupuesto_utilizado) > 0 ? parseFloat(tempPartidasActivas[p].presupuesto_utilizado) : 0) - (parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion)>0? parseFloat(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2):0);
                 }
 
             }
         }
 
-        // for (let p = 0; p < tempPartidasActivas.length; p++) {
+        for (let p = 0; p < tempPartidasActivas.length; p++) {
+            tempPartidasActivas[p].presupuesto_mes = Util.formatoNumero(tempPartidasActivas[p].presupuesto_mes,2,'.','');
+            tempPartidasActivas[p].presupuesto_total= Util.formatoNumero(tempPartidasActivas[p].presupuesto_total,2,'.','');
+            tempPartidasActivas[p].presupuesto_utilizado= Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado,2,'.','');
+            tempPartidasActivas[p].presupuesto_utilizado_al_cambio= Util.formatoNumero(tempPartidasActivas[p].presupuesto_utilizado_al_cambio,2,'.','');
+            tempPartidasActivas[p].saldo_mes= Util.formatoNumero(tempPartidasActivas[p].saldo_mes,2,'.','');
+            tempPartidasActivas[p].saldo_total= Util.formatoNumero(tempPartidasActivas[p].saldo_total,2,'.','');
+            tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion= Util.formatoNumero(tempPartidasActivas[p].total_por_consumido_con_igv_fase_aprobacion,2,'.','');
+            tempPartidasActivas[p].total_saldo_mes_disponible= Util.formatoNumero(tempPartidasActivas[p].total_saldo_mes_disponible,2,'.','');
 
-        // }
+        }
 
 
         this.construirTablaPresupuestoUtilizadoYSaldoPorPartida(tempPartidasActivas);
@@ -1728,6 +1829,7 @@ class RequerimientoView {
             <td>${element.descripcion}</td>
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_total, 2)}</td>
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
+                <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.total_saldo_mes_disponible, 2)}</td>
                 <td style="text-align:right; background-color: #fbdddd;"><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
                 <td style="text-align:right; background-color: #fbdddd;">
                     <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 

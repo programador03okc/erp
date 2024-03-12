@@ -10,9 +10,12 @@ use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Logistica\PagoCuota;
+use App\Models\Logistica\PagoCuotaDetalle;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use App\Models\Tesoreria\TipoCambio;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ValidarPresupuestoInternoController extends Controller
@@ -45,8 +48,16 @@ class ValidarPresupuestoInternoController extends Controller
 
         $numeroMes = strlen($fechaPago) == 2 ? intval($fechaPago) : intval(date('m', strtotime($fechaPago)));
 
+
+
         if ($tipo == 'requerimiento pago') { // id requerimiento de pago
             $idRequerimientoPago = $id;
+
+            $requerimientoPago = RequerimientoPago::find($id);
+            if($requerimientoPago->mes_afectacion!=null){
+                $numeroMes=intval($requerimientoPago->mes_afectacion);
+            }
+    
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago, $numeroMes, $totalPago, $fechaPago,$fase);
             // $tipoCambioUtilizado= $this->getTipoCambioVenta($fechaPago);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
@@ -76,38 +87,101 @@ class ValidarPresupuestoInternoController extends Controller
             ];
         } elseif ($tipo == 'orden') { // id orden de compra o orden de servicio
             $idOrden = $id;
-            $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden, $numeroMes, $totalPago, $fechaPago,$fase);
-            $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
-            $montoSinVinculoConPresupuestoInterno = $this->obtenerMontoSinVinculoConPresupuestoInterno($idOrden);
-            // $no_exceder_pago = (floatval($montoAcumuladoDePartida) + floatval($montoSinVinculoConPresupuestoInterno)) >= floatval($totalPago)?true:false;
-            $mensajeValidacion = [];
-
-            // if(boolval($no_exceder_pago ==false)){
-            //     $mensajeValidacion[]='El monto ingresado es mayor al monto total del documento';
-            // }
-
-            $tienePresupuestoEnPartidas = true;
-            foreach ($validacionDePartidaConPresupuestoInternoList as $key => $value) {
-                $tienePresupuestoEnPartidas = (boolval($tienePresupuestoEnPartidas) * boolval($value['tiene_presupuesto']));
+        
+            $orden= Orden::find($idOrden);
+            $tieneUnPagoEfectuado=false;
+            if($orden->tiene_pago_en_cuotas ==true){ // la orden tiene pago en cuotas
+                $pagoCuota = PagoCuota::where('id_orden',$idOrden)->first();
+                $pagoCuotaDetalle =PagoCuotaDetalle::where('id_pago_cuota',$pagoCuota->id_pago_cuota)->get();
+                foreach ($pagoCuotaDetalle as $value) {
+                    if($value->id_estado ==6){
+                        $tieneUnPagoEfectuado=true;
+                    }
+                }
             }
 
-            if (boolval($tienePresupuestoEnPartidas) == false) {
-                $mensajeValidacion[] = 'Hay partida(s) de presupuesto interno sin saldo suficiente';
+            if($tieneUnPagoEfectuado==false){
+                // validar si tiene el requeirmiento definido un mes de afectacion 
+                $idRequerimientoList=[];
+                $detalleOrde=OrdenCompraDetalle::where([['id_orden_compra',$idOrden],['estado','!=',7]])->get();
+                foreach ($detalleOrde as $key => $value) {
+                    if($value->id_detalle_requerimiento>0){
+                        $detalleRequerimiento = DetalleRequerimiento::find($value->id_detalle_requerimiento);
+
+                        if(!in_array($detalleRequerimiento->id_requerimiento,$idRequerimientoList)){
+                            $idRequerimientoList[]=$detalleRequerimiento->id_requerimiento;
+                        }
+                    }
+                }
+
+                $mesAfectacionList =[];
+                foreach ($idRequerimientoList as $id) {
+                    $requerimiento = Requerimiento::find($id);
+                    if($requerimiento->mes_afectacion !=null){
+                        if(!in_array($requerimiento->mes_afectacion,$mesAfectacionList)){
+                            $mesAfectacionList[]=$requerimiento->mes_afectacion;
+                        }
+                    }
+                }
+
+                if(count($mesAfectacionList)==1){ // solo tomar uno el primero del array, la orden deberia solo tener un requerimiento para tomar su campo de mes afectacion, si tiene mas requerimientos vinculados no considerar
+                    $numeroMes=intval($mesAfectacionList[0]);
+                }
+
+                // 
+                $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDeLaOrden($idOrden, $numeroMes, $totalPago, $fechaPago,$fase);
+                $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
+                $montoSinVinculoConPresupuestoInterno = $this->obtenerMontoSinVinculoConPresupuestoInterno($idOrden);
+                // $no_exceder_pago = (floatval($montoAcumuladoDePartida) + floatval($montoSinVinculoConPresupuestoInterno)) >= floatval($totalPago)?true:false;
+                $mensajeValidacion = [];
+
+                // if(boolval($no_exceder_pago ==false)){
+                //     $mensajeValidacion[]='El monto ingresado es mayor al monto total del documento';
+                // }
+
+                $tienePresupuestoEnPartidas = true;
+                foreach ($validacionDePartidaConPresupuestoInternoList as $key => $value) {
+                    $tienePresupuestoEnPartidas = (boolval($tienePresupuestoEnPartidas) * boolval($value['tiene_presupuesto']));
+                }
+
+                if (boolval($tienePresupuestoEnPartidas) == false) {
+                    $mensajeValidacion[] = 'Hay partida(s) de presupuesto interno sin saldo suficiente';
+                }
+
+
+                $data = [
+                    // 'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
+                    'tiene_presupuesto' => boolval($tienePresupuestoEnPartidas),
+                    'mensaje' => $mensajeValidacion,
+                    'monto_acumulado_partidas_presupuesto_interno' => floatval($montoAcumuladoDePartida),
+                    'monto_sin_vinculo_con_presupuesto_interno' => floatval($montoSinVinculoConPresupuestoInterno),
+                    'monto_pago_ingresado' => floatval($totalPago),
+                    'tiene_pago_efectuado_en_cuotas' => ($tieneUnPagoEfectuado),
+                    'validacion_partidas_con_presupuesto_interno' => $validacionDePartidaConPresupuestoInternoList
+                    
+                ];
+            }else{
+                $data = [
+                    // 'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
+                    'tiene_presupuesto' => true,
+                    'mensaje' => 'Este pago no afecta ppto interno, ya fue afectado el el primer pago',
+                    'monto_acumulado_partidas_presupuesto_interno' => 0,
+                    'monto_sin_vinculo_con_presupuesto_interno' => 0,
+                    'monto_pago_ingresado' => floatval($totalPago),
+                    'tiene_pago_efectuado_en_cuotas' => ($tieneUnPagoEfectuado),
+                    'validacion_partidas_con_presupuesto_interno' => []
+                ];  
             }
-
-
-            $data = [
-                // 'tiene_presupuesto'=> boolval($no_exceder_pago * $tienePresupuestoEnPartidas),
-                'tiene_presupuesto' => boolval($tienePresupuestoEnPartidas),
-                'mensaje' => $mensajeValidacion,
-                'monto_acumulado_partidas_presupuesto_interno' => floatval($montoAcumuladoDePartida),
-                'monto_sin_vinculo_con_presupuesto_interno' => floatval($montoSinVinculoConPresupuestoInterno),
-                'monto_pago_ingresado' => floatval($totalPago),
-                'validacion_partidas_con_presupuesto_interno' => $validacionDePartidaConPresupuestoInternoList
-            ];
+          
         } elseif ($tipo == 'requerimiento logistico') { // id de requerimiento logistico
+
+
             $idRequerimientoLogistio = $id;
             $mensajeValidacion = [];
+            $requerimiento = Requerimiento::find($idRequerimientoLogistio);
+            if($requerimiento->mes_afectacion!=null){
+                $numeroMes=intval($requerimiento->mes_afectacion);
+            }
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoLogistico($idRequerimientoLogistio, $numeroMes, $totalPago, $fechaPago, $fase);
 
             $tienePresupuestoEnPartidas = true;
@@ -245,9 +319,17 @@ class ValidarPresupuestoInternoController extends Controller
                     if ($item->id_partida_pi > 0) {
                         // lista de item con monto y partida
                         if ($requerimiento->id_moneda == 1) {
-                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + floatval($item->subtotal);
+                            if ($requerimiento->monto_igv > 0) {
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + (floatval($item->subtotal) * 1.18);
+                            } else {
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + floatval($item->subtotal);
+                            }
                         } elseif ($requerimiento->id_moneda == 2) {
-                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                            if ($requerimiento->monto_igv > 0) {
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + ((floatval($item->subtotal) * 1.18) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                            } else {
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                            }
 
                         }
                     }
@@ -255,7 +337,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
 
             foreach ($montoPorUtilizarPorPartida as $partidaId => $monto) {
-                $tieneSaldoPartida = $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, $monto, $totalPago,$fase);
+                $tieneSaldoPartida = $this->TieneSaldoLaPartida($partidaId, $nombreMesAux, number_format($monto, 2, '.', ''), $totalPago,$fase);
                 if ($tieneSaldoPartida != []) {
                     $data[] = $tieneSaldoPartida;
                 }
@@ -322,6 +404,7 @@ class ValidarPresupuestoInternoController extends Controller
                             'id_partida' => $detalle->id_presupuesto_interno_detalle ,
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
+                            'nombre_mes_aux' => $nombreMesAux,
                             'monto_aux' => $detalle->$nombreMesAux,
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,
@@ -341,6 +424,7 @@ class ValidarPresupuestoInternoController extends Controller
                             'id_partida' => $detalle->id_presupuesto_interno_detalle ,
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
+                            'nombre_mes_aux' => $nombreMesAux,
                             'monto_aux' => $detalle->$nombreMesAux,
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,

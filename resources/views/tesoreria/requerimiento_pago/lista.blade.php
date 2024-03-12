@@ -135,8 +135,8 @@ Listado de requerimientos de pago
 <script src="{{ asset('js/logistica/requerimiento/presupuesto-interno-model.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/presupuesto-interno-model.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/modalCuadroPresupuesto.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/modalCuadroPresupuesto.js'))}}"></script>
 <script src="{{ asset('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js')}}?v={{filemtime(public_path('js/logistica/requerimiento/verRequerimientosVinculadosConPartida.js'))}}"></script>
-
 <script>
+
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');
     function updateUM(val) {
         val.options[val.selectedIndex].setAttribute("selected", "");

@@ -67,6 +67,8 @@ use App\Http\Controllers\Gerencial\Cobranza\RegistroController;
 use App\Http\Controllers\Gerencial\GerencialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HynoTechController;
+use App\Http\Controllers\Kardex\DashboardController as KardexDashboardController;
+use App\Http\Controllers\Kardex\ProductosController;
 use App\Http\Controllers\Logistica\Distribucion\DistribucionController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
@@ -2585,6 +2587,17 @@ Route::middleware(['auth'])->group(function () {
             Route::post('enviar-gr-control', [GuiaController::class, 'enviarGRControl'])->name('enviar-gr-control');
             Route::post('reporte-filtros', [GuiaController::class, 'reporteFiltros'])->name('reporte-filtros');
         });
+
+    });
+    Route::name('kardex.')->prefix('kardex')->group(function () {
+        Route::get('index', [KardexDashboardController::class, 'index'])->name('index');
+        Route::name('productos.')->prefix('productos')->group(function () {
+            Route::get('lista', [ProductosController::class, 'lista'])->name('lista');
+            Route::post('listar', [ProductosController::class, 'listar'])->name('listar');
+            Route::post('carga-inicial', [ProductosController::class, 'cargaInicial'])->name('carga-inicial');
+            Route::post('listar-series', [ProductosController::class, 'listarSeries'])->name('listar-series');
+        });
+
 
     });
 });

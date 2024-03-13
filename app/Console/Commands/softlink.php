@@ -54,9 +54,9 @@ class softlink extends Command
             //         MigrateMovimientosSoftlinkController::obtenerMovimientosDeSoftlink();
             //     break;
             
-            case 'migrar_cabecera_movimiento':
+            case 'migrar_cabecera_movimientos':
                
-                $data  = DB::connection('soft')->table('movimien')->orderBy('fec_docu','asc')->get();
+                $data  = DB::connection('soft')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->orderBy('fec_docu','asc')->get();
                 $cantidadMigrados=0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -178,9 +178,15 @@ class softlink extends Command
                 break;
 
 
-            case 'migrar_detalle_movimiento':
+            case 'migrar_detalle_movimientos':
                 
-                $data  = DB::connection('soft')->table('detmov')->orderBy('fec_pedi','asc')->get();
+                $idMovList = [];
+                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->get();
+                foreach ($aux as $key => $value) {
+                    $idMovList[]=$value->mov_id;
+                }
+
+                $data  = DB::connection('soft')->table('detmov')->whereIn('mov_id',$idMovList)->orderBy('fec_pedi','asc')->get();
                 $cantidadMigrados=0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -260,7 +266,7 @@ class softlink extends Command
 
             case 'migrar_series':
                 
-                $data  = DB::connection('soft')->table('series')->orderBy('fecha_ingre','asc')->get();
+                $data  = DB::connection('soft')->table('series')->orderBy('fecha_ing','asc')->get();
                 $cantidadMigrados=0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -270,7 +276,7 @@ class softlink extends Command
                     //     ['mov_id',$value->mov_id],
                     //     ['cod_prod',$value->cod_prod],
                     //     ['serie',$value->serie]
-                    // ])->orderBy('fecha_ingre','asc')->count();
+                    // ])->orderBy('fecha_ing','asc')->count();
                  
                     // if($seriesAGILE==0){
                         $nuevaSerie =  new Serie(); 
@@ -281,10 +287,10 @@ class softlink extends Command
                         $nuevaSerie->id_salida = str_replace("'", "", str_replace("", "",htmlspecialchars($value->id_salida, ENT_NOQUOTES, "UTF-8")));
                         $nuevaSerie->flg_kar_i = $value->flg_kar_i;
                         $nuevaSerie->flg_kar_s = $value->flg_kar_s;
-                        $nuevaSerie->fecha_ing = $value->fec_pedi !='0000-00-00'?$value->fecha_ing:null;
-                        $nuevaSerie->fecha_sal = $value->fec_pedi !='0000-00-00'?$value->fecha_sal:null;
+                        $nuevaSerie->fecha_ing = $value->fecha_ing !='0000-00-00'?$value->fecha_ing:null;
+                        $nuevaSerie->fecha_sal = $value->fecha_sal !='0000-00-00'?$value->fecha_sal:null;
                         $nuevaSerie->proceso = $value->proceso;
-                        $nuevaSerie->fechavcto =  $value->fec_pedi !='0000-00-00'?$value->fechavcto:null;
+                        $nuevaSerie->fechavcto =  $value->fechavcto !='0000-00-00'?$value->fechavcto:null;
                         $nuevaSerie->unicodet_i = str_replace("'", "", str_replace("", "",htmlspecialchars($value->unicodet_i, ENT_NOQUOTES, "UTF-8")));
                         $nuevaSerie->unicodet_s = str_replace("'", "", str_replace("", "",htmlspecialchars($value->unicodet_s, ENT_NOQUOTES, "UTF-8")));
                         $nuevaSerie->lote = str_replace("'", "", str_replace("", "",htmlspecialchars($value->lote, ENT_NOQUOTES, "UTF-8")));

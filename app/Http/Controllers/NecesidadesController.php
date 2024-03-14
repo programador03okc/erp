@@ -33,7 +33,7 @@ class NecesidadesController extends Controller
 
 
     public function listarSeguimiento(){
-        $data= DashboardSeguimientoView::orderBy('fecha_publicacion_orden','DESC')->paginate(15);
+        $data= DashboardSeguimientoView::orderBy('tiempo_entrega_dias','DESC')->paginate(15);
  
         return response()->json($data,200);
     }

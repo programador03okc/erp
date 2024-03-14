@@ -2600,6 +2600,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('listar', [ProductosController::class, 'listar'])->name('listar');
             Route::post('carga-inicial', [ProductosController::class, 'cargaInicial'])->name('carga-inicial');
             Route::post('listar-series', [ProductosController::class, 'listarSeries'])->name('listar-series');
+            Route::get('actualizar-productos', [ProductosController::class, 'actualizarProductos'])->name('actualizar-productos');
         });
 
 

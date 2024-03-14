@@ -115,4 +115,10 @@ class ProductosController extends Controller
             </div>';
         })->rawColumns(['accion'])->make(true);;
     }
+    public function actualizarProductos(){
+
+        return response()->json([
+            "tipo"=>true
+        ],200);
+    }
 }

@@ -25,14 +25,14 @@
 @section('cuerpo')
     <div class="row">
         <div class="col-md-12">
-            <div class="box box-success">
+            <div class="box box-widget">
                 <div class="box-header">
                     <h3 class="box-title">Productos</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-inbox mb-0 dataTable no-footer dtr-inline collapsed table-responsive" id="tabla">
+                            <table class="table table-inbox mb-0 dataTable no-footer dtr-inline collapsed table-responsive" id="tabla" width="100%">
                                 <thead>
                                     <tr>
                                         <th>Cod.Agil</th>
@@ -102,7 +102,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-inbox mb-0 dataTable no-footer dtr-inline collapsed table-responsive" id="tabla-series">
+                            <table class="table table-inbox mb-0 dataTable no-footer dtr-inline collapsed table-responsive" id="tabla-series" width="100%">
                                 <thead>
                                     <tr>
                                         <th>Serie</th>

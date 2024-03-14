@@ -180,87 +180,85 @@ class softlink extends Command
 
             case 'migrar_detalle_movimientos':
                 
-                $idMovList = [];
-                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->get();
-                foreach ($aux as $key => $value) {
-                    $idMovList[]=$value->mov_id;
-                }
-
-                $data  = DB::connection('soft')->table('detmov')->whereIn('mov_id',$idMovList)->orderBy('fec_pedi','asc')->get();
                 $cantidadMigrados=0;
-                $bar = $this->output->createProgressBar(count($data));
+                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->orderBy('fec_docu','asc')->get();
+                $cantidadAux =count($aux);
+                $bar = $this->output->createProgressBar($cantidadAux);
                 $bar->start();
-                
-                foreach ($data as $value) {
-                    // $movimientosDetalleAGILE = MovimientoDetalle::where([
-                    //     ['mov_id',$value->mov_id],
-                    //     ['tipo',$value->tipo],
-                    //     ['cod_docu',$value->cod_docu],
-                    //     ['num_docu',$value->num_docu]
-                    // ])->orderBy('fec_pedi','asc')->count();
-                 
-                    // if($movimientosDetalleAGILE==0){
-                        $nuevoMovimientoDetalle =  new MovimientoDetalle(); 
-                        $nuevoMovimientoDetalle->unico = str_replace("'", "", str_replace("", "",htmlspecialchars($value->unico, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->mov_id = str_replace("'", "", str_replace("", "",htmlspecialchars($value->mov_id, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->tipo = $value->tipo;
-                        $nuevoMovimientoDetalle->cod_docu = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_docu, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->num_docu =  str_replace("'", "", str_replace("", "",htmlspecialchars($value->num_docu, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->fec_pedi = $value->fec_pedi !='0000-00-00'?$value->fec_pedi:null;
-                        $nuevoMovimientoDetalle->cod_auxi = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_auxi, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->cod_prod = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_prod, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->nom_prod =  str_replace("'", "", str_replace("", "",htmlspecialchars($value->nom_prod, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->can_pedi = $value->can_pedi;
-                        $nuevoMovimientoDetalle->sal_pedi = $value->sal_pedi;
-                        $nuevoMovimientoDetalle->can_devo = $value->can_devo;
-                        $nuevoMovimientoDetalle->pre_prod = $value->pre_prod;
-                        $nuevoMovimientoDetalle->dscto_condi = $value->dscto_condi;
-                        $nuevoMovimientoDetalle->dscto_categ = $value->dscto_categ;
-                        $nuevoMovimientoDetalle->pre_neto = $value->pre_neto;
-                        $nuevoMovimientoDetalle->igv_inclu = $value->igv_inclu;
-                        $nuevoMovimientoDetalle->cod_igv = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_igv, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->impto1 = $value->impto1;
-                        $nuevoMovimientoDetalle->impto2 = $value->impto2;
-                        $nuevoMovimientoDetalle->imp_item = $value->imp_item;
-                        $nuevoMovimientoDetalle->pre_gratis = $value->pre_gratis;
-                        $nuevoMovimientoDetalle->descargo = str_replace("'", "", str_replace("", "",htmlspecialchars($value->descargo, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->trecord = str_replace("'", "", str_replace("", "",htmlspecialchars($value->trecord, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->cod_model = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_model, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->flg_serie = $value->flg_serie;
-                        $nuevoMovimientoDetalle->series = str_replace("'", "", str_replace("", "",htmlspecialchars($value->series, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->entrega = $value->entrega;
-                        $nuevoMovimientoDetalle->notas = str_replace("'", "", str_replace("", "",htmlspecialchars($value->notas, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->flg_percep = $value->flg_percep;
-                        $nuevoMovimientoDetalle->por_percep = $value->por_percep;
-                        $nuevoMovimientoDetalle->mon_percep = $value->mon_percep;
-                        $nuevoMovimientoDetalle->ok_stk = $value->ok_stk;
-                        $nuevoMovimientoDetalle->ok_serie = $value->ok_serie;
-                        $nuevoMovimientoDetalle->lstock = $value->lStock;
-                        $nuevoMovimientoDetalle->no_calc = $value->no_calc;
-                        $nuevoMovimientoDetalle->promo = $value->promo;
-                        $nuevoMovimientoDetalle->seriesprod =str_replace("'", "", str_replace("", "",htmlspecialchars($value->seriesprod, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->pre_anexa = $value->pre_anexa;
-                        $nuevoMovimientoDetalle->dsctocompra = $value->dsctocompra;
-                        $nuevoMovimientoDetalle->cod_prov = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_prov, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->costo_unit = $value->costo_unit;
-                        $nuevoMovimientoDetalle->peso = $value->peso;
-                        $nuevoMovimientoDetalle->gasto1 = $value->gasto1;
-                        $nuevoMovimientoDetalle->gasto2 = $value->gasto2;
-                        $nuevoMovimientoDetalle->flg_detrac = $value->flg_detrac;
-                        $nuevoMovimientoDetalle->por_detrac = $value->por_detrac;
-                        $nuevoMovimientoDetalle->cod_detrac =str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_detrac, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->mon_detrac = $value->mon_detrac;
-                        $nuevoMovimientoDetalle->tipoprecio = str_replace("'", "", str_replace("", "",htmlspecialchars($value->tipoprecio, ENT_NOQUOTES, "UTF-8")));
-                        $nuevoMovimientoDetalle->save();
-                        $cantidadMigrados++;
-    
-                    // }
+                foreach ($aux as $key => $value) {
+                    $data  = DB::connection('soft')->table('detmov')->where('mov_id',$value->mov_id)->orderBy('fec_pedi','asc')->get();
+                    
+                    foreach ($data as $value) {
+                        // $movimientosDetalleAGILE = MovimientoDetalle::where([
+                        //     ['mov_id',$value->mov_id],
+                        //     ['tipo',$value->tipo],
+                        //     ['cod_docu',$value->cod_docu],
+                        //     ['num_docu',$value->num_docu]
+                        // ])->orderBy('fec_pedi','asc')->count();
+                     
+                        // if($movimientosDetalleAGILE==0){
+                            $nuevoMovimientoDetalle =  new MovimientoDetalle(); 
+                            $nuevoMovimientoDetalle->unico = str_replace("'", "", str_replace("", "",htmlspecialchars($value->unico, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->mov_id = str_replace("'", "", str_replace("", "",htmlspecialchars($value->mov_id, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->tipo = $value->tipo;
+                            $nuevoMovimientoDetalle->cod_docu = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_docu, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->num_docu =  str_replace("'", "", str_replace("", "",htmlspecialchars($value->num_docu, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->fec_pedi = $value->fec_pedi !='0000-00-00'?$value->fec_pedi:null;
+                            $nuevoMovimientoDetalle->cod_auxi = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_auxi, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->cod_prod = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_prod, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->nom_prod =  str_replace("'", "", str_replace("", "",htmlspecialchars($value->nom_prod, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->can_pedi = $value->can_pedi;
+                            $nuevoMovimientoDetalle->sal_pedi = $value->sal_pedi;
+                            $nuevoMovimientoDetalle->can_devo = $value->can_devo;
+                            $nuevoMovimientoDetalle->pre_prod = $value->pre_prod;
+                            $nuevoMovimientoDetalle->dscto_condi = $value->dscto_condi;
+                            $nuevoMovimientoDetalle->dscto_categ = $value->dscto_categ;
+                            $nuevoMovimientoDetalle->pre_neto = $value->pre_neto;
+                            $nuevoMovimientoDetalle->igv_inclu = $value->igv_inclu;
+                            $nuevoMovimientoDetalle->cod_igv = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_igv, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->impto1 = $value->impto1;
+                            $nuevoMovimientoDetalle->impto2 = $value->impto2;
+                            $nuevoMovimientoDetalle->imp_item = $value->imp_item;
+                            $nuevoMovimientoDetalle->pre_gratis = $value->pre_gratis;
+                            $nuevoMovimientoDetalle->descargo = str_replace("'", "", str_replace("", "",htmlspecialchars($value->descargo, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->trecord = str_replace("'", "", str_replace("", "",htmlspecialchars($value->trecord, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->cod_model = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_model, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->flg_serie = $value->flg_serie;
+                            $nuevoMovimientoDetalle->series = str_replace("'", "", str_replace("", "",htmlspecialchars($value->series, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->entrega = $value->entrega;
+                            $nuevoMovimientoDetalle->notas = str_replace("'", "", str_replace("", "",htmlspecialchars($value->notas, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->flg_percep = $value->flg_percep;
+                            $nuevoMovimientoDetalle->por_percep = $value->por_percep;
+                            $nuevoMovimientoDetalle->mon_percep = $value->mon_percep;
+                            $nuevoMovimientoDetalle->ok_stk = $value->ok_stk;
+                            $nuevoMovimientoDetalle->ok_serie = $value->ok_serie;
+                            $nuevoMovimientoDetalle->lstock = $value->lStock;
+                            $nuevoMovimientoDetalle->no_calc = $value->no_calc;
+                            $nuevoMovimientoDetalle->promo = $value->promo;
+                            $nuevoMovimientoDetalle->seriesprod =str_replace("'", "", str_replace("", "",htmlspecialchars($value->seriesprod, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->pre_anexa = $value->pre_anexa;
+                            $nuevoMovimientoDetalle->dsctocompra = $value->dsctocompra;
+                            $nuevoMovimientoDetalle->cod_prov = str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_prov, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->costo_unit = $value->costo_unit;
+                            $nuevoMovimientoDetalle->peso = $value->peso;
+                            $nuevoMovimientoDetalle->gasto1 = $value->gasto1;
+                            $nuevoMovimientoDetalle->gasto2 = $value->gasto2;
+                            $nuevoMovimientoDetalle->flg_detrac = $value->flg_detrac;
+                            $nuevoMovimientoDetalle->por_detrac = $value->por_detrac;
+                            $nuevoMovimientoDetalle->cod_detrac =str_replace("'", "", str_replace("", "",htmlspecialchars($value->cod_detrac, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->mon_detrac = $value->mon_detrac;
+                            $nuevoMovimientoDetalle->tipoprecio = str_replace("'", "", str_replace("", "",htmlspecialchars($value->tipoprecio, ENT_NOQUOTES, "UTF-8")));
+                            $nuevoMovimientoDetalle->save();
+                            $cantidadMigrados++;
+        
+                        // }
+                    }
                     $bar->advance();
                 }
 
                 $bar->finish();
                 
-                $this->info("\nCantidad de registros de detalle de movimiento migrados: $cantidadMigrados");
+                $this->info("\nLa cabecera tiene un total de $cantidadAux registros y se agrego al detalle de movimiento $cantidadMigrados registros");
 
                 break;
 

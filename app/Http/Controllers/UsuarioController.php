@@ -36,7 +36,7 @@ class UsuarioController extends Controller
             $usuario = Usuario::find(Auth::user()->id_usuario);
             $usuario->clave = StringHelper::encode5t($request->clave);
             $usuario->password = Hash::make($request->clave);
-            $usuario->fecha_renovacion = date("Y-m-d", strtotime(Carbon::now()."+ 45 days"));
+            $usuario->fecha_renovacion = date("Y-m-d", strtotime(Carbon::now()."+ 60 days"));
             $usuario->save();
 
             if ($usuario) {

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Imports\ProductosKardexImport;
 use App\Models\kardex\Producto;
 use App\Models\kardex\ProductoDetalle;
+use App\Models\softlink\Movimiento;
+use App\Models\softlink\MovimientoDetalle;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -117,8 +119,17 @@ class ProductosController extends Controller
     }
     public function actualizarProductos(){
 
+        $movimietos = Movimiento::where('cod_docu','GR')->get();
+        return $movimietos;exit;
+        $array_detalle = array();
+        foreach ($movimietos as $key => $value) {
+            $value->detalle = MovimientoDetalle::where('mov_id',$value->mov_id)->get();
+            array_push($array_detalle, $value->detalle);
+        }
         return response()->json([
-            "tipo"=>true
+            "tipo"=>true,
+            // "movimientos"=>$movimietos
+            "detalle"=>$array_detalle
         ],200);
     }
 }

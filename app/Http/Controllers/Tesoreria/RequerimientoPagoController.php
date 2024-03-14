@@ -52,6 +52,7 @@ use App\Models\Tesoreria\RequerimientoPagoCategoriaAdjunto;
 use App\Models\Tesoreria\RequerimientoPagoEstados;
 use App\Models\Tesoreria\RequerimientoPagoTipo;
 use App\Models\Tesoreria\RequerimientoPagoTipoDestinatario;
+use App\Models\Tesoreria\TipoCambio;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -330,6 +331,14 @@ class RequerimientoPagoController extends Controller
          
     }
 
+    public function getTipoCambioVenta($fecha)
+    {
+        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
+            ->orderBy('fecha', 'DESC')->first();
+
+        return ($tc !== null ? $tc->venta : 0);
+    }
+
 
     function guardarRequerimientoPago(Request $request)
     {
@@ -383,6 +392,7 @@ class RequerimientoPagoController extends Controller
 
             // $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;
             // $requerimientoPago->plazo_entrega = $request->plazo_entrega ? $request->plazo_entrega : null;
+            $requerimientoPago->tipo_cambio = $this->getTipoCambioVenta(new Carbon());
 
             $requerimientoPago->save();
 

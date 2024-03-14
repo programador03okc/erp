@@ -77,14 +77,14 @@ class SeguimientoView {
             (data.data).forEach(element => {
                 htmlTabla+=`
                 <tr>
-                <td class="text-center">${element.codigo_requerimiento}</td>
-                <td class="text-center">${element.codigo_oportunidad}</td>
-                <td class="text-center">${element.dias_para_entrega}</td>
+                <td class="text-center" style="vertical-align: middle;">${element.codigo_requerimiento}</td>
+                <td class="text-center" style="vertical-align: middle;">${element.codigo_oportunidad}</td>
+                <td class="text-center" style="vertical-align: middle;">${element.dias_para_entrega}</td>
                 <td class="text-center">${element.comercial}</td>
                 <td class="text-center">${element.compras}</td>
                 <td class="text-center">${element.almacen}</td>
                 <td class="text-center">${element.cas}</td>
-                <td class="text-center"></td>
+                <td class="text-center">${element.despacho}</td>
             </tr>
                 `;
             });

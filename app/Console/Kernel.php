@@ -25,6 +25,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('softlink auto')->runInBackground();
+        // $schedule->command('softlink auto')->when(function(){
+        //     return true;
+        // });
     }
 
     /**

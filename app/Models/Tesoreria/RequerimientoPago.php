@@ -146,6 +146,10 @@ class RequerimientoPago extends Model
             $documento .= 'MK';
             $num = RequerimientoPago::obtenerCantidadRegistros(6, $idRequerimientoPago, $idPeriodo); //tipo: BS, grupo: Marketing
         }
+        if ($idGrupo == 7) {
+            $documento .= 'AD';
+            $num = RequerimientoPago::obtenerCantidadRegistros(7, $idRequerimientoPago, $idPeriodo); //tipo: BS, grupo: Alta dirección
+        }
         // $yy = date('y', strtotime("now"));
         $correlativo = sprintf('%04d', $num);
 

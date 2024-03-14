@@ -81,6 +81,7 @@ use App\Http\Controllers\Logistica\Requerimientos\TrazabilidadRequerimientoContr
 use App\Http\Controllers\LogisticaController;
 use App\Http\Controllers\Migraciones\MigracionAlmacenSoftLinkController;
 use App\Http\Controllers\Migraciones\MigrateFacturasSoftlinkController;
+use App\Http\Controllers\Migraciones\MigrateMovimientosSoftlinkController;
 use App\Http\Controllers\Migraciones\MigrateOrdenSoftLinkController;
 use App\Http\Controllers\Migraciones\MigrateProductoSoftlinkController;
 use App\Http\Controllers\Migraciones\MigrateRequerimientoSoftLinkController;
@@ -153,6 +154,7 @@ Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('tes
 // Route::get('test-ordenes-servicio', [ReporteLogisticaController::class, 'listaOrdenesServicio'])->name('test-ordenes-servicio');
 Route::get('test-inicial-clave', [TestController::class, 'cargarClaves'])->name('test-lista-cliente');
 
+// Route::get('obtener-movimientos-de-softlink', [MigrateMovimientosSoftlinkController::class, 'obtenerMovimientosDeSoftlink'])->name('obtener-movimientos-de-softlink');
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('cerrar-sesion', [LoginController::class, 'logout'])->name('cerrar-sesion');

@@ -23,4 +23,15 @@ class KardexModel {
             data: { _token: this.token, id:id },
         });
     }
+
+    actualizarKardex = (id) => {
+        return $.ajax({
+            url: route("kardex.productos.actualizar-productos"),
+            type: "GET",
+            dataType: "JSON",
+            // processData: false,
+            // contentType: false,
+            data: { _token: this.token },
+        });
+    }
 }

@@ -9,7 +9,7 @@ class KardexView {
     listar = () => {
         // console.log(data_filtros);
         var vardataTables = funcDatatables();
-
+        let model = this.model;
         const $tabla = $('#tabla').DataTable({
             dom: 'Bfrtip',
             pageLength: 20,
@@ -71,6 +71,22 @@ class KardexView {
                         $("#modal-carga-inicial").modal("show");
                     },
                     className: 'btn btn-default btn-sm',
+                    init: function(api, node, config) {
+                        $(node).removeClass('btn-primary')
+                    }
+                },
+                {
+                    text: '<i class="fa fa-filter"></i> Actualizar',
+                    className: 'btn btn-default btn-sm actualizar-kardex',
+                    action: function () {
+                        // $("#formulario-masivo")[0].reset();
+                        model.actualizarKardex().then((respuesta) => {
+                            console.log(respuesta);
+                        }).fail((respuesta) => {
+                            // return respuesta;
+                        }).always(() => {
+                        });
+                    },
                     init: function(api, node, config) {
                         $(node).removeClass('btn-primary')
                     }
@@ -158,7 +174,6 @@ class KardexView {
         $('#carga-inicial').submit(function (e) {
             e.preventDefault();
             let data = new FormData($(e.currentTarget)[0]);
-            console.log(model);
             model.cargaInicialKardex(data).then((respuesta) => {
                 $(e.currentTarget).trigger("reset")
                 if(respuesta.tipo == "success"){

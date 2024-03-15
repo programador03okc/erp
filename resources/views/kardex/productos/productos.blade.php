@@ -144,7 +144,6 @@
 
 
     $(document).ready(function() {
-        console.log(token);
         const view = new KardexView(new KardexModel(token));
 
         view.listar();

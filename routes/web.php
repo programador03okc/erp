@@ -2603,6 +2603,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('carga-inicial', [ProductosController::class, 'cargaInicial'])->name('carga-inicial');
             Route::post('listar-series', [ProductosController::class, 'listarSeries'])->name('listar-series');
             Route::get('actualizar-productos', [ProductosController::class, 'actualizarProductos'])->name('actualizar-productos');
+            Route::get('paginar-movimiento', [ProductosController::class, 'paginarMovimiento'])->name('paginar-movimiento');
+            // Route::get('actualizar-productos', [ProductosController::class, 'actualizarProductos'])->name('actualizar-productos');
         });
 
 

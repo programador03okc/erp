@@ -9,6 +9,7 @@ use App\Models\kardex\ProductoDetalle;
 use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -119,17 +120,55 @@ class ProductosController extends Controller
     }
     public function actualizarProductos(){
 
-        $movimietos = Movimiento::where('cod_docu','GR')->get();
-        return $movimietos;exit;
-        $array_detalle = array();
-        foreach ($movimietos as $key => $value) {
-            $value->detalle = MovimientoDetalle::where('mov_id',$value->mov_id)->get();
-            array_push($array_detalle, $value->detalle);
-        }
+
+        // $array_detalle = array();
+        // foreach ($movimietos as $key => $value) {
+        //     $value->detalle = MovimientoDetalle::where('mov_id',$value->mov_id)->get();
+        //     array_push($array_detalle, $value->detalle);
+        // }
+        // $data  = DB::connection('soft')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->orderBy('fec_docu','asc')->get();
+        // foreach ($data as $key => $value) {
+        //     return $value;
+        // }
+        return $this->obtenerMovimientos();
         return response()->json([
             "tipo"=>true,
             // "movimientos"=>$movimietos
-            "detalle"=>$array_detalle
+            // "detalle"=>$array_detalle
         ],200);
+    }
+    public function obtenerMovimientos(){
+
+        $array=array();
+        // set_time_limit(0);
+        $contador = 0;
+        $count = 0;
+        do {
+
+            $count = Movimiento::whereIn('cod_docu',['GR','G1','G2','G4','G5','G6'])
+            ->count();
+            $inicio = 0;
+            $limit = 2000;
+
+            $pages = (($count % $limit) == 0 ? (int) ($count / $limit) : (int) ($count / $limit) + 1 );
+
+            $movimietos = Movimiento::whereIn('cod_docu',['GR','G1','G2','G4','G5','G6'])
+            ->offset($inicio) // Starting position of records
+            ->limit($limit) // Number of records to retrieve
+            ->get();
+
+            array_push($array, $movimietos);
+
+            $contador ++;
+
+            $inicio = $inicio + $limit;
+
+        } while ($contador < 3);
+
+        return [$contador, $count, $inicio, $array];
+
+    }
+    public function paginarMovimiento(){
+        return $movimietos = Movimiento::whereIn('cod_docu',['GR','G1','G2','G4','G5','G6'])->paginate(90);
     }
 }

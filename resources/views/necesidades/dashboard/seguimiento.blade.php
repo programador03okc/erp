@@ -40,6 +40,9 @@
     td {
         padding: 8px 16px;
     }
+    td:hover {
+        background-color: #ccc;
+    }
 
     th {
         background: #eee;
@@ -130,7 +133,7 @@
             <div class="">
                 <div class="">
                     <div class="table-responsive tableFixHead">
-                        <table class="table table-condensed table-bordered" id="tablaSeguimiento" width="100%">
+                        <table class="table table-condensed table-bordered table-striped  table-hover" id="tablaSeguimiento" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width: 3%">Requerimiento</th>

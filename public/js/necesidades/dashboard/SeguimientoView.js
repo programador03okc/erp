@@ -77,7 +77,7 @@ class SeguimientoView {
             (data.data).forEach(element => {
                 htmlTabla+=`
                 <tr>
-                <td class="text-center" style="vertical-align: middle;">${element.codigo_requerimiento}</td>
+                <td class="text-center" style="vertical-align: middle;"><a href="/necesidades/requerimiento/listado/imprimir-requerimiento-pdf/${element.id_requerimiento}/0" target="_blank">${element.codigo_requerimiento}</a></td>
                 <td class="text-center" style="vertical-align: middle;">${element.codigo_oportunidad}</td>
                 <td class="text-center" style="vertical-align: middle;">${element.dias_para_entrega}</td>
                 <td class="text-center">${element.comercial}</td>

@@ -162,7 +162,7 @@ class PresupuestoInternoDetalle extends Model
             ->where('id_tipo_presupuesto',3)
             ->orderBy('partida', 'asc')
             ->get();
-
+            // return [$value, $historial];
             foreach ($historial as $k_h => $v_h) {
                 if (
                     $v_h->registro == '2'
@@ -176,7 +176,9 @@ class PresupuestoInternoDetalle extends Model
                     $saldo_mes_actual = ($saldo_mes_actual>0?$saldo_mes_actual:0); // valido que el saldo no sea negativo (febrero)
 
                     $inicio_mes_siguiente = ($nombre_mes!=='diciembre'?floatval(str_replace(",", "", $v_h->$nombre_mes_siguiente)):0) ; // mes de (marzo)
-                    // return [$inicio_mes_siguiente,$saldo_mes_actual];
+
+                    return [$nombre_mes_siguiente,$mes_siguiente];
+
                     $saldo_mes_siguiente =  $saldo_mes_actual + $inicio_mes_siguiente; // campo de mes el que visualiza el usuario
 
 
@@ -197,22 +199,22 @@ class PresupuestoInternoDetalle extends Model
 
 
                     #historial de saldo
-                    $historial = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$presupuesto_interno_detalle->id_presupuesto_interno)
+                    $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno',$presupuesto_interno_detalle->id_presupuesto_interno)
                     ->where('id_partida',$presupuesto_interno_detalle->id_presupuesto_interno_detalle)
                     ->where('descripcion','saldo del mes anterior')->first();
-                    if (!$historial) {
-                        $historial = new HistorialPresupuestoInternoSaldo();
+                    if (!$historial_saldo) {
+                        $historial_saldo = new HistorialPresupuestoInternoSaldo();
                     }
-                        $historial->id_presupuesto_interno = $presupuesto_interno_detalle->id_presupuesto_interno;
-                        $historial->id_partida = $presupuesto_interno_detalle->id_presupuesto_interno_detalle;
-                        $historial->tipo = 'INGRESO';
-                        $historial->importe = floatval(str_replace(",", "", $saldo_mes_actual));
-                        $historial->mes = $mes_siguiente;
-                        $historial->fecha_registro = date('Y-m-d H:i:s');
-                        $historial->estado = 3;
-                        $historial->descripcion = 'saldo del mes anterior';
-                        $historial->operacion = 'S';
-                    $historial->save();
+                        $historial_saldo->id_presupuesto_interno = $presupuesto_interno_detalle->id_presupuesto_interno;
+                        $historial_saldo->id_partida = $presupuesto_interno_detalle->id_presupuesto_interno_detalle;
+                        $historial_saldo->tipo = 'INGRESO';
+                        $historial_saldo->importe = floatval(str_replace(",", "", $saldo_mes_actual));
+                        $historial_saldo->mes = $mes_siguiente;
+                        $historial_saldo->fecha_registro = date('Y-m-d H:i:s');
+                        $historial_saldo->estado = 3;
+                        $historial_saldo->descripcion = 'saldo del mes anterior';
+                        $historial_saldo->operacion = 'S';
+                    $historial_saldo->save();
                     #-----
                     PresupuestoInterno::calcularColumnaAuxMensual(
                         $presupuesto_interno_detalle->id_presupuesto_interno,
@@ -222,8 +224,9 @@ class PresupuestoInternoDetalle extends Model
                     );
                 }
             }
-
+            // return [$value, $historial];
             foreach ($historial as $k_h => $v_h) {
+                // return [$v_h->id_presupuesto_interno_detalle, $nombre_mes_siguiente, $mes_siguiente];
                 PresupuestoInternoDetalle::replicaAux($v_h->id_presupuesto_interno_detalle, $nombre_mes_siguiente, $mes_siguiente);
             }
         }

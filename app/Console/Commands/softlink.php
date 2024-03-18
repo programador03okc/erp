@@ -409,7 +409,8 @@ class softlink extends Command
                 $bar->start();
 
                 foreach ($movimiento as $key => $movValue) {
-                    $movimientoDetalle = MovimientoDetalle::join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
+                    $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id','detmov.cod_prod','detmov.nom_prod','sopprod.cod_espe','sopprod.nom_unid','sopprod.tip_moneda')
+                    ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
                     ->where('detmov.mov_id',$movValue->mov_id)->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {

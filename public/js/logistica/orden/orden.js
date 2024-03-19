@@ -506,8 +506,12 @@ function migrarOrdenASoftlink() {
             },
             success: function (response) {
                 $("#wrapper-okc").LoadingOverlay("hide", true);
-                mostrarOrden(response.ocAgile.cabecera.id_orden_compra);
-                actionPage = 'historial';
+                if(response.ocAgile !=undefined && response.ocAgile.cabecera !=undefined){
+                    if(response.ocAgile.cabecera.id_orden_compra >0){
+                        mostrarOrden(response.ocAgile.cabecera.id_orden_compra);
+                        actionPage = 'historial';
+                    }
+                }
 
                 Lobibox.notify(response.tipo, {
                     title: false,

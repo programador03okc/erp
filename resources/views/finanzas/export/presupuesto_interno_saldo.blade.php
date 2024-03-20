@@ -1,39 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <h2>Reporte de Presupuesto de Interno </h2>
-    <br>
-    <br>
-    <h2>Requerimiento de pago</h2>
-    <table>
-        <thead>
+<table class="table table-light">
+    <thead class="thead-light">
+        <tr>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PARTIDA</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">DESCRIPCIÓN</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($data as $value)
+        @php
+            $saldo = $value->total - $value->total_ejecutado;
+            $saldo = ($saldo>0 ? $saldo : 0);
+        @endphp
             <tr>
-                <th style="background-color: #cccccc;" width="18"><b>Partida	</b></th>
-                <th style="background-color: #cccccc;" width="30"><b>Descripción	</b></th>
-                <th style="background-color: #cccccc;text-align: center;" width="18"><b>Total</b></th>
-                <th style="background-color: #cccccc;text-align: center;" width="18"><b>Ejecutado</b></th>
-                <th style="background-color: #cccccc;text-align: center;" width="18"><b>Saldo</b></th>
+                <td style="border: 1 solid #000;  ">
+                    {{ $value->partida }}
+                </td>
+                <td style="border: 1 solid #000;">
+                    {{ $value->descripcion }}
+                </td>
+                <td style="border: 1 solid #000;">
 
+                    {{ $value->total }}
+                </td>
+                <td style="border: 1 solid #000;">
+                    {{ $value->total_ejecutado }}
+                </td>
+
+                <td style="border: 1 solid #000;">
+
+                    {{ $saldo }}
+                </td>
             </tr>
-        </thead>
-        <tbody>
+            {{-- @if (sizeof($value->historial)>0)
+                @foreach ($value->historial as $historia)
+                    <tr>
+                        <td style="border-bottom: 1 solid #000;border-left: 1 solid #000; background-color: #d9d9d9;"><i>{{ $value->partida }}</i></td>
+                        <td style="border-bottom: 1 solid #000;background-color: #d9d9d9;"><i>{{ $historia['codigo'] }}</i></td>
+                        <td style="border-bottom: 1 solid #000;background-color: #d9d9d9;"></td>
+
+                        <td style="border-bottom: 1 solid #000; sbackground-color: #d9d9d9;"><i>{{ $historia['soles'] }}</i></td>
+                        <td style="border-bottom: 1 solid #000; background-color: #d9d9d9;"><i>{{ $historia['dolares'] }}</i></td>
+
+                        <td style="border-bottom: 1 solid #000;background-color: #d9d9d9;"><i>{{ $historia['monto'] }}</i></td>
+                        <td style="border-bottom: 1 solid #000; border-right: 1 solid #000;background-color: #d9d9d9;"></td>
 
 
-
-            @foreach ($data as $key => $item)
-                <tr>
-                    <td style="text-align: left;">{{ $item->partida  }}</td>
-                    <td style="text-align: left;">{{ $item->descripcion }}</td>
-                    <td style="text-align: right;"> {{ $item->total}}</td>
-                    <td style="text-align: right;"> {{ $item->ejecutado}}</td>
-                    <td style="text-align: right;"> {{ ($item->total - $item->ejecutado ) }}</td>
-                </tr>
-
-            @endforeach
-        </tbody>
-    </table>
-</body>
-</html>
+                    </tr>
+                @endforeach
+            @endif --}}
+        @endforeach
+    </tbody>
+</table>

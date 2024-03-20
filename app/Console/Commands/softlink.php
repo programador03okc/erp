@@ -409,7 +409,8 @@ class softlink extends Command
                 $bar->start();
 
                 foreach ($movimiento as $key => $movValue) {
-                    $movimientoDetalle = MovimientoDetalle::join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
+                    $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id','detmov.cod_prod','detmov.nom_prod','sopprod.cod_espe','sopprod.nom_unid','sopprod.tip_moneda')
+                    ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
                     ->where('detmov.mov_id',$movValue->mov_id)->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {
@@ -420,9 +421,9 @@ class softlink extends Command
                             $nuevoProducto = new KardexProducto();
                             $nuevoProducto->codigo_softlink= $movDetValue->cod_prod;
                             $nuevoProducto->descripcion= $movDetValue->nom_prod;
-                            $nuevoProducto->part_number= $movDetValue->sopprod? $movDetValue->sopprod->cod_espe:null;
-                            $nuevoProducto->unidad_medida= $movDetValue->sopprod? $movDetValue->sopprod->nom_unid:null;
-                            $nuevoProducto->tipo_moneda= $movDetValue->sopprod? $movDetValue->sopprod->tip_moneda:null;
+                            $nuevoProducto->part_number= $movDetValue->cod_espe? $movDetValue->cod_espe:null;
+                            $nuevoProducto->unidad_medida= $movDetValue->nom_unid? $movDetValue->nom_unid:null;
+                            $nuevoProducto->tipo_moneda= $movDetValue->tip_moneda? $movDetValue->tip_moneda:null;
                             $nuevoProducto->save();
                             $cantidadProductosAgregados++;
                             

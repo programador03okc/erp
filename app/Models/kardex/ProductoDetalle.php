@@ -12,7 +12,7 @@ class ProductoDetalle extends Model
 
     protected $table = 'kardex.producto_detalle';
     protected $fillable = [
-        'serie', 'fecha', 'precio', 'tipo_moneda','precio_unitario', 'producto_id', 'estado',
+        'serie', 'fecha', 'precio', 'tipo_moneda','precio_unitario', 'producto_id', 'estado','disponible'
     ];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 }

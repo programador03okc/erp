@@ -42,7 +42,9 @@
                                         <th>Empresa</th>
                                         <th>Estado Kardex</th>
                                         <th>Responsable</th>
+                                        <th>Cantidad</th>
                                         <th>Fecha</th>
+                                        <th>Movimiento</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
@@ -84,7 +86,7 @@
                     </div>
                     <div class="modal-footer">
                         {{-- <button type="button" class="btn btn-primary">Seleccionar</button> --}}
-                        <button type="submit" class="btn btn-info" >Importar</button>
+                        <button type="submit" class="btn btn-info" ><i class="fa fa-save"></i> Importar</button>
                     </div>
                 </form>
             </div>
@@ -109,6 +111,7 @@
                                         <th>Fecha</th>
                                         <th>Precio</th>
                                         <th>P. Unitario</th>
+                                        <th>Disponibilidad</th>
                                     </tr>
                                 </thead>
                                 <tbody>

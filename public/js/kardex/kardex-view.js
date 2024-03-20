@@ -60,7 +60,9 @@ class KardexView {
                 {data: 'empresa'},
                 {data: 'estado_kardex', className: 'text-center'},
                 {data: 'responsable'},
+                {data: 'cantidad', className: 'text-center'},
                 {data: 'fecha_registro', className: 'text-center'},
+                {data: 'habilitado_estado', className: 'text-center'},
                 {data: 'accion', orderable: false, searchable: false, className: 'text-center'}
             ],
             buttons: [
@@ -174,7 +176,14 @@ class KardexView {
         $('#carga-inicial').submit(function (e) {
             e.preventDefault();
             let data = new FormData($(e.currentTarget)[0]);
+
+            $(e.currentTarget).find('[type="submit"]').find('i').remove();
+            $(e.currentTarget).find('[type="submit"]').html('<i class="fa fa-spinner fa-spin"></i> Cargando...')
+            $(e.currentTarget).find('[type="submit"]').attr('disabled','true')
             model.cargaInicialKardex(data).then((respuesta) => {
+                $(e.currentTarget).find('[type="submit"]').find('i').remove();
+                $(e.currentTarget).find('[type="submit"]').html('<i class="fa fa-save"></i> Importar')
+                $(e.currentTarget).find('[type="submit"]').removeAttr('disabled');
                 $(e.currentTarget).trigger("reset")
                 if(respuesta.tipo == "success"){
                     // $('#tabla').LoadingOverlay('show', { imageAutoResize: true, progress: true, imageColor: '#3c8dbc' });
@@ -246,6 +255,7 @@ class KardexView {
                     {data: 'fecha'},
                     {data: 'precio'},
                     {data: 'precio_unitario', className: 'text-center'},
+                    {data: 'disponible_estado', className: 'text-center'},
 
                 ],
                 buttons:[],

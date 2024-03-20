@@ -23,6 +23,14 @@ class ProductosController extends Controller
 
         $data = Producto::all();
         return DataTables::of($data)
+        ->addColumn('cantidad', function ($data) {
+            return ProductoDetalle::where('producto_id', $data->id)->where('disponible','t')->count();
+        })
+        ->addColumn('habilitado_estado', function ($data) {
+            $status_color = ($data->habilitado=='t'?'success':'danger');
+            $status_text = ($data->habilitado=='t'?'Habilitado':'Deshabilitado ');
+            return '<span class="label label-'.$status_color.'">'.$status_text.'</span>';
+        })
         ->addColumn('accion', function ($data) {
             return '<div class="btn-group">
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -33,7 +41,7 @@ class ProductosController extends Controller
                 <li><a class="text-primary ver-series" href="javascript:void(0)" data-id="'.$data->id.'">Ver series</a></li>
                 </ul>
             </div>';
-        })->rawColumns(['accion'])->make(true);;
+        })->rawColumns(['accion','habilitado_estado'])->make(true);;
     }
 
     public function cargaInicial(Request $request){
@@ -57,6 +65,7 @@ class ProductosController extends Controller
                         $producto->estado_kardex    = $value[10];
                         $producto->ubicacion        = $value[11];
                         $producto->responsable      = $value[12];
+                        $producto->habilitado       = true;
                         if(!Producto::where('codigo_softlink',$value[4])->first()){
                             $producto->fecha_registro   = date('Y-m-d H:i:s');
                         }
@@ -82,6 +91,7 @@ class ProductosController extends Controller
                         $serie->producto_id     = $producto->id;
                         $serie->fecha           = $this->formatoFechaExcel($value[14]);
                         $serie->estado          = 1;
+                        $serie->disponible      = ($value[1] == $value[19] ? 't' :'f');
                         $serie->save();
                     // }
 
@@ -110,6 +120,11 @@ class ProductosController extends Controller
 
         $data = ProductoDetalle::where('producto_id',$request->id)->get();
         return DataTables::of($data)
+        ->addColumn('disponible_estado', function ($data) {
+            $status_color = ($data->disponible=='t'?'success':'danger');
+            $status_text = ($data->disponible=='t'?'Habilitado':'Deshabilitado ');
+            return '<span class="label label-'.$status_color.'">'.$status_text.'</span>';
+        })
         ->addColumn('accion', function ($data) {
             return '<div class="btn-group">
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -120,7 +135,7 @@ class ProductosController extends Controller
                 <li><a class="text-primary ver-series" href="javascript:void(0)" data-id="'.$data->id.'">Ver series</a></li>
                 </ul>
             </div>';
-        })->rawColumns(['accion'])->make(true);;
+        })->rawColumns(['accion', 'disponible_estado'])->make(true);;
     }
     public function actualizarProductos(){
 

@@ -11,7 +11,7 @@ class DashboardSeguimientoView extends Model
     protected $table = 'administracion.dashboard_seguimiento_view';
     protected $primaryKey = 'id';
     public $timestamps = false;
-    protected $appends = ['dias_para_entrega','comercial','compras','almacen','cas','despacho'];
+    protected $appends = ['dias_para_entrega', 'comercial', 'compras', 'almacen', 'cas', 'despacho'];
 
 
 
@@ -29,10 +29,10 @@ class DashboardSeguimientoView extends Model
             $horasParaEntrega = $diferencia->h;
             $minutosParaEntrega = $diferencia->i;
 
-            if($fechaHoy > $fecha_entrega){
+            if ($fechaHoy > $fecha_entrega) {
                 $result = '<span class="text-danger">(Plazo Vencido)<span>';
-            }else{
-                
+            } else {
+
                 $result = $diasParaEntrega . 'd ' . $horasParaEntrega . 'h ' . $minutosParaEntrega . 'm';
             }
         }
@@ -49,26 +49,42 @@ class DashboardSeguimientoView extends Model
             $fechaPublicacionOrden = Carbon::make(null);
         }
 
-        if ($this->attributes['fecha_creacion_cdp'] != null) {
-            $fechaCreacionCdp = Carbon::parse($this->attributes['fecha_creacion_cdp'])->format('d-m-Y H:i:s');
-        } else {
-            $fechaCreacionCdp = Carbon::make(null);
-        }
 
+        if ($this->attributes['fecha_solicitud_aprobacion_cdp'] != null) {
+            $fechaSolicitudAprobacionCdp = Carbon::parse($this->attributes['fecha_solicitud_aprobacion_cdp'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaSolicitudAprobacionCdp = Carbon::make(null);
+        }
         if ($this->attributes['fecha_aprobacion_cdp'] != null) {
-            $fechaAprobacionCdp = Carbon::parse($this->attributes['fecha_aprobacion_cdp'])->format('d-m-Y H:i:s');
+            $fechaUltimaAprobacionCdp = Carbon::parse($this->attributes['fecha_aprobacion_cdp'])->format('d-m-Y H:i:s');
         } else {
-            $fechaAprobacionCdp = Carbon::make(null);
+            $fechaUltimaAprobacionCdp = Carbon::make(null);
+        }
+        if ($this->attributes['fecha_aprobacion_cdp_anterior'] != null) {
+            $fechaAprobacionAnteriorCdp = Carbon::parse($this->attributes['fecha_aprobacion_cdp_anterior'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaAprobacionAnteriorCdp = Carbon::make(null);
         }
 
+        $fechaAprobacion = null;
+        $fechaUltimaReAprobacion = null;
+        if ($fechaAprobacionAnteriorCdp != null) {
+            $fechaAprobacion = $fechaAprobacionAnteriorCdp;
+            $fechaUltimaReAprobacion = $fechaUltimaAprobacionCdp;
+        } else {
+            $fechaAprobacion = $fechaUltimaAprobacionCdp;
+            // $fechaUltimaReAprobacion= $fechaAprobacionAnteriorCdp;
+
+
+        }
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaPublicacionOrden, $fechaCreacionCdp, $fechaAprobacionCdp);
+        $tiempoTotalSalida = max($fechaPublicacionOrden, $fechaSolicitudAprobacionCdp, $fechaAprobacion);
 
         // obtener tiempo global de area
-        $fechas = [$fechaPublicacionOrden, $fechaCreacionCdp, $fechaAprobacionCdp];
+        $fechas = [$fechaPublicacionOrden, $fechaSolicitudAprobacionCdp, $fechaAprobacion];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
-            $carbonFecha2 = Carbon::parse($fechas[$i+1]);
+            $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
         $diasGlobalArea = $diferencia->d;
@@ -79,18 +95,23 @@ class DashboardSeguimientoView extends Model
 
         return '
         <div class="grid">
-            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' . $diasGlobalArea . 'd ' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaPublicacionOrden != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">PUBLICACION</div>
+            <div class="actividad">Publicación de OC</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaPublicacionOrden != null ? $fechaPublicacionOrden : '') . '</div>
 
-            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaCreacionCdp != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">GENERAR CDP</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaCreacionCdp != null ? $fechaCreacionCdp : '') . '</div>
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSolicitudAprobacionCdp != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad"><span>Generación de CP <small>(en Pendiente de Aprobación)</small></span></div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaSolicitudAprobacionCdp != null ? $fechaSolicitudAprobacionCdp : '') . '</div>
+        
+            
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaAprobacion != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">Aprobación</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaAprobacion != null ? $fechaAprobacion : '') . '</div>
 
-            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaAprobacionCdp != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">APROBACIÓN</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaAprobacionCdp != null ? $fechaAprobacionCdp : '') . '</div>
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimaReAprobacion != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad"><span> Re-aprobación <small>(casos de modificaciones)</small></span></div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaUltimaReAprobacion != null ? $fechaUltimaReAprobacion : '') . '</div>
             
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -98,11 +119,9 @@ class DashboardSeguimientoView extends Model
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
-            <div class="indicador-semaforo"></div>
-            <div class="actividad">&nbsp;</div>
-            <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
-            <div class="tiempo-ingreso-area">' . ($fechaAprobacionCdp != null ? $fechaAprobacionCdp : '') . '</div>
+
+            <div class="tiempo-ingreso-area">' . ($fechaUltimaAprobacionCdp != null ? $fechaUltimaAprobacionCdp : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
@@ -128,6 +147,11 @@ class DashboardSeguimientoView extends Model
             $fechaUltimoMapeo = Carbon::make(null);
         }
 
+        if ($this->attributes['fecha_ultima_reserva_generada'] != null) {
+            $fechaUltimaReserva = Carbon::parse($this->attributes['fecha_ultima_reserva_generada'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaUltimaReserva = Carbon::make(null);
+        }
         if ($this->attributes['fecha_ultimo_orden_generada'] != null) {
             $fechaUltimaOrdenGenerada = Carbon::parse($this->attributes['fecha_ultimo_orden_generada'])->format('d-m-Y H:i:s');
         } else {
@@ -143,40 +167,40 @@ class DashboardSeguimientoView extends Model
         }
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaUltimoMapeo, $fechaUltimaOrdenGenerada, $fechaUltimoEnvioAPago);
+        $tiempoTotalSalida = max($fechaUltimoMapeo, $fechaUltimaReserva, $fechaUltimaOrdenGenerada, $fechaUltimoEnvioAPago);
         // obtener tiempo global de area
         // if($fechaUltimoEnvioAPago==null){}
-        $fechas = [$fechaUltimoMapeo, $fechaUltimaOrdenGenerada, $fechaUltimoEnvioAPago];
-        
+        $fechas = [$fechaUltimoMapeo, $fechaUltimaReserva, $fechaUltimaOrdenGenerada, $fechaUltimoEnvioAPago];
+
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
-            $carbonFecha2 = Carbon::parse($fechas[$i+1]);
+            $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
         $diasGlobalArea = $diferencia->d;
         $horasGlobalArea = $diferencia->h;
         $minutosGlobalArea = $diferencia->i;
 
- 
-        $html= '
+
+        $html = '
         <div class="grid">
-            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' . $diasGlobalArea . 'd ' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimoMapeo != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">MAPEO PRODUCTOS</div>
+            <div class="actividad">Mapeo items</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaUltimoMapeo != null ? $fechaUltimoMapeo : '') . '</div>
 
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimaReserva != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">Reserva items</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaUltimaReserva != null ? $fechaUltimaReserva : '') . '</div>
+
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimaOrdenGenerada != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">GENERAR ORDEN</div>
+            <div class="actividad">Generación de OC</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaUltimaOrdenGenerada != null ? $fechaUltimaOrdenGenerada : '') . '</div>
             ';
-            $html.='
+        $html .= '
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimoEnvioAPago != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">ENVIO A PAGO</div>
+            <div class="actividad">Envío a pago</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaUltimoEnvioAPago != null ? $fechaUltimoEnvioAPago : '') . '</div>
-
-            <div class="indicador-semaforo"></div>
-            <div class="actividad">&nbsp;</div>
-            <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -208,7 +232,7 @@ class DashboardSeguimientoView extends Model
     public function getAlmacenAttribute()
     {
 
-        
+
         if ($this->attributes['fecha_ultimo_ingreso_almacen'] != null) {
             $fechaUltimoIngresoAlmacen = Carbon::parse($this->attributes['fecha_ultimo_ingreso_almacen'])->format('d-m-Y H:i:s');
         } else {
@@ -221,20 +245,21 @@ class DashboardSeguimientoView extends Model
             $fechaSalidaAlmacenODI = Carbon::make(null);
         }
 
-        if ($this->attributes['fecha_salida_almacen_ode'] != null) {
-            $fechaSalidaAlmacenODE = Carbon::parse($this->attributes['fecha_salida_almacen_ode'])->format('d-m-Y H:i:s');
-        } else {
-            $fechaSalidaAlmacenODE = Carbon::make(null);
-        }
+        // if ($this->attributes['fecha_salida_almacen_ode'] != null) {
+        //     $fechaSalidaAlmacenODE = Carbon::parse($this->attributes['fecha_salida_almacen_ode'])->format('d-m-Y H:i:s');
+        // } else {
+        //     $fechaSalidaAlmacenODE = Carbon::make(null);
+        // }
 
+        $fechaGeneracionDocumentos=null;
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI, $fechaSalidaAlmacenODE);
+        $tiempoTotalSalida = max($fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI);
 
         // obtener tiempo global de area
-        $fechas = [$fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI, $fechaSalidaAlmacenODE];
+        $fechas = [$fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
-            $carbonFecha2 = Carbon::parse($fechas[$i+1]);
+            $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
         $diasGlobalArea = $diferencia->d;
@@ -242,23 +267,23 @@ class DashboardSeguimientoView extends Model
         $minutosGlobalArea = $diferencia->i;
 
 
-        $html= '
+        $html = '
         <div class="grid">
-        <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+        <div class="tiempo-global-area">' . $diasGlobalArea . 'd ' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
         <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaUltimoIngresoAlmacen != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">INGRESO PRODUCTO</div>
+            <div class="actividad">Ingreso de mercadería</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaUltimoIngresoAlmacen != null ? $fechaUltimoIngresoAlmacen : '') . '</div>
             ';
-            if($this->attributes['tiene_transformacion']==true){
+        if ($this->attributes['tiene_transformacion'] == true) {
 
-            $html.='<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaAlmacenODI != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">SALIDA ODI</div>
+            $html .= '<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaAlmacenODI != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">Picking/ envío a CAS (ODI)</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODI != null ? $fechaSalidaAlmacenODI : '') . '</div>
             ';
-            }
-            $html.='<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaAlmacenODE != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">SALIDA ODE</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
+        }
+        $html .= '<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaGeneracionDocumentos != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">Generación documentos (Salida producto)</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaGeneracionDocumentos != null ? $fechaGeneracionDocumentos : '') . '</div>
             
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -274,7 +299,7 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
 
-            <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODI != null ? $fechaSalidaAlmacenODI : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
@@ -296,7 +321,7 @@ class DashboardSeguimientoView extends Model
     public function getCasAttribute()
     {
 
-        
+
         if ($this->attributes['fecha_inicio_cas'] != null) {
             $fechaInicioCAS = Carbon::parse($this->attributes['fecha_inicio_cas'])->format('d-m-Y H:i:s');
         } else {
@@ -309,6 +334,7 @@ class DashboardSeguimientoView extends Model
             $fechaTransformacionCAS = Carbon::make(null);
         }
 
+        $fechaDevolucionDeComponentes=null;
 
         // obtener tiempo total salida
         $tiempoTotalSalida = max($fechaInicioCAS, $fechaTransformacionCAS);
@@ -317,7 +343,7 @@ class DashboardSeguimientoView extends Model
         $fechas = [$fechaInicioCAS, $fechaTransformacionCAS];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
-            $carbonFecha2 = Carbon::parse($fechas[$i+1]);
+            $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
         $diasGlobalArea = $diferencia->d;
@@ -325,20 +351,22 @@ class DashboardSeguimientoView extends Model
         $minutosGlobalArea = $diferencia->i;
 
 
-        $html= '
+        $html = '
         <div class="grid">
-            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+            <div class="tiempo-global-area">' . $diasGlobalArea . 'd ' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaInicioCAS != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">INICIO TRANSFORMACIÓN</div>
+            <div class="actividad">Inicio customización</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaInicioCAS != null ? $fechaInicioCAS : '') . '</div>
             
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaTransformacionCAS != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">FIN TRANSFORMACIÓN</div>
+            <div class="actividad">Fin customización</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
-        
-            <div class="indicador-semaforo"></div>
-            <div class="actividad">&nbsp;</div>
-            <div class="tiempo-finalizado-actividad">&nbsp;</div>
+            
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaDevolucionDeComponentes != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">Devolución de componentes sobrantes</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaDevolucionDeComponentes != null ? $fechaDevolucionDeComponentes : '') . '</div>
+
+
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
@@ -368,22 +396,12 @@ class DashboardSeguimientoView extends Model
         return $html;
     }
 
-    
+
     public function getDespachoAttribute()
     {
 
-        
-        if ($this->attributes['fecha_programacion_odi'] != null) {
-            $fechaProgramacionODI = Carbon::parse($this->attributes['fecha_programacion_odi'])->format('d-m-Y H:i:s');
-        } else {
-            $fechaProgramacionODI = Carbon::make(null);
-        }
 
-        if ($this->attributes['fecha_programacion_ode'] != null) {
-            $fechaProgramacionODE = Carbon::parse($this->attributes['fecha_programacion_ode'])->format('d-m-Y H:i:s');
-        } else {
-            $fechaProgramacionODE = Carbon::make(null);
-        }
+
 
         if ($this->attributes['fecha_salida_despacho'] != null) {
             $fechaSalidaDespacho = Carbon::parse($this->attributes['fecha_salida_despacho'])->format('d-m-Y H:i:s');
@@ -397,16 +415,17 @@ class DashboardSeguimientoView extends Model
             $fechaEntregadoConforme = Carbon::make(null);
         }
 
-        $fechaRetornioGuiaCellada='';
+        $fechaCargaGuiaFirmadaASistema = null;
+        $fechaRetornioGuiaCellada = null;
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaProgramacionODI,$fechaProgramacionODE, $fechaSalidaDespacho, $fechaEntregadoConforme);
+        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme);
 
         // obtener tiempo global de area
-        $fechas = [$fechaProgramacionODI,$fechaProgramacionODE,$fechaSalidaDespacho, $fechaEntregadoConforme];
+        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
-            $carbonFecha2 = Carbon::parse($fechas[$i+1]);
+            $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
             $diferencia = $carbonFecha1->diff($carbonFecha2);
         }
         $diasGlobalArea = $diferencia->d;
@@ -414,31 +433,26 @@ class DashboardSeguimientoView extends Model
         $minutosGlobalArea = $diferencia->i;
 
 
-        $html= '
+        $html = '
         <div class="grid">';
-        if($this->attributes['tiene_transformacion']==true){
-            $html.='<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaProgramacionODI != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">ORDEN DESPACHO INTERNO</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaProgramacionODI != null ? $fechaProgramacionODI : '') . '</div>
-            ';
-        }
-            $html.=' 
-            
-            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaProgramacionODE != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">ORDEN DESPACHO EXTERNO</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaProgramacionODE != null ? $fechaProgramacionODE : '') . '</div>
-
-            <div class="tiempo-global-area">' .$diasGlobalArea.'d '. $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
+        
+            $html .= '            
+   
+            <div class="tiempo-global-area">' . $diasGlobalArea . 'd ' . $horasGlobalArea . 'h ' . $minutosGlobalArea . 'm </div>
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaDespacho != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">SALIDA DESPACHO</div>
+            <div class="actividad">Salida a despacho</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaSalidaDespacho != null ? $fechaSalidaDespacho : '') . '</div>
             
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaEntregadoConforme != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">ENTREGADO CONFORME</div>
+            <div class="actividad">Entregado conforme a cliente</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaEntregadoConforme != null ? $fechaEntregadoConforme : '') . '</div>
         
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaCargaGuiaFirmadaASistema != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="actividad">Carga GR firmada a sistema</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaCargaGuiaFirmadaASistema != null ? $fechaCargaGuiaFirmadaASistema : '') . '</div>
+        
             <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaRetornioGuiaCellada != null ? 'verde' : 'rojo') . '"></i></div>
-            <div class="actividad">RETORNO DE GUIA CELLADA</div>
+            <div class="actividad">Retorno de GR firmada</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaCellada != null ? $fechaRetornioGuiaCellada : '') . '</div>
         
             <div class="indicador-semaforo"></div>
@@ -465,6 +479,7 @@ class DashboardSeguimientoView extends Model
         </div>
         ';
 
-        return $html;
+    
+    return $html;
     }
 }

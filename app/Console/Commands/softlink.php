@@ -458,12 +458,15 @@ class softlink extends Command
                             $serie = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->first();
 
                             if ($serie && $serie->id > 0) {
-                                $nuevoProductoDetalle = new ProductoDetalle();
+                                // $nuevoProductoDetalle = new ProductoDetalle();
+                                $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>$serie->serie, 'producto_id'=>$nuevoProducto->id]);
+                                $estado = (($movDetValue->tipo == 2) ? (($nuevoProductoDetalle!=null) ? 0 : 1) : 1);
                                 $nuevoProductoDetalle->serie = $serie->serie;
                                 $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                 $nuevoProductoDetalle->id_ingreso =  $serie->id_ingreso;
                                 $nuevoProductoDetalle->id_salida = $serie->id_salida;
                                 $nuevoProductoDetalle->estado = 1;
+                                $nuevoProductoDetalle->disponible = $estado;
                                 $nuevoProductoDetalle->save();
                                 $cantidadDetalleProductosAgregados++;
                             }

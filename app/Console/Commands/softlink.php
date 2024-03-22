@@ -316,12 +316,12 @@ class softlink extends Command
                     $cantidadMigrados++;
 
 
-                    DB::connection('soft')
-                        ->table('series')
-                        ->where('mov_id', $value->mov_id)
-                        ->update(
-                            ['flg_migracion' => 1]
-                        );
+                    // DB::connection('soft')
+                    //     ->table('series')
+                    //     ->where('mov_id', $value->mov_id)
+                    //     ->update(
+                    //         ['flg_migracion' => 1]
+                    //     );
 
                     // }
                     $bar->advance();
@@ -452,18 +452,29 @@ class softlink extends Command
                             $cantidadProductosAgregados++;
 
                             $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movValue->unico)->first();
-                            $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
-                            $actualiarDetalleMovimiento->save();
+                            if($actualiarDetalleMovimiento!=null){
+                                $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
+                                $actualiarDetalleMovimiento->save();
+                            }
 
                             $serie = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->first();
 
                             if ($serie && $serie->id > 0) {
                                 $nuevoProductoDetalle = new ProductoDetalle();
                                 $nuevoProductoDetalle->serie = $serie->serie;
+                                $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                 $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                 $nuevoProductoDetalle->id_ingreso =  $serie->id_ingreso;
+                                $nuevoProductoDetalle->fecha_ing =  $serie->fecha_ing;
                                 $nuevoProductoDetalle->id_salida = $serie->id_salida;
+                                $nuevoProductoDetalle->fecha_sal = $serie->fecha_sal;
                                 $nuevoProductoDetalle->estado = 1;
+                                if(($serie->fecha_ing !=null && (trim($serie->fecha_ing) !='0000-00-00')) && ($serie->fecha_sal ==null || trim($serie->fecha_sal) =='0000-00-00') ){
+                                    $nuevoProductoDetalle->disponible = true;
+                                }else{
+                                    $nuevoProductoDetalle->disponible = false;
+                                }
+
                                 $nuevoProductoDetalle->save();
                                 $cantidadDetalleProductosAgregados++;
                             }

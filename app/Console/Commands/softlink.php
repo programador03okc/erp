@@ -433,14 +433,14 @@ class softlink extends Command
                 $bar->start();
 
                 foreach ($movimiento as $key => $movValue) {
-                    $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
+                    $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.unico', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
                         ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
                         ->where([['detmov.mov_id', $movValue->mov_id], ['estado_migracion', 1]])->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {
-                        if (!in_array($movDetValue->cod_prod, $listaCodProdAgregado)) {
+                        if (!in_array($movDetValue->unico, $listaCodProdAgregado)) {
 
-                            $listaCodProdAgregado[] = $movDetValue->cod_prod;
+                            $listaCodProdAgregado[] = $movDetValue->unico;
 
                             $nuevoProducto = new KardexProducto();
                             $nuevoProducto->codigo_softlink = $movDetValue->cod_prod;
@@ -451,7 +451,7 @@ class softlink extends Command
                             $nuevoProducto->save();
                             $cantidadProductosAgregados++;
 
-                            $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movValue->unico)->first();
+                            $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movDetValue->unico)->first();
                             if($actualiarDetalleMovimiento!=null){
                                 $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
                                 $actualiarDetalleMovimiento->save();

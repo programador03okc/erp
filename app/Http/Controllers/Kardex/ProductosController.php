@@ -51,10 +51,11 @@ class ProductosController extends Controller
             foreach ($array[0] as $key => $value) {
                 if($key !== 0){
                     // return $value;
-                    $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
-                    // return $value;
-                    // if($producto){
-                    //     $producto = new Producto();
+                    // $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
+                    $producto = Producto::where('codigo_softlink', $value[4])->where('almacen', $value[7])->first();
+                    // return $producto;
+                    if(!$producto){
+                        $producto = new Producto();
                         $producto->codigo_agil      = (int)$value[3];
                         $producto->codigo_softlink  = $value[4];
                         $producto->descripcion      = $value[6];
@@ -73,7 +74,7 @@ class ProductosController extends Controller
                         $producto->anual            = $value[16];
                         $producto->estado           = 1;
                         $producto->save();
-                    // }
+                    }
                     // return $value;
                     // $serie = ProductoDetalle::where('serie',$value[1])->first();
                     $serie = ProductoDetalle::firstOrNew(['serie'=>$value[1], 'producto_id'=>$producto->id]);

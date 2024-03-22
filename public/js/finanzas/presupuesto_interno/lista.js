@@ -134,6 +134,8 @@ function lista() {
                         html+='<button type="button" class="btn btn-default text-black btn-flat botonList saldos-presupuesto" data-id="'+row['id_presupuesto_interno']+'" data-toggle="tooltip" title="Exportar Saldos" data-original-title="Exportar Saldos"><i class="fa fa-file-alt"></i></button>';
 
                         html +='<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat botonList " title="Exportar Ejecutados" data-original-title="Exportar Ejecutados"><i class="fa fa-file"></i></a>';
+
+                        html +='<a href="#" data-action="saldos-mensual" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat btn-sm" title="Exportar Ejecutados" data-original-title="Ver los saldos del mes"><i class="fa fa-balance-scale"></i></a>';
                     html+='';
                     return html;
                 },

@@ -451,7 +451,7 @@ class softlink extends Command
                             $nuevoProducto->save();
                             $cantidadProductosAgregados++;
 
-                            $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movValue->unico)->first();
+                            $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movDetValue->unico)->first();
                             $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
                             $actualiarDetalleMovimiento->save();
 

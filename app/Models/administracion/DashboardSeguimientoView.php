@@ -245,18 +245,18 @@ class DashboardSeguimientoView extends Model
             $fechaSalidaAlmacenODI = Carbon::make(null);
         }
 
-        // if ($this->attributes['fecha_salida_almacen_ode'] != null) {
-        //     $fechaSalidaAlmacenODE = Carbon::parse($this->attributes['fecha_salida_almacen_ode'])->format('d-m-Y H:i:s');
-        // } else {
-        //     $fechaSalidaAlmacenODE = Carbon::make(null);
-        // }
+        if ($this->attributes['fecha_salida_almacen_ode'] != null) {
+            $fechaSalidaAlmacenODE = Carbon::parse($this->attributes['fecha_salida_almacen_ode'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaSalidaAlmacenODE = Carbon::make(null);
+        }
 
-        $fechaGeneracionDocumentos=null;
+ 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI);
+        $tiempoTotalSalida = max($fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI,$fechaSalidaAlmacenODE);
 
         // obtener tiempo global de area
-        $fechas = [$fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI];
+        $fechas = [$fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI, $fechaSalidaAlmacenODE];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
@@ -281,9 +281,9 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODI != null ? $fechaSalidaAlmacenODI : '') . '</div>
             ';
         }
-        $html .= '<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaGeneracionDocumentos != null ? 'verde' : 'rojo') . '"></i></div>
+        $html .= '<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaAlmacenODE != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">Generación documentos (Salida producto)</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaGeneracionDocumentos != null ? $fechaGeneracionDocumentos : '') . '</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
             
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -299,7 +299,7 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
 
-            <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODI != null ? $fechaSalidaAlmacenODI : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">

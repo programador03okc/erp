@@ -109,7 +109,7 @@ class ProductosController extends Controller
                         $serie->producto_id     = $producto->id;
                         $serie->fecha           = $this->formatoFechaExcel($value[14]);
                         $serie->estado          = 1;
-                        $serie->disponible      = ($value[1] == $value[19] ? 't' :'f');
+                        $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
                         $serie->save();
                     // }
 

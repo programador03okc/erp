@@ -3,11 +3,17 @@ class KardexView {
 
     constructor(model) {
         this.model = model;
-
+        this.json_filtros = {
+            almacen:'null',
+            empresa:'null',
+            estado_kardex:'null',
+            // fecha_inicio:'null',
+            // fecha_final:'null'
+        };
     }
 
     listar = () => {
-        // console.log(data_filtros);
+
         var vardataTables = funcDatatables();
         let model = this.model;
         const $tabla = $('#tabla').DataTable({
@@ -47,7 +53,7 @@ class KardexView {
                 url: route('kardex.productos.listar'),
                 method: 'POST',
                 // headers: {'X-CSRF-TOKEN': token},
-                // data: data_filtros,
+                data: this.json_filtros,
                 beforeSend: data => {
                     $('#tabla').LoadingOverlay('show', { imageAutoResize: true, progress: true, imageColor: '#3c8dbc' });
                 }
@@ -61,13 +67,24 @@ class KardexView {
                 {data: 'estado_kardex', className: 'text-center'},
                 {data: 'responsable'},
                 {data: 'cantidad', className: 'text-center'},
-                {data: 'fecha_registro', className: 'text-center'},
+                // {data: 'fecha_registro', className: 'text-center'},
                 {data: 'habilitado_estado', className: 'text-center'},
                 {data: 'accion', orderable: false, searchable: false, className: 'text-center'}
             ],
             buttons: [
                 {
-                    text: '<i class="fa fa-filter"></i> Importar carga Inicial',
+                    text: '<i class="fa fa-filter"></i> Filtros',
+                    className: 'btn btn-default btn-sm actualizar-kardex',
+                    action: function () {
+                        // $("#formulario-masivo")[0].reset();
+                        $('#modal-filtros').modal('show');
+                    },
+                    init: function(api, node, config) {
+                        $(node).removeClass('btn-primary')
+                    }
+                },
+                {
+                    text: '<i class="fa fa-file-import"></i> Importar carga Inicial',
                     action: function () {
                         // $("#formulario-masivo")[0].reset();
                         $("#modal-carga-inicial").modal("show");
@@ -77,22 +94,7 @@ class KardexView {
                         $(node).removeClass('btn-primary')
                     }
                 },
-                {
-                    text: '<i class="fa fa-filter"></i> Actualizar',
-                    className: 'btn btn-default btn-sm actualizar-kardex',
-                    action: function () {
-                        // $("#formulario-masivo")[0].reset();
-                        model.actualizarKardex().then((respuesta) => {
-                            console.log(respuesta);
-                        }).fail((respuesta) => {
-                            // return respuesta;
-                        }).always(() => {
-                        });
-                    },
-                    init: function(api, node, config) {
-                        $(node).removeClass('btn-primary')
-                    }
-                },
+
                 // {
                 //     text: '<i class="fa fa-plus"></i> Agregar GR',
                 //     action: function () {
@@ -283,6 +285,60 @@ class KardexView {
                     $('#tabla-series').LoadingOverlay("hide", true);
                 }
             });
+        }
+    }
+    filtros = () => {
+        let data = this.json_filtros;
+        let this_ = this;
+        $('#modal-filtros').on('click','[data-action="click"]',function (e) {
+
+            let value = $(e.currentTarget).val();
+            let from_control = $(this).closest('.row').find('.form-control');
+            if( $(this).prop('checked') ) {
+                from_control.removeAttr('disabled');
+            }else{
+                from_control.attr('disabled','true');
+            }
+            seleccionarChecked(value, $(e.currentTarget));
+        });
+
+        $('#modal-filtros').on('change','.seleccionado',function (e) {
+            let current = $(e.currentTarget).closest('.row').find('[data-action="click"]');
+            let value = $(e.currentTarget).attr('data-switch');
+
+            seleccionarChecked(value, current);
+
+        });
+        $('#aplicar-filtros').click(function (e) {
+            this_.listar();
+
+        });
+
+        function seleccionarChecked(key, this_click) {
+            switch (key) {
+                case "almacen":
+                    if (this_click.prop('checked')) {
+                        data.almacen = $('#modal-filtros').find('select#filtro_almacen').val();
+                    }else{
+                        data.almacen = 'null';
+                    }
+                break;
+                case "empresa":
+                    if (this_click.prop('checked')) {
+
+                        data.empresa = $('#modal-filtros').find('select#filtro_empresa').val();
+                    }else{
+                        data.empresa = 'null';
+                    }
+                break;
+                case "estado_kardex":
+                    if (this_click.prop('checked')) {
+                        data.estado_kardex = $('#modal-filtros').find('select#filtro_estado_kardex').val();
+                    }else{
+                        data.estado_kardex = 'null';
+                    }
+                break;
+            }
         }
     }
 }

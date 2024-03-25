@@ -17,11 +17,28 @@ class ProductosController extends Controller
 {
     //
     public function lista(){
+        // $almacen = Producto::where('estado',1)->dis
+        $almacenes = Producto::select('almacen')->where('estado',1)->whereNotNull('almacen')->distinct()->orderBy('almacen', 'asc')->get();
+        $empresas = Producto::select('empresa')->where('estado',1)->whereNotNull('empresa')->distinct()->orderBy('empresa', 'asc')->get();
+        $estados_kardex = Producto::select('estado_kardex')->where('estado',1)->whereNotNull('estado_kardex')->distinct()->orderBy('estado_kardex', 'asc')->get();
         return view('kardex.productos.productos', get_defined_vars());
     }
-    public function listar(){
+    public function listar(Request $request){
 
-        $data = Producto::all();
+        $data = Producto::where('estado',1);
+
+        if($request->almacen!=='null'){
+            $data = $data->where('almacen',$request->almacen);
+        }
+
+        if($request->empresa!=='null'){
+            $data = $data->where('empresa',$request->empresa);
+        }
+
+        if($request->estado_kardex!=='null'){
+            $data = $data->where('estado_kardex',$request->estado_kardex);
+        }
+        $data = $data->get();
         return DataTables::of($data)
         ->addColumn('cantidad', function ($data) {
             return ProductoDetalle::where('producto_id', $data->id)->where('disponible','t')->count();

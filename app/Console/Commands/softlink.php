@@ -460,7 +460,9 @@ class softlink extends Command
                             $serie = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->first();
 
                             if ($serie && $serie->id > 0) {
-                                $nuevoProductoDetalle = new ProductoDetalle();
+                                // $nuevoProductoDetalle = new ProductoDetalle();
+                                $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>$serie->serie, 'producto_id'=>$nuevoProducto->id]);
+                                $estado = (($movDetValue->tipo == 2) ? (($nuevoProductoDetalle!=null) ? 0 : 1) : 1);
                                 $nuevoProductoDetalle->serie = $serie->serie;
                                 $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                 $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
@@ -469,12 +471,7 @@ class softlink extends Command
                                 $nuevoProductoDetalle->id_salida = $serie->id_salida;
                                 $nuevoProductoDetalle->fecha_sal = $serie->fecha_sal;
                                 $nuevoProductoDetalle->estado = 1;
-                                if(($serie->fecha_ing !=null && (trim($serie->fecha_ing) !='0000-00-00')) && ($serie->fecha_sal ==null || trim($serie->fecha_sal) =='0000-00-00') ){
-                                    $nuevoProductoDetalle->disponible = true;
-                                }else{
-                                    $nuevoProductoDetalle->disponible = false;
-                                }
-
+                                $nuevoProductoDetalle->disponible = $estado;
                                 $nuevoProductoDetalle->save();
                                 $cantidadDetalleProductosAgregados++;
                             }

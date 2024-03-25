@@ -695,4 +695,44 @@ class PresupuestoInterno extends Model
         return $array_nivel_partida;
     }
 
+    public static function calcularColumnaMensual($id_presupuesto_interno, $id_tipo_presupuesto, $id_partida,$mes)
+    {
+        // ini_set('max_execution_time', 50000);
+        // return ;rexit;
+        $mes_siguente= $mes;
+        $mes= $mes;
+        $presupuesto_interno_destalle= PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',$id_tipo_presupuesto)->where('estado', 1)->where('id_presupuesto_interno_detalle', $id_partida)->orderBy('partida')->first();
+
+        $id_hijo = $presupuesto_interno_destalle->id_hijo;
+        $id_padre = $presupuesto_interno_destalle->id_padre;
+        $total = 0;
+
+        // if ('03.01.03.01'===$partida) {
+        //     return $presupuesto_interno_destalle;exit;
+        // }
+        while ($id_padre!=='0' && $id_padre!==0) {
+            $total = 0;
+            $partidas = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',$id_tipo_presupuesto)->where('estado', 1)->where('id_padre', $id_padre)->orderBy('partida')->get();
+
+            foreach ($partidas as $key => $value) {
+                $float_mes = 'float_'.$mes;
+                $columna_mes      = $value->$float_mes;
+                $total      = $total + $columna_mes;
+            }
+
+            $presupuesto_interno_destalle= PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',$id_tipo_presupuesto)->where('estado', 1)->where('id_hijo', $id_padre)->orderBy('partida')->first();
+
+            if ($presupuesto_interno_destalle) {
+
+                $presupuesto_interno_destalle->$mes = number_format($total, 2, '.', ',');
+                $presupuesto_interno_destalle->save();
+                $id_hijo = $presupuesto_interno_destalle->id_hijo;
+                $id_padre = $presupuesto_interno_destalle->id_padre;
+            }
+
+
+
+        }
+        // return $partidas;
+    }
 }

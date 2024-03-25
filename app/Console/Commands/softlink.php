@@ -316,12 +316,12 @@ class softlink extends Command
                     $cantidadMigrados++;
 
 
-                    DB::connection('soft')
-                        ->table('series')
-                        ->where('mov_id', $value->mov_id)
-                        ->update(
-                            ['flg_migracion' => 1]
-                        );
+                    // DB::connection('soft')
+                    //     ->table('series')
+                    //     ->where('mov_id', $value->mov_id)
+                    //     ->update(
+                    //         ['flg_migracion' => 1]
+                    //     );
 
                     // }
                     $bar->advance();
@@ -433,14 +433,14 @@ class softlink extends Command
                 $bar->start();
 
                 foreach ($movimiento as $key => $movValue) {
-                    $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
+                    $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.unico', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
                         ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
                         ->where([['detmov.mov_id', $movValue->mov_id], ['estado_migracion', 1]])->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {
-                        if (!in_array($movDetValue->cod_prod, $listaCodProdAgregado)) {
+                        if (!in_array($movDetValue->unico, $listaCodProdAgregado)) {
 
-                            $listaCodProdAgregado[] = $movDetValue->cod_prod;
+                            $listaCodProdAgregado[] = $movDetValue->unico;
 
                             $nuevoProducto = new KardexProducto();
                             $nuevoProducto->codigo_softlink = $movDetValue->cod_prod;
@@ -452,18 +452,26 @@ class softlink extends Command
                             $cantidadProductosAgregados++;
 
                             $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movDetValue->unico)->first();
-                            $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
-                            $actualiarDetalleMovimiento->save();
+                            if($actualiarDetalleMovimiento!=null){
+                                $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
+                                $actualiarDetalleMovimiento->save();
+                            }
 
                             $serie = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->first();
 
                             if ($serie && $serie->id > 0) {
-                                $nuevoProductoDetalle = new ProductoDetalle();
+                                // $nuevoProductoDetalle = new ProductoDetalle();
+                                $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>$serie->serie, 'producto_id'=>$nuevoProducto->id]);
+                                $estado = (($movDetValue->tipo == 2) ? (($nuevoProductoDetalle!=null) ? 0 : 1) : 1);
                                 $nuevoProductoDetalle->serie = $serie->serie;
+                                $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                 $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                 $nuevoProductoDetalle->id_ingreso =  $serie->id_ingreso;
+                                $nuevoProductoDetalle->fecha_ing =  $serie->fecha_ing;
                                 $nuevoProductoDetalle->id_salida = $serie->id_salida;
+                                $nuevoProductoDetalle->fecha_sal = $serie->fecha_sal;
                                 $nuevoProductoDetalle->estado = 1;
+                                $nuevoProductoDetalle->disponible = $estado;
                                 $nuevoProductoDetalle->save();
                                 $cantidadDetalleProductosAgregados++;
                             }

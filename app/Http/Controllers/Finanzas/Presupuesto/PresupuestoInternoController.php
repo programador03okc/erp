@@ -2546,7 +2546,7 @@ class PresupuestoInternoController extends Controller
     public function saldosMensual($id){
         $presupuesto = PresupuestoInterno::find($id);
         // $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->get();
-        $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->where('estado',1)->orderBy('partida', 'asc')->get();
-        return Excel::download(new ReporteSalosMensualesExport(json_encode($presupuesto_detalle)), 'Saldos_mensuales'.$presupuesto->codigo.'.xlsx');
+        $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->where('estado',1)->where('registro','2')->orderBy('partida', 'asc')->get();
+        return Excel::download(new ReporteSalosMensualesExport(json_encode($presupuesto_detalle)), 'Saldos_mensuales-'.$presupuesto->codigo.'.xlsx');
     }
 }

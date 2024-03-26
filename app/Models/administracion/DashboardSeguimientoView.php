@@ -421,13 +421,19 @@ class DashboardSeguimientoView extends Model
             $fechaRetornioGuiaFirmada = Carbon::make(null);
         }
 
-        $fechaCargaGuiaFirmadaASistema = null;
+        if ($this->attributes['fecha_carga_guia_firmada_sistema'] != null) {
+            $fechaCargaGuiaFirmadaASistema = Carbon::parse($this->attributes['fecha_carga_guia_firmada_sistema'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaCargaGuiaFirmadaASistema = Carbon::make(null);
+        }
+
+       
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada);
+        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada,$fechaCargaGuiaFirmadaASistema);
 
         // obtener tiempo global de area
-        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada];
+        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada,$fechaCargaGuiaFirmadaASistema];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);

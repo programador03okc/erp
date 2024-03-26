@@ -1409,6 +1409,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('grafica/{id}', [PresupuestoInternoController::class, 'grafica'])->name('grafica');
 
                 Route::get('reporte-anual/{year}', [PresupuestoInternoController::class, 'reporteAnual'])->name('reporte-anual');
+                Route::get('saldos-mensual/{id}', [PresupuestoInternoController::class, 'saldosMensual'])->name('saldos-mensual');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {

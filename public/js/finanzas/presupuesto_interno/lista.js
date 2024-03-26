@@ -482,3 +482,11 @@ function listarFinalizados() {
         }
     });
 }
+$(document).on('click','[data-action="saldos-mensual"]',function (e) {
+    e.preventDefault();
+
+    let id = $(this).attr('data-id');
+    // console.log(id);
+    window.open(route("finanzas.presupuesto.presupuesto-interno.saldos-mensual",{id:id}), '_blank');
+
+});

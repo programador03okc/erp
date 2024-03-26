@@ -259,6 +259,7 @@ class GuiaController extends Controller
                 $data->fecha_guia_transportista = $request->fecha_emision_guia;
                 $data->flete = $request->importe_flete;
                 $data->cargo_guia = ($request->cargo_guia) ? $request->cargo_guia : false;
+                $data->fecha_retorno_guia = ($request->cargo_guia)? new Carbon() : null;
                 $data->envio_adjunto_guia = ($request->envio_adjunto_guia) ? $request->envio_adjunto_guia : false;
                 $data->envio_adjunto_guia_sellada = ($request->envio_adjunto_guia_sellada) ? $request->envio_adjunto_guia_sellada : false;
                 $data->id_usuario = Auth::user()->id_usuario;
@@ -488,6 +489,7 @@ class GuiaController extends Controller
         try {
             $data = GuiaDespacho::find($request->id_despacho_act);
                 $data->cargo_guia = ($request->cargo_guia_act) ? $request->cargo_guia_act : false;
+                $data->fecha_retorno_guia = ($request->cargo_guia_act)? new Carbon() : null;
                 $data->envio_adjunto_guia = ($request->envio_adjunto_guia_act) ? $request->envio_adjunto_guia_act : false;
                 $data->envio_adjunto_guia_sellada = ($request->envio_adjunto_guia_sellada_act) ? $request->envio_adjunto_guia_sellada_act : false;
                 $data->id_usuario = Auth::user()->id_usuario;

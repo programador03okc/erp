@@ -415,14 +415,19 @@ class DashboardSeguimientoView extends Model
             $fechaEntregadoConforme = Carbon::make(null);
         }
 
+        if ($this->attributes['fecha_retorno_guia_firmanda'] != null) {
+            $fechaRetornioGuiaFirmada = Carbon::parse($this->attributes['fecha_retorno_guia_firmanda'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaRetornioGuiaFirmada = Carbon::make(null);
+        }
+
         $fechaCargaGuiaFirmadaASistema = null;
-        $fechaRetornioGuiaCellada = null;
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme);
+        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada);
 
         // obtener tiempo global de area
-        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme];
+        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
@@ -451,9 +456,9 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">Carga GR firmada a sistema</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaCargaGuiaFirmadaASistema != null ? $fechaCargaGuiaFirmadaASistema : '') . '</div>
         
-            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaRetornioGuiaCellada != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaRetornioGuiaFirmada != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">Retorno de GR firmada</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaCellada != null ? $fechaRetornioGuiaCellada : '') . '</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaFirmada != null ? $fechaRetornioGuiaFirmada : '') . '</div>
         
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -463,7 +468,7 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
 
-            <div class="tiempo-ingreso-area">' . ($fechaEntregadoConforme != null ? $fechaEntregadoConforme : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaRetornioGuiaFirmada != null ? $fechaRetornioGuiaFirmada : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">

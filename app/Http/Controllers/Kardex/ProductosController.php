@@ -94,7 +94,9 @@ class ProductosController extends Controller
                     }
                     // return $value;
                     // $serie = ProductoDetalle::where('serie',$value[1])->first();
-                    $serie = ProductoDetalle::firstOrNew(['serie'=>$value[1], 'producto_id'=>$producto->id]);
+                    $serie_codigo = ProductoDetalle::verificarSerie($value[1], $producto->id);
+                    // return $serie_codigo;
+                    $serie = ProductoDetalle::firstOrNew(['serie'=>$serie_codigo, 'producto_id'=>$producto->id]);
 
                     // if (!$serie) {
                         $monto = strrpos ($value[18], "$");
@@ -102,7 +104,7 @@ class ProductosController extends Controller
                         $precio = str_replace("$", "0", $value[18]);
 
                         // $serie = new ProductoDetalle();
-                        $serie->serie           = $value[1];
+                        $serie->serie           = $serie_codigo;
                         $serie->precio          = (float) $value[13];
                         $serie->tipo_moneda     = $tipo_moneda;
                         $serie->precio_unitario = (float) $precio;
@@ -110,7 +112,12 @@ class ProductosController extends Controller
                         $serie->fecha           = $this->formatoFechaExcel($value[14]);
                         $serie->estado          = 1;
                         $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
-                        $serie->save();
+                    $serie->save();
+
+                    // $serie_codigo = (!$value[1] ? $value[1] : 'SN-'.$serie->id );
+                    // $serie = ProductoDetalle::find($serie->id);
+                    //     $serie->serie   = $serie_codigo;
+                    // $serie->save();
                     // }
 
                 }

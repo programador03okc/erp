@@ -97,10 +97,14 @@ class RequerimientoPago extends Model
 
     public function getTipoCambioAttribute()
     {
-        
-        $tipoCambio = TipoCambio::where("fecha",date('Y-m-d', strtotime($this->attributes['fecha_registro'])))
-        ->first();
-        return $tipoCambio?$tipoCambio->venta:'';
+        if($this->attributes['tipo_cambio'] !=null){
+            return floatval($this->attributes['tipo_cambio']);
+        }else{
+            $tipoCambio = TipoCambio::where("fecha",date('Y-m-d', strtotime($this->attributes['fecha_registro'])))
+            ->first();
+            return $tipoCambio?floatval($tipoCambio->venta):'';
+
+        }
     }
 
     public static function obtenerCantidadRegistros($grupo, $idRequerimientoPago, $idPeriodo)

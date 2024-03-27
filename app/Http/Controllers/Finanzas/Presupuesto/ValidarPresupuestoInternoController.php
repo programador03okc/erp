@@ -59,9 +59,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
     
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago, $numeroMes, $totalPago, $fechaPago,$fase);
-            // $tipoCambioUtilizado= $this->getTipoCambioVenta($fechaPago);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
-            // $no_exceder_pago = (floatval($montoAcumuladoDePartida) >= floatval($totalPago))?true:false;
             $tienePresupuestoEnPartidas = true;
 
             foreach ($validacionDePartidaConPresupuestoInternoList as $key => $value) {
@@ -243,10 +241,11 @@ class ValidarPresupuestoInternoController extends Controller
                                 $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal);
                             }
                         } elseif ($orden->id_moneda == 2) {
+                            $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
                             if ($orden->incluye_igv == true) {
-                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal * 1.18)) * $this->getTipoCambioVenta($fechaPago));
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal * 1.18) * ($requerimiento->tipo_cambio !=null ? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago))));
                             } else {
-                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal)) * $this->getTipoCambioVenta($fechaPago));
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal) * ($requerimiento->tipo_cambio !=null ? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago))));
                             }
                         }
                     }
@@ -283,8 +282,8 @@ class ValidarPresupuestoInternoController extends Controller
                         if ($requerimientoPago->id_moneda == 1) { // soles
                             $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + floatval($item->subtotal);
                         } else if ($requerimientoPago->id_moneda == 2) {
-                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));
-                        }
+                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  ($requerimientoPago->tipo_cambio !=null?floatval($requerimientoPago->tipo_cambio): $this->getTipoCambioVenta($fechaPago)));
+                         }
                     }
                 }
             }
@@ -326,9 +325,9 @@ class ValidarPresupuestoInternoController extends Controller
                             }
                         } elseif ($requerimiento->id_moneda == 2) {
                             if ($requerimiento->monto_igv > 0) {
-                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + ((floatval($item->subtotal) * 1.18) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + ((floatval($item->subtotal) * 1.18) *  ($requerimiento->tipo_cambio!= null? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago)));
                             } else {
-                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  ($requerimiento->tipo_cambio!= null? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago)));
                             }
 
                         }

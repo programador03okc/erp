@@ -21,7 +21,7 @@ class ProductoDetalle extends Model
             // ProductoDetalle::where('')
             // ProductoDetalle::where('producto_id', $producto_id)
             // ->update(['estado' => 7]);
-
+            // ProductoDetalle::where('producto_id', $producto_id)->delete();
             $data = ProductoDetalle::count();
             $serie = 'SN-'. ($data+1);
             return $serie;

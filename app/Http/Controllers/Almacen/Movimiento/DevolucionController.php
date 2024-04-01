@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\almacen\Devolucion;
 use App\Models\almacen\DevolucionDetalle;
 use App\Models\Almacen\Reserva;
+use App\Models\Comercial\CuadroCosto\CuadroCostosView;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\LogActividad;
 use App\Models\Presupuestos\Moneda;
@@ -60,6 +61,10 @@ class DevolucionController extends Controller
         $tipos = DB::table('cas.devolucion_tipo')->where('estado', 1)->get();
 
         return view('almacen.devoluciones.devolucionCas', compact('almacenes', 'empresas', 'usuarios', 'unidades', 'monedas', 'tipos'));
+    }
+
+    public function listarCdps(){
+        return CuadroCostosView::mostrar();
     }
 
     public function listarDevoluciones()
@@ -192,7 +197,9 @@ class DevolucionController extends Controller
                 'proveedor.razon_social as proveedor_razon_social',
                 'cliente.razon_social as cliente_razon_social',
                 'devolucion_estado.descripcion as estado_descripcion',
-                'devolucion_estado.bootstrap_color'
+                'devolucion_estado.bootstrap_color',
+                'cc_view.id as id_cc',
+                'cc_view.codigo_oportunidad'
             )
             ->leftjoin('logistica.log_prove', 'log_prove.id_proveedor', '=', 'devolucion.id_proveedor')
             ->leftjoin('contabilidad.adm_contri as proveedor', 'proveedor.id_contribuyente', '=', 'log_prove.id_contribuyente')
@@ -201,6 +208,7 @@ class DevolucionController extends Controller
             ->join('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'devolucion.registrado_por')
             ->leftjoin('configuracion.sis_usua as usu_revisado', 'usu_revisado.id_usuario', '=', 'devolucion.revisado_por')
             ->join('cas.devolucion_estado', 'devolucion_estado.id_estado', '=', 'devolucion.estado')
+            ->leftjoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'devolucion.id_cc')
             ->where('id_devolucion', $id)->first();
 
         $detalle = DB::table('cas.devolucion_detalle')
@@ -425,6 +433,7 @@ class DevolucionController extends Controller
                         'fecha_documento' => $request->fecha_documento,
                         'id_cliente' => $id_cliente,
                         'id_proveedor' => $id_proveedor,
+                        'id_cc' => $request->id_cc,
                         'observacion' => $request->observacion,
                         'registrado_por' => $usuario->id_usuario,
                         'estado' => 1,
@@ -574,6 +583,7 @@ class DevolucionController extends Controller
                         'tipo' => (($request->id_tipo == 1 or $request->id_tipo == 2) ? 'cliente' : 'proveedor'),
                         'id_cliente' => $id_cliente,
                         'id_proveedor' => $id_proveedor,
+                        'id_cc' => $request->id_cc,
                         'observacion' => $request->observacion,
 
                     ]);

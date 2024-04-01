@@ -333,14 +333,18 @@ class DashboardSeguimientoView extends Model
         } else {
             $fechaTransformacionCAS = Carbon::make(null);
         }
-
-        $fechaDevolucionDeComponentes=null;
+        if ($this->attributes['fecha_devolucion'] != null) {
+            $fechaDevolucionDeComponentes = Carbon::parse($this->attributes['fecha_devolucion'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaDevolucionDeComponentes = Carbon::make(null);
+        }
+ 
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaInicioCAS, $fechaTransformacionCAS);
+        $tiempoTotalSalida = max($fechaInicioCAS, $fechaTransformacionCAS,$fechaDevolucionDeComponentes);
 
         // obtener tiempo global de area
-        $fechas = [$fechaInicioCAS, $fechaTransformacionCAS];
+        $fechas = [$fechaInicioCAS, $fechaTransformacionCAS,$fechaDevolucionDeComponentes];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
@@ -377,7 +381,7 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">&nbsp;</div>
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
             
-            <div class="tiempo-ingreso-area">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaDevolucionDeComponentes != null ? $fechaDevolucionDeComponentes : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">

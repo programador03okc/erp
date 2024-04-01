@@ -78,6 +78,9 @@ class OrdenCtrl{
 
     }
 
+    obtenerDataProveedor(id){
+        return ordenModel.obtenerDataProveedor(id);
+    }
     // obtenerRequerimiento(id){
     //     return ordenModel.obtenerRequerimiento(id);
     // }

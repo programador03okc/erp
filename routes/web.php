@@ -56,8 +56,6 @@ use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\Finanzas\Presupuesto\ScriptController;
 use App\Http\Controllers\Finanzas\Presupuesto\TituloController;
 use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoController;
-use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoEnFaseAprobacionController;
-use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoEnFaseEjecutadoController;
 use App\Http\Controllers\Finanzas\Reportes\ReporteGastoController;
 use App\Http\Controllers\Gerencial\Cobranza\ClienteController as CobranzaClienteController;
 use App\Http\Controllers\Gerencial\Cobranza\CobranzaController;
@@ -74,6 +72,7 @@ use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesTransformacionController;
 use App\Http\Controllers\Logistica\Distribucion\ProgramacionDespachosController;
+use App\Http\Controllers\Logistica\OrdenMultipleController;
 use App\Http\Controllers\Logistica\ProveedoresController;
 use App\Http\Controllers\Logistica\RequerimientoController;
 use App\Http\Controllers\Logistica\Requerimientos\MapeoProductosController;
@@ -122,6 +121,8 @@ use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\Http\Controllers\Proyectos\Opciones\PresupuestoInternoController as PresupuestoInternoControllerProy;
+use App\Models\softlink\MovimientoDetalle;
+
 // use App\Http\Controllers\ApiController;
 /*
 |--------------------------------------------------------------------------
@@ -171,7 +172,6 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('migrar_venta_directa/{id}', [MigrateRequerimientoSoftLinkController::class, 'migrar_venta_directa'])->name('migrar-venta-directa');
 	// Route::get('anular_presup', 'ProyectosController@anular_presup');
 	// Route::get('listarUsu', 'Almacen\Movimiento\TransferenciaController@listarUsu');
-
 	/**
 	 * Configuración
 	 */
@@ -1267,6 +1267,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class, 'listarIngresos'])->name('listar-ingresos');
 				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class, 'obtenerMovimientoDetalle'])->name('obtener-movimiento-detalle');
 				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
+				Route::post('lista-cuadro-presupuesto', [RequerimientoPagoController::class, 'listaCuadroPresupuesto'])->name('lista-cuadro-presupuesto');
+
 			});
 
 			Route::group(['as' => 'fichas.', 'prefix' => 'fichas'], function () {
@@ -1522,6 +1524,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::name('ordenes.')->prefix('ordenes')->group(function () {
 					Route::name('elaborar.')->prefix('elaborar')->group(function () {
 						Route::get('index', [OrdenController::class, 'view_crear_orden_requerimiento'])->name('index');
+						Route::get('orden-multiple-index', [OrdenMultipleController::class, 'view_orden_multiple'])->name('orden-multiple-index'); // TODO: En desarrollo
+						Route::get('obtener-data-proveedor/{idProveedor}', [OrdenMultipleController::class, 'obtenerDataProveedor'])->name('obtener-data-proveedor');
+						Route::get('porveedores', [OrdenMultipleController::class, 'listar_proveedores'])->name('porveedores');
 						Route::post('requerimiento-detallado', [OrdenController::class, 'ObtenerRequerimientoDetallado'])->name('requerimiento-detallado');
 						Route::post('detalle-requerimiento-orden', [OrdenController::class, 'get_detalle_requerimiento_orden'])->name('detalle-requerimiento-orden');
 						Route::post('guardar', [OrdenController::class, 'guardar_orden_por_requerimiento'])->name('guardar');

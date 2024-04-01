@@ -457,24 +457,27 @@ class softlink extends Command
                                 $actualiarDetalleMovimiento->save();
                             }
 
-                            $serie = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->first();
+                            $series = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->get();
 
-                            if ($serie && $serie->id > 0) {
-                                // $nuevoProductoDetalle = new ProductoDetalle();
-                                $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>$serie->serie, 'producto_id'=>$nuevoProducto->id]);
-                                $estado = (($movDetValue->tipo == 2) ? (($nuevoProductoDetalle!=null) ? 0 : 1) : 1);
-                                $nuevoProductoDetalle->serie = $serie->serie;
-                                $nuevoProductoDetalle->fecha = $serie->fechavcto;
-                                $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
-                                $nuevoProductoDetalle->id_ingreso =  $serie->id_ingreso;
-                                $nuevoProductoDetalle->fecha_ing =  $serie->fecha_ing;
-                                $nuevoProductoDetalle->id_salida = $serie->id_salida;
-                                $nuevoProductoDetalle->fecha_sal = $serie->fecha_sal;
-                                $nuevoProductoDetalle->estado = 1;
-                                $nuevoProductoDetalle->disponible = $estado;
-                                $nuevoProductoDetalle->save();
-                                $cantidadDetalleProductosAgregados++;
+                            foreach ($series as $serie) {
+                                if ($series && $serie->id > 0) {
+                                    // $nuevoProductoDetalle = new ProductoDetalle();
+                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>trim($serie->serie), 'producto_id'=>$nuevoProducto->id]);
+                                    $estado = (($movDetValue->tipo == 2) ? (($nuevoProductoDetalle!=null && (trim($nuevoProductoDetalle->fecha_sal) !=null || trim($nuevoProductoDetalle->fecha_sal) !='') ) ? 0 : 1) : 1);
+                                    $nuevoProductoDetalle->serie = $serie->serie;
+                                    $nuevoProductoDetalle->fecha = $serie->fechavcto;
+                                    $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
+                                    $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);
+                                    $nuevoProductoDetalle->fecha_ing =  trim($serie->fecha_ing) ==""?null:trim($serie->fecha_ing);
+                                    $nuevoProductoDetalle->id_salida = trim($serie->id_salida) ==""?null:trim($serie->id_salida);
+                                    $nuevoProductoDetalle->fecha_sal = trim($serie->fecha_sal) ==""?null:trim($serie->fecha_sal);
+                                    $nuevoProductoDetalle->estado = 1;
+                                    $nuevoProductoDetalle->disponible = $estado;
+                                    $nuevoProductoDetalle->save();
+                                    $cantidadDetalleProductosAgregados++;
+                                }
                             }
+
                         }
                     }
 

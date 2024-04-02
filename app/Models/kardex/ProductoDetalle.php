@@ -16,4 +16,17 @@ class ProductoDetalle extends Model
         'id_salida', 'fecha_ing', 'fecha_sal'
     ];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
+
+    static function verificarSerie($serie, $producto_id) {
+        if ($serie && $serie!=='' && $serie!==null) {
+            // ProductoDetalle::where('')
+            // ProductoDetalle::where('producto_id', $producto_id)
+            // ->update(['estado' => 7]);
+            // ProductoDetalle::where('producto_id', $producto_id)->delete();
+            $data = ProductoDetalle::count();
+            $serie = 'SN-'. ($data+1);
+            return $serie;
+        }
+        return $serie;
+    }
 }

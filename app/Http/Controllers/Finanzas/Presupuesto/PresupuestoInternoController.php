@@ -6,6 +6,8 @@ use App\Exports\PresupuestoInternoEjecutadoExport;
 use App\Exports\PresupuestoInternoExport;
 use App\Exports\PresupuesInternoReporteAnualExport;
 use App\Exports\PresupuestoInternoSaldoExport;
+use App\Exports\ReporteSaldosExport;
+use App\Exports\ReporteSalosMensualesExport;
 use App\Helpers\ConfiguracionHelper;
 use App\Helpers\StringHelper;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
@@ -2540,5 +2542,11 @@ class PresupuestoInternoController extends Controller
 
 
         return Excel::download(new PresupuesInternoReporteAnualExport($modelo_partidas), 'presupuesto_interno.xlsx');
+    }
+    public function saldosMensual($id){
+        $presupuesto = PresupuestoInterno::find($id);
+        // $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->get();
+        $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->where('estado',1)->where('registro','2')->orderBy('partida', 'asc')->get();
+        return Excel::download(new ReporteSalosMensualesExport(json_encode($presupuesto_detalle)), 'Saldos_mensuales-'.$presupuesto->codigo.'.xlsx');
     }
 }

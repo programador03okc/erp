@@ -51,7 +51,7 @@ function lista() {
     const button_reporte_total = (array_accesos.find(
         element => element === 302)?
             {
-            text: '<i class="fa fa-calendar-times"></i> Reporte General',
+            text: '<i class="fa fa-project-diagram"></i> Reporte General',
             attr: {
                 id: 'btn-reporte-general',
             },
@@ -135,7 +135,7 @@ function lista() {
 
                         html +='<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat botonList " title="Exportar Ejecutados" data-original-title="Exportar Ejecutados"><i class="fa fa-file"></i></a>';
 
-                        html +='<a href="#" data-action="saldos-mensual" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat btn-sm" title="Exportar Ejecutados" data-original-title="Ver los saldos del mes"><i class="fa fa-balance-scale"></i></a>';
+                        html +='<a href="#" data-action="saldos-mensual" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat btn-sm" title="Saldos mensuales" data-original-title="Ver los saldos del mes"><i class="fa fa-balance-scale"></i></a>';
                     html+='';
                     return html;
                 },
@@ -482,3 +482,11 @@ function listarFinalizados() {
         }
     });
 }
+$(document).on('click','[data-action="saldos-mensual"]',function (e) {
+    e.preventDefault();
+
+    let id = $(this).attr('data-id');
+    // console.log(id);
+    window.open(route("finanzas.presupuesto.presupuesto-interno.saldos-mensual",{id:id}), '_blank');
+
+});

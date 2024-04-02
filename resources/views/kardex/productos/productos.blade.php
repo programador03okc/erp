@@ -43,7 +43,7 @@
                                         <th>Estado Kardex</th>
                                         <th>Responsable</th>
                                         <th>Cantidad</th>
-                                        <th>Fecha</th>
+                                        {{-- <th>Fecha</th> --}}
                                         <th>Movimiento</th>
                                         <th>Acción</th>
                                     </tr>
@@ -124,6 +124,110 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade effect-flip-vertical" id="modal-filtros">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Filtros</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" data-action="click" name="almacen" value="almacen"> Almacen
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <select class="form-control seleccionado" name="filtro_almacen" id="filtro_almacen" disabled="disabled" data-switch="almacen">
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($almacenes as $value)
+                                    <option value="{{$value->almacen}}">{{$value->almacen}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" data-action="click" name="empresa" value="empresa"> Empresa
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <select class="form-control seleccionado" name="filtro_empresa" id="filtro_empresa" disabled="disabled" data-switch="empresa">
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($empresas as $value)
+                                    <option value="{{$value->empresa}}">{{$value->empresa}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" data-action="click" name="estado_kardex" value="estado_kardex"> Estado kardex
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <select class="form-control seleccionado" name="filtro_estado_kardex" id="filtro_estado_kardex" disabled="disabled" data-switch="estado_kardex">
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($estados_kardex as $value)
+                                    <option value="{{$value->estado_kardex}}">{{$value->estado_kardex}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" data-action="click" name="estado_kardex" value="fecha"> Fecha
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group text-center">
+                                <input type="date" class="form-control" name="filtro_fecha_inicio" id="filtro_fecha_inicio" value="" disabled="disabled">
+                                <small id="" class="text-muted">Fecha de inicio</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group text-center">
+                                <input type="date" class="form-control" name="filtro_fecha_final" id="filtro_fecha_final" value="" disabled="disabled">
+                                <small id="" class="text-muted">Fecha final</small>
+                            </div>
+                        </div>
+                    </div> --}}
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="aplicar-filtros">Aplicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -151,6 +255,7 @@
 
         view.listar();
         view.eventos();
+        view.filtros();
     });
     </script>
 @endsection

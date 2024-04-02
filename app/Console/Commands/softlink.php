@@ -435,7 +435,7 @@ class softlink extends Command
                 foreach ($movimiento as $key => $movValue) {
                     $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.unico', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
                         ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
-                        ->where([['detmov.mov_id', $movValue->mov_id], ['estado_migracion', 1]])->get();
+                        ->where([['detmov.mov_id', $movValue->mov_id], ['estado_migracion', 1]])->orderBy('fec_pedi', 'asc')->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {
                         if (!in_array($movDetValue->unico, $listaCodProdAgregado)) {
@@ -443,11 +443,11 @@ class softlink extends Command
                             $listaCodProdAgregado[] = $movDetValue->unico;
 
                             $nuevoProducto = new KardexProducto();
-                            $nuevoProducto->codigo_softlink = $movDetValue->cod_prod;
-                            $nuevoProducto->descripcion = $movDetValue->nom_prod;
-                            $nuevoProducto->part_number = $movDetValue->cod_espe ? $movDetValue->cod_espe : null;
-                            $nuevoProducto->unidad_medida = $movDetValue->nom_unid ? $movDetValue->nom_unid : null;
-                            $nuevoProducto->tipo_moneda = $movDetValue->tip_moneda ? $movDetValue->tip_moneda : null;
+                            $nuevoProducto->codigo_softlink = trim($movDetValue->cod_prod);
+                            $nuevoProducto->descripcion = trim($movDetValue->nom_prod);
+                            $nuevoProducto->part_number = $movDetValue->cod_espe ? trim($movDetValue->cod_espe) : null;
+                            $nuevoProducto->unidad_medida = $movDetValue->nom_unid ? trim($movDetValue->nom_unid) : null;
+                            $nuevoProducto->tipo_moneda = $movDetValue->tip_moneda ? trim($movDetValue->tip_moneda) : null;
                             $nuevoProducto->save();
                             $cantidadProductosAgregados++;
 
@@ -463,8 +463,16 @@ class softlink extends Command
                                 if ($series && $serie->id > 0) {
                                     // $nuevoProductoDetalle = new ProductoDetalle();
                                     $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>trim($serie->serie), 'producto_id'=>$nuevoProducto->id]);
-                                    $estado = (($movDetValue->tipo == 2) ? (($nuevoProductoDetalle!=null && (trim($nuevoProductoDetalle->fecha_sal) !=null || trim($nuevoProductoDetalle->fecha_sal) !='') ) ? 0 : 1) : 1);
-                                    $nuevoProductoDetalle->serie = $serie->serie;
+                                    if($movValue->tipo == 2){
+                                        if($serie->fecha_sal ==null ){
+                                            $estado=1;
+                                        }else{
+                                            $estado=0;
+                                        }
+                                    }else{
+                                        $estado=1;
+                                    }
+                                    $nuevoProductoDetalle->serie = trim($serie->serie);
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                     $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);

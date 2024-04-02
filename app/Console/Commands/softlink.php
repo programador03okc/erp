@@ -316,12 +316,12 @@ class softlink extends Command
                     $cantidadMigrados++;
 
 
-                    // DB::connection('soft')
-                    //     ->table('series')
-                    //     ->where('mov_id', $value->mov_id)
-                    //     ->update(
-                    //         ['flg_migracion' => 1]
-                    //     );
+                    DB::connection('soft')
+                        ->table('series')
+                        ->where('mov_id', $value->mov_id)
+                        ->update(
+                            ['flg_migracion' => 1]
+                        );
 
                     // }
                     $bar->advance();
@@ -472,7 +472,8 @@ class softlink extends Command
                                     }else{
                                         $estado=1;
                                     }
-                                    $nuevoProductoDetalle->serie = trim($serie->serie);
+                                 
+                                    $nuevoProductoDetalle->serie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                     $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);

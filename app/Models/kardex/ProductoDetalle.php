@@ -18,7 +18,7 @@ class ProductoDetalle extends Model
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
     static function verificarSerie($serie, $producto_id) {
-        if ($serie && $serie!=='' && $serie!==null) {
+        if ($serie && trim($serie)!=='' && $serie!==null) {
             // ProductoDetalle::where('')
             // ProductoDetalle::where('producto_id', $producto_id)
             // ->update(['estado' => 7]);

@@ -78,7 +78,8 @@
 								<th id="tdResp">A. Respo.</th>
 								<th width="10">Fase</th>
 								<th class="hidden">Tipo</th>
-                                <th width="60">Fec. inicio / entrega </th>
+                                <th width="60">Fec. inicio / entrega <em>(estimada)</em> </th>
+                                <th width="60">Fec. entrega <em>(real)</em> </th>
 								<th id="tdAct">-</th>
                             </tr>
                         </thead>

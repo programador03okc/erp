@@ -550,6 +550,7 @@ function listar() {
                 },
                 className: "text-center", searchable: false, orderable: false
             },
+            {data: 'fecha_entrega_real', className: "text-center", searchable: false, orderable: false},
             {data: 'accion', className: "text-center", searchable: false, orderable: false},
         ],
         buttons: [

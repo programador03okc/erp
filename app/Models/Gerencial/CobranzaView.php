@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CobranzaView extends Model
 {
-    protected $table = 'cobranza.rc_ventas_view';
+    protected $table = 'cobranza.rc_ventas_view2';
     protected $fillable = [
         "empresa", "sector", "cliente", "cliente_ruc", "categoria", "plazo_credito", "uu_ee", "fuente_financ", "factura", "cdp", "siaf", "oc_fisica", "ocam", "id_oc", 
         "periodo", "fecha_emision", "fecha_recepcion", "inicio_entrega", "fecha_entrega", "estado_cobranza", "estado", "estado_reporte_id", "tipo_tramite", "area", 

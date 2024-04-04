@@ -26,7 +26,7 @@ Cronograma Interno
         <!-- <div class="thumbnail" style="padding-left: 10px;padding-right: 10px;"> -->
             <div class="row">
                 <input type="text" class="oculto" name="id_presupuesto" primary="ids">
-                <input type="text" class="oculto" name="modo">
+                <input type="text" class="oculto" name="modo" value="">
                 <div class="col-md-12">
                     <div id="tab-cronoint">
                     <ul class="nav nav-tabs" id="myTab">
@@ -134,7 +134,7 @@ Cronograma Interno
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/pdfmake.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/vfs_fonts.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/js/jszip.min.js') }}"></script> -->
-    
+
     <script src="{{ asset('template/adminlte2-4/plugins/gantt/dhtmlxgantt.js') }}"></script>
 
     <script src="{{ asset('js/proyectos/cronograma/cronoint.js')}}"></script>
@@ -143,7 +143,7 @@ Cronograma Interno
     <script src="{{ asset('js/proyectos/presupuesto/presLeccion.js')}}"></script>
     <script>
     $(document).ready(function(){
-        
+
     });
     </script>
 @endsection

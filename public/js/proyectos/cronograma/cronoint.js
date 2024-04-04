@@ -6,7 +6,7 @@ $(function(){
     vista_extendida();
 
     $("#tab-cronoint section:first form").attr('form', 'formulario');
-    
+
     /* Efecto para los tabs */
     $('ul.nav-tabs li a').click(function(){
         $('ul.nav-tabs li').removeClass('active');
@@ -84,7 +84,7 @@ function listar_acus_cronograma(id_presupuesto){
             lista = response['lista'];
             tp_pred = response['tp_pred'];
             mostrar_lista();
-            
+
             $('[name=unid_program]').val(response['unid_program']);
 
             var unid = '';
@@ -120,7 +120,8 @@ function mostrar_lista(){
     if (modo !== "new"){
         disabled = (type == "edition" ? "" : 'disabled="true"');
     }
-
+    console.log(lista);
+    console.log(tp_pred);
     lista.forEach(element => {
         if (element.partidas !== undefined){
             html += '<tr id="com-'+element.id_cd_compo+'">'+
@@ -250,7 +251,7 @@ function save_cronoint(){
     console.log(data);
     if (msj.length > 0){
         alert(msj);
-    } 
+    }
     else {
         $.ajax({
             type: 'POST',
@@ -282,22 +283,22 @@ function anular_cronoint(id_presupuesto){
         success: function(response){
             if (response > 0){
                 alert("Se anuló correctamente.");
-                
+
                 $('#form-cronoint')[0].reset();
                 $('#codigo').text('');
                 $('#descripcion').text('');
                 $('#listaPartidas tbody').html('');
-                
+
                 partidas = [];
                 lista = [];
                 tp_pred = [];
-                
+
                 tasks = {
                     data: [],
                     links: []
                 };
                 gantt.parse(tasks);
-    
+
             } else {
                 alert("No es posible anular. Ya existe un Cronograma Valorizado!");
             }
@@ -436,11 +437,11 @@ function change_fini_cronograma(){
         if (element.partidas !== undefined){
             var array = element.partidas.filter(partida => (partida.predecesora == '' || partida.predecesora == '0'));
             array.forEach(obj => {
-               iniciales.push(obj); 
+               iniciales.push(obj);
             });
         } else {
             if (element.predecesora == '' || element.predecesora == '0'){
-                iniciales.push(element); 
+                iniciales.push(element);
             }
         }
     });
@@ -617,7 +618,7 @@ function actualiza_predecesoras(predecesoras, tp_pred, actual){
                     }
                     break;
                 default:
-                    break; 
+                    break;
             }
         }
     }
@@ -625,7 +626,7 @@ function actualiza_predecesoras(predecesoras, tp_pred, actual){
 
 function vista_extendida(){
     let body=document.getElementsByTagName('body')[0];
-    body.classList.add("sidebar-collapse"); 
+    body.classList.add("sidebar-collapse");
 }
 
 //Ver Diagrama de Gantt
@@ -652,7 +653,7 @@ function mostrar_gant(id_presupuesto){
                 var ffin = null;
                 var dura = 0;
                 var parti = [];
-                
+
                 response['partidas'].forEach(function(part){
                     if (element.codigo == part.cod_compo){
                         if (ffin == null){
@@ -668,13 +669,13 @@ function mostrar_gant(id_presupuesto){
                         }
                         j++;
                         var p = {
-                            id: i+j, 
-                            text: part.descripcion, 
-                            start_date: format2Date(part.fecha_inicio), 
-                            end_date: format2Date(part.fecha_fin), 
-                            duration: restarFechas(part.fecha_inicio, part.fecha_fin), 
+                            id: i+j,
+                            text: part.descripcion,
+                            start_date: format2Date(part.fecha_inicio),
+                            end_date: format2Date(part.fecha_fin),
+                            duration: restarFechas(part.fecha_inicio, part.fecha_fin),
                             // order: 10,
-                            progress: 1, 
+                            progress: 1,
                             open: false,
                             parent: i,
                             type: (part.tp_predecesora == 2 ? "1" : "0"),
@@ -682,7 +683,7 @@ function mostrar_gant(id_presupuesto){
                             nro_orden: part.nro_orden
                         }
                         parti.push(p);
-                        
+
                     }
                 });
                 var padre = _data.find(e => e.nro_orden == element.cod_padre);
@@ -695,7 +696,7 @@ function mostrar_gant(id_presupuesto){
                         end_date: (padre !== undefined ? padre.end_date : ffin),
                         duration: (padre !== undefined ? padre.duration : dura),
                         // order: 10,
-                        // progress: 1, 
+                        // progress: 1,
                         open: true,
                         color: "#34c461",
                         parent: (padre !== undefined ? padre.id : ''),
@@ -718,13 +719,13 @@ function mostrar_gant(id_presupuesto){
                 if (part.id_partida == null){
                     z++;
                     var n = {
-                        id: z, 
-                        text: (part.tipo == 'ci' ? 'Costos Indirectos' : (part.tipo == 'gg' ? 'Gastos Generales' : '')), 
-                        start_date: format2Date(part.fecha_inicio), 
-                        end_date: format2Date(part.fecha_fin), 
-                        duration: restarFechas(part.fecha_inicio, part.fecha_fin), 
+                        id: z,
+                        text: (part.tipo == 'ci' ? 'Costos Indirectos' : (part.tipo == 'gg' ? 'Gastos Generales' : '')),
+                        start_date: format2Date(part.fecha_inicio),
+                        end_date: format2Date(part.fecha_fin),
+                        duration: restarFechas(part.fecha_inicio, part.fecha_fin),
                         // order: 10,
-                        progress: 1,                         
+                        progress: 1,
                         open: false,
                         // parent: i,
                         type: (part.tp_predecesora == 2 ? "1" : "0"),
@@ -751,9 +752,9 @@ function mostrar_gant(id_presupuesto){
                                 console.log(tar);
                                 if (tar !== undefined){
                                     var li = {
-                                        id: i_link, 
-                                        source: tar.id, 
-                                        target: element.id, 
+                                        id: i_link,
+                                        source: tar.id,
+                                        target: element.id,
                                         type: (element.tp_predecesora == 2 ? "1" : "0")
                                     }
                                     _links.push(li);
@@ -779,12 +780,12 @@ function mostrar_gant(id_presupuesto){
                     return "nested_task"
                 };
             }
-
+            // agrega los array para insertarlo en el plugin del diagram de gant
             tasks = {
                 data: _data,
                 links: _links
             };
-
+            console.log(tasks);
             if (rspta){
                 gantt.init("gantt_here");
                 gantt.parse(tasks);
@@ -815,10 +816,10 @@ function changeUnidProgram(){
 
     if (unid !== '' && tasks !== ''){
         gantt.config.scale_unit = unid;
-    
+
         if (unid == 'month'){
             gantt.config.date_scale = "%F, %Y";
-        } 
+        }
         else if (unid == 'week'){
             gantt.config.date_scale = "%W";
         }
@@ -841,13 +842,13 @@ function calculaRutaCritica(){
                 rutas.push(inicial);
             }
         });
-        
+
         var rutas_criticas = [];
-    
+
         rutas.forEach(function(element){
             var ruta_probable = [];
             var pred_ini = element.nro_orden;
-    
+
             tasks.data.forEach(function(task){
                 if (task.open == false){
                     //revisa si esa partida tiene predecesora
@@ -873,24 +874,24 @@ function calculaRutaCritica(){
             });
             rutas_criticas.push(ruta_probable);
         });
-        
+
         var suma_ganadora = 0;
-        
+
         for (var i=0; i < rutas_criticas.length; i++) {
             var suma = 0;
             for (var j=0; j < rutas_criticas[i].length; j++){
                 suma += rutas_criticas[i][j].duration;
             }
-    
+
             if (suma > suma_ganadora){
                 ganadora = rutas_criticas[i];
                 suma_ganadora = suma;
             }
         }
-    
+
         console.log(ganadora);
         console.log(suma_ganadora);
-    
+
         //recorre las tareas y le asigna color red
         for (var i=0; i < ganadora.length; i++){
             console.log('id: '+ganadora[i].id);

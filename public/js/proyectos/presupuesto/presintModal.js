@@ -7,8 +7,8 @@ $(function(){
         var id = $(this)[0].firstChild.innerHTML;
         var cod = $(this)[0].childNodes[1].innerHTML;
         var des = $(this)[0].childNodes[2].innerHTML;
-        
-        if (id !== null && id !== undefined){          
+
+        if (id !== null && id !== undefined){
             if (formName =='cronoint'){
                 $('[name=id_presupuesto]').val(id);
                 $('#codigo').text(cod);
@@ -24,7 +24,7 @@ $(function(){
                     mostrar_gant(id);
                     $('[name=modo]').val('update');
                 }
-            } 
+            }
             else if (formName =='cronovalint'){
                 $('[name=id_presupuesto]').val(id);
                 $('#codigo').text(cod);
@@ -41,13 +41,13 @@ $(function(){
                     $('[name=unid_program]').attr('disabled',true);
                     $('[name=btn_actualizar]').attr('disabled',true);
                     mostrar_crono_valorizado();
-                } 
+                }
             }
             else {
                 mostrar_presint(id);
                 document.getElementById('btnCopiar').removeAttribute("disabled");
             }
-            $('#modal-presint').modal('hide');       
+            $('#modal-presint').modal('hide');
         }
     });
 });
@@ -89,12 +89,12 @@ function presintModal(modal){
 
     if (modal == ''){
         listarPresInt();
-    } 
+    }
     else if (modal === 'nuevo'){
         console.log('modal:'+modal);
         crono_modal = 0;
         listarPresIntCrono(crono_modal);
-    } 
+    }
     else if (modal === 'modal'){
         console.log('modal:'+modal);
         crono_modal = 1;

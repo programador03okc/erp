@@ -39,7 +39,7 @@ $(function(){
 
 function vista_extendida(){
     let body=document.getElementsByTagName('body')[0];
-    body.classList.add("sidebar-collapse"); 
+    body.classList.add("sidebar-collapse");
 }
 
 
@@ -72,14 +72,14 @@ function mostrar_propuesta(id){
             $('[name=porcen_igv]').val(formatDecimal(response['totales'].porcen_igv));
             $('[name=importe_igv]').val(formatDecimal(response['totales'].importe_igv));
             $('[name=total_propuesta]').val(formatDecimal(response['totales'].total_propuesta));
-            
+
             $('#codigo').text(response['propuesta'].codigo);
             $('#cod_presint').text(response['presint'].codigo);
             $('[name=cod_presint]').text(response['presint'].codigo);
 
             $('#des_estado').text(response['propuesta'].des_estado);
             $('#estado').text(response['propuesta'].estado);
-            
+
             var des='';
             if (response['propuesta'].estado == 1){
                 des = 'label label-primary';
@@ -91,9 +91,9 @@ function mostrar_propuesta(id){
             $('#des_estado').removeClass();
             $('#des_estado').addClass(des);
 
-            document.getElementById("cronograma").style.visibility = (response['propuesta'].cronograma ? "visible" : "hidden"); 
-            document.getElementById("cronoval").style.visibility = (response['propuesta'].cronoval ? "visible" : "hidden"); 
-            
+            document.getElementById("cronograma").style.visibility = (response['propuesta'].cronograma ? "visible" : "hidden");
+            document.getElementById("cronoval").style.visibility = (response['propuesta'].cronoval ? "visible" : "hidden");
+
             listar_partidas_propuesta(id);
             $('#modal-propuesta').modal('hide');
         }
@@ -106,7 +106,7 @@ function mostrar_propuesta(id){
 
 function refresh_partidas(){
     var id = $('[name=id_presup]').val();
-    
+
     if (id !== ''){
         listar_partidas_propuesta(id);
     } else {
@@ -219,13 +219,13 @@ function exportar_propuesta(){
 function copiar_partidas_presint(){
     var id_presupuesto = $('[name=id_presupuesto]').val();
     var id_presup = $('[name=id_presup]').val();
-    
+
     if (id_presupuesto !== '' && id_presup !== ''){
         var filas = document.querySelectorAll('#listaPresupuesto tbody tr');
-        
+
         if (filas.length > 0){
             alert('No es posible copiar. Ya existen partidas creadas.');
-        } 
+        }
         else {
             var rspta = confirm('¿Está seguro que desea copiar las partidas del Presupuesto Interno relacionado?');
             if (rspta){

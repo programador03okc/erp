@@ -916,6 +916,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('guardar-ajuste-transformacion-requerimiento', [ComprasPendientesController::class, 'guardarAjusteTransformacionRequerimiento'])->name('guardar-ajuste-transformacion-requerimiento');
 				Route::get('mostrar-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'requerimiento'])->name('mostrar-requerimiento');
 				Route::get('detalle-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'detalleRequerimiento'])->name('detalle-requerimientos');
+				Route::post('generarDespachoInterno', [OrdenesDespachoInternoController::class, 'generarDespachoInterno'])->name('generar-despacho-interno');
+
 			});
 		});
 

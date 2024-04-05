@@ -928,3 +928,9 @@ function actualizarPartidas(){
         console.log(errorThrown);
     });
 }
+$('#btnEditar').click(function (e) {
+    e.preventDefault();
+    console.log('click editar');
+    $('[name="modo"]').val('modal')
+    // presintModal('modal');
+});

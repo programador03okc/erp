@@ -541,7 +541,8 @@ class FichaReporteController extends Controller
 
     public function reporteAtencion(){
         $incidencia = Incidencia::select('incidencia.*', 'incidencia_estado.descripcion as estado_incidencia')
-        ->where('incidencia.estado','!=',7)
+        // ->where('incidencia.estado','!=',7)
+        ->where('incidencia.estado',3)
         ->join('cas.incidencia_estado', 'incidencia_estado.id_estado', '=', 'incidencia.estado')
         ->get();
 
@@ -564,7 +565,12 @@ class FichaReporteController extends Controller
 
         }
         $json = array();
+        $fecha_menor = '';
+        $fecha_mayor = '';
+        $dias = '';
+
         foreach ($data as $key => $value) {
+            // --------- fechas -------------------
             $fecha_inicial = '';
             $fecha_final = '';
             foreach ($value['incidencias'] as $key_inci => $incidente) {
@@ -586,16 +592,33 @@ class FichaReporteController extends Controller
 
 
             }
+
             $diferencia = Carbon::parse($fecha_inicial)->diffInDays(Carbon::parse($fecha_final));
-            // return $diferencia;
+
             $data[$key]['fecha_inicio'] = $fecha_inicial;
             $data[$key]['fecha_final'] = $fecha_final;
             $data[$key]['diferencia_dias'] = $diferencia;
 
-            // return $value;
-            // return [$fecha_inicial , $fecha_final , $value['incidencias']];
+            if( $key == 0 ){
+
+                $fecha_menor = $fecha_inicial;
+                $fecha_mayor = $fecha_final;
+
+            }else{
+
+                if($fecha_menor > $fecha_inicial){
+                    $fecha_menor = $fecha_inicial;
+                }
+
+                if($fecha_mayor < $fecha_final){
+                    $fecha_mayor = $fecha_final;
+                }
+                $dias_general = Carbon::parse($fecha_menor)->diffInDays(Carbon::parse($fecha_mayor));
+                $dias = $dias_general;
+            }
+
         }
         // return $data;
-        return Excel::download(new HorasAtencionExport(json_encode($data)), 'Reporte-horas-incidencia.xlsx');
+        return Excel::download(new HorasAtencionExport(json_encode($data), $fecha_menor, $fecha_mayor, $dias), 'Reporte-horas-incidencia.xlsx');
     }
 }

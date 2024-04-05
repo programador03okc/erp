@@ -14,10 +14,16 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 class HorasAtencionExport implements FromView, WithStyles, WithColumnWidths
 {
     public $data;
+    public $fecha_menor;
+    public $fecha_mayor;
+    public $dias;
 
-    public function __construct($data)
+    public function __construct($data, $fecha_menor, $fecha_mayor, $dias)
     {
         $this->data = json_decode($data);
+        $this->fecha_menor = $fecha_menor;
+        $this->fecha_mayor = $fecha_mayor;
+        $this->dias = $dias;
 
 
     }
@@ -26,7 +32,10 @@ class HorasAtencionExport implements FromView, WithStyles, WithColumnWidths
     {
         return view('cas.export.horas_acumuladas_incidencia',
             [
-                'data' => $this->data
+                'data' => $this->data,
+                'fecha_menor' => $this->fecha_menor,
+                'fecha_mayor' => $this->fecha_mayor,
+                'dias' => $this->dias
             ]
         );
     }
@@ -62,6 +71,7 @@ class HorasAtencionExport implements FromView, WithStyles, WithColumnWidths
                 ],
                 'alignment' => [
                     'vertical' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -73,6 +83,7 @@ class HorasAtencionExport implements FromView, WithStyles, WithColumnWidths
                 ],
                 'alignment' => [
                     'vertical' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true
@@ -84,6 +95,19 @@ class HorasAtencionExport implements FromView, WithStyles, WithColumnWidths
                 ],
                 'alignment' => [
                     'vertical' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'quotePrefix'    => true
+            ],
+            'F' => [
+                'font' => [
+                    'size' => 9,
+                    'width'=>15
+                ],
+                'alignment' => [
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'wrapText' => true,
                 ],
                 'quotePrefix'    => true

@@ -239,7 +239,7 @@ class CronogramaInternoController extends Controller
     }
 
     public function guardar_crono(Request $request){
-
+        // return [$request->all(), 'new' ];exit;
         $ids = explode(',',$request->id_partida);
         $nro = explode(',',$request->nro_orden);
         $dias = explode(',',$request->dias);
@@ -275,7 +275,7 @@ class CronogramaInternoController extends Controller
             }
 
             if ($request->modo === 'new'){
-                return [$request->all(), 'new' ];exit;
+                // return [$request->all(), 'new' ];exit;
                 $id_crono = DB::table('proyectos.proy_cd_pcronog')
                 ->insert([
                     'id_partida'=>$id,
@@ -294,7 +294,7 @@ class CronogramaInternoController extends Controller
                 // return [$tipo,$no,$ini,$fin,$dia,$tp_pre,$dpos,$pre, $id_crono];exit;
             }
             else {
-                return [$request->all(), 'otro' ];exit;
+                // return [$request->all(), 'otro' ];exit;
                 $crono = DB::table('proyectos.proy_cd_pcronog')
                 ->where([['id_partida','=',$id],['tipo','=',$tipo]])
                 ->first();

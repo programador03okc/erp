@@ -17,6 +17,9 @@ use App\Models\Configuracion\Pais;
 use App\Models\Configuracion\SisUsua;
 use App\Models\Contabilidad\Contribuyente;
 use App\Models\contabilidad\ContribuyenteView;
+use App\Models\Gerencial\AreaContacto;
+use App\models\Gerencial\Cobranza;
+use App\Models\Gerencial\CobranzaAdjuntoObservacion;
 use App\models\Gerencial\CobranzaFase;
 use App\Models\Gerencial\CobranzaView;
 use App\models\Gerencial\EstadoDocumento;
@@ -31,6 +34,7 @@ use App\models\Gerencial\Sector;
 use App\models\Gerencial\TipoTramite;
 use App\Models\Gerencial\Vendedor;
 use App\Models\Logistica\Proveedor;
+use App\Models\mgcp\AcuerdoMarco\AcuerdoMarco;
 use App\Models\mgcp\AcuerdoMarco\OrdenCompraPropias;
 use App\Models\mgcp\OrdenCompra\Propia\Directa\OrdenCompraDirecta;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
@@ -41,6 +45,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 ini_set('max_execution_time', '0');
 class CobranzaController extends Controller
@@ -51,10 +57,10 @@ class CobranzaController extends Controller
         $tipo_ramite = TipoTramite::where('estado', 1)->get();
         $empresas = Empresa::with('contribuyente')->where('estado', 1)->get();
         $periodo = Periodo::where('estado', 1)->orderBy('descripcion', 'desc')->get();
-        $estado_documento = EstadoDocumento::where('estado', 1)->get();
+        $estado_documento = EstadoDocumento::where('estado', 1)->orderBy('nombre','asc')->get();
         $vendedores = Vendedor::where('estado', 1)->orderBy('nombre', 'asc')->get();
         $fases = Fase::orderBy('descripcion', 'asc')->get();
-
+        $area_contacto= AreaContacto::where('estado',1)->orderBy('nombre','asc')->get();
         if (!session()->has('cobranzaPeriodo')) {
             $periodoActual = Periodo::where('descripcion', date('Y'))->first();
             session()->put('cobranzaPeriodo', $periodoActual->descripcion);
@@ -73,6 +79,11 @@ class CobranzaController extends Controller
 
     public function filtros(Request $request)
     {
+        if ($request->checkSemaforo == 'on') {
+            $request->session()->put('cobranzaSemaforo', $request->filterSemaforo);
+        } else {
+            $request->session()->forget('cobranzaSemaforo');
+        }
         if ($request->checkEmpresa == 'on') {
             $request->session()->put('cobranzaEmpresa', $request->filterEmpresa);
         } else {
@@ -117,6 +128,24 @@ class CobranzaController extends Controller
             $data = $data->where('tiene_penalidad', session()->get('cobranzaPenalidad'));
         }
 
+        if ($request->session()->has('cobranzaSemaforo')) {
+
+            $optionSemaforo =session()->get('cobranzaSemaforo');
+             
+            if($optionSemaforo ==0){
+                $data = $data->whereRaw("coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) >= 0 and coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) < 5");
+
+            }elseif($optionSemaforo==1){
+                $data = $data->whereRaw("coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) <= 5 and coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) < 10");
+
+            }elseif($optionSemaforo==2){
+                $data = $data->whereRaw("coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) >= 10  and coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) < 15");
+
+            }elseif($optionSemaforo==3){
+                $data = $data->whereRaw("coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp ),0) >= 15");
+
+            }
+        }
         if ($request->session()->has('cobranzaEmpresa')) {
             $data = $data->where('empresa', session()->get('cobranzaEmpresa'));
         }
@@ -172,11 +201,36 @@ class CobranzaController extends Controller
             </div>';
             return $btn;
         })
+        ->addColumn('semaforo', function ($data){
+            $diferenciaEnDias=0;
+            $fechaActual = Carbon::now();
+
+            if($data->fecha_entrega_real!=null){
+                $fechaEntregaReal  = Carbon::createFromFormat('Y-m-d',$data->fecha_entrega_real );
+                // ->addDay(5)->toDateTimeString();
+                $diferenciaEnDias = $fechaEntregaReal->diffInDays($fechaActual);
+
+            }
+
+            if($diferenciaEnDias >= 0 && $diferenciaEnDias < 5){
+                return '<div class="text-center"> <i class="fas fa-thermometer-empty gris"  data-toggle="tooltip" data-placement="right"></i></div>';
+            }elseif($diferenciaEnDias >= 5 && $diferenciaEnDias < 10){
+                return '<div class="text-center"> <i class="fas fa-thermometer-quarter green"  data-toggle="tooltip" data-placement="right"></i></div>';
+            }elseif($diferenciaEnDias >= 10 && $diferenciaEnDias < 15){
+                return '<div class="text-center"> <i class="fas fa-thermometer-half orange"  data-toggle="tooltip" data-placement="right"></i></div>2';
+            }elseif($diferenciaEnDias >=15){
+                return '<div class="text-center"> <i class="fas fa-thermometer-full red"  data-toggle="tooltip" data-placement="right" title="Rojo"></i></div>';
+
+            }
+  
+        })
         ->editColumn('importe', function ($data) { return number_format($data->importe, 2); })
         ->editColumn('fase', function ($data) {
             return ($data->fase != null) ? '<label class="label label-primary label-badge">'.$data->fase.'</label>' : '<label class="label label-danger label-badge">-</label>';
          })
-        ->rawColumns(['fase', 'accion'])->make(true);
+        ->rawColumns(['fase', 'accion','semaforo'])
+        
+        ->make(true);
     }
 
     public function guardarRegistro(Request $request)
@@ -401,6 +455,16 @@ class CobranzaController extends Controller
         return DataTables::of($data)->addColumn('documento', function ($data) { return $data->serie.'-'.$data->numero; })->make(true);
     }
 
+    public function buscarContacto(Request $request)
+    {
+        
+        $data = Observaciones::select('nombre_contacto','telefono_contacto','area_contacto_id')->with('areaContacto')->where([['cobranza_id', $request->cobranza_id],['estado','!=',7]])->distinct();
+ 
+
+        return DataTables::of($data)->make(true);
+    }
+
+
     public function cargarDatosRequerimiento($id_requerimiento)
     {
         // $cliente_gerencial = DB::table('almacen.requerimiento_logistico_view')
@@ -482,22 +546,86 @@ class CobranzaController extends Controller
 
     public function obtenerObservaciones($id)
     {
-        $observaciones = Observaciones::with('usuario')->where('cobranza_id', $id)->where('estado', 1)->orderBy('created_at', 'desc')->get();
-        return response()->json(["success" => true, "status" => 200, "observaciones"=> $observaciones]);
+        $cobranza= RegistroCobranza::find($id);
+        $guia=[];
+        $guiaDespacho=OrdenCompraPropias::leftJoin('mgcp_oportunidades.oportunidades','oportunidades.id','=','oc_propias.id_oportunidad')
+        ->leftJoin('mgcp_cuadro_costos.cc','cc.id_oportunidad','=','oportunidades.id')
+        ->leftJoin('almacen.alm_req','alm_req.id_cc','=','cc.id')
+        ->leftJoin('almacen.orden_despacho','orden_despacho.id_requerimiento','=','alm_req.id_requerimiento')
+        ->leftJoin('almacen.orden_despacho_obs','orden_despacho_obs.id_od','=','orden_despacho.id_od')
+        ->where([['alm_req.estado','!=',7],['orden_despacho.estado','!=',7],['oc_propias.id',$cobranza->id_oc],['orden_despacho.aplica_cambios',false],['orden_despacho_obs.accion',8]])->orderBy('orden_despacho_obs.fecha_registro','desc')->limit(1)->get();
+        
+        if(count($guiaDespacho)>0){
+            $guia=[
+                'fecha_entrega_real'=>$guiaDespacho[0]['fecha_estado'],
+                'fecha_registro'=>$guiaDespacho[0]['fecha_registro'],
+                'estado_entrega'=>$guiaDespacho[0]['estado_entrega'],
+                'adjunto'=>$guiaDespacho[0]['adjunto']
+            ];
+
+        }
+ 
+
+        $observaciones = Observaciones::with(['estadoDocumento','usuario','areaContacto','adjunto' => function ($q) {
+            $q->where('cobranza_adjunto_observacion.estado','!=', 7);
+        }
+        
+        ])->where([['cobranza_id', $id],['estado','!=',7]])->orderBy('created_at', 'desc')->get();
+        return response()->json(["success" => true, "status" => 200, "observaciones"=> $observaciones,"guia"=>$guia]);
     }
 
     public function guardarObservaciones(Request $request)
     {
         $registro_cobranza = RegistroCobranza::find($request->cobranza_id);
-        $observacion = new Observaciones();
-            $observacion->descripcion = $request->descripcion;
+        $registro_cobranza->id_estado_doc = $request->estado;
+        $registro_cobranza->updated_at = new Carbon();
+        $registro_cobranza->save();
+
+            $observacion = new Observaciones();
+            $observacion->descripcion = $request->descripcion_observacion;
             $observacion->cobranza_id = $request->cobranza_id;
             $observacion->usuario_id = Auth::user()->id_usuario;
             $observacion->oc_id = ($registro_cobranza) ? $registro_cobranza->id_oc : null;
-            $observacion->estado = 1;
+            $observacion->estado = $request->estado;
+            $observacion->fecha_observacion = $request->fecha_observacion;
+            $observacion->fecha_documento = $request->fecha_documento;
+            $observacion->telefono_contacto = $request->telefono_contacto;
+            $observacion->nombre_contacto = $request->nombre_contacto;
+            $observacion->area_contacto_id = $request->area_contacto;
             $observacion->created_at = date('Y-m-d H:i:s');
             $observacion->updated_at = date('Y-m-d H:i:s');
-        $observacion->save();
+            $observacion->save();
+
+     
+
+            if($observacion->id >0 && (isset($request->archivo_adjunto) || $request->archivo_adjunto !=null)){
+                // $cantidadDeAdjunto =  count($request->adjunto);
+                foreach (($request->archivo_adjunto) as $key => $archivo) {
+                if ($archivo != null) {
+                    $fechaHoy = new Carbon();
+                    $sufijo = $fechaHoy->format('YmdHis');
+                    $file = $archivo->getClientOriginalName();
+                    $extension = pathinfo($file, PATHINFO_EXTENSION);
+                    $newNameFile = $observacion->cobranza_id . $key  . $sufijo . '.' . $extension;
+                    Storage::disk('archivos')->put("cobranzas/" . $newNameFile, File::get($archivo));
+    
+                    $idAdjunto = DB::table('cobranza.cobranza_adjunto_observacion')->insertGetId(
+                        [
+                            'observacion_id'            => $observacion->id,
+                            'cobranza_id'               => $observacion->cobranza_id,
+                            'archivo'                   => $newNameFile,
+                            'estado'                    => 1,
+                            'usuario_id'                => Auth::user()->id_usuario,
+                            'created_at'                => $fechaHoy
+                        ],
+                        'id'
+                    );
+    
+                    $idAdjuntoList[] = $idAdjunto;
+                }
+            }
+
+        }
 
         $comentarioCabecera = 'SE PROCEDIO A CREAR UNA OBSERVACIÓN - cobranza_id'.$request->cobranza_id;
         LogActividad::registrar(Auth::user(), 'Crear observaciones', 2, $observacion->getTable(), null, $observacion, $comentarioCabecera,'GERENCIAL - OBSERVACIONES');
@@ -508,8 +636,15 @@ class CobranzaController extends Controller
     public function eliminarObservaciones(Request $request)
     {
         $observacion = Observaciones::find($request->id);
-            $observacion->estado = 7;
+        $observacion->estado = 7;
         $observacion->save();
+
+        $adjuntoObservacion = CobranzaAdjuntoObservacion::where('observacion_id',$request->id)->get();
+        foreach ($adjuntoObservacion as $adjunto) {
+            $adjunto = CobranzaAdjuntoObservacion::find($adjunto->id);
+            $adjunto->estado =7;
+            $adjunto->save();
+        }
 
         $comentarioCabecera = 'SE PROCEDIO A ELIMINAR UNA OBSERVACIÓN - cobranza_id'.$observacion->cobranza_id;
         LogActividad::registrar(Auth::user(), 'ELIMINAR observaciones', 4, $observacion->getTable(), null, $observacion, $comentarioCabecera,'GERENCIAL - OBSERVACIONES');

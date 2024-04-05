@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/css/dataTables.bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/datatables/extensions/Buttons/css/buttons.bootstrap.min.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.min.css') }}"> -->
+
     <style>
         .group-okc-ini {
             display: flex;
@@ -60,6 +62,7 @@
                         <thead>
                             <tr>
                                 <th hidden></th>
+                                <th width="5">Sem.</th>
                                 <th width="10">Emp</th>
 								<th width="90">OCAM</th>
 								<th>Nombre del Cliente</th>
@@ -94,7 +97,7 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-cobranza" data-action="modal" style="overflow: auto;">
 	<div class="modal-dialog" style="width: 70%;">
 		<div class="modal-content">
-			<form class="formPage" id="formulario" form="cobranza" type="register" data-form="guardar-formulario">
+			<form class="formPage" id="formulario" form="cobranza" type="register" data-form="guardar-formulario" enctype="multipart/form-data">
 				<div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
                     <h3 class="modal-title"></h3>
@@ -536,7 +539,7 @@
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-observaciones">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
@@ -545,15 +548,78 @@
 			<div class="modal-body">
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <form id="formulario-observaciones">
+                        <form id="formulario-observaciones" enctype="multipart/form-data">
                             <input type="hidden" name="cobranza_id" value="0">
                             <div class="row">
-                                <div class="col-md-12">
+
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Descripcion</label>
-                                        <textarea class="form-control input-sm" name="descripcion" id="descripcion_observacion" rows="3" required></textarea>
+                                        <label>fecha observación</label>
+                                        <input type="date" class="form-control input-sm" name="fecha_observacion" id="fecha_observacion"  value={{ date('Y-m-d H:i:s') }} />
                                     </div>
                                 </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Estado</label>
+                                        <select type="date" class="form-control input-sm selectpicker" name="estado" id="estado"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                             @foreach ($estado_documento as $item)
+                                                <option value="{{$item->id_estado_doc}}" >{{$item->nombre}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Documento(s)</label>
+                                        <input type="file" class="form-control input-sm" name="adjunto" id="adjunto" multiple />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>fecha documento adjuntado</label>
+                                        <input type="date" class="form-control input-sm" name="fecha_documento" id="fecha_documento" />
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <label>Descripcion</label>
+                                        <textarea class="form-control input-sm" name="descripcion_observacion" id="descripcion_observacion"  style="height: 6rem; overflow:scroll;"></textarea>
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Telefono contacto</label>
+                                        <div style="display: flex;">
+                                        <input type="text" class="form-control input-sm revisarValidacionIngresoTexto" name="telefono_contacto" id="telefono_contacto" />
+                                        <button type="button" class="group-tex btn-primary" onclick="listaContactoModal();">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Nombre contacto</label>
+                                        <input type="text" class="form-control input-sm actualizarValidacionIngresoTexto" name="nombre_contacto" id="nombre_contacto" />
+                                    </div>
+                                </div> 
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Área</label>
+                                            <select type="date" class="form-control input-sm  actualizarValidacionIngresoTexto" name="area_contacto" id="area_contacto">
+                                                <option value="">Seleccione una opción</option>
+                                                @foreach ($area_contacto as $area)
+                                                    <option value="{{$area->id}}" >{{$area->nombre}}</option>
+                                                @endforeach
+                                            </select>
+                                    </div>
+                                </div> 
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -568,10 +634,13 @@
                         <table class="table table-bordered table-condensed table-hover">
                             <thead>
                                 <tr>
+                                    <th>Fec. observación</th>
+                                    <th>Estado</th>
+                                    <th>Adjunto</th>
+                                    <th>Fec. doc</th>
                                     <th>Descripción</th>
                                     <th>Usuario</th>
-                                    <th>Estado</th>
-                                    <th>Fecha</th>
+                                    <th>Fec. registro</th>
                                     <th>-</th>
                                 </tr>
                             </thead>
@@ -596,6 +665,23 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="checkSemaforo" name="checkSemaforo" @if (session('cobranzaSemaforo') !== null) checked @endif>
+                                        <label class="text-muted label-check" for="checkSemaforo">Semaforo</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="filterSemaforo" id="filterSemaforo">
+                                        <option value="" selected disabled>Elija una opción</option>
+                                            <option value="0">0 a 5 dias</option>
+                                            <option value="1">5 a 10 días</option>
+                                            <option value="2">10 a 15 días</option>
+                                            <option value="3">más de 15 días</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <div class="form-check">
@@ -784,6 +870,62 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-ver-mas">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title"> </h3>
+			</div>
+			<div class="modal-body">
+            <div class="row">
+					<div class="col-md-12">
+                        <table class="table table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre contacto</th>
+                                    <th>Telefono contacto</th>
+                                    <th>Área contacto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="verMasResultadoObservaciones"></tbody>
+                        </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-lista-contactos">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title"> </h3>
+			</div>
+			<div class="modal-body">
+            <div class="row">
+					<div class="col-md-12">
+                        <table class="table table-bordered table-condensed table-hover" id="tablaContacto">
+                            <thead>
+                                <tr>
+                                    <th>Nombre contacto</th>
+                                    <th>Telefono contacto</th>
+                                    <th>Área contacto</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultadoContactoObservaciones"></tbody>
+                        </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 @else
 <div class="row">
     <div class="col-md-12">

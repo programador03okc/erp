@@ -1800,7 +1800,8 @@ Route::middleware(['auth'])->group(function () {
 		Route::group(['as' => 'cobranza.', 'prefix' => 'cobranza'], function () {
 			Route::get('index', [CobranzaController::class, 'index'])->name('index');
 			Route::post('listar', [CobranzaController::class, 'listar'])->name('listar');
-			Route::post('buscar-registro', [CobranzaController::class, 'buscarRegistro'])->name('buscar-registro');
+			Route::post('buscar-registro', [CobranzaController::class, 'buscarResgistro'])->name('buscar-registro');
+			Route::post('buscar-contacto', [CobranzaController::class, 'buscarContacto'])->name('buscar-contacto');
 			Route::get('seleccionar-registro/{id_requerimiento}', [CobranzaController::class, 'cargarDatosRequerimiento'])->name('seleccionar-registro');
 			Route::get('obtener-fases/{id}', [CobranzaController::class, 'obtenerFase'])->name('obtener-fases');
 			Route::post('guardar-fase', [CobranzaController::class, 'guardarFase'])->name('guardar-fase');

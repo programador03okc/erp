@@ -40,11 +40,22 @@ function listarIncidencias() {
 
         },
         className: 'btn-default btn-sm'
+    }),
+    reporte_atencion = ({
+        text: '<i class="fa fa-file-alt" aria-hidden="true"></i> Reporte de atención',
+        attr: {
+            id: 'btn-reporte-atencion'
+        },
+        action: () => {
+            // $('#model-filtros').modal('show');
+            window.open(route('cas.garantias.fichas.reporte-atencion'));
+        },
+        className: 'btn-default btn-sm'
     });
 
     tableIncidenciasx = $('#listaIncidencias').DataTable({
         dom: vardataTables[1],
-        buttons: [buttonDescargarExcelIncidencias,buttonDescargarExcelIncidenciasConHistorial,filtros],
+        buttons: [buttonDescargarExcelIncidencias,buttonDescargarExcelIncidenciasConHistorial,filtros,reporte_atencion],
         language: vardataTables[0],
         serverSide: true,
         ajax: {

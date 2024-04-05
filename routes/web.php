@@ -1290,6 +1290,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('revertirConformidad/{id}', [DevolucionController::class, 'revertirConformidad'])->name('revertir-devolucion');
 
 				Route::post('clonarIncidencia', [FichaReporteController::class, 'clonarIncidencia'])->name('clonar-incidencia');
+				Route::get('reporte-atencion', [FichaReporteController::class, 'reporteAtencion'])->name('reporte-atencion');
 			});
 			Route::group(['as' => 'marca.', 'prefix' => 'marca'], function () {
 				Route::get('inicio', [CasMarcaController::class, 'inicio'])->name('inicio');

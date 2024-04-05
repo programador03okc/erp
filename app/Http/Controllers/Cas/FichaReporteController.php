@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cas;
 
+use App\Exports\HorasAtencionExport;
 use App\Exports\IncidenciasConHistorialExport;
 use App\Exports\IncidenciasExport;
 use Illuminate\Http\Request;
@@ -536,5 +537,65 @@ class FichaReporteController extends Controller
             "status"=>200,
             "data"=>$incidencia
         ]);
+    }
+
+    public function reporteAtencion(){
+        $incidencia = Incidencia::select('incidencia.*', 'incidencia_estado.descripcion as estado_incidencia')
+        ->where('incidencia.estado','!=',7)
+        ->join('cas.incidencia_estado', 'incidencia_estado.id_estado', '=', 'incidencia.estado')
+        ->get();
+
+        $data = array();
+        foreach ($incidencia as $key => $value) {
+
+            if(array_search($value->nro_orden, array_column($data, 'nro_orden')) === false){
+
+                array_push($data,array(
+                    "nro_orden"=>$value->nro_orden,
+                    "fecha_inicio"=>'-',
+                    "fecha_final"=>'-',
+                    "diferencia_dias"=>0,
+                    "incidencias"=>array(),
+                ));
+
+            }
+            $index = array_search($value->nro_orden, array_column($data, 'nro_orden'));
+            array_push($data[$index]['incidencias'], $value);
+
+        }
+        $json = array();
+        foreach ($data as $key => $value) {
+            $fecha_inicial = '';
+            $fecha_final = '';
+            foreach ($value['incidencias'] as $key_inci => $incidente) {
+
+                if($key_inci==0){
+                    $fecha_inicial = $incidente->fecha_reporte;
+                    $fecha_final = $incidente->fecha_cierre;
+                }else{
+
+                    if($fecha_inicial > $incidente->fecha_reporte){
+                        $fecha_inicial = $incidente->fecha_reporte;
+                    }
+
+                    if( $fecha_final < $incidente->fecha_cierre ){
+                        $fecha_final = $incidente->fecha_cierre;
+                    }
+                }
+
+
+
+            }
+            $diferencia = Carbon::parse($fecha_inicial)->diffInDays(Carbon::parse($fecha_final));
+            // return $diferencia;
+            $data[$key]['fecha_inicio'] = $fecha_inicial;
+            $data[$key]['fecha_final'] = $fecha_final;
+            $data[$key]['diferencia_dias'] = $diferencia;
+
+            // return $value;
+            // return [$fecha_inicial , $fecha_final , $value['incidencias']];
+        }
+        // return $data;
+        return Excel::download(new HorasAtencionExport(json_encode($data)), 'Reporte-horas-incidencia.xlsx');
     }
 }

@@ -5,6 +5,8 @@
             <th style="background-color: #cccccc;text-align:center;">Cod. Requerimiento</th>
             <th style="background-color: #cccccc;text-align:center;">Emp.</th>
             <th style="background-color: #cccccc;text-align:center;">Cod. Orden</th>
+            <th style="background-color: #cccccc;text-align:center;">Condición de pago</th>
+            <th style="background-color: #cccccc;text-align:center;">Plazo días</th>
             <th style="background-color: #cccccc;text-align:center;" width="60">Razon social del proveedor</th>
             <th style="background-color: #cccccc;text-align:center;">Fecha de envío a pago</th>
             <th style="background-color: #cccccc;text-align:center;">Mnd</th>
@@ -41,6 +43,8 @@
             </td>
             <td>{{ $requerimiento->codigo_empresa }}</td>
             <td>{{ $requerimiento->codigo }}</td>
+            <td>{{ $requerimiento->condicion_pago }}</td>
+            <td>{{ $requerimiento->plazo_dias }}</td>
             <td>{{ $requerimiento->razon_social }}</td>
             <td>{{ date("d-m-Y", strtotime($requerimiento->fecha_solicitud_pago)) }}</td>
             <td>{{ $requerimiento->simbolo }}</td>

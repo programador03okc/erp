@@ -3704,13 +3704,12 @@ class ListarRequerimientoPagoView {
 
     construirTablaVerAdjuntosRequerimientoPagoDetalle(adjuntoList, idRequerimientoPagoDetalle) {
         this.limpiarTabla('listaVerAdjuntosRequerimientoPagodetalle');
-
         let html = '';
         let hasDisableBtnEliminarArchivo = '';
-        let estadoActual = document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_estado']").value;
+        let estadoActual = document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_estado']")!=null ? document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_estado']").value:'';
 
         if (estadoActual == 1 || estadoActual == 3 || estadoActual == '') {
-            if (document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_usuario']").value == auth_user.id_usuario) { //usuario en sesion == usuario requerimiento
+            if (document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_usuario']")!=null && document.querySelector("div[id='modal-requerimiento-pago'] input[name='id_usuario']").value == auth_user.id_usuario) { //usuario en sesion == usuario requerimiento
                 hasDisableBtnEliminarArchivo = '';
             } else {
                 hasDisableBtnEliminarArchivo = 'oculto';
@@ -3850,10 +3849,12 @@ class ListarRequerimientoPagoView {
     }
 
     descargarArchivoRequerimientoPagoDetalle(obj) {
+        console.log(obj);
         if (tempArchivoAdjuntoRequerimientoPagoDetalleList.length > 0) {
             tempArchivoAdjuntoRequerimientoPagoDetalleList.forEach(element => {
                 if (element.id == obj.dataset.id) {
                     window.open("/files/necesidades/requerimientos/pago/detalle/" + element.nameFile);
+                    console.log("descargando");
                 }
             });
         }

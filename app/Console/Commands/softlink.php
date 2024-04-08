@@ -191,7 +191,7 @@ class softlink extends Command
             case 'migrar_detalle_movimientos':
 
                 $cantidadMigrados = 0;
-                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
+                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
                 $cantidadAux = count($aux);
                 $bar = $this->output->createProgressBar($cantidadAux);
                 $bar->start();

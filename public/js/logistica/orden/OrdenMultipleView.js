@@ -66,6 +66,9 @@ class OrdenView {
             sessionStorage.removeItem('action');
         }
 
+        $('#form-orden').on("click", "button.crearNuevaOrden", (e) => {
+            this.crearNuevaOrden();
+        });
         $('#form-orden').on("change", "select.onChangeSeleccionarProveedor", (e) => {
             this.llenarDatosCabeceraSeccionProveedor(e.currentTarget.value)
         });
@@ -93,42 +96,72 @@ class OrdenView {
     cargarContenedorOrden() {
 
         let contenidoHTML = `
-        <div class="panel panel-default">
+
+        <div class="panel panel-warning">
         <div class="panel-heading">
             <div class="panel-title">
-                <!-- <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" data-target="#collapseExample"> -->
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseExample">
-                    <span>
-                        <span class="label label-default">Cod. Orden: <span class="text-primary" name="tituloDocumentoCodigoOrden[]">OC-240240</span></span>
-                        <span class="label label-default">Cod. Softlink: <span class="text-primary" name="tituloDocumentoCodigoSoftlink[]">00100189</span></span>
-                        <span class="label label-default">Proveedor: <span class="text-primary" name="tituloDocumentoProveedor[]">MAXIMA S.A.C</span></span>
-                        <span class="label label-default">Empresa: <span class="text-primary" name="tituloDocumentoEmpresa[]">OK COMPUTER EIRL</span></span>
-                        <span class="label label-default">Sede: <span class="text-primary" name="tituloDocumentoSede[]">LIMA</span></span>
-                    </span>
-
-                </a>
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Acción <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Imprimir orden</a></li>
-                        <li><a href="#">Editar orden</a></li>
-                        <li><a href="#">Anular orden</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Migrar orden a Softlink</a></li>
-                        <li><a href="#">Vincular con orden Softlink</a></li>
-                    </ul>
-                </div>
+                Ordenes generadas
             </div>
-
-
-
         </div>
-        <div class="panel-body collapse in" id="collapseExample">
+        <div class="panel-body" style="overflow:auto; white-space:nowrap; padding-bottom:0px;">
+            <ul class="list-inline">
+                <li>
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center" style="display:flex; flex-direction:row; gap:0.5rem;">
+                            <h5>Cód. orden: <span class="label label-default" title="Código de orden"><span
+                                        name="tituloDocumentoCodigoOrden[]">OC-240240</span></span></h5>
+                            <h5>Cód. Softlink: <span class="label label-default" title="Código de Softlink"><span
+                                        name="tituloDocumentoCodigoSoftlink[]">00100189</span></span></h5>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-inline">
+                                <li>
+                                    <dl>
+                                    <dt>Empresa:</dt>
+                                    <dd>OK COMPUTER EIRL</dd>
+                                    <dt>Sede:</dt>
+                                    <dd>Lima</dd>
+                                    <dt>Proveedor:</dt>
+                                    <dd>MAXIMA EIRL</dd>
+                                    </dl>
+                                </li>
+                                <li>
+                                    <dl>
+                                    <dt>Fecha emsión:</dt>
+                                    <dd>##/##/####</dd>
+                                    <dt>Importe:</dt>
+                                    <dd>S/.1000.00</dd>
+                                    <dt>Cta Proveedor:</dt>
+                                    <dd>55234242-2432-10</dd>
+                                </li>
+                            </ul>
+
+                            <div class="text-left">
+                            <button type="button" class="btn btn-xs btn-success" id="btnSeleccionarOrden" title="Seleccionar"><i class="fas fa-check"></i></button>
+                            <button type="button" class="btn btn-xs btn-info" id="btnSeleccionarOrden" title="Imprimir"><i class="fas fa-print"></i></button>
+                            <button type="button" class="btn btn-xs btn-warning" id="btnSeleccionarOrden" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-xs btn-danger" id="btnSeleccionarOrden" title="Anular"><i class="fas fa-trash"></i></button>
+                            <button type="button" class="btn btn-xs btn-primary" id="btnSeleccionarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
+                            </div>
+    
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+        <br>
+        
+
+        <div class="panel panel-info" style="flex:auto;">
+        <div class="panel-heading">
+            <div class="panel-title">
+                Cabecera Orden
+            </div>
+        </div>
+        <div class="panel-body">
             <div class="row">
-                <!-- Nav tabs -->
+
                 <div class="col-md-2">
                     <ul class="nav nav-pills nav-stacked" role="tablist">
                         <li role="presentation" class="active"><a href="#seccionDetalle" aria-controls="seccionDetalle" role="tab" data-toggle="tab">Detalle documento</a></li>
@@ -137,7 +170,7 @@ class OrdenView {
                         <li role="presentation"><a href="#seccionDespacho" aria-controls="seccionDespacho" role="tab" data-toggle="tab">Despacho</a></li>
                     </ul>
                 </div>
-                <!-- Tab panes -->
+
                 <div class="col-md-10">
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="seccionDetalle">
@@ -425,78 +458,108 @@ class OrdenView {
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <legend>
-                        <h6>Items de orden</h6>
-                    </legend>
-                    <div class="btn-group" role="group" aria-label="...">
-                        @if((in_array(Auth::user()->id_usuario,[3,17,27,1,77])))
-                        <button type="button" class="btn btn-xs btn-success activation handleClickCatalogoProductosModal" id="btnAgregarProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar producto"><i class="fas fa-plus"></i> Productos</button>
-                        @endif
-                        <button type="button" class="btn btn-xs btn-info activation handleClickCatalogoProductosObsequioModal" id="btnAgregarProductoObsequio" data-toggle="tooltip" data-placement="bottom" title="Agregar producto para obsequio"><i class="fas fa-plus"></i> Productos para obsequio</button>
-                        <button type="button" class="btn btn-xs btn-primary activation handleClickAgregarServicio" id="btnAgregarServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar servicio"><i class="fas fa-plus"></i> Servicio</button>
-                        <button type="button" class="btn btn-xs btn-default activation handleClickVincularRequerimientoAOrdenModalOLD" onClick="openVincularRequerimientoConOrden();" id="btnAgregarVinculoRequerimiento" data-toggle="tooltip" data-placement="bottom" title="Agregar items de otro requerimiento" disabled><i class="fas fa-plus"></i> Vincular otro requerimiento
-                        </button>
-                    </div>
-                    <div class="box box-widget">
-                        <div class="box-body">
-                            <div class="table-responsive">
-                                <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden[]" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 5%">Req.</th>
-                                            <th style="width: 5%">Cod. producto</th>
-                                            <th style="width: 5%">Cod. softlink</th>
-                                            <th style="width: 5%">Part number</th>
-                                            <th>Descripción del producto/servicio</th>
-                                            <th style="width: 8%">Unid. Med.</th>
-                                            <th style="width: 5%">Cantidad solicitada</th>
-                                            <th style="width: 5%">Cantidad Reservada</th>
-                                            <th style="width: 5%">Cantidad atendida por orden</th>
-                                            <th style="width: 8%">Cantidad a comprar</th>
-                                            <th style="width: 10%">Precio Unitario</th>
-                                            <th style="width: 6%">Total</th>
-                                            <th style="width: 5%">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody name="body_detalle_orden[]"></tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="11" class="text-right"><strong>Monto neto:</strong></td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoNeto[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="11" class="text-right">
-                                                <input class="activation handleClickIncluyeIGV" type="checkbox" name="incluye_igv[]" checked> <strong>Incluye IGV</strong>
-                                            </td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="igv[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="11" class="text-right">
-                                                <input class="activation handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper[]"> <strong>Incluye ICBPER</strong>
-                                            </td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="icbper[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="11" class="text-right"><strong>Monto total:</strong></td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoTotal[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
+  
+        </div>
+    </div>
 
-                                    </tfoot>
-                                </table>
-
+        <div class="panel panel-info" style="flex:auto;">
+        <div class="panel-heading">
+            <div class="panel-title">
+                Item's Orden
+            </div>
+        </div>
+            <div class="panel-body">
+            
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" class="btn btn-xs btn-success activation handleClickCatalogoProductosModal"
+                                id="btnAgregarProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar producto"><i
+                                    class="fas fa-plus"></i> Productos</button>
+                            <button type="button" class="btn btn-xs btn-info activation handleClickCatalogoProductosObsequioModal"
+                                id="btnAgregarProductoObsequio" data-toggle="tooltip" data-placement="bottom"
+                                title="Agregar producto para obsequio"><i class="fas fa-plus"></i> Productos para obsequio</button>
+                            <button type="button" class="btn btn-xs btn-primary activation handleClickAgregarServicio"
+                                id="btnAgregarServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar servicio"><i
+                                    class="fas fa-plus"></i> Servicio</button>
+                            <button type="button"
+                                class="btn btn-xs btn-default activation handleClickVincularRequerimientoAOrdenModalOLD"
+                                onClick="openVincularRequerimientoConOrden();" id="btnAgregarVinculoRequerimiento" data-toggle="tooltip"
+                                data-placement="bottom" title="Agregar items de otro requerimiento" disabled><i class="fas fa-plus"></i>
+                                Vincular otro requerimiento
+                            </button>
+                        </div>
+                        <div class="box box-widget">
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table
+                                        class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer"
+                                        name="listaDetalleOrden[]" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%">Req.</th>
+                                                <th style="width: 5%">Cod. producto</th>
+                                                <th style="width: 5%">Cod. softlink</th>
+                                                <th style="width: 5%">Part number</th>
+                                                <th>Descripción del producto/servicio</th>
+                                                <th style="width: 8%">Unid. Med.</th>
+                                                <th style="width: 5%">Cantidad solicitada</th>
+                                                <th style="width: 5%">Cantidad Reservada</th>
+                                                <th style="width: 5%">Cantidad atendida por orden</th>
+                                                <th style="width: 8%">Cantidad a comprar</th>
+                                                <th style="width: 10%">Precio Unitario</th>
+                                                <th style="width: 6%">Total</th>
+                                                <th style="width: 5%">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody name="body_detalle_orden[]"></tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="11" class="text-right"><strong>Monto neto:</strong></td>
+                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoNeto[]">
+                                                        0.00</label></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="11" class="text-right">
+                                                    <input class="activation handleClickIncluyeIGV" type="checkbox" name="incluye_igv[]"
+                                                        checked> <strong>Incluye IGV</strong>
+                                                </td>
+                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="igv[]">
+                                                        0.00</label></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="11" class="text-right">
+                                                    <input class="activation handleClickIncluyeICBPER" type="checkbox"
+                                                        name="incluye_icbper[]"> <strong>Incluye ICBPER</strong>
+                                                </td>
+                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="icbper[]">
+                                                        0.00</label></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="11" class="text-right"><strong>Monto total:</strong></td>
+                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoTotal[]">
+                                                        0.00</label></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table> 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </div>
+
+
+
+</div>
         `;
 
         document.querySelector("div[id='contenedor_orden']").insertAdjacentHTML('beforeend', contenidoHTML)
@@ -504,6 +567,11 @@ class OrdenView {
 
 
 
+    }
+
+
+    crearNuevaOrden(){
+        console.log("crear nueva orden en blanco o jalar de requerimiento pendientes");
     }
 
 

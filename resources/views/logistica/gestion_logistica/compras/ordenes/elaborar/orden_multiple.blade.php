@@ -85,14 +85,10 @@
             <div class="col-md-12">
                 <h4 style="display:flex;justify-content: space-between;">
                     <div>
-                        <button type="button" name="btn-nuevo" class="btn btn-default btn-sm" title="Nuevo"><i class="fas fa-file"></i> Nuevo</button>
-                        <button type="button" name="btn-editar" class="btn btn-default btn-sm" title="Editar"><i class="fas fa-edit"></i> Editar</button>
-                        <button type="button" name="btn-guardar" class="btn btn-success btn-sm" title="Guardar"><i class="fas fa-save"></i> Guardar</button>
-                        <button type="button" name="btn-nuevo" class="btn btn-default btn-sm" title="Vincular requerimiento"><i class="fas fa-file-prescription"></i> Vincular Requerimiento</button>
-                        <button type="button" name="btn-historial" class="btn btn-default btn-sm" title="Historial"><i class="fas fa-folder"></i> Historial</button>
-                        <button type="button" name="btn-migrar-orden-softlink" class="btn btn-default btn-sm handleClickMigrarOrdenASoftlink" title="Migrar orden a softlink" disabled><i class="fas fa-file-export"></i> Migrar Orden a soflink</button>
-
-
+                        <button type="button" name="btn-nuevo" class="btn btn-default btn-sm crearNuevaOrden" title="Nuevo"><i class="fas fa-file"></i> Crear nueva Orden</button>
+                        <button type="button" name="btn-guardar" class="btn btn-default btn-sm guardarOrden" title="Guardar"><i class="fas fa-save"></i> Guardar</button>
+                        <button type="button" name="btn-historial" class="btn btn-default btn-sm listaHistorialOrden" title="Historial"><i class="fas fa-folder"></i> Historial</button>
+                        <button type="button" name="btn-migrar-orden-softlink" class="btn btn-default btn-sm migrarOrdenASoftlink" title="Migrar orden a softlink" disabled><i class="fas fa-file-export"></i> Migrar Orden a soflink</button>
                     </div>
                     <div>
 
@@ -108,7 +104,7 @@
        
             <div class="col-md-12">
                 <fieldset class="group-table">
-                    <div id="contenedor_orden"></div>
+                    <div id="contenedor_orden" style=" display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.5rem;"></div>
 
                 </fieldset>
             </div>
@@ -166,7 +162,8 @@
 @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_trabajadores')
 
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_cuadro_costos')
-@include('logistica.requerimientos.modal_vincular_item_requerimiento') revisar uso -->
+@include('logistica.requerimientos.modal_vincular_item_requerimiento') 
+-->
 @endsection
 
 @section('scripts')

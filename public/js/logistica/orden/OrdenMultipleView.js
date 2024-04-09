@@ -97,7 +97,7 @@ class OrdenView {
 
         let contenidoHTML = `
 
-        <div class="panel panel-warning">
+        <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
                 Ordenes generadas
@@ -571,8 +571,24 @@ class OrdenView {
 
 
     crearNuevaOrden(){
-        console.log("crear nueva orden en blanco o jalar de requerimiento pendientes");
-    }
+
+        Swal.fire({
+            title: "Desea desde un requerimiento pendiente o genera una orden libre?",
+            width: 500,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Mostrar lista de requerimientos",
+            denyButtonText: `Crear en orden libre`
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) { // mostrar lista de requerimientos pendientes
+              Swal.fire("TO-DO: mostrar modal de lista de requerimientos pendientes", "", "info");
+            } else if (result.isDenied) { // limpiar todo para genera orden libre
+                Swal.fire("TO-DO: limpiar y habiltar todo los input", "", "info");
+            }
+          });
+
+        }
 
 
     llenarDatosCabeceraSeccionProveedor(idProveedor) {

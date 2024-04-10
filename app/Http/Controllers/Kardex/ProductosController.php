@@ -141,11 +141,15 @@ class ProductosController extends Controller
 
                 }
             }
-            return $array_series;
+            // return $array_series;
             foreach ($array_series as $key => $value) {
-
-                return $value;
+                $data = ProductoDetalle::where('producto_id',$value['producto'])
+                ->whereNotIn('id',$value['series'])
+                ->where('autogenerado','t')
+                ->delete();
+                // return $data;
             }
+            return $array_series;
             return response()->json([
                 "titulo"=>"Éxito",
                 "mensjae"=>"se importo con éxito",

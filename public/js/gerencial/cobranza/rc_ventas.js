@@ -144,6 +144,7 @@ $(function () {
                         success: function(response) {
                             listarObservaciones(response.data.cobranza_id);
                             $('#formulario-observaciones')[0].reset();
+                            $('.selectpicker').selectpicker('refresh');
                         }
                     }).fail( function(jqXHR, textStatus, errorThrown) {
                         console.log(jqXHR);
@@ -326,6 +327,7 @@ $(function () {
     $('#tablaCobranza').on('click', 'a.observaciones', function (e) {
         e.preventDefault();
         $("#formulario-observaciones")[0].reset();
+        $('.selectpicker').selectpicker('refresh');
         $('[name="cobranza_id"]').val($(e.currentTarget).data('id'));
         listarObservaciones($(e.currentTarget).data('id'));
     });
@@ -1131,8 +1133,15 @@ $('#formulario-vendedor').submit(function (e) {
 
 
 function validarFormularioListaObservaciones(){
+    let validoEstado=true;
     let validoNombre=true;
     let validoArea=true;
+
+    if (document.querySelector("select[name='estado']").value == '') {
+        validoEstado = false;
+    }
+    
+
     if (document.querySelector("input[name='telefono_contacto']").value != '') {
         if (document.querySelector("input[name='nombre_contacto']").value == '') {
             validoNombre = false;
@@ -1142,6 +1151,16 @@ function validarFormularioListaObservaciones(){
         }
     }
 
+    if(validoEstado ==false ){
+            let newSpanInfo = document.createElement("span");
+            newSpanInfo.classList.add('text-danger');
+            newSpanInfo.textContent = '(Seleccione un estado)';
+            if( document.querySelector("select[name='estado']").closest('div[class="form-group"]')!=null){
+                document.querySelector("select[name='estado']").closest('div[class="form-group"]').querySelector("label").appendChild(newSpanInfo);
+                document.querySelector("select[name='estado']").closest('div[class="form-group"]').classList.add('has-warning');
+            }
+
+    }
     if(validoNombre ==false ){
             let newSpanInfo = document.createElement("span");
             newSpanInfo.classList.add('text-danger');
@@ -1158,19 +1177,19 @@ function validarFormularioListaObservaciones(){
             document.querySelector("select[name='area_contacto']").closest('div').classList.add('has-warning');
 
     }
-    return (validoNombre*validoArea);
+    return (validoNombre*validoArea * validoEstado);
     
 }
 
 
 function actualizarValidacionIngresoTexto (obj) {
     if (obj.target.value.length > 0) {
-         obj.target.closest('div').classList.remove("has-warning");
-        if (obj.target.closest('div').querySelector("span")) {
-            obj.target.closest('div').querySelector("span").remove();
+         obj.target.closest('div[class~="form-group"]').classList.remove("has-warning");
+        if (obj.target.closest('div[class~="form-group"]').querySelector("span")) {
+            obj.target.closest('div[class~="form-group"]').querySelector("span").remove();
         }
     } else {
-        obj.target.closest('div').classList.add("has-warning");
+        obj.target.closest('div[class~="form-group"]').classList.add("has-warning");
     }
 }
 

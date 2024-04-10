@@ -562,7 +562,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Estado</label>
-                                        <select type="date" class="form-control input-sm selectpicker" name="estado" id="estado"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                        <select type="date" class="form-control input-sm selectpicker validarFormularioListaObservaciones actualizarValidacionIngresoTexto" name="estado" id="estado"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                              @foreach ($estado_documento as $item)
                                                 <option value="{{$item->id_estado_doc}}" >{{$item->nombre}}</option>
                                             @endforeach

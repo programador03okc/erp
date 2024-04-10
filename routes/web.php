@@ -1802,7 +1802,7 @@ Route::middleware(['auth'])->group(function () {
 		Route::group(['as' => 'cobranza.', 'prefix' => 'cobranza'], function () {
 			Route::get('index', [CobranzaController::class, 'index'])->name('index');
 			Route::post('listar', [CobranzaController::class, 'listar'])->name('listar');
-			Route::post('buscar-registro', [CobranzaController::class, 'buscarResgistro'])->name('buscar-registro');
+			Route::post('buscar-registro', [CobranzaController::class, 'buscarRegistro'])->name('buscar-registro');
 			Route::post('buscar-contacto', [CobranzaController::class, 'buscarContacto'])->name('buscar-contacto');
 			Route::get('seleccionar-registro/{id_requerimiento}', [CobranzaController::class, 'cargarDatosRequerimiento'])->name('seleccionar-registro');
 			Route::get('obtener-fases/{id}', [CobranzaController::class, 'obtenerFase'])->name('obtener-fases');
@@ -1936,6 +1936,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('ordenes-compra-servicio-exportar-excel', [RegistroPagoController::class, 'ordenesCompraServicioExportarExcel'])->name('ordenes-compra-servicio-exportar-excel');
 				Route::get('listar-archivos-adjuntos-orden/{id_order}', [OrdenController::class, 'listarArchivosOrder'])->name('listar-archivos-adjuntos-orden');
 				Route::post('validarPresupuestoParaPago', [ValidarPresupuestoInternoController::class, 'validarPresupuestoParaPago'])->name('validar-presupuesto-para-pagos');
+				Route::get('listar-adjuntos-requerimiento-pago-cabecera/{idRequerimentoPago}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoCabecera'])->name('listar-adjuntos-requerimiento-pago-cabecera');
+				Route::get('listar-adjuntos-requerimiento-pago-detalle/{idRequerimentoPagoDetalle}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoDetalle'])->name('listar-adjuntos-requerimiento-pago-detalle');
 
 				#exportar excel con los fltros aplicados
 				Route::post('exportar-requerimientos-pagos', [RegistroPagoController::class, 'exportarRequerimientosPagos'])->name('exportar-requerimientos-pagos');
@@ -1951,6 +1953,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('cuadro-comparativo-pagos', [RegistroPagoController::class, 'cuadroComparativoPagos'])->name('cuadro-comparativo-pagos');
                 Route::get('cuadro-comparativo-ordenes', [RegistroPagoController::class, 'cuadroComparativoOrdenes'])->name('cuadro-comparativo-ordenes');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+				
 
 			});
 

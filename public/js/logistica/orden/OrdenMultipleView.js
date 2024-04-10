@@ -9,6 +9,10 @@ var detalleOrdenList = [];
 var iTableCounter = 1;
 var oInnerTable;
 var actionPage = null;
+
+var $tablaListaRequerimientosPendientes;
+var iTableCounter = 1;
+var oInnerTable;
 class OrdenView {
     constructor(ordenCtrl) {
         this.ordenCtrl = ordenCtrl;
@@ -45,8 +49,6 @@ class OrdenView {
         // variable session storage: tipoOrden -> puede tener los valor: COMPRA , SERVICIO
         // variable session storage: action -> puede tener los valor: register, edition, historial (para mostrar una orden) 
 
-        this.cargarContenedorOrden();
-
 
         var reqTrueList = JSON.parse(sessionStorage.getItem('reqCheckedList'));
 
@@ -66,6 +68,9 @@ class OrdenView {
             sessionStorage.removeItem('action');
         }
 
+        $('#form-orden').on("click", "button.crearNuevaOrden", (e) => {
+            this.crearNuevaOrden();
+        });
         $('#form-orden').on("change", "select.onChangeSeleccionarProveedor", (e) => {
             this.llenarDatosCabeceraSeccionProveedor(e.currentTarget.value)
         });
@@ -90,421 +95,268 @@ class OrdenView {
         });
     }
 
-    cargarContenedorOrden() {
-
-        let contenidoHTML = `
-        <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="panel-title">
-                <!-- <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" data-target="#collapseExample"> -->
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseExample">
-                    <span>
-                        <span class="label label-default">Cod. Orden: <span class="text-primary" name="tituloDocumentoCodigoOrden[]">OC-240240</span></span>
-                        <span class="label label-default">Cod. Softlink: <span class="text-primary" name="tituloDocumentoCodigoSoftlink[]">00100189</span></span>
-                        <span class="label label-default">Proveedor: <span class="text-primary" name="tituloDocumentoProveedor[]">MAXIMA S.A.C</span></span>
-                        <span class="label label-default">Empresa: <span class="text-primary" name="tituloDocumentoEmpresa[]">OK COMPUTER EIRL</span></span>
-                        <span class="label label-default">Sede: <span class="text-primary" name="tituloDocumentoSede[]">LIMA</span></span>
-                    </span>
-
-                </a>
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Acción <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Imprimir orden</a></li>
-                        <li><a href="#">Editar orden</a></li>
-                        <li><a href="#">Anular orden</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Migrar orden a Softlink</a></li>
-                        <li><a href="#">Vincular con orden Softlink</a></li>
-                    </ul>
-                </div>
-            </div>
 
 
-
-        </div>
-        <div class="panel-body collapse in" id="collapseExample">
-            <div class="row">
-                <!-- Nav tabs -->
-                <div class="col-md-2">
-                    <ul class="nav nav-pills nav-stacked" role="tablist">
-                        <li role="presentation" class="active"><a href="#seccionDetalle" aria-controls="seccionDetalle" role="tab" data-toggle="tab">Detalle documento</a></li>
-                        <li role="presentation"><a href="#seccionProveedor" aria-controls="seccionProveedor" role="tab" data-toggle="tab">Proveedor</a></li>
-                        <li role="presentation"><a href="#seccionCondicionCompra" aria-controls="seccionCondicionCompra" role="tab" data-toggle="tab">Condicion de compra</a></li>
-                        <li role="presentation"><a href="#seccionDespacho" aria-controls="seccionDespacho" role="tab" data-toggle="tab">Despacho</a></li>
-                    </ul>
-                </div>
-                <!-- Tab panes -->
-                <div class="col-md-10">
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="seccionDetalle">
-                            <fieldset class="group-table">
-                                <div class="row" style="position: absolute;right: 2rem;z-index: 999;">
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Tipo Orden</dt>
-                                            <dd>
-                                            <select class="form-control input-xs" name="id_tipo_orden_compra[]">
-                                                @foreach ($tp_documento as $tp)
-                                                @if($tp->descripcion == 'Orden de Compra')
-                                                <option value="{{$tp->id_tp_documento}}" selected>{{$tp->descripcion}}</option>
-                                                @else
-                                                @if((!in_array(Auth::user()->id_usuario,[17,27,3,1,77]) && $tp->id_tp_documento == 13))
-                                                @else
-                                                <option value="{{$tp->id_tp_documento}}">{{$tp->descripcion}}</option>
-                                                @endif
-                                                @endif
-                                                @endforeach
-
-                                            </select>
-                                            </dd>
-                                            <dt>Periodo</dt>
-                                            <dd>
-                                            <select class="form-control input-xs" name="id_periodo[]">
-                                                @foreach ($periodos as $periodo)
-                                                <option value="{{$periodo->id_periodo}}">{{$periodo->descripcion}}</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Código</dt>
-                                            <dd>
-                                                <p class="form-control-static" name="codigo_orden_compra[]">(Debe crear o abrir una orden)</p>
-                                            </dd>
-                                            <dt>Cod.Softlink</dt>
-                                            <dd>
-                                                <p class="form-control-static" name="codigo_softlink[]">(Debe migrar la OC/OS)</p>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Moneda</dt>
-                                            <dd>
-                                            <select class="form-control input-xs" name="id_moneda">
-                                                @foreach ($tp_moneda as $tpm)
-                                                <option value="{{$tpm->id_moneda}}" data-simbolo-moneda="{{$tpm->simbolo}}">{{$tpm->descripcion}} ( {{$tpm->simbolo}} )</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                            <dt>Fecha Emisión</dt>
-                                            <dd>
-                                                <input class="form-control input-xs" name="fecha_emision[]" type="datetime-local" value="2024-03-19T11:23">
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Empresa / Sede</dt>
-                                            <dd>
-                                            <select class="form-control selectpicker input-xs handleChangeSede " name="id_sede[]" title="Seleccionar empresa - sede" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($sedes as $sede)
-                                                <option value="{{$sede->id_sede}}" data-id-empresa="{{$sede->id_empresa}}" data-direccion="{{$sede->direccion}}" data-id-ubigeo="{{$sede->id_ubigeo}}" data-ubigeo-descripcion="{{$sede->ubigeo_descripcion}}">{{$sede->descripcion}}</option>
-                                                @endforeach
-                                            </select>                                                           
-                                            </dd>
-                                            <dt>
-                                                <dd><img id="logo_empresa" src="/images/img-wide.png" alt="" style="height:80px !important; width:100% !important;"></dd>
-                                            </dt>
-                                        </dl>
-                                    </div>
-                                </div>
-
-
-                            </fieldset>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="seccionProveedor">
-                            <fieldset class="group-table">
-                                <div class="row" style="position: absolute;right: 2rem;z-index: 999;">
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>RUC - Razón social</dt>
-                                            <dd>
-                                            <select class="form-control selectpicker input-xs onChangeSeleccionarProveedor" name="id_proveedor[]" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($proveedores as $proveedor)
-                                                <option value="{{$proveedor->id_proveedor}}" data-id-contribuyente="{{$proveedor->id_contribuyente}}" data-razon-social="{{$proveedor->contribuyente->razon_social}}" data-numero-documento="{{$proveedor->contribuyente->nro_documento}}">{{$proveedor->contribuyente->nro_documento!=null?$proveedor->contribuyente->nro_documento.' - ':''}} {{$proveedor->contribuyente->razon_social}}</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                            <dt>Contacto</dt>
-                                            <dd>
-                                            <select class="form-control input-xs seleccionarDatoCabeceraConcatoProveedor" name="id_contacto_proveedor[]">
-                                                <option value="" disabled>Elija una opción</option>
-                                            </select>
-                                            </dd>
-
-
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                        <dt>Dirección</dt>
-                                            <dd>
-                                            <p class="form-control-static" name="direccion_proveedor[]">(seleccione un proveedor)</p>
-                                            </dd>
-                                            <dt>Telefono contacto</dt>
-                                            <dd>
-                                                <p class="form-control-static" name="telefono_contacto[]">(seleccione un concacto)</p>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Cuenta Bancaria</dt>
-                                            <dd>
-                                            <div style="display:flex;">
-                                                <select class="form-control input-xs" name="id_cuenta_bancaria_proveedor[]">
-                                                    <option value="" disabled>Elija una opción</option>
-                                                </select>
-                                                <button type="button" class="btn-primary agregarCuentaProveedor" title="Agregar cuenta bancaria"><i class="fas fa-plus"></i></button>
-
-                                            </div>
-                                            </dd>
-                                            <dt>Rubro</dt>
-                                            <dd>
-                                            <select class="selectpicker" title="Elija una opción" data-width="100%" data-container="body" data-live-search="true" name="id_rubro_proveedor[]">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($rubros as $rubro)
-                                                <option value="{{$rubro->id_rubro}}">{{$rubro->descripcion}}</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                        </dl>
-                                    </div>
-
-                                </div>
-                            </fieldset>
-                        </div>
-
-                        <div role="tabpanel" class="tab-pane" id="seccionCondicionCompra">
-                            <fieldset class="group-table">
-                                <div class="row" style="position: absolute;right: 2rem;z-index: 999;">
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Forma de pago</dt>
-                                            <dd>
-                                            <select class="form-control input-xs actualizarFormaPago" name="forma_pago[]">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($condiciones_softlink as $cond)
-                                                <option value="{{$cond->id_condicion_softlink}}" data-dias="{{$cond->dias}}">{{$cond->descripcion}}</option>
-                                                @endforeach
-                                            </select>
-                                            <div style="display:none;">
-                                                <select class="form-control group-elemento activation" name="id_condicion[]" style="width:100%; text-align:center;">
-                                                    @foreach ($condiciones as $cond)
-                                                    <option value="{{$cond->id_condicion_pago}}">{{$cond->descripcion}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Plazo entrega</dt>
-                                            <dd>
-                                            <div style="display:flex;">
-                                                <input type="number" name="plazo_entrega[]" min="0" class="form-control input-xs" style="text-align:right;">
-                                                <input type="text" value="días" class="form-control group-elemento input-xs" style="text-align:center;" readonly="">
-                                            </div>
-                                             </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Requerimiento</dt>
-                                            <dd>
-                                            <p class="form-control-static" name="requerimiento_vinculados[]">(Sin vinculo con requerimiento)</p>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Tipo Documento</dt>
-                                            <dd>
-                                            <select class="form-control selectpicker input-xs" name="id_tipo_documento[]"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($tp_doc as $tp)
-                                                @if($tp->descripcion == 'Factura')
-                                                <option value="{{$tp->id_tp_doc}}" selected>{{$tp->cod_sunat}} - {{$tp->descripcion}}</option>
-                                                @else
-                                                <option value="{{$tp->id_tp_doc}}">{{$tp->cod_sunat}} - {{$tp->descripcion}}</option>
-                                                @endif
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="seccionDespacho">
-                            <fieldset class="group-table">
-                                <div class="row" style="position: absolute;right: 2rem;z-index: 999;">
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Direccion de Entrega</dt>
-                                            <dd>
-                                            <input class="form-control input-xs" name="direccion_entrega[]" type="text">
-                                            </dd>
-                                            <dt>Compra locales</dt>
-                                            <dd>
-                                            <input type="checkbox" name="compra_local[]"> Compras locales
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Ubigeo entrega</dt>
-                                            <dd>
-                                            <select class="form-control selectpicker input-xs" name="id_ubigeo_destino[]"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($ubigeos as $ubigeo)
-                                                <option value="{{$ubigeo->id_dis}}">{{$ubigeo->codigo}} - {{$ubigeo->descripcion}} - {{$ubigeo->provincia}} - {{$ubigeo->departamento}}</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                            <dt>Observación</dt>
-                                            <dd>
-                                            <textarea class="form-control input-xs" name="observacion[]" cols="100" rows="100" style="height:50px;"></textarea>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Personal autorizado #1</dt>
-                                            <dd>
-                                            <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_1[]"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($trabajadores as $trabajador)
-                                                <option value="{{$trabajador->id_trabajador}}">{{$trabajador->nombre_trabajador}}</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <dl class="">
-                                            <dt>Personal autorizado #2</dt>
-                                            <dd>
-                                            <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_2[]"  title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
-                                                <option value="" disabled>Elija una opción</option>
-                                                @foreach ($trabajadores as $trabajador)
-                                                <option value="{{$trabajador->id_trabajador}}">{{$trabajador->nombre_trabajador}}</option>
-                                                @endforeach
-                                            </select>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </div>
-
+    construirCardOrden(){
+        const cardOrden = `
+            <li>
+                <div class="panel panel-default">
+                    <div class="panel-heading text-center" style="display:flex; flex-direction:row; gap:0.5rem;">
+                        <h5>Cód. orden: <span class="label label-default" title="Código de orden"><span name="tituloDocumentoCodigoOrden[]">OC-240240</span></span></h5>
+                        <h5>Cód. Softlink: <span class="label label-default" title="Código de Softlink"><span name="tituloDocumentoCodigoSoftlink[]">00100189</span></span></h5>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <legend>
-                        <h6>Items de orden</h6>
-                    </legend>
-                    <div class="btn-group" role="group" aria-label="...">
-                        @if((in_array(Auth::user()->id_usuario,[3,17,27,1,77])))
-                        <button type="button" class="btn btn-xs btn-success activation handleClickCatalogoProductosModal" id="btnAgregarProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar producto"><i class="fas fa-plus"></i> Productos</button>
-                        @endif
-                        <button type="button" class="btn btn-xs btn-info activation handleClickCatalogoProductosObsequioModal" id="btnAgregarProductoObsequio" data-toggle="tooltip" data-placement="bottom" title="Agregar producto para obsequio"><i class="fas fa-plus"></i> Productos para obsequio</button>
-                        <button type="button" class="btn btn-xs btn-primary activation handleClickAgregarServicio" id="btnAgregarServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar servicio"><i class="fas fa-plus"></i> Servicio</button>
-                        <button type="button" class="btn btn-xs btn-default activation handleClickVincularRequerimientoAOrdenModalOLD" onClick="openVincularRequerimientoConOrden();" id="btnAgregarVinculoRequerimiento" data-toggle="tooltip" data-placement="bottom" title="Agregar items de otro requerimiento" disabled><i class="fas fa-plus"></i> Vincular otro requerimiento
-                        </button>
-                    </div>
-                    <div class="box box-widget">
-                        <div class="box-body">
-                            <div class="table-responsive">
-                                <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden[]" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 5%">Req.</th>
-                                            <th style="width: 5%">Cod. producto</th>
-                                            <th style="width: 5%">Cod. softlink</th>
-                                            <th style="width: 5%">Part number</th>
-                                            <th>Descripción del producto/servicio</th>
-                                            <th style="width: 8%">Unid. Med.</th>
-                                            <th style="width: 5%">Cantidad solicitada</th>
-                                            <th style="width: 5%">Cantidad Reservada</th>
-                                            <th style="width: 5%">Cantidad atendida por orden</th>
-                                            <th style="width: 8%">Cantidad a comprar</th>
-                                            <th style="width: 10%">Precio Unitario</th>
-                                            <th style="width: 6%">Total</th>
-                                            <th style="width: 5%">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody name="body_detalle_orden[]"></tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="11" class="text-right"><strong>Monto neto:</strong></td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoNeto[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="11" class="text-right">
-                                                <input class="activation handleClickIncluyeIGV" type="checkbox" name="incluye_igv[]" checked> <strong>Incluye IGV</strong>
-                                            </td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="igv[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="11" class="text-right">
-                                                <input class="activation handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper[]"> <strong>Incluye ICBPER</strong>
-                                            </td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="icbper[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="11" class="text-right"><strong>Monto total:</strong></td>
-                                            <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoTotal[]"> 0.00</label></td>
-                                            <td></td>
-                                        </tr>
+                    <div class="panel-body">
+                        <ul class="list-inline">
+                            <li>
+                                <dl>
+                                    <dt>Empresa:</dt>
+                                    <dd>OK COMPUTER EIRL</dd>
+                                    <dt>Sede:</dt>
+                                    <dd>Lima</dd>
+                                    <dt>Proveedor:</dt>
+                                    <dd>MAXIMA EIRL</dd>
+                                </dl>
+                            </li>
+                            <li>
+                                <dl>
+                                    <dt>Fecha emsión:</dt>
+                                    <dd>##/##/####</dd>
+                                    <dt>Importe:</dt>
+                                    <dd>S/.1000.00</dd>
+                                    <dt>Cta Proveedor:</dt>
+                                    <dd>55234242-2432-10</dd>
+                            </li>
+                            <li>
 
-                                    </tfoot>
-                                </table>
-
-                            </div>
+                            </li>
+                        </ul>
+                        <div class="text-left">
+                            <button type="button" class="btn btn-xs btn-success" id="btnSeleccionarOrden" title="Seleccionar"><i class="fas fa-check"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Imprimir"><i class="fas fa-print"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Anular"><i class="fas fa-trash"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </li>
         `;
-
-        document.querySelector("div[id='contenedor_orden']").insertAdjacentHTML('beforeend', contenidoHTML)
-        $('select[name="id_sede[]"]').selectpicker();
-
-
-
+        return cardOrden;
     }
+
+    crearNuevaOrden(){
+
+        Swal.fire({
+            title: "Desea desde un requerimiento pendiente o genera una orden libre?",
+            width: 500,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Mostrar lista de requerimientos",
+            denyButtonText: `Crear en orden libre`
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) { // mostrar lista de requerimientos pendientes
+                
+                // 
+
+                $('#modal-lista-requerimientos-pendientes').modal('show');
+                
+                let idEmpresa='SIN_FILTRO';
+                let idSede='SIN_FILTRO';
+                let fechaRegistroDesde='SIN_FILTRO';
+                let fechaRegistroHasta='SIN_FILTRO';
+                let reserva='SIN_FILTRO';
+                let orden='SIN_FILTRO';
+                let estado='SIN_FILTRO';
+                
+                $tablaListaRequerimientosPendientes = $('#tablaRequerimientosPendientes').DataTable({
+                    'dom': 'Blfrtip',
+                    'buttons': [],
+                    'language': vardataTables[0],
+                    'order': [[3, 'desc']],
+                    'serverSide': true,
+                    'destroy': true,
+                    'stateSave': true,
+                    'bLengthChange': false,
+                    "pageLength": 20,
+                    'ajax': {
+                        'url': route('logistica.gestion-logistica.compras.pendientes.requerimientos-pendientes'),
+                        'type': 'POST',
+                        'data': { 'idEmpresa': idEmpresa, 'idSede': idSede, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'reserva': reserva, 'orden': orden, 'estado':estado },
+                        beforeSend: data => {
+        
+                            $("#tablaRequerimientosPendientes").LoadingOverlay("show", {
+                                imageAutoResize: true,
+                                progress: true,
+                                imageColor: "#3c8dbc"
+                            });
+                        }
+        
+                    },
+                    'columns': [
+                        { 'data': 'descripcion_prioridad', 'name': 'adm_prioridad.descripcion', 'render': function (data, type, row) {
+        
+                            return `${row['termometro']}`;
+                        }},
+                        { 'data': 'empresa_sede', 'name': 'sis_sede.descripcion', 'className': 'text-center' },
+                        { 'data': 'codigo', 'name': 'alm_req.codigo', 'className': 'text-center',  'render': function (data, type, row) {
+                            return `${row.estado == 38 ? '<i class="fas fa-exclamation-triangle ' + (row.count_pendientes > 0 ? 'red' : 'orange') + ' handleClickAbrirModalPorRegularizar" style="cursor:pointer;" title="Por regularizar' + (row.count_pendientes > 0 ? '(Tiene ' + row.count_pendientes + ' item(s) pendientes por mapear)' : '') + '" data-id-requerimiento="' + row.id_requerimiento + '" ></i> &nbsp;' : ''}<a href="/necesidades/requerimiento/elaboracion/index?id=${row.id_requerimiento}" target="_blank" title="Abrir Requerimiento">${row.codigo}</a> ${row.tiene_transformacion == true ? '<i class="fas fa-random text-danger" title="Con transformación"></i>' : ''} `;
+                        }},
+                        { 'data': 'fecha_registro', 'name': 'alm_req.fecha_registro', 'className': 'text-center' },
+                        { 'data': 'fecha_entrega', 'name': 'alm_req.fecha_entrega', 'className': 'text-center',render:function(data, type, row){
+                            // return (row.fecha_entrega!= '' && row.fecha_entrega != null)?(moment(row.fecha_entrega).format('DD-MM-YYYY')):'';
+                            return row.fecha_entrega;
+                        }},
+                        { 'data': 'concepto', 'name': 'alm_req.concepto', 'className': 'text-left' },
+                        { 'data': 'tipo_req_desc', 'name': 'alm_tp_req.descripcion', 'className': 'text-center' },
+                        { 'data': 'division', 'name': 'division.descripcion', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
+                            return row.division != null ? JSON.parse(row.division.replace(/&quot;/g, '"')).join(",") : '';
+                        }},
+                        { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por', 'className': 'text-center'},
+                        { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
+                        { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-left td-lg-300'},
+                        { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
+                            return row['estado_doc'];
+                        }},
+                        { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false,'render': function (data, type, row) {
+                            let tieneTransformacion = row.tiene_transformacion;
+                            let cantidadItemBase = row.cantidad_items_base;
+                            if (tieneTransformacion == true && cantidadItemBase == 0) {
+                                return ('<div class="btn-group" role="group"></div><div class="btn-group" role="group"><button type="button" class="btn btn-info btn-xs handleClickOpenModalCuadroCostos" name="btnVercuadroCostos" title="Ver Cuadro Costos" data-id-requerimiento="' + row.id_requerimiento + '" >' + '<i class="fas fa-eye fa-sm"></i></button></div>');
+                            } else {
+                                let openDiv = '<div class="btn-group" role="group">';
+                                let btnMapearProductos = '<button type="button" class="mapeo btn btn-success btn-xs" title="Mapear productos" data-id-requerimiento="' + row.id_requerimiento + '" data-codigo="' + row.codigo + '"  ><i class="fas fa-sign-out-alt"></i> <span class="badge" title="Cantidad items sin mapear" name="cantidadAdjuntosRequerimiento" style="position:absolute;border: solid 0.1px;z-index: 9;top: -9px;left: 0px;font-size: 0.9rem;">' + row.count_pendientes + '</span></button>';
+                                let btnCrearOrdenCompra = '';
+                                let btnCrearOrdenServicio = '<button type="button" class="btn btn-warning btn-xs handleClickCrearOrdenServicioPorRequerimiento" name="btnCrearOrdenServicioPorRequerimiento" title="Crear Orden de Servicio" data-id-requerimiento="' + row.id_requerimiento + '"  >OS</button>';
+        
+                                if (row.count_mapeados > 0) {
+                                    if (row.estado == 38 || row.estado == 39) { // estado por regularizar | estado  en pausa
+                                        btnCrearOrdenCompra = '<button type="button" class="btn btn-warning btn-xs" name="btnCrearOrdenCompraPorRequerimiento" title="Crear Orden de Compra" data-id-requerimiento="' + row.id_requerimiento + '"  disabled>OC</button>';
+                                        btnCrearOrdenServicio = '<button type="button" class="btn btn-danger btn-xs" name="btnCrearOrdenServicioPorRequerimiento" title="Crear Orden de Servicio" data-id-requerimiento="' + row.id_requerimiento + '" disabled >OS</button>';
+        
+                                    } else {
+                                        btnCrearOrdenCompra = '<button type="button" class="btn btn-warning btn-xs handleClickCrearOrdenCompraPorRequerimiento" name="btnCrearOrdenCompraPorRequerimiento" title="Crear Orden de Compra" data-id-requerimiento="' + row.id_requerimiento + '"  >OC</button>';        
+                                    }
+                                }
+                                
+                                let closeDiv = '</div>';
+                                let botones = '';
+        
+                                if (row.estado == 1 || row.estado == 3 || row.estado == 4 || row.estado == 12) {
+                                    botones = openDiv   + closeDiv;
+                                } else {
+                                    botones = openDiv  + btnMapearProductos +
+                                        btnCrearOrdenCompra ;
+        
+                                    if (row.cantidad_tipo_servicio > 0) {
+                                        botones += btnCrearOrdenServicio;
+                                    }
+        
+                                    botones +=  closeDiv;
+                                }
+                                return botones;
+                            }
+        
+                        }}
+                    ],
+                    'columnDefs': [
+                    ],
+                    'rowCallback': function (row, data, dataIndex) {
+                        // Get row ID
+                        // var rowId = data.id_requerimiento;
+                        // // If row ID is in the list of selected row IDs
+                        // if ($.inArray(rowId, reqTrueList) !== -1) {
+                        //     $(row).find('input[type="checkbox"]').prop('checked', true);
+                        //     $(row).addClass('selected');
+                        // }
+        
+                    },
+                    'initComplete': function () {
+        
+                        //Boton de busqueda
+                        const $filter = $('#tablaRequerimientosPendientes_filter');
+                        const $input = $filter.find('input');
+                        $filter.append('<button id="btnBuscarRequerimientosPendientes" class="btn btn-default btn-sm pull-right" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>');
+                        $input.off();
+                        $input.on('keyup', (e) => {
+                            if (e.key == 'Enter') {
+                                $('#btnBuscarRequerimientosPendientes').trigger('click');
+                            }
+                        });
+                        $('#btnBuscarRequerimientosPendientes').on('click', (e) => {
+                            $tablaListaRequerimientosPendientes.search($input.val()).draw();
+                        })
+                        //Fin boton de busqueda
+                    },
+                    "drawCallback": function (settings) {
+                        //Botón de búsqueda
+                        $('#tablaRequerimientosPendientes_filter input').prop('disabled', false);
+                        $('#btnBuscarRequerimientosPendientes').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                        $('#tablaRequerimientosPendientes_filter input').trigger('focus');
+                        //fin botón búsqueda
+                        if ($tablaListaRequerimientosPendientes.rows().data().length == 0) {
+                            Lobibox.notify('info', {
+                                title: false,
+                                size: 'mini',
+                                rounded: true,
+                                sound: false,
+                                delayIndicator: false,
+                                msg: `No se encontro data disponible para mostrar`
+                            });
+                        }
+                        //Botón de búsqueda
+                        $('#tablaRequerimientosPendientes_filter input').prop('disabled', false);
+                        $('#btnBuscarRequerimientosPendientes').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                        $('#tablaRequerimientosPendientes_filter input').trigger('focus');
+                        //fin botón búsqueda
+                        $("#tablaRequerimientosPendientes").LoadingOverlay("hide", true);
+        
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+        
+                        let color = '#ffffff';
+                        switch (data.bootstrap_color) {
+                            case 'default':
+                                color = '#d7d7d7';
+                                break;
+                            case 'primary':
+                                color = '#5caad9';
+                                break;
+                            case 'success':
+                                color = '#a2c9a2';
+                                break;
+                            case 'secundary':
+                                color = '#cbc0d6';
+                                break;
+                            case 'warning':
+                                color = '#e8e9bc';
+                                break;
+                            case 'info':
+                                color = '#72bcd4';
+                                break;
+                            case 'danger':
+                                color = '#98beca';
+                                break;
+        
+                            default:
+                                color = '#f2f2f2';
+                                break;
+                        }
+                        $(row.childNodes[11]).css('background-color', color);
+                    }
+        
+                });
+                // 
+
+            } else if (result.isDenied) { // limpiar todo para genera orden libre
+
+                document.querySelector("ul[id='contenedor_lista_ordenes']").insertAdjacentHTML('beforeend', this.construirCardOrden())
+                // $('select[name="id_sede[]"]').selectpicker();
+
+            }
+          });
+
+        }
 
 
     llenarDatosCabeceraSeccionProveedor(idProveedor) {

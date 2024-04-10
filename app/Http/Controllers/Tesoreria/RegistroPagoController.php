@@ -1656,6 +1656,8 @@ class RegistroPagoController extends Controller
                 "requerimientos"=>$value->requerimientos,
                 "codigo_empresa"=>$value->codigo_empresa,
                 "codigo"=>$value->codigo,
+                "condicion_pago"=>$value->condicion_pago,
+                "plazo_dias"=>$value->plazo_dias,
                 "razon_social"=>$value->razon_social,
                 "fecha_solicitud_pago"=>($value->fecha_solicitud_pago !== null ? $value->fecha_solicitud_pago: ''),
                 "simbolo"=>$value->simbolo,

@@ -473,7 +473,7 @@ class softlink extends Command
                                         $estado=1;
                                     }
                                  
-                                    $nuevoProductoDetalle->serie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
+                                    $nuevoProductoDetalle->serie = ProductoDetalle::verificarSerie(trim($serie->serie)['serie'], null);
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                     $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);

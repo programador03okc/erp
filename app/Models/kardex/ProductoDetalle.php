@@ -13,20 +13,22 @@ class ProductoDetalle extends Model
     protected $table = 'kardex.producto_detalle';
     protected $fillable = [
         'serie', 'fecha', 'precio', 'tipo_moneda','precio_unitario', 'producto_id', 'estado','disponible','id_ingreso',
-        'id_salida', 'fecha_ing', 'fecha_sal'
+        'id_salida', 'fecha_ing', 'fecha_sal','autogenerado'
     ];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
     static function verificarSerie($serie, $producto_id) {
-        if ($serie && trim($serie)!=='' && $serie!==null) {
+        $autogenerado = false ;
+        if ($serie =='' || $serie==null || $serie=='-') {
             // ProductoDetalle::where('')
             // ProductoDetalle::where('producto_id', $producto_id)
             // ->update(['estado' => 7]);
             // ProductoDetalle::where('producto_id', $producto_id)->delete();
             $data = ProductoDetalle::count();
             $serie = 'SN-'. ($data+1);
-            return $serie;
+            $autogenerado = true;
+            return ["serie"=>$serie,"autogenerado"=>$autogenerado];
         }
-        return $serie;
+        return ["serie"=>$serie,"autogenerado"=>$autogenerado];
     }
 }

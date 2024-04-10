@@ -38,7 +38,8 @@ class ProductosController extends Controller
         if($request->estado_kardex!=='null'){
             $data = $data->where('estado_kardex',$request->estado_kardex);
         }
-        $data = $data->get();
+        // $data = $data->get();
+        $data = $data->limit(20);
         return DataTables::of($data)
         ->addColumn('cantidad', function ($data) {
             return ProductoDetalle::where('producto_id', $data->id)->where('disponible','t')->count();
@@ -65,6 +66,7 @@ class ProductosController extends Controller
         // try {
             $array = Excel::toArray(new ProductosKardexImport, request()->file('carga_inicial'));
 
+            $array_series = array();
             foreach ($array[0] as $key => $value) {
                 if($key !== 0){
                     // return $value;
@@ -92,11 +94,13 @@ class ProductosController extends Controller
                         $producto->estado           = 1;
                         $producto->save();
                     }
-                    // return $value;
-                    // $serie = ProductoDetalle::where('serie',$value[1])->first();
+
                     $serie_codigo = ProductoDetalle::verificarSerie($value[1], $producto->id);
-                    // return $serie_codigo;
-                    $serie = ProductoDetalle::firstOrNew(['serie'=>$serie_codigo, 'producto_id'=>$producto->id]);
+                    // if ( $value[1]==null || $value[1]=='-') {
+                    //     return [$serie_codigo, $value];
+                    // }
+
+                    $serie = ProductoDetalle::firstOrNew(['serie'=>$serie_codigo['serie'], 'producto_id'=>$producto->id]);
 
                     // if (!$serie) {
                         $monto = strrpos ($value[18], "$");
@@ -104,7 +108,7 @@ class ProductosController extends Controller
                         $precio = str_replace("$", "0", $value[18]);
 
                         // $serie = new ProductoDetalle();
-                        $serie->serie           = $serie_codigo;
+                        $serie->serie           = $serie_codigo['serie'];
                         $serie->precio          = (float) $value[13];
                         $serie->tipo_moneda     = $tipo_moneda;
                         $serie->precio_unitario = (float) $precio;
@@ -112,21 +116,40 @@ class ProductosController extends Controller
                         $serie->fecha           = $this->formatoFechaExcel($value[14]);
                         $serie->estado          = 1;
                         $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
+                        $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
                     $serie->save();
 
-                    // $serie_codigo = (!$value[1] ? $value[1] : 'SN-'.$serie->id );
-                    // $serie = ProductoDetalle::find($serie->id);
-                    //     $serie->serie   = $serie_codigo;
-                    // $serie->save();
-                    // }
+                    $index = array_search($producto->id, array_column($array_series, 'producto'));
+                    // return [$index];
+                    if($serie_codigo['autogenerado'] == true){
+
+
+                        if($index!==false){
+                            // return [$index,'ingreso'];
+                        //     // return [$array_series[$index]['series'], $array_series];
+                            array_push($array_series[$index]['series'],$serie->id);
+                        }else{
+                            // return [$index,'ingreso'];
+                            array_push($array_series, array(
+                                "producto"=>$producto->id,
+                                "series"=>[$serie->id],
+                            ));
+                        }
+                    }
+
+
 
                 }
             }
+            return $array_series;
+            foreach ($array_series as $key => $value) {
 
+                return $value;
+            }
             return response()->json([
                 "titulo"=>"Éxito",
                 "mensjae"=>"se importo con éxito",
-                "tipo"=>"success"
+                "tipo"=>"success",
             ],200);
         // } catch (\Throwable $th) {
         //     return response()->json([

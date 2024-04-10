@@ -10,6 +10,7 @@ use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use App\Models\softlink\Producto;
 use App\Models\softlink\Serie;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -426,7 +427,10 @@ class softlink extends Command
                 $cantidadProductosAgregados = 0;
                 $cantidadDetalleProductosAgregados = 0;
 
-                $movimiento = Movimiento::whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('estado_migracion', 1)->orderBy('fec_docu', 'asc')->get();
+              
+                $to = Carbon::parse();
+                $from = Carbon::parse('2023-01-01')->toDateTimeString();
+                $movimiento = Movimiento::whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('estado_migracion', 1)->whereBetween('fec_docu', [$from, $to])->orderBy('fec_docu', 'asc')->get();
 
                 $cantidadAux = count($movimiento);
                 $bar = $this->output->createProgressBar($cantidadAux);

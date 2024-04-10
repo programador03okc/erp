@@ -225,36 +225,36 @@ class OrdenView {
                                 return ('<div class="btn-group" role="group"></div><div class="btn-group" role="group"><button type="button" class="btn btn-info btn-xs handleClickOpenModalCuadroCostos" name="btnVercuadroCostos" title="Ver Cuadro Costos" data-id-requerimiento="' + row.id_requerimiento + '" >' + '<i class="fas fa-eye fa-sm"></i></button></div>');
                             } else {
                                 let openDiv = '<div class="btn-group" role="group">';
-                                let btnMapearProductos = '<button type="button" class="mapeo btn btn-success btn-xs" title="Mapear productos" data-id-requerimiento="' + row.id_requerimiento + '" data-codigo="' + row.codigo + '"  ><i class="fas fa-sign-out-alt"></i> <span class="badge" title="Cantidad items sin mapear" name="cantidadAdjuntosRequerimiento" style="position:absolute;border: solid 0.1px;z-index: 9;top: -9px;left: 0px;font-size: 0.9rem;">' + row.count_pendientes + '</span></button>';
-                                let btnCrearOrdenCompra = '';
-                                let btnCrearOrdenServicio = '<button type="button" class="btn btn-warning btn-xs handleClickCrearOrdenServicioPorRequerimiento" name="btnCrearOrdenServicioPorRequerimiento" title="Crear Orden de Servicio" data-id-requerimiento="' + row.id_requerimiento + '"  >OS</button>';
-        
+                                // let btnMapearProductos = '<button type="button" class="mapeo btn btn-success btn-xs" title="Mapear productos" data-id-requerimiento="' + row.id_requerimiento + '" data-codigo="' + row.codigo + '"  ><i class="fas fa-sign-out-alt"></i> <span class="badge" title="Cantidad items sin mapear" name="cantidadAdjuntosRequerimiento" style="position:absolute;border: solid 0.1px;z-index: 9;top: -9px;left: 0px;font-size: 0.9rem;">' + row.count_pendientes + '</span></button>';
+                                let textCantidadMapeados = row.count_pendientes >0? `<p>Pendientes de Mapear: ${row.count_pendientes}</p>`:'';
+                                let btnCrearOrdenCompra = '<button type="button" class="btn btn-warning btn-xs handleClickSeleccionar" name="btnSeleccionar" title="Seleccionar (tipo OC)" data-tipo-documento="2" data-id-requerimiento="' + row.id_requerimiento + '"  >Seleccionar</button>';
+                                let btnCrearOrdenServicio = '<button type="button" class="btn btn-warning btn-xs handleClickSeleccionar" name="btnSeleccionar" title="Seleccionar (tipo OS)" data-tipo-documento="3" data-id-requerimiento="' + row.id_requerimiento + '"  >Seleccionar</button>';
+
                                 if (row.count_mapeados > 0) {
                                     if (row.estado == 38 || row.estado == 39) { // estado por regularizar | estado  en pausa
-                                        btnCrearOrdenCompra = '<button type="button" class="btn btn-warning btn-xs" name="btnCrearOrdenCompraPorRequerimiento" title="Crear Orden de Compra" data-id-requerimiento="' + row.id_requerimiento + '"  disabled>OC</button>';
-                                        btnCrearOrdenServicio = '<button type="button" class="btn btn-danger btn-xs" name="btnCrearOrdenServicioPorRequerimiento" title="Crear Orden de Servicio" data-id-requerimiento="' + row.id_requerimiento + '" disabled >OS</button>';
-        
-                                    } else {
-                                        btnCrearOrdenCompra = '<button type="button" class="btn btn-warning btn-xs handleClickCrearOrdenCompraPorRequerimiento" name="btnCrearOrdenCompraPorRequerimiento" title="Crear Orden de Compra" data-id-requerimiento="' + row.id_requerimiento + '"  >OC</button>';        
-                                    }
+                                        btnCrearOrdenCompra = '';
+                                    } 
+                                }else{
+                                    btnCrearOrdenCompra = '';
+
                                 }
                                 
                                 let closeDiv = '</div>';
-                                let botones = '';
+                                let acciones = '';
         
                                 if (row.estado == 1 || row.estado == 3 || row.estado == 4 || row.estado == 12) {
-                                    botones = openDiv   + closeDiv;
+                                    acciones = openDiv   + closeDiv;
                                 } else {
-                                    botones = openDiv  + btnMapearProductos +
+                                    acciones = openDiv  + textCantidadMapeados +
                                         btnCrearOrdenCompra ;
         
                                     if (row.cantidad_tipo_servicio > 0) {
-                                        botones += btnCrearOrdenServicio;
+                                        acciones += btnCrearOrdenServicio;
                                     }
         
-                                    botones +=  closeDiv;
+                                    acciones +=  closeDiv;
                                 }
-                                return botones;
+                                return acciones;
                             }
         
                         }}

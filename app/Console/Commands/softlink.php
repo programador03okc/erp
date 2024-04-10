@@ -472,8 +472,8 @@ class softlink extends Command
                                     }else{
                                         $estado=1;
                                     }
-                                 
-                                    $nuevoProductoDetalle->serie = ProductoDetalle::verificarSerie(trim($serie->serie)['serie'], null);
+                                    $verificarSerie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
+                                    $nuevoProductoDetalle->serie = $verificarSerie['serie'];
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                     $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);
@@ -482,6 +482,7 @@ class softlink extends Command
                                     $nuevoProductoDetalle->fecha_sal = trim($serie->fecha_sal) ==""?null:trim($serie->fecha_sal);
                                     $nuevoProductoDetalle->estado = 1;
                                     $nuevoProductoDetalle->disponible = $estado;
+                                    $nuevoProductoDetalle->autogenerado = $verificarSerie['autogenerado'];
                                     $nuevoProductoDetalle->save();
                                     $cantidadDetalleProductosAgregados++;
                                 }

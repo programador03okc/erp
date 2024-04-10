@@ -149,7 +149,7 @@ class ProductosController extends Controller
                 ->delete();
                 // return $data;
             }
-            return $array_series;
+
             return response()->json([
                 "titulo"=>"Éxito",
                 "mensjae"=>"se importo con éxito",

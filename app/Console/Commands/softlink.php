@@ -10,6 +10,7 @@ use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use App\Models\softlink\Producto;
 use App\Models\softlink\Serie;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -426,7 +427,10 @@ class softlink extends Command
                 $cantidadProductosAgregados = 0;
                 $cantidadDetalleProductosAgregados = 0;
 
-                $movimiento = Movimiento::whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('estado_migracion', 1)->orderBy('fec_docu', 'asc')->get();
+              
+                $to = Carbon::parse();
+                $from = Carbon::parse('2023-01-01')->toDateTimeString();
+                $movimiento = Movimiento::whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('estado_migracion', 1)->whereBetween('fec_docu', [$from, $to])->orderBy('fec_docu', 'asc')->get();
 
                 $cantidadAux = count($movimiento);
                 $bar = $this->output->createProgressBar($cantidadAux);
@@ -434,7 +438,7 @@ class softlink extends Command
 
                 foreach ($movimiento as $key => $movValue) {
                     $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.unico', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
-                        ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
+                        ->leftJoin('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
                         ->where([['detmov.mov_id', $movValue->mov_id], ['estado_migracion', 1]])->orderBy('fec_pedi', 'asc')->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {
@@ -457,12 +461,12 @@ class softlink extends Command
                                 $actualiarDetalleMovimiento->save();
                             }
 
-                            $series = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->get();
-
+                            $series = Serie::where('cod_prod', trim($movDetValue->cod_prod))->get();
+                            
                             foreach ($series as $serie) {
-                                if ($series && $serie->id > 0) {
+                                if ($series && intval($serie->id) > 0) {
                                     // $nuevoProductoDetalle = new ProductoDetalle();
-                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>trim($serie->serie), 'producto_id'=>$nuevoProducto->id]);
+                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=> trim($serie->serie)]);
                                     if($movValue->tipo == 2){
                                         if($serie->fecha_sal ==null ){
                                             $estado=1;
@@ -472,8 +476,8 @@ class softlink extends Command
                                     }else{
                                         $estado=1;
                                     }
-                                 
-                                    $nuevoProductoDetalle->serie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
+                                    $verificarSerie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
+                                    $nuevoProductoDetalle->serie = trim($verificarSerie['serie']);
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                     $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);
@@ -482,6 +486,7 @@ class softlink extends Command
                                     $nuevoProductoDetalle->fecha_sal = trim($serie->fecha_sal) ==""?null:trim($serie->fecha_sal);
                                     $nuevoProductoDetalle->estado = 1;
                                     $nuevoProductoDetalle->disponible = $estado;
+                                    $nuevoProductoDetalle->autogenerado = $verificarSerie['autogenerado'];
                                     $nuevoProductoDetalle->save();
                                     $cantidadDetalleProductosAgregados++;
                                 }

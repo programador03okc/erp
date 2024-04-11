@@ -141,19 +141,41 @@ class ProductosController extends Controller
 
                 }
             }
-            // return $array_series;
+            $array_delete = array();
             foreach ($array_series as $key => $value) {
-                $data = ProductoDetalle::where('producto_id',$value['producto'])
-                ->whereNotIn('id',$value['series'])
-                ->where('autogenerado','t')
-                ->delete();
+
                 // return $data;
+                foreach ($value['series'] as $key_delete => $delete) {
+                    array_push($array_delete, $delete);
+
+                }
+            }
+            $data = ProductoDetalle::where('producto_id',$value['producto'])
+            // ->whereNotIn('id',$array_delete)
+            // ->whereNotIn('id',$array_delete)
+            ->where('autogenerado','t')
+            ->get();
+            foreach ($data as $key => $value) {
+                $producto_detalle = ProductoDetalle::find($value->id);
+                $producto_detalle->estado=7;
+                $producto_detalle->save();
+                $producto_detalle->delete();
             }
 
+            foreach ($array_delete as $key => $value) {
+
+            }
+            $producto_detalle = ProductoDetalle::whereIn('id',$array_delete)->restore();
+
+            ProductoDetalle::whereIn('id',$array_delete)
+            ->update(['estado' => 1]);
             return response()->json([
                 "titulo"=>"Éxito",
                 "mensjae"=>"se importo con éxito",
                 "tipo"=>"success",
+                "array_Series"=>$array_series,
+                "restaurados"=>$producto_detalle,
+                "data"=>$data
             ],200);
         // } catch (\Throwable $th) {
         //     return response()->json([

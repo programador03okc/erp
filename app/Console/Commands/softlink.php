@@ -438,7 +438,7 @@ class softlink extends Command
 
                 foreach ($movimiento as $key => $movValue) {
                     $movimientoDetalle = MovimientoDetalle::select('detmov.mov_id', 'detmov.unico', 'detmov.cod_prod', 'detmov.nom_prod', 'sopprod.cod_espe', 'sopprod.nom_unid', 'sopprod.tip_moneda')
-                        ->join('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
+                        ->leftJoin('kardex.sopprod', 'sopprod.cod_prod', '=', 'detmov.cod_prod')
                         ->where([['detmov.mov_id', $movValue->mov_id], ['estado_migracion', 1]])->orderBy('fec_pedi', 'asc')->get();
 
                     foreach ($movimientoDetalle as $key => $movDetValue) {
@@ -461,12 +461,12 @@ class softlink extends Command
                                 $actualiarDetalleMovimiento->save();
                             }
 
-                            $series = Serie::where('cod_prod', trim($nuevoProducto->codigo_softlink))->get();
-
+                            $series = Serie::where('cod_prod', trim($movDetValue->cod_prod))->get();
+                            
                             foreach ($series as $serie) {
-                                if ($series && $serie->id > 0) {
+                                if ($series && intval($serie->id) > 0) {
                                     // $nuevoProductoDetalle = new ProductoDetalle();
-                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=>trim($serie->serie), 'producto_id'=>$nuevoProducto->id]);
+                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=> trim($serie->serie)]);
                                     if($movValue->tipo == 2){
                                         if($serie->fecha_sal ==null ){
                                             $estado=1;
@@ -477,7 +477,7 @@ class softlink extends Command
                                         $estado=1;
                                     }
                                     $verificarSerie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
-                                    $nuevoProductoDetalle->serie = $verificarSerie['serie'];
+                                    $nuevoProductoDetalle->serie = trim($verificarSerie['serie']);
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
                                     $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);

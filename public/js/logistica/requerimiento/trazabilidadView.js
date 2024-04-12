@@ -195,7 +195,9 @@ class TrazabilidadView {
                     nodo.data.id_orden_compra,
                     nodo.data.codigo,
                     nodo.data.fecha_registro,
-                    nodo.data.estado_descripcion
+                    nodo.data.estado_descripcion,
+                    nodo.data.estado_pago
+
                 )
                 break;
             case 'flujo_pago':
@@ -290,7 +292,7 @@ class TrazabilidadView {
     `;
         return plantillaHTML;
     }
-    plantillaOrden(id, codigo, fecha_registro, estado) {
+    plantillaOrden(id, codigo, fecha_registro, estado, estado_pago) {
         var plantillaHTML = `<div class=\"title-box\"> Orden de compra</div>
         <div class="box">
             <dl>
@@ -300,6 +302,8 @@ class TrazabilidadView {
             <dd>${fecha_registro}</dd>
             <dt>Estado</dt>
             <dd>${estado}</dd>
+            <dt>Envío a pago</dt>
+            <dd>${(estado_pago>1?'SI':'NO')}</dd>
             </dl>
         </div>
     `;

@@ -303,7 +303,7 @@ class TrazabilidadView {
             <dt>Estado</dt>
             <dd>${estado}</dd>
             <dt>Envío a pago</dt>
-            <dd>${(estado_pago>1?'SI':'NO')}</dd>
+            <dd>${(parseInt(estado_pago) >1?'SI':'NO')}</dd>
             </dl>
         </div>
     `;

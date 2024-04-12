@@ -14,7 +14,7 @@ class EstadoEnvio extends Model
 
     public static function listaEstadosDespacho(){
 
-        return EstadoEnvio::whereIn('id_estado', [3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15])->orderBy('descripcion', 'asc')->get();
+        return EstadoEnvio::whereIn('id_estado', [3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 17])->orderBy('descripcion', 'asc')->get();
     }
 
     public static function listaEstadosDespachoParaSeleccionEnRequerimientoLogistico(){

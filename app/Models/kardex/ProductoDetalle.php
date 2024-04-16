@@ -17,9 +17,9 @@ class ProductoDetalle extends Model
     ];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
-    static function verificarSerie($serie, $producto_id) {
+    static function verificarSerie($serie, $generarSerie) {
         $autogenerado = false ;
-        if ($serie =='' || $serie==null || $serie=='-') {
+        if (($serie == '' || $serie == null || $serie == '-') && ($generarSerie == true)) {
             // ProductoDetalle::where('')
             // ProductoDetalle::where('producto_id', $producto_id)
             // ->update(['estado' => 7]);
@@ -27,8 +27,10 @@ class ProductoDetalle extends Model
             $data = ProductoDetalle::count();
             $serie = 'SN-'. ($data+1);
             $autogenerado = true;
-            return ["serie"=>$serie,"autogenerado"=>$autogenerado];
+            return ["serie" => $serie, "autogenerado" => $autogenerado];
+        } else {
+            $serie = null;
         }
-        return ["serie"=>$serie,"autogenerado"=>$autogenerado];
+        return ["serie" => $serie, "autogenerado"=> $autogenerado];
     }
 }

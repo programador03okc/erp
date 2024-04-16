@@ -67,90 +67,79 @@ class ProductosController extends Controller
             if ($request->hasFile('carga_inicial')) {
                 $array = Excel::toArray(new ProductosKardexImport, $request->file('carga_inicial'));
     
-                if ($request->generar_serie) {
-                    $array_series = array();
-                    foreach ($array[0] as $key => $value) {
-                        if($key !== 0){
-                            // return $value;
-                            // $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
-                            $producto = Producto::where('codigo_softlink', $value[4])->where('almacen', $value[7])->first();
-                            // return $producto;
-                            if(!$producto){
-                                $producto = new Producto();
-                                $producto->codigo_agil      = (int)$value[3];
-                                $producto->codigo_softlink  = $value[4];
-                                $producto->descripcion      = $value[6];
-                                $producto->part_number      = $value[5];
-                                $producto->almacen          = $value[7];
-                                $producto->empresa          = $value[8];
-                                $producto->clasificacion    = $value[9];
-                                $producto->estado_kardex    = $value[10];
-                                $producto->ubicacion        = $value[11];
-                                $producto->responsable      = $value[12];
-                                $producto->habilitado       = true;
-                                if(!Producto::where('codigo_softlink',$value[4])->first()){
-                                    $producto->fecha_registro   = date('Y-m-d H:i:s');
-                                }
-        
-                                $producto->anual            = $value[16];
-                                $producto->estado           = 1;
-                                $producto->save();
+                $array_series = array();
+                foreach ($array[0] as $key => $value) {
+                    if($key !== 0){
+                        // return $value;
+                        // $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
+                        $producto = Producto::where('codigo_softlink', $value[4])->where('almacen', $value[7])->first();
+                        // return $producto;
+                        if(!$producto){
+                            $producto = new Producto();
+                            $producto->codigo_agil      = (int)$value[3];
+                            $producto->codigo_softlink  = $value[4];
+                            $producto->descripcion      = $value[6];
+                            $producto->part_number      = $value[5];
+                            $producto->almacen          = $value[7];
+                            $producto->empresa          = $value[8];
+                            $producto->clasificacion    = $value[9];
+                            $producto->estado_kardex    = $value[10];
+                            $producto->ubicacion        = $value[11];
+                            $producto->responsable      = $value[12];
+                            $producto->habilitado       = true;
+                            if(!Producto::where('codigo_softlink',$value[4])->first()){
+                                $producto->fecha_registro   = date('Y-m-d H:i:s');
                             }
-        
-                            $serie_codigo = ProductoDetalle::verificarSerie($value[1], $producto->id);
-                            // if ( $value[1]==null || $value[1]=='-') {
-                            //     return [$serie_codigo, $value];
-                            // }
-        
-                            $serie = ProductoDetalle::firstOrNew(['serie'=>$serie_codigo['serie'], 'producto_id'=>$producto->id]);
-        
-                            // if (!$serie) {
-                                $monto = strrpos ($value[18], "$");
-                                $tipo_moneda = ($monto?1:2); // 1 es dolar y el 2 soles
-                                $precio = str_replace("$", "0", $value[18]);
-        
-                                // $serie = new ProductoDetalle();
-                                $serie->serie           = $serie_codigo['serie'];
-                                $serie->precio          = (float) $value[13];
-                                $serie->tipo_moneda     = $tipo_moneda;
-                                $serie->precio_unitario = (float) $precio;
-                                $serie->producto_id     = $producto->id;
-                                $serie->fecha           = $this->formatoFechaExcel($value[14]);
-                                $serie->estado          = 1;
-                                $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
-                                $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
-                            $serie->save();
-        
-                            $index = array_search($producto->id, array_column($array_series, 'producto'));
-                            // return [$index];
-                            if($serie_codigo['autogenerado'] == true){
-        
-        
-                                if($index!==false){
-                                    // return [$index,'ingreso'];
-                                //     // return [$array_series[$index]['series'], $array_series];
-                                    array_push($array_series[$index]['series'],$serie->id);
-                                }else{
-                                    // return [$index,'ingreso'];
-                                    array_push($array_series, array(
-                                        "producto"=>$producto->id,
-                                        "series"=>[$serie->id],
-                                    ));
-                                }
-                            }
-        
-        
-        
+    
+                            $producto->anual            = $value[16];
+                            $producto->estado           = 1;
+                            $producto->save();
                         }
+                        
+                        $serie_codigo = ProductoDetalle::verificarSerie($value[1], $request->generar_serie);
+                        $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
+
+                            $monto = strrpos ($value[18], "$");
+                            $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
+                            $precio = str_replace("$", "0", $value[18]);
+    
+                            $serie->serie           = $serie_codigo['serie'];
+                            $serie->precio          = (float) $value[13];
+                            $serie->tipo_moneda     = $tipo_moneda;
+                            $serie->precio_unitario = (float) $precio;
+                            $serie->producto_id     = $producto->id;
+                            $serie->fecha           = $this->formatoFechaExcel($value[14]);
+                            $serie->estado          = 1;
+                            $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
+                            $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
+                        $serie->save();
+    
+                        $index = array_search($producto->id, array_column($array_series, 'producto'));
+                        // return [$index];
+                        if($serie_codigo['autogenerado'] == true){
+                            if($index!==false){
+                                // return [$index,'ingreso'];
+                            //     // return [$array_series[$index]['series'], $array_series];
+                                array_push($array_series[$index]['series'],$serie->id);
+                            }else{
+                                // return [$index,'ingreso'];
+                                array_push($array_series, array(
+                                    "producto"=>$producto->id,
+                                    "series"=>[$serie->id],
+                                ));
+                            }
+                        }
+    
+    
+    
                     }
-                    // return $array_series;
-                    foreach ($array_series as $key => $value) {
-                        $data = ProductoDetalle::where('producto_id',$value['producto'])
-                        ->whereNotIn('id',$value['series'])
-                        ->where('autogenerado','t')
-                        ->delete();
-                        // return $data;
-                    }
+                }
+                // return $array_series;
+                foreach ($array_series as $key => $value) {
+                    $data = ProductoDetalle::where('producto_id',$value['producto'])
+                    ->whereNotIn('id',$value['series'])->where('autogenerado','t')
+                    ->delete();
+                    // return $data;
                 }
     
                 return response()->json(["titulo"=>"Éxito", "mensaje"=>"Se importo con éxito", "tipo"=>"success"], 200);

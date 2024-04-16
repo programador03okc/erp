@@ -7,12 +7,19 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\Controller;
 use App\Models\Administracion\Periodo;
+use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\Almacen\Requerimiento;
+use App\Models\Almacen\Reserva;
 use App\Models\Almacen\UnidadMedida;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Moneda;
 use App\Models\Contabilidad\Banco;
+use App\Models\Contabilidad\Contribuyente;
+use App\Models\Contabilidad\CuentaContribuyente;
 use App\Models\Contabilidad\TipoCuenta;
 use App\Models\Logistica\CondicionSoftlink;
+use App\Models\Logistica\Orden;
+use App\Models\Logistica\OrdenCompraDetalle;
 use App\Models\Logistica\Proveedor;
 use Carbon\Carbon;
 use Exception;
@@ -244,4 +251,140 @@ class OrdenMultipleController extends Controller
         return $data;
     }
 
+
+    public function ObtenerAtencionItemRequerimiento($idRequerimiento){
+        $isSuccess=true;
+        $listaAtendidoOrden=[];
+        $estadoItems=[];
+
+        $requerimiento = Requerimiento::with('periodo','moneda','empresa.contribuyente','sede')->find($idRequerimiento);
+        if(in_array($requerimiento->estado,[2,15,27])){
+            $detalleRequerimiento = DetalleRequerimiento::with('producto')->where([['id_requerimiento',$idRequerimiento],['estado','!=',7]])->get();
+            foreach ($detalleRequerimiento as $detReq) {
+
+                    $estadoItems[]=[
+                        'id_requerimiento'=>intval($detReq->id_requerimiento),
+                        'id_detalle_requerimiento'=>intval($detReq->id_detalle_requerimiento),
+                        'id_tipo_item'=>intval($detReq->id_tipo_item),
+                        'cantidad_solicitada'=>intval($detReq->cantidad),
+                        'cantidad_atendida_orden'=>0,
+                        'cantidad_atendida_almacen'=>0,
+                        'tiene_atencion_total'=>false
+                    ];
+
+                $detalleOrden = OrdenCompraDetalle::where([['id_detalle_requerimiento',$detReq->id_detalle_requerimiento],['estado','!=',7]])->get();
+                foreach ($detalleOrden as $keyDetOrd => $detOrd) {
+                    foreach ($estadoItems as $keyEstItem => $estItem) {
+                        if($estItem['id_detalle_requerimiento'] == $detOrd->id_detalle_requerimiento){
+                            $estadoItems[$keyEstItem]['cantidad_atendida_orden'] += intval($detOrd->cantidad);
+                            if($estadoItems[$keyEstItem]['cantidad_atendida_orden']==$estItem['cantidad_solicitada']){
+                                $estadoItems[$keyEstItem]['tiene_atencion_total'] =true ;
+
+                            }
+                         
+                        }
+                        
+                    }
+                }
+
+                $reservas = Reserva::where([['id_detalle_requerimiento',$detReq->id_detalle_requerimiento],['estado','!=',7],['id_guia_com_det',null],['id_guia_ven_det',null]])->get();
+                foreach ($reservas as $keyRes => $res) {
+                    foreach ($estadoItems as $keyEstItem => $estItem) {
+                        if($estItem['id_detalle_requerimiento'] == $res->id_detalle_requerimiento){
+                            $estadoItems[$keyEstItem]['cantidad_atendida_almacen'] += intval($res->stock_comprometido);
+                            if($estadoItems[$keyEstItem]['cantidad_atendida_almacen']==$estItem['cantidad_solicitada']){
+                                $estadoItems[$keyEstItem]['tiene_atencion_total'] =true ;
+
+                            }
+                         
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        $detalleRequerimientoFiltrado=[];
+        foreach ($estadoItems as $keyEstItem => $EstItemValue) {
+            foreach ($detalleRequerimiento as $keyDetReq => $DetReqValue) {
+
+                if($EstItemValue['id_detalle_requerimiento'] == $DetReqValue->id_detalle_requerimiento){
+                    if($EstItemValue['tiene_atencion_total']==false){
+                        $proveedorAgile= ($this->getIdProveedorAgile($DetReqValue->proveedor_seleccionado));
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_id_proveedor']=$proveedorAgile['id_proveedor'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_id_contribuyente']=$proveedorAgile['id_contribuyente'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_razon_social']=$proveedorAgile['razon_social'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_tipo_documento']=$proveedorAgile['tipo_documento'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_numero_documento']=$proveedorAgile['numero_documento'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_direccion_fiscal']=$proveedorAgile['direccion_fiscal'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_id_cuenta_bancaria']=$proveedorAgile['id_cuenta_bancaria'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_numero_cuenta_bancaria']=$proveedorAgile['numero_cuenta_bancaria'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_numero_cuenta_interbancaria']=$proveedorAgile['numero_cuenta_interbancaria'];
+                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria']=$proveedorAgile['simbolo_moneda_cuenta_bancaria'];
+                         $detalleRequerimientoFiltrado[]= $DetReqValue;
+                    }
+                }
+            }
+        }
+
+
+       
+
+        return response()->json([
+            "success" => $isSuccess,
+            "estado_item_list" => $estadoItems,
+            "requerimiento" => $requerimiento,
+            "detalle_requerimiento_list" => $detalleRequerimientoFiltrado,
+            "mensaje" => '',
+        ], 200);
+    }
+    
+    
+    public function  getIdProveedorAgile($razonSocialProveedor){
+        $idProveedor='';
+        $idContribuyente='';
+        $razonSocial='';
+        $tipoDocumento='';
+        $numeroDocumento='';
+        $DireccionFiscal='';
+        $idCuentaBancaria='';
+        $numeroCuentaBancaria='';
+        $numeroCuentaInterbancariaBancaria='';
+        $simboloMonedaCuentaBancaria='';
+
+        if($razonSocialProveedor !=''){
+            $contri=  Contribuyente::with("tipoDocumentoIdentidad")->where('razon_social','LIKE','%'.trim($razonSocialProveedor).'%')->get();
+            $cuentasContri= CuentaContribuyente::with('moneda')->where([['id_contribuyente',$contri->first()->id_contribuyente],['estado',1]])->orderBy('fecha_registro','desc')->first();
+          
+            if($contri){
+                $idContribuyente=$contri->first()->id_contribuyente;
+                $razonSocial=$contri->first()->razon_social;
+                $tipoDocumento=$contri->first()->tipoDocumentoIdentidad->descripcion;
+                $numeroDocumento=$contri->first()->nro_documento;
+                $DireccionFiscal=$contri->first()->direccion_fiscal;
+                $idCuentaBancaria= $cuentasContri !=null ? $cuentasContri->id_cuenta_contribuyente:'';
+                $numeroCuentaBancaria= $cuentasContri !=null ? $cuentasContri->nro_cuenta:'';
+                $numeroCuentaInterbancariaBancaria= $cuentasContri !=null ? $cuentasContri->nro_cuenta_interbancaria:'';
+                $simboloMonedaCuentaBancaria= $cuentasContri !=null ? $cuentasContri->moneda->simbolo:'';
+                $prove = Proveedor::where('id_contribuyente',$contri->first()->id_contribuyente)->get();
+                if($prove){
+                    $idProveedor = $prove->first()->id_proveedor;
+                }
+
+            } 
+        }
+
+        return [
+            'id_proveedor'=>$idProveedor,
+            'id_contribuyente'=>$idContribuyente,
+            'razon_social'=>$razonSocial,
+            'tipo_documento'=>$tipoDocumento,
+            'numero_documento'=>$numeroDocumento,
+            'direccion_fiscal'=>$DireccionFiscal,
+            'id_cuenta_bancaria'=>$idCuentaBancaria,
+            'numero_cuenta_bancaria'=>$numeroCuentaBancaria,
+            'numero_cuenta_interbancaria'=>$numeroCuentaInterbancariaBancaria,
+            'simbolo_moneda_cuenta_bancaria'=>$simboloMonedaCuentaBancaria
+        ];
+    }
 }

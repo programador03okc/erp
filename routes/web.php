@@ -1090,7 +1090,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'kardex-series.', 'prefix' => 'kardex-series'], function () {
 
 				Route::get('index', [KardexSerieController::class, 'view_kardex_series'])->name('index');
-				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-erie-productos');
+				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-serie-productos');
 				Route::get('listar_kardex_serie/{serie}/{id_prod}', [KardexSerieController::class, 'listar_kardex_serie'])->name('listar-kardex-serie');
 				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto'])->name('datos-producto');
 				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');

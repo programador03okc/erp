@@ -183,6 +183,8 @@ class KardexView {
             $(e.currentTarget).find('[type="submit"]').html('<i class="fa fa-spinner fa-spin"></i> Cargando...')
             $(e.currentTarget).find('[type="submit"]').attr('disabled','true')
             model.cargaInicialKardex(data).then((respuesta) => {
+                console.log(respuesta);
+                Util.notify(respuesta.tipo, respuesta.mensaje);
                 $(e.currentTarget).find('[type="submit"]').find('i').remove();
                 $(e.currentTarget).find('[type="submit"]').html('<i class="fa fa-save"></i> Importar')
                 $(e.currentTarget).find('[type="submit"]').removeAttr('disabled');
@@ -194,7 +196,6 @@ class KardexView {
                 $("#modal-carga-inicial").modal("hide");
             }).fail((respuesta) => {
                 // return respuesta;
-            }).always(() => {
             });
         });
 

@@ -10,6 +10,7 @@ use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use App\Models\softlink\Producto;
 use App\Models\softlink\Serie;
+use App\Models\softlink\TipoCambio;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +59,35 @@ class softlink extends Command
                 //         MigrateMovimientosSoftlinkController::obtenerMovimientosDeSoftlink();
                 //     break;
 
+            case 'migrar_tipo_cambio':
+                $data  = DB::connection('soft')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
+                $cantidadMigrados = 0;
+                $bar = $this->output->createProgressBar(count($data));
+                $bar->start();
+                foreach ($data as $value) {
+                    if($value->dfecha != '0000-00-00'){
+                        $tipoCambio = new TipoCambio();
+                        $tipoCambio->dfecha =$value->dfecha;
+                        $tipoCambio->cambio =$value->cambio;
+                        $tipoCambio->cambio2 =$value->cambio2;
+                        $tipoCambio->cambio3 =$value->cambio3;
+                        $tipoCambio->save();
+                        $cantidadMigrados++;
+                    }
+
+                    DB::connection('soft')
+                    ->table('tcambio')
+                    ->where('dfecha', $value->dfecha)
+                    ->update(
+                        ['flg_migracion' => 1]
+                    );
+
+                  $bar->advance();
+                }
+                $bar->finish();
+                $this->info("\nSe migró $cantidadMigrados registros de tipo de cambio de softlink a la tabla local kardex.tcambio");
+
+                break;
             case 'migrar_cabecera_movimientos':
 
                 $data  = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();

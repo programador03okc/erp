@@ -1822,6 +1822,7 @@ class OrdenController extends Controller
                 $head = [
                     'id_orden_compra' => $data->id_orden_compra,
                     'logo_empresa' => $data->logo_empresa,
+                    'id_empresa' => $data->id_empresa,
                     'codigo' => $data->codigo,
                     'fecha_orden' => $data->fecha_orden,
                     'id_tp_documento' => $data->id_tp_documento,
@@ -2003,7 +2004,6 @@ class OrdenController extends Controller
         $ordenArray = $this->get_orden_por_requerimiento($id_orden_compra);
         // return dd($ordenArray);
         $sizeOrdenHeader = count($ordenArray['head']);
-
         if ($sizeOrdenHeader == 0) {
             $html = 'Error en documento';
             return $html;
@@ -2017,6 +2017,30 @@ class OrdenController extends Controller
         }
         $EstadoSiOrdenAnulada = '<div style="position:absolute;" class="right">' . ((isset($ordenArray['head']['estado']) && $ordenArray['head']['estado'] == 7) ? '<h1 style=" color:red; ">ORDEN ANULADA </h2>' : '') . '</div>';
         $sustentoSiOrdenAnulada =  ((isset($ordenArray['head']['estado']) && $ordenArray['head']['estado'] == 7) ? '<div class="right" style="position:relative; color:red; font-size:1.5em;">Sustento de anulación: ' . ((isset($ordenArray['head']['sustento_anulacion']) && strlen($ordenArray['head']['sustento_anulacion']) > 0) ? $ordenArray['head']['sustento_anulacion'] : '(Sin sustento)') . ' </div>' : '');
+
+        $colorBrand='';
+        switch ($ordenArray['head']['id_empresa']) {
+            case '1': // OKC
+                $colorBrand='#cc352a';
+
+                break;
+            case '2': // PTC
+                $colorBrand='#006781';
+                break;
+            case '3':// SVS
+                $colorBrand='#2da7e2';
+                break;
+            case '5': // RBDB
+                $colorBrand='#010101';
+                break;
+            case '6': // PTEC
+                $colorBrand='#d41e1e';
+                break;
+            default:
+                $colorBrand='#000';
+                break;
+        }
+
         $html = '
         <html>
             <head>
@@ -2039,7 +2063,6 @@ class OrdenController extends Controller
                 }
                 .tablePDF thead{
                     padding:4px;
-                    background-color:#d04f46;
                     color:white;
                 }
                 .bgColorRed{
@@ -2081,9 +2104,6 @@ class OrdenController extends Controller
                 .top{
                     vertical-align:top;
                 }
-                hr{
-                    color:#cc352a;
-                }
                 .tablePDF .noBorder{
                     border:none;
                     border-left:none;
@@ -2114,7 +2134,7 @@ class OrdenController extends Controller
         $html .= '
         </div>
                 <br>
-                <hr>
+                <hr style="color:'.$colorBrand.'">
                 <h1><center>' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'PURCHASE ORDER - IMPORT' : $ordenArray['head']['tipo_documento']) . '<br>' . $ordenArray['head']['codigo'] . '</center></h1>
                 <table border="0" >
                     <tr>
@@ -2159,7 +2179,7 @@ class OrdenController extends Controller
         $html .= '<br>
 
                 <table class="tablePDF" style="border:0; font-size:8px;">
-                <thead>
+                <thead style=" background-color:'.$colorBrand.';">
                     <tr class="subtitle">
                         <td style="width:5px; text-align:center;">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Product code' : 'Código') . '</td>
                         <td style="width:5px; text-align:center;">Part number</td>

@@ -766,8 +766,11 @@ class RegistroPagoController extends Controller
                             $pagoCuota = PagoCuota::where('id_orden',$orden->id_orden_compra)->first();
                             $pagoCuotaDetalle =PagoCuotaDetalle::where('id_pago_cuota',$pagoCuota->id_pago_cuota)->get();
                             foreach ($pagoCuotaDetalle as $value) {
-                                if($value->id_estado ==6){
+                                if($value->id_estado ==6 && $request->idPagoCuotaDetalle==$value->id_pago_cuota_detalle){
                                     $tieneUnPagoEfectuado=true;
+                                }else{
+                                    $tieneUnPagoEfectuado=false;
+
                                 }
                             }
                         }

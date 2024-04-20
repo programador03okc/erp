@@ -13,24 +13,24 @@ class ProductoDetalle extends Model
     protected $table = 'kardex.producto_detalle';
     protected $fillable = [
         'serie', 'fecha', 'precio', 'tipo_moneda','precio_unitario', 'producto_id', 'estado','disponible','id_ingreso',
-        'id_salida', 'fecha_ing', 'fecha_sal','autogenerado'
+        'id_salida', 'fecha_ing', 'fecha_sal','autogenerado','tipo_cambio'
     ];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
     static function verificarSerie($serie, $generarSerie) {
         $autogenerado = false ;
-        if (($serie == '' || $serie == null || $serie == '-') && ($generarSerie == true)) {
-            // ProductoDetalle::where('')
-            // ProductoDetalle::where('producto_id', $producto_id)
-            // ->update(['estado' => 7]);
-            // ProductoDetalle::where('producto_id', $producto_id)->delete();
-            $data = ProductoDetalle::count();
-            $serie = 'SN-'. ($data+1);
-            $autogenerado = true;
-            return ["serie" => $serie, "autogenerado" => $autogenerado];
+        if ((trim($serie) == '' || $serie == null || trim($serie) == '-')) {
+            if ($generarSerie == true) {
+                $data = ProductoDetalle::count();
+                $serie = 'SN-'. ($data+1);
+                $autogenerado = true;
+                return ["serie" => $serie, "autogenerado" => $autogenerado];
+            } else {
+                return ["serie" => null, "autogenerado" => $autogenerado];
+            }
         } else {
-            $serie = null;
+            $serie = $serie;
+            return ["serie" => $serie, "autogenerado"=> $autogenerado];
         }
-        return ["serie" => $serie, "autogenerado"=> $autogenerado];
     }
 }

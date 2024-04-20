@@ -8,6 +8,7 @@ use App\Models\kardex\Producto;
 use App\Models\kardex\ProductoDetalle;
 use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
+use App\Models\Tesoreria\TipoCambio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -96,42 +97,43 @@ class ProductosController extends Controller
                             $producto->save();
                         }
                         
-                        $serie_codigo = ProductoDetalle::verificarSerie($value[1], $request->generar_serie);
-                        $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
-
-                            $monto = strrpos ($value[18], "$");
-                            $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
-                            $precio = str_replace("$", "0", $value[18]);
+                        $serieInicial = (string) $value[1];
+                        $serie_codigo = ProductoDetalle::verificarSerie($serieInicial, $request->generar_serie);
+                        if ($serie_codigo['serie'] != null) {
+                            $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
     
-                            $serie->serie           = $serie_codigo['serie'];
-                            $serie->precio          = (float) $value[13];
-                            $serie->tipo_moneda     = $tipo_moneda;
-                            $serie->precio_unitario = (float) $precio;
-                            $serie->producto_id     = $producto->id;
-                            $serie->fecha           = $this->formatoFechaExcel($value[14]);
-                            $serie->estado          = 1;
-                            $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
-                            $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
-                        $serie->save();
-    
-                        $index = array_search($producto->id, array_column($array_series, 'producto'));
-                        // return [$index];
-                        if($serie_codigo['autogenerado'] == true){
-                            if($index!==false){
-                                // return [$index,'ingreso'];
-                            //     // return [$array_series[$index]['series'], $array_series];
-                                array_push($array_series[$index]['series'],$serie->id);
-                            }else{
-                                // return [$index,'ingreso'];
-                                array_push($array_series, array(
-                                    "producto"=>$producto->id,
-                                    "series"=>[$serie->id],
-                                ));
+                                $monto = strrpos ($value[18], "$");
+                                $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
+                                $precio = str_replace("$", "0", $value[18]);
+        
+                                $serie->serie           = $serie_codigo['serie'];
+                                $serie->precio          = (float) $value[13];
+                                $serie->tipo_moneda     = $tipo_moneda;
+                                $serie->precio_unitario = (float) $precio;
+                                $serie->producto_id     = $producto->id;
+                                $serie->fecha           = $this->formatoFechaExcel($value[14]);
+                                $serie->estado          = 1;
+                                $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
+                                $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
+                                $serie->tipo_cambio     = $this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
+                            $serie->save();
+        
+                            $index = array_search($producto->id, array_column($array_series, 'producto'));
+                            // return [$index];
+                            if($serie_codigo['autogenerado'] == true){
+                                if($index!==false){
+                                    // return [$index,'ingreso'];
+                                //     // return [$array_series[$index]['series'], $array_series];
+                                    array_push($array_series[$index]['series'],$serie->id);
+                                }else{
+                                    // return [$index,'ingreso'];
+                                    array_push($array_series, array(
+                                        "producto"=>$producto->id,
+                                        "series"=>[$serie->id],
+                                    ));
+                                }
                             }
                         }
-    
-    
-    
                     }
                 }
                 // return $array_series;
@@ -233,4 +235,14 @@ class ProductosController extends Controller
     public function paginarMovimiento(){
         return $movimietos = Movimiento::whereIn('cod_docu',['GR','G1','G2','G4','G5','G6'])->paginate(90);
     }
+
+
+    public function getTipoCambioVenta($fecha)
+    {
+        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
+            ->orderBy('fecha', 'DESC')->first();
+
+        return ($tc !== null ? $tc->venta : 0);
+    }
+
 }

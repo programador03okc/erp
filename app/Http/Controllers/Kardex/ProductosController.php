@@ -8,6 +8,7 @@ use App\Models\kardex\Producto;
 use App\Models\kardex\ProductoDetalle;
 use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
+use App\Models\softlink\TipoCambio as SoftlinkTipoCambio;
 use App\Models\Tesoreria\TipoCambio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -101,10 +102,11 @@ class ProductosController extends Controller
                         $serie_codigo = ProductoDetalle::verificarSerie($serieInicial, $request->generar_serie);
                         if ($serie_codigo['serie'] != null) {
                             $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
-    
+                            
                                 $monto = strrpos ($value[18], "$");
                                 $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
                                 $precio = str_replace("$", "0", $value[18]);
+                                $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
         
                                 $serie->serie           = $serie_codigo['serie'];
                                 $serie->precio          = (float) $value[13];
@@ -115,7 +117,7 @@ class ProductosController extends Controller
                                 $serie->estado          = 1;
                                 $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
                                 $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
-                                $serie->tipo_cambio     = $this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
+                                $serie->tipo_cambio     = $tipoCambio;
                             $serie->save();
         
                             $index = array_search($producto->id, array_column($array_series, 'producto'));
@@ -237,12 +239,13 @@ class ProductosController extends Controller
     }
 
 
-    public function getTipoCambioVenta($fecha)
+    public function getTipoCambio($fecha)
     {
-        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
-            ->orderBy('fecha', 'DESC')->first();
+        $tc = SoftlinkTipoCambio::where([['dfecha', '!=', null], ['cambio3', '<=', $fecha]])
+            ->orderBy('dfecha', 'DESC')->first();
 
-        return ($tc !== null ? $tc->venta : 0);
+        return ($tc !== null ? $tc->cambio3 : 0);
     }
+    
 
 }

@@ -62,6 +62,15 @@ class KardexView {
                 {data: 'codigo_agil', className: 'text-center'},
                 {data: 'codigo_softlink'},
                 {data: 'part_number'},
+                {data: 'tipo_moneda',className: 'text-center', 'render': function (data, type, row) {
+                    let moneda='';
+                    if(row['tipo_moneda'] ==1){
+                        moneda='Soles';
+                    }else if(row['tipo_moneda']==2){
+                        moneda='Dolares';
+                    }
+                    return moneda;
+                }},
                 {data: 'almacen', className: 'text-center'},
                 {data: 'empresa'},
                 {data: 'estado_kardex', className: 'text-center'},
@@ -258,6 +267,8 @@ class KardexView {
                     {data: 'fecha'},
                     {data: 'precio'},
                     {data: 'precio_unitario', className: 'text-center'},
+                    {data: 'tipo_cambio', className: 'text-center'},
+                    {data: 'precio_unitario_al_tipo_cambio', className: 'text-center'},
                     {data: 'disponible_estado', className: 'text-center'},
 
                 ],

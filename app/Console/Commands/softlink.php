@@ -65,7 +65,7 @@ class softlink extends Command
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
                 foreach ($data as $value) {
-                    if($value->dfecha != '0000-00-00'){
+                    if($value->dfecha != '0000-00-00' && $value->dfecha !=null){
                         $tipoCambio = new TipoCambio();
                         $tipoCambio->dfecha =$value->dfecha;
                         $tipoCambio->cambio =$value->cambio;

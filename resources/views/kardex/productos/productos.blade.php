@@ -38,6 +38,7 @@
                                         <th>Cod.Agil</th>
                                         <th>Cod.Softlink</th>
                                         <th>P. Number</th>
+                                        <th>Moneda</th>
                                         <th>Almacen</th>
                                         <th>Empresa</th>
                                         <th>Estado Kardex</th>
@@ -119,6 +120,8 @@
                                         <th>Fecha</th>
                                         <th>Precio</th>
                                         <th>P. Unitario</th>
+                                        <th>Tipo cambio</th>
+                                        <th>P. Unitario <small>(T.C)</small></th>
                                         <th>Disponibilidad</th>
                                     </tr>
                                 </thead>

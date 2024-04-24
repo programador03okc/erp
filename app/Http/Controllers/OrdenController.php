@@ -5517,7 +5517,7 @@ class OrdenController extends Controller
 
         foreach ($det_ord_compra as $key => $d) {
             $data[] = [
-                'codigo_oportunidad'     => ($d['codigo_oportunidad'] ? $d['codigo_oportunidad'] : '-'),
+                'codigo_oportunidad'     => ($d['codigo_oportunidad'] !=null ? $d['codigo_oportunidad'] : ( $d['codigo_oportunidad_old']!=null? $d['codigo_oportunidad_old']:'-')),
                 'nro_orden_mgc'         => ($d['nro_orden_mgc'] ? $d['nro_orden_mgc'] : '-'),
                 'razon_social_cliente'      => ($d['razon_social_cliente'] ? $d['razon_social_cliente'] : '-'),
                 'fecha_aprobacion_cdp'      => ($d['fecha_aprobacion_cdp'] ? $d['fecha_aprobacion_cdp'] : '-'),
@@ -5529,6 +5529,7 @@ class OrdenController extends Controller
                 'condicion_pago'            => ($d['condicion_pago'] ? $d['condicion_pago'] : '-'),
                 'fecha_emision'             => ($d['fecha_emision'] ? $d['fecha_emision'] : '-'),
                 'fecha_ingreso_almacen'     => ($d['fecha_ingreso_almacen'] ? $d['fecha_ingreso_almacen'] : '-'),
+                'dias_restantes'            => ($d['dias_restantes'] ? $d['dias_restantes'] : '-'),
                 'fecha_llegada'             => ($d['fecha_llegada'] ? $d['fecha_llegada'] : '-'),
                 'razon_social_proveedor'    => ($d['razon_social_proveedor'] ? $d['razon_social_proveedor'] : '-'),
                 'marca'                     => ($d['descripcion_subcategoria'] ? $d['descripcion_subcategoria'] : '-'),
@@ -5558,13 +5559,14 @@ class OrdenController extends Controller
         $activeWorksheet->setCellValue('I1', 'Monto Orden (Inc IGV)');
         $activeWorksheet->setCellValue('J1', 'Condición de pago');
         $activeWorksheet->setCellValue('K1', 'Fecha de orden');
-        $activeWorksheet->setCellValue('L1', 'ETA'); // fecha ingreso almacen
-        $activeWorksheet->setCellValue('M1', 'Vencimiento'); //plazo entrega
-        $activeWorksheet->setCellValue('N1', 'Proveedor');
-        $activeWorksheet->setCellValue('O1', 'Marca');
-        $activeWorksheet->setCellValue('P1', 'Descripción');
-        $activeWorksheet->setCellValue('Q1', 'Part number');
-        $activeWorksheet->setCellValue('R1', 'Cantidad');
+        $activeWorksheet->setCellValue('L1', 'Fecha ingreso Almacén'); // fecha ingreso almacen
+        $activeWorksheet->setCellValue('M1', 'ETA'); // fecha ingreso almacen
+        $activeWorksheet->setCellValue('N1', 'Vencimiento'); //plazo entrega
+        $activeWorksheet->setCellValue('O1', 'Proveedor');
+        $activeWorksheet->setCellValue('P1', 'Marca');
+        $activeWorksheet->setCellValue('Q1', 'Descripción');
+        $activeWorksheet->setCellValue('R1', 'Part number');
+        $activeWorksheet->setCellValue('S1', 'Cantidad');
 
         foreach ($data as $key => $item) {
             $celda = $key + 2;
@@ -5581,12 +5583,13 @@ class OrdenController extends Controller
             $activeWorksheet->setCellValue('J' . $celda, $item['condicion_pago']);
             $activeWorksheet->setCellValue('K' . $celda, $item['fecha_emision']);
             $activeWorksheet->setCellValue('L' . $celda, $item['fecha_ingreso_almacen']);
-            $activeWorksheet->setCellValue('M' . $celda, $item['fecha_llegada']);
-            $activeWorksheet->setCellValue('N' . $celda, $item['razon_social_proveedor']);
-            $activeWorksheet->setCellValue('O' . $celda, $item['marca']);
-            $activeWorksheet->setCellValue('P' . $celda, $item['descripcion_producto']);
-            $activeWorksheet->setCellValue('Q' . $celda, $item['part_number_producto']);
-            $activeWorksheet->setCellValue('R' . $celda, $item['cantidad']);
+            $activeWorksheet->setCellValue('M' . $celda, $item['dias_restantes']);
+            $activeWorksheet->setCellValue('N' . $celda, $item['fecha_llegada']);
+            $activeWorksheet->setCellValue('O' . $celda, $item['razon_social_proveedor']);
+            $activeWorksheet->setCellValue('P' . $celda, $item['marca']);
+            $activeWorksheet->setCellValue('Q' . $celda, $item['descripcion_producto']);
+            $activeWorksheet->setCellValue('R' . $celda, $item['part_number_producto']);
+            $activeWorksheet->setCellValue('S' . $celda, $item['cantidad']);
         }
 
 

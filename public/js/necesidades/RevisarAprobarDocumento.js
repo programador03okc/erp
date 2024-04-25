@@ -720,6 +720,11 @@ class RevisarAprobarDocumentoView {
         this.limpiarTabla('listaDetalleRequerimientoPago');
         this.limpiarTabla('listaHistorialRevision');
 
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+                 element.textContent = "";
+        });
+
     }
     obtenerRequerimientoPago(id) {
         return new Promise(function (resolve, reject) {

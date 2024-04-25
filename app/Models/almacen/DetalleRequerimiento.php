@@ -3,10 +3,7 @@
 namespace App\Models\Almacen;
 
 use App\Models\Comercial\CuadroCosto\CcAmFila;
-use App\Models\Finanzas\CentroCostosView;
-use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Logistica\OrdenCompraDetalle;
-use App\Models\Presupuestos\CentroCosto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +13,7 @@ class DetalleRequerimiento extends Model
     protected $primaryKey = 'id_detalle_requerimiento';
     protected $fillable = ['id_requerimiento','id_item','precio_referencial','cantidad','descripcion_adicional','unidad_medida','estado','fecha_registro','lugar_entrega','id_tipo_item','stock_comprometido','id_unidad_medida','id_producto','id_almacen_reserva','partida','observacion','id_cc_am_filas','id_cc_venta_filas','id_moneda','tiene_transformacion','centro_costo_id','proveedor_id','precio_unitario','subtotal','motivo','part_number','descripcion','entrega_cliente','id_occ_det_softlink','cantidad_solicitada_original','razon_ajuste_necesidad','id_partida_pi'];
     public $timestamps = false;
-    protected $appends = ['codigo_requerimiento', 'ordenes_compra', 'facturas', 'proveedor_seleccionado_id','proveedor_seleccionado','movimiento_ingresos_almacen','movimiento_salidas_almacen'];
+    protected $appends = ['codigo_requerimiento', 'ordenes_compra', 'facturas', 'proveedor_seleccionado_id','proveedor_seleccionado','movimiento_ingresos_almacen','movimiento_salidas_almacen','unidad_medida'];
 
     public function getPartNumberAttribute()
     {
@@ -28,6 +25,16 @@ class DetalleRequerimiento extends Model
         return $codigo ?? '';
     }
 
+
+    public function getUnidadMedidaAttribute()
+    {
+
+        $und = UnidadMedida::join('almacen.alm_det_req', 'alm_und_medida.id_unidad_medida', 'alm_det_req.id_unidad_medida')
+            ->where([['alm_und_medida.id_unidad_medida', $this->attributes['id_unidad_medida']]])
+            ->select(['alm_und_medida.descripcion', 'alm_und_medida.abreviatura'])->first();
+ 
+        return $und->abreviatura;
+    }
 
     public function getOrdenesCompraAttribute()
     {
@@ -103,6 +110,7 @@ class DetalleRequerimiento extends Model
 
         return $facturas;
     }
+
     public function getProveedorSeleccionadoAttribute()
     {
 

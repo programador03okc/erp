@@ -620,14 +620,22 @@ class RequerimientoView {
         }
 
         let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
-        allMesPpto.forEach(element => {
-            if(data && data.fecha_registro !=null){
-                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
-            }else{
-                element.textContent =  moment().format('MMMM');
-
-            }
-        });
+        if(data.mes_afectacion!=null){
+            allMesPpto.forEach(element => {
+                element.textContent = moment(data.mes_afectacion, 'MM').format('MMMM');
+            });
+    
+        }else{
+            allMesPpto.forEach(element => {
+                if(data && data.fecha_registro !=null){
+                    element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+                }else{
+                    element.textContent =  moment().format('MMMM');
+    
+                }
+            });
+    
+        }
 
         // document.querySelector("input[name='nombre_contacto']").value =data.
         // document.querySelector("input[name='cargo_contacto']").value =data.
@@ -3025,6 +3033,22 @@ class RequerimientoView {
         disabledControl(document.getElementsByName("btn-imprimir-requerimento-pdf"), true);
         // this.actualizarEstadoBotonAdjuntarNuevoCabeceraRequerimiento();
         this.actualizarEstadoBotonAdjuntarNuevoDetalleRequerimiento();
+
+
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        let mesAfectacion = document.querySelector("select[name='mes_afectacion']");
+
+        if(mesAfectacion){
+            allMesPpto.forEach(element => {
+                element.textContent = moment(mesAfectacion.value, 'MM').format('MMMM');
+            });
+    
+        }else{
+            allMesPpto.forEach(element => {
+                    element.textContent =  moment().format('MMMM');
+            });
+         }
+
     }
 
     cancelarRequerimiento() {

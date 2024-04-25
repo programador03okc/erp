@@ -16,6 +16,7 @@ class OrdenView {
     constructor(ordenCtrl) {
         this.ordenCtrl = ordenCtrl;
         this.ordenArray = [];
+        this.idOrdenSeleccionada = '';
     }
 
     getTipoCambioCompra() {
@@ -67,8 +68,14 @@ class OrdenView {
             sessionStorage.removeItem('action');
         }
 
-        $('#form-orden').on("click", "button.crearNuevaOrden", (e) => {
+        $('#form-orden').on("click", "button.handleClickCrearNuevaOrden", (e) => {
             this.crearNuevaOrden();
+        });
+        $('#form-orden').on("click", "button.handleClickGuardarOrden", (e) => {
+            this.guardarOrdenes();
+        });
+        $('#form-orden').on("click", "button.handleClickMigrarOrdenASoftlink", (e) => {
+            this.migrarOrdenes();
         });
         $('#form-orden').on("change", "select.onChangeSeleccionarProveedor", (e) => {
             this.llenarDatosCabeceraSeccionProveedor(e.currentTarget.value)
@@ -95,55 +102,154 @@ class OrdenView {
         $('#modal-lista-requerimientos-pendientes').on("click", "button.handleClickSeleccionarRequerimientoPendiente", (e) => {
             this.seleccionarRequerimientoPendiente(e.currentTarget);
         });
+
+        $('#contenedor_orden').on("click", "button.handleClickSeleccionarOrden", (e) => {
+            this.seleccionarOrden(e.currentTarget.dataset.id);
+        });
+        $('#contenedor_orden').on("click", "button.handleClickImprimirOrden", (e) => {
+            this.imprimirOrden(e.currentTarget.dataset.id);
+        });
+        $('#contenedor_orden').on("click", "button.handleClickEditarOrden", (e) => {
+            this.editarOrden(e.currentTarget.dataset.id);
+        });
+        $('#contenedor_orden').on("click", "button.handleClickAnularOrden", (e) => {
+            this.anularOrden(e.currentTarget.dataset.id);
+        });
+        $('#contenedor_orden').on("click", "button.handleClickAbrirCatalogoProductos", () => {
+            this.abrirCatalogoProductos();
+        });
+        $('#listaCatalogoProductos tbody').on("click", "button.handleClickSelectProducto", (e) => {
+            this.selectProducto(e.currentTarget);
+        });
+        $('#contenedor_orden').on("click", "button.handleClickAgregarServicio", () => {
+            this.agregarServicio();
+        });
+    }
+
+
+    seleccionarOrden(id) {
+        let cardOrden = document.querySelector("ul[id='contenedor_lista_ordenes']").children;
+        let cardOrdenArray = Array.from(cardOrden);
+        cardOrdenArray.forEach(element => {
+            element.querySelector("div[class~='panel']").classList.replace("panel-info", "panel-default");
+        });
+        document.querySelector("li[id='" + id + "']").querySelector("div[class~='panel']").classList.replace("panel-default", "panel-info");
+        (this.ordenArray).forEach(element => {
+            if (element.id == id) {
+                this.construirPanelEncabezadoOrden(element);
+                this.construirPanelDetalleOrden(element.detalle);
+            }
+        });
+
+
+    }
+
+    imprimirOrden(id) {
+
+    }
+
+    editarOrden(id) {
+
+    }
+
+    anularOrden(id) {
+
+        if ((this.ordenArray).length > 0) {
+
+            this.ordenArray.forEach(element => {
+                if (element.id == id) {
+                    document.querySelector("li[id='" + id + "']").remove();
+                }
+                const filtrados = this.ordenArray.filter(item => item.id != id)
+                this.ordenArray = filtrados;
+
+                Lobibox.notify('success', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: `No se eliminó la orden seleccionada`
+                });
+
+            });
+        }
+        // console.log(this.ordenArray);
+
+    }
+
+    migrarOrden(id) {
+        if (/[a-zA-Z]/g.test(id) == true) {
+            Swal.fire(
+                '',
+                'Debe guardar la orden antes de migrar',
+                'warning'
+            );
+        }
     }
 
 
 
-    construirCardOrden() {
-        const cardOrden = `
-            <li>
+    construirCardOrden(data = null) {
+
+        //   console.log(data);
+        if (data != null) {
+
+            let montototal = 0;
+            (data.detalle).forEach(item => {
+                montototal += (parseFloat(item.cantidad) * parseFloat(item.precio_unitario))
+            });
+
+            return `
+            <li id="${data.id}">
                 <div class="panel panel-default">
                     <div class="panel-heading text-center" style="display:flex; flex-direction:row; gap:0.5rem;">
-                        <h5>Cód. orden: <span class="label label-default" title="Código de orden"><span name="tituloDocumentoCodigoOrden[]">OC-240240</span></span></h5>
-                        <h5>Cód. Softlink: <span class="label label-default" title="Código de Softlink"><span name="tituloDocumentoCodigoSoftlink[]">00100189</span></span></h5>
+                        <h5>Cód. orden: <span class="label label-default" title="Código de orden"><span name="tituloDocumentoCodigoOrden[]">${data.codigo_orden == '' ? '(Sin generar)' : data.codigo_orden}</span></span></h5>
+                        <h5>Cód. Softlink: <span class="label label-default" title="Código de Softlink"><span name="tituloDocumentoCodigoSoftlink[]">${data.codigo_softlink == '' ? '(Sin generar)' : data.codigo_softlink}</span></span></h5>
                     </div>
                     <div class="panel-body">
                         <ul class="list-inline">
                             <li>
                                 <dl>
                                     <dt>Empresa:</dt>
-                                    <dd>OK COMPUTER EIRL</dd>
+                                    <dd>${data.descripcion_empresa}</dd>
                                     <dt>Sede:</dt>
-                                    <dd>Lima</dd>
+                                    <dd>${data.descripcion_sede}</dd>
                                     <dt>Proveedor:</dt>
-                                    <dd>MAXIMA EIRL</dd>
+                                    <dd style="cursor:help;" title="${data.descripcion_tipo_documento_proveedor} ${data.nro_documento_proveedor}">${data.razon_social_proveedor}</dd>
                                 </dl>
                             </li>
                             <li>
                                 <dl>
                                     <dt>Fecha emsión:</dt>
-                                    <dd>##/##/####</dd>
+                                    <dd>${data.fecha_emision == '' ? '00/00/0000' : data.fecha_emision}</dd>
                                     <dt>Importe:</dt>
-                                    <dd>S/.1000.00</dd>
+                                    <dd>${data.simbolo_moneda} ${$.number(montototal, 2, ".", ",")}</dd>
                                     <dt>Cta Proveedor:</dt>
-                                    <dd>55234242-2432-10</dd>
+                                    <dd>${data.numero_cuenta_proveedor != '' && data.numero_cuenta_proveedor != null ? data.numero_cuenta_proveedor : (data.numero_cuenta_interbancaria_proveedor != '' && data.numero_cuenta_interbancaria_proveedor != null ? data.numero_cuenta_interbancaria_proveedor : '<small>(Sin cuenta)</small>')}</dd>
                             </li>
                             <li>
 
                             </li>
                         </ul>
                         <div class="text-left">
-                            <button type="button" class="btn btn-xs btn-success" id="btnSeleccionarOrden" title="Seleccionar"><i class="fas fa-check"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnImprimirOrden" title="Imprimir"><i class="fas fa-print"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnEditarOrden" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnAnularOrden" title="Anular"><i class="fas fa-trash"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnMigrarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
+                            <button type="button" class="btn btn-xs btn-default handleClickSeleccionarOrden" id="btnSeleccionarOrden" title="Seleccionar" data-id="${data.id}"><i class="fas fa-check"></i> Seleccionar</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickImprimirOrden" id="btnImprimirOrden" title="Imprimir" data-id="${data.id}"><i class="fas fa-print"></i> Imprimir</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickEditarOrden" id="btnEditarOrden" title="Editar" data-id="${data.id}"><i class="fas fa-edit"></i> Editar</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickAnularOrden" id="btnAnularOrden" title="Anular" data-id="${data.id}"><i class="fas fa-trash"></i> Anular</button>
                         </div>
                     </div>
                 </div>
             </li>
         `;
-        return cardOrden;
+
+        } else {
+            Swal.fire(
+                '',
+                'No hay data para mostrar',
+                'warning'
+            );
+        }
     }
 
     crearNuevaOrden() {
@@ -158,8 +264,6 @@ class OrdenView {
         }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) { // mostrar lista de requerimientos pendientes
-
-                // 
 
                 $('#modal-lista-requerimientos-pendientes').modal('show');
 
@@ -387,10 +491,10 @@ class OrdenView {
     }
 
 
-    llenarDatosCabeceraSeccionProveedor(idProveedor) {
+    llenarDatosCabeceraSeccionProveedor(idProveedor, idCuentaProveedor = null) {
         this.ordenCtrl.obtenerDataProveedor(idProveedor).then((res) => {
-            document.querySelector("p[name='direccion_proveedor[]']").textContent = res.contribuyente != null ? res.contribuyente.direccion_fiscal : '';
-            this.llenarDatosCabeceraCuentaBancariaProveedor(res.cuenta_contribuyente);
+            document.querySelector("p[name='direccion_proveedor']").textContent = res.contribuyente != null ? res.contribuyente.direccion_fiscal : '';
+            this.llenarDatosCabeceraCuentaBancariaProveedor(res.cuenta_contribuyente, idCuentaProveedor);
             this.llenarDatosCabeceraConcactoProveedor(res.contacto_contribuyente);
             // document.querySelector("select[name='contacto_proveedor']").textContent = '';
             // document.querySelector("p[name='telefono_contacto']").textContent = '';
@@ -401,7 +505,7 @@ class OrdenView {
     }
 
     llenarDatosCabeceraCuentaBancariaProveedor(data, idCuentaSelected = null) {
-        let selectElement = document.querySelector("select[name='cuenta_bancaria_proveedor[]']");
+        let selectElement = document.querySelector("select[name='id_cuenta_bancaria_proveedor']");
 
         if (selectElement.options.length > 0) {
             var i, L = selectElement.options.length - 1;
@@ -428,7 +532,7 @@ class OrdenView {
     }
 
     llenarDatosCabeceraConcactoProveedor(data) {
-        let selectElement = document.querySelector("select[name='id_contacto_proveedor[]']");
+        let selectElement = document.querySelector("select[name='id_contacto_proveedor']");
 
         if (selectElement.options.length > 0) {
             var i, L = selectElement.options.length - 1;
@@ -447,8 +551,8 @@ class OrdenView {
         });
 
         // cargar telefono de contacto seleccionado
-        if (document.querySelector("select[name='id_contacto_proveedor[]']").length > 0) {
-            document.querySelector("p[name='telefono_contacto[]']").textContent = selectElement.options[selectElement.selectedIndex].dataset.telefono;
+        if (document.querySelector("select[name='id_contacto_proveedor']").length > 0) {
+            document.querySelector("p[name='telefono_contacto']").textContent = selectElement.options[selectElement.selectedIndex].dataset.telefono;
         }
     }
 
@@ -635,9 +739,9 @@ class OrdenView {
     }
 
     llenarUbigeo(direccion, id_ubigeo, ubigeo_descripcion) {
-        document.querySelector("input[name='direccion_entrega[]']").value = direccion;
-        document.querySelector("select[name='id_ubigeo_destino[]']").value = id_ubigeo;
-        $("select[name='id_ubigeo_destino[]']").trigger("change");
+        document.querySelector("input[name='direccion_entrega']").value = direccion;
+        document.querySelector("select[name='id_ubigeo_destino']").value = id_ubigeo;
+        $("select[name='id_ubigeo_destino']").trigger("change");
     }
 
 
@@ -689,22 +793,22 @@ class OrdenView {
     seleccionarRequerimientoPendiente(obj) {
         const idRequerimiento = obj.dataset.idRequerimiento;
 
-        let continuar=true;
+        let continuar = true;
         this.ordenArray.forEach(arr => {
             (arr.requerimiento_vinculado_list).forEach(req => {
-                if(req.id_requerimiento==idRequerimiento){
-                    continuar=false;
+                if (req.id_requerimiento == idRequerimiento) {
+                    continuar = false;
                 }
             });
         });
 
-        if(continuar){
+        if (continuar) {
             $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("show", {
                 imageAutoResize: true,
                 progress: true,
                 imageColor: "#3c8dbc"
             });
-    
+
             let cantidadItemsTipoProductosPorAtender = 0;
             let cantidadItemsTipoServiciosPorAtender = 0;
             let detalleRequerimientoList = [];
@@ -716,7 +820,7 @@ class OrdenView {
                     $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("hide", true);
                     cabeceraRequerimiento = response.requerimiento;
                     DataFiltradaDetalleRequerimientoList = response.detalle_requerimiento_list;
-    
+
                     response.estado_item_list.forEach(element => {
                         if (element.id_tipo_item == 1 && element.tiene_atencion_total == false) {
                             cantidadItemsTipoProductosPorAtender++;
@@ -724,11 +828,11 @@ class OrdenView {
                         if (element.id_tipo_item == 2 && element.tiene_atencion_total == false) {
                             cantidadItemsTipoServiciosPorAtender++;
                         }
-    
+
                     });
                     // const cantidadItemTipoProducto = (parseInt(obj.dataset.cantidadItemTipoProducto) >0 ? parseInt(obj.dataset.cantidadItemTipoProducto): 0);
                     // const cantidadItemTipoServicio = (parseInt(obj.dataset.cantidadItemTipoServicio) >0 ? parseInt(obj.dataset.cantidadItemTipoServicio):0);
-    
+
                     if (cantidadItemsTipoProductosPorAtender > 0 && cantidadItemsTipoServiciosPorAtender > 0) {
                         Swal.fire({
                             title: "Se detectó item's tipo producto y servicio, Qué desea hacer?",
@@ -739,10 +843,10 @@ class OrdenView {
                             denyButtonText: `Seleccionar un tipo`
                         }).then((result) => {
                             if (result.isConfirmed) { //* cargar ambos tipos de item (productos mapeados y servicios)
-    
+
                                 this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_COMPRA');
                             } else if (result.isDenied) { //* dar opcion de elergir un tipo de item
-    
+
                                 Swal.fire({
                                     title: "Seleccione un tipo de item para cargar",
                                     width: 500,
@@ -758,7 +862,7 @@ class OrdenView {
                                             }
                                         });
                                         this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_COMPRA');
-    
+
                                     } else if (result.isDenied) { //* Seleccion de solo cargar servicios
                                         detalleRequerimientoList.forEach(element => {
                                             if (element.id_tipo_item == 2) {
@@ -768,12 +872,12 @@ class OrdenView {
                                         this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_SERVICIO');
                                     }
                                 });
-    
+
                             }
                         });
-    
+
                     } else {
-    
+
                         if (cantidadItemsTipoProductosPorAtender > 0) { //* cargar para tipo de item producto mapeados
                             detalleRequerimientoList.forEach(element => {
                                 if (element.id_tipo_item == 1 && element.id_producto != null) {
@@ -790,10 +894,10 @@ class OrdenView {
                             });
                             this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_SERVICIO');
                         }
-    
-    
+
+
                     }
-    
+
                 }
             }).catch((err) => {
                 $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("hide", true);
@@ -805,20 +909,28 @@ class OrdenView {
                 );
             });
 
-        }else{
+        } else {
             Swal.fire(
                 '',
                 'El requerimiento ya fue agregado',
                 'warning'
-            ); 
+            );
         }
 
     }
 
+    makeId() {
+        let ID = "";
+        let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (var i = 0; i < 12; i++) {
+            ID += characters.charAt(Math.floor(Math.random() * 36));
+        }
+        return ID;
+    }
 
     construirOrdenConRequerimiento(cabeceraRequerimiento, detalleRequerimiento, TipoDocumento) {
         let idTipoOrden = "";
-        let cabeceraRequerimientoObject={};
+        let cabeceraRequerimientoObject = {};
         switch (TipoDocumento) {
             case 'ORDEN_COMPRA': // administracion.adm_tp_docum.id_tp_documento = 2
                 idTipoOrden = 2;
@@ -839,117 +951,147 @@ class OrdenView {
                 break;
         }
 
-        cabeceraRequerimientoObject=[{
-            'id_requerimiento':cabeceraRequerimiento.id_requerimiento,
-            'codigo':cabeceraRequerimiento.codigo,
-            'id_periodo':cabeceraRequerimiento.id_periodo,
-            'descripcion_periodo':cabeceraRequerimiento.periodo.descripcion,
-            'id_moneda':cabeceraRequerimiento.id_moneda,
-            'simbolo_moneda':cabeceraRequerimiento.moneda.simbolo,
-            'tipo_cambio':cabeceraRequerimiento.tipo_cambio,
-            'id_empresa':cabeceraRequerimiento.id_empresa,
-            'descripcion_empresa':cabeceraRequerimiento.empresa.contribuyente.razon_social,
-            'id_sede':cabeceraRequerimiento.id_sede,
-            'descripcion_sede':cabeceraRequerimiento.sede.codigo,
-            'direccion_fiscal_empresa':cabeceraRequerimiento.empresa.contribuyente.direccion_fiscal,
-            'id_ubigeo_empresa':cabeceraRequerimiento.empresa.contribuyente.ubigeo,
-            'descripcion_ubigeo_empresa':cabeceraRequerimiento.empresa.contribuyente.ubigeo_completo,
-            'observacion':cabeceraRequerimiento.observacion
-        }];
+        cabeceraRequerimientoObject = {
+            'id_requerimiento': cabeceraRequerimiento.id_requerimiento,
+            'codigo': cabeceraRequerimiento.codigo,
+            'id_periodo': cabeceraRequerimiento.id_periodo,
+            'descripcion_periodo': cabeceraRequerimiento.periodo.descripcion,
+            'id_moneda': cabeceraRequerimiento.id_moneda,
+            'simbolo_moneda': cabeceraRequerimiento.moneda.simbolo,
+            'tipo_cambio': cabeceraRequerimiento.tipo_cambio > 0 ? cabeceraRequerimiento.tipo_cambio : cabeceraRequerimiento.tipo_cambio_venta,
+            'id_empresa': cabeceraRequerimiento.id_empresa,
+            'descripcion_empresa': cabeceraRequerimiento.empresa.contribuyente.razon_social,
+            'id_sede': cabeceraRequerimiento.id_sede,
+            'descripcion_sede': cabeceraRequerimiento.sede.codigo,
+            'direccion_fiscal_empresa': cabeceraRequerimiento.empresa.contribuyente.direccion_fiscal,
+            'id_ubigeo_empresa': cabeceraRequerimiento.empresa.contribuyente.ubigeo,
+            'descripcion_ubigeo_empresa': cabeceraRequerimiento.empresa.contribuyente.ubigeo_completo,
+            'observacion': cabeceraRequerimiento.observacion
+        };
 
-        let proveedorDetReq=[];
+        let proveedorDetReq = [];
+        // console.log(detalleRequerimiento);
         detalleRequerimiento.forEach(detReq => {
-            let registradoEnProveedorDetReq=0;
-            if(detReq.proveedor_seleccionado_id >0 || detReq.proveedor_seleccionado !=null){
-                proveedorDetReq.forEach((provDetReqValue,ProvDetReqIndex) => {
-                   if(provDetReqValue.proveedor_seleccionado_id ==detReq.proveedor_seleccionado_id || (provDetReqValue.proveedor_seleccionado !=null && provDetReqValue.proveedor_seleccionado ==detReq.proveedor_seleccionado)){
+            let registradoEnProveedorDetReq = 0;
+            if (detReq.proveedor_seleccionado_id > 0 || detReq.proveedor_seleccionado != null) {
+                proveedorDetReq.forEach((provDetReqValue, ProvDetReqIndex) => {
+                    if (provDetReqValue.proveedor_seleccionado_id == detReq.proveedor_seleccionado_id || (provDetReqValue.proveedor_seleccionado != null && provDetReqValue.proveedor_seleccionado == detReq.proveedor_seleccionado)) {
                         registradoEnProveedorDetReq++;
-                    } 
+                    }
                 });
-                if(registradoEnProveedorDetReq==0){
-                    
+                if (registradoEnProveedorDetReq == 0) {
+
                     proveedorDetReq.push(
                         {
-                            'detalle_requerimiento_id_list':[detReq.id_detalle_requerimiento],
-                            'proveedor_seleccionado_id':detReq.proveedor_seleccionado_id, //mgc
-                            'proveedor_seleccionado':detReq.proveedor_seleccionado, //mgc
-                            'proveedor_agile_seleccionado_direccion_fiscal':detReq.proveedor_agile_seleccionado_direccion_fiscal,
-                            'proveedor_agile_seleccionado_id_contribuyente':detReq.proveedor_agile_seleccionado_id_contribuyente,
-                            'proveedor_agile_seleccionado_id_proveedor':detReq.proveedor_agile_seleccionado_id_proveedor,
-                            'proveedor_agile_seleccionado_razon_social':detReq.proveedor_agile_seleccionado_razon_social,
-                            'proveedor_agile_seleccionado_tipo_documento':detReq.proveedor_agile_seleccionado_tipo_documento,
-                            'proveedor_agile_seleccionado_numero_documento':detReq.proveedor_agile_seleccionado_numero_documento,
-                            'proveedor_agile_seleccionado_id_cuenta_bancaria':detReq.proveedor_agile_seleccionado_id_cuenta_bancaria,
-                            'proveedor_agile_seleccionado_numero_cuenta_bancaria':detReq.proveedor_agile_seleccionado_numero_cuenta_bancaria,
-                            'proveedor_agile_seleccionado_numero_cuenta_interbancaria':detReq.proveedor_agile_seleccionado_numero_cuenta_interbancaria,
-                            'proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria':detReq.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria,
+                            'id': this.makeId(),
+                            'detalle_requerimiento_list': [detReq],
+                            'proveedor_seleccionado_id': detReq.proveedor_seleccionado_id, //mgc
+                            'proveedor_seleccionado': detReq.proveedor_seleccionado, //mgc
+                            'id_proveedor': detReq.proveedor != null ? detReq.proveedor.id_proveedor : '',
+                            'id_contribuyente': detReq.proveedor != null ? detReq.proveedor.id_contribuyente : '',
+                            'razon_social_proveedor': detReq.proveedor != null ? detReq.proveedor.razon_social : '',
+                            'id_tipo_documento_proveedor': detReq.proveedor != null ? detReq.proveedor.id_tipo_documento : '',
+                            'descripcion_tipo_documento_proveedor': detReq.proveedor != null ? detReq.proveedor.descripcion_tipo_documento : '',
+                            'nro_documento_proveedor': detReq.proveedor != null ? detReq.proveedor.nro_documento : '',
+                            'direccion_fiscal_proveedor': detReq.proveedor != null ? detReq.proveedor.direccion_fiscal : '',
+                            'id_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.id_cuenta_bancaria : '',
+                            'id_moneda_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.id_moneda_cuenta_bancaria : '',
+                            'simbolo_moneda_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.simbolo_moneda_cuenta_bancaria : '',
+                            'numero_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.numero_cuenta_bacnaria : '',
+                            'numero_cuenta_interbancaria_proveedor': detReq.proveedor != null ? detReq.proveedor.numero_cuenta_interbacnaria : '',
+                            'id_concato_proveedor': detReq.proveedor != null ? detReq.proveedor.id_contacto : '',
+                            'nombre_contacto_proveedor': detReq.proveedor != null ? detReq.proveedor.nombre_contacto : '',
+                            'telefono_contacto_proveedor': detReq.proveedor != null ? detReq.proveedor.telefono_contacto : '',
+                            'cargo_contacto_proveedor': detReq.proveedor != null ? detReq.proveedor.cargo_contacto : ''
                         }
                     );
-                }else{
-                    proveedorDetReq.forEach((provDetReqValue,ProvDetReqIndex) => {
-                       if(provDetReqValue.proveedor_seleccionado_id ==detReq.proveedor_seleccionado_id || provDetReqValue.proveedor_seleccionado == detReq.proveedor_seleccionado ){
-                            proveedorDetReq[ProvDetReqIndex]['detalle_requerimiento_id_list'].push(detReq.id_detalle_requerimiento);
+                } else {
+                    proveedorDetReq.forEach((provDetReqValue, ProvDetReqIndex) => {
+                        if (provDetReqValue.proveedor_seleccionado_id == detReq.proveedor_seleccionado_id || provDetReqValue.proveedor_seleccionado == detReq.proveedor_seleccionado) {
+                            proveedorDetReq[ProvDetReqIndex]['detalle_requerimiento_list'].push(detReq);
 
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado_id']==null && detReq.proveedor_seleccionado_id>0){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado_id'] =detReq.proveedor_seleccionado_id;
+                            if (proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado_id'] == null && detReq.proveedor_seleccionado_id > 0) {
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado_id'] = detReq.proveedor_seleccionado_id;
                             }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado']==null && detReq.proveedor_seleccionado !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado'] =detReq.proveedor_seleccionado;
+                            if (proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado'] == null && detReq.proveedor_seleccionado != null) {
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado'] = detReq.proveedor_seleccionado;
                             }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_direccion_fiscal']==null && detReq.proveedor_agile_seleccionado_direccion_fiscal !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_direccion_fiscal'] =detReq.proveedor_agile_seleccionado_direccion_fiscal;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_contribuyente']==null && detReq.proveedor_agile_seleccionado_id_contribuyente !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_contribuyente'] =detReq.proveedor_agile_seleccionado_id_contribuyente;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_proveedor']==null && detReq.proveedor_agile_seleccionado_id_proveedor !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_proveedor'] =detReq.proveedor_agile_seleccionado_id_proveedor;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_razon_social']==null && detReq.proveedor_agile_seleccionado_razon_social !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_razon_social'] =detReq.proveedor_agile_seleccionado_razon_social;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_tipo_documento']==null && detReq.proveedor_agile_seleccionado_tipo_documento !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_tipo_documento'] =detReq.proveedor_agile_seleccionado_tipo_documento;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_documento']==null && detReq.proveedor_agile_seleccionado_numero_documento !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_documento'] =detReq.proveedor_agile_seleccionado_numero_documento;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_id_cuenta_bancaria !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_id_cuenta_bancaria;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_numero_cuenta_bancaria !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_numero_cuenta_bancaria;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_interbancaria']==null && detReq.proveedor_agile_seleccionado_numero_cuenta_interbancaria !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_interbancaria'] =detReq.proveedor_agile_seleccionado_numero_cuenta_interbancaria;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_moneda_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_moneda_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria;
-                            }
-                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria !=null){
-                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria;
-                            }
-                       } 
+
+                        }
                     });
 
                 }
-            }else{
+            } else {
                 proveedorDetReq.push(
-                    {'detalle_requerimiento_id_list':[detReq.id_detalle_requerimiento],
-                    'proveedor_seleccionado_id':null,
-                    'proveedor_seleccionado':null
+                    {
+                        'id': this.makeId(),
+                        'detalle_requerimiento_list': [detReq],
+                        'proveedor_seleccionado_id': null,
+                        'proveedor_seleccionado': null,
+                        'id_proveedor': detReq.proveedor != null ? detReq.proveedor.id_proveedor : '',
+                        'id_contribuyente': detReq.proveedor != null ? detReq.proveedor.id_contribuyente : '',
+                        'razon_social_proveedor': detReq.proveedor != null ? detReq.proveedor.razon_social : '',
+                        'id_tipo_documento_proveedor': detReq.proveedor != null ? detReq.proveedor.id_tipo_documento : '',
+                        'descripcion_tipo_documento_proveedor': detReq.proveedor != null ? detReq.proveedor.descripcion_tipo_documento : '',
+                        'nro_documento_proveedor': detReq.proveedor != null ? detReq.proveedor.nro_documento : '',
+                        'direccion_fiscal_proveedor': detReq.proveedor != null ? detReq.proveedor.direccion_fiscal : '',
+                        'id_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.id_cuenta_bancaria : '',
+                        'id_moneda_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.id_moneda_cuenta_bancaria : '',
+                        'simbolo_moneda_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.simbolo_moneda_cuenta_bancaria : '',
+                        'numero_cuenta_proveedor': detReq.proveedor != null ? detReq.proveedor.numero_cuenta_bacnaria : '',
+                        'numero_cuenta_interbancaria_proveedor': detReq.proveedor != null ? detReq.proveedor.numero_cuenta_interbacnaria : '',
+                        'id_concato_proveedor': detReq.proveedor != null ? detReq.proveedor.id_contacto : '',
+                        'nombre_contacto_proveedor': detReq.proveedor != null ? detReq.proveedor.nombre_contacto : '',
+                        'telefono_contacto_proveedor': detReq.proveedor != null ? detReq.proveedor.telefono_contacto : '',
+                        'cargo_contacto_proveedor': detReq.proveedor != null ? detReq.proveedor.cargo_contacto : ''
                     });
-             }
+            }
         });
-        
-        console.log(proveedorDetReq);
-        
+
+        // console.log(proveedorDetReq);
+        // revisar si en this.ordenArray existe el proveedor y añadir en esa objeto de orden los item
+
+        let proveedorDetReqNuevaOrden = [];
+        let idProvDetReqAtendidosArray = [];
+        if ((this.ordenArray).length > 0) {
+            (proveedorDetReq).forEach(pdr => {
+                (this.ordenArray).forEach((oa, k) => {
+                    if ((oa.id_proveedor_mgc == pdr.proveedor_seleccionado_id && pdr.proveedor_seleccionado_id != null) || (oa.razon_social_proveedor_mgc == pdr.proveedor_seleccionado && pdr.proveedor_seleccionado != null)) { // incluir en orden
+                        pdr.detalle_requerimiento_list.forEach(drl => {
+                            this.ordenArray[k].detalle.push(drl)
+                        });
+                        idProvDetReqAtendidosArray.push(pdr.id); // lista de atendidos que deben ser compara con proveedorDetReq para determinar los que falta agregar como nueva orden
+                    }
+
+                });
+            });
+
+            // agregado a nueva orden 
+
+            (proveedorDetReq).forEach(pdr => {
+                if (!idProvDetReqAtendidosArray.includes(pdr.id)) {
+                    proveedorDetReqNuevaOrden.push(pdr);
+                }
+            });
+
+
+        } else {// si el this.ordenArray esta vacio, es el primero
+            (proveedorDetReq).forEach(pdr => {
+                proveedorDetReqNuevaOrden.push(pdr);
+            });
+        }
+
+
+
         // crear un array de objetos de ordenes ( el total por proveedor)
-        proveedorDetReq.forEach(provDetReqValue => {
-        
-           let cabeceraOrdenObject = {
+        // console.log(proveedorDetReqNuevaOrden);
+        proveedorDetReqNuevaOrden.forEach(provDetReqValue => {
+            let cabeceraOrdenObject = {
+                'id': 'ORDEN' + provDetReqValue.id,
+                'id_orden': '',
                 'id_tipo_orden': idTipoOrden,
                 'descripcion_tipo_orden': idTipoOrden,
+                'codigo_orden': '',
                 'id_moneda': cabeceraRequerimientoObject.id_moneda,
                 'simbolo_moneda': cabeceraRequerimientoObject.simbolo_moneda,
                 'tipo_cambio': cabeceraRequerimientoObject.tipo_cambio,
@@ -962,26 +1104,31 @@ class OrdenView {
                 'descripcion_empresa': cabeceraRequerimientoObject.descripcion_empresa,
                 'id_sede': cabeceraRequerimientoObject.id_sede,
                 'descripcion_sede': cabeceraRequerimientoObject.descripcion_sede,
-                'id_proveedor': provDetReqValue.proveedor_agile_seleccionado_id >0 ?provDetReqValue.proveedor_agile_seleccionado_id:'',
-                'ruc_proveedor': provDetReqValue.proveedor_agile_seleccionado_numero_documento !=null ?provDetReqValue.proveedor_agile_seleccionado_numero_documento:'',
-                'razon_social_proveedor': provDetReqValue.proveedor_agile_seleccionado_razon_social !=null ?provDetReqValue.proveedor_agile_seleccionado_razon_social:(provDetReqValue.proveedor_seleccionado=!null?provDetReqValue.proveedor_seleccionado:'') ,
-                'direccion_fiscal_proveedor': provDetReqValue.proveedor_agile_seleccionado_direccion_fiscal !=null?provDetReqValue.proveedor_agile_seleccionado_direccion_fiscal !=null:'',
-                'id_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_id_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_id_cuenta_bancaria !=null:'',
-                'numero_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_numero_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_numero_cuenta_bancaria !=null:'',
-                'simbolo_moneda_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria !=null:'',
-                'id_moneda_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria !=null:'',
-                'id_concato_proveedor': '',
-                'nombre_concato_proveedor': '',
-                'telefono_concato_proveedor': '',
+                'id_proveedor_mgc': provDetReqValue.proveedor_seleccionado_id > 0 ? provDetReqValue.proveedor_seleccionado_id : '',
+                'id_proveedor': '',
+                'razon_social_proveedor_mgc': provDetReqValue.proveedor_seleccionado != null ? provDetReqValue.proveedor_seleccionado : '',
+                'razon_social_proveedor': provDetReqValue.razon_social_proveedor,
+                'id_tipo_documento_proveedor': provDetReqValue.id_tipo_documento_proveedor,
+                'descripcion_tipo_documento_proveedor': provDetReqValue.descripcion_tipo_documento_proveedor,
+                'nro_documento_proveedor': provDetReqValue.nro_documento_proveedor,
+                'direccion_fiscal_proveedor': provDetReqValue.direccion_fiscal_proveedor,
+                'id_cuenta_proveedor': provDetReqValue.id_cuenta_proveedor,
+                'numero_cuenta_proveedor': provDetReqValue.numero_cuenta_proveedor,
+                'numero_cuenta_interbancaria_proveedor': provDetReqValue.numero_cuenta_interbancaria_proveedor,
+                'simbolo_moneda_cuenta_proveedor': provDetReqValue.simbolo_moneda_cuenta_proveedor,
+                'id_moneda_cuenta_proveedor': provDetReqValue.id_moneda_cuenta_proveedor,
+                'id_contacto_proveedor': provDetReqValue.id_concato_proveedor,
+                'nombre_contacto_proveedor': provDetReqValue.nombre_contacto_proveedor,
+                'telefono_contacto_proveedor': provDetReqValue.telefono_contacto_proveedor,
+                'cargo_contacto_proveedor': provDetReqValue.cargo_contacto_proveedor,
                 'id_rubro_proveedor': '',
                 'descripcion_rubro_proveedor': '',
-
                 'id_condicion_compra': '',
                 'descripcion_condicion_compra': '',
                 'id_condicion_softlink': '',
                 'descripcion_condicion_softlink': '',
-                'plazo_entrega_dias': '',
-                'requerimiento_vinculado_list': cabeceraRequerimientoObject,
+                'plazo_entrega_dias': 1,
+                'requerimiento_vinculado_list': [cabeceraRequerimientoObject],
                 'id_tipo_documento': 2,
                 'descripcion_tipo_documento': '01 - Factura',
                 'direccion_entrega': cabeceraRequerimientoObject.direccion_fiscal_empresa,
@@ -995,222 +1142,361 @@ class OrdenView {
                 'observacion': cabeceraRequerimientoObject.observacion,
                 'id_estado_orden': '',
                 'descripcion_estado_orden': '',
-    
+                'detalle': provDetReqValue.detalle_requerimiento_list
+
             };
-
             this.ordenArray.push(cabeceraOrdenObject);
+
         });
-        
-         console.log(this.ordenArray);
 
-     
-        this.construirPanelListaDeOrdenes(cabeceraRequerimiento);
-        this.construirPanelEncabezadoOrden(cabeceraRequerimiento);
-        this.construirPanelDetalleOrden(detalleRequerimiento);
+        Lobibox.notify('info', {
+            title: false,
+            size: 'mini',
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: `Seleccionó el requerimiento ${cabeceraRequerimientoObject.codigo}`
+        });
 
+        this.construirPanelListaOrdenes(this.ordenArray);
+        // construir panel de encabezado y panel detalle por defecto la primera orden de array
+        this.autoSeleccionarOrdenParaMostrar(this.ordenArray);
+
+    }
+
+    construirPanelListaOrdenes(data) {
+        // Panel lista ordenes
+        document.querySelector("ul[id='contenedor_lista_ordenes']").innerHTML = '';
+        data.forEach(element => {
+            document.querySelector("ul[id='contenedor_lista_ordenes']").insertAdjacentHTML('beforeend', this.construirCardOrden(element))
+
+        });
 
 
     }
 
 
-    construirPanelListaDeOrdenes(data) {
-        // console.log(data);
+    guardarOrdenes() {
+
     }
+
+
+    migrarOrdenes() {
+
+    }
+
+
+    autoSeleccionarOrdenParaMostrar(data) {
+        if (this.idOrdenSeleccionada == '' || this.idOrdenSeleccionada == null) {// si NO existe un id, selecciona le primero del array
+            if (data.length > 0) {
+                this.idOrdenSeleccionada = data[0]['id'];
+                this.seleccionarOrden(data[0]['id']);
+            }
+        } else { // si existe un id, buscar y llamar funciones
+            data.forEach(element => {
+                if (element.id == this.idOrdenSeleccionada) {
+                    this.seleccionarOrden(this.idOrdenSeleccionada);
+
+                }
+            });
+        }
+    }
+
+
     construirPanelEncabezadoOrden(data) {
-        // console.log(data);
-        
+
+        document.querySelector("form[id='form-orden'] input[name='id_orden']").value = '';
+        document.querySelector("form[id='form-orden'] input[name='tipo_cambio']").value = data.tipo_cambio ? data.tipo_cambio : '';
+        document.querySelector("form[id='form-orden'] span[name='tipo_cambio']").textContent = data.tipo_cambio ? data.tipo_cambio : '';
+        document.querySelector("form[id='form-orden'] select[name='id_tipo_orden']").value = data.id_tipo_orden ? data.id_tipo_orden : '';
+        document.querySelector("form[id='form-orden'] select[name='id_moneda']").value = data.id_moneda ? data.id_moneda : '';
+        const SelectorSede = document.querySelector("form[id='form-orden'] select[name='id_sede']");
+        SelectorSede.value = data.id_sede ? data.id_sede : '';
+        var id_empresa = SelectorSede.options[SelectorSede.selectedIndex].getAttribute('data-id-empresa');
+        var id_ubigeo = SelectorSede.options[SelectorSede.selectedIndex].getAttribute('data-id-ubigeo');
+        var ubigeo_descripcion = SelectorSede.options[SelectorSede.selectedIndex].getAttribute('data-ubigeo-descripcion');
+        var direccion = SelectorSede.options[SelectorSede.selectedIndex].getAttribute('data-direccion');
+        this.changeLogoEmprsa(id_empresa);
+        this.llenarUbigeo(direccion, id_ubigeo, ubigeo_descripcion);
+
+        if (data.id_proveedor > 0) {
+            document.querySelector("form[id='form-orden'] p[name='direccion_proveedor']").textContent = data.direccion_fiscal_proveedor ? data.direccion_fiscal_proveedor : '';
+            document.querySelector("form[id='form-orden'] select[name='id_proveedor']").value = data.id_proveedor ? data.id_proveedor : '';
+            this.llenarDatosCabeceraSeccionProveedor(data.id_proveedor, data.id_cuenta_proveedor);
+        }
+
+        document.querySelector("form[id='form-orden'] p[name='requerimiento_vinculados']").textContent = data.requerimiento_vinculado_list.length > 0 ? data.requerimiento_vinculado_list.map(function (e) { return e.codigo }).join(", ") : '';
+
+        $('.selectpicker').selectpicker('refresh')
+
     }
+
     construirPanelDetalleOrden(data) {
-        // console.log(data);
+        let payload = [];
+        let CantidadItemsPendientesPorMapear = 0;
+        let cantidadItemsAgregados = 0;
+        data.forEach(element => {
+            if (element.id_tipo_item == 1 && (element.id_producto == null || element.id_producto == '')) {
+                CantidadItemsPendientesPorMapear++;
+            } else {
+
+                cantidadItemsAgregados++;
+
+                payload.push({
+                    'id': element.id_detalle_orden ? element.id_detalle_orden : ('ITEM' + this.makeId()),
+                    'id_detalle_orden': '',
+                    'id_tipo_item': element.id_tipo_item,
+                    'id_producto': (element.id_producto ? element.id_producto : ''),
+                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto.codigo ? element.producto.codigo : '') : '<small>(No aplica)</small>',
+                    'codigo_requerimiento': element.codigo_requerimiento ? element.codigo_requerimiento : '',
+                    'codigo_softlink': element.producto.cod_softlink ? element.producto.cod_softlink : '',
+                    'part_number': element.producto.part_number ? element.producto.part_number : '',
+                    'descripcion': (element.producto.descripcion ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
+                    'descripcion_complementaria': (element.descripcion_complementaria ? element.descripcion_complementaria : ''),
+                    'id_unidad_medida': (element.producto.id_unidad_medida ? element.producto.id_unidad_medida : element.id_unidad_medida),
+                    'abreviatura_unidad_medida': (element.producto != null && element.producto.unidad_medida != null ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
+                    'cantidad_solicitada': (element.cantidad > 0 ? element.cantidad : '<small>(no definido en el requerimiento)</small'),
+                    'cantidad_pendiente_atender': (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
+                    'cantidad_atendida_almacen': (element.cantidad_atendida_almacen > 0 ? element.cantidad_atendida_almacen : '0'),
+                    'cantidad_atendida_orden': (element.cantidad_atendida_orden > 0 ? element.cantidad_atendida_orden : '0'),
+                    'precio_unitario': (element.precio_unitario ? element.precio_unitario : 0),
+                    'subtotal': (element.precio_unitario ? element.precio_unitario : 0) * (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
+                    'id_moneda': document.querySelector("select[name='id_moneda']").value,
+                    'simbolo_moneda': document.querySelector("select[name='id_moneda']").options[document.querySelector("select[name='id_moneda']").selectedIndex].dataset.simboloMoneda,
+                    'id_estado': 1
+                });
+            }
+
+
+        });
+
+        if (cantidadItemsAgregados > 0) {
+            Lobibox.notify('success', {
+                title: false,
+                size: 'mini',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: `Se agregó ${cantidadItemsAgregados} ítem(s)`
+            });
+        }
+        if (CantidadItemsPendientesPorMapear > 0) {
+            Lobibox.notify('warning', {
+                title: false,
+                size: 'mini',
+                rounded: true,
+                sound: false,
+                delayIndicator: false,
+                msg: `Aun tiene ${CantidadItemsPendientesPorMapear} ítem(s) por mapear`
+            });
+        }
+        this.agregarItemADetalleOrden(payload);
+    }
+
+    agregarItemADetalleOrden(payload) {
+        payload.forEach(element => {
+            document.querySelector("tbody[name='body_detalle_orden']").insertAdjacentHTML('beforeend', `<tr style="text-align:center;" class="${element.id_estado == 7 ? 'danger textRedStrikeHover' : ''}">
+            <td class="text-center">${element.codigo_requerimiento} <input type="hidden"  name="idRegister[]" value="${element.id}"> <input type="hidden"  class="idEstado" name="idEstado[]"> <input type="hidden"  name="idDetalleRequerimiento[]" value="${element.id_detalle_requerimiento ? element.id_detalle_requerimiento : ''}">  <input type="hidden"  name="idTipoItem[]" value="1"></td>
+            <td class="text-center">${element.codigo_producto} </td>
+            <td class="text-center">${element.codigo_softlink} </td>
+            <td class="text-center">${element.part_number} <input type="hidden"  name="idProducto[]" value="${element.id_producto} "></td>
+            <td class="text-left">${element.descripcion} 
+                <textarea class="form-control" placeholder="Descripción de servicio" style="display:${element.id_tipo_item == 1 ? 'none' : 'block'}; height: 5rem; overflow-y: scroll;"  name="descripcion[]">${element.descripcion}</textarea>
+                <textarea class="form-control" style="display:${element.id_tipo_item == 2 ? 'none' : 'block'}; height: 5rem; overflow-y: scroll;" name="descripcionComplementaria[]" placeholder="Descripción complementaria" style="width:100%;height: 60px;" >${element.descripcion_complementaria}</textarea>
+            </td>
+            <td><p name="unidad[]" class="form-control-static unidadMedida" data-valor="${element.id_unidad_medida}">${element.abreviatura_unidad_medida}</p>
+            <input type="hidden"  name="unidad[]" value="${element.id_unidad_medida}">
+
+            </td>
+            <td>${element.cantidad_pendiente_atender}</td>
+            <td>${element.cantidad_atendida_almacen}</td>
+            <td>${element.cantidad_atendida_orden}</td>
+            <td>
+                <input class="form-control cantidad_a_comprar input-sm text-right  handleBurUpdateSubtotal"  data-id-tipo-item="1" type="number" min="0" name="cantidadAComprarRequerida[]"  placeholder="" value="${element.cantidad_pendiente_atender}" >
+            </td>
+            <td>
+                <div class="input-group">
+                    <div class="input-group-addon" style="background:lightgray;" name="simboloMoneda">${element.simbolo_moneda}</div>
+                    <input class="form-control precio input-sm text-right  handleBurUpdateSubtotal" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${element.precio_unitario}" >
+                </div>
+            </td>
+            <td style="text-align:right;"><span class="moneda" name="simboloMoneda">${element.simbolo_moneda}</span><span class="subtotal" name="subtotal[]">0.00</span></td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm handleClickOpenModalEliminarItemOrden" name="btnOpenModalEliminarItemOrden" title="Eliminar Item">
+                <i class="fas fa-trash fa-sm"></i>
+                </button>
+            </td>
+        </tr>`);
+        });
+    }
+
+
+    abrirCatalogoProductos() {
+        document.querySelector("div[id='modal-catalogo-items'] h3[class='modal-title']").textContent = "Lista de productos";
+        $('#modal-catalogo-items').modal({
+            show: true,
+            backdrop: 'true',
+            keyboard: true
+
+        });
+        this.limpiarTabla('listaItems');
+        document.querySelector("div[id='modal-catalogo-items'] button[id='btn-crear-producto']").classList.add("oculto")
+        this.listarCatalogoProductos();
+    }
+
+    listarCatalogoProductos() {
+        $tablaListaCatalogoProductos = $('#listaCatalogoProductos').DataTable({
+            'dom': 'frtip',
+            'language': vardataTables[0],
+            'order': [[5, 'asc']],
+            'serverSide': true,
+            'processing': false,
+            'destroy': true,
+            'ajax': {
+                'url': 'mostrar-catalogo-productos',
+                'type': 'POST',
+                beforeSend: data => {
+
+                    $("#listaCatalogoProductos").LoadingOverlay("show", {
+                        imageAutoResize: true,
+                        progress: true,
+                        imageColor: "#3c8dbc"
+                    });
+                }
+
+            },
+            'columns': [
+                { 'data': 'codigo', 'name': 'alm_prod.codigo' },
+                { 'data': 'cod_softlink', 'name': 'alm_prod.cod_softlink' },
+                { 'data': 'part_number', 'name': 'alm_prod.part_number' },
+                { 'data': 'descripcion', 'name': 'alm_prod.descripcion' },
+                { 'data': 'abreviatura_unidad_medida', 'name': 'alm_und_medida.abreviatura' },
+                { 'data': 'id_producto', 'name': 'alm_prod.id_producto', "searchable": false }
+
+            ],
+            'initComplete': function () {
+                //Boton de busqueda
+                const $filter = $('#listaCatalogoProductos_filter');
+                const $input = $filter.find('input');
+                $filter.append('<button id="btnBuscar" class="btn btn-default btn-sm pull-right" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>');
+                $input.off();
+                $input.on('keyup', (e) => {
+                    if (e.key == 'Enter') {
+                        $('#btnBuscar').trigger('click');
+                    }
+                });
+                $('#btnBuscar').on('click', (e) => {
+                    $tablaListaCatalogoProductos.search($input.val()).draw();
+                })
+                //Fin boton de busqueda
+            },
+            "drawCallback": function (settings) {
+                //Botón de búsqueda
+                $('#listaCatalogoProductos_filter input').prop('disabled', false);
+                $('#btnBuscar').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                $('#listaCatalogoProductos_filter input').trigger('focus');
+                //fin botón búsqueda
+                if ($tablaListaCatalogoProductos.rows().data().length == 0) {
+                    Lobibox.notify('info', {
+                        title: false,
+                        size: 'mini',
+                        rounded: true,
+                        sound: false,
+                        delayIndicator: false,
+                        msg: `No se encontro data disponible para mostrar`
+                    });
+                }
+                //Botón de búsqueda
+                $('#listaCatalogoProductos_filter input').prop('disabled', false);
+                $('#btnBuscar').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                $('#listaCatalogoProductos_filter input').trigger('focus');
+                //fin botón búsqueda
+                $("#listaCatalogoProductos").LoadingOverlay("hide", true);
+            },
+            'columnDefs': [
+                { 'aTargets': [0], 'className': "text-center", 'sWidth': '5%' },
+                { 'aTargets': [1], 'className': "text-center", 'sWidth': '5%' },
+                { 'aTargets': [2], 'className': "text-center", 'sWidth': '5%' },
+                { 'aTargets': [3], 'className': "text-left", 'sWidth': '40%' },
+                { 'aTargets': [4], 'className': "text-center", 'sWidth': '5%' },
+                { 'aTargets': [5], 'className': "text-center", 'sWidth': '20%' },
+                {
+                    'render':
+                        function (data, type, row) {
+
+                            return `<button class="btn btn-success btn-xs handleClickSelectProducto"
+                                data-id-producto="${row.id_producto}"
+                                data-codigo="${row.codigo}"
+                                data-codigo-softlink="${row.cod_softlink}"
+                                data-part-number="${row.part_number}"
+                                data-descripcion="${row.descripcion}"
+                                data-unidad-medida="${row.abreviatura_unidad_medida}"
+                                data-id-unidad-medida="${row.id_unidad_medida}"
+                                >Agregar producto</button>`;
+
+                        }, targets: 5, className: "text-center", sWidth: '8%'
+                }
+            ]
+
+        });
+    }
+
+    selectProducto(obj) {
+
+        this.agregarItemADetalleOrden([{
+            'id': 'ITEM' + this.makeId(),
+            'id_detalle_orden': '',
+            'id_tipo_item': 1,
+            'id_producto': obj.dataset.idProducto,
+            'codigo_producto': obj.dataset.codigo,
+            'codigo_requerimiento': '<small>(Sin vínculo)</small>',
+            'codigo_softlink': obj.dataset.codigoSoftlink,
+            'part_number': obj.dataset.partNumber,
+            'descripcion': obj.dataset.descripcion,
+            'descripcion_complementaria': '',
+            'id_unidad_medida': obj.dataset.idUnidadMedida,
+            'abreviatura_unidad_medida': obj.dataset.unidadMedida,
+            'cantidad_solicitada': '<small>(No aplica)</small>',
+            'cantidad_pendiente_atender': 1,
+            'cantidad_atendida_almacen': 0,
+            'cantidad_atendida_orden': 0,
+            'precio_unitario': 0,
+            'subtotal': 0,
+            'id_moneda': document.querySelector("select[name='id_moneda']").value,
+            'simbolo_moneda': document.querySelector("select[name='id_moneda']").options[document.querySelector("select[name='id_moneda']").selectedIndex].dataset.simboloMoneda,
+            'id_estado': 1
+
+        }]);
+        $('#modal-catalogo-items').modal('hide');
 
     }
 
-    // obtenerRequerimiento(reqTrueList, tipoOrden) { // used
-    //     this.limpiarTabla('listaDetalleOrden');
-    //     let idTipoItem = 0;
-    //     let idTipoOrden = 0;
-    //     let ambosTipos=false;
-    //     if (tipoOrden == 'COMPRA') {
-    //         idTipoItem = 1; // producto
-    //         idTipoOrden = 2; // compra
-    //     } else if (tipoOrden == 'SERVICIO') {
-    //         idTipoItem = 2; // servicio
-    //         idTipoOrden = 3; // servicio
-    //     }else if(tipoOrden == 'COMPRA_SERVICIO'){
-    //         ambosTipos=true;
-    //     }
 
-    //     detalleOrdenList = [];
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: 'requerimiento-detallado',
-    //         data: { 'requerimientoList': reqTrueList },
-    //         dataType: 'JSON',
-    //         success: (response) => {
-    //             // console.log(response);
-    //             response.forEach(req => {
-    //                 req.detalle.forEach(det => {
-    //                     if ((![28, 5, 7].includes(det.estado)) && (det.id_tipo_item == idTipoItem || ambosTipos==true )) {
-    //                         let cantidad_atendido_almacen = 0;
-    //                         if (det.reserva.length > 0) {
-    //                             (det.reserva).forEach(reserva => {
-    //                                 if (reserva.estado == 1) {
-    //                                     cantidad_atendido_almacen += parseFloat(reserva.stock_comprometido);
-    //                                 }
-    //                             });
-    //                         }
-    //                         let cantidad_atendido_orden = 0;
-    //                         if (det.ordenes_compra.length > 0) {
-    //                             (det.ordenes_compra).forEach(orden => {
-    //                                 cantidad_atendido_orden += parseFloat(orden.cantidad);
-    //                             });
-    //                         }
-    //                         let cantidadAAtender = (parseFloat(det.cantidad) - cantidad_atendido_almacen - cantidad_atendido_orden);
-    //                         if (det.tiene_transformacion == false) {
-    //                             detalleOrdenList.push(
-    //                                 {
-    //                                     'id': det.id,
-    //                                     'id_detalle_requerimiento': det.id_detalle_requerimiento,
-    //                                     'id_producto': det.id_producto,
-    //                                     'id_tipo_item': det.id_tipo_item,
-    //                                     'id_requerimiento': det.id_requerimiento,
-    //                                     'codigo_requerimiento': req.codigo,
-    //                                     'id_moneda': req.id_moneda,
-    //                                     'cantidad': det.cantidad,
-    //                                     'cantidad_a_comprar': !(cantidadAAtender >= 0) ? '' : cantidadAAtender,
-    //                                     'cantidad_atendido_almacen': cantidad_atendido_almacen,
-    //                                     'cantidad_atendido_orden': cantidad_atendido_orden,
-    //                                     'descripcion_producto': det.producto != null ? det.producto.descripcion : '',
-    //                                     'codigo_producto': det.producto != null ? det.producto.codigo : '',
-    //                                     'part_number': det.producto != null ? det.producto.part_number : '',
-    //                                     'codigo_softlink': det.producto != null ? det.producto.cod_softlink : '',
-    //                                     'descripcion': det.descripcion,
-    //                                     'estado': det.estado.id_estado_doc,
-    //                                     'fecha_registro': det.fecha_registro,
-    //                                     'id_unidad_medida': det.producto != null ? det.producto.id_unidad_medida : det.id_unidad_medida,
-    //                                     'lugar_entrega': det.lugar_entrega,
-    //                                     'observacion': det.observacion,
-    //                                     'precio_unitario': det.precio_unitario,
-    //                                     'stock_comprometido': cantidad_atendido_almacen,
-    //                                     'subtotal': det.subtotal,
-    //                                     'unidad_medida': det.producto!=null && det.producto.unidad_medida !=null ?det.producto.unidad_medida.abreviatura:det.unidad_medida
-    //                                 }
-    //                             );
-    //                         }
-
-    //                     }
-    //                 });
-    //             });
-    //             // console.log(detalleOrdenList);
-    //             if (detalleOrdenList.length == 0) {
-    //                 Swal.fire(
-    //                     '',
-    //                     'No se encuentras items para atender',
-    //                     'info'
-    //                 );
-
-    //             } else {
-
-    //                 this.componerCabeceraOrden(response, idTipoOrden);
-    //                 // this.listarDetalleOrdeRequerimiento(detalleOrdenList);
-    //                 // this.setStatusPage();
-
-
-    //             }
-    //         }
-    //     }).fail((jqXHR, textStatus, errorThrown) => {
-    //         console.log(jqXHR);
-    //         console.log(textStatus);
-    //         console.log(errorThrown);
-    //     });
-
-    //     // sessionStorage.removeItem('reqCheckedList');
-    //     // sessionStorage.removeItem('tipoOrden');
-    // }
-
-    // componerCabeceraOrden(data, idTipoOrden) {
-    //     let codigoRequerimientoList =[];
-    //     let idCcRequerimientoList =[];
-    //     let observacionRequerimientoList =[];
-    //     data.forEach(element => {
-    //         let foundCodigoRequerimiento = codigoRequerimientoList.find(item => item == element.codigo);
-    //         if (foundCodigoRequerimiento == undefined) {
-    //             codigoRequerimientoList.push(element.codigo);
-    //         }
-    //         let foundIdCdpRequerimiento = codigoRequerimientoList.find(item => item == element.id_cc);
-    //         if (foundIdCdpRequerimiento == undefined) {
-    //             idCcRequerimientoList.push(element.id_cc);
-    //         }
-    //         let foundObservacionRequerimiento = codigoRequerimientoList.find(item => item == element.observacion);
-    //         if (foundObservacionRequerimiento == undefined) {
-    //             observacionRequerimientoList.push(element.observacion);
-    //         }
-    //     });
-
-    //     this.cabeceraOrdenObject ={
-    //         'id_tipo_orden':idTipoOrden??null,
-    //         'descripcion_tipo_orden':idTipoOrden==1?'Compra':(idTipoOrden==2?'Servicio':'Orden & Servicio'),
-    //         'codigo_requerimiento_vinculados':codigoRequerimientoList.toString(),
-    //         'logo_empresa':Util.isEmpty(data[0].empresa.logo_empresa) ==false ?data[0].empresa.logo_empresa:null,
-    //         'direccion_destino':data[0].sede && util.isEmpty(data[0].sede.direccion)==false ? data[0].sede.direccion : null,
-    //         'id_ubigeo_destuno':data[0].sede && util.isEmpty(data[0].sede.id_ubigeo)==false ? data[0].sede.id_ubigeo : null,
-    //         'id_empresa':data[0].id_empresa ? data[0].id_empresa : null,
-    //         'id_sede':data[0].id_sede ? data[0].id_sede : null,
-    //         'id_moneda':data[0].id_moneda ? data[0].id_moneda : null,
-    //         'observacion':observacionRequerimientoList.toString(),
-    //         'id_cc':idCcRequerimientoList
-    //     };
-
-    //     this.llenarCabeceraOrden(cabeceraOrdenObject);
-    // }
-
-    // llenarCabeceraOrden(cabeceraOrdenObject) {
-    //     if (idTipoOrden == 3) { // orden de servicio
-    //         this.ocultarBtnCrearProducto();
-    //     }
-    //     // let codigoRequerimiento = [];
-    //     data.forEach(element => {
-    //         let foundRequerimiento = this.codigoRequerimientoList.find(item => item == element.codigo);
-    //         if (foundRequerimiento == undefined) {
-
-    //             this.codigoRequerimientoList.push(element.codigo);
-
-    //         }
-    //     });
-
-    //     document.querySelector("select[name='id_tp_documento']").value = idTipoOrden;
-    //     document.querySelector("img[id='logo_empresa']").setAttribute("src", data[0].empresa.logo_empresa);
-    //     document.querySelector("input[name='cdc_req']").value = this.codigoRequerimientoList.length > 0 ? this.codigoRequerimientoList : '';
-    //     document.querySelector("input[name='ejecutivo_responsable']").value = '';
-    //     document.querySelector("input[name='direccion_destino']").value = data[0].sede ? data[0].sede.direccion : '';
-    //     document.querySelector("input[name='id_ubigeo_destino']").value = data[0].sede ? data[0].sede.id_ubigeo : '';
-    //     document.querySelector("input[name='ubigeo_destino']").value = data[0].sede ? data[0].sede.ubigeo_completo : '';
-    //     document.querySelector("select[name='id_sede']").value = data[0].id_sede ? data[0].id_sede : '';
-    //     document.querySelector("select[name='id_moneda']").value = data[0].id_moneda ? data[0].id_moneda : 1;
-    //     document.querySelector("input[name='id_cc']").value = data[0].id_cc ? data[0].id_cc : '';
-    //     document.querySelector("textarea[name='observacion']").value = '';
-
-    //     this.updateAllSimboloMoneda();
-
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    agregarServicio() {
+        this.agregarItemADetalleOrden([
+            {
+                'id': 'ITEM' + this.makeId(),
+                'id_detalle_orden': '',
+                'id_tipo_item': 2,
+                'id_producto': '',
+                'codigo_producto': '<small>(No aplica)</small>',
+                'codigo_requerimiento': '<small>(Sin vínculo)</small>',
+                'codigo_softlink': '',
+                'part_number': '',
+                'descripcion': '',
+                'descripcion_complementaria': '',
+                'id_unidad_medida': 17,
+                'abreviatura_unidad_medida': 'SERV',
+                'cantidad_solicitada': '<small>(No aplica)</small>',
+                'cantidad_pendiente_atender': 1,
+                'cantidad_atendida_almacen': '<small>(No aplica)</small>',
+                'cantidad_atendida_orden': 0,
+                'precio_unitario': 0,
+                'subtotal': 0,
+                'id_moneda': document.querySelector("select[name='id_moneda']").value,
+                'simbolo_moneda': document.querySelector("select[name='id_moneda']").options[document.querySelector("select[name='id_moneda']").selectedIndex].dataset.simboloMoneda,
+                'id_estado': 1
+            }
+        ])
+    }
 }

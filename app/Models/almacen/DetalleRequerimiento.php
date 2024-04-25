@@ -16,7 +16,7 @@ class DetalleRequerimiento extends Model
     protected $primaryKey = 'id_detalle_requerimiento';
     protected $fillable = ['id_requerimiento','id_item','precio_referencial','cantidad','descripcion_adicional','unidad_medida','estado','fecha_registro','lugar_entrega','id_tipo_item','stock_comprometido','id_unidad_medida','id_producto','id_almacen_reserva','partida','observacion','id_cc_am_filas','id_cc_venta_filas','id_moneda','tiene_transformacion','centro_costo_id','proveedor_id','precio_unitario','subtotal','motivo','part_number','descripcion','entrega_cliente','id_occ_det_softlink','cantidad_solicitada_original','razon_ajuste_necesidad','id_partida_pi'];
     public $timestamps = false;
-    protected $appends = ['codigo_requerimiento', 'ordenes_compra', 'facturas', 'proveedor_seleccionado','movimiento_ingresos_almacen','movimiento_salidas_almacen'];
+    protected $appends = ['codigo_requerimiento', 'ordenes_compra', 'facturas', 'proveedor_seleccionado_id','proveedor_seleccionado','movimiento_ingresos_almacen','movimiento_salidas_almacen'];
 
     public function getPartNumberAttribute()
     {
@@ -123,6 +123,27 @@ class DetalleRequerimiento extends Model
         }
 
         return $proveedorSeleccionado;
+    }
+    public function getProveedorSeleccionadoIdAttribute()
+    {
+
+        $ccAmFila = CcAmFila::leftJoin('almacen.alm_det_req', 'cc_am_filas.id', '=', 'alm_det_req.id_cc_am_filas')
+            ->leftJoin('mgcp_cuadro_costos.cc_am_proveedores', 'cc_am_proveedores.id', '=', 'cc_am_filas.proveedor_seleccionado')
+            ->leftJoin('mgcp_cuadro_costos.proveedores as proveedores_am', 'proveedores_am.id', '=', 'cc_am_proveedores.id_proveedor')
+            ->leftJoin('mgcp_cuadro_costos.cc_venta_filas', 'cc_venta_filas.id', '=', 'alm_det_req.id_cc_venta_filas')
+            ->leftJoin('mgcp_cuadro_costos.cc_venta_proveedor', 'cc_venta_proveedor.id', '=', 'cc_venta_filas.proveedor_seleccionado')
+            ->leftJoin('mgcp_cuadro_costos.proveedores as proveedores_venta', 'proveedores_venta.id', '=', 'cc_venta_filas.proveedor_seleccionado')
+            ->select('proveedores_am.id as id_proveedor_seleccionado_am', 'proveedores_venta.razon_social as id_proveedor_seleccionado_venta')
+            ->where('alm_det_req.id_detalle_requerimiento', $this->attributes['id_detalle_requerimiento'])
+            ->first();
+
+        if ($ccAmFila) {
+            $idProveedorSeleccionado = $ccAmFila->id_proveedor_seleccionado_am != null ? $ccAmFila->id_proveedor_seleccionado_am : ($ccAmFila->id_proveedor_seleccionado_venta != null ? $ccAmFila->id_proveedor_seleccionado_venta : '');
+        } else {
+            $idProveedorSeleccionado = '';
+        }
+
+        return $idProveedorSeleccionado;
     }
     static public function actualizarEstadoDetalleRequerimientoAtendido($idDetalleRequerimiento)
     {

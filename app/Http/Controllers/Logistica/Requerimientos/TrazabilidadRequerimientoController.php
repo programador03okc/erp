@@ -85,6 +85,7 @@ class TrazabilidadRequerimientoController extends Controller
             'log_ord_compra.fecha_autorizacion',
             'log_ord_compra.fecha_solicitud_pago',
             'log_ord_compra.estado',
+            'log_ord_compra.estado_pago',
             'estados_compra.descripcion AS estado_descripcion',
             'usu_autoriza_pago.nombre_corto as usuario_autoriza_pago',
             'requerimiento_pago_estado.descripcion as descripcion_estado_pago')

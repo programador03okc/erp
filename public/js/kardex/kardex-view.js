@@ -62,6 +62,15 @@ class KardexView {
                 {data: 'codigo_agil', className: 'text-center'},
                 {data: 'codigo_softlink'},
                 {data: 'part_number'},
+                {data: 'tipo_moneda',className: 'text-center', 'render': function (data, type, row) {
+                    let moneda='';
+                    if(row['tipo_moneda'] ==1){
+                        moneda='Soles';
+                    }else if(row['tipo_moneda']==2){
+                        moneda='Dolares';
+                    }
+                    return moneda;
+                }},
                 {data: 'almacen', className: 'text-center'},
                 {data: 'empresa'},
                 {data: 'estado_kardex', className: 'text-center'},
@@ -183,6 +192,8 @@ class KardexView {
             $(e.currentTarget).find('[type="submit"]').html('<i class="fa fa-spinner fa-spin"></i> Cargando...')
             $(e.currentTarget).find('[type="submit"]').attr('disabled','true')
             model.cargaInicialKardex(data).then((respuesta) => {
+                console.log(respuesta);
+                Util.notify(respuesta.tipo, respuesta.mensaje);
                 $(e.currentTarget).find('[type="submit"]').find('i').remove();
                 $(e.currentTarget).find('[type="submit"]').html('<i class="fa fa-save"></i> Importar')
                 $(e.currentTarget).find('[type="submit"]').removeAttr('disabled');
@@ -194,7 +205,6 @@ class KardexView {
                 $("#modal-carga-inicial").modal("hide");
             }).fail((respuesta) => {
                 // return respuesta;
-            }).always(() => {
             });
         });
 
@@ -257,6 +267,8 @@ class KardexView {
                     {data: 'fecha'},
                     {data: 'precio'},
                     {data: 'precio_unitario', className: 'text-center'},
+                    {data: 'tipo_cambio', className: 'text-center'},
+                    {data: 'precio_unitario_al_tipo_cambio', className: 'text-center'},
                     {data: 'disponible_estado', className: 'text-center'},
 
                 ],

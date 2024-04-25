@@ -1,4 +1,3 @@
-
 // ============== View =========================
 var vardataTables = funcDatatables();
 var simboloMoneda = '';
@@ -16,7 +15,7 @@ var oInnerTable;
 class OrdenView {
     constructor(ordenCtrl) {
         this.ordenCtrl = ordenCtrl;
-        this.cabeceraOrdenObject = {};
+        this.ordenArray = [];
     }
 
     getTipoCambioCompra() {
@@ -87,17 +86,20 @@ class OrdenView {
             document.querySelector("form[id='form-agregar-cuenta-bancaria-proveedor'] input[class~='boton']").setAttribute("disabled", true);
             this.guardarCuentaBancariaProveedor();
         });
-        $('#form-orden').on("change", "select.actualizarFormaPago", () => {
+        $('#form-orden').on("change", "select.handleChangeFormaPago", () => {
             this.actualizarFormaPago();
         });
         $('#form-orden').on("change", "select.handleChangeSede", (e) => {
             this.changeSede(e.currentTarget);
         });
+        $('#modal-lista-requerimientos-pendientes').on("click", "button.handleClickSeleccionarRequerimientoPendiente", (e) => {
+            this.seleccionarRequerimientoPendiente(e.currentTarget);
+        });
     }
 
 
 
-    construirCardOrden(){
+    construirCardOrden() {
         const cardOrden = `
             <li>
                 <div class="panel panel-default">
@@ -132,10 +134,10 @@ class OrdenView {
                         </ul>
                         <div class="text-left">
                             <button type="button" class="btn btn-xs btn-success" id="btnSeleccionarOrden" title="Seleccionar"><i class="fas fa-check"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Imprimir"><i class="fas fa-print"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Anular"><i class="fas fa-trash"></i></button>
-                            <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnImprimirOrden" title="Imprimir"><i class="fas fa-print"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnEditarOrden" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnAnularOrden" title="Anular"><i class="fas fa-trash"></i></button>
+                            <button type="button" class="btn btn-xs btn-default" id="btnMigrarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
                         </div>
                     </div>
                 </div>
@@ -144,7 +146,7 @@ class OrdenView {
         return cardOrden;
     }
 
-    crearNuevaOrden(){
+    crearNuevaOrden() {
 
         Swal.fire({
             title: "Desea desde un requerimiento pendiente o genera una orden libre?",
@@ -153,22 +155,22 @@ class OrdenView {
             showCancelButton: true,
             confirmButtonText: "Mostrar lista de requerimientos",
             denyButtonText: `Crear en orden libre`
-          }).then((result) => {
+        }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) { // mostrar lista de requerimientos pendientes
-                
+
                 // 
 
                 $('#modal-lista-requerimientos-pendientes').modal('show');
-                
-                let idEmpresa='SIN_FILTRO';
-                let idSede='SIN_FILTRO';
-                let fechaRegistroDesde='SIN_FILTRO';
-                let fechaRegistroHasta='SIN_FILTRO';
-                let reserva='SIN_FILTRO';
-                let orden='SIN_FILTRO';
-                let estado='SIN_FILTRO';
-                
+
+                let idEmpresa = 'SIN_FILTRO';
+                let idSede = 'SIN_FILTRO';
+                let fechaRegistroDesde = 'SIN_FILTRO';
+                let fechaRegistroHasta = 'SIN_FILTRO';
+                let reserva = 'SIN_FILTRO';
+                let orden = 'SIN_FILTRO';
+                let estado = 'SIN_FILTRO';
+
                 $tablaListaRequerimientosPendientes = $('#tablaRequerimientosPendientes').DataTable({
                     'dom': 'Blfrtip',
                     'buttons': [],
@@ -182,82 +184,108 @@ class OrdenView {
                     'ajax': {
                         'url': route('logistica.gestion-logistica.compras.pendientes.requerimientos-pendientes'),
                         'type': 'POST',
-                        'data': { 'idEmpresa': idEmpresa, 'idSede': idSede, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'reserva': reserva, 'orden': orden, 'estado':estado },
+                        'data': { 'idEmpresa': idEmpresa, 'idSede': idSede, 'fechaRegistroDesde': fechaRegistroDesde, 'fechaRegistroHasta': fechaRegistroHasta, 'reserva': reserva, 'orden': orden, 'estado': estado },
                         beforeSend: data => {
-        
+
                             $("#tablaRequerimientosPendientes").LoadingOverlay("show", {
                                 imageAutoResize: true,
                                 progress: true,
                                 imageColor: "#3c8dbc"
                             });
                         }
-        
+
                     },
                     'columns': [
-                        { 'data': 'descripcion_prioridad', 'name': 'adm_prioridad.descripcion', 'render': function (data, type, row) {
-        
-                            return `${row['termometro']}`;
-                        }},
+                        {
+                            'data': 'descripcion_prioridad', 'name': 'adm_prioridad.descripcion', 'render': function (data, type, row) {
+
+                                return `${row['termometro']}`;
+                            }
+                        },
                         { 'data': 'empresa_sede', 'name': 'sis_sede.descripcion', 'className': 'text-center' },
-                        { 'data': 'codigo', 'name': 'alm_req.codigo', 'className': 'text-center',  'render': function (data, type, row) {
-                            return `${row.estado == 38 ? '<i class="fas fa-exclamation-triangle ' + (row.count_pendientes > 0 ? 'red' : 'orange') + ' handleClickAbrirModalPorRegularizar" style="cursor:pointer;" title="Por regularizar' + (row.count_pendientes > 0 ? '(Tiene ' + row.count_pendientes + ' item(s) pendientes por mapear)' : '') + '" data-id-requerimiento="' + row.id_requerimiento + '" ></i> &nbsp;' : ''}<a href="/necesidades/requerimiento/elaboracion/index?id=${row.id_requerimiento}" target="_blank" title="Abrir Requerimiento">${row.codigo}</a> ${row.tiene_transformacion == true ? '<i class="fas fa-random text-danger" title="Con transformación"></i>' : ''} `;
-                        }},
+                        {
+                            'data': 'codigo', 'name': 'alm_req.codigo', 'className': 'text-center', 'render': function (data, type, row) {
+                                return `${row.estado == 38 ? '<i class="fas fa-exclamation-triangle ' + (row.count_pendientes > 0 ? 'red' : 'orange') + ' handleClickAbrirModalPorRegularizar" style="cursor:pointer;" title="Por regularizar' + (row.count_pendientes > 0 ? '(Tiene ' + row.count_pendientes + ' item(s) pendientes por mapear)' : '') + '" data-id-requerimiento="' + row.id_requerimiento + '" ></i> &nbsp;' : ''}<a href="/necesidades/requerimiento/elaboracion/index?id=${row.id_requerimiento}" target="_blank" title="Abrir Requerimiento">${row.codigo}</a> ${row.tiene_transformacion == true ? '<i class="fas fa-random text-danger" title="Con transformación"></i>' : ''} `;
+                            }
+                        },
                         { 'data': 'fecha_registro', 'name': 'alm_req.fecha_registro', 'className': 'text-center' },
-                        { 'data': 'fecha_entrega', 'name': 'alm_req.fecha_entrega', 'className': 'text-center',render:function(data, type, row){
-                            // return (row.fecha_entrega!= '' && row.fecha_entrega != null)?(moment(row.fecha_entrega).format('DD-MM-YYYY')):'';
-                            return row.fecha_entrega;
-                        }},
+                        {
+                            'data': 'fecha_entrega', 'name': 'alm_req.fecha_entrega', 'className': 'text-center', render: function (data, type, row) {
+                                // return (row.fecha_entrega!= '' && row.fecha_entrega != null)?(moment(row.fecha_entrega).format('DD-MM-YYYY')):'';
+                                return row.fecha_entrega;
+                            }
+                        },
                         { 'data': 'concepto', 'name': 'alm_req.concepto', 'className': 'text-left' },
                         { 'data': 'tipo_req_desc', 'name': 'alm_tp_req.descripcion', 'className': 'text-center' },
-                        { 'data': 'division', 'name': 'division.descripcion', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
-                            return row.division != null ? JSON.parse(row.division.replace(/&quot;/g, '"')).join(",") : '';
-                        }},
-                        { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por', 'className': 'text-center'},
-                        { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
-                        { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-left td-lg-300'},
-                        { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
-                            return row['estado_doc'];
-                        }},
-                        { 'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false,'render': function (data, type, row) {
-                            let tieneTransformacion = row.tiene_transformacion;
-                            let cantidadItemBase = row.cantidad_items_base;
-                            if (tieneTransformacion == true && cantidadItemBase == 0) {
-                                return ('<div class="btn-group" role="group"></div><div class="btn-group" role="group"><button type="button" class="btn btn-info btn-xs handleClickOpenModalCuadroCostos" name="btnVercuadroCostos" title="Ver Cuadro Costos" data-id-requerimiento="' + row.id_requerimiento + '" >' + '<i class="fas fa-eye fa-sm"></i></button></div>');
-                            } else {
-                                let openDiv = '<div class="btn-group" role="group">';
-                                // let btnMapearProductos = '<button type="button" class="mapeo btn btn-success btn-xs" title="Mapear productos" data-id-requerimiento="' + row.id_requerimiento + '" data-codigo="' + row.codigo + '"  ><i class="fas fa-sign-out-alt"></i> <span class="badge" title="Cantidad items sin mapear" name="cantidadAdjuntosRequerimiento" style="position:absolute;border: solid 0.1px;z-index: 9;top: -9px;left: 0px;font-size: 0.9rem;">' + row.count_pendientes + '</span></button>';
-                                let textCantidadMapeados = row.count_pendientes >0? `<p>Pendientes de Mapear: ${row.count_pendientes}</p>`:'';
-                                let btnCrearOrdenCompra = '<button type="button" class="btn btn-warning btn-xs handleClickSeleccionar" name="btnSeleccionar" title="Seleccionar (tipo OC)" data-tipo-documento="2" data-id-requerimiento="' + row.id_requerimiento + '"  >Seleccionar</button>';
-                                let btnCrearOrdenServicio = '<button type="button" class="btn btn-warning btn-xs handleClickSeleccionar" name="btnSeleccionar" title="Seleccionar (tipo OS)" data-tipo-documento="3" data-id-requerimiento="' + row.id_requerimiento + '"  >Seleccionar</button>';
-
-                                if (row.count_mapeados > 0) {
-                                    if (row.estado == 38 || row.estado == 39) { // estado por regularizar | estado  en pausa
-                                        btnCrearOrdenCompra = '';
-                                    } 
-                                }else{
-                                    btnCrearOrdenCompra = '';
-
-                                }
-                                
-                                let closeDiv = '</div>';
-                                let acciones = '';
-        
-                                if (row.estado == 1 || row.estado == 3 || row.estado == 4 || row.estado == 12) {
-                                    acciones = openDiv   + closeDiv;
-                                } else {
-                                    acciones = openDiv  + textCantidadMapeados +
-                                        btnCrearOrdenCompra ;
-        
-                                    if (row.cantidad_tipo_servicio > 0) {
-                                        acciones += btnCrearOrdenServicio;
-                                    }
-        
-                                    acciones +=  closeDiv;
-                                }
-                                return acciones;
+                        {
+                            'data': 'division', 'name': 'division.descripcion', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
+                                return row.division != null ? JSON.parse(row.division.replace(/&quot;/g, '"')).join(",") : '';
                             }
-        
-                        }}
+                        },
+                        { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por', 'className': 'text-center' },
+                        { 'data': 'nombre_usuario', 'name': 'nombre_usuario', 'className': 'text-center' },
+                        { 'data': 'observacion', 'name': 'alm_req.observacion', 'className': 'text-left td-lg-300' },
+                        {
+                            'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc', 'className': 'text-center', 'render': function (data, type, row) {
+                                return row['estado_doc'];
+                            }
+                        },
+                        {
+                            'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
+
+                                let openDiv = '<div class="btn-group" role="group" style="text-align:left;">';
+                                let textCantidadMapeados = row.cantidad_tipo_producto > 0 ? `<span class="label label-default" title="Cantidad de items tipo producto {mapeados}/{total de item}" style="background-color:#a99cd1 !important;" >Productos: ${row.count_mapeados} / ${row.cantidad_tipo_producto} </span>` : '';
+                                let textCantidadItemServicio = row.cantidad_tipo_servicio > 0 ? `<span class="label label-default" title="Cantidad de items tipo servicios" style="background-color: #83d7d3 !important;" >Servicios: ${row.cantidad_tipo_servicio} </span>` : '';
+                                let closeDiv = '</div>';
+                                return openDiv + textCantidadMapeados + '<br>' + textCantidadItemServicio + closeDiv;
+
+                            }
+                        },
+                        {
+                            'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
+                                // let tieneTransformacion = row.tiene_transformacion;
+                                // let cantidadItemBase = row.cantidad_items_base;
+
+                                let openDiv = '<div class="btn-group" role="group">';
+                                let closeDiv = '</div>';
+                                let btnSeleccionarHasDisable = 'disabled';
+                                let mensajeTitle = [];
+                                if (row.count_mapeados > 0 || row.cantidad_tipo_servicio > 0) {
+                                    btnSeleccionarHasDisable = '';
+                                    if ((row.estado == 1 || row.estado == 12 || row.estado == 3 || row.estado == 38 || row.estado == 39)) { // estado por observado | regularizar |  en pausa
+                                        btnSeleccionarHasDisable = 'disabled';
+                                    }
+                                }
+
+
+                                if (row.estado == 1 || row.estado == 12) {
+                                    mensajeTitle.push('Se requiere aprobar el requerimiento para poder atender');
+                                }
+                                if (row.estado == 3) {
+                                    mensajeTitle.push('Se requiere resolver la observación');
+                                }
+                                if (row.estado == 38) {
+                                    mensajeTitle.push('Se requiere resolver el estado por regularizar primero');
+                                }
+                                if (row.estado == 39) {
+                                    mensajeTitle.push('Debe requiere que el estado de CDP sea aprobado en etapa de compra');
+                                }
+
+                                if (((row.cantidad_tipo_producto > 0 && row.count_mapeados > 0) || row.cantidad_tipo_servicio > 0) && (row.estado == 2 || row.estado == 15 || row.estado == 27)) {
+                                    mensajeTitle.push('Seleccionar');
+                                }
+
+                                if (row.count_mapeados != row.cantidad_tipo_producto) {
+                                    mensajeTitle.push("Aún tiene item's por mapear");
+                                }
+
+
+                                return openDiv + '<button type="button" class="btn btn-' + (btnSeleccionarHasDisable != '' ? 'default' : 'success') + ' btn-xs handleClickSeleccionarRequerimientoPendiente" name="btnSeleccionar" title="' + (mensajeTitle.length > 0 ? mensajeTitle.toString() : 'Seleccionar') + '" data-cantidad-item-tipo-producto="' + row.cantidad_tipo_producto + '"  data-cantidad-item-tipo-servicio="' + row.cantidad_tipo_servicio + '" data-id-requerimiento="' + row.id_requerimiento + '"  ' + btnSeleccionarHasDisable + ' ><i class="fas fa-check"></i> Seleccionar</button>' + closeDiv;
+
+
+
+                            }
+                        }
                     ],
                     'columnDefs': [
                     ],
@@ -269,10 +297,10 @@ class OrdenView {
                         //     $(row).find('input[type="checkbox"]').prop('checked', true);
                         //     $(row).addClass('selected');
                         // }
-        
+
                     },
                     'initComplete': function () {
-        
+
                         //Boton de busqueda
                         const $filter = $('#tablaRequerimientosPendientes_filter');
                         const $input = $filter.find('input');
@@ -310,10 +338,10 @@ class OrdenView {
                         $('#tablaRequerimientosPendientes_filter input').trigger('focus');
                         //fin botón búsqueda
                         $("#tablaRequerimientosPendientes").LoadingOverlay("hide", true);
-        
+
                     },
                     "createdRow": function (row, data, dataIndex) {
-        
+
                         let color = '#ffffff';
                         switch (data.bootstrap_color) {
                             case 'default':
@@ -337,14 +365,14 @@ class OrdenView {
                             case 'danger':
                                 color = '#98beca';
                                 break;
-        
+
                             default:
                                 color = '#f2f2f2';
                                 break;
                         }
                         $(row.childNodes[11]).css('background-color', color);
                     }
-        
+
                 });
                 // 
 
@@ -354,9 +382,9 @@ class OrdenView {
                 // $('select[name="id_sede[]"]').selectpicker();
 
             }
-          });
+        });
 
-        }
+    }
 
 
     llenarDatosCabeceraSeccionProveedor(idProveedor) {
@@ -637,6 +665,364 @@ class OrdenView {
                 document.querySelector("img[id='logo_empresa']").setAttribute('src', '/images/img-wide.png');
                 break;
         }
+    }
+
+
+
+    obtenerAtencionItemRequerimiento(id) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                type: 'GET',
+                url: route('logistica.gestion-logistica.compras.ordenes.elaborar.obtener-atencion-de-item-requerimiento', id),
+                dataType: 'JSON',
+                success(response) {
+                    resolve(response);
+                },
+                error: function (err) {
+                    reject(err)
+                }
+            });
+        });
+    }
+
+
+    seleccionarRequerimientoPendiente(obj) {
+        const idRequerimiento = obj.dataset.idRequerimiento;
+
+        let continuar=true;
+        this.ordenArray.forEach(arr => {
+            (arr.requerimiento_vinculado_list).forEach(req => {
+                if(req.id_requerimiento==idRequerimiento){
+                    continuar=false;
+                }
+            });
+        });
+
+        if(continuar){
+            $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("show", {
+                imageAutoResize: true,
+                progress: true,
+                imageColor: "#3c8dbc"
+            });
+    
+            let cantidadItemsTipoProductosPorAtender = 0;
+            let cantidadItemsTipoServiciosPorAtender = 0;
+            let detalleRequerimientoList = [];
+            let cabeceraRequerimiento = [];
+            let DataFiltradaDetalleRequerimientoList = [];
+            this.obtenerAtencionItemRequerimiento(idRequerimiento).then((response) => {
+                // console.log(response);
+                if (response.success == true) {
+                    $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("hide", true);
+                    cabeceraRequerimiento = response.requerimiento;
+                    DataFiltradaDetalleRequerimientoList = response.detalle_requerimiento_list;
+    
+                    response.estado_item_list.forEach(element => {
+                        if (element.id_tipo_item == 1 && element.tiene_atencion_total == false) {
+                            cantidadItemsTipoProductosPorAtender++;
+                        }
+                        if (element.id_tipo_item == 2 && element.tiene_atencion_total == false) {
+                            cantidadItemsTipoServiciosPorAtender++;
+                        }
+    
+                    });
+                    // const cantidadItemTipoProducto = (parseInt(obj.dataset.cantidadItemTipoProducto) >0 ? parseInt(obj.dataset.cantidadItemTipoProducto): 0);
+                    // const cantidadItemTipoServicio = (parseInt(obj.dataset.cantidadItemTipoServicio) >0 ? parseInt(obj.dataset.cantidadItemTipoServicio):0);
+    
+                    if (cantidadItemsTipoProductosPorAtender > 0 && cantidadItemsTipoServiciosPorAtender > 0) {
+                        Swal.fire({
+                            title: "Se detectó item's tipo producto y servicio, Qué desea hacer?",
+                            width: 500,
+                            showDenyButton: true,
+                            showCancelButton: true,
+                            confirmButtonText: "Cargar todos",
+                            denyButtonText: `Seleccionar un tipo`
+                        }).then((result) => {
+                            if (result.isConfirmed) { //* cargar ambos tipos de item (productos mapeados y servicios)
+    
+                                this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_COMPRA');
+                            } else if (result.isDenied) { //* dar opcion de elergir un tipo de item
+    
+                                Swal.fire({
+                                    title: "Seleccione un tipo de item para cargar",
+                                    width: 500,
+                                    showDenyButton: true,
+                                    showCancelButton: true,
+                                    confirmButtonText: "Productos",
+                                    denyButtonText: `Servicios`
+                                }).then((result) => {
+                                    if (result.isConfirmed) { //* Seleccion de solo cargar productos mapeados
+                                        detalleRequerimientoList.forEach(element => {
+                                            if (element.id_tipo_item == 1 && element.id_producto != null) {
+                                                DataFiltradaDetalleRequerimientoList.push(element);
+                                            }
+                                        });
+                                        this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_COMPRA');
+    
+                                    } else if (result.isDenied) { //* Seleccion de solo cargar servicios
+                                        detalleRequerimientoList.forEach(element => {
+                                            if (element.id_tipo_item == 2) {
+                                                DataFiltradaDetalleRequerimientoList.push(element);
+                                            }
+                                        });
+                                        this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_SERVICIO');
+                                    }
+                                });
+    
+                            }
+                        });
+    
+                    } else {
+    
+                        if (cantidadItemsTipoProductosPorAtender > 0) { //* cargar para tipo de item producto mapeados
+                            detalleRequerimientoList.forEach(element => {
+                                if (element.id_tipo_item == 1 && element.id_producto != null) {
+                                    DataFiltradaDetalleRequerimientoList.push(element);
+                                }
+                            });
+                            this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_COMPRA');
+                        }
+                        if (cantidadItemsTipoServiciosPorAtender > 0) { //* cargar para tipo de item servicio
+                            detalleRequerimientoList.forEach(element => {
+                                if (element.id_tipo_item == 2) {
+                                    DataFiltradaDetalleRequerimientoList.push(element);
+                                }
+                            });
+                            this.construirOrdenConRequerimiento(cabeceraRequerimiento, DataFiltradaDetalleRequerimientoList, 'ORDEN_SERVICIO');
+                        }
+    
+    
+                    }
+    
+                }
+            }).catch((err) => {
+                $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("hide", true);
+                console.log(err)
+                Swal.fire(
+                    '',
+                    'Lo sentimos hubo un error en el servidor, por favor vuelva a intentarlo',
+                    'error'
+                );
+            });
+
+        }else{
+            Swal.fire(
+                '',
+                'El requerimiento ya fue agregado',
+                'warning'
+            ); 
+        }
+
+    }
+
+
+    construirOrdenConRequerimiento(cabeceraRequerimiento, detalleRequerimiento, TipoDocumento) {
+        let idTipoOrden = "";
+        let cabeceraRequerimientoObject={};
+        switch (TipoDocumento) {
+            case 'ORDEN_COMPRA': // administracion.adm_tp_docum.id_tp_documento = 2
+                idTipoOrden = 2;
+
+                break;
+
+            case 'ORDEN_SERVICIO':// administracion.adm_tp_docum.id_tp_documento = 3
+                idTipoOrden = 3;
+
+                break;
+
+            case 'ORDEN_IMPORTACION':// administracion.adm_tp_docum.id_tp_documento = 12
+                idTipoOrden = 12;
+
+                break;
+
+            default:
+                break;
+        }
+
+        cabeceraRequerimientoObject=[{
+            'id_requerimiento':cabeceraRequerimiento.id_requerimiento,
+            'codigo':cabeceraRequerimiento.codigo,
+            'id_periodo':cabeceraRequerimiento.id_periodo,
+            'descripcion_periodo':cabeceraRequerimiento.periodo.descripcion,
+            'id_moneda':cabeceraRequerimiento.id_moneda,
+            'simbolo_moneda':cabeceraRequerimiento.moneda.simbolo,
+            'tipo_cambio':cabeceraRequerimiento.tipo_cambio,
+            'id_empresa':cabeceraRequerimiento.id_empresa,
+            'descripcion_empresa':cabeceraRequerimiento.empresa.contribuyente.razon_social,
+            'id_sede':cabeceraRequerimiento.id_sede,
+            'descripcion_sede':cabeceraRequerimiento.sede.codigo,
+            'direccion_fiscal_empresa':cabeceraRequerimiento.empresa.contribuyente.direccion_fiscal,
+            'id_ubigeo_empresa':cabeceraRequerimiento.empresa.contribuyente.ubigeo,
+            'descripcion_ubigeo_empresa':cabeceraRequerimiento.empresa.contribuyente.ubigeo_completo,
+            'observacion':cabeceraRequerimiento.observacion
+        }];
+
+        let proveedorDetReq=[];
+        detalleRequerimiento.forEach(detReq => {
+            let registradoEnProveedorDetReq=0;
+            if(detReq.proveedor_seleccionado_id >0 || detReq.proveedor_seleccionado !=null){
+                proveedorDetReq.forEach((provDetReqValue,ProvDetReqIndex) => {
+                   if(provDetReqValue.proveedor_seleccionado_id ==detReq.proveedor_seleccionado_id || (provDetReqValue.proveedor_seleccionado !=null && provDetReqValue.proveedor_seleccionado ==detReq.proveedor_seleccionado)){
+                        registradoEnProveedorDetReq++;
+                    } 
+                });
+                if(registradoEnProveedorDetReq==0){
+                    
+                    proveedorDetReq.push(
+                        {
+                            'detalle_requerimiento_id_list':[detReq.id_detalle_requerimiento],
+                            'proveedor_seleccionado_id':detReq.proveedor_seleccionado_id, //mgc
+                            'proveedor_seleccionado':detReq.proveedor_seleccionado, //mgc
+                            'proveedor_agile_seleccionado_direccion_fiscal':detReq.proveedor_agile_seleccionado_direccion_fiscal,
+                            'proveedor_agile_seleccionado_id_contribuyente':detReq.proveedor_agile_seleccionado_id_contribuyente,
+                            'proveedor_agile_seleccionado_id_proveedor':detReq.proveedor_agile_seleccionado_id_proveedor,
+                            'proveedor_agile_seleccionado_razon_social':detReq.proveedor_agile_seleccionado_razon_social,
+                            'proveedor_agile_seleccionado_tipo_documento':detReq.proveedor_agile_seleccionado_tipo_documento,
+                            'proveedor_agile_seleccionado_numero_documento':detReq.proveedor_agile_seleccionado_numero_documento,
+                            'proveedor_agile_seleccionado_id_cuenta_bancaria':detReq.proveedor_agile_seleccionado_id_cuenta_bancaria,
+                            'proveedor_agile_seleccionado_numero_cuenta_bancaria':detReq.proveedor_agile_seleccionado_numero_cuenta_bancaria,
+                            'proveedor_agile_seleccionado_numero_cuenta_interbancaria':detReq.proveedor_agile_seleccionado_numero_cuenta_interbancaria,
+                            'proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria':detReq.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria,
+                        }
+                    );
+                }else{
+                    proveedorDetReq.forEach((provDetReqValue,ProvDetReqIndex) => {
+                       if(provDetReqValue.proveedor_seleccionado_id ==detReq.proveedor_seleccionado_id || provDetReqValue.proveedor_seleccionado == detReq.proveedor_seleccionado ){
+                            proveedorDetReq[ProvDetReqIndex]['detalle_requerimiento_id_list'].push(detReq.id_detalle_requerimiento);
+
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado_id']==null && detReq.proveedor_seleccionado_id>0){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado_id'] =detReq.proveedor_seleccionado_id;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado']==null && detReq.proveedor_seleccionado !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_seleccionado'] =detReq.proveedor_seleccionado;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_direccion_fiscal']==null && detReq.proveedor_agile_seleccionado_direccion_fiscal !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_direccion_fiscal'] =detReq.proveedor_agile_seleccionado_direccion_fiscal;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_contribuyente']==null && detReq.proveedor_agile_seleccionado_id_contribuyente !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_contribuyente'] =detReq.proveedor_agile_seleccionado_id_contribuyente;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_proveedor']==null && detReq.proveedor_agile_seleccionado_id_proveedor !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_proveedor'] =detReq.proveedor_agile_seleccionado_id_proveedor;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_razon_social']==null && detReq.proveedor_agile_seleccionado_razon_social !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_razon_social'] =detReq.proveedor_agile_seleccionado_razon_social;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_tipo_documento']==null && detReq.proveedor_agile_seleccionado_tipo_documento !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_tipo_documento'] =detReq.proveedor_agile_seleccionado_tipo_documento;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_documento']==null && detReq.proveedor_agile_seleccionado_numero_documento !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_documento'] =detReq.proveedor_agile_seleccionado_numero_documento;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_id_cuenta_bancaria !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_id_cuenta_bancaria;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_numero_cuenta_bancaria !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_numero_cuenta_bancaria;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_interbancaria']==null && detReq.proveedor_agile_seleccionado_numero_cuenta_interbancaria !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_numero_cuenta_interbancaria'] =detReq.proveedor_agile_seleccionado_numero_cuenta_interbancaria;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_moneda_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_id_moneda_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria;
+                            }
+                            if(proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria']==null && detReq.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria !=null){
+                                proveedorDetReq[ProvDetReqIndex]['proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria'] =detReq.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria;
+                            }
+                       } 
+                    });
+
+                }
+            }else{
+                proveedorDetReq.push(
+                    {'detalle_requerimiento_id_list':[detReq.id_detalle_requerimiento],
+                    'proveedor_seleccionado_id':null,
+                    'proveedor_seleccionado':null
+                    });
+             }
+        });
+        
+        console.log(proveedorDetReq);
+        
+        // crear un array de objetos de ordenes ( el total por proveedor)
+        proveedorDetReq.forEach(provDetReqValue => {
+        
+           let cabeceraOrdenObject = {
+                'id_tipo_orden': idTipoOrden,
+                'descripcion_tipo_orden': idTipoOrden,
+                'id_moneda': cabeceraRequerimientoObject.id_moneda,
+                'simbolo_moneda': cabeceraRequerimientoObject.simbolo_moneda,
+                'tipo_cambio': cabeceraRequerimientoObject.tipo_cambio,
+                'id_softlink': '',
+                'codigo_softlink': '',
+                'id_periodo': cabeceraRequerimientoObject.id_periodo,
+                'descripcion_periodo': cabeceraRequerimientoObject.descripcion_periodo,
+                'fecha_emision': '', //moment().format("DD-MM-YYYY");
+                'id_empresa': cabeceraRequerimientoObject.id_empresa,
+                'descripcion_empresa': cabeceraRequerimientoObject.descripcion_empresa,
+                'id_sede': cabeceraRequerimientoObject.id_sede,
+                'descripcion_sede': cabeceraRequerimientoObject.descripcion_sede,
+                'id_proveedor': provDetReqValue.proveedor_agile_seleccionado_id >0 ?provDetReqValue.proveedor_agile_seleccionado_id:'',
+                'ruc_proveedor': provDetReqValue.proveedor_agile_seleccionado_numero_documento !=null ?provDetReqValue.proveedor_agile_seleccionado_numero_documento:'',
+                'razon_social_proveedor': provDetReqValue.proveedor_agile_seleccionado_razon_social !=null ?provDetReqValue.proveedor_agile_seleccionado_razon_social:(provDetReqValue.proveedor_seleccionado=!null?provDetReqValue.proveedor_seleccionado:'') ,
+                'direccion_fiscal_proveedor': provDetReqValue.proveedor_agile_seleccionado_direccion_fiscal !=null?provDetReqValue.proveedor_agile_seleccionado_direccion_fiscal !=null:'',
+                'id_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_id_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_id_cuenta_bancaria !=null:'',
+                'numero_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_numero_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_numero_cuenta_bancaria !=null:'',
+                'simbolo_moneda_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria !=null:'',
+                'id_moneda_cuenta_proveedor': provDetReqValue.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria !=null?provDetReqValue.proveedor_agile_seleccionado_id_moneda_cuenta_bancaria !=null:'',
+                'id_concato_proveedor': '',
+                'nombre_concato_proveedor': '',
+                'telefono_concato_proveedor': '',
+                'id_rubro_proveedor': '',
+                'descripcion_rubro_proveedor': '',
+
+                'id_condicion_compra': '',
+                'descripcion_condicion_compra': '',
+                'id_condicion_softlink': '',
+                'descripcion_condicion_softlink': '',
+                'plazo_entrega_dias': '',
+                'requerimiento_vinculado_list': cabeceraRequerimientoObject,
+                'id_tipo_documento': 2,
+                'descripcion_tipo_documento': '01 - Factura',
+                'direccion_entrega': cabeceraRequerimientoObject.direccion_fiscal_empresa,
+                'id_ubigeo_entrega': cabeceraRequerimientoObject.id_ubigeo_empresa,
+                'descripcion_ubigeo_entrega': cabeceraRequerimientoObject.descripcion_ubigeo_empresa,
+                'id_personal_autorizado_1': '',
+                'nombre_personal_autorizado_1': '',
+                'id_personal_autorizado_2': '',
+                'nombre_personal_autorizado_2': '',
+                'es_compra_local': false,
+                'observacion': cabeceraRequerimientoObject.observacion,
+                'id_estado_orden': '',
+                'descripcion_estado_orden': '',
+    
+            };
+
+            this.ordenArray.push(cabeceraOrdenObject);
+        });
+        
+         console.log(this.ordenArray);
+
+     
+        this.construirPanelListaDeOrdenes(cabeceraRequerimiento);
+        this.construirPanelEncabezadoOrden(cabeceraRequerimiento);
+        this.construirPanelDetalleOrden(detalleRequerimiento);
+
+
+
+    }
+
+
+    construirPanelListaDeOrdenes(data) {
+        // console.log(data);
+    }
+    construirPanelEncabezadoOrden(data) {
+        // console.log(data);
+        
+    }
+    construirPanelDetalleOrden(data) {
+        // console.log(data);
+
     }
 
     // obtenerRequerimiento(reqTrueList, tipoOrden) { // used

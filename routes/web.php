@@ -1090,7 +1090,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'kardex-series.', 'prefix' => 'kardex-series'], function () {
 
 				Route::get('index', [KardexSerieController::class, 'view_kardex_series'])->name('index');
-				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-erie-productos');
+				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-serie-productos');
 				Route::get('listar_kardex_serie/{serie}/{id_prod}', [KardexSerieController::class, 'listar_kardex_serie'])->name('listar-kardex-serie');
 				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto'])->name('datos-producto');
 				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
@@ -1528,6 +1528,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::name('elaborar.')->prefix('elaborar')->group(function () {
 						Route::get('index', [OrdenController::class, 'view_crear_orden_requerimiento'])->name('index');
 						Route::get('orden-multiple-index', [OrdenMultipleController::class, 'view_orden_multiple'])->name('orden-multiple-index'); // TODO: En desarrollo
+						Route::get('obtener-atencion-de-item-requerimiento/{idRequerimiento}', [OrdenMultipleController::class, 'ObtenerAtencionItemRequerimiento'])->name('obtener-atencion-de-item-requerimiento');
 						Route::get('obtener-data-proveedor/{idProveedor}', [OrdenMultipleController::class, 'obtenerDataProveedor'])->name('obtener-data-proveedor');
 						Route::get('porveedores', [OrdenMultipleController::class, 'listar_proveedores'])->name('porveedores');
 						Route::post('requerimiento-detallado', [OrdenController::class, 'ObtenerRequerimientoDetallado'])->name('requerimiento-detallado');

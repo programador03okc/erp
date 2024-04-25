@@ -146,10 +146,10 @@
                                                 </ul>
                                                 <div class="text-left">
                                                     <button type="button" class="btn btn-xs btn-success" id="btnSeleccionarOrden" title="Seleccionar"><i class="fas fa-check"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Imprimir"><i class="fas fa-print"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Editar"><i class="fas fa-edit"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Anular"><i class="fas fa-trash"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnSeleccionarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
+                                                    <button type="button" class="btn btn-xs btn-default" id="btnImprimirOrden" title="Imprimir"><i class="fas fa-print"></i></button>
+                                                    <button type="button" class="btn btn-xs btn-default" id="btnEditarOrden" title="Editar"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-xs btn-default" id="btnAnularOrden" title="Anular"><i class="fas fa-trash"></i></button>
+                                                    <button type="button" class="btn btn-xs btn-default" id="btnMigrarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
                                                 </div>
 
 
@@ -344,7 +344,7 @@
                                                             <dl class="">
                                                                 <dt>Forma de pago</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs actualizarFormaPago" name="forma_pago[]">
+                                                                    <select class="form-control input-xs handleChangeFormaPago" name="forma_pago[]">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($condiciones_softlink as $cond)
                                                                         <option value="{{$cond->id_condicion_softlink}}" data-dias="{{$cond->dias}}">{{$cond->descripcion}}</option>
@@ -622,6 +622,7 @@
                                     <th style="text-align:center;">Req. creado por</th>
                                     <th style="text-align:center;">Observación</th>
                                     <th style="text-align:center;">Estado</th>
+                                    <th style="text-align:center;">Tipo Item</th>
                                     <th style="text-align:center;width:7%;">Acción</th>
                                 </tr>
                             </thead>
@@ -631,7 +632,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-success" id="btnAgregarCliente"> Seleccionar</button>
+                <button class="btn btn-sm btn-default" class="close" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

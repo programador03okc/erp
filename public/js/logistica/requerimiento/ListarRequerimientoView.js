@@ -398,24 +398,42 @@ class ListarRequerimientoView {
                 { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por' },
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc','render': function (data, type, row) {
+
+                    let textoTrazabilidad='';
+                    if(row['ordenes_compra']){
+                        (row['ordenes_compra']).forEach(element => {
+                            if(element.estado_pago==1){
+                                textoTrazabilidad='Logística: Orden Creada';
+                            }else if(element.estado_pago==8){
+                                textoTrazabilidad='Logística: Solicitud de pago enviado';
+                            }else if(element.estado_pago==5){
+                                textoTrazabilidad='Contabilidad: Autorizado para pago';
+                            }else if(element.estado_pago==6){
+                                textoTrazabilidad='Tesorería: Orden pagada';
+                            }else if(element.estado_pago==10){
+                                textoTrazabilidad='Tesorería: Orden pagada con saldo';
+                            }
+                            
+                        });
+                    }
                     switch (row['estado']) {
                         case 1:
-                            return '<span class="labelEstado label label-default">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-default">' + row['estado_doc'] +'</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 2:
-                            return '<span class="labelEstado label label-success">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-success">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 3:
-                            return '<span class="labelEstado label label-warning">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-warning">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 5:
-                            return '<span class="labelEstado label label-primary">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-primary">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 7:
-                            return '<span class="labelEstado label label-danger">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-danger">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         default:
-                            return '<span class="labelEstado label label-default">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-default">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
 
                     }

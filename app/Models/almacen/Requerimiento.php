@@ -202,8 +202,9 @@ class Requerimiento extends Model
 
         $ordenes = OrdenCompraDetalle::join('almacen.alm_det_req', 'log_det_ord_compra.id_detalle_requerimiento', 'alm_det_req.id_detalle_requerimiento')
             ->join('logistica.log_ord_compra', 'log_ord_compra.id_orden_compra', 'log_det_ord_compra.id_orden_compra')
+            ->leftJoin('tesoreria.requerimiento_pago_estado', 'requerimiento_pago_estado.id_requerimiento_pago_estado', 'log_ord_compra.estado_pago')
             ->where([['alm_det_req.id_requerimiento', $this->attributes['id_requerimiento']], ['log_ord_compra.estado', '!=', 7]])
-            ->select(['log_ord_compra.id_orden_compra', 'log_ord_compra.codigo'])->distinct()->get();
+            ->select(['log_ord_compra.id_orden_compra', 'log_ord_compra.codigo','log_ord_compra.estado_pago','requerimiento_pago_estado.descripcion AS descripcion_estado_pago'])->distinct()->get();
 
         return $ordenes;
     }
@@ -453,6 +454,10 @@ class Requerimiento extends Model
     public function cuadroCostos()
     {
         return $this->hasOne('App\Models\Comercial\CuadroCosto\CuadroCostosView', 'id', 'id_cc');
+    }
+    public function periodo()
+    {
+        return $this->hasOne('App\Models\Administracion\Periodo', 'id_periodo', 'id_periodo');
     }
     // public function almacen()
     // {

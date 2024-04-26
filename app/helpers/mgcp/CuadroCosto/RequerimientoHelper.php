@@ -8,6 +8,7 @@ use App\Mail\mgcp\CuadroCosto\SolicitudAprobacion;
 use App\Models\Administracion\Aprobacion;
 use App\Models\Administracion\Documento;
 use App\Models\Administracion\Periodo;
+use App\Models\Almacen\CdpRequerimiento;
 use App\Models\Almacen\DetalleOrdenCompra;
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\OrdenCompra;
@@ -281,6 +282,14 @@ class RequerimientoHelper
 
         $requerimiento->save();
         $this->crearDocumentoReferencia($requerimiento);
+
+        $cdpRequerimiento = new CdpRequerimiento();
+        $cdpRequerimiento->id_cc = $cuadro->id;
+        $cdpRequerimiento->codigo_oportunidad = $oportunidad->codigo_oportunidad;
+        $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
+        $cdpRequerimiento->estado = 1;
+        $cdpRequerimiento->save();
+        
         return $requerimiento;
     }
 

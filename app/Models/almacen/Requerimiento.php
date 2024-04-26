@@ -10,6 +10,7 @@ use App\Models\Administracion\Estado;
 use App\Models\Administracion\Periodo;
 use App\Models\Configuracion\Usuario;
 use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Tesoreria\TipoCambio;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,7 @@ class Requerimiento extends Model
 {
     protected $table = 'almacen.alm_req';
     protected $primaryKey = 'id_requerimiento';
-    protected $appends = ['termometro', 'nombre_estado', 'nombre_completo_usuario', 'ordenes_compra','reserva', 'cantidad_tipo_producto', 'cantidad_tipo_servicio','cantidad_adjuntos_activos','historial_aprobacion'];
+    protected $appends = ['termometro', 'nombre_estado', 'nombre_completo_usuario', 'ordenes_compra','reserva', 'cantidad_tipo_producto', 'cantidad_tipo_servicio','cantidad_adjuntos_activos','historial_aprobacion','tipo_cambio_venta'];
     public $timestamps = false;
 
     // public function getMontoTotalAttribute(){
@@ -417,6 +418,14 @@ class Requerimiento extends Model
             return [];
          }
 
+    }
+
+    public function getTipoCambioVentaAttribute()
+    {
+        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $this->attributes['fecha_registro']]])->orderBy('fecha', 'DESC')->first();
+
+        return ($tc !== null ? $tc->venta : 0);
+         
     }
 
 

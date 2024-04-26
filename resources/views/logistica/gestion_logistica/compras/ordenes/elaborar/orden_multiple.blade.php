@@ -73,10 +73,7 @@
 <div class="page-main" type="orden">
     <form id="form-orden" type="register" form="formulario">
         <input type="hidden" name="id_orden" primary="ids">
-        <input type="hidden" name="tipo_cambio_compra">
-        <input class="oculto" name="monto_subtotal">
-        <input class="oculto" name="monto_igv">
-        <input class="oculto" name="monto_total">
+        <input type="hidden" name="tipo_cambio">
 
 
 
@@ -85,13 +82,12 @@
             <div class="col-md-12">
                 <h4 style="display:flex;justify-content: space-between;">
                     <div>
-                        <button type="button" name="btn-nuevo" class="btn btn-default btn-sm crearNuevaOrden" title="Nuevo"><i class="fas fa-file"></i> Crear nueva Orden</button>
-                        <button type="button" name="btn-guardar" class="btn btn-default btn-sm guardarOrden" title="Guardar"><i class="fas fa-save"></i> Guardar</button>
-                        <button type="button" name="btn-historial" class="btn btn-default btn-sm listaHistorialOrden" title="Historial"><i class="fas fa-folder"></i> Historial</button>
-                        <button type="button" name="btn-migrar-orden-softlink" class="btn btn-default btn-sm migrarOrdenASoftlink" title="Migrar orden a softlink" disabled><i class="fas fa-file-export"></i> Migrar Orden a soflink</button>
+                        <button type="button" name="btn-nuevo" class="btn btn-primary btn-sm handleClickCrearNuevaOrden" title="Nuevo"><i class="fas fa-file"></i> Crear nueva Orden</button>
+                        <button type="button" name="btn-guardar" class="btn btn-success btn-sm handleClickGuardarOrden" title="Guardar"><i class="fas fa-save"></i> Guardar</button>
+                        <button type="button" name="btn-migrar-orden-softlink" class="btn btn-warning btn-sm handleClickMigrarOrdenASoftlink" title="Migrar a softlink" disabled><i class="fas fa-file-export"></i> Migrar Orden a soflink</button>
                     </div>
                     <div>
-
+                        <h5><span class="label label-info">Tipo cambio: <span name="tipo_cambio">0</span></span></h5>
 
 
 
@@ -113,49 +109,6 @@
                             </div>
                             <div class="panel-body" style="overflow:auto; white-space:nowrap; padding-bottom:0px;">
                                 <ul class="list-inline" id="contenedor_lista_ordenes">
-                                    <li>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading text-center" style="display:flex; flex-direction:row; gap:0.5rem;">
-                                                <h5>Cód. orden: <span class="label label-default" title="Código de orden"><span name="tituloDocumentoCodigoOrden[]">OC-240240</span></span></h5>
-                                                <h5>Cód. Softlink: <span class="label label-default" title="Código de Softlink"><span name="tituloDocumentoCodigoSoftlink[]">00100189</span></span></h5>
-                                            </div>
-                                            <div class="panel-body">
-                                                <ul class="list-inline">
-                                                    <li>
-                                                        <dl>
-                                                            <dt>Empresa:</dt>
-                                                            <dd>OK COMPUTER EIRL</dd>
-                                                            <dt>Sede:</dt>
-                                                            <dd>Lima</dd>
-                                                            <dt>Proveedor:</dt>
-                                                            <dd>MAXIMA EIRL</dd>
-                                                        </dl>
-                                                    </li>
-                                                    <li>
-                                                        <dl>
-                                                            <dt>Fecha emsión:</dt>
-                                                            <dd>##/##/####</dd>
-                                                            <dt>Importe:</dt>
-                                                            <dd>S/.1000.00</dd>
-                                                            <dt>Cta Proveedor:</dt>
-                                                            <dd>55234242-2432-10</dd>
-                                                    </li>
-                                                    <li>
-
-                                                    </li>
-                                                </ul>
-                                                <div class="text-left">
-                                                    <button type="button" class="btn btn-xs btn-success" id="btnSeleccionarOrden" title="Seleccionar"><i class="fas fa-check"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnImprimirOrden" title="Imprimir"><i class="fas fa-print"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnEditarOrden" title="Editar"><i class="fas fa-edit"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnAnularOrden" title="Anular"><i class="fas fa-trash"></i></button>
-                                                    <button type="button" class="btn btn-xs btn-default" id="btnMigrarOrden" title="Migrar a Softlink"><i class="fas fa-file-export"></i></button>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -193,7 +146,7 @@
                                                             <dl class="">
                                                                 <dt>Tipo Orden</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs" name="id_tipo_orden_compra[]">
+                                                                    <select class="form-control input-xs" name="id_tipo_orden">
                                                                         @foreach ($tp_documento as $tp)
                                                                         @if($tp->descripcion == 'Orden de Compra')
                                                                         <option value="{{$tp->id_tp_documento}}" selected>{{$tp->descripcion}}</option>
@@ -209,7 +162,7 @@
                                                                 </dd>
                                                                 <dt>Periodo</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs" name="id_periodo[]">
+                                                                    <select class="form-control input-xs" name="id_periodo">
                                                                         @foreach ($periodos as $periodo)
                                                                         <option value="{{$periodo->id_periodo}}">{{$periodo->descripcion}}</option>
                                                                         @endforeach
@@ -222,11 +175,11 @@
                                                             <dl class="">
                                                                 <dt>Código</dt>
                                                                 <dd>
-                                                                    <p class="form-control-static" name="codigo_orden_compra[]">(Debe crear o abrir una orden)</p>
+                                                                    <p class="form-control-static" name="codigo_orden_compra">(Debe crear o abrir una orden)</p>
                                                                 </dd>
                                                                 <dt>Cod.Softlink</dt>
                                                                 <dd>
-                                                                    <p class="form-control-static" name="codigo_softlink[]">(Debe migrar la OC/OS)</p>
+                                                                    <p class="form-control-static" name="codigo_softlink">(Debe migrar la OC/OS)</p>
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -242,7 +195,7 @@
                                                                 </dd>
                                                                 <dt>Fecha Emisión</dt>
                                                                 <dd>
-                                                                    <input class="form-control input-xs" name="fecha_emision[]" type="datetime-local" value="2024-03-19T11:23">
+                                                                    <input class="form-control input-xs" name="fecha_emision" type="datetime-local" value="2024-03-19T11:23">
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -250,7 +203,7 @@
                                                             <dl class="">
                                                                 <dt>Empresa / Sede</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs handleChangeSede " name="id_sede[]" title="Seleccionar empresa - sede" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs handleChangeSede " name="id_sede" title="Seleccionar empresa - sede" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($sedes as $sede)
                                                                         <option value="{{$sede->id_sede}}" data-id-empresa="{{$sede->id_empresa}}" data-direccion="{{$sede->direccion}}" data-id-ubigeo="{{$sede->id_ubigeo}}" data-ubigeo-descripcion="{{$sede->ubigeo_descripcion}}">{{$sede->descripcion}}</option>
@@ -258,7 +211,7 @@
                                                                     </select>
                                                                 </dd>
                                                                 <dt>
-                                                                <dd><img id="logo_empresa" src="/images/img-wide.png" alt="" style="height:80px !important; width:100% !important;"></dd>
+                                                                <dd><img id="logo_empresa" src="/images/img-wide.png" alt="" style="height:60px !important; width:100% !important;"></dd>
                                                                 </dt>
                                                             </dl>
                                                         </div>
@@ -277,7 +230,7 @@
                                                             <dl class="">
                                                                 <dt>RUC - Razón social</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs onChangeSeleccionarProveedor" name="id_proveedor[]" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs onChangeSeleccionarProveedor" name="id_proveedor" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($proveedores as $proveedor)
                                                                         <option value="{{$proveedor->id_proveedor}}" data-id-contribuyente="{{$proveedor->id_contribuyente}}" data-razon-social="{{$proveedor->contribuyente->razon_social}}" data-numero-documento="{{$proveedor->contribuyente->nro_documento}}">{{$proveedor->contribuyente->nro_documento!=null?$proveedor->contribuyente->nro_documento.' - ':''}} {{$proveedor->contribuyente->razon_social}}</option>
@@ -286,7 +239,7 @@
                                                                 </dd>
                                                                 <dt>Contacto</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs seleccionarDatoCabeceraConcatoProveedor" name="id_contacto_proveedor[]">
+                                                                    <select class="form-control input-xs seleccionarDatoCabeceraConcatoProveedor" name="id_contacto_proveedor">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                     </select>
                                                                 </dd>
@@ -298,11 +251,11 @@
                                                             <dl class="">
                                                                 <dt>Dirección</dt>
                                                                 <dd>
-                                                                    <p class="form-control-static" name="direccion_proveedor[]">(seleccione un proveedor)</p>
+                                                                    <p class="form-control-static" name="direccion_proveedor">(seleccione un proveedor)</p>
                                                                 </dd>
                                                                 <dt>Telefono contacto</dt>
                                                                 <dd>
-                                                                    <p class="form-control-static" name="telefono_contacto[]">(seleccione un concacto)</p>
+                                                                    <p class="form-control-static" name="telefono_contacto">(seleccione un concacto)</p>
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -311,7 +264,7 @@
                                                                 <dt>Cuenta Bancaria</dt>
                                                                 <dd>
                                                                     <div style="display:flex;">
-                                                                        <select class="form-control input-xs" name="id_cuenta_bancaria_proveedor[]">
+                                                                        <select class="form-control input-xs" name="id_cuenta_bancaria_proveedor">
                                                                             <option value="" disabled>Elija una opción</option>
                                                                         </select>
                                                                         <button type="button" class="btn-primary agregarCuentaProveedor" title="Agregar cuenta bancaria"><i class="fas fa-plus"></i></button>
@@ -320,7 +273,7 @@
                                                                 </dd>
                                                                 <dt>Rubro</dt>
                                                                 <dd>
-                                                                    <select class="selectpicker" title="Elija una opción" data-width="100%" data-container="body" data-live-search="true" name="id_rubro_proveedor[]">
+                                                                    <select class="selectpicker" title="Elija una opción" data-width="100%" data-container="body" data-live-search="true" name="id_rubro_proveedor">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($rubros as $rubro)
                                                                         <option value="{{$rubro->id_rubro}}">{{$rubro->descripcion}}</option>
@@ -344,14 +297,14 @@
                                                             <dl class="">
                                                                 <dt>Forma de pago</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs handleChangeFormaPago" name="forma_pago[]">
+                                                                    <select class="form-control input-xs handleChangeFormaPago" name="forma_pago">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($condiciones_softlink as $cond)
                                                                         <option value="{{$cond->id_condicion_softlink}}" data-dias="{{$cond->dias}}">{{$cond->descripcion}}</option>
                                                                         @endforeach
                                                                     </select>
                                                                     <div style="display:none;">
-                                                                        <select class="form-control group-elemento activation" name="id_condicion[]" style="width:100%; text-align:center;">
+                                                                        <select class="form-control group-elemento activation" name="id_condicion" style="width:100%; text-align:center;">
                                                                             @foreach ($condiciones as $cond)
                                                                             <option value="{{$cond->id_condicion_pago}}">{{$cond->descripcion}}</option>
                                                                             @endforeach
@@ -365,7 +318,7 @@
                                                                 <dt>Plazo entrega</dt>
                                                                 <dd>
                                                                     <div style="display:flex;">
-                                                                        <input type="number" name="plazo_entrega[]" min="0" class="form-control input-xs" style="text-align:right;">
+                                                                        <input type="number" name="plazo_entrega" min="0" class="form-control input-xs" style="text-align:right;">
                                                                         <input type="text" value="días" class="form-control group-elemento input-xs" style="text-align:center;" readonly="">
                                                                     </div>
                                                                 </dd>
@@ -375,7 +328,7 @@
                                                             <dl class="">
                                                                 <dt>Requerimiento</dt>
                                                                 <dd>
-                                                                    <p class="form-control-static" name="requerimiento_vinculados[]">(Sin vinculo con requerimiento)</p>
+                                                                    <p class="form-control-static" name="requerimiento_vinculados">(Sin vinculo con requerimiento)</p>
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -383,7 +336,7 @@
                                                             <dl class="">
                                                                 <dt>Tipo Documento</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_tipo_documento[]" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs" name="id_tipo_documento" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($tp_doc as $tp)
                                                                         @if($tp->descripcion == 'Factura')
@@ -409,11 +362,11 @@
                                                             <dl class="">
                                                                 <dt>Direccion de Entrega</dt>
                                                                 <dd>
-                                                                    <input class="form-control input-xs" name="direccion_entrega[]" type="text">
+                                                                    <input class="form-control input-xs" name="direccion_entrega" type="text">
                                                                 </dd>
                                                                 <dt>Compra locales</dt>
                                                                 <dd>
-                                                                    <input type="checkbox" name="compra_local[]"> Compras locales
+                                                                    <input type="checkbox" name="compra_local"> Compras locales
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -421,7 +374,7 @@
                                                             <dl class="">
                                                                 <dt>Ubigeo entrega</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_ubigeo_destino[]" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs" name="id_ubigeo_destino" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($ubigeos as $ubigeo)
                                                                         <option value="{{$ubigeo->id_dis}}">{{$ubigeo->codigo}} - {{$ubigeo->descripcion}} - {{$ubigeo->provincia}} - {{$ubigeo->departamento}}</option>
@@ -430,7 +383,7 @@
                                                                 </dd>
                                                                 <dt>Observación</dt>
                                                                 <dd>
-                                                                    <textarea class="form-control input-xs" name="observacion[]" cols="100" rows="100" style="height:50px;"></textarea>
+                                                                    <textarea class="form-control input-xs" name="observacion" cols="50" rows="100" style="height:50px;"></textarea>
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -438,7 +391,7 @@
                                                             <dl class="">
                                                                 <dt>Personal autorizado #1</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_1[]" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_1" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($trabajadores as $trabajador)
                                                                         <option value="{{$trabajador->id_trabajador}}">{{$trabajador->nombre_trabajador}}</option>
@@ -451,7 +404,7 @@
                                                             <dl class="">
                                                                 <dt>Personal autorizado #2</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_2[]" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_2" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($trabajadores as $trabajador)
                                                                         <option value="{{$trabajador->id_trabajador}}">{{$trabajador->nombre_trabajador}}</option>
@@ -482,17 +435,13 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="btn-group" role="group" aria-label="...">
-                                            <button type="button" class="btn btn-xs btn-success activation handleClickCatalogoProductosModal" id="btnAgregarProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar producto"><i class="fas fa-plus"></i> Productos</button>
-                                            <button type="button" class="btn btn-xs btn-info activation handleClickCatalogoProductosObsequioModal" id="btnAgregarProductoObsequio" data-toggle="tooltip" data-placement="bottom" title="Agregar producto para obsequio"><i class="fas fa-plus"></i> Productos para obsequio</button>
-                                            <button type="button" class="btn btn-xs btn-primary activation handleClickAgregarServicio" id="btnAgregarServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar servicio"><i class="fas fa-plus"></i> Servicio</button>
-                                            <button type="button" class="btn btn-xs btn-default activation handleClickVincularRequerimientoAOrdenModalOLD" onClick="openVincularRequerimientoConOrden();" id="btnAgregarVinculoRequerimiento" data-toggle="tooltip" data-placement="bottom" title="Agregar items de otro requerimiento" disabled><i class="fas fa-plus"></i>
-                                                Vincular otro requerimiento
-                                            </button>
+                                            <button type="button" class="btn btn-xs btn-default handleClickAbrirCatalogoProductos" id="btnAgregarProducto" data-toggle="tooltip" data-placement="bottom" title="Agregar producto"><i class="fas fa-plus"></i> Productos</button>
+                                            <button type="button" class="btn btn-xs btn-default handleClickAgregarServicio" id="btnAgregarServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar servicio"><i class="fas fa-plus"></i> Servicio</button>
                                         </div>
                                         <div class="box box-widget">
                                             <div class="box-body">
                                                 <div class="table-responsive">
-                                                    <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden[]" width="100%">
+                                                    <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width: 5%">Req.</th>
@@ -510,33 +459,33 @@
                                                                 <th style="width: 5%">Acción</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody name="body_detalle_orden[]"></tbody>
+                                                        <tbody name="body_detalle_orden"></tbody>
                                                         <tfoot>
                                                             <tr>
                                                                 <td colspan="11" class="text-right"><strong>Monto neto:</strong></td>
-                                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoNeto[]">
+                                                                <td class="text-right"><span name="simboloMoneda">S/</span><label name="montoNeto">
                                                                         0.00</label></td>
                                                                 <td></td>
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right">
-                                                                    <input class="activation handleClickIncluyeIGV" type="checkbox" name="incluye_igv[]" checked> <strong>Incluye IGV</strong>
+                                                                    <input class="handleClickIncluyeIGV" type="checkbox" name="incluye_igv" checked> <strong>Incluye IGV</strong>
                                                                 </td>
-                                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="igv[]">
+                                                                <td class="text-right"><span name="simboloMoneda">S/</span><label name="igv">
                                                                         0.00</label></td>
                                                                 <td></td>
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right">
-                                                                    <input class="activation handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper[]"> <strong>Incluye ICBPER</strong>
+                                                                    <input class="handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper"> <strong>Incluye ICBPER</strong>
                                                                 </td>
-                                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="icbper[]">
+                                                                <td class="text-right"><span name="simboloMoneda">S/</span><label name="icbper">
                                                                         0.00</label></td>
                                                                 <td></td>
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right"><strong>Monto total:</strong></td>
-                                                                <td class="text-right"><span name="simboloMoneda[]">S/</span><label name="montoTotal[]">
+                                                                <td class="text-right"><span name="simboloMoneda">S/</span><label name="montoTotal">
                                                                         0.00</label></td>
                                                                 <td></td>
                                                             </tr>
@@ -638,6 +587,7 @@
     </div>
 </div>
 
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_catalogo_items')
 
 @include('logistica.gestion_logistica.proveedores.modal_cuentas_bancarias_proveedor')
 

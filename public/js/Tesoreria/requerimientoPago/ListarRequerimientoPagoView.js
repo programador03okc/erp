@@ -1171,6 +1171,11 @@ class ListarRequerimientoPagoView {
             }
         }
 
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+                 element.textContent = "";
+        });
+
     }
     nuevoRequerimientoPago() {
         this.resetearFormularioRequerimientoPago();
@@ -1184,7 +1189,19 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-requerimiento-pago'] button[id='btnActualizarRequerimientoPago']").classList.add("oculto");
         document.querySelector("div[id='modal-requerimiento-pago'] button[id='btnGuardarRequerimientoPago']").classList.remove("oculto");
         // document.querySelector("div[id='modal-requerimiento-pago'] input[name='fecha_registro']").value = moment().format("YYYY-MM-DD");
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        let mesAfectacion = document.querySelector("select[name='mes_afectacion']");
 
+        if(mesAfectacion){
+            allMesPpto.forEach(element => {
+                element.textContent = moment(mesAfectacion.value, 'MM').format('MMMM');
+            });
+    
+        }else{
+            allMesPpto.forEach(element => {
+                    element.textContent =  moment().format('MMMM');
+            });
+         }
     }
 
 
@@ -2793,6 +2810,10 @@ class ListarRequerimientoPagoView {
         document.querySelector("td[id='adjuntosRequerimientoPago']").innerHTML = '';
         this.limpiarTabla('listaDetalleRequerimientoPago');
         this.limpiarTabla('listaHistorialRevision');
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+                 element.textContent = "";
+        });
 
     }
 
@@ -2855,15 +2876,26 @@ class ListarRequerimientoPagoView {
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] span[name='simboloMoneda']").textContent = data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='listaDetalleRequerimientoPago'] span[name='simbolo_moneda']").textContent = data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : '';
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='listaDetalleRequerimientoPago'] label[name='total']").textContent = $.number(data.monto_total, 2);
-        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
-        allMesPpto.forEach(element => {
-            if(data && data.fecha_registro !=null){
-                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
-            }else{
-                element.textContent =  moment().format('MMMM');
 
-            }
-        });
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+
+        if(data.mes_afectacion!=null){
+            allMesPpto.forEach(element => {
+                element.textContent = moment(data.mes_afectacion, 'MM').format('MMMM');
+            });
+
+        }else{
+            allMesPpto.forEach(element => {
+                if(data && data.fecha_registro !=null){
+                    element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+                }else{
+                    element.textContent =  moment().format('MMMM');
+    
+                }
+            });
+
+        }
+
  
 
         if (data.id_presupuesto_interno > 0) {

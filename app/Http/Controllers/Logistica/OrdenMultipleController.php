@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Logistica;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AlmacenController;
@@ -14,6 +15,7 @@ use App\Models\Almacen\UnidadMedida;
 use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Moneda;
 use App\Models\Contabilidad\Banco;
+use App\Models\Contabilidad\ContactoContribuyente;
 use App\Models\Contabilidad\Contribuyente;
 use App\Models\Contabilidad\CuentaContribuyente;
 use App\Models\Contabilidad\TipoCuenta;
@@ -21,6 +23,7 @@ use App\Models\Logistica\CondicionSoftlink;
 use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
 use App\Models\Logistica\Proveedor;
+use App\Models\mgcp\CuadroCosto\Proveedor as CuadroCostoProveedor;
 use Carbon\Carbon;
 use Exception;
 date_default_timezone_set('America/Lima');
@@ -260,6 +263,12 @@ class OrdenMultipleController extends Controller
         $requerimiento = Requerimiento::with('periodo','moneda','empresa.contribuyente','sede')->find($idRequerimiento);
         if(in_array($requerimiento->estado,[2,15,27])){
             $detalleRequerimiento = DetalleRequerimiento::with('producto')->where([['id_requerimiento',$idRequerimiento],['estado','!=',7]])->get();
+
+            //añadir proveedor equivalente en agile
+            foreach ($detalleRequerimiento as $keyDetReq => $DetReqValue) {
+                $detalleRequerimiento[$keyDetReq]['proveedor']=$this->obtenerProveedorEquivalente($DetReqValue->proveedor_seleccionado_id, $DetReqValue->proveedor_seleccionado);
+            }
+
             foreach ($detalleRequerimiento as $detReq) {
 
                     $estadoItems[]=[
@@ -307,20 +316,11 @@ class OrdenMultipleController extends Controller
         $detalleRequerimientoFiltrado=[];
         foreach ($estadoItems as $keyEstItem => $EstItemValue) {
             foreach ($detalleRequerimiento as $keyDetReq => $DetReqValue) {
-
+                
                 if($EstItemValue['id_detalle_requerimiento'] == $DetReqValue->id_detalle_requerimiento){
+                    $detalleRequerimiento[$keyDetReq]['cantidad_atendida_almacen']=$EstItemValue['cantidad_atendida_almacen'];
+                    $detalleRequerimiento[$keyDetReq]['cantidad_atendida_orden']=$EstItemValue['cantidad_atendida_orden'];
                     if($EstItemValue['tiene_atencion_total']==false){
-                        $proveedorAgile= ($this->getIdProveedorAgile($DetReqValue->proveedor_seleccionado));
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_id_proveedor']=$proveedorAgile['id_proveedor'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_id_contribuyente']=$proveedorAgile['id_contribuyente'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_razon_social']=$proveedorAgile['razon_social'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_tipo_documento']=$proveedorAgile['tipo_documento'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_numero_documento']=$proveedorAgile['numero_documento'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_direccion_fiscal']=$proveedorAgile['direccion_fiscal'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_id_cuenta_bancaria']=$proveedorAgile['id_cuenta_bancaria'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_numero_cuenta_bancaria']=$proveedorAgile['numero_cuenta_bancaria'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_numero_cuenta_interbancaria']=$proveedorAgile['numero_cuenta_interbancaria'];
-                        $detalleRequerimiento[$keyDetReq]['proveedor_agile_seleccionado_simbolo_moneda_cuenta_bancaria']=$proveedorAgile['simbolo_moneda_cuenta_bancaria'];
                          $detalleRequerimientoFiltrado[]= $DetReqValue;
                     }
                 }
@@ -339,52 +339,102 @@ class OrdenMultipleController extends Controller
         ], 200);
     }
     
-    
-    public function  getIdProveedorAgile($razonSocialProveedor){
-        $idProveedor='';
-        $idContribuyente='';
+
+    public function obtenerProveedorEquivalente($idProveedorMgc, $razonSocialProveedorMgc){
+    // public function obtenerProveedorEquivalente(Request $request){
+        // $idProveedorMgc = $request->id_proveedor_mgc;
+        // $razonSocialProveedorMgc = $request->razon_social_proveedor_mgc;
+
+        $idProveedorAgile='';
+        $idContribuyenteAgile='';
         $razonSocial='';
-        $tipoDocumento='';
+        $idTipoDocumento='';
+        $descripcionTipoDocumento='';
         $numeroDocumento='';
-        $DireccionFiscal='';
+        $direccionFiscal='';
         $idCuentaBancaria='';
         $numeroCuentaBancaria='';
         $numeroCuentaInterbancariaBancaria='';
+        $idMonedaCuentaBancaria='';
         $simboloMonedaCuentaBancaria='';
+        $idContacto='';
+        $nombreContacto='';
+        $telefonoContacto='';
+        $cargoContacto='';
 
-        if($razonSocialProveedor !=''){
-            $contri=  Contribuyente::with("tipoDocumentoIdentidad")->where('razon_social','LIKE','%'.trim($razonSocialProveedor).'%')->get();
-            $cuentasContri= CuentaContribuyente::with('moneda')->where([['id_contribuyente',$contri->first()->id_contribuyente],['estado',1]])->orderBy('fecha_registro','desc')->first();
-          
-            if($contri){
-                $idContribuyente=$contri->first()->id_contribuyente;
-                $razonSocial=$contri->first()->razon_social;
-                $tipoDocumento=$contri->first()->tipoDocumentoIdentidad->descripcion;
-                $numeroDocumento=$contri->first()->nro_documento;
-                $DireccionFiscal=$contri->first()->direccion_fiscal;
-                $idCuentaBancaria= $cuentasContri !=null ? $cuentasContri->id_cuenta_contribuyente:'';
-                $numeroCuentaBancaria= $cuentasContri !=null ? $cuentasContri->nro_cuenta:'';
-                $numeroCuentaInterbancariaBancaria= $cuentasContri !=null ? $cuentasContri->nro_cuenta_interbancaria:'';
-                $simboloMonedaCuentaBancaria= $cuentasContri !=null ? $cuentasContri->moneda->simbolo:'';
-                $prove = Proveedor::where('id_contribuyente',$contri->first()->id_contribuyente)->get();
-                if($prove){
-                    $idProveedor = $prove->first()->id_proveedor;
-                }
+        if($idProveedorMgc >0){
+           $proveedorMgc = CuadroCostoProveedor::find($idProveedorMgc);
+        }elseif($razonSocialProveedorMgc !=null){
+            $proveedorMgc = CuadroCostoProveedor::where('razon_social','LIKE','%'.$razonSocialProveedorMgc.'%')->first();
+        }
+        if($proveedorMgc){
+            $contribuyenteAgile= Contribuyente::with("tipoDocumentoIdentidad")->where('razon_social','LIKE','%'.$proveedorMgc->razon_social.'%')->first();
+            $cuentasContribuyenteAgile= CuentaContribuyente::with('moneda')->where([['id_contribuyente',$contribuyenteAgile->id_contribuyente],['estado',1]])->orderByRaw('por_defecto DESC, fecha_registro DESC')->first();
+            $contactoContribuyenteAgile= ContactoContribuyente::where([['id_contribuyente',$contribuyenteAgile->id_contribuyente],['estado',1]])->orderByRaw('fecha_registro DESC')->first();
 
-            } 
+            $idContribuyenteAgile=$contribuyenteAgile->id_contribuyente;
+            $razonSocial=$contribuyenteAgile->razon_social??'';
+            $idTipoDocumento=$contribuyenteAgile->id_tipo_contribuyente;
+            $descripcionTipoDocumento=$contribuyenteAgile->tipoDocumentoIdentidad!=null ? $contribuyenteAgile->tipoDocumentoIdentidad->descripcion:'';
+            $numeroDocumento=$contribuyenteAgile->nro_documento??'';
+            $direccionFiscal=$contribuyenteAgile->direccion_fiscal??'';
+
+            if($cuentasContribuyenteAgile){
+                $idCuentaBancaria= $cuentasContribuyenteAgile !=null ? $cuentasContribuyenteAgile->id_cuenta_contribuyente:'';
+                $numeroCuentaBancaria= $cuentasContribuyenteAgile !=null ? $cuentasContribuyenteAgile->nro_cuenta:'';
+                $numeroCuentaInterbancariaBancaria= $cuentasContribuyenteAgile !=null ? $cuentasContribuyenteAgile->nro_cuenta_interbancaria:'';
+                $idMonedaCuentaBancaria= $cuentasContribuyenteAgile !=null ? $cuentasContribuyenteAgile->moneda->id_moneda:'';
+                $simboloMonedaCuentaBancaria= $cuentasContribuyenteAgile !=null ? $cuentasContribuyenteAgile->moneda->simbolo:'';
+            }
+
+            if($contactoContribuyenteAgile){
+                $idContacto = $contactoContribuyenteAgile->id_datos_contacto;
+                $nombreContacto= $contactoContribuyenteAgile->nombre;
+                $telefonoContacto=$contactoContribuyenteAgile->telefono;
+                $cargoContacto=$contactoContribuyenteAgile->cargo;
+            }
+
+            if($contribuyenteAgile && $contribuyenteAgile->estado==0){
+                $actualizarContribuyente= Contribuyente::find($contribuyenteAgile->id_contribuyente);
+                $actualizarContribuyente->estado=1;
+                $actualizarContribuyente->save();
+            }
+
+            $proveedorAgile= Proveedor::where('id_contribuyente',$contribuyenteAgile->id_contribuyente)->first();
+            $idProveedorAgile=$proveedorAgile->id_proveedor;
+
+            if(!$proveedorAgile && $contribuyenteAgile->id_contribuyente>0){
+                $nuevoProveedor= new Proveedor();
+                $nuevoProveedor->id_contribuyente = $contribuyenteAgile->id_contribuyente;
+                $nuevoProveedor->estado=1;
+                $nuevoProveedor->fecha_registro=New Carbon();
+                $nuevoProveedor->save();
+                $idProveedorAgile=$nuevoProveedor->id_proveedor;
+            }
         }
 
-        return [
-            'id_proveedor'=>$idProveedor,
-            'id_contribuyente'=>$idContribuyente,
+        $data=[
+            'id_proveedor'=>$idProveedorAgile,
+            'id_contribuyente'=>$idContribuyenteAgile,
             'razon_social'=>$razonSocial,
-            'tipo_documento'=>$tipoDocumento,
-            'numero_documento'=>$numeroDocumento,
-            'direccion_fiscal'=>$DireccionFiscal,
+            'id_tipo_documento'=>$idTipoDocumento,
+            'descripcion_tipo_documento'=>$descripcionTipoDocumento,
+            'nro_documento'=>$numeroDocumento,
+            'direccion_fiscal'=>$direccionFiscal,
             'id_cuenta_bancaria'=>$idCuentaBancaria,
-            'numero_cuenta_bancaria'=>$numeroCuentaBancaria,
-            'numero_cuenta_interbancaria'=>$numeroCuentaInterbancariaBancaria,
-            'simbolo_moneda_cuenta_bancaria'=>$simboloMonedaCuentaBancaria
+            'id_moneda_cuenta_bancaria'=>$idMonedaCuentaBancaria,
+            'simbolo_moneda_cuenta_bancaria'=>$simboloMonedaCuentaBancaria,
+            'numero_cuenta_bacnaria'=>$numeroCuentaBancaria,
+            'numero_cuenta_interbacnaria'=>$numeroCuentaInterbancariaBancaria,
+            'id_contacto'=>$idContacto,
+            'nombre_contacto'=>$nombreContacto,
+            'telefono_contacto'=>$telefonoContacto,
+            'cargo_contacto'=>$cargoContacto,
         ];
+
+        return $data;
+
     }
+
+    
 }

@@ -600,6 +600,10 @@ class ListarRequerimientoView {
         this.limpiarTabla('listaHistorialRevision');
         this.limpiarTabla('listaPartidasActivas');
 
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+                 element.textContent = "";
+        });
     }
 
 
@@ -686,14 +690,22 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = data.simbolo_moneda;
         
         let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
-        allMesPpto.forEach(element => {
-            if(data && data.fecha_registro !=null){
-                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
-            }else{
-                element.textContent =  moment().format('MMMM');
-
-            }
-        });
+        if(data.mes_afectacion!=null){
+            allMesPpto.forEach(element => {
+                element.textContent = moment(data.mes_afectacion, 'MM').format('MMMM');
+            });
+    
+        }else{
+            allMesPpto.forEach(element => {
+                if(data && data.fecha_registro !=null){
+                    element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+                }else{
+                    element.textContent =  moment().format('MMMM');
+    
+                }
+            });
+    
+        }
 
 
         if (data.id_incidencia > 0) {

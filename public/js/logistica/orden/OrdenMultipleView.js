@@ -124,18 +124,21 @@ class OrdenView {
         $('#contenedor_orden').on("click", "button.handleClickAgregarServicio", () => {
             this.agregarServicio();
         });
+        $('#contenedor_orden').on("click", "button.handleClickEliminarItemOrden", (e) => {
+            this.eliminarItemOrden(e.currentTarget);
+        });
     }
 
 
-    seleccionarOrden(id) {
+    seleccionarOrden(id_orden) {
         let cardOrden = document.querySelector("ul[id='contenedor_lista_ordenes']").children;
         let cardOrdenArray = Array.from(cardOrden);
         cardOrdenArray.forEach(element => {
             element.querySelector("div[class~='panel']").classList.replace("panel-info", "panel-default");
         });
-        document.querySelector("li[id='" + id + "']").querySelector("div[class~='panel']").classList.replace("panel-default", "panel-info");
+        document.querySelector("li[id='" + id_orden + "']").querySelector("div[class~='panel']").classList.replace("panel-default", "panel-info");
         (this.ordenArray).forEach(element => {
-            if (element.id == id) {
+            if (element.id_orden == id_orden) {
                 this.construirPanelEncabezadoOrden(element);
                 this.construirPanelDetalleOrden(element.detalle);
             }
@@ -201,7 +204,7 @@ class OrdenView {
             });
 
             return `
-            <li id="${data.id}">
+            <li id="${data.id_orden}">
                 <div class="panel panel-default">
                     <div class="panel-heading text-center" style="display:flex; flex-direction:row; gap:0.5rem;">
                         <h5>Cód. orden: <span class="label label-default" title="Código de orden"><span name="tituloDocumentoCodigoOrden[]">${data.codigo_orden == '' ? '(Sin generar)' : data.codigo_orden}</span></span></h5>
@@ -983,7 +986,7 @@ class OrdenView {
 
                     proveedorDetReq.push(
                         {
-                            'id': this.makeId(),
+                            'id_orden': 'ORDEN' + this.makeId(),
                             'detalle_requerimiento_list': [detReq],
                             'proveedor_seleccionado_id': detReq.proveedor_seleccionado_id, //mgc
                             'proveedor_seleccionado': detReq.proveedor_seleccionado, //mgc
@@ -1024,7 +1027,7 @@ class OrdenView {
             } else {
                 proveedorDetReq.push(
                     {
-                        'id': this.makeId(),
+                        'id_orden': 'ORDEN' + this.makeId(),
                         'detalle_requerimiento_list': [detReq],
                         'proveedor_seleccionado_id': null,
                         'proveedor_seleccionado': null,
@@ -1060,7 +1063,7 @@ class OrdenView {
                         pdr.detalle_requerimiento_list.forEach(drl => {
                             this.ordenArray[k].detalle.push(drl)
                         });
-                        idProvDetReqAtendidosArray.push(pdr.id); // lista de atendidos que deben ser compara con proveedorDetReq para determinar los que falta agregar como nueva orden
+                        idProvDetReqAtendidosArray.push(pdr.id_orden); // lista de atendidos que deben ser compara con proveedorDetReq para determinar los que falta agregar como nueva orden
                     }
 
                 });
@@ -1069,7 +1072,7 @@ class OrdenView {
             // agregado a nueva orden 
 
             (proveedorDetReq).forEach(pdr => {
-                if (!idProvDetReqAtendidosArray.includes(pdr.id)) {
+                if (!idProvDetReqAtendidosArray.includes(pdr.id_orden)) {
                     proveedorDetReqNuevaOrden.push(pdr);
                 }
             });
@@ -1085,10 +1088,50 @@ class OrdenView {
 
         // crear un array de objetos de ordenes ( el total por proveedor)
         // console.log(proveedorDetReqNuevaOrden);
+        let montoNetoOrden =0;
+        let montoIgvOrden =0;
+        let montoIcbperOrden =0;
+        let montoTotalOrden =0;
+
         proveedorDetReqNuevaOrden.forEach(provDetReqValue => {
+
+            let detalleOrdenObject = [];
+            provDetReqValue.detalle_requerimiento_list.forEach(element => {
+                detalleOrdenObject.push({
+                    'id_detalle_orden': 'ITEM' + this.makeId(),
+                    'id_detalle_requerimiento': element.id_detalle_requerimiento ? element.id_detalle_requerimiento :'',
+                    'id_tipo_item': element.id_tipo_item,
+                    'id_producto': (element.id_producto ? element.id_producto : ''),
+                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto.codigo ? element.producto.codigo : '') : '<small>(No aplica)</small>',
+                    'codigo_requerimiento': element.codigo_requerimiento ? element.codigo_requerimiento : '',
+                    'codigo_softlink': element.producto.cod_softlink ? element.producto.cod_softlink : '',
+                    'part_number': element.producto.part_number ? element.producto.part_number : '',
+                    'descripcion': (element.producto.descripcion ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
+                    'descripcion_complementaria': (element.descripcion_complementaria ? element.descripcion_complementaria : ''),
+                    'id_unidad_medida': (element.producto.id_unidad_medida ? element.producto.id_unidad_medida : element.id_unidad_medida),
+                    'abreviatura_unidad_medida': (element.producto != null && element.producto.unidad_medida != null ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
+                    'cantidad_solicitada': (element.cantidad > 0 ? element.cantidad : '<small>(no definido en el requerimiento)</small'),
+                    'cantidad_pendiente_atender': (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
+                    'cantidad_atendida_almacen': (element.cantidad_atendida_almacen > 0 ? element.cantidad_atendida_almacen : '0'),
+                    'cantidad_atendida_orden': (element.cantidad_atendida_orden > 0 ? element.cantidad_atendida_orden : '0'),
+                    'precio_unitario': (element.precio_unitario ? element.precio_unitario : 0),
+                    'subtotal': (element.precio_unitario ? element.precio_unitario : 0) * (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
+                    'id_moneda': cabeceraRequerimientoObject.simbolo_moneda,
+                    'simbolo_moneda': cabeceraRequerimientoObject.simbolo_moneda,
+                    'id_estado': 1
+                });
+                
+                montoNetoOrden+=(element.precio_unitario ? element.precio_unitario : 0) * (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0)
+                
+            });
+
+            montoIgvOrden=montoNetoOrden*0.18;
+            montoTotalOrden=montoNetoOrden+montoIgvOrden;
+
+
+
             let cabeceraOrdenObject = {
-                'id': 'ORDEN' + provDetReqValue.id,
-                'id_orden': '',
+                'id_orden': provDetReqValue.id_orden,
                 'id_tipo_orden': idTipoOrden,
                 'descripcion_tipo_orden': idTipoOrden,
                 'codigo_orden': '',
@@ -1142,7 +1185,11 @@ class OrdenView {
                 'observacion': cabeceraRequerimientoObject.observacion,
                 'id_estado_orden': '',
                 'descripcion_estado_orden': '',
-                'detalle': provDetReqValue.detalle_requerimiento_list
+                'monto_neto':montoNetoOrden,
+                'monto_igv':montoIgvOrden,
+                'monto_icbper':montoIcbperOrden,
+                'monto_total':montoTotalOrden,
+                'detalle': detalleOrdenObject
 
             };
             this.ordenArray.push(cabeceraOrdenObject);
@@ -1158,6 +1205,7 @@ class OrdenView {
             msg: `Seleccionó el requerimiento ${cabeceraRequerimientoObject.codigo}`
         });
 
+        // console.log(this.ordenArray);
         this.construirPanelListaOrdenes(this.ordenArray);
         // construir panel de encabezado y panel detalle por defecto la primera orden de array
         this.autoSeleccionarOrdenParaMostrar(this.ordenArray);
@@ -1189,12 +1237,12 @@ class OrdenView {
     autoSeleccionarOrdenParaMostrar(data) {
         if (this.idOrdenSeleccionada == '' || this.idOrdenSeleccionada == null) {// si NO existe un id, selecciona le primero del array
             if (data.length > 0) {
-                this.idOrdenSeleccionada = data[0]['id'];
-                this.seleccionarOrden(data[0]['id']);
+                this.idOrdenSeleccionada = data[0]['id_orden'];
+                this.seleccionarOrden(data[0]['id_orden']);
             }
         } else { // si existe un id, buscar y llamar funciones
             data.forEach(element => {
-                if (element.id == this.idOrdenSeleccionada) {
+                if (element.id_orden == this.idOrdenSeleccionada) {
                     this.seleccionarOrden(this.idOrdenSeleccionada);
 
                 }
@@ -1241,30 +1289,7 @@ class OrdenView {
             } else {
 
                 cantidadItemsAgregados++;
-
-                payload.push({
-                    'id': element.id_detalle_orden ? element.id_detalle_orden : ('ITEM' + this.makeId()),
-                    'id_detalle_orden': '',
-                    'id_tipo_item': element.id_tipo_item,
-                    'id_producto': (element.id_producto ? element.id_producto : ''),
-                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto.codigo ? element.producto.codigo : '') : '<small>(No aplica)</small>',
-                    'codigo_requerimiento': element.codigo_requerimiento ? element.codigo_requerimiento : '',
-                    'codigo_softlink': element.producto.cod_softlink ? element.producto.cod_softlink : '',
-                    'part_number': element.producto.part_number ? element.producto.part_number : '',
-                    'descripcion': (element.producto.descripcion ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
-                    'descripcion_complementaria': (element.descripcion_complementaria ? element.descripcion_complementaria : ''),
-                    'id_unidad_medida': (element.producto.id_unidad_medida ? element.producto.id_unidad_medida : element.id_unidad_medida),
-                    'abreviatura_unidad_medida': (element.producto != null && element.producto.unidad_medida != null ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
-                    'cantidad_solicitada': (element.cantidad > 0 ? element.cantidad : '<small>(no definido en el requerimiento)</small'),
-                    'cantidad_pendiente_atender': (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
-                    'cantidad_atendida_almacen': (element.cantidad_atendida_almacen > 0 ? element.cantidad_atendida_almacen : '0'),
-                    'cantidad_atendida_orden': (element.cantidad_atendida_orden > 0 ? element.cantidad_atendida_orden : '0'),
-                    'precio_unitario': (element.precio_unitario ? element.precio_unitario : 0),
-                    'subtotal': (element.precio_unitario ? element.precio_unitario : 0) * (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
-                    'id_moneda': document.querySelector("select[name='id_moneda']").value,
-                    'simbolo_moneda': document.querySelector("select[name='id_moneda']").options[document.querySelector("select[name='id_moneda']").selectedIndex].dataset.simboloMoneda,
-                    'id_estado': 1
-                });
+                payload.push(element);
             }
 
 
@@ -1296,7 +1321,7 @@ class OrdenView {
     agregarItemADetalleOrden(payload) {
         payload.forEach(element => {
             document.querySelector("tbody[name='body_detalle_orden']").insertAdjacentHTML('beforeend', `<tr style="text-align:center;" class="${element.id_estado == 7 ? 'danger textRedStrikeHover' : ''}">
-            <td class="text-center">${element.codigo_requerimiento} <input type="hidden"  name="idRegister[]" value="${element.id}"> <input type="hidden"  class="idEstado" name="idEstado[]"> <input type="hidden"  name="idDetalleRequerimiento[]" value="${element.id_detalle_requerimiento ? element.id_detalle_requerimiento : ''}">  <input type="hidden"  name="idTipoItem[]" value="1"></td>
+            <td class="text-center">${element.codigo_requerimiento} <input type="hidden"  name="id_detalle_orden[]" value="${element.id_detalle_orden}"> <input type="hidden"  class="idEstado" name="idEstado[]"> <input type="hidden"  name="idDetalleRequerimiento[]" value="${element.id_detalle_requerimiento ? element.id_detalle_requerimiento : ''}">  <input type="hidden"  name="idTipoItem[]" value="1"></td>
             <td class="text-center">${element.codigo_producto} </td>
             <td class="text-center">${element.codigo_softlink} </td>
             <td class="text-center">${element.part_number} <input type="hidden"  name="idProducto[]" value="${element.id_producto} "></td>
@@ -1317,19 +1342,130 @@ class OrdenView {
             <td>
                 <div class="input-group">
                     <div class="input-group-addon" style="background:lightgray;" name="simboloMoneda">${element.simbolo_moneda}</div>
-                    <input class="form-control precio input-sm text-right  handleBurUpdateSubtotal" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${element.precio_unitario}" >
+                    <input class="form-control precio input-sm text-right  handleBurUpdateSubtotal" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${$.number(element.precio_unitario,2,'.',',')}" >
                 </div>
             </td>
-            <td style="text-align:right;"><span class="moneda" name="simboloMoneda">${element.simbolo_moneda}</span><span class="subtotal" name="subtotal[]">0.00</span></td>
+            <td style="text-align:right;"><span class="moneda" name="simboloMoneda">${element.simbolo_moneda}</span><span class="subtotal" name="subtotal[]">${$.number(element.subtotal,2,'.',',')??'0.00'}</span></td>
             <td>
-                <button type="button" class="btn btn-danger btn-sm handleClickOpenModalEliminarItemOrden" name="btnOpenModalEliminarItemOrden" title="Eliminar Item">
+                <button type="button" class="btn btn-danger btn-sm handleClickEliminarItemOrden" name="btnEliminarItemOrden" title="Eliminar Item">
                 <i class="fas fa-trash fa-sm"></i>
                 </button>
             </td>
         </tr>`);
         });
+
+
+        this.calcularTotales();
     }
 
+    calcularTotales(){
+        let simboloMonedaOrden='';
+        let montoNetoOrden = 0;
+        let montoIgvOrden = 0;
+        let montoIcbperOrden = 0;
+        let montoTotalOrden = 0;
+        (this.ordenArray).forEach((element)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                simboloMonedaOrden = element.simbolo_moneda;
+                montoNetoOrden = element.monto_neto;
+                montoIgvOrden= element.monto_igv;
+                montoIcbperOrden= element.monto_icbper;
+                montoTotalOrden= element.monto_total;
+            }
+        });
+
+        const simboloMonedaSpan = document.querySelectorAll("table[name='listaDetalleOrden'] tfoot span[name='simboloMoneda']");
+        simboloMonedaSpan.forEach(element => {
+            element.textContent=simboloMonedaOrden;
+        });
+        document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='montoNeto']").textContent=$.number(montoNetoOrden,2,'.',',');
+        if(montoIgvOrden>0){
+            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_igv']").checked =true;
+        }else{
+            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_igv']").checked =false;
+        }
+        if(montoIcbperOrden>0){
+            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =true;
+        }else{
+            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =false;
+        }
+        document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='igv']").textContent=$.number(montoIgvOrden,2,'.',',');
+        document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='icbper']").textContent=$.number(montoIcbperOrden,2,'.',',');
+        document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='montoTotal']").textContent=$.number(montoTotalOrden,2,'.',',');
+
+    }
+
+    eliminarItemOrden(obj) {
+        Swal.fire({
+            title: 'Esta seguro?',
+            text: "No podrás revertir esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'cancelar',
+            confirmButtonText: 'Si, eliminar'
+    
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let tr = obj.closest("tr");
+                const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+                var regExp = /[a-zA-Z]/g; //expresión regular
+    
+                if (regExp.test(identificador) == true) {//si contiene el id letras es un autogenerado 
+                    const cantidadItemEliminados=this.eliminarItemDeOrdenArray(identificador);
+                    if(cantidadItemEliminados>0){
+                        tr.remove();
+                        // this.calcularMontosTotales(); //TODO 
+                    }
+                    console.log(this.ordenArray);
+    
+                } else {
+                    const cantidadItemEliminados= this.eliminarItemDeOrdenArray(identificador);
+                    if(cantidadItemEliminados>0){
+                        tr.remove();
+                        
+                    }
+                    console.log(this.ordenArray);
+                    // tr.querySelector("input[class~='idEstado']").value = 7;
+                    // tr.classList.add("danger", "textRedStrikeHover");
+                    // tr.querySelector("button[name='btnOpenModalEliminarItemOrden']").setAttribute("disabled", true);
+                    // this.calcularMontosTotales(); // considere las filas anuladas
+                }
+    
+                Lobibox.notify('success', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'El item fue eliminado'
+                });
+            }
+        })
+    }
+
+    eliminarItemDeOrdenArray(id){
+        let tamOriginalArrayDetalle=0;
+        let tamFiltradoArrayDetalle=0;
+        this.ordenArray.forEach((ordValue,ordKey) => {
+            if((ordValue.detalle).length>0){
+                
+                ordValue.detalle.forEach((detValue,DetKey) => {
+                    if(detValue.id_detalle_orden==id){
+                        tamOriginalArrayDetalle= ordValue.detalle.length;
+                    }
+                });
+                this.ordenArray[ordKey]['detalle'] = ordValue.detalle.filter(item => item.id_detalle_orden != id);
+                tamFiltradoArrayDetalle = this.ordenArray[ordKey]['detalle'].length;
+            }
+        });
+
+    
+        return (parseInt(tamOriginalArrayDetalle)-parseInt(tamFiltradoArrayDetalle));
+
+    }
+    
 
     abrirCatalogoProductos() {
         document.querySelector("div[id='modal-catalogo-items'] h3[class='modal-title']").textContent = "Lista de productos";
@@ -1444,8 +1580,8 @@ class OrdenView {
     selectProducto(obj) {
 
         this.agregarItemADetalleOrden([{
-            'id': 'ITEM' + this.makeId(),
-            'id_detalle_orden': '',
+            'id_detalle_orden': 'ITEMPRO' + this.makeId(),
+            'id_detalle_requerimiento':'',
             'id_tipo_item': 1,
             'id_producto': obj.dataset.idProducto,
             'codigo_producto': obj.dataset.codigo,
@@ -1475,8 +1611,8 @@ class OrdenView {
     agregarServicio() {
         this.agregarItemADetalleOrden([
             {
-                'id': 'ITEM' + this.makeId(),
-                'id_detalle_orden': '',
+                'id_detalle_orden': 'ITEMSER' + this.makeId(),
+                'id_detalle_requerimiento':'',
                 'id_tipo_item': 2,
                 'id_producto': '',
                 'codigo_producto': '<small>(No aplica)</small>',

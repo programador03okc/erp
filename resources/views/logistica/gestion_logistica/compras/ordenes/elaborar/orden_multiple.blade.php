@@ -469,7 +469,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right">
-                                                                    <input class="activation handleClickIncluyeIGV" type="checkbox" name="incluye_igv" checked> <strong>Incluye IGV</strong>
+                                                                    <input class="handleClickIncluyeIGV" type="checkbox" name="incluye_igv" checked> <strong>Incluye IGV</strong>
                                                                 </td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span><label name="igv">
                                                                         0.00</label></td>
@@ -477,7 +477,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right">
-                                                                    <input class="activation handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper"> <strong>Incluye ICBPER</strong>
+                                                                    <input class="handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper"> <strong>Incluye ICBPER</strong>
                                                                 </td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span><label name="icbper">
                                                                         0.00</label></td>

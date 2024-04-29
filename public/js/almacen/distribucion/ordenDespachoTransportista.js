@@ -20,7 +20,13 @@ function openAgenciaTransporte(data) {
     $("[name=fecha_transportista]").val(data.fecha_transportista !== null ? data.fecha_transportista : '');
     $("[name=fecha_despacho_real]").val(data.fecha_despacho_real !== null ? data.fecha_despacho_real : '');
     $("[name=importe_flete]").val(data.importe_flete !== null ? data.importe_flete : '');
-    $("[name=fechaRegistroFlete]").prop('title', (data.fecha_registro_flete != null ? ('Fecha registro de flete: ' + (moment(data.fecha_registro_flete).format("DD-MM-YYYY h:m"))) : 'Flete Sin fecha registro'));
+    $("[name=importe_flete_sin_igv]").val(data.importe_flete_sin_igv !== null ? $.number(data.importe_flete_sin_igv,2,'.','') : '');
+    $("[name=aplica_igv]").prop("checked",data.aplica_igv ? true : false);
+    if(!data.aplica_igv){
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').prop('readOnly',true);
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').val("");
+    }
+    // $("[name=fechaRegistroFlete]").prop('title', (data.fecha_registro_flete != null ? ('Fecha registro de flete: ' + (moment(data.fecha_registro_flete).format("DD-MM-YYYY h:m"))) : 'Flete Sin fecha registro'));
 
     if (data.credito) {
         $('[name=credito]').prop('checked', true);
@@ -28,6 +34,41 @@ function openAgenciaTransporte(data) {
         $('[name=credito]').prop('checked', false);
     }
     $("#submit_od_transportista").removeAttr("disabled");
+}
+
+$('form[id="form-orden_despacho_transportista"]').on("keyup", "input.handleUpdateImporteFleteConIGV", (e) => {
+    updatePrecioConIGV(e.currentTarget);
+});
+$('form[id="form-orden_despacho_transportista"]').on("keyup", "input.handleUpdateImporteFleteSinIGV", (e) => {
+    updatePrecioSinIGV(e.currentTarget);
+});
+$('form[id="form-orden_despacho_transportista"]').on("change", "input.hadleChangeAplicaIGV", (e) => {
+    updateAplicaIGV(e.currentTarget);
+});
+
+function updatePrecioConIGV(obj){
+    if(typeof parseFloat(obj.value) =='number'){
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete_sin_igv"]').val($.number(parseFloat(obj.value)/1.18,2,'.',''));
+    }
+}
+
+function updatePrecioSinIGV(obj){
+    if(typeof parseFloat(obj.value) =='number'){
+
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').val($.number(parseFloat(obj.value)*1.18,2,'.',''));
+    }
+}
+
+function updateAplicaIGV(obj){
+    if(obj.checked==false){
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').prop('readOnly',true);
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').val("");
+    }else{
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').prop('readOnly',false);
+        const fleteSinIGV = $('form[id="form-orden_despacho_transportista"] input[name="importe_flete_sin_igv"]').val();
+        $('form[id="form-orden_despacho_transportista"] input[name="importe_flete"]').val($.number(parseFloat(fleteSinIGV)*1.18,2,'.',''));
+        
+    }
 }
 
 $("#form-orden_despacho_transportista").on("submit", function (e) {

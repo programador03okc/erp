@@ -25,9 +25,9 @@
                 </div>
                 <div class="modal-footer">
                     {{-- <button type="button" class="btn btn-sm btn-danger" 
-                    id="btnDespachoObs" onClick="anularDespachoInterno();" >Quitar despacho</button> --}}
+                    id="btnAnularDespachoInterno" onClick="anularDespachoInterno();" >Quitar despacho</button> --}}
                     <button type="button" class="btn btn-sm btn-success" 
-                    id="btnDespachoObs" onClick="generarDespachoExterno();" >Guardar despacho</button>
+                    id="btnGenerarDespachoExterno" onClick="generarDespachoExterno();" >Guardar despacho</button>
                 </div>
             </form>
         </div>

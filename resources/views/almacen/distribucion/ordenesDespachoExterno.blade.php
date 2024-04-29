@@ -64,7 +64,7 @@ Gestión de Despachos
                                         <th>Generado por</th>
                                         {{-- <th>Sede Req.</th> --}}
                                         <th>Fecha Despacho Real</th>
-                                        <th>Flete</th>
+                                        <th>Flete <small>(sin IGV)</small></th>
                                         <th>Gasto Adic.</th>
                                         <th>Fecha Entrega</th>
                                         <th>Adj. Cargos.</th>

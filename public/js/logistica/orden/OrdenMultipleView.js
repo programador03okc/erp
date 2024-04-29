@@ -127,6 +127,110 @@ class OrdenView {
         $('#contenedor_orden').on("click", "button.handleClickEliminarItemOrden", (e) => {
             this.eliminarItemOrden(e.currentTarget);
         });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateTipoOrden", (e) => {
+            this.updateTipoOrden(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdatePeriodo", (e) => {
+            this.updatePeriodo(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateMoneda", (e) => {
+            this.updateMoneda(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "input.handleChangeUpdateFechaEmision", (e) => {
+            this.updateFechaEmision(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateSede", (e) => {
+            this.updateSede(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateProveedor", (e) => {
+            this.updateProveedor(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateCuentaBancariaProveedor", (e) => {
+            this.updateCuentaBancariaProveedor(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateContactoProveedor", (e) => {
+            this.updateContactoProveedor(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateRubroProveedor", (e) => {
+            this.updateRubroProveedor(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateFormaPago", (e) => {
+            this.updateFormaPago(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("keyup", "input.handleKeyUpUpdatePlazoEntrega", (e) => {
+            this.updatePlazoEntrega(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateTipoDocumento", (e) => {
+            this.updateTipoDocumento(e.currentTarget);
+        });
+        
+        $('#contenedor_orden').on("keyup", "input.handleChangeKeyUpDireccionEntrega", (e) => {
+            this.updateDireccionEntrega(e.currentTarget);
+        });
+        
+        $('#contenedor_orden').on("change", "select.handleChangeUpdateUbigeoEntrega", (e) => {
+            this.updateUbigeoEntrega(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "input.handleChangeUpdateCompraLocal", (e) => {
+            this.updateCompraLocal(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangePersonalAutorizado1", (e) => {
+            this.updatePersonalAutorizado1(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("change", "select.handleChangePersonalAutorizado2", (e) => {
+            this.updatePersonalAutorizado2(e.currentTarget);
+        });
+
+        $('#contenedor_orden').on("keyup", "textarea.handleKeyUpUpdateObservacion", (e) => {
+            this.updateObservacion(e.currentTarget);
+        });
+
+        $('table[name="listaDetalleOrden"]').on("keyup", "textarea.handleChangeUpdateDescripcionComplementaria", (e) => {
+            this.updateDescripcionComplementaria(e.currentTarget);
+        });
+
+        $('table[name="listaDetalleOrden"]').on("keyup", "textarea.handleChangeUpdateDescripcionServicio", (e) => {
+            this.updateDescripcionServicio(e.currentTarget);
+        });
+
+        $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdateCantidad", (e) => {
+            this.updateCantidad(e.currentTarget);
+        });
+    
+        $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateCantidad", (e) => {
+            this.updateCantidad(e.currentTarget);
+        });
+
+        $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdatePrecio", (e) => {
+            this.updatePrecio(e.currentTarget);
+        });
+
+        $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdatePrecio", (e) => {
+            this.updatePrecio(e.currentTarget);
+        });
+        
+        $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateIncluyeIGV", (e) => {
+            this.updateIncluyeIGV(e.currentTarget);
+        });
+
+        $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateIncluyeICBPER", (e) => {
+            this.updateIncluyeICBPER(e.currentTarget);
+        });
     }
 
 
@@ -219,7 +323,7 @@ class OrdenView {
                                     <dt>Sede:</dt>
                                     <dd>${data.descripcion_sede}</dd>
                                     <dt>Proveedor:</dt>
-                                    <dd style="cursor:help;" title="${data.descripcion_tipo_documento_proveedor} ${data.nro_documento_proveedor}">${data.razon_social_proveedor}</dd>
+                                    <dd style="cursor:help;" title="${data.descripcion_tipo_documento_proveedor} ${data.nro_documento_proveedor}">${(data.id_proveedor >0? data.razon_social_proveedor:'(Sin proveedor)')}</dd>
                                 </dl>
                             </li>
                             <li>
@@ -485,7 +589,7 @@ class OrdenView {
 
             } else if (result.isDenied) { // limpiar todo para genera orden libre
 
-                document.querySelector("ul[id='contenedor_lista_ordenes']").insertAdjacentHTML('beforeend', this.construirCardOrden())
+                this.agregarOrdenVacia();
                 // $('select[name="id_sede[]"]').selectpicker();
 
             }
@@ -494,9 +598,81 @@ class OrdenView {
     }
 
 
+    agregarOrdenVacia(){
+
+        let cabeceraOrdenObject = {
+            'id_orden': 'ORDENVACIA' + this.makeId(),
+            'id_tipo_orden': 1,
+            'descripcion_tipo_orden': 'Orden compra',
+            'codigo_orden': '',
+            'id_moneda': 1,
+            'simbolo_moneda': 'S/',
+            'tipo_cambio': '',
+            'id_softlink': '',
+            'codigo_softlink': '',
+            'id_periodo': '',
+            'descripcion_periodo':'',
+            'fecha_emision': '',
+            'id_empresa': 1,
+            'descripcion_empresa': 'OK Computer',
+            'id_sede': 4,
+            'descripcion_sede': 'Lima',
+            'id_proveedor_mgc': '',
+            'id_proveedor': '',
+            'razon_social_proveedor_mgc': '',
+            'razon_social_proveedor': '',
+            'id_tipo_documento_proveedor': '',
+            'descripcion_tipo_documento_proveedor': '',
+            'nro_documento_proveedor': '',
+            'direccion_fiscal_proveedor': '',
+            'id_cuenta_proveedor': '',
+            'numero_cuenta_proveedor': '',
+            'numero_cuenta_interbancaria_proveedor': '',
+            'simbolo_moneda_cuenta_proveedor': '',
+            'id_moneda_cuenta_proveedor': '',
+            'id_contacto_proveedor': '',
+            'nombre_contacto_proveedor': '',
+            'telefono_contacto_proveedor': '',
+            'cargo_contacto_proveedor': '',
+            'id_rubro_proveedor': '',
+            'descripcion_rubro_proveedor': '',
+            'id_condicion_compra': '',
+            'descripcion_condicion_compra': '',
+            'id_condicion_softlink': '',
+            'descripcion_condicion_softlink': '',
+            'plazo_entrega_dias': 1,
+            'requerimiento_vinculado_list': [],
+            'id_tipo_documento': 2,
+            'descripcion_tipo_documento': '01 - Factura',
+            'direccion_entrega': 'Jr. Domingo Martinez Lujan 1135, Surquillo',
+            'id_ubigeo_entrega': 1321,
+            'descripcion_ubigeo_entrega':  '150141 - SURQUILLO - LIMA - LIMA',
+            'id_personal_autorizado_1': '',
+            'nombre_personal_autorizado_1': '',
+            'id_personal_autorizado_2': '',
+            'nombre_personal_autorizado_2': '',
+            'es_compra_local': false,
+            'observacion': '',
+            'id_estado_orden': '',
+            'descripcion_estado_orden': '',
+            'monto_neto':0,
+            'monto_igv':0,
+            'monto_icbper':0,
+            'monto_total':0,
+            'detalle': []
+
+        };
+
+        this.ordenArray.push(cabeceraOrdenObject);
+
+        this.construirPanelListaOrdenes(this.ordenArray);
+
+    }
+
     llenarDatosCabeceraSeccionProveedor(idProveedor, idCuentaProveedor = null) {
         this.ordenCtrl.obtenerDataProveedor(idProveedor).then((res) => {
             document.querySelector("p[name='direccion_proveedor']").textContent = res.contribuyente != null ? res.contribuyente.direccion_fiscal : '';
+            // TODO : 1) ACtualizar direccion proveedor en this.ordenArray 
             this.llenarDatosCabeceraCuentaBancariaProveedor(res.cuenta_contribuyente, idCuentaProveedor);
             this.llenarDatosCabeceraConcactoProveedor(res.contacto_contribuyente);
             // document.querySelector("select[name='contacto_proveedor']").textContent = '';
@@ -718,15 +894,15 @@ class OrdenView {
     //###
 
     actualizarFormaPago() {
-        let selectFormaPago = document.querySelector("select[name='forma_pago']");
+        let selectFormaPago = document.querySelector("select[name='id_condicion_softlink']");
         let dias_condicion_softlink = selectFormaPago.options[selectFormaPago.selectedIndex].dataset.dias;
 
         if (dias_condicion_softlink > 0) {
-            document.getElementsByName('id_condicion')[0].value = 2;
-            document.getElementsByName('plazo_dias')[0].value = dias_condicion_softlink;
+            document.getElementsByName('id_condicion').value = 2;
+            document.getElementsByName('plazo_dias').value = dias_condicion_softlink;
         } else {
-            document.getElementsByName('id_condicion')[0].value = 1;
-            document.getElementsByName('plazo_dias')[0].value = 0;
+            document.getElementsByName('id_condicion').value = 1;
+            document.getElementsByName('plazo_dias').value = 0;
         }
     }
 
@@ -1326,8 +1502,8 @@ class OrdenView {
             <td class="text-center">${element.codigo_softlink} </td>
             <td class="text-center">${element.part_number} <input type="hidden"  name="idProducto[]" value="${element.id_producto} "></td>
             <td class="text-left">${element.descripcion} 
-                <textarea class="form-control" placeholder="Descripción de servicio" style="display:${element.id_tipo_item == 1 ? 'none' : 'block'}; height: 5rem; overflow-y: scroll;"  name="descripcion[]">${element.descripcion}</textarea>
-                <textarea class="form-control" style="display:${element.id_tipo_item == 2 ? 'none' : 'block'}; height: 5rem; overflow-y: scroll;" name="descripcionComplementaria[]" placeholder="Descripción complementaria" style="width:100%;height: 60px;" >${element.descripcion_complementaria}</textarea>
+                <textarea class="form-control handleChangeUpdateDescripcionServicio" placeholder="Descripción de servicio" style="display:${element.id_tipo_item == 1 ? 'none' : 'block'}; height: 5rem; overflow-y: scroll;"  name="descripcion[]">${element.descripcion}</textarea>
+                <textarea class="form-control handleChangeUpdateDescripcionComplementaria" style="display:${element.id_tipo_item == 2 ? 'none' : 'block'}; height: 5rem; overflow-y: scroll;" name="descripcionComplementaria[]" placeholder="Descripción complementaria" style="width:100%;height: 60px;" >${element.descripcion_complementaria}</textarea>
             </td>
             <td><p name="unidad[]" class="form-control-static unidadMedida" data-valor="${element.id_unidad_medida}">${element.abreviatura_unidad_medida}</p>
             <input type="hidden"  name="unidad[]" value="${element.id_unidad_medida}">
@@ -1337,12 +1513,12 @@ class OrdenView {
             <td>${element.cantidad_atendida_almacen}</td>
             <td>${element.cantidad_atendida_orden}</td>
             <td>
-                <input class="form-control cantidad_a_comprar input-sm text-right  handleBurUpdateSubtotal"  data-id-tipo-item="1" type="number" min="0" name="cantidadAComprarRequerida[]"  placeholder="" value="${element.cantidad_pendiente_atender}" >
+                <input class="form-control cantidad_a_comprar input-sm text-right handleBurUpdateSubtotal handleChangeUpdateCantidad"  data-id-tipo-item="1" type="number" min="0" name="cantidadAComprarRequerida[]"  placeholder="" value="${element.cantidad_pendiente_atender}" >
             </td>
             <td>
                 <div class="input-group">
                     <div class="input-group-addon" style="background:lightgray;" name="simboloMoneda">${element.simbolo_moneda}</div>
-                    <input class="form-control precio input-sm text-right  handleBurUpdateSubtotal" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${$.number(element.precio_unitario,2,'.',',')}" >
+                    <input class="form-control precio input-sm text-right handleBurUpdateSubtotal handleChangeUpdateCantidad" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${$.number(element.precio_unitario,2,'.',',')}" >
                 </div>
             </td>
             <td style="text-align:right;"><span class="moneda" name="simboloMoneda">${element.simbolo_moneda}</span><span class="subtotal" name="subtotal[]">${$.number(element.subtotal,2,'.',',')??'0.00'}</span></td>
@@ -1411,27 +1587,35 @@ class OrdenView {
                 let tr = obj.closest("tr");
                 const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
                 var regExp = /[a-zA-Z]/g; //expresión regular
-    
-                if (regExp.test(identificador) == true) {//si contiene el id letras es un autogenerado 
-                    const cantidadItemEliminados=this.eliminarItemDeOrdenArray(identificador);
-                    if(cantidadItemEliminados>0){
-                        tr.remove();
-                        // this.calcularMontosTotales(); //TODO 
+                
+                console.log(this.ordenArray);
+                
+                if(this.ordenArray.length ==0){
+                    tr.remove();
+
+                }else{
+                    if (regExp.test(identificador) == true) {//si contiene el id letras es un autogenerado 
+                        const cantidadItemEliminados=this.eliminarItemDeOrdenArray(identificador);
+                        if(cantidadItemEliminados>0){
+                            tr.remove();
+                            // this.calcularMontosTotales(); //TODO: calcular monto totales despues de anular un item
+                        }
+                        console.log(this.ordenArray);
+        
+                    } else {
+                        const cantidadItemEliminados= this.eliminarItemDeOrdenArray(identificador);
+                        if(cantidadItemEliminados>0){
+                            tr.remove();
+                            
+                        }
+                        console.log(this.ordenArray);
+                        // tr.querySelector("input[class~='idEstado']").value = 7;
+                        // tr.classList.add("danger", "textRedStrikeHover");
+                        // tr.querySelector("button[name='btnOpenModalEliminarItemOrden']").setAttribute("disabled", true);
+                        // this.calcularMontosTotales(); // considere las filas anuladas
                     }
-                    console.log(this.ordenArray);
-    
-                } else {
-                    const cantidadItemEliminados= this.eliminarItemDeOrdenArray(identificador);
-                    if(cantidadItemEliminados>0){
-                        tr.remove();
-                        
-                    }
-                    console.log(this.ordenArray);
-                    // tr.querySelector("input[class~='idEstado']").value = 7;
-                    // tr.classList.add("danger", "textRedStrikeHover");
-                    // tr.querySelector("button[name='btnOpenModalEliminarItemOrden']").setAttribute("disabled", true);
-                    // this.calcularMontosTotales(); // considere las filas anuladas
                 }
+
     
                 Lobibox.notify('success', {
                     title: false,
@@ -1634,5 +1818,141 @@ class OrdenView {
                 'id_estado': 1
             }
         ])
+    }
+
+    updateTipoOrden(obj){
+        console.log(obj.value);
+    }
+
+    updatePeriodo(obj){
+        console.log(obj.value);
+    }
+
+    updateMoneda(obj){
+        console.log(obj.value);
+    }
+
+    updateFechaEmision(obj){
+        console.log(obj.value);
+    }
+  
+    updateSede(obj){
+        var id_sede = obj.value;
+        var id_empresa = obj.options[obj.selectedIndex].getAttribute('data-id-empresa');
+        var id_ubigeo = obj.options[obj.selectedIndex].getAttribute('data-id-ubigeo');
+        var ubigeo_descripcion = obj.options[obj.selectedIndex].getAttribute('data-ubigeo-descripcion');
+        var direccion = obj.options[obj.selectedIndex].getAttribute('data-direccion');
+
+        console.log(id_sede,id_empresa,id_ubigeo,ubigeo_descripcion,direccion);
+    }
+
+    updateProveedor(obj){
+        var id_proveedor = obj.value;
+        var id_contribuyente = obj.options[obj.selectedIndex].getAttribute('data-id-contribuyente');
+        var razon_social = obj.options[obj.selectedIndex].getAttribute('data-razon-social');
+        var numero_documento = obj.options[obj.selectedIndex].getAttribute('data-numero-documento');
+        console.log(id_proveedor,id_contribuyente,razon_social,numero_documento);
+    }
+
+    updateCuentaBancariaProveedor(obj){
+        console.log(obj.value);
+    }
+    
+    updateContactoProveedor(obj){
+        let id_contacto_proveedor= obj.value;
+        let telefono_contacto_proveedor= obj.options[obj.selectedIndex].dataset.telefono;
+        console.log(id_contacto_proveedor,telefono_contacto_proveedor);
+    }
+
+    updateRubroProveedor(obj){
+        console.log(obj.value);
+    }
+
+    updateFormaPago(obj){
+        let id_condicion_softlink = obj.value; // id condicion softlink
+        let text_condicion_softlink = obj.options[obj.selectedIndex].text;
+        let dias_condicion_softlink = obj.options[obj.selectedIndex].dataset.dias; // dias condicion softlink
+        let id_condicion=1; // id condicion agile
+        let plazo_dias=0; // plazo dias agile
+
+        if (dias_condicion_softlink > 0) {
+            id_condicion = 2; 
+            plazo_dias = dias_condicion_softlink;
+        } else {
+            id_condicion = 1;
+            plazo_dias = 0;
+        }
+
+        console.log(id_condicion_softlink,text_condicion_softlink,dias_condicion_softlink,id_condicion,plazo_dias);
+    }
+
+    updatePlazoEntrega(obj){
+        console.log(obj.value);
+    }
+
+    updateTipoDocumento(obj){
+        let id_tipo_documento= obj.value;
+        let text_tipo_documento= obj.options[obj.selectedIndex].text;;
+        console.log(id_tipo_documento,text_tipo_documento);
+    }
+    
+    updateDireccionEntrega(obj){
+        console.log(obj.value);
+    }
+
+    updateUbigeoEntrega(obj){
+        console.log(obj.value);
+    }
+
+    updateCompraLocal(obj){
+        console.log(obj.checked);
+    }
+    
+    updatePersonalAutorizado1(obj){
+        console.log(obj.value);
+    }
+
+    updatePersonalAutorizado2(obj){
+        console.log(obj.value);
+    }
+
+    updateObservacion(obj){
+        console.log(obj.value);
+    }
+
+    updateDescripcionComplementaria(obj){
+        const tr = obj.closest("tr");
+        const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+
+        console.log(identificador, obj.value);
+    }
+
+    updateDescripcionServicio(obj){
+        const tr = obj.closest("tr");
+        const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+
+        console.log(identificador, obj.value);
+    }
+
+    updateCantidad(obj){
+        const tr = obj.closest("tr");
+        const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+
+        console.log(identificador, obj.value);
+    }
+    
+    updatePrecio(obj){
+        const tr = obj.closest("tr");
+        const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+
+        console.log(identificador, obj.value);
+    }
+
+    updateIncluyeIGV(obj){
+        console.log(obj.checked);
+    }
+
+    updateIncluyeICBPER(obj){
+        console.log(obj.checked);
     }
 }

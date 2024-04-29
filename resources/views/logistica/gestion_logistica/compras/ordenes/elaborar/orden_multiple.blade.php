@@ -146,7 +146,7 @@
                                                             <dl class="">
                                                                 <dt>Tipo Orden</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs" name="id_tipo_orden">
+                                                                    <select class="form-control input-xs handleChangeUpdateTipoOrden" name="id_tipo_orden">
                                                                         @foreach ($tp_documento as $tp)
                                                                         @if($tp->descripcion == 'Orden de Compra')
                                                                         <option value="{{$tp->id_tp_documento}}" selected>{{$tp->descripcion}}</option>
@@ -162,7 +162,7 @@
                                                                 </dd>
                                                                 <dt>Periodo</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs" name="id_periodo">
+                                                                    <select class="form-control input-xs handleChangeUpdatePeriodo" name="id_periodo">
                                                                         @foreach ($periodos as $periodo)
                                                                         <option value="{{$periodo->id_periodo}}">{{$periodo->descripcion}}</option>
                                                                         @endforeach
@@ -187,7 +187,7 @@
                                                             <dl class="">
                                                                 <dt>Moneda</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs" name="id_moneda">
+                                                                    <select class="form-control input-xs handleChangeUpdateMoneda" name="id_moneda">
                                                                         @foreach ($tp_moneda as $tpm)
                                                                         <option value="{{$tpm->id_moneda}}" data-simbolo-moneda="{{$tpm->simbolo}}">{{$tpm->descripcion}} ( {{$tpm->simbolo}} )</option>
                                                                         @endforeach
@@ -195,7 +195,7 @@
                                                                 </dd>
                                                                 <dt>Fecha Emisión</dt>
                                                                 <dd>
-                                                                    <input class="form-control input-xs" name="fecha_emision" type="datetime-local" value="2024-03-19T11:23">
+                                                                    <input class="form-control input-xs handleChangeUpdateFechaEmision" name="fecha_emision" type="datetime-local" value="2024-03-19T11:23">
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -203,7 +203,7 @@
                                                             <dl class="">
                                                                 <dt>Empresa / Sede</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs handleChangeSede " name="id_sede" title="Seleccionar empresa - sede" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs handleChangeSede handleChangeUpdateSede " name="id_sede" title="Seleccionar empresa - sede" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($sedes as $sede)
                                                                         <option value="{{$sede->id_sede}}" data-id-empresa="{{$sede->id_empresa}}" data-direccion="{{$sede->direccion}}" data-id-ubigeo="{{$sede->id_ubigeo}}" data-ubigeo-descripcion="{{$sede->ubigeo_descripcion}}">{{$sede->descripcion}}</option>
@@ -230,7 +230,7 @@
                                                             <dl class="">
                                                                 <dt>RUC - Razón social</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs onChangeSeleccionarProveedor" name="id_proveedor" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs onChangeSeleccionarProveedor handleChangeUpdateProveedor" name="id_proveedor" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($proveedores as $proveedor)
                                                                         <option value="{{$proveedor->id_proveedor}}" data-id-contribuyente="{{$proveedor->id_contribuyente}}" data-razon-social="{{$proveedor->contribuyente->razon_social}}" data-numero-documento="{{$proveedor->contribuyente->nro_documento}}">{{$proveedor->contribuyente->nro_documento!=null?$proveedor->contribuyente->nro_documento.' - ':''}} {{$proveedor->contribuyente->razon_social}}</option>
@@ -239,7 +239,7 @@
                                                                 </dd>
                                                                 <dt>Contacto</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs seleccionarDatoCabeceraConcatoProveedor" name="id_contacto_proveedor">
+                                                                    <select class="form-control input-xs seleccionarDatoCabeceraConcatoProveedor handleChangeUpdateContactoProveedor" name="id_contacto_proveedor">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                     </select>
                                                                 </dd>
@@ -264,7 +264,7 @@
                                                                 <dt>Cuenta Bancaria</dt>
                                                                 <dd>
                                                                     <div style="display:flex;">
-                                                                        <select class="form-control input-xs" name="id_cuenta_bancaria_proveedor">
+                                                                        <select class="form-control input-xs handleChangeUpdateCuentaBancariaProveedor" name="id_cuenta_bancaria_proveedor">
                                                                             <option value="" disabled>Elija una opción</option>
                                                                         </select>
                                                                         <button type="button" class="btn-primary agregarCuentaProveedor" title="Agregar cuenta bancaria"><i class="fas fa-plus"></i></button>
@@ -273,7 +273,7 @@
                                                                 </dd>
                                                                 <dt>Rubro</dt>
                                                                 <dd>
-                                                                    <select class="selectpicker" title="Elija una opción" data-width="100%" data-container="body" data-live-search="true" name="id_rubro_proveedor">
+                                                                    <select class="selectpicker handleChangeUpdateRubroProveedor" title="Elija una opción" data-width="100%" data-container="body" data-live-search="true" name="id_rubro_proveedor">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($rubros as $rubro)
                                                                         <option value="{{$rubro->id_rubro}}">{{$rubro->descripcion}}</option>
@@ -297,7 +297,7 @@
                                                             <dl class="">
                                                                 <dt>Forma de pago</dt>
                                                                 <dd>
-                                                                    <select class="form-control input-xs handleChangeFormaPago" name="forma_pago">
+                                                                    <select class="form-control input-xs handleChangeFormaPago handleChangeUpdateFormaPago" name="id_condicion_softlink">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($condiciones_softlink as $cond)
                                                                         <option value="{{$cond->id_condicion_softlink}}" data-dias="{{$cond->dias}}">{{$cond->descripcion}}</option>
@@ -318,7 +318,7 @@
                                                                 <dt>Plazo entrega</dt>
                                                                 <dd>
                                                                     <div style="display:flex;">
-                                                                        <input type="number" name="plazo_entrega" min="0" class="form-control input-xs" style="text-align:right;">
+                                                                        <input type="number" name="plazo_entrega" min="0" class="form-control input-xs handleKeyUpUpdatePlazoEntrega" style="text-align:right;">
                                                                         <input type="text" value="días" class="form-control group-elemento input-xs" style="text-align:center;" readonly="">
                                                                     </div>
                                                                 </dd>
@@ -336,7 +336,7 @@
                                                             <dl class="">
                                                                 <dt>Tipo Documento</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_tipo_documento" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs handleChangeUpdateTipoDocumento" name="id_tipo_documento" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($tp_doc as $tp)
                                                                         @if($tp->descripcion == 'Factura')
@@ -362,11 +362,11 @@
                                                             <dl class="">
                                                                 <dt>Direccion de Entrega</dt>
                                                                 <dd>
-                                                                    <input class="form-control input-xs" name="direccion_entrega" type="text">
+                                                                    <input class="form-control input-xs handleChangeKeyUpDireccionEntrega" name="direccion_entrega" type="text">
                                                                 </dd>
                                                                 <dt>Compra locales</dt>
                                                                 <dd>
-                                                                    <input type="checkbox" name="compra_local"> Compras locales
+                                                                    <input class="handleChangeUpdateCompraLocal" type="checkbox" name="compra_local"> Compras locales
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -374,7 +374,7 @@
                                                             <dl class="">
                                                                 <dt>Ubigeo entrega</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_ubigeo_destino" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs handleChangeUpdateUbigeoEntrega" name="id_ubigeo_destino" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($ubigeos as $ubigeo)
                                                                         <option value="{{$ubigeo->id_dis}}">{{$ubigeo->codigo}} - {{$ubigeo->descripcion}} - {{$ubigeo->provincia}} - {{$ubigeo->departamento}}</option>
@@ -383,7 +383,7 @@
                                                                 </dd>
                                                                 <dt>Observación</dt>
                                                                 <dd>
-                                                                    <textarea class="form-control input-xs" name="observacion" cols="50" rows="100" style="height:50px;"></textarea>
+                                                                    <textarea class="form-control input-xs handleKeyUpUpdateObservacion" name="observacion" cols="50" rows="100" style="height:50px;"></textarea>
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -391,7 +391,7 @@
                                                             <dl class="">
                                                                 <dt>Personal autorizado #1</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_1" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs handleChangePersonalAutorizado1" name="id_trabajador_persona_autorizado_1" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($trabajadores as $trabajador)
                                                                         <option value="{{$trabajador->id_trabajador}}">{{$trabajador->nombre_trabajador}}</option>
@@ -404,7 +404,7 @@
                                                             <dl class="">
                                                                 <dt>Personal autorizado #2</dt>
                                                                 <dd>
-                                                                    <select class="form-control selectpicker input-xs" name="id_trabajador_persona_autorizado_2" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
+                                                                    <select class="form-control selectpicker input-xs handleChangePersonalAutorizado2" name="id_trabajador_persona_autorizado_2" title="Elija una opción" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($trabajadores as $trabajador)
                                                                         <option value="{{$trabajador->id_trabajador}}">{{$trabajador->nombre_trabajador}}</option>
@@ -469,7 +469,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right">
-                                                                    <input class="handleClickIncluyeIGV" type="checkbox" name="incluye_igv" checked> <strong>Incluye IGV</strong>
+                                                                    <input class="handleClickIncluyeIGV handleChangeUpdateIncluyeIGV" type="checkbox" name="incluye_igv" checked> <strong>Incluye IGV</strong>
                                                                 </td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span><label name="igv">
                                                                         0.00</label></td>
@@ -477,7 +477,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="11" class="text-right">
-                                                                    <input class="handleClickIncluyeICBPER" type="checkbox" name="incluye_icbper"> <strong>Incluye ICBPER</strong>
+                                                                    <input class="handleClickIncluyeICBPER handleChangeUpdateIncluyeICBPER" type="checkbox" name="incluye_icbper"> <strong>Incluye ICBPER</strong>
                                                                 </td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span><label name="icbper">
                                                                         0.00</label></td>

@@ -38,6 +38,7 @@
                                         <th>Cod.Agil</th>
                                         <th>Cod.Softlink</th>
                                         <th>P. Number</th>
+                                        <th>Moneda</th>
                                         <th>Almacen</th>
                                         <th>Empresa</th>
                                         <th>Estado Kardex</th>
@@ -78,11 +79,19 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label >Seleccione un archivo</label>
-                                    <input type="file" name="carga_inicial">
+                                    <input type="file" name="carga_inicial" class="form-control">
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="generar_serie"> Generar series automáticas para la lista de productos
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         {{-- <button type="button" class="btn btn-primary">Seleccionar</button> --}}
@@ -111,6 +120,8 @@
                                         <th>Fecha</th>
                                         <th>Precio</th>
                                         <th>P. Unitario</th>
+                                        <th>Tipo cambio</th>
+                                        <th>P. Unitario <small>(T.C)</small></th>
                                         <th>Disponibilidad</th>
                                     </tr>
                                 </thead>

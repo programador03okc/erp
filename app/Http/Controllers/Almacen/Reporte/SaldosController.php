@@ -398,6 +398,15 @@ class SaldosController extends Controller
             ->first();
         return $data->compra;
     }
+    
+    public function tipo_cambio_venta($fecha)
+    {
+        $data = DB::table('contabilidad.cont_tp_cambio')
+            ->where('cont_tp_cambio.fecha', '<=', $fecha)
+            ->orderBy('fecha', 'desc')
+            ->first();
+        return $data->venta;
+    }
 
     public function obtenerSaldoValorizado($id_producto, $id_almacen, $finicio, $ffin)
     {

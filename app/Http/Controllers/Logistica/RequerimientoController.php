@@ -109,7 +109,7 @@ class RequerimientoController extends Controller
         $fuentes = Fuente::mostrar();
         $divisiones = Division::mostrar();
         $categoria_adjunto = CategoriaAdjunto::mostrar();
-        $tipo_cambio = (new SaldosController)->tipo_cambio_compra(new Carbon());
+        $tipo_cambio = (new SaldosController)->tipo_cambio_venta(new Carbon());
 
         $array_accesos = [];
         $accesos_usuario = AccesosUsuarios::where('estado', 1)->where('id_usuario', Auth::user()->id_usuario)->get();

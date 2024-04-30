@@ -38,6 +38,8 @@ function generarDespachoInterno() {
             if (response.tipo == 'success') {
                 $('#modal-despacho_fecha_programada').modal('hide');
                 $('#requerimientosEnProceso').DataTable().ajax.reload(null, false);
+                $('#requerimientosAlmacen').DataTable().ajax.reload(null, false);
+
             }
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {

@@ -1374,7 +1374,7 @@ class PresupuestoInternoController extends Controller
                         ['alm_req.id_moneda',1]
                     ])
                     ->whereIn('alm_req.estado',[1,2])
-                    ->groupBy('alm_req.id_requerimiento')
+                    ->groupBy('alm_req.id_requerimiento','alm_req.monto_igv')
                     ->get();
 
                     $requerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=DetalleRequerimiento::select('alm_req.id_requerimiento','alm_req.fecha_registro','alm_det_req.cantidad','alm_det_req.precio_unitario', 'alm_req.monto_igv')

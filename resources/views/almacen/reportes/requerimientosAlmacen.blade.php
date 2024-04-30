@@ -82,6 +82,7 @@
 @include('almacen.reportes.cambioRequerimiento')
 @include('logistica.gestion_logistica.compras.pendientes.modal_ver_orden_de_requerimiento')
 @include('almacen.reportes.modal_ajustar_transformacion_requerimiento')
+@include('almacen.distribucion.ordenDespachoProgramar')
 
 @endsection
 
@@ -107,6 +108,7 @@
 <script src="{{ asset('js/almacen/reporte/requerimientosAlmacen.js') }}?v={{filemtime(public_path('js/almacen/reporte/requerimientosAlmacen.js'))}}"></script>
 <script src="{{ asset('js/almacen/reporte/cambioRequerimiento.js') }}?v={{filemtime(public_path('js/almacen/reporte/cambioRequerimiento.js'))}}"></script>
 <script src="{{ asset('js/almacen/distribucion/verDetalleRequerimiento.js?') }}?v={{filemtime(public_path('js/almacen/distribucion/verDetalleRequerimiento.js'))}}"></script>
+<script src="{{ asset('js/almacen/distribucion/ordenDespachoProgramar.js?')}}?v={{filemtime(public_path('js/almacen/distribucion/ordenDespachoProgramar.js'))}}"></script>
 
 <script>
     var array_accesos = JSON.parse('{!!json_encode($array_accesos)!!}');

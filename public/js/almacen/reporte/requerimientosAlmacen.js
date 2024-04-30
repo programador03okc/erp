@@ -151,7 +151,15 @@ function listarRequerimientosAlmacen(id_usuario) {
                     data-placement="bottom" title="Ver transferencias" data-id="${row['id_requerimiento']}">
                     <i class="fas fa-exchange-alt"></i></button>`: ''
                         }
+                    
 
+                        ${row['tiene_transformacion'] ?
+                        (array_accesos.find(element => element === 334)?`<button type="button" class="interno btn btn-${row['codigo_despacho_interno'] !== null ? 'danger' : 'default'} btn-flat btn-xs " data-toggle="tooltip"
+                        data-placement="bottom" title="Despacho Interno" data-id="${row['id_requerimiento']}"
+                        data-estado="${row['estado_di']}" data-estado-despacho="${row['estado_despacho']}"
+                        data-idod="${row['id_despacho_interno']}" >
+                        <strong>ODI</strong></button>`:'')
+                        : ''}
                     `+(array_accesos.find(element => element === 158)?`<button type="button" class="cambio btn btn-warning btn-flat btn-xs " data-toggle="tooltip"
                     data-placement="bottom" title="Cambio de almacén" data-id="${row['id_requerimiento']}"
                     data-almacen="${row['id_almacen']}" data-codigo="${row['codigo']}">
@@ -165,6 +173,7 @@ function listarRequerimientosAlmacen(id_usuario) {
     });
     vista_extendida();
 }
+
 
 $('#requerimientosAlmacen tbody').on("click", "button.transferencia", function () {
     var id = $(this).data('id');
@@ -513,3 +522,31 @@ function actualizarAjusteTransformacionRequerimiento(){
         );
     }
 }
+
+$('#requerimientosAlmacen tbody').on("click", "button.interno", function (e) {
+    $(e.preventDefault());
+    var id = $(this).data("id");
+    var od = $(this).data("idod");
+    var estado = $(this).data("estado");
+    var estado_despacho = $(this).data("estadoDespacho");
+    var msj = '';
+
+    if (estado == null || estado == 1) {
+        openFechaProgramada(id, od);
+    } else if (estado == 10) {
+        msj = 'Ya se finalizó el proceso de transformación. No es posible modificar.';
+    } else {
+        msj = 'Ya se inició el proceso de transformación. No es posible modificar.';
+    }
+    
+    if (msj !== '') {
+        Lobibox.notify('warning', {
+            title: false,
+            size: "mini",
+            rounded: true,
+            sound: false,
+            delayIndicator: false,
+            msg: msj
+        });
+    }
+});

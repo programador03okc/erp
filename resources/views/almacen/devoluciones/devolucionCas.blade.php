@@ -4,13 +4,14 @@
 @section('cabecera') Orden Devolución @endsection
 @include('layouts.menu_cas')
 @section('estilos')
-<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('css/usuario-accesos.css') }}">
     <style>
         .invisible{
             display: none;
         }
     </style>
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/iCheck/all.css') }}">
+<link rel="stylesheet" href="{{ asset('template/adminlte2-4/plugins/select2/css/select2.css') }}">
 @endsection
 
 @section('breadcrumb')
@@ -35,24 +36,28 @@
     </div>
 </div>
 @endif
-
 @include('almacen.devoluciones.devolucionModal')
 @include('almacen.customizacion.productoCatalogoModal')
 @include('almacen.devoluciones.contribuyenteModal')
 @include('almacen.devoluciones.salidasModal')
 @include('cas.incidencias.incidenciaModal')
+@include('tesoreria.requerimiento_pago.modal_lista_cuadro_presupuesto')
 @endsection
 
 @section('scripts')
 
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/datatables/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/moment/moment.min.js') }}"></script>
+   
+    <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
+    <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
 
     <script src="{{ asset('js/almacen/devolucion/devolucion.js')}}?v={{filemtime(public_path('js/almacen/devolucion/devolucion.js'))}}"></script>
     <script src="{{ asset('js/almacen/devolucion/devolucionModal.js')}}?v={{filemtime(public_path('js/almacen/devolucion/devolucionModal.js'))}}"></script>
     <script src="{{ asset('js/almacen/devolucion/salidasDevolucion.js')}}?v={{filemtime(public_path('js/almacen/devolucion/salidasDevolucion.js'))}}"></script>
+    <script src="{{ asset('js/almacen/devolucion/ingresosDevolucion.js')}}?v={{filemtime(public_path('js/almacen/devolucion/ingresosDevolucion.js'))}}"></script>
+    <script src="{{ asset('js/almacen/devolucion/ingresosModal.js')}}?v={{filemtime(public_path('js/almacen/devolucion/ingresosModal.js'))}}"></script>
     <script src="{{ asset('js/almacen/devolucion/incidenciasDevolucion.js')}}?v={{filemtime(public_path('js/almacen/devolucion/incidenciasDevolucion.js'))}}"></script>
     <script src="{{ asset('js/almacen/devolucion/productosDevolucion.js')}}?v={{filemtime(public_path('js/almacen/devolucion/productosDevolucion.js'))}}"></script>
     <script src="{{ asset('js/almacen/devolucion/salidasModal.js')}}?v={{filemtime(public_path('js/almacen/devolucion/salidasModal.js'))}}"></script>
@@ -60,8 +65,10 @@
     <script src="{{ asset('js/almacen/devolucion/contribuyenteModal.js')}}?v={{filemtime(public_path('js/almacen/devolucion/contribuyenteModal.js'))}}"></script>
     <script src="{{ asset('js/almacen/customizacion/productoCatalogoModal.js')}}?v={{filemtime(public_path('js/almacen/customizacion/productoCatalogoModal.js'))}}"></script>
 
+
     <script>
         $(document).ready(function() {
+            $('.select2').select2();
 
             usuarioSession = '{{Auth::user()->id_usuario}}';
             usuarioNombreSession = '{{Auth::user()->nombre_corto}}';

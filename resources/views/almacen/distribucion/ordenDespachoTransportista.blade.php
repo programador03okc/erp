@@ -42,26 +42,48 @@
                                     <input type="text" class="form-control" name="numero" onBlur="ceros_numero('numero');" placeholder="Número">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <h5>Fecha de emisión de la guía</h5>
+                            <div class="col-md-4">
+                                <h5>Fecha de emisión de guía</h5>
                                 <input type="date" name="fecha_transportista" class="form-control" />
                             </div>
-                            <div class="col-md-6">
-                                <h5>Monto flete <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="" name="fechaRegistroFlete"></span> <small>(Include IGV)</small></h5>
+
+                            <!-- <div class="col-md-2">
+                                <h5>incluye IGV</h5>
+                                <input type="checkbox" name="incluye_igv" id="incluye_igv" style="margin-top: 13px;" />
+                            </div>-->
+
+                            <div class="col-md-4">
+                                <h5>Monto flete <small>(Sin IGV)</small></h5>
                                 <div class="input-group">
                                     <span class="input-group-addon" disabled>S/</span>
-                                    {{-- <input type="text" class="form-control decimal" name="fleteReal" > --}}
-                                    <input type="number" class="form-control" name="importe_flete" step="any" placeholder="Flete real">
+                                    <input type="number" class="form-control handleUpdateImporteFleteSinIGV" name="importe_flete_sin_igv" step="any" placeholder="(sin IGV)">
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <h5>Monto flete <small>(Con IGV)</small></h5>
+                                <div class="input-group">
+                                    <span class="input-group-addon" disabled>S/</span>
+                                    <input type="number" class="form-control handleUpdateImporteFleteConIGV" name="importe_flete" step="any" placeholder="(con IGV)">
+                                </div>
+                            </div> 
                         </div>
                         <div class="row">
 
-                            <div class="col-md-1">
-                                <h5>Crédito</h5>
-                            </div>
+ 
                             <div class="col-md-2">
-                                <input type="checkbox" name="credito" id="credito" style="margin-top: 13px;" />
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="credito" id="credito"> Credito
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label>
+                                    <input type="checkbox" class="hadleChangeAplicaIGV" name="aplica_igv" id="aplica_igv" checked> Aplica IGV
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

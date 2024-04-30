@@ -48,17 +48,19 @@ $(function () {
 });
 
 function validarClave() {
-    $.ajax({
-        url: route('validar-clave'),
-        type: 'GET',
-        dataType: 'JSON',
-        success: function (data) {
-            if (data.success === true) {
-                // $('#actualizar-contraseña').modal('show');
-                $('#actualizar-clave').modal('show');
+    if (auth_user.renovar == true) {
+        $.ajax({
+            url: route('validar-clave'),
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success === true) {
+                    // $('#actualizar-contraseña').modal('show');
+                    $('#actualizar-clave').modal('show');
+                }
             }
-        }
-    });
+        });
+    }
 }
 function cambiarClave() {
     $("#actualizar-clave").modal({

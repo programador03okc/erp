@@ -196,9 +196,9 @@ function listarRequerimientosPendientes(usuario) {
                 }
             },
             {
-                data: 'importe_flete', name: 'orden_despacho.importe_flete',
+                data: 'importe_flete_sin_igv', name: 'orden_despacho.importe_flete_sin_igv',
                 'render': function (data, type, row) {
-                    return (row['importe_flete'] !== null ? formatNumber.decimal(row['importe_flete'], 'S/', -2) : '');
+                    return (row['importe_flete_sin_igv'] !== null ? formatNumber.decimal(row['importe_flete_sin_igv'], 'S/', -2) : '');
                 }
             },
             {
@@ -228,7 +228,7 @@ function listarRequerimientosPendientes(usuario) {
                         (color ? 'Pendiente' : row['estado_doc']) + '</span>'
                 }, className: "text-center"
             },
-            { data: 'id_od', name: 'orden_despacho.id_od' },
+            { data: 'id_od', name: 'orden_despacho.id_od' }
         ],
         columnDefs: [
             { targets: [0], className: "invisible" },

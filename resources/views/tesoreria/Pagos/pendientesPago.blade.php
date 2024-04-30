@@ -415,7 +415,8 @@ Registro de pagos
 @include('tesoreria.requerimiento_pago.modal_vista_rapida_requerimiento_pago')
 @include('logistica.reportes.modal_lista_adjuntos')
 @include('logistica.requerimientos.modal_requerimientos_vinculados_con_partida')
-
+@include('tesoreria.requerimiento_pago.modal_ver_adjuntos_requerimiento_pago_cabecera')
+@include('tesoreria.requerimiento_pago.modal_ver_adjuntos_requerimiento_pago_detalle')
 @endsection
 
 @section('scripts')
@@ -446,7 +447,7 @@ Registro de pagos
     <script src="{{ asset('js/tesoreria/pagos/pendientesPago.js')}}?v={{filemtime(public_path('js/tesoreria/pagos/pendientesPago.js'))}}"></script>
     <script src="{{ asset('js/tesoreria/pagos/procesarPago.js')}}?v={{filemtime(public_path('js/tesoreria/pagos/procesarPago.js'))}}"></script>
     <script src="{{ asset('js/logistica/reportes/modalAdjuntosLogisticos.js')}}?v={{filemtime(public_path('js/logistica/reportes/modalAdjuntosLogisticos.js'))}}"></script>
-    {{-- <script src="{{ asset('js/tesoreria/requerimientoPago/ListarRequerimientoPagoView.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/ListarRequerimientoPagoView.js'))}}"></script> --}}
+    <script src="{{ asset('js/tesoreria/requerimientoPago/ListarRequerimientoPagoView.js')}}?v={{filemtime(public_path('js/Tesoreria/requerimientoPago/ListarRequerimientoPagoView.js'))}}"></script> 
 
     <script src="{{ asset('js/tesoreria/pagos/modalVistaRapidaRequerimiento.js')}}?v={{filemtime(public_path('js/tesoreria/pagos/modalVistaRapidaRequerimiento.js'))}}"></script>
 
@@ -457,6 +458,7 @@ Registro de pagos
     $(document).ready(function(){
 
         vista_extendida();
+        iniciar();
 
         let requerimientoPago=new RequerimientoPago('{{Auth::user()->tieneAccion(137)}}','{{Auth::user()->tieneAccion(138)}}','{{Auth::user()->tieneAccion(139)}}');
         // let requerimientoPago=new RequerimientoPago('1','1','1');

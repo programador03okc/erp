@@ -59,9 +59,7 @@ class ValidarPresupuestoInternoController extends Controller
             }
     
             $validacionDePartidaConPresupuestoInternoList =  $this->tienePresupuestoLasPartidasDelRequerimientoPago($idRequerimientoPago, $numeroMes, $totalPago, $fechaPago,$fase);
-            // $tipoCambioUtilizado= $this->getTipoCambioVenta($fechaPago);
             $montoAcumuladoDePartida = $this->obtenerMontoAcumuladoPartidas($validacionDePartidaConPresupuestoInternoList);
-            // $no_exceder_pago = (floatval($montoAcumuladoDePartida) >= floatval($totalPago))?true:false;
             $tienePresupuestoEnPartidas = true;
 
             foreach ($validacionDePartidaConPresupuestoInternoList as $key => $value) {
@@ -243,10 +241,11 @@ class ValidarPresupuestoInternoController extends Controller
                                 $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal);
                             }
                         } elseif ($orden->id_moneda == 2) {
+                            $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
                             if ($orden->incluye_igv == true) {
-                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal * 1.18)) * $this->getTipoCambioVenta($fechaPago));
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal * 1.18) * ($requerimiento->tipo_cambio !=null ? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago))));
                             } else {
-                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal)) * $this->getTipoCambioVenta($fechaPago));
+                                $montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] = ((floatval($montoPorUtilizarPorPartida[$detalleRequerimiento->id_partida_pi] ?? 0) + floatval($item->subtotal) * ($requerimiento->tipo_cambio !=null ? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago))));
                             }
                         }
                     }
@@ -283,8 +282,8 @@ class ValidarPresupuestoInternoController extends Controller
                         if ($requerimientoPago->id_moneda == 1) { // soles
                             $montoPorUtilizarPorPartida[$item->id_partida_pi] = floatval($montoPorUtilizarPorPartida[$item->id_partida_pi] ?? 0) + floatval($item->subtotal);
                         } else if ($requerimientoPago->id_moneda == 2) {
-                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));
-                        }
+                            $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  ($requerimientoPago->tipo_cambio !=null?floatval($requerimientoPago->tipo_cambio): $this->getTipoCambioVenta($fechaPago)));
+                         }
                     }
                 }
             }
@@ -326,9 +325,9 @@ class ValidarPresupuestoInternoController extends Controller
                             }
                         } elseif ($requerimiento->id_moneda == 2) {
                             if ($requerimiento->monto_igv > 0) {
-                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + ((floatval($item->subtotal) * 1.18) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + ((floatval($item->subtotal) * 1.18) *  ($requerimiento->tipo_cambio!= null? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago)));
                             } else {
-                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  floatval($this->getTipoCambioVenta($fechaPago)));
+                                $montoPorUtilizarPorPartida[$item->id_partida_pi] = (isset($montoPorUtilizarPorPartida[$item->id_partida_pi]) && isset($montoPorUtilizarPorPartida[$item->id_partida_pi])>0 ? floatval($montoPorUtilizarPorPartida[$item->id_partida_pi]): 0 ) + (floatval($item->subtotal) *  ($requerimiento->tipo_cambio!= null? floatval($requerimiento->tipo_cambio): $this->getTipoCambioVenta($fechaPago)));
                             }
 
                         }
@@ -396,7 +395,7 @@ class ValidarPresupuestoInternoController extends Controller
 
             foreach (($presupuesto[0]->detalle) as $detalle) {
                 if ($detalle->id_presupuesto_interno_detalle == $idPartidaDePresupuestoInterno) {
-                    if ($detalle->$nombreMesAux >= (floatval($monto) + floatval($montoComprometido)) ) { // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
+                    if (number_format($detalle->$nombreMesAux,2,'.','') >= (floatval($monto) + floatval($montoComprometido)) ) { // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
                         $mensaje="Tiene suficiente saldo en partida";
                         $data = [
                             'tiene_presupuesto' => true,
@@ -405,14 +404,14 @@ class ValidarPresupuestoInternoController extends Controller
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
                             'nombre_mes_aux' => $nombreMesAux,
-                            'monto_aux' => $detalle->$nombreMesAux,
+                            'monto_aux' => number_format($detalle->$nombreMesAux,2,'.',''),
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,
                             'mensaje'=>$mensaje
                             // 'monto_utilizado_por_otros_documentos' => $obtenerMontoUtilizadoPorRequerimientosLogisticosYPagoConPartida[0]['monto_total_partida_ulitizado'] ?? 0,
                         ];
                     } else {
-                        if($detalle->$nombreMesAux < floatval($montoComprometido)){
+                        if(number_format($detalle->$nombreMesAux,2,'.','') < floatval($montoComprometido)){
                             $mensaje.="Saldo insuficiente, otros documentos estan con saldo comprometido.";
                         }   
 
@@ -425,7 +424,7 @@ class ValidarPresupuestoInternoController extends Controller
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
                             'nombre_mes_aux' => $nombreMesAux,
-                            'monto_aux' => $detalle->$nombreMesAux,
+                            'monto_aux' => number_format($detalle->$nombreMesAux,2,'.',''),
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,
                             'mensaje'=>$mensaje

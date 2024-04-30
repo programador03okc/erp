@@ -252,4 +252,9 @@ class Util {
         }
         return returnArray;
     }
+
+
+    static isEmpty(str) {
+        return (!str || (str).replace(/^\s+|\s+$/gm, "").length === 0 );
+    }
 }

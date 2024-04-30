@@ -245,18 +245,18 @@ class DashboardSeguimientoView extends Model
             $fechaSalidaAlmacenODI = Carbon::make(null);
         }
 
-        // if ($this->attributes['fecha_salida_almacen_ode'] != null) {
-        //     $fechaSalidaAlmacenODE = Carbon::parse($this->attributes['fecha_salida_almacen_ode'])->format('d-m-Y H:i:s');
-        // } else {
-        //     $fechaSalidaAlmacenODE = Carbon::make(null);
-        // }
+        if ($this->attributes['fecha_salida_almacen_ode'] != null) {
+            $fechaSalidaAlmacenODE = Carbon::parse($this->attributes['fecha_salida_almacen_ode'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaSalidaAlmacenODE = Carbon::make(null);
+        }
 
-        $fechaGeneracionDocumentos=null;
+ 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI);
+        $tiempoTotalSalida = max($fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI,$fechaSalidaAlmacenODE);
 
         // obtener tiempo global de area
-        $fechas = [$fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI];
+        $fechas = [$fechaUltimoIngresoAlmacen, $fechaSalidaAlmacenODI, $fechaSalidaAlmacenODE];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
@@ -281,9 +281,9 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODI != null ? $fechaSalidaAlmacenODI : '') . '</div>
             ';
         }
-        $html .= '<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaGeneracionDocumentos != null ? 'verde' : 'rojo') . '"></i></div>
+        $html .= '<div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaSalidaAlmacenODE != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">Generación documentos (Salida producto)</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaGeneracionDocumentos != null ? $fechaGeneracionDocumentos : '') . '</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
             
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -299,7 +299,7 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
 
-            <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODI != null ? $fechaSalidaAlmacenODI : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaSalidaAlmacenODE != null ? $fechaSalidaAlmacenODE : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
@@ -333,14 +333,18 @@ class DashboardSeguimientoView extends Model
         } else {
             $fechaTransformacionCAS = Carbon::make(null);
         }
-
-        $fechaDevolucionDeComponentes=null;
+        if ($this->attributes['fecha_devolucion'] != null) {
+            $fechaDevolucionDeComponentes = Carbon::parse($this->attributes['fecha_devolucion'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaDevolucionDeComponentes = Carbon::make(null);
+        }
+ 
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaInicioCAS, $fechaTransformacionCAS);
+        $tiempoTotalSalida = max($fechaInicioCAS, $fechaTransformacionCAS,$fechaDevolucionDeComponentes);
 
         // obtener tiempo global de area
-        $fechas = [$fechaInicioCAS, $fechaTransformacionCAS];
+        $fechas = [$fechaInicioCAS, $fechaTransformacionCAS,$fechaDevolucionDeComponentes];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
@@ -377,7 +381,7 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">&nbsp;</div>
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
             
-            <div class="tiempo-ingreso-area">' . ($fechaTransformacionCAS != null ? $fechaTransformacionCAS : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaDevolucionDeComponentes != null ? $fechaDevolucionDeComponentes : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">
@@ -415,14 +419,25 @@ class DashboardSeguimientoView extends Model
             $fechaEntregadoConforme = Carbon::make(null);
         }
 
-        $fechaCargaGuiaFirmadaASistema = null;
-        $fechaRetornioGuiaCellada = null;
+        if ($this->attributes['fecha_retorno_guia_firmanda'] != null) {
+            $fechaRetornioGuiaFirmada = Carbon::parse($this->attributes['fecha_retorno_guia_firmanda'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaRetornioGuiaFirmada = Carbon::make(null);
+        }
+
+        if ($this->attributes['fecha_carga_guia_firmada_sistema'] != null) {
+            $fechaCargaGuiaFirmadaASistema = Carbon::parse($this->attributes['fecha_carga_guia_firmada_sistema'])->format('d-m-Y H:i:s');
+        } else {
+            $fechaCargaGuiaFirmadaASistema = Carbon::make(null);
+        }
+
+       
 
         // obtener tiempo total salida
-        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme);
+        $tiempoTotalSalida = max($fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada,$fechaCargaGuiaFirmadaASistema);
 
         // obtener tiempo global de area
-        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme];
+        $fechas = [$fechaSalidaDespacho, $fechaEntregadoConforme,$fechaRetornioGuiaFirmada,$fechaCargaGuiaFirmadaASistema];
         for ($i = 0; $i < count($fechas) - 1; $i++) {
             $carbonFecha1 = Carbon::parse($fechas[$i]);
             $carbonFecha2 = Carbon::parse($fechas[$i + 1]);
@@ -451,9 +466,9 @@ class DashboardSeguimientoView extends Model
             <div class="actividad">Carga GR firmada a sistema</div>
             <div class="tiempo-finalizado-actividad">' . ($fechaCargaGuiaFirmadaASistema != null ? $fechaCargaGuiaFirmadaASistema : '') . '</div>
         
-            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaRetornioGuiaCellada != null ? 'verde' : 'rojo') . '"></i></div>
+            <div class="indicador-semaforo"><i class="fas fa-circle ' . ($fechaRetornioGuiaFirmada != null ? 'verde' : 'rojo') . '"></i></div>
             <div class="actividad">Retorno de GR firmada</div>
-            <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaCellada != null ? $fechaRetornioGuiaCellada : '') . '</div>
+            <div class="tiempo-finalizado-actividad">' . ($fechaRetornioGuiaFirmada != null ? $fechaRetornioGuiaFirmada : '') . '</div>
         
             <div class="indicador-semaforo"></div>
             <div class="actividad">&nbsp;</div>
@@ -463,7 +478,7 @@ class DashboardSeguimientoView extends Model
             <div class="tiempo-finalizado-actividad">&nbsp;</div>
 
 
-            <div class="tiempo-ingreso-area">' . ($fechaEntregadoConforme != null ? $fechaEntregadoConforme : '') . '</div>
+            <div class="tiempo-ingreso-area">' . ($fechaRetornioGuiaFirmada != null ? $fechaRetornioGuiaFirmada : '') . '</div>
             <div class="flechas">
                 <div style="display:flex; flex-direction: row; justify-content:space-between; flex-wrap:nowrap; text-align:center;">
                     <div style="display:block; width: 70px;">

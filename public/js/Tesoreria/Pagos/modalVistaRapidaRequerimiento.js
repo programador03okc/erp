@@ -1,3 +1,14 @@
+function iniciar(){
+    $('#modal-vista-rapida-requerimiento-pago').on("click", "a.handleClickAdjuntarArchivoDetalle", (event) => {
+        // console.log(event.currentTarget.dataset.id);
+        modalVerAdjuntarArchivosDetalle(event);
+    });
+
+    $('#modal-ver-adjuntos-requerimiento-pago-detalle').on("click", "button.handleClickDescargarArchivoRequerimientoPagoDetalle", (event) => {
+        descargarArchivoRequerimientoPagoDetalle(event);
+    });
+}
+
 function limpiarVistaRapidaRequerimientoPago() {
     document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_requerimiento_pago']").value = '';
     document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] input[name='id_estado']").value = '';
@@ -76,7 +87,7 @@ function obtenerRequerimientoPago(id) {
 }
 
 function mostrarDataEnVistaRapidaRequerimientoPago(data) {
-    console.log(data);
+    // console.log(data);
     // ### ==================== cabecera ====================== ###
     var destinatario,tipo_documento_destinatario,nro_documento_destinatario, banco, tipo_cuenta, tipo_cuenta, moneda, nro_cuenta, nro_cci = '';
     if (data.id_tipo_destinatario == 1 || data.id_persona > 0) {
@@ -128,8 +139,25 @@ function mostrarDataEnVistaRapidaRequerimientoPago(data) {
     document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] span[name='simboloMoneda']").textContent = data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : '';
     document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='listaDetalleRequerimientoPago'] span[name='simbolo_moneda']").textContent = data.moneda != null && data.moneda.simbolo != undefined ? data.moneda.simbolo : '';
     document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='listaDetalleRequerimientoPago'] label[name='total']").textContent = $.number(data.monto_total, 2);
-    document.querySelector("span[name='mes_ppto']").textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+    // document.querySelector("span[name='mes_ppto']").textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+    let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
 
+    if(data.mes_afectacion!=null){
+        allMesPpto.forEach(element => {
+            element.textContent = moment(data.mes_afectacion, 'MM').format('MMMM');
+        });
+
+    }else{
+        allMesPpto.forEach(element => {
+            if(data && data.fecha_registro !=null){
+                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+            }else{
+                element.textContent =  moment().format('MMMM');
+
+            }
+        });
+
+    }
 
     if (data.id_presupuesto_interno > 0) {
         document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='presupuesto_interno']").textContent = (data.presupuesto_interno !=null ?data.presupuesto_interno.codigo: '')+' - '+(data.presupuesto_interno !=null ? data.presupuesto_interno.descripcion: '');
@@ -173,7 +201,7 @@ function mostrarDataEnVistaRapidaRequerimientoPago(data) {
         for (let i = 0; i < data.detalle.length; i++) {
             let cantidadAdjuntosItem = 0;
             cantidadAdjuntosItem = (data.detalle[i].adjunto).filter((element, i) => element.id_estado != 7).length;
-            console.log(cantidadAdjuntosItem);
+            // console.log(cantidadAdjuntosItem);
             // cantidadAdjuntosItem = data.detalle[i].adjunto.length;
 
             let idPartida= '';
@@ -254,6 +282,18 @@ function mostrarDataEnVistaRapidaRequerimientoPago(data) {
 
 }
 
+
+function modalVerAdjuntarArchivosDetalle(event){
+   
+    const listarRequerimientoPagoView = new ListarRequerimientoPagoView(null);
+    listarRequerimientoPagoView.modalVerAdjuntarArchivosDetalle(event.currentTarget.dataset.id);
+}
+function descargarArchivoRequerimientoPagoDetalle(event){
+   
+    const listarRequerimientoPagoView = new ListarRequerimientoPagoView(null);
+    console.log(event.currentTarget);
+    listarRequerimientoPagoView.descargarArchivoRequerimientoPagoDetalle(event.currentTarget);
+}
 
 
 function calcularPresupuestoUtilizadoYSaldoPorPartida() {

@@ -398,24 +398,42 @@ class ListarRequerimientoView {
                 { 'data': 'nombre_solicitado_por', 'name': 'nombre_solicitado_por' },
                 { 'data': 'nombre_usuario', 'name': 'nombre_usuario' },
                 { 'data': 'estado_doc', 'name': 'adm_estado_doc.estado_doc','render': function (data, type, row) {
+
+                    let textoTrazabilidad='';
+                    if(row['ordenes_compra']){
+                        (row['ordenes_compra']).forEach(element => {
+                            if(element.estado_pago==1){
+                                textoTrazabilidad='Logística: Orden Creada';
+                            }else if(element.estado_pago==8){
+                                textoTrazabilidad='Logística: Solicitud de pago enviado';
+                            }else if(element.estado_pago==5){
+                                textoTrazabilidad='Contabilidad: Autorizado para pago';
+                            }else if(element.estado_pago==6){
+                                textoTrazabilidad='Tesorería: Orden pagada';
+                            }else if(element.estado_pago==10){
+                                textoTrazabilidad='Tesorería: Orden pagada con saldo';
+                            }
+                            
+                        });
+                    }
                     switch (row['estado']) {
                         case 1:
-                            return '<span class="labelEstado label label-default">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-default">' + row['estado_doc'] +'</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 2:
-                            return '<span class="labelEstado label label-success">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-success">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 3:
-                            return '<span class="labelEstado label label-warning">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-warning">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 5:
-                            return '<span class="labelEstado label label-primary">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-primary">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         case 7:
-                            return '<span class="labelEstado label label-danger">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-danger">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
                         default:
-                            return '<span class="labelEstado label label-default">' + row['estado_doc'] + '</span>';
+                            return '<span class="labelEstado label label-default">' + row['estado_doc'] + '</span>' + '<br><small>'+textoTrazabilidad+'</small>';
                             break;
 
                     }
@@ -426,7 +444,7 @@ class ListarRequerimientoView {
                     let btnEditar = '';
                     let btnAnular = '';
                     // let btnMandarAPago = '';
-                    let btnVerAdjuntosModal = (array_accesos.find(element => element === 34)?'<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAgregarAdjuntosRequerimiento" data-id-requerimiento="' + row['id_requerimiento'] + '" data-codigo-requerimiento="' + row['codigo'] + '" title="Ver archivos adjuntos" data-sustento="'+row['requerimiento_sustentado']+'"><i class="fas fa-paperclip fa-xs"></i></button>':'');
+                    let btnVerAdjuntosModal = (array_accesos.find(element => element === 34)?'<button type="button" class="btn btn-xs btn-default  handleClickVerAgregarAdjuntosRequerimiento" name="btnVerAgregarAdjuntosRequerimiento" data-id-requerimiento="' + row['id_requerimiento'] + '" data-codigo-requerimiento="' + row['codigo'] + '" title="Ver archivos adjuntos" data-sustento="'+row['requerimiento_sustentado']+'"><i class="fas fa-paperclip fa-xs"></i> <span class="badge" title="Cantidad de adjunto del requerimiento" name="cantidadAdjuntosRequerimiento" style="background-color:dimgray; position:absolute;border: solid 0.1px;z-index: 9;top: -9px;left: 0px;font-size: 0.9rem;">' + (parseInt(row['cantidad_adjuntos_activos']['cabecera'])+ parseInt(row['cantidad_adjuntos_activos']['detalle'])) + '</span></button>':'');
                     let btnDetalleRapido = (array_accesos.find(element => element === 33)?'<button type="button" class="btn btn-xs btn-primary btnVerDetalle handleClickVerDetalleRequerimientoSoloLectura" data-id-requerimiento="' + row['id_requerimiento'] + '" title="Ver detalle" ><i class="fas fa-eye fa-xs"></i></button>':'');
                     let btnImprimirEnPdf = (array_accesos.find(element => element === 36)?'<button type="button" class="btn btn-xs btn-default handleClickImprimirRequerimientoPdf" data-id-requerimiento="' + row['id_requerimiento'] + '" title="Imprimir en PDF" ><i class="fas fa-print fa-xs"></i></button>':'');
                     let btnTrazabilidad = (array_accesos.find(element => element === 35)?'<button type="button" class="btn btn-xs btn-default btnVerTrazabilidad handleClickVerTrazabilidadRequerimiento" title="Trazabilidad"><i class="fas fa-route fa-xs"></i></button>':'');
@@ -582,6 +600,10 @@ class ListarRequerimientoView {
         this.limpiarTabla('listaHistorialRevision');
         this.limpiarTabla('listaPartidasActivas');
 
+        let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
+        allMesPpto.forEach(element => {
+                 element.textContent = "";
+        });
     }
 
 
@@ -668,14 +690,22 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = data.simbolo_moneda;
         
         let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
-        allMesPpto.forEach(element => {
-            if(data && data.fecha_registro !=null){
-                element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
-            }else{
-                element.textContent =  moment().format('MMMM');
-
-            }
-        });
+        if(data.mes_afectacion!=null){
+            allMesPpto.forEach(element => {
+                element.textContent = moment(data.mes_afectacion, 'MM').format('MMMM');
+            });
+    
+        }else{
+            allMesPpto.forEach(element => {
+                if(data && data.fecha_registro !=null){
+                    element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
+                }else{
+                    element.textContent =  moment().format('MMMM');
+    
+                }
+            });
+    
+        }
 
 
         if (data.id_incidencia > 0) {

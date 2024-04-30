@@ -106,7 +106,7 @@ class RequerimientoPagoController extends Controller
 
         $presupuestoInternoList = (new PresupuestoInternoController)->comboPresupuestoInterno(0, 0);
 
-        $tipo_cambio = (new SaldosController)->tipo_cambio_compra(new Carbon());
+        $tipo_cambio = (new SaldosController)->tipo_cambio_venta(new Carbon());
 
         $condiciones_softlink = CondicionSoftlink::mostrar();
 

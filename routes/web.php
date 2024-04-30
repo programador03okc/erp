@@ -56,8 +56,6 @@ use App\Http\Controllers\Finanzas\Presupuesto\PresupuestoInternoController;
 use App\Http\Controllers\Finanzas\Presupuesto\ScriptController;
 use App\Http\Controllers\Finanzas\Presupuesto\TituloController;
 use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoController;
-use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoEnFaseAprobacionController;
-use App\Http\Controllers\Finanzas\Presupuesto\ValidarPresupuestoInternoEnFaseEjecutadoController;
 use App\Http\Controllers\Finanzas\Reportes\ReporteGastoController;
 use App\Http\Controllers\Gerencial\Cobranza\ClienteController as CobranzaClienteController;
 use App\Http\Controllers\Gerencial\Cobranza\CobranzaController;
@@ -74,6 +72,7 @@ use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoExternoController
 use App\Http\Controllers\Logistica\Distribucion\OrdenesDespachoInternoController;
 use App\Http\Controllers\Logistica\Distribucion\OrdenesTransformacionController;
 use App\Http\Controllers\Logistica\Distribucion\ProgramacionDespachosController;
+use App\Http\Controllers\Logistica\OrdenMultipleController;
 use App\Http\Controllers\Logistica\ProveedoresController;
 use App\Http\Controllers\Logistica\RequerimientoController;
 use App\Http\Controllers\Logistica\Requerimientos\MapeoProductosController;
@@ -122,6 +121,8 @@ use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\Http\Controllers\Proyectos\Opciones\PresupuestoInternoController as PresupuestoInternoControllerProy;
+use App\Models\softlink\MovimientoDetalle;
+
 // use App\Http\Controllers\ApiController;
 /*
 |--------------------------------------------------------------------------
@@ -171,7 +172,6 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('migrar_venta_directa/{id}', [MigrateRequerimientoSoftLinkController::class, 'migrar_venta_directa'])->name('migrar-venta-directa');
 	// Route::get('anular_presup', 'ProyectosController@anular_presup');
 	// Route::get('listarUsu', 'Almacen\Movimiento\TransferenciaController@listarUsu');
-
 	/**
 	 * Configuración
 	 */
@@ -916,6 +916,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('guardar-ajuste-transformacion-requerimiento', [ComprasPendientesController::class, 'guardarAjusteTransformacionRequerimiento'])->name('guardar-ajuste-transformacion-requerimiento');
 				Route::get('mostrar-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'requerimiento'])->name('mostrar-requerimiento');
 				Route::get('detalle-requerimiento/{idRequerimiento?}', [RequerimientoController::class, 'detalleRequerimiento'])->name('detalle-requerimientos');
+				Route::post('generarDespachoInterno', [OrdenesDespachoInternoController::class, 'generarDespachoInterno'])->name('generar-despacho-interno');
+
 			});
 		});
 
@@ -1088,7 +1090,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'kardex-series.', 'prefix' => 'kardex-series'], function () {
 
 				Route::get('index', [KardexSerieController::class, 'view_kardex_series'])->name('index');
-				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-erie-productos');
+				Route::get('listar_serie_productos/{serie}/{des}/{cod}/{part}', [KardexSerieController::class, 'listar_serie_productos'])->name('listar-serie-productos');
 				Route::get('listar_kardex_serie/{serie}/{id_prod}', [KardexSerieController::class, 'listar_kardex_serie'])->name('listar-kardex-serie');
 				Route::get('datos_producto/{id}', [KardexSerieController::class, 'datos_producto'])->name('datos-producto');
 				Route::get('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
@@ -1267,6 +1269,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listarIngresos/{alm}/{id}', [DevolucionController::class, 'listarIngresos'])->name('listar-ingresos');
 				Route::get('obtenerMovimientoDetalle/{id}', [DevolucionController::class, 'obtenerMovimientoDetalle'])->name('obtener-movimiento-detalle');
 				Route::get('listarIncidencias', [IncidenciaController::class, 'listarIncidencias'])->name('listar-incidencias');
+				Route::post('lista-cuadro-presupuesto', [RequerimientoPagoController::class, 'listaCuadroPresupuesto'])->name('lista-cuadro-presupuesto');
+
 			});
 
 			Route::group(['as' => 'fichas.', 'prefix' => 'fichas'], function () {
@@ -1524,6 +1528,10 @@ Route::middleware(['auth'])->group(function () {
 				Route::name('ordenes.')->prefix('ordenes')->group(function () {
 					Route::name('elaborar.')->prefix('elaborar')->group(function () {
 						Route::get('index', [OrdenController::class, 'view_crear_orden_requerimiento'])->name('index');
+						Route::get('orden-multiple-index', [OrdenMultipleController::class, 'view_orden_multiple'])->name('orden-multiple-index'); // TODO: En desarrollo
+						Route::get('obtener-atencion-de-item-requerimiento/{idRequerimiento}', [OrdenMultipleController::class, 'ObtenerAtencionItemRequerimiento'])->name('obtener-atencion-de-item-requerimiento');
+						Route::get('obtener-data-proveedor/{idProveedor}', [OrdenMultipleController::class, 'obtenerDataProveedor'])->name('obtener-data-proveedor');
+						Route::get('porveedores', [OrdenMultipleController::class, 'listar_proveedores'])->name('porveedores');
 						Route::post('requerimiento-detallado', [OrdenController::class, 'ObtenerRequerimientoDetallado'])->name('requerimiento-detallado');
 						Route::post('detalle-requerimiento-orden', [OrdenController::class, 'get_detalle_requerimiento_orden'])->name('detalle-requerimiento-orden');
 						Route::post('guardar', [OrdenController::class, 'guardar_orden_por_requerimiento'])->name('guardar');
@@ -1797,6 +1805,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::get('index', [CobranzaController::class, 'index'])->name('index');
 			Route::post('listar', [CobranzaController::class, 'listar'])->name('listar');
 			Route::post('buscar-registro', [CobranzaController::class, 'buscarRegistro'])->name('buscar-registro');
+			Route::post('buscar-contacto', [CobranzaController::class, 'buscarContacto'])->name('buscar-contacto');
 			Route::get('seleccionar-registro/{id_requerimiento}', [CobranzaController::class, 'cargarDatosRequerimiento'])->name('seleccionar-registro');
 			Route::get('obtener-fases/{id}', [CobranzaController::class, 'obtenerFase'])->name('obtener-fases');
 			Route::post('guardar-fase', [CobranzaController::class, 'guardarFase'])->name('guardar-fase');
@@ -1929,6 +1938,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('ordenes-compra-servicio-exportar-excel', [RegistroPagoController::class, 'ordenesCompraServicioExportarExcel'])->name('ordenes-compra-servicio-exportar-excel');
 				Route::get('listar-archivos-adjuntos-orden/{id_order}', [OrdenController::class, 'listarArchivosOrder'])->name('listar-archivos-adjuntos-orden');
 				Route::post('validarPresupuestoParaPago', [ValidarPresupuestoInternoController::class, 'validarPresupuestoParaPago'])->name('validar-presupuesto-para-pagos');
+				Route::get('listar-adjuntos-requerimiento-pago-cabecera/{idRequerimentoPago}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoCabecera'])->name('listar-adjuntos-requerimiento-pago-cabecera');
+				Route::get('listar-adjuntos-requerimiento-pago-detalle/{idRequerimentoPagoDetalle}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoDetalle'])->name('listar-adjuntos-requerimiento-pago-detalle');
 
 				#exportar excel con los fltros aplicados
 				Route::post('exportar-requerimientos-pagos', [RegistroPagoController::class, 'exportarRequerimientosPagos'])->name('exportar-requerimientos-pagos');
@@ -1944,6 +1955,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('cuadro-comparativo-pagos', [RegistroPagoController::class, 'cuadroComparativoPagos'])->name('cuadro-comparativo-pagos');
                 Route::get('cuadro-comparativo-ordenes', [RegistroPagoController::class, 'cuadroComparativoOrdenes'])->name('cuadro-comparativo-ordenes');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
+				
 
 			});
 

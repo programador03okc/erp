@@ -43,6 +43,23 @@ class OrdenModel {
             });
     }
 
+
+    obtenerDataProveedor(id){
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                type: 'GET',
+                url:`obtener-data-proveedor/${id}`,
+                dataType: 'JSON',
+                success(response) {
+                    resolve(response);
+                },
+                error: function(err) {
+                reject(err) // Reject the promise and go to catch()
+                }
+                });
+            });  
+    }
+
     // obtenerRequerimiento(id){
     //     return new Promise(function(resolve, reject) {
     //         $.ajax({

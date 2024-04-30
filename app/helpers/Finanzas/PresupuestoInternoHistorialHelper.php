@@ -28,7 +28,11 @@ class PresupuestoInternoHistorialHelper
                 $detalle = DetalleRequerimiento::where([['id_requerimiento', '=', $idRequerimiento], ['estado', '!=', 7]])->get();
                 foreach ($detalle as $key => $item) {
                     if($requerimientoLogistico->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
-                        $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoLogistico->fecha_requerimiento,floatval($item['precio_unitario']));
+                        if($requerimientoLogistico->tipo_cambio !=null){
+                            $precioUnitario = floatval($requerimientoLogistico->tipo_cambio) * floatval($item['precio_unitario']);
+                        }else{
+                            $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoLogistico->fecha_requerimiento,floatval($item['precio_unitario']));
+                        }
                     }else{
                         $precioUnitario = floatval($item['precio_unitario']);
                     }
@@ -360,6 +364,7 @@ class PresupuestoInternoHistorialHelper
         $porcentajeParaProrrateo =  (floatval($totalPago) * 100) / floatval($orden->monto_total);
 
         $detalleArray = [];
+        $tipoCambioArray = [];
         if ($idOrden > 0) {
             $ordenDetalle = OrdenCompraDetalle::with('detalleRequerimiento.requerimiento')
                 ->where([['id_orden_compra', $idOrden], ['estado', '!=', 7]])->get();
@@ -370,6 +375,9 @@ class PresupuestoInternoHistorialHelper
                     if ($detOrd->id_detalle_requerimiento == $idDetalleRequerimientoLogistico) {
                         if ($detOrd->detalleRequerimiento->id_partida_pi > 0) {
                             $detalleArray[] = $detOrd;
+                            if($detOrd->detalleRequerimiento->requerimiento->tipo_cambio !=null){
+                                $tipoCambioArray[]=floatval($detOrd->detalleRequerimiento->requerimiento->tipo_cambio);
+                            }
                         }
                     }
 
@@ -388,7 +396,12 @@ class PresupuestoInternoHistorialHelper
             foreach ($detalleArray as $key => $item) {
 
                 if($orden->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
-                    $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha_registro,floatval($item['precio']));
+                    if(count($tipoCambioArray)>0){
+                        asort($tipoCambioArray);
+                        $precioUnitario = floatval(number_format(floatval($tipoCambioArray[0]) * floatval($item['precio']), 2, '.', ''));
+                    }else{
+                        $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha_registro,floatval($item['precio']));
+                    }
                 }else{
                     $precioUnitario = floatval($item['precio']);
                 }
@@ -399,7 +412,12 @@ class PresupuestoInternoHistorialHelper
             foreach ($detalleArray as $key => $item) {
 
                 if($orden->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
-                    $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha_registro,floatval($item['precio']));
+                    if(count($tipoCambioArray)>0){
+                        asort($tipoCambioArray);
+                        $precioUnitario = floatval(number_format(floatval($tipoCambioArray[0]) * floatval($item['precio']), 2, '.', ''));
+                    }else{
+                        $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha_registro,floatval($item['precio']));
+                    }
                 }else{
                     $precioUnitario = floatval($item['precio']);
                 }
@@ -433,7 +451,11 @@ class PresupuestoInternoHistorialHelper
 
             foreach ($detalleArray as $key => $item) { 
                 if($requerimientoPago->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
-                    $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoPago->fecha_registro,floatval($item['precio_unitario']));
+                    if($requerimientoPago->tipo_cambio !=null){
+                        $precioUnitario =  floatval(number_format(floatval($requerimientoPago->tipo_cambio) * floatval($item['precio_unitario']), 2, '.', '')) ;
+                    }else{
+                        $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoPago->fecha_registro,floatval($item['precio_unitario']));
+                    }
                 }else{
                     $precioUnitario = floatval($item['precio_unitario']);
                 }
@@ -605,8 +627,13 @@ class PresupuestoInternoHistorialHelper
                     $nuevoHistorial->descripcion = 'Retorno de presupuesto';
                     $nuevoHistorial->operacion = 'S';
                     if($requerimientoPago->id_moneda ==2){
+                        
+                        if($requerimientoPago->tipo_cambio!=null){
+                            $subtotalMoneda =  floatval(number_format(floatval($requerimientoPago->tipo_cambio) * floatval($fila->subtotal), 2, '.', ''));
+                        }else{
+                            $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoPago->fecha_registro,floatval($fila->subtotal));
+                        }
 
-                        $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoPago->fecha_registro,floatval($fila->subtotal));
                     }else{
                         $subtotalMoneda=floatval($fila->subtotal);
                     }
@@ -655,8 +682,12 @@ class PresupuestoInternoHistorialHelper
                     $nuevoHistorial->operacion = 'S';
 
                     if($orden->id_moneda ==2){
+                        if($requerimiento->tipo_cambio !=null){
+                            $subtotalMoneda = floatval($requerimiento->tipo_cambio) * floatval($detItemOrden->subtotal);
+                        }else{
+                            $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha,floatval($detItemOrden->subtotal));
 
-                        $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($orden->fecha,floatval($detItemOrden->subtotal));
+                        }
                     }else{
                         $subtotalMoneda=floatval($detItemOrden->subtotal);
                     }

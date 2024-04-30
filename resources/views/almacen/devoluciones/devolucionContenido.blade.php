@@ -95,19 +95,23 @@
                             <div class="col-md-4">
                                 <label class="col-sm-4 control-label">Fecha documento: </label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control edition limpiardevolucion" name="fecha_documento"/>
+                                    <input type="date" class="form-control edition limpiardevolucion" name="fecha_documento" />
                                 </div>
                             </div>
                             <div class="col-md-8">
-                                <div class="row" style="padding-left: 10px;padding-right: 10px;margin-top: 0px;">
-                                    <div class="col-md-4">
-                                        <label>Registrado por:</label>
-                                        <span id="nombre_registrado_por" class="limpiarTexto"></span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Fecha registro:</label>
-                                        <span id="fecha_registro" class="limpiarTexto"></span>
-                                    </div>
+                                <label class="col-sm-2 control-label">CDP: </label>
+                                <div class="col-sm-4">
+                                <div style="display:flex;">
+
+                                        <input type="text" class="oculto" name="id_cc">
+                                        <input type="text" class="form-control limpiardevolucion" name="codigo_oportunidad" readonly>
+                                        <button type="button" class="input-group-text activation" id="basic-addon2" onClick="listaCuadroDePresupuestoModal();">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                        <button type="button" class="input-group-text activation" id="basic-addon3" onClick="limpiarInputCuadroDePresupuesto();">
+                                            <i class="fas fa-broom"></i>
+                                        </button>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -115,11 +119,19 @@
                 </div>
 
                 <div class="row" style="padding-left: 10px;padding-right: 10px;margin-top: 0px;">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label>Registrado por:</label>
+                        <span id="nombre_registrado_por" class="limpiarTexto"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Fecha registro:</label>
+                        <span id="fecha_registro" class="limpiarTexto"></span>
+                    </div>
+                    <div class="col-md-3">
                         <label>Revisado por:</label>
                         <span id="nombre_revisado_por" class="limpiarTexto"></span>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Comentario de conformidad:</label>
                         <span id="comentario_revision" class="limpiarTexto"></span>
                     </div>
@@ -182,8 +194,7 @@
                                 <th>Razon Social del Proveedor</th>
                                 <th>Cod.Ingreso</th>
                                 <th width='8%' style="padding:0px;">
-                                    <i class="fa fa-plus-square icon-tabla green boton edition" data-toggle="tooltip"
-                                     data-placement="bottom" title="Agregar Ingreso" onClick="verIngresos();"></i>
+                                    <i class="fa fa-plus-square icon-tabla green boton edition" data-toggle="tooltip" data-placement="bottom" title="Agregar Ingreso" onClick="verIngresos();"></i>
                                 </th>
                             </tr>
                         </thead>

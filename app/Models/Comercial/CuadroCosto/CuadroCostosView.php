@@ -11,4 +11,9 @@ class CuadroCostosView extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
 
+    public static function mostrar(){
+        $data = CuadroCostosView::where('cc_view.eliminado', '=', false)
+        ->orderBy('cc_view.fecha_creacion', 'desc')->get();
+        return $data;
+    }
 }

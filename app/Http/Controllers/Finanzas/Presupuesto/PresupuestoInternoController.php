@@ -1371,16 +1371,11 @@ class PresupuestoInternoController extends Controller
                     ->where([
                         ['alm_det_req.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
                         ['alm_det_req.estado','!=',7],
-                        ['alm_req.mes_afectacion','=',null],
                         ['alm_req.id_moneda',1]
                     ])
-                    ->orWhere([
-                        ['alm_det_req.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
-                        ['alm_det_req.estado','!=',7],
-                        ['alm_req.mes_afectacion','=',date("m")],
-                        ['alm_req.id_moneda',1]
-                    ])
+         
                     ->whereIn('alm_req.estado',[1,2])
+                    ->whereIn('alm_req.mes_afectacion',[null,date("m")])
                     ->groupBy('alm_req.id_requerimiento','alm_req.monto_igv')
                     ->get();
 
@@ -1391,6 +1386,7 @@ class PresupuestoInternoController extends Controller
                         ['alm_det_req.estado','!=',7],
                         ['alm_req.id_moneda',2]
                     ])
+                    ->whereIn('alm_req.mes_afectacion',[null,date("m")])
                     ->whereIn('alm_req.estado',[1,2])
                     ->get();
                     $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=[];
@@ -1429,16 +1425,10 @@ class PresupuestoInternoController extends Controller
                         )
                     ->where([
                         ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
-                        ['requerimiento_pago.mes_afectacion','=',null],
                         ['requerimiento_pago_detalle.id_estado','!=',7]
 
                     ])
-                    // ->orWhere([
-                    //     ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
-                    //     ['requerimiento_pago.mes_afectacion','=',date("m")],
-                    //     ['requerimiento_pago_detalle.id_estado','!=',7]
-
-                    // ])
+                    ->whereIn('requerimiento_pago.mes_afectacion',[null,date("m")])
                     ->whereIn('requerimiento_pago.id_estado',[1,2])
                     ->get();
 

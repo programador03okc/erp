@@ -1421,7 +1421,15 @@ class PresupuestoInternoController extends Controller
                         )
                     ->where([
                         ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
+                        ['requerimiento_pago.mes_afectacion','=',null],
                         ['requerimiento_pago_detalle.id_estado','!=',7]
+
+                    ])
+                    ->orWhere([
+                        ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
+                        ['requerimiento_pago.mes_afectacion','=',date("m")],
+                        ['requerimiento_pago_detalle.id_estado','!=',7]
+
                     ])
                     ->whereIn('requerimiento_pago.id_estado',[1,2])
                     ->get();

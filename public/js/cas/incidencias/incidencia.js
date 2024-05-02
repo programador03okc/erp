@@ -408,3 +408,49 @@ $(document).on('change', 'select[name="marca"]', function () {
     //     console.log(errorThrown);
     // });
 });
+$('.ver-series-modal').click(function (e) {
+    e.preventDefault();
+    $('#modal-series').modal('show')
+    let nro_orden = $('#fieldsetDatosNegocio [name="nro_orden"]').val();
+    console.log(nro_orden);
+    obtenerSeries(nro_orden)
+});
+
+
+function obtenerSeries(nro_orden) {
+    let html ='';
+    let table = $('#modal-series #series-detalle tbody');
+    table.html(html);
+    $.ajax({
+        type: 'GET',
+        url: route("cas.garantias.incidencias.obtener-series",{nro_orden:nro_orden}),
+        data: {},
+        dataType: 'JSON',
+    }).done(function(response) {
+        console.log(response);
+
+        html = '';
+        $.each(response.detalle, function (index, element) {
+            let series_text = '';
+            $.each(element.series, function (index_serie, element_serie) {
+                series_text = series_text + element_serie.serie+ ', ';
+            });
+
+            html+=`<tr>
+                <td>${index+1}</td>
+                <td>${element.codigo}</td>
+                <td>${element.part_number}</td>
+                <td>${element.descripcion + '<strong><br>'+series_text+'</strong>'}</td>
+                <td>${element.cantidad}</td>
+                <td>${element.abreviatura }</td>
+            </tr>`;
+        });
+
+
+        table.html(html);
+    }).fail( function( jqXHR, textStatus, errorThrown ){
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+}

@@ -34,7 +34,6 @@ $(function () {
         $(".email_contacto").text(data.email);
 
         $("#modal-salidasVenta").modal("hide");
-        obtenerSeries(data.nro_orden);
     });
 });
 
@@ -71,17 +70,4 @@ function openSalidasVentaModal() {
     listarSalidasVenta();
 }
 
-function obtenerSeries(nro_orden) {
-    $.ajax({
-        type: 'GET',
-        url: route("cas.garantias.incidencias.obtener-series",{nro_orden:nro_orden}),
-        data: {},
-        dataType: 'JSON',
-    }).done(function(response) {
-        console.log(response);
-    }).fail( function( jqXHR, textStatus, errorThrown ){
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-    });
-}
+

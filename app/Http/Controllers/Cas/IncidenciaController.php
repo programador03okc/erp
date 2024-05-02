@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Cas;
 
+use App\Http\Controllers\Almacen\Movimiento\SalidasPendientesController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Administracion\Division;
 use App\Models\Administracion\Empresa;
+use App\Models\almacen\GuiaVenta;
 use App\Models\Almacen\Movimiento;
+use App\Models\Almacen\Requerimiento;
 use App\Models\Cas\AtiendeIncidencia;
 use App\Models\Cas\CasMarca;
 use App\Models\Cas\CasModelo;
@@ -22,6 +25,8 @@ use App\Models\Cas\TipoGarantia;
 use App\Models\Cas\TipoServicio;
 use App\Models\Configuracion\Usuario;
 use App\Models\Distribucion\OrdenDespacho;
+use App\Models\mgcp\CuadroCosto\CuadroCosto;
+use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -554,6 +559,22 @@ class IncidenciaController extends Controller
     }
     public function obtenerSeries($nro_orden){
 
-        return response()->json(["data"=>$nro_orden],200);
+        $data           = OrdenCompraPropiaView::where('nro_orden',$nro_orden)->first();
+        $cc             = CuadroCosto::where('id_oportunidad',$data->id_oportunidad)->first();
+        $requerimiento  = Requerimiento::where('id_cc',$cc->id)->first();
+        $despachos      = OrdenDespacho::where('id_requerimiento',$requerimiento->id_requerimiento)->first();
+        $guia           = GuiaVenta::where('id_od',$despachos->id_od)->first();
+
+        $controlador    = new SalidasPendientesController();
+        $detalle        = $controlador->listarDetalleGuiaSalida($guia->id_guia_ven);
+        // listarDetalleGuiaSalida($id_guia_ven)
+        return response()->json([
+            "OrdenCompraPropiaView"=>$data,
+            "CuadroCosto"=>$cc,
+            "requerimiento"=>$requerimiento,
+            "despachos"=>$despachos,
+            "guia"=>$guia,
+            "detalle"=>$detalle
+        ],200);
     }
 }

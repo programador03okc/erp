@@ -143,6 +143,12 @@
                                         <div class="form-control-static limpiarTexto codigo_oportunidad d-none"></div>
                                     </div>
                                 </div>
+                                <div class="form-group" style="margin-bottom:5px">
+                                    <label class="col-sm-3 control-label">  Ver series</label>
+                                    <div class="col-sm-9">
+                                        <button type="button" class="btn btn-warning btn-sm ver-series-modal"><i class="fa fa-info-circle"></i></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -540,6 +546,56 @@
     @include('almacen.distribucion.agregarContacto')
     @include('publico.ubigeoModal')
 
+    <!-- modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-series">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Lista de series</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="mytable table table-condensed table-bordered table-okc-view" width="100%" id="series-detalle" style="margin-top:10px;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Código</th>
+                                    <th>PartNumber</th>
+                                    <th>Descripción</th>
+                                    <th>Cant.</th>
+                                    <th>Unid</th>
+                                    {{-- <th width="80px">Series</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody data-table="series"></tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- <table class="mytable table table-condensed table-bordered table-okc-view" id="series-detalle" width="100%">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Código</td>
+                            <td>PartNumber</td>
+                            <td >Descripción </td>
+                            <td>Cant.	</td>
+                            <td width="80px">Unid</td>
+                        </tr>
+                    </thead>
+                    <tbody data-table="series"></tbody>
+                </table> --}}
+            </div>
+            {{-- <div class="modal-footer">
+                <button class="btn btn-sm btn-success" onClick="selectIncidencia();">Aceptar</button>
+            </div> --}}
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')

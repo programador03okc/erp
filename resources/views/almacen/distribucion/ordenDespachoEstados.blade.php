@@ -31,12 +31,22 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <h5>Gasto extra  <small>(Include IGV)</small></h5>
+                                <h5>Gasto extra  <small class="text-danger">(Sin IGV)</small></h5>
                                 <div class="input-group">
-                                    <span class="input-group-addon" disabled>S/</span>
-                                    <input type="number" class="form-control" name="gasto_extra" step="any" placeholder="Gasto extra" >
+                                    </div>
+                                    <div>
+                                        <div class="input-group">
+                                        <span class="input-group-addon" disabled>S/</span>
+                                        <input type="number" class="form-control" name="gasto_extra_sin_igv" step="any" placeholder="Gasto extra" >
+                                        <!-- <span class="input-group-addon">
+                                        <input type="checkbox" class="hadleChangeExtraAplicaIGVGasto" name="aplica_igv">
+                                        </span>
+                                        <input type="number" class="form-control handleUpdateGastoExtraConIGV" name="gasto_extra" placeholder="Gasto + IGV"  readonly> -->
+                                    </div>
                                 </div>
                             </div>
+
+
                             {{-- <div class="col-md-4">
                                 <h5>Plazo excedido</h5>
                             </div>

@@ -1,3 +1,14 @@
+// $('#modal-ordenDespachoEstados').on("keyup", "input.handleUpdateGastoExtraConIGV", (e) => {
+//     updateGastoExtraConIGV(e.currentTarget);
+// });
+// $('#modal-ordenDespachoEstados').on("keyup", "input.handleUpdateGastoExtraSinIGV", (e) => {
+//     updateGastoExtraSinIGV(e.currentTarget);
+// });
+// $('#modal-ordenDespachoEstados').on("change", "input.hadleChangeExtraAplicaIGVGasto", (e) => {
+//     updateGastoExtraAplicaIGV(e.currentTarget);
+// });
+
+
 function agregarEstadoEnvio(id) {
     $('#modal-ordenDespachoEstados').modal({
         show: true
@@ -56,7 +67,7 @@ function guardarEstadoEnvio() {
             });
             $('#requerimientosEnProceso').DataTable().ajax.reload(null, false);
 
-            consultaGuardarRequerimientoFlete($("input[name='id_od']").val()); 
+            consultaGuardarRequerimientoFlete($("input[name='id_od']").val());
 
 
         }
@@ -88,15 +99,15 @@ function formatTimeLine(table_id, id, row) {
 
                 response.forEach(element => {
 
-                    fleteObject={
-                        'estado':'',
-                        'transportista':element.razon_social_transportista??'',
-                        'fecha_entrega':element.fecha_transportista??'',
-                        'precio_unitario' : element.importe_flete_sin_igv??'',
-                        'importe_igv' : element.importe_flete??'',
-                        'importe_total' :element.importe_flete != null?element.importe_flete:(element.importe_flete_sin_igv!=null?importe_flete_sin_igv:'')
+                    fleteObject = {
+                        'estado': '',
+                        'transportista': element.razon_social_transportista ?? '',
+                        'fecha_entrega': element.fecha_transportista ?? '',
+                        'precio_unitario': element.importe_flete_sin_igv ?? '',
+                        'importe_igv': element.importe_flete ?? '',
+                        'importe_total': element.importe_flete != null ? element.importe_flete : (element.importe_flete_sin_igv != null ? importe_flete_sin_igv : '')
                     }
-                    
+
                     if (element.accion == 2) {
                         html += `<li class="timeline-item">
                         <div class="timeline-badge bggreendark"><i class="glyphicon glyphicon-time"></i></div>
@@ -231,13 +242,41 @@ function calcularImportesDetalleRequerimientoEstado(importeFlete) {
         importeTotal = (parseFloat(importeFlete));
     }
 
-    fleteObject={
+    fleteObject = {
 
-        'transportista':'',
-        'estado':$("select[name='estado'] option:selected").text(),
-        'fecha_entrega':$("input[name='fecha_estado']").val(),
-        'precio_unitario' : importeUnitario,
-        'importe_igv' : importeIGV,
-        'importe_total' :importeTotal
+        'transportista': '',
+        'estado': $("select[name='estado'] option:selected").text(),
+        'fecha_entrega': $("input[name='fecha_estado']").val(),
+        'precio_unitario': importeUnitario,
+        'importe_igv': importeIGV,
+        'importe_total': importeTotal
     }
 }
+
+
+// function updateGastoExtraConIGV(obj) {
+//     if (typeof parseFloat(obj.value) == 'number') {
+//         document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra_sin_igv']").value = $.number((parseFloat(obj.value) / 1.18), 2, '.', '');
+//     }
+// }
+// function updateGastoExtraSinIGV(obj) {
+//     if (typeof parseFloat(obj.value) == 'number') {
+
+//         if (document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='aplica_igv']").checked == false) {
+//             document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra']").value = $.number(parseFloat(obj.value), 2, '.', '');
+//         } else {
+//             document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra']").value = $.number((parseFloat(obj.value) * 1.18), 2, '.', '');
+//         }
+//     }
+// }
+// function updateGastoExtraAplicaIGV(obj) {
+//     if (obj.checked == false) {
+//         document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra']").setAttribute("readOnly", true);
+//         document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra']").value = document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra_sin_igv']").value;
+//     } else {
+//         document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra']").removeAttribute("readOnly");
+//         let importeSinIGV = document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra_sin_igv']").value;
+//         document.querySelector("div[id='modal-ordenDespachoEstados'] input[name='gasto_extra']").value = $.number((parseFloat(importeSinIGV) * 1.18), 2, '.', '')
+//     }
+
+// }

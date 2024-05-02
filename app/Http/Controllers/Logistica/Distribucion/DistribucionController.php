@@ -1926,6 +1926,7 @@ class DistribucionController extends Controller
                                 'registrado_por' => Auth::user()->id_usuario,
                                 'gasto_extra' => $data->importe_con_igv,
                                 'gasto_extra_sin_igv' => $data->importe_sin_igv,
+                                'aplica_igv' => $data->aplica_igv,
                                 'fecha_registro' => new Carbon()
                             ], 'id_obs');
 
@@ -1957,7 +1958,7 @@ class DistribucionController extends Controller
                         $ode = OrdenDespacho::find($ordenDespachoExterno->id_od);
                         $ode->importe_flete =  $data->importe_con_igv;
                         $ode->importe_flete_sin_igv =  $data->importe_sin_igv;
-                        $ode->aplica_igv =  $data->aplica_igv;
+                        $ode->aplica_igv =  ((isset($data->aplica_igv) && ($data->aplica_igv == 'on'|| $data->aplica_igv == true)) ? true : false);
                         $ode->fecha_actualizacion_od =  new Carbon();
                         $ode->save();
 
@@ -1985,7 +1986,9 @@ class DistribucionController extends Controller
                 'alm_req.id_requerimiento',
                 'orden_despacho.codigo',
                 'alm_req.fecha_entrega',
-                'orden_despacho.importe_flete'
+                'orden_despacho.importe_flete',
+                'orden_despacho.importe_flete_sin_igv',
+                'orden_despacho.aplica_igv'
             )
             ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'orden_despacho.id_requerimiento')
             ->where('id_od', $request->id_od)->first();
@@ -2031,13 +2034,13 @@ class DistribucionController extends Controller
                     DB::table('mgcp_ordenes_compra.despachos')
                         ->where('id', $id_despacho)
                         ->update([
-                            'flete_real' => (($od->importe_flete !== null ? $od->importe_flete : 0) + ($request->gasto_extra !== null ? $request->gasto_extra : 0)),
+                            'flete_real' => (($od->importe_flete_sin_igv !== null ? $od->importe_flete_sin_igv : 0) + ($request->gasto_extra_sin_igv !== null ? $request->gasto_extra_sin_igv : 0)),
                             'fecha_llegada' => $request->fecha_estado,
                         ]);
                 } else {
                     $id_despacho = DB::table('mgcp_ordenes_compra.despachos')
                         ->insertGetId([
-                            'flete_real' => (($od->importe_flete !== null ? $od->importe_flete : 0) + ($request->gasto_extra !== null ? $request->gasto_extra : 0)),
+                            'flete_real' => (($od->importe_flete_sin_igv !== null ? $od->importe_flete_sin_igv : 0) + ($request->gasto_extra_sin_igv !== null ? $request->gasto_extra_sin_igv : 0)),
                             'fecha_llegada' => $request->fecha_estado,
                             'id_usuario' => $id_usuario,
                             'fecha_registro' => new Carbon(),
@@ -2060,32 +2063,9 @@ class DistribucionController extends Controller
                         ]);
                 }
 
-                // if ($oc->id_despacho_directa !== null) {
-
-                //     DB::table('mgcp_ordenes_compra.despachos')
-                //         ->where('id', $oc->id_despacho_directa)
-                //         ->update([
-                //             'flete_real' => ($oc->importe_flete + ($request->gasto_extra !== null ? $request->gasto_extra : 0)),
-                //             'fecha_llegada' => $request->fecha_estado,
-                //         ]);
-                // } else if ($oc->id_despacho_propia !== null) {
-
-                //     DB::table('mgcp_ordenes_compra.despachos')
-                //         ->where('id', $oc->id_despacho_propia)
-                //         ->update([
-                //             'flete_real' => ($oc->importe_flete + ($request->gasto_extra !== null ? $request->gasto_extra : 0)),
-                //             'fecha_llegada' => $request->fecha_estado,
-                //         ]);
-                // }
             }
         }
 
-        // $obs = DB::table('almacen.orden_despacho_obs')
-        //     ->where([
-        //         ['id_od', '=', $request->id_od],
-        //         ['accion', '=', $request->estado]
-        //     ])
-        //     ->first();
 
         if ($request->estado == 8 || $request->estado == 7 || $request->estado == 6) {
 
@@ -2101,19 +2081,6 @@ class DistribucionController extends Controller
                 ]);
         }
 
-        // if ($obs !== null) {
-        //     $id_obs = $obs->id_obs;
-        //     DB::table('almacen.orden_despacho_obs')
-        //         ->where('id_obs', $obs->id_obs)
-        //         ->update([
-        //             'accion' => $request->estado,
-        //             'observacion' => $request->observacion,
-        //             'fecha_estado' => $request->fecha_estado,
-        //             'registrado_por' => $id_usuario,
-        //             'gasto_extra' => $request->gasto_extra,
-        //             'fecha_registro' => $fechaRegistro
-        //         ]);
-        // } else {
         $id_obs = DB::table('almacen.orden_despacho_obs')
             ->insertGetId([
                 'id_od' => $request->id_od,
@@ -2121,10 +2088,12 @@ class DistribucionController extends Controller
                 'observacion' => $request->observacion,
                 'fecha_estado' => $request->fecha_estado,
                 'registrado_por' => $id_usuario,
-                'gasto_extra' => $request->gasto_extra,
+                'gasto_extra_sin_igv' => $request->gasto_extra_sin_igv,
+                'gasto_extra' => $request->gasto_extra_sin_igv,
+                'aplica_igv' => false,
                 'fecha_registro' => $fechaRegistro
             ], 'id_obs');
-        // }
+        
 
         if (isset($file)) {
             //obtenemos el nombre del archivo

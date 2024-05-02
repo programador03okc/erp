@@ -1795,6 +1795,7 @@ class DistribucionController extends Controller
                 'orden_despacho.codigo_envio',
                 'orden_despacho.fecha_transportista',
                 'orden_despacho.importe_flete',
+                'orden_despacho.importe_flete_sin_igv',
                 'orden_despacho.credito',
                 'sis_usua.nombre_corto',
                 'estado_envio.descripcion as estado_doc'
@@ -1923,7 +1924,8 @@ class DistribucionController extends Controller
                                 'observacion' => null,
                                 'fecha_estado' => $data->fecha_estado,
                                 'registrado_por' => Auth::user()->id_usuario,
-                                'gasto_extra' => $data->monto,
+                                'gasto_extra' => $data->importe_con_igv,
+                                'gasto_extra_sin_igv' => $data->importe_sin_igv,
                                 'fecha_registro' => new Carbon()
                             ], 'id_obs');
 
@@ -1953,7 +1955,9 @@ class DistribucionController extends Controller
                         // actualizar importe flete sin generar trazabilidad en estado
 
                         $ode = OrdenDespacho::find($ordenDespachoExterno->id_od);
-                        $ode->importe_flete =  $data->monto;
+                        $ode->importe_flete =  $data->importe_con_igv;
+                        $ode->importe_flete_sin_igv =  $data->importe_sin_igv;
+                        $ode->aplica_igv =  $data->aplica_igv;
                         $ode->fecha_actualizacion_od =  new Carbon();
                         $ode->save();
 

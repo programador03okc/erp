@@ -68,13 +68,13 @@ function guardarEstadoEnvio() {
 }
 
 function formatTimeLine(table_id, id, row) {
-    console.log(id);
+    // console.log(id);
     $.ajax({
         type: 'GET',
         url: 'getTimelineOrdenDespacho/' + id,
         dataType: 'JSON',
         success: function (response) {
-            console.log(response.length);
+            // console.log(response.length);
 
             if (response.length > 0) {
                 var html = `<div style="overflow-x:scroll;">
@@ -92,9 +92,9 @@ function formatTimeLine(table_id, id, row) {
                         'estado':'',
                         'transportista':element.razon_social_transportista??'',
                         'fecha_entrega':element.fecha_transportista??'',
-                        'precio_unitario' : element.importe_flete !== null?(element.importe_flete/1.18):'',
-                        'importe_igv' : element.importe_flete !== null? (element.importe_flete*0.18):'',
-                        'importe_total' :element.importe_flete !== null?element.importe_flete:''
+                        'precio_unitario' : element.importe_flete_sin_igv??'',
+                        'importe_igv' : element.importe_flete??'',
+                        'importe_total' :element.importe_flete != null?element.importe_flete:(element.importe_flete_sin_igv!=null?importe_flete_sin_igv:'')
                     }
                     
                     if (element.accion == 2) {
@@ -108,7 +108,8 @@ function formatTimeLine(table_id, id, row) {
                             <strong>${element.estado_doc.toUpperCase()}</strong><br>
                             ${element.observacion !== null ? element.observacion + '<br>' : ''}
                             ${element.razon_social_transportista !== null ? element.razon_social_transportista + '<br>' : 'Propia'}
-                            ${element.importe_flete !== null ? ('<strong>Flete real: S/' + element.importe_flete + (element.credito ? ' (Crédito)' : '') + '</strong>') : ''}</small><br></p>
+                            ${element.importe_flete_sin_igv !== null ? ('<strong>Flete real: S/' + element.importe_flete_sin_igv + (element.credito ? ' (Crédito)' : '') + '</strong>') : ''}<br>
+                            ${element.importe_flete !== null ? ('<strong>Flete real + IGV: S/' + element.importe_flete + (element.credito ? ' (Crédito)' : '') + '</strong>') : ''}</small><br></p>
                             </div>
                             <p class="text-center"><input type="button" id="btn_cerrar_transportista" class="btn btn-xs btn-success"
                             onClick="openModalRequerimientoFlete(${id});" value="Nuevo req. Flete"/></p>
@@ -144,7 +145,8 @@ function formatTimeLine(table_id, id, row) {
                             <strong>${element.estado_doc.toUpperCase()}</strong><br>
                             ${element.observacion !== null ? element.observacion + '<br>' : ''}
                             ${element.nombre_corto}<br>
-                            ${element.gasto_extra !== null ? ('<strong>Gasto extra: S/' + element.gasto_extra + '</strong><br>') : ''}
+                            ${element.gasto_extra_sin_igv !== null ? ('<strong>Gasto extra: S/' + element.gasto_extra_sin_igv + '</strong><br>') : ''}
+                            ${element.gasto_extra !== null ? ('<strong>Gasto extra + IGV: S/' + element.gasto_extra + '</strong><br>') : ''}
                             ${element.adjunto !== null ? (`<a target="_blank" href="/files/almacen/trazabilidad_envio/${element.adjunto}">Adjunto</a><br>`) : ''}
                             </small></p>
                             <p class="text-center"><input type="button" id="btn_cerrar_transportista" class="btn btn-xs btn-success"

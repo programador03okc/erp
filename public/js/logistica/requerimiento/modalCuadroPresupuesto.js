@@ -14,6 +14,16 @@ $('#listaCuadroPresupuesto').on("click", "button.handleClickAgregarCDP", (e) => 
     this.agregarCDP(e.currentTarget);
 });
 
+$('#tablaCuadroPresupuestoVinculados').on("keyup", "input.handleUpdateImporteFleteConIGV", (e) => {
+    this.updatePrecioConIGV(e.currentTarget);
+});
+$('#tablaCuadroPresupuestoVinculados').on("keyup", "input.handleUpdateImporteFleteSinIGV", (e) => {
+    this.updatePrecioSinIGV(e.currentTarget);
+});
+$('#tablaCuadroPresupuestoVinculados').on("change", "input.hadleChangeAplicaIGV", (e) => {
+    this.updateAplicaIGV(e.currentTarget);
+});
+
 var cdpVinculadoConRequerimientoList = [];
 
 function modalListaCuadroDePresupuesto() {
@@ -255,7 +265,20 @@ function agregarEnTablaCuadroPresupuestoVinculados(element) {
                 <input type="text" name="id_cc_cpd_vinculado[]" value="${element.id_cc}" hidden>
                 <input type="text" name="codigo_oportunidad_cpd_vinculado[]" value="${element.codigo_oportunidad}" hidden> ${element.codigo_oportunidad}</td>
             <td style="text-align:left;"><input type="text" name="nombre_entidad_cpd_vinculado[]" value="${element.nombre_entidad}" hidden> ${element.nombre_entidad}</td>
-            <td style="text-align:right;"><span>S/</span> <input type="numeric" min="0" name="monto_cpd_vinculado[]" value="${parseFloat(element.monto)}"> </td>
+            <td style="text-align:right;">
+                <div style="display:flex;">
+                    <h5 style="width: 10%;text-align: center;">S/</h5> 
+                    <input type="numeric" class="form-control handleUpdateImporteFleteSinIGV" style="width: 40%;" min="0" name="importe_sin_igv_cpd_vinculado[]" placeholder="Sin IGV" value="${(element.importe_sin_igv!=null?parseFloat(element.importe_sin_igv):'')}"> 
+                    <div style="width: 50%;">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                            <input type="checkbox" class="hadleChangeAplicaIGV" name="aplica_igv_cdp_vinculado[]">
+                            </span>
+                            <input type="number" class="form-control handleUpdateImporteFleteConIGV" name="importe_con_igv_cpd_vinculado[]" placeholder="Con IGV" value="${(element.importe_con_igv!=null?parseFloat(element.importe_con_igv):'')}" readOnly>
+                        </div>
+                    </div>
+                </div>
+            </td>
             <td style="text-align:right;"> <select class="form-control handleChangeEstadoEnvio" name="id_estado_envio[]">
                 <option value="0">Seleccione un estado para enviar a trazabilidad</option>
                 `;
@@ -313,5 +336,33 @@ function eliminarVinculoConCdp(e) {
         }
     });
 
+}
+
+function updatePrecioConIGV(obj){
+    if(typeof parseFloat(obj.value) =='number'){
+        obj.closest("tr").querySelector("input[name='importe_sin_igv_cpd_vinculado[]']").value=$.number((parseFloat(obj.value)/1.18),2,'.','');
+    }
+}
+function updatePrecioSinIGV(obj){
+    
+    if(typeof parseFloat(obj.value) =='number'){
+
+        if( obj.closest("tr").querySelector("input[name='aplica_igv_cdp_vinculado[]']").checked == false){
+            obj.closest("tr").querySelector("input[name='importe_con_igv_cpd_vinculado[]']").value= $.number(parseFloat(obj.value),2,'.','');
+        }else{
+            obj.closest("tr").querySelector("input[name='importe_con_igv_cpd_vinculado[]']").value= $.number((parseFloat(obj.value)*1.18),2,'.','');
+        }
+    }
+}
+function updateAplicaIGV(obj){
+    // console.log(obj.closest("tr"));
+    if(obj.checked==false){
+        obj.closest("tr").querySelector("input[name='importe_con_igv_cpd_vinculado[]']").setAttribute("readOnly",true);
+        obj.closest("tr").querySelector("input[name='importe_con_igv_cpd_vinculado[]']").value=obj.closest("tr").querySelector("input[name='importe_sin_igv_cpd_vinculado[]']").value;
+    }else{
+        obj.closest("tr").querySelector("input[name='importe_con_igv_cpd_vinculado[]']").removeAttribute("readOnly");
+        let importeSinIGV=obj.closest("tr").querySelector("input[name='importe_sin_igv_cpd_vinculado[]']").value;
+        obj.closest("tr").querySelector("input[name='importe_con_igv_cpd_vinculado[]']").value= $.number((parseFloat(importeSinIGV)*1.18),2,'.','')
+    }
 
 }

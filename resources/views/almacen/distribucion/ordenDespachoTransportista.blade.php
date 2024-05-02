@@ -63,7 +63,7 @@
                                 <h5>Monto flete <small>(Con IGV)</small></h5>
                                 <div class="input-group">
                                     <span class="input-group-addon" disabled>S/</span>
-                                    <input type="number" class="form-control handleUpdateImporteFleteConIGV" name="importe_flete" step="any" placeholder="(con IGV)">
+                                    <input type="number" class="form-control handleUpdateImporteFleteConIGV" name="importe_flete" step="any" placeholder="(con IGV)" readonly>
                                 </div>
                             </div> 
                         </div>
@@ -81,7 +81,7 @@
                             <div class="col-md-3">
                                 <div class="checkbox">
                                     <label>
-                                    <input type="checkbox" class="hadleChangeAplicaIGV" name="aplica_igv" id="aplica_igv" checked> Aplica IGV
+                                        <input type="checkbox" class="hadleChangeAplicaIGV" name="aplica_igv" id="aplica_igv"> Aplica IGV
                                     </label>
                                 </div>
                             </div>

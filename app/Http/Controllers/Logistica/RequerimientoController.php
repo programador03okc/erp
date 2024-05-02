@@ -1241,7 +1241,9 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
                     $cdpRequerimiento->id_estado_envio = (isset($request->id_estado_envio[$c]) && $request->id_estado_envio[$c] >0) ?$request->id_estado_envio[$c]:null;
-                    $cdpRequerimiento->monto = (isset($request->monto_cpd_vinculado[$c]) && $request->monto_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->monto_cpd_vinculado[$c]))):null;
+                    $cdpRequerimiento->importe_con_igv = (isset($request->importe_con_igv_cpd_vinculado[$c]) && $request->importe_con_igv_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->importe_con_igv_cpd_vinculado[$c]))):null;
+                    $cdpRequerimiento->importe_sin_igv = (isset($request->importe_sin_igv_cpd_vinculado[$c]) && $request->importe_sin_igv_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->importe_sin_igv_cpd_vinculado[$c]))):null;
+                    $cdpRequerimiento->aplica_igv = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                     $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
@@ -1791,7 +1793,9 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_con_igv = $request->importe_con_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_sin_igv = $request->importe_sin_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->aplica_igv = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                     $cdpRequerimiento->save();
@@ -1799,7 +1803,9 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento = CdpRequerimiento::find($request->id_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_con_igv = $request->importe_con_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_sin_igv = $request->importe_sin_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->aplica_igv = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
                     $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                     $cdpRequerimiento->save();

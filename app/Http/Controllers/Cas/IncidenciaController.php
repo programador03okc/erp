@@ -552,4 +552,8 @@ class IncidenciaController extends Controller
 
         // return response()->json(['incidencia' => $incidencia, 'productos' => $productos, 'reporte' => $reporte]);
     }
+    public function obtenerSeries($nro_orden){
+
+        return response()->json(["data"=>$nro_orden],200);
+    }
 }

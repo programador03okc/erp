@@ -1252,6 +1252,7 @@ Route::middleware(['auth'])->group(function () {
 
 				Route::get('imprimirIncidencia/{id}', [IncidenciaController::class, 'imprimirIncidencia'])->name('imprimir-incidencia');
 				Route::get('imprimirFichaAtencionBlanco/{id}', [IncidenciaController::class, 'imprimirFichaAtencionBlanco'])->name('imprimir-ficha-atencion-blanco');
+				Route::get('obtener-series/{nro_orden}', [IncidenciaController::class, 'obtenerSeries'])->name('obtener-series');
 			});
 
 			Route::group(['as' => 'devolucionCas.', 'prefix' => 'devolucionCas'], function () {
@@ -1954,7 +1955,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('cuadro-comparativo-pagos', [RegistroPagoController::class, 'cuadroComparativoPagos'])->name('cuadro-comparativo-pagos');
                 Route::get('cuadro-comparativo-ordenes', [RegistroPagoController::class, 'cuadroComparativoOrdenes'])->name('cuadro-comparativo-ordenes');
 				Route::post('listar-requerimientos-vinculados-con-partida', [RequerimientoController::class, 'listarRequerimientosVinculadosConPartida'])->name('listar-requerimientos-vinculados-con-partida');
-				
+
 
 			});
 

@@ -616,7 +616,7 @@ class RequerimientoView {
         document.querySelector("input[name='direccion_entrega']").value = data.direccion_entrega;
         document.querySelector("select[name='tipo_impuesto']").value = data.tipo_impuesto != null ? data.tipo_impuesto : 0;
         if(data.mes_afectacion!=null){
-            document.querySelector("select[name='mes_afectacion']").value = data.mes_afectacion;
+            document.querySelector("select[name='mes_afectacion']")?(document.querySelector("select[name='mes_afectacion']").value = data.mes_afectacion):false;
         }
 
         let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");

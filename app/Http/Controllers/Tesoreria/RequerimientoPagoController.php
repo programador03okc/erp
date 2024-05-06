@@ -1974,7 +1974,7 @@ class RequerimientoPagoController extends Controller
                 return $query->whereRaw('sis_grupo.id_grupo = ' . $idGrupo);
             })
             ->when((intval($idDivision) > 0), function ($query)  use ($idDivision) {
-                return $query->whereRaw('requerimiento_pago.division_id = ' . $idDivision);
+                return $query->whereRaw('requerimiento_pago.id_division = ' . $idDivision);
             })
             ->when((($fechaRegistroDesde != 'SIN_FILTRO') and ($fechaRegistroHasta == 'SIN_FILTRO')), function ($query) use ($fechaRegistroDesde) {
                 return $query->where('requerimiento_pago.fecha_registro', '>=', $fechaRegistroDesde);

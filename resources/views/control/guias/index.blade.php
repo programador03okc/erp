@@ -977,9 +977,10 @@ Control de Guías de Remisión
 <script src="{{ asset('template/adminlte2-4/plugins/loadingoverlay/loadingoverlay.min.js') }}"></script>
 <script src="{{ asset('js/control/guias/guias.js') }}"></script>
 
-    <script src="{{ asset('js/control/guias/guias-model.js') }}"></script>
-    <script src="{{ asset('js/control/guias/guias-view.js') }}"></script>
-    <script>
+<script src="{{ asset('js/control/guias/guias-model.js')}}?v={{filemtime(public_path('js/control/guias/guias-model.js'))}}"></script>
+<script src="{{ asset('js/control/guias/guias-view.js')}}?v={{filemtime(public_path('js/control/guias/guias-view.js'))}}"></script>
+
+<script>
 
 
         $(document).ready(function () {

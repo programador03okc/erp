@@ -374,30 +374,23 @@ Control de Guías de Remisión
                         </div>
                     </div>
                     <div class="row mb-2">
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Fecha:</label>
-                                <input type="date" name="fecha_guia_transportista"
-                                    class="form-control text-center" value="{{ date('Y-m-d') }}" required>
-                            </div>
-                        </div> --}}
 
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="">Flete:</label>
-                                <input type="text" name="flete" class="form-control numero text-center"
-                                    value="0.00">
-                            </div>
-                        </div> --}}
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="importe_flete">Monto flete</label>
-                                <div class="input-group multiple-input-group">
-                                    <span class="input-group-text bg-default">S/.</span>
-                                    <input type="number" class="form-control" id="monto_flete" name="importe_flete" step="0.01">
+                        <div class="col-md-3">
+                                <label>Monto flete <small>(Sin IGV)</small></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" disabled>S/</span>
+                                    <input type="number" class="form-control handleUpdateImporteFleteSinIGV" name="importe_flete_sin_igv" step="any" placeholder="(sin IGV)">
                                 </div>
                             </div>
-                        </div>
+                        <div class="col-md-3">
+                            <label>Monto flete <small>(Con IGV)</small></label>
+                            <div class="input-group">
+                                <span class="input-group-addon" disabled>S/</span>
+                                <input type="number" class="form-control handleUpdateImporteFleteConIGV" name="importe_flete" step="any" placeholder="(con IGV)" readonly>
+                            </div>
+                        </div> 
+                        
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="codigo_envio">Código de envío</label>
@@ -410,7 +403,14 @@ Control de Guías de Remisión
 
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+
+                        <div class="col-md-6">
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input hadleChangeAplicaIGV" name="aplica_igv">
+                                <span class="custom-control-label">Aplica IGV</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
                             <label class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" name="credito" value="true">
                                 <span class="custom-control-label">Crédito</span>

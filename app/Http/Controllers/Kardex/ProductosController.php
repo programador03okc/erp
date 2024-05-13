@@ -68,8 +68,9 @@ class ProductosController extends Controller
         // try {
             if ($request->hasFile('carga_inicial')) {
                 $array = Excel::toArray(new ProductosKardexImport, $request->file('carga_inicial'));
-    
+
                 $array_series = array();
+
                 foreach ($array[0] as $key => $value) {
                     if($key !== 0){
                         // return $value;
@@ -92,22 +93,23 @@ class ProductosController extends Controller
                             if(!Producto::where('codigo_softlink',$value[4])->first()){
                                 $producto->fecha_registro   = date('Y-m-d H:i:s');
                             }
-    
+
                             $producto->anual            = $value[16];
                             $producto->estado           = 1;
                             $producto->save();
                         }
-                        
+
                         $serieInicial = (string) $value[1];
                         $serie_codigo = ProductoDetalle::verificarSerie($serieInicial, $request->generar_serie);
                         if ($serie_codigo['serie'] != null) {
                             $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
-                            
+
                                 $monto = strrpos ($value[18], "$");
-                                $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
+                                $tipo_moneda = ($monto==false ? 2 :1); // 1 es dolar y el 2 soles
                                 $precio = str_replace("$", "0", $value[18]);
+                                // return [$value, $value[18], $precio, $tipo_moneda, $monto];
                                 $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
-        
+
                                 $serie->serie           = $serie_codigo['serie'];
                                 $serie->precio          = (float) $value[13];
                                 $serie->tipo_moneda     = $tipo_moneda;
@@ -119,7 +121,7 @@ class ProductosController extends Controller
                                 $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
                                 $serie->tipo_cambio     = $tipoCambio;
                             $serie->save();
-        
+
                             $index = array_search($producto->id, array_column($array_series, 'producto'));
                             // return [$index];
                             if($serie_codigo['autogenerado'] == true){
@@ -145,7 +147,7 @@ class ProductosController extends Controller
                     ->delete();
                     // return $data;
                 }
-    
+
                 return response()->json(["titulo"=>"Éxito", "mensaje"=>"Se importo con éxito", "tipo"=>"success"], 200);
             } else {
                 return response()->json(["titulo"=>"Error", "mensaje"=>"No ha importado ningún archivo", "tipo"=>"error"],200);
@@ -246,6 +248,6 @@ class ProductosController extends Controller
 
         return ($tc !== null ? $tc->cambio3 : 0);
     }
-    
+
 
 }

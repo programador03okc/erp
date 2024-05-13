@@ -1373,7 +1373,9 @@ class PresupuestoInternoController extends Controller
                         ['alm_det_req.estado','!=',7],
                         ['alm_req.id_moneda',1]
                     ])
+         
                     ->whereIn('alm_req.estado',[1,2])
+                    ->whereIn('alm_req.mes_afectacion',[null,date("m")])
                     ->groupBy('alm_req.id_requerimiento','alm_req.monto_igv')
                     ->get();
 
@@ -1384,6 +1386,7 @@ class PresupuestoInternoController extends Controller
                         ['alm_det_req.estado','!=',7],
                         ['alm_req.id_moneda',2]
                     ])
+                    ->whereIn('alm_req.mes_afectacion',[null,date("m")])
                     ->whereIn('alm_req.estado',[1,2])
                     ->get();
                     $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=[];
@@ -1415,14 +1418,17 @@ class PresupuestoInternoController extends Controller
                     // ])
                     // ->whereIn('requerimiento_pago.id_estado',[1,2])
                     // ->get();
-                    $totalRequerimientoPagoPorConsumirHastaFaseAprobacion = DB::table('tesoreria.requerimiento_pago_detalle')->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
+                    $totalRequerimientoPagoPorConsumirHastaFaseAprobacion = DB::table('tesoreria.requerimiento_pago_detalle')
+                    ->join('tesoreria.requerimiento_pago', 'requerimiento_pago.id_requerimiento_pago', '=', 'requerimiento_pago_detalle.id_requerimiento_pago')
                     ->select( 'requerimiento_pago_detalle.cantidad','requerimiento_pago_detalle.precio_unitario', 'requerimiento_pago.id_moneda', 'requerimiento_pago.fecha_registro'
                         // DB::raw("SUM(requerimiento_pago_detalle.cantidad * requerimiento_pago_detalle.precio_unitario ) AS total_por_consumido_con_igv"),
                         )
                     ->where([
                         ['requerimiento_pago_detalle.id_partida_pi',$detPresup['id_presupuesto_interno_detalle']],
                         ['requerimiento_pago_detalle.id_estado','!=',7]
+
                     ])
+                    ->whereIn('requerimiento_pago.mes_afectacion',[null,date("m")])
                     ->whereIn('requerimiento_pago.id_estado',[1,2])
                     ->get();
 

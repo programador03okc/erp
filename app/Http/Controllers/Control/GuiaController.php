@@ -287,6 +287,8 @@ class GuiaController extends Controller
                 $data->guia_transportista_numero    = $request->guia_transportista_numero;
                 $data->fecha_emision_guia           = $request->fecha_emision_guia;
                 $data->importe_flete                = $request->importe_flete;
+                $data->importe_flete_sin_igv        = $request->importe_flete_sin_igv;
+                $data->aplica_igv                   = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                 $data->codigo_envio                 = $request->codigo_envio;
                 $data->credito                      = ($request->credito=='true'?$request->credito:false);
                 $data->guia_venta_serie             = $request->guia_venta_serie;
@@ -342,6 +344,8 @@ class GuiaController extends Controller
                     'fecha_despacho_real' => $request->fecha_despacho_real,
                     'codigo_envio' => $request->codigo_envio,
                     'importe_flete' => $request->importe_flete,
+                    'importe_flete_sin_igv' => $request->importe_flete_sin_igv,
+                    'aplica_igv' => ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false),
                     'serie_guia_venta' => $request->guia_venta_serie,
                     'numero_guia_venta' => $request->guia_venta_numero,
                     'id_estado_envio' => $id_estado_envio,
@@ -892,6 +896,8 @@ class GuiaController extends Controller
                 'orden_despacho.codigo_envio',
                 'orden_despacho.credito',
                 'orden_despacho.importe_flete',
+                'orden_despacho.importe_flete_sin_igv',
+                'orden_despacho.aplica_igv',
                 'orden_despacho.id_transportista',
                 'orden_despacho.plazo_excedido',
                 'orden_despacho.fecha_entregada',

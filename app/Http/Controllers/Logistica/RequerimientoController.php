@@ -852,15 +852,15 @@ class RequerimientoController extends Controller
                       SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) * (CASE WHEN r.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= r.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)  AS total
                       FROM almacen.alm_det_req AS dr
                       INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
-                      WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
+                      WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle and (r.mes_afectacion= TO_CHAR(CURRENT_DATE, 'MM') or r.mes_afectacion isNull)
                       AND r.estado IN (1,2) AND dr.estado != 7
-                      GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro
+                      GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro 
                     ) AS t LIMIT 1) 
                     + 
                     (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario * (CASE WHEN rp.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= rp.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)),0)
                     FROM tesoreria.requerimiento_pago_detalle as drp
                     INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
-                    WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
+                    WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7 and (rp.mes_afectacion= TO_CHAR(CURRENT_DATE, 'MM') or rp.mes_afectacion isNull)
                     limit 1)
                     
                     AS total_consumido_hasta_fase_aprobacion_con_igv")
@@ -1241,7 +1241,9 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
                     $cdpRequerimiento->id_estado_envio = (isset($request->id_estado_envio[$c]) && $request->id_estado_envio[$c] >0) ?$request->id_estado_envio[$c]:null;
-                    $cdpRequerimiento->monto = (isset($request->monto_cpd_vinculado[$c]) && $request->monto_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->monto_cpd_vinculado[$c]))):null;
+                    $cdpRequerimiento->importe_con_igv = (isset($request->importe_con_igv_cpd_vinculado[$c]) && $request->importe_con_igv_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->importe_con_igv_cpd_vinculado[$c]))):null;
+                    $cdpRequerimiento->importe_sin_igv = (isset($request->importe_sin_igv_cpd_vinculado[$c]) && $request->importe_sin_igv_cpd_vinculado[$c]!=null) ? (floatval(preg_replace("/[^-0-9\.]/", "", $request->importe_sin_igv_cpd_vinculado[$c]))):null;
+                    $cdpRequerimiento->aplica_igv = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                     $cdpRequerimiento->fecha_estado = $request->fecha_estado[$c]??null;
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->save();
@@ -1791,7 +1793,9 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_con_igv = $request->importe_con_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_sin_igv = $request->importe_sin_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->aplica_igv = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                     $cdpRequerimiento->estado = 1;
                     $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                     $cdpRequerimiento->save();
@@ -1799,7 +1803,9 @@ class RequerimientoController extends Controller
                     $cdpRequerimiento = CdpRequerimiento::find($request->id_cpd_vinculado[$c]);
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
                     $cdpRequerimiento->codigo_oportunidad = $this->getCodigoOportunidad($request->id_cc_cpd_vinculado[$c]);
-                    $cdpRequerimiento->monto = $request->monto_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_con_igv = $request->importe_con_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->importe_sin_igv = $request->importe_sin_igv_cpd_vinculado[$c];
+                    $cdpRequerimiento->aplica_igv = ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false);
                     $cdpRequerimiento->id_requerimiento_logistico = $requerimiento->id_requerimiento;
                     $cdpRequerimiento->id_estado_envio = $request->id_estado_envio[$c];
                     $cdpRequerimiento->save();

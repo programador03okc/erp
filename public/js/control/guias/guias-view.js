@@ -107,6 +107,50 @@ class GuiasView {
             form.submit();
         });
 
+
+        $('form[id="formulario-transportista"]').on("keyup", "input.handleUpdateImporteFleteConIGV", (e) => {
+            this.updatePrecioConIGV(e.currentTarget);
+        });
+        $('form[id="formulario-transportista"]').on("keyup", "input.handleUpdateImporteFleteSinIGV", (e) => {
+            this.updatePrecioSinIGV(e.currentTarget);
+        });
+        $('form[id="formulario-transportista"]').on("change", "input.hadleChangeAplicaIGV", (e) => {
+            this.updateAplicaIGV(e.currentTarget);
+        });
+
+
+
+
+    }
+
+    
+    updatePrecioConIGV(obj){
+        if(typeof parseFloat(obj.value) =='number'){
+            $('form[id="formulario-transportista"] input[name="importe_flete_sin_igv"]').val($.number(parseFloat(obj.value)/1.18,2,'.',''));
+        }
+    }
+    
+    updatePrecioSinIGV(obj){
+        if(typeof parseFloat(obj.value) =='number'){
+            if($('form[id="formulario-transportista"] input[name="aplica_igv"]')[0].checked ==false){
+                $('form[id="formulario-transportista"] input[name="importe_flete"]').val($.number(parseFloat(obj.value),2,'.',''));
+            }else{
+                $('form[id="formulario-transportista"] input[name="importe_flete"]').val($.number(parseFloat(obj.value)*1.18,2,'.',''));
+    
+            }
+        }
+    }
+    
+    updateAplicaIGV(obj){
+        if(obj.checked==false){
+            $('form[id="formulario-transportista"] input[name="importe_flete"]').prop('readOnly',true);
+            $('form[id="formulario-transportista"] input[name="importe_flete"]').val("");
+        }else{
+            $('form[id="formulario-transportista"] input[name="importe_flete"]').prop('readOnly',false);
+            const fleteSinIGV = $('form[id="formulario-transportista"] input[name="importe_flete_sin_igv"]').val();
+            $('form[id="formulario-transportista"] input[name="importe_flete"]').val($.number(parseFloat(fleteSinIGV)*1.18,2,'.',''));
+            
+        }
     }
 }
 

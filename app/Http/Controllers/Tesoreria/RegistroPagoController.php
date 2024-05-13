@@ -505,7 +505,7 @@ class RegistroPagoController extends Controller
             $registroPago->total_pago = round($request->total_pago, 2);
             $registroPago->id_empresa = $request->id_empresa;
             $registroPago->id_cuenta_origen = $request->id_cuenta_origen;
-            $registroPago->registrado_por = $request->$id_usuario;
+            $registroPago->registrado_por = $id_usuario;
             $registroPago->estado = 1;
             $registroPago->fecha_registro = date('Y-m-d H:i:s');
             $registroPago->save();
@@ -725,7 +725,7 @@ class RegistroPagoController extends Controller
                         $msj = 'Se autorizó el pago del requerimiento exitosamente';
                         $tipo = 'success';
 
-                        // * aplicar afectación de presupuesto de requerimiento de pago
+                        // * al enviar a pago se aplicar la afectación de presupuesto de requerimiento de pago
                         if ($requerimientoPago->id_presupuesto_interno > 0) {
                             $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($requerimientoPago->id_requerimiento_pago, floatval($requerimientoPago->monto_total), null);
 
@@ -778,7 +778,7 @@ class RegistroPagoController extends Controller
                         if($tieneUnPagoEfectuado ==false){
                             // no tiene ningun pago, debe pasar por registrar el gasto afectando al ppto interno
 
-                            // * aplicar afectación de presupuesto de requerimiento de logistico (Orden)
+                            // * al enviar a pago se aplicar la afectación de presupuesto de requerimiento de logistico (Orden)
                             $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($orden->id_orden_compra, $montoAfectar);
                             PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($orden->id_orden_compra, null, $detalleArray, 'R',  $orden->fecha_autorizacion,  'Registrar afectación regular');
                             $comentario='Autorizacion de pago - orden '.($orden->codigo??'');

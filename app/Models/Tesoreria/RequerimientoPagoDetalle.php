@@ -193,12 +193,12 @@ class RequerimientoPagoDetalle extends Model
                 DB::raw("((SELECT COALESCE(SUM(dr.cantidad * dr.precio_unitario ) * (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * ((CASE WHEN r.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= r.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)),0)   
                 FROM almacen.alm_det_req as dr
                 INNER JOIN almacen.alm_req r ON r.id_requerimiento = dr.id_requerimiento
-                WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7 and r.id_requerimiento = dr.id_requerimiento
+                WHERE  dr.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and r.estado in (1,2) and dr.estado !=7 and r.id_requerimiento = dr.id_requerimiento and (r.mes_afectacion= TO_CHAR(CURRENT_DATE, 'MM') or r.mes_afectacion isNUll)
                 GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro
                 limit 1) +(SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario * (CASE WHEN rp.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= rp.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)) ,0)
                 FROM tesoreria.requerimiento_pago_detalle as drp
                 INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
-                WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7 and rp.id_requerimiento_pago = drp.id_requerimiento_pago
+                WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7 and rp.id_requerimiento_pago = drp.id_requerimiento_pago and (rp.mes_afectacion= TO_CHAR(CURRENT_DATE, 'MM') or rp.mes_afectacion isNull)
                 limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
             )
             ->where('id_presupuesto_interno_detalle', $this->attributes['id_partida_pi'])->first();

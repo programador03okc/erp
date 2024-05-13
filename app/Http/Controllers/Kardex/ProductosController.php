@@ -105,7 +105,7 @@ class ProductosController extends Controller
                             $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
 
                                 $monto = strrpos ($value[18], "$");
-                                $tipo_moneda = ($monto==false ? 2 :1); // 1 es dolar y el 2 soles
+                                $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
                                 $precio = str_replace("$", "0", $value[18]);
                                 // return [$value, $value[18], $precio, $tipo_moneda, $monto];
                                 $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
@@ -169,7 +169,7 @@ class ProductosController extends Controller
 
         return response()->json($tc !== null ? $tc->venta : 0);
     }
-    
+
     public function formatoFechaExcel($numero){
         return gmdate("Y-m-d", (((int)$numero - 25569) * 86400));
     }

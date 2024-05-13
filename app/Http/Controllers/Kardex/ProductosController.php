@@ -9,7 +9,6 @@ use App\Models\kardex\ProductoDetalle;
 use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use App\Models\softlink\TipoCambio as SoftlinkTipoCambio;
-use App\Models\Tesoreria\TipoCambio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -106,7 +105,7 @@ class ProductosController extends Controller
                                 $monto = strrpos ($value[18], "$");
                                 $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
                                 $precio = str_replace("$", "0", $value[18]);
-                                $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
+                                $tipoCambio=$this->getTipoCambio($this->formatoFechaExcel($value[14]));
         
                                 $serie->serie           = $serie_codigo['serie'];
                                 $serie->precio          = (float) $value[13];
@@ -160,13 +159,6 @@ class ProductosController extends Controller
 
     }
 
-    public function getTipoCambioVenta($fecha)
-    {
-        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
-            ->orderBy('fecha', 'DESC')->first();
-
-        return response()->json($tc !== null ? $tc->venta : 0);
-    }
     
     public function formatoFechaExcel($numero){
         return gmdate("Y-m-d", (((int)$numero - 25569) * 86400));

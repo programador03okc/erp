@@ -147,9 +147,9 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th style="width:5%">Código</th>
-                                                                        <th style="width:35%">Entidad</th>
-                                                                        <th style="width:15%">Monto</th>
-                                                                        <th style="width:30%">Estado de envio <small>(Trazabilidad Despachos)</small></th>
+                                                                        <th style="width:30%">Entidad</th>
+                                                                        <th style="width:25%">Monto</th>
+                                                                        <th style="width:20%">Estado de envio <small>(Trazabilidad Despachos)</small></th>
                                                                         <th style="width:10%">Fecha estado</th>
                                                                         <th style="width:5%">Acción</th>
                                                                     </tr>

@@ -161,6 +161,15 @@ class ProductosController extends Controller
         // }
 
     }
+
+    public function getTipoCambioVenta($fecha)
+    {
+        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
+            ->orderBy('fecha', 'DESC')->first();
+
+        return response()->json($tc !== null ? $tc->venta : 0);
+    }
+    
     public function formatoFechaExcel($numero){
         return gmdate("Y-m-d", (((int)$numero - 25569) * 86400));
     }

@@ -179,7 +179,7 @@ class Usuario extends Authenticatable
 		$roles = DB::table('configuracion.usuario_rol')
 			->select('usuario_rol.*', 'sis_rol.descripcion')
 			->join('configuracion.sis_rol', 'sis_rol.id_rol', '=', 'usuario_rol.id_rol')
-			->where('usuario_rol.id_usuario', $id)
+			->where([['usuario_rol.id_usuario', $id],['usuario_rol.estado',1]])
 			->get();
 		// $roles = DB::table('configuracion.sis_acceso')
 		// 	->select('sis_acceso.*', 'sis_rol.descripcion')

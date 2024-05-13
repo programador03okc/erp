@@ -1203,7 +1203,7 @@ class OrdenesDespachoExternoController extends Controller
                 }
             }
 
-            if (!empty($request->serie) && !empty($request->numero)) {
+            if (!empty($request->serie) && !empty($request->numero) || ($request->importe_flete_sin_igv !=null && $request->importe_flete_sin_igv >=0 )) {
                 //si se ingreso serie y numero de la guia se agrega el nuevo estado envio
                 $obs = DB::table('almacen.orden_despacho_obs')
                     ->where([

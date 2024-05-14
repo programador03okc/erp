@@ -9,12 +9,12 @@ use App\Models\kardex\ProductoDetalle;
 use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use App\Models\softlink\TipoCambio as SoftlinkTipoCambio;
-use App\Models\Tesoreria\TipoCambio;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
+
+use Carbon\Carbon;
 
 class ProductosController extends Controller
 {
@@ -74,7 +74,6 @@ class ProductosController extends Controller
 
                 foreach ($array[0] as $key => $value) {
                     if($key !== 0){
-                        $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
 
                         $fecha03 = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[14]));
                         $fecha = $fecha03->format('Y-m-d');
@@ -112,8 +111,7 @@ class ProductosController extends Controller
                                 $monto = strrpos ($value[18], "$");
                                 $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
                                 $precio = str_replace("$", "0", $value[18]);
-                                // return [$value, $value[18], $precio, $tipo_moneda, $monto];
-                                // $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
+                                $tipoCambio=$this->getTipoCambio($fecha);
 
                                 $serie->serie           = $serie_codigo['serie'];
                                 $serie->precio          = (float) $value[13];
@@ -165,14 +163,6 @@ class ProductosController extends Controller
         //     ],200);
         // }
 
-    }
-
-    public function getTipoCambioVenta($fecha)
-    {
-        $tc = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $fecha]])
-            ->orderBy('fecha', 'DESC')->first();
-
-        return response()->json($tc !== null ? $tc->venta : 0);
     }
 
     public function formatoFechaExcel($numero){

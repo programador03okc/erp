@@ -10,6 +10,7 @@ use App\Models\softlink\Movimiento;
 use App\Models\softlink\MovimientoDetalle;
 use App\Models\softlink\TipoCambio as SoftlinkTipoCambio;
 use App\Models\Tesoreria\TipoCambio;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -73,6 +74,10 @@ class ProductosController extends Controller
 
                 foreach ($array[0] as $key => $value) {
                     if($key !== 0){
+                        $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
+
+                        $fecha03 = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[14]));
+                        $fecha = $fecha03->format('Y-m-d');
                         // return $value;
                         // $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
                         $producto = Producto::where('codigo_softlink', $value[4])->where('almacen', $value[7])->first();
@@ -108,14 +113,14 @@ class ProductosController extends Controller
                                 $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
                                 $precio = str_replace("$", "0", $value[18]);
                                 // return [$value, $value[18], $precio, $tipo_moneda, $monto];
-                                $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
+                                // $tipoCambio=$this->getTipoCambioVenta($this->formatoFechaExcel($value[14]));
 
                                 $serie->serie           = $serie_codigo['serie'];
                                 $serie->precio          = (float) $value[13];
                                 $serie->tipo_moneda     = $tipo_moneda;
                                 $serie->precio_unitario = (float) $precio;
                                 $serie->producto_id     = $producto->id;
-                                $serie->fecha           = $this->formatoFechaExcel($value[14]);
+                                $serie->fecha           = $fecha;
                                 $serie->estado          = 1;
                                 $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
                                 $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
@@ -140,7 +145,7 @@ class ProductosController extends Controller
                         }
                     }
                 }
-                // return $array_series;
+                // return $array_series;exit;
                 foreach ($array_series as $key => $value) {
                     $data = ProductoDetalle::where('producto_id',$value['producto'])
                     ->whereNotIn('id',$value['series'])->where('autogenerado','t')
@@ -171,6 +176,11 @@ class ProductosController extends Controller
     }
 
     public function formatoFechaExcel($numero){
+
+
+        // $fecha03 = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['fecha_atencion']));
+        // $fecha = $fecha01->format('Y-m-d');
+
         return gmdate("Y-m-d", (((int)$numero - 25569) * 86400));
     }
 

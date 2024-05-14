@@ -91,6 +91,13 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="productos_activos" value="1"> Productos activos (columna TOTAL)
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

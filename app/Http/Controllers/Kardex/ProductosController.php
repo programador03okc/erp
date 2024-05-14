@@ -71,73 +71,85 @@ class ProductosController extends Controller
                 $array = Excel::toArray(new ProductosKardexImport, $request->file('carga_inicial'));
 
                 $array_series = array();
-
+                // return sizeof($array[0]); exit;
                 foreach ($array[0] as $key => $value) {
+                    $productos_activos = ( (int) $request->productos_activos == 1 ? 1 : $value[22]);
+                    // return [$productos_activos, $request->productos_activos];exit;
                     if($key !== 0){
 
-                        $fecha03 = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[14]));
-                        $fecha = $fecha03->format('Y-m-d');
-                        // return $value;
-                        // $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
-                        $producto = Producto::where('codigo_softlink', $value[4])->where('almacen', $value[7])->first();
-                        // return $producto;
-                        if(!$producto){
-                            $producto = new Producto();
-                            $producto->codigo_agil      = (int)$value[3];
-                            $producto->codigo_softlink  = $value[4];
-                            $producto->descripcion      = $value[6];
-                            $producto->part_number      = $value[5];
-                            $producto->almacen          = $value[7];
-                            $producto->empresa          = $value[8];
-                            $producto->clasificacion    = $value[9];
-                            $producto->estado_kardex    = $value[10];
-                            $producto->ubicacion        = $value[11];
-                            $producto->responsable      = $value[12];
-                            $producto->habilitado       = true;
-                            if(!Producto::where('codigo_softlink',$value[4])->first()){
-                                $producto->fecha_registro   = date('Y-m-d H:i:s');
-                            }
+                        if($value[22] == $productos_activos){
 
-                            $producto->anual            = $value[16];
-                            $producto->estado           = 1;
-                            $producto->save();
-                        }
+                            if(isset($value[14])){
 
-                        $serieInicial = (string) $value[1];
-                        $serie_codigo = ProductoDetalle::verificarSerie($serieInicial, $request->generar_serie);
-                        if ($serie_codigo['serie'] != null) {
-                            $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
+                                $fecha03 = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[14]));
+                                $fecha = $fecha03->format('Y-m-d');
+                                // if($value[5] == 'ASU650SS-512GT-R'){
+                                //     return $value;
+                                // }
+                                // return $value;
+                                // $producto = Producto::firstOrNew([ 'codigo_softlink'=> $value[4] ]);
+                                $producto = Producto::where('codigo_softlink', $value[4])->where('almacen', $value[7])->first();
+                                // return $producto;
+                                if(!$producto){
+                                    $producto = new Producto();
+                                    $producto->codigo_agil      = (int)$value[3];
+                                    $producto->codigo_softlink  = $value[4];
+                                    $producto->descripcion      = $value[6];
+                                    $producto->part_number      = $value[5];
+                                    $producto->almacen          = $value[7];
+                                    $producto->empresa          = $value[8];
+                                    $producto->clasificacion    = $value[9];
+                                    $producto->estado_kardex    = $value[10];
+                                    $producto->ubicacion        = $value[11];
+                                    $producto->responsable      = $value[12];
+                                    $producto->habilitado       = true;
+                                    if(!Producto::where('codigo_softlink',$value[4])->first()){
+                                        $producto->fecha_registro   = date('Y-m-d H:i:s');
+                                    }
 
-                                $monto = strrpos ($value[18], "$");
-                                $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
-                                $precio = str_replace("$", "0", $value[18]);
-                                $tipoCambio=$this->getTipoCambio($fecha);
+                                    $producto->anual            = $value[16];
+                                    $producto->estado           = 1;
+                                    $producto->save();
+                                }
 
-                                $serie->serie           = $serie_codigo['serie'];
-                                $serie->precio          = (float) $value[13];
-                                $serie->tipo_moneda     = $tipo_moneda;
-                                $serie->precio_unitario = (float) $precio;
-                                $serie->producto_id     = $producto->id;
-                                $serie->fecha           = $fecha;
-                                $serie->estado          = 1;
-                                $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
-                                $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
-                                $serie->tipo_cambio     = $tipoCambio;
-                            $serie->save();
+                                $serieInicial = (string) $value[1];
+                                $serie_codigo = ProductoDetalle::verificarSerie($serieInicial, $request->generar_serie);
+                                if ($serie_codigo['serie'] != null) {
+                                    $serie = ProductoDetalle::firstOrNew(['serie'=> $serie_codigo['serie'], 'producto_id'=> $producto->id]);
 
-                            $index = array_search($producto->id, array_column($array_series, 'producto'));
-                            // return [$index];
-                            if($serie_codigo['autogenerado'] == true){
-                                if($index!==false){
-                                    // return [$index,'ingreso'];
-                                //     // return [$array_series[$index]['series'], $array_series];
-                                    array_push($array_series[$index]['series'],$serie->id);
-                                }else{
-                                    // return [$index,'ingreso'];
-                                    array_push($array_series, array(
-                                        "producto"=>$producto->id,
-                                        "series"=>[$serie->id],
-                                    ));
+                                        $monto = strrpos ($value[18], "$");
+                                        $tipo_moneda = ($monto ? 1 : 2); // 1 es dolar y el 2 soles
+                                        $precio = str_replace("$", "0", $value[18]);
+
+                                        $tipoCambio= $this->getTipoCambio($fecha);
+                                        // return [$value, $fecha, $tipoCambio];exit;
+                                        $serie->serie           = $serie_codigo['serie'];
+                                        $serie->precio          = (float) $value[13];
+                                        $serie->tipo_moneda     = $tipo_moneda;
+                                        $serie->precio_unitario = (float) $precio;
+                                        $serie->producto_id     = $producto->id;
+                                        $serie->fecha           = $fecha;
+                                        $serie->estado          = 1;
+                                        $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
+                                        $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
+                                        $serie->tipo_cambio     = $tipoCambio;
+                                    $serie->save();
+
+                                    $index = array_search($producto->id, array_column($array_series, 'producto'));
+                                    // return [$index];
+                                    if($serie_codigo['autogenerado'] == true){
+                                        if($index!==false){
+                                            // return [$index,'ingreso'];
+                                        //     // return [$array_series[$index]['series'], $array_series];
+                                            array_push($array_series[$index]['series'],$serie->id);
+                                        }else{
+                                            // return [$index,'ingreso'];
+                                            array_push($array_series, array(
+                                                "producto"=>$producto->id,
+                                                "series"=>[$serie->id],
+                                            ));
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -252,7 +264,7 @@ class ProductosController extends Controller
 
     public function getTipoCambio($fecha)
     {
-        $tc = SoftlinkTipoCambio::where([['dfecha', '!=', null], ['cambio3', '<=', $fecha]])
+        $tc = SoftlinkTipoCambio::where([['dfecha', '!=', null], ['dfecha', '<=', $fecha]])
             ->orderBy('dfecha', 'DESC')->first();
 
         return ($tc !== null ? $tc->cambio3 : 0);

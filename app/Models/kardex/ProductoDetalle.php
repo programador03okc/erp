@@ -13,7 +13,7 @@ class ProductoDetalle extends Model
     protected $table = 'kardex.producto_detalle';
     protected $fillable = [
         'serie', 'fecha', 'precio', 'tipo_moneda','precio_unitario', 'producto_id', 'estado','disponible','id_ingreso',
-        'id_salida', 'fecha_ing', 'fecha_sal','autogenerado','tipo_cambio'
+        'id_salida', 'fecha_ing', 'fecha_sal','autogenerado','tipo_cambio','total'
     ];
     protected $appends = ['precio_unitario_al_tipo_cambio'];
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
@@ -39,7 +39,7 @@ class ProductoDetalle extends Model
     {
 
         $precioUnitarioAlTipoCambio=0;
-        
+
         $detalleProducto = ProductoDetalle::leftJoin('kardex.productos', 'productos.id', '=', 'producto_detalle.producto_id')
             ->where([['producto_detalle.id', $this->attributes['id']]])
             ->select(['productos.tipo_moneda', 'producto_detalle.precio_unitario','producto_detalle.tipo_cambio'])

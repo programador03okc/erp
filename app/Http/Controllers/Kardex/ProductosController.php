@@ -133,6 +133,7 @@ class ProductosController extends Controller
                                         $serie->disponible      = ($value[1] == $value[19] ? 'f' :'t');
                                         $serie->autogenerado    = ($serie_codigo['autogenerado'] == true ? 't' :'f');
                                         $serie->tipo_cambio     = $tipoCambio;
+                                        $serie->total           = (int) $value[22];
                                     $serie->save();
 
                                     $index = array_search($producto->id, array_column($array_series, 'producto'));

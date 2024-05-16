@@ -206,7 +206,7 @@
                                                                     <select class="form-control selectpicker input-xs handleChangeSede handleChangeUpdateSede " name="id_sede" title="Seleccionar empresa - sede" data-live-search="true" data-width="100%" data-actions-box="true" data-size="10">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($sedes as $sede)
-                                                                        <option value="{{$sede->id_sede}}" data-id-empresa="{{$sede->id_empresa}}" data-direccion="{{$sede->direccion}}" data-id-ubigeo="{{$sede->id_ubigeo}}" data-ubigeo-descripcion="{{$sede->ubigeo_descripcion}}">{{$sede->descripcion}}</option>
+                                                                        <option value="{{$sede->id_sede}}" data-descripcion-sede="{{$sede->codigo}}" data-id-empresa="{{$sede->id_empresa}}" data-descripcion-empresa="{{$sede->razon_social_empresa}}" data-direccion="{{$sede->direccion}}" data-id-ubigeo="{{$sede->id_ubigeo}}" data-ubigeo-descripcion="{{$sede->ubigeo_descripcion}}">{{$sede->descripcion}}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </dd>

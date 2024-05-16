@@ -103,9 +103,9 @@ class Proveedor extends Model
 
  
         // $data = Proveedor::with(['contribuyente','cuentaContribuyente.banco.contribuyente','cuentaContribuyente.tipoCuenta','cuentaContribuyente.moneda','cuentaContribuyente' => function($q){
-        $data = Proveedor::with(['contribuyente','cuentaContribuyente' => function($q){
+        $data = Proveedor::with(['contribuyente.cuentaContribuyente.banco.contribuyente','contribuyente.cuentaContribuyente.tipoCuenta','contribuyente.cuentaContribuyente.moneda','contribuyente.cuentaContribuyente' => function($q){
             $q->where('estado', '!=', 7);
-        },'cuentaContribuyente.banco.contribuyente','cuentaContribuyente.tipoCuenta','cuentaContribuyente.moneda'])
+        }])
         // ->whereHas('cuentaContribuyente', function ($q) {
         //     $q->where('estado', '!=',7);
         // })

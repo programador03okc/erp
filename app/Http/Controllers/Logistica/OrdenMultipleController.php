@@ -87,7 +87,7 @@ class OrdenMultipleController extends Controller
     {
         $proveedor = Proveedor::with(['contribuyente.tipoDocumentoIdentidad', 'estadoProveedor','contactoContribuyente' ,'cuentaContribuyente' => function ($q) {
                 $q->where('estado', '=', 1);
-            }])
+            }, 'cuentaContribuyente.banco.contribuyente','cuentaContribuyente.tipoCuenta','cuentaContribuyente.moneda'])
                 ->whereHas('contribuyente', function ($q) {
                     $q->where('estado', '=', 1);
                 })->where([['id_proveedor','=',$idProveedor],['log_prove.estado', '=', 1]])->get()->first();
@@ -170,8 +170,11 @@ class OrdenMultipleController extends Controller
         $data = DB::table('administracion.sis_sede')
             ->select(
                 'sis_sede.*',
+                'adm_contri.razon_social as razon_social_empresa',
                 'ubi_dis.descripcion as ubigeo_descripcion'
             )
+            ->leftJoin('administracion.adm_empresa', 'adm_empresa.id_empresa', '=', 'sis_sede.id_empresa')
+            ->leftJoin('contabilidad.adm_contri', 'adm_contri.id_contribuyente', '=', 'adm_empresa.id_contribuyente')
             ->leftJoin('configuracion.ubi_dis', 'ubi_dis.id_dis', '=', 'sis_sede.id_ubigeo')
             ->where('sis_sede.estado', '=', '1')
             ->orderBy('sis_sede.id_empresa', 'asc')

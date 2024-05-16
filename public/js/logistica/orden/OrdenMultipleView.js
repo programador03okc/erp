@@ -674,6 +674,7 @@ class OrdenView {
             document.querySelector("p[name='direccion_proveedor']").textContent = res.contribuyente != null ? res.contribuyente.direccion_fiscal : '';
             // TODO : 1) ACtualizar direccion proveedor en this.ordenArray 
             this.llenarDatosCabeceraCuentaBancariaProveedor(res.cuenta_contribuyente, idCuentaProveedor);
+            console.log(res);
             this.llenarDatosCabeceraConcactoProveedor(res.contacto_contribuyente);
             // document.querySelector("select[name='contacto_proveedor']").textContent = '';
             // document.querySelector("p[name='telefono_contacto']").textContent = '';
@@ -692,7 +693,7 @@ class OrdenView {
                 selectElement.remove(i);
             }
         }
-
+        console.log(data);
         data.forEach(element => {
             let option = document.createElement("option");
 
@@ -704,6 +705,11 @@ class OrdenView {
                 option.setAttribute('selected', true);
             }
 
+            option.dataset.nroCuenta = element.nro_cuenta != null ? element.nro_cuenta : '';
+            option.dataset.nroCuentaInterbancaria = element.nro_cuenta_interbancaria != null ? element.nro_cuenta_interbancaria : '';
+            option.dataset.idMoneda = element.id_moneda != null ? element.id_moneda : '';
+            option.dataset.simboMoneda = element.moneda != null ? element.moneda.simbolo : '';
+            option.dataset.banco = element.banco != null && element.banco.contribuyente !=null ? element.banco.contribuyente.razon_social : '';
             option.text = element.nro_cuenta != null ? element.nro_cuenta : (element.nro_cuenta_interbancaria != null ? element.nro_cuenta_interbancaria : '');
             option.value = element.id_cuenta_contribuyente;
             selectElement.add(option);
@@ -720,11 +726,15 @@ class OrdenView {
             }
         }
 
+        console.log(data);
         data.forEach(element => {
             let option = document.createElement("option");
 
             option.text = element.nombre;
             option.dataset.telefono = element.telefono;
+            option.dataset.cargo = element.cargo;
+            option.dataset.email = element.email;
+            option.dataset.direccion = element.direccion;
             option.value = element.id_datos_contacto;
             selectElement.add(option);
         });
@@ -998,6 +1008,7 @@ class OrdenView {
                 if (response.success == true) {
                     $("#modal-lista-requerimientos-pendientes .modal-content").LoadingOverlay("hide", true);
                     cabeceraRequerimiento = response.requerimiento;
+                    // console.log(response);
                     DataFiltradaDetalleRequerimientoList = response.detalle_requerimiento_list;
 
                     response.estado_item_list.forEach(element => {
@@ -1263,7 +1274,7 @@ class OrdenView {
 
 
         // crear un array de objetos de ordenes ( el total por proveedor)
-        // console.log(proveedorDetReqNuevaOrden);
+        console.log(proveedorDetReqNuevaOrden);
         let montoNetoOrden =0;
         let montoIgvOrden =0;
         let montoIcbperOrden =0;
@@ -1292,7 +1303,7 @@ class OrdenView {
                     'cantidad_atendida_orden': (element.cantidad_atendida_orden > 0 ? element.cantidad_atendida_orden : '0'),
                     'precio_unitario': (element.precio_unitario ? element.precio_unitario : 0),
                     'subtotal': (element.precio_unitario ? element.precio_unitario : 0) * (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
-                    'id_moneda': cabeceraRequerimientoObject.simbolo_moneda,
+                    'id_moneda': cabeceraRequerimientoObject.id_moneda,
                     'simbolo_moneda': cabeceraRequerimientoObject.simbolo_moneda,
                     'id_estado': 1
                 });
@@ -1309,7 +1320,7 @@ class OrdenView {
             let cabeceraOrdenObject = {
                 'id_orden': provDetReqValue.id_orden,
                 'id_tipo_orden': idTipoOrden,
-                'descripcion_tipo_orden': idTipoOrden,
+                'descripcion_tipo_orden': TipoDocumento,
                 'codigo_orden': '',
                 'id_moneda': cabeceraRequerimientoObject.id_moneda,
                 'simbolo_moneda': cabeceraRequerimientoObject.simbolo_moneda,
@@ -1324,7 +1335,7 @@ class OrdenView {
                 'id_sede': cabeceraRequerimientoObject.id_sede,
                 'descripcion_sede': cabeceraRequerimientoObject.descripcion_sede,
                 'id_proveedor_mgc': provDetReqValue.proveedor_seleccionado_id > 0 ? provDetReqValue.proveedor_seleccionado_id : '',
-                'id_proveedor': '',
+                'id_proveedor': provDetReqValue.id_proveedor >0?provDetReqValue.id_proveedor:'',
                 'razon_social_proveedor_mgc': provDetReqValue.proveedor_seleccionado != null ? provDetReqValue.proveedor_seleccionado : '',
                 'razon_social_proveedor': provDetReqValue.razon_social_proveedor,
                 'id_tipo_documento_proveedor': provDetReqValue.id_tipo_documento_proveedor,
@@ -1821,51 +1832,127 @@ class OrdenView {
     }
 
     updateTipoOrden(obj){
-        console.log(obj.value);
+        // console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_tipo_orden']= obj.value;
+                this.ordenArray[key]['descripcion_tipo_orden']= obj.options[obj.selectedIndex].text;
+            }
+        });
+        // console.log(this.ordenArray);
     }
 
     updatePeriodo(obj){
-        console.log(obj.value);
+        // console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_periodo']= obj.value;
+                this.ordenArray[key]['descripcion_periodo']= obj.options[obj.selectedIndex].text;
+            }
+        });
     }
 
     updateMoneda(obj){
-        console.log(obj.value);
+        // console.log(obj.value);
+        (this.ordenArray).forEach((element,keyOrden)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[keyOrden]['id_moneda']= obj.value;
+                this.ordenArray[keyOrden]['simbolo_moneda']= obj.options[obj.selectedIndex].dataset.simboloMoneda;
+                
+                (orden.detalle).forEach((item,keyItem) => {
+                    this.ordenArray[keyOrden]['detalle'][keyItem]['id_moneda']= obj.value;
+                    this.ordenArray[keyOrden]['detalle'][keyItem]['simbolo_moneda']= obj.options[obj.selectedIndex].dataset.simboloMoneda;
+                });
+            }
+        });
     }
 
     updateFechaEmision(obj){
-        console.log(obj.value);
+        // console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['fecha_emision']= obj.value;
+            }
+        });
     }
   
     updateSede(obj){
         var id_sede = obj.value;
+        var descripcion_sede = obj.options[obj.selectedIndex].getAttribute('data-descripcion-sede');
         var id_empresa = obj.options[obj.selectedIndex].getAttribute('data-id-empresa');
+        var descripcion_empresa = obj.options[obj.selectedIndex].getAttribute('data-descripcion-empresa');
         var id_ubigeo = obj.options[obj.selectedIndex].getAttribute('data-id-ubigeo');
         var ubigeo_descripcion = obj.options[obj.selectedIndex].getAttribute('data-ubigeo-descripcion');
         var direccion = obj.options[obj.selectedIndex].getAttribute('data-direccion');
 
-        console.log(id_sede,id_empresa,id_ubigeo,ubigeo_descripcion,direccion);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_empresa']= id_empresa;
+                this.ordenArray[key]['descripcion_empresa']= descripcion_empresa;
+                this.ordenArray[key]['id_sede']= id_sede;
+                this.ordenArray[key]['descripcion_sede']= descripcion_sede;
+                this.ordenArray[key]['id_ubigeo_entrega']= id_ubigeo;
+                this.ordenArray[key]['descripcion_ubigeo_entrega']= ubigeo_descripcion;
+                this.ordenArray[key]['direccion_entrega']= direccion;
+            }
+        });
+
     }
 
     updateProveedor(obj){
         var id_proveedor = obj.value;
-        var id_contribuyente = obj.options[obj.selectedIndex].getAttribute('data-id-contribuyente');
+        // var id_contribuyente = obj.options[obj.selectedIndex].getAttribute('data-id-contribuyente');
         var razon_social = obj.options[obj.selectedIndex].getAttribute('data-razon-social');
         var numero_documento = obj.options[obj.selectedIndex].getAttribute('data-numero-documento');
-        console.log(id_proveedor,id_contribuyente,razon_social,numero_documento);
+        // console.log(id_proveedor,id_contribuyente,razon_social,numero_documento);
+
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_proveedor']= id_proveedor;
+                this.ordenArray[key]['razon_social_proveedor']= razon_social;
+                this.ordenArray[key]['id_tipo_documento_proveedor']= 2;// RUC
+                this.ordenArray[key]['nro_documento_proveedor']= numero_documento;
+   
+            }
+        });
+
     }
 
     updateCuentaBancariaProveedor(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_cuenta_proveedor']= obj.value;
+                this.ordenArray[key]['numero_cuenta_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-nro-cuenta');
+                this.ordenArray[key]['numero_cuenta_interbancaria_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-nro-cuenta-interbancaria');
+                this.ordenArray[key]['id_moneda_cuenta_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-id-moneda');
+                this.ordenArray[key]['simbolo_moneda_cuenta_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-simbolo-moneda');
+   
+            }
+        });
     }
     
     updateContactoProveedor(obj){
-        let id_contacto_proveedor= obj.value;
-        let telefono_contacto_proveedor= obj.options[obj.selectedIndex].dataset.telefono;
-        console.log(id_contacto_proveedor,telefono_contacto_proveedor);
+
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_concato_proveedor']= obj.value;
+                this.ordenArray[key]['nombre_contacto_proveedor']= obj.options[obj.selectedIndex].text;
+                this.ordenArray[key]['telefono_contacto_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-telefono');
+                this.ordenArray[key]['cargo_contacto_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-cargo');
+   
+            }
+        });
     }
 
     updateRubroProveedor(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_rubro_proveedor']= obj.value;
+                this.ordenArray[key]['descripcion_rubro_proveedor']= obj.options[obj.selectedIndex].text;
+            }
+        });
+
+
     }
 
     updateFormaPago(obj){
@@ -1873,79 +1960,168 @@ class OrdenView {
         let text_condicion_softlink = obj.options[obj.selectedIndex].text;
         let dias_condicion_softlink = obj.options[obj.selectedIndex].dataset.dias; // dias condicion softlink
         let id_condicion=1; // id condicion agile
-        let plazo_dias=0; // plazo dias agile
+        // let plazo_dias=0; // plazo dias agile
 
         if (dias_condicion_softlink > 0) {
             id_condicion = 2; 
-            plazo_dias = dias_condicion_softlink;
+            // plazo_dias = dias_condicion_softlink;
         } else {
             id_condicion = 1;
-            plazo_dias = 0;
+            // plazo_dias = 0;
         }
-
-        console.log(id_condicion_softlink,text_condicion_softlink,dias_condicion_softlink,id_condicion,plazo_dias);
+        // console.log(id_condicion_softlink,text_condicion_softlink,dias_condicion_softlink,id_condicion,plazo_dias);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_condicion_compra']=id_condicion;
+                this.ordenArray[key]['descripcion_condicion_compra']= obj.options[obj.selectedIndex].text;
+                this.ordenArray[key]['id_condicion_softlink']= id_condicion_softlink;
+                this.ordenArray[key]['descripcion_condicion_softlink']= text_condicion_softlink;
+                
+            }
+        });
     }
-
+    
     updatePlazoEntrega(obj){
-        console.log(obj.value);
+        // console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['plazo_entrega_dias']= obj.options[obj.selectedIndex].text;
+
+            }
+        });
     }
 
-    updateTipoDocumento(obj){
-        let id_tipo_documento= obj.value;
-        let text_tipo_documento= obj.options[obj.selectedIndex].text;;
-        console.log(id_tipo_documento,text_tipo_documento);
+    updateTipoDocumento(obj){     
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_tipo_documento']= obj.value;
+                this.ordenArray[key]['descripcion_tipo_documento']= obj.options[obj.selectedIndex].text;
+
+            }
+        });
     }
     
     updateDireccionEntrega(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['direccion_entrega']= obj.value;
+            }
+        });
     }
 
     updateUbigeoEntrega(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_ubigeo_entrega']= obj.value;
+                this.ordenArray[key]['descripcion_ubigeo_entrega']= obj.options[obj.selectedIndex].text;
+            }
+        });
     }
 
     updateCompraLocal(obj){
-        console.log(obj.checked);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['es_compra_local']= obj.checked;
+            }
+        });
     }
     
     updatePersonalAutorizado1(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_personal_autorizado_1']= obj.value;
+                this.ordenArray[key]['nombre_personal_autorizado_1']= obj.options[obj.selectedIndex].text;
+            }
+        });
     }
 
     updatePersonalAutorizado2(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['id_personal_autorizado_2']= obj.value;
+                this.ordenArray[key]['nombre_personal_autorizado_2']= obj.options[obj.selectedIndex].text;
+            }
+        });
     }
 
     updateObservacion(obj){
-        console.log(obj.value);
+        (this.ordenArray).forEach((element,key)=>{
+            if(element.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['observacion']= obj.value;
+             }
+        });
     }
 
+    // nivel de items
     updateDescripcionComplementaria(obj){
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+        // console.log(identificador, obj.value);
+        (this.ordenArray).forEach((orden,keyOrden)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                
+                (orden.detalle).forEach((item,keyItem) => {
+                    if(item.id_detalle_orden ==identificador){
+                        this.ordenArray[keyOrden]['detalle'][keyItem]['descripcion_complementaria']= obj.value;
+                    }
+                });
+                // console.log(this.ordenArray[keyOrden]);
+             }
+        });
 
-        console.log(identificador, obj.value);
     }
 
     updateDescripcionServicio(obj){
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
 
-        console.log(identificador, obj.value);
+        // console.log(identificador, obj.value);
+
+        (this.ordenArray).forEach((orden,keyOrden)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                (orden.detalle).forEach((item,keyItem) => {
+                    if(item.id_detalle_orden ==identificador){
+                        this.ordenArray[keyOrden]['detalle'][keyItem]['descripcion']= obj.value;
+                    }
+                });
+                // console.log(this.ordenArray[keyOrden]);
+             }
+        });
     }
 
     updateCantidad(obj){
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
 
-        console.log(identificador, obj.value);
+        // console.log(identificador, obj.value);
+        (this.ordenArray).forEach((orden,keyOrden)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                (orden.detalle).forEach((item,keyItem) => {
+                    if(item.id_detalle_orden ==identificador){
+                        this.ordenArray[keyOrden]['detalle'][keyItem]['cantidad_pendiente_atender']= obj.value;
+                    }
+                });
+                // console.log(this.ordenArray[keyOrden]);
+             }
+        });
     }
     
     updatePrecio(obj){
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
 
-        console.log(identificador, obj.value);
+        // console.log(identificador, obj.value);
+        (this.ordenArray).forEach((orden,keyOrden)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                (orden.detalle).forEach((item,keyItem) => {
+                    if(item.id_detalle_orden ==identificador){
+                        this.ordenArray[keyOrden]['detalle'][keyItem]['precio_unitario']= obj.value;
+                    }
+                });
+                // console.log(this.ordenArray[keyOrden]);
+             }
+        });
+
     }
 
     updateIncluyeIGV(obj){

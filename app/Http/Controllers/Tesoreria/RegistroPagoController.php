@@ -726,14 +726,14 @@ class RegistroPagoController extends Controller
                         $tipo = 'success';
 
                         // * al enviar a pago se aplicar la afectación de presupuesto de requerimiento de pago
-                        if ($requerimientoPago->id_presupuesto_interno > 0) {
-                            $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($requerimientoPago->id_requerimiento_pago, floatval($requerimientoPago->monto_total), null);
+                        // if ($requerimientoPago->id_presupuesto_interno > 0) {
+                        //     $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoPagoParaPresupuestoInterno($requerimientoPago->id_requerimiento_pago, floatval($requerimientoPago->monto_total), null);
 
-                            PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($requerimientoPago->id_requerimiento_pago, null, $detalleArray, 'R', $requerimientoPago->fecha_autorizacion, 'Registrar afectación regular');
+                        //     PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoPago($requerimientoPago->id_requerimiento_pago, null, $detalleArray, 'R', $requerimientoPago->fecha_autorizacion, 'Registrar afectación regular');
 
-                            $comentario='Autorización de pago - requerimiento de pago '.($requerimientoPago->codigo??'');
-                            LogActividad::registrar(Auth::user(), 'Nueva autorización de pago', 4, $requerimientoPago->getTable(), null, $requerimientoPago, $comentario,'Contabilidad');
-                        }
+                        //     $comentario='Autorización de pago - requerimiento de pago '.($requerimientoPago->codigo??'');
+                        //     LogActividad::registrar(Auth::user(), 'Nueva autorización de pago', 4, $requerimientoPago->getTable(), null, $requerimientoPago, $comentario,'Contabilidad');
+                        // }
 
                     } else {
                         $msj = 'El requerimiento fue anulado';
@@ -779,8 +779,8 @@ class RegistroPagoController extends Controller
                             // no tiene ningun pago, debe pasar por registrar el gasto afectando al ppto interno
 
                             // * al enviar a pago se aplicar la afectación de presupuesto de requerimiento de logistico (Orden)
-                            $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($orden->id_orden_compra, $montoAfectar);
-                            PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($orden->id_orden_compra, null, $detalleArray, 'R',  $orden->fecha_autorizacion,  'Registrar afectación regular');
+                            // $detalleArray = PresupuestoInternoHistorialHelper::obtenerDetalleRequerimientoLogisticoDeOrdenParaAfectarPresupuestoInterno($orden->id_orden_compra, $montoAfectar);
+                            // PresupuestoInternoHistorialHelper::registrarEstadoGastoAfectadoDeRequerimientoLogistico($orden->id_orden_compra, null, $detalleArray, 'R',  $orden->fecha_autorizacion,  'Registrar afectación regular');
                             $comentario='Autorizacion de pago - orden '.($orden->codigo??'');
                             LogActividad::registrar(Auth::user(), 'Nueva autorizacion de pago', 4, $orden->getTable(), null, $orden, $comentario,'Tesorería');    
 
@@ -840,10 +840,10 @@ class RegistroPagoController extends Controller
                         $tipo = 'success';
 
                         //* Retorno de presupuesto - requerimiento de logistico(orden)
-                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoPago($requerimientoPago->id_requerimiento_pago,$mesRetorno);
-                        if($cantidadDeRetornoDePresupuesto >0){
-                            $msj.='. Se retorno de presupuesto';
-                        }
+                        // $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoPago($requerimientoPago->id_requerimiento_pago,$mesRetorno);
+                        // if($cantidadDeRetornoDePresupuesto >0){
+                        //     $msj.='. Se retorno de presupuesto';
+                        // }
 
                     } else {
                         $msj = 'El requerimiento fue anulado';
@@ -882,10 +882,10 @@ class RegistroPagoController extends Controller
                         $tipo = 'success';
 
                         //* Retorno de presupuesto - requerimiento de logistico(orden)
-                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorOrden($orden->id_orden_compra, $mesRetorno);
-                        if($cantidadDeRetornoDePresupuesto >0){
-                            $msj.='. Se retorno de presupuesto';
-                        }
+                        // $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorOrden($orden->id_orden_compra, $mesRetorno);
+                        // if($cantidadDeRetornoDePresupuesto >0){
+                        //     $msj.='. Se retorno de presupuesto';
+                        // }
 
                     } else {
                         $msj = 'La orden fue anulada';

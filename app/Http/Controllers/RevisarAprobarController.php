@@ -22,6 +22,7 @@ use App\models\Configuracion\AccesosUsuarios;
 use App\Models\Configuracion\Usuario;
 use App\Models\Configuracion\UsuarioDivision;
 use App\models\Configuracion\UsuarioRol;
+use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Tesoreria\RequerimientoPago;
 use App\Models\Tesoreria\RequerimientoPagoDetalle;
 use Carbon\Carbon;
@@ -521,7 +522,8 @@ class RevisarAprobarController extends Controller{
                     }
 
 
-                    // Debugbar::info($idRolUsuarioList);
+                    // dd($idRolUsuarioList);
+                    // exit();
                     // Debugbar::info(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList));
 
                     if ( in_array(6,$idRolUsuarioList) || ((count(array_intersect($nextIdRolAprobanteList, $idRolUsuarioList))) > 0) == true || (count(array_intersect($idRolAprobanteEnCualquierOrdenList, $idRolUsuarioList))) > 0) {
@@ -539,9 +541,9 @@ class RevisarAprobarController extends Controller{
                             $element->setAttribute('pendiente_aprobacion',$pendiente_aprobacion);
                             $element->setAttribute('aprobar_sin_importar_orden',$aprobarSinImportarOrden);
 
-                            if(!(in_array(36,$idRolUsuarioDocList) && (in_array(21,$idRolUsuarioList) || in_array(22,$idRolUsuarioList) ))){ //filtro residente no mostrar a jefes de planificacion y jefe de ejecición de proyectos
-                                $payload[] = $element;
-                            }
+                                if(!(in_array(36,$idRolUsuarioDocList) && (in_array(21,$idRolUsuarioList) || in_array(22,$idRolUsuarioList) ))){ //filtro residente no mostrar a jefes de planificacion y jefe de ejecición de proyectos
+                                    $payload[] = $element;
+                                }
                             }
 
                     }
@@ -785,13 +787,34 @@ class RevisarAprobarController extends Controller{
         $aprobacion->save();
 
         $mensaje='';
+        $afectacionPresupuesto=[];
+
         if($accion ==1){
             $mensaje='Documento aprobado';
 
             if($idTipoDocumento == 1){
-            PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento,$idTipoDocumento);
+                $requerimiento = Requerimiento::find($idRequerimiento);
+                    if($this->tieneUnaExistenteAfectacionElRequerimiento(11,$idRequerimiento,$requerimiento->id_presupuesto_interno)==false){
+                        $afectacionPresupuesto = PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento,$idTipoDocumento);
+                        if($afectacionPresupuesto && $afectacionPresupuesto->id_presupuesto_interno >0 ){
+                            $mensaje.=', presupuesto afectado';
+                    }else{    
+                        $mensaje.=', ya fue afectado el presupuesto';
+                    }
+                }
+                
             }else if($idTipoDocumento == 11){
-                PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimientoPago,$idTipoDocumento);
+                $requerimientoPago = RequerimientoPago::find($idRequerimientoPago);
+                // dd($requerimientoPago);
+                // exit();
+                if($this->tieneUnaExistenteAfectacionElRequerimiento(11,$idRequerimientoPago,$requerimientoPago->id_presupuesto_interno)==false){
+                    $afectacionPresupuesto = PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimientoPago,$idTipoDocumento);
+                    if($afectacionPresupuesto && $afectacionPresupuesto->id_presupuesto_interno >0 ){
+                        $mensaje.=', presupuesto afectado';
+                    }else{
+                        $mensaje.=', ya fue afectado el presupuesto';
+                    }
+                }
             }
 
         }elseif($accion ==2){
@@ -800,18 +823,68 @@ class RevisarAprobarController extends Controller{
 
             // actualizar a true el campo de "documento_anulado" en la tabla historial_presupuesto_interno_saldo para determinar que registros ya no se atenderán
             if($idTipoDocumento == 11){
-                PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null,null,$idRequerimientoPago);
+                // PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null,null,$idRequerimientoPago);
+                $requerimientoPago = RequerimientoPago::find($idRequerimiento);
+                if($requerimientoPago->id_presupuesto_interno>0){
+                    
+                    // Valida antes de registrar el retorno, solo si existe una afectacion, se buscaria la existencia del registro con el idRequerimiento, idPresupuesto, estadoAfectacion = 3
+                    if($this->tieneUnaExistenteAfectacionElRequerimiento(11,$requerimientoPago->id_requerimiento_pago,$requerimientoPago->id_presupuesto_interno)){
+                        
+                        if($requerimientoPago->mes_afectacion!=null){
+                            $mesRetorno=$requerimientoPago->mes_afectacion;
+                        }else{
+                            $mesRetorno= str_pad((Carbon::create($requerimientoPago->fecha_registro)->month), 2, "0", STR_PAD_LEFT);
+                        }
+    
+                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoPago($idRequerimiento, $mesRetorno);
+                        if($cantidadDeRetornoDePresupuesto >0){
+                            $mensaje.=', se retorno el presupuesto';
+                        }
+                    }
+
+                }
+
             }elseif($idTipoDocumento == 1){
-                PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo($idRequerimiento,null,null);
+                // PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo($idRequerimiento,null,null);
+                $requerimientoLogistico = Requerimiento::find($idRequerimiento);
+                if($requerimientoLogistico->id_presupuesto_interno>0){
+
+                    // Valida antes de registrar el retorno, solo si existe una afectacion, se buscaria la existencia del registro con el idRequerimiento, idPresupuesto, estadoAfectacion = 3
+                    if($this->tieneUnaExistenteAfectacionElRequerimiento(1,$requerimientoLogistico->id_requerimiento, $requerimientoLogistico->id_presupuesto_interno)){
+
+                        if($requerimientoLogistico->mes_afectacion!=null){
+                            $mesRetorno=$requerimientoLogistico->mes_afectacion;
+                        }else{
+                            $mesRetorno= str_pad((Carbon::create($requerimientoLogistico->fecha_registro)->month), 2, "0", STR_PAD_LEFT);
+                        }
+                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoLogistico($idRequerimiento, $mesRetorno);
+                        if($cantidadDeRetornoDePresupuesto >0){
+                            $mensaje.=', se retorno el presupuesto';
+                        }
+                    }
+                }
             }
 
         }elseif($accion ==3){
             $mensaje='Documento observado';
             $this->limpiarMapeoDeDocumento($idDocumento);
 
+        }elseif($accion==5){
+            $mensaje='Documento con revisado';
         }
 
         return ['data'=>$aprobacion,'mensaje'=>$mensaje];
+    }
+
+    public function tieneUnaExistenteAfectacionElRequerimiento($tipoRequerimiento,$idRequerimiento,$idPresupuestoInterno){
+        if($tipoRequerimiento==11){
+            $cantidadRegistrosDeHhistorialAfectado = HistorialPresupuestoInternoSaldo::where([['id_requerimiento_pago',$idRequerimiento],['id_presupuesto_interno',$idPresupuestoInterno],['estado',3],['tipo','SALIDA']])->count();
+        }else if($tipoRequerimiento==1){
+            $cantidadRegistrosDeHhistorialAfectado = HistorialPresupuestoInternoSaldo::where([['id_requerimiento',$idRequerimiento],['id_presupuesto_interno',$idPresupuestoInterno],['estado',3],['tipo','SALIDA']])->count();
+
+        }
+
+        return $cantidadRegistrosDeHhistorialAfectado>0?true:false;
     }
 
     public function limpiarMapeoDeDocumento($idDocAprob){
@@ -839,7 +912,7 @@ class RevisarAprobarController extends Controller{
     public function guardarRespuesta(Request $request){
         DB::beginTransaction();
         try {
-            // $accion = $request->accion;
+            $accion = $request->accion;
             // $sustento = $request->sustento;
             // $idTipoDocumento = $request->idTipoDocumento;
             // $tipoDocumento = $request->tipoDocumento;
@@ -856,36 +929,36 @@ class RevisarAprobarController extends Controller{
             // $aprobarSinImportarOrden = $request->aprobarSinImportarOrden;
             $nombreCompletoUsuarioRevisaAprueba = Usuario::withTrashed()->find($request->idUsuarioAprobante)->nombre_corto;
             $nombreAccion='';
-            if ($request->accion == 1) {
+            if ($accion == 1) {
                 $nombreAccion='Aprobado';
             }
-            if ($request->accion == 2) {
+            if ($accion == 2) {
                 $nombreAccion='Rechazado';
             }
-            if ($request->accion == 3) {
+            if ($accion == 3) {
                 $nombreAccion='Observado';
             }
             if ($request->aprobacionFinalOPendiente == 'PENDIENTE') {
-                if ($request->accion == 1) {
-                    $request->accion = 5; // Revisado
+                if ($accion == 1) {
+                    $accion = 5; // Revisado
                     $nombreAccion='Pendiente Aprobación';
                 }
             }
             // agregar vobo (1= aprobado, 2= rechazado, 3=observado, 5=Revisado)
-            $aprobacion= $this->registrarRespuesta($request->accion, $request->idFlujo, $request->idDocumento, $request->idTipoDocumento, $request->idRequerimiento, $request->idRequerimientoPago, $request->idUsuarioAprobante,$request->sustento, $request->idRolAprobante);
+            $aprobacion= $this->registrarRespuesta($accion, $request->idFlujo, $request->idDocumento, $request->idTipoDocumento, $request->idRequerimiento, $request->idRequerimientoPago, $request->idUsuarioAprobante,$request->sustento, $request->idRolAprobante);
 
 
-            $montoTotal= 0;
+            // $montoTotal= 0;
 
-            $obtenerMontoTotal = $this->obtenerMontoTotalDocumento($request->idTipoDocumento,$request->idDocumento);
+            // $obtenerMontoTotal = $this->obtenerMontoTotalDocumento($request->idTipoDocumento,$request->idDocumento);
 
-            if($obtenerMontoTotal['estado']=='success'){
-                $montoTotal=$obtenerMontoTotal['monto'];
+            // if($obtenerMontoTotal['estado']=='success'){
+            //     $montoTotal=$obtenerMontoTotal['monto'];
 
-            }else{
-                return response()->json(['id_aprobacion' => -1, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
+            // }else{
+            //     return response()->json(['id_aprobacion' => -1, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:']);
 
-            }
+            // }
 
             // $nombreCompletoUsuarioPropietarioDelDocumento = Usuario::find($request->idUsuarioPropietarioDocumento)->nombre_corto;
             //  ======= inicio tipo requerimiento b/s =======
@@ -900,12 +973,12 @@ class RevisarAprobarController extends Controller{
                     if($obtenerId['estado']=='success'){
                         $requerimiento = Requerimiento::find($obtenerId['id']);
                     }else{
-                        return response()->json(['id_aprobacion' => -2, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:'.$obtenerMontoTotal['mensaje']]);
+                        return response()->json(['id_aprobacion' => -2, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Mensaje de error:']);
                     }
                 }
 
-                $requerimientoConEstadoActualizado= $this->actualizarEstadoRequerimiento($request->accion,$requerimiento,$request->aprobacionFinalOPendiente);
-                $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$request->aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $request->accion);
+                $requerimientoConEstadoActualizado= $this->actualizarEstadoRequerimiento($accion,$requerimiento,$request->aprobacionFinalOPendiente);
+                $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$request->aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $accion);
 
                 // $this->enviarNotificacionPorAprobacion($requerimiento,$request->sustento,$nombreCompletoUsuarioPropietarioDelDocumento,$nombreCompletoUsuarioRevisaAprueba,$montoTotal,$trazabilidad);
 
@@ -926,8 +999,8 @@ class RevisarAprobarController extends Controller{
                 }
 
                 
-                $this->actualizarEstadoRequerimientoPago($request->accion,$requerimientoPago,$request->aprobacionFinalOPendiente);
-                // $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$request->aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $request->accion);
+                $this->actualizarEstadoRequerimientoPago($accion,$requerimientoPago,$request->aprobacionFinalOPendiente);
+                // $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$request->aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $accion);
 
                 // $this->enviarNotificacionPorAprobacion($requerimientoPago,$request->sustento,$nombreCompletoUsuarioPropietarioDelDocumento,$nombreCompletoUsuarioRevisaAprueba,$montoTotal,$trazabilidad);
 
@@ -941,7 +1014,7 @@ class RevisarAprobarController extends Controller{
 
             if(($request->tieneRolConSiguienteAprobacion) === true || ($request->tieneRolConSiguienteAprobacion) === 'true'){ // si existe un siguiente flujo de aprobacion con el mismo rol
  
-                if($request->accion==1 || $request->accion ==5){ // si accion es revisar/aprobar, buscar siguientes aprobaciones con mismo rol de usuario para auto aprobación
+                if($accion==1 || $accion ==5){ // si accion es revisar/aprobar, buscar siguientes aprobaciones con mismo rol de usuario para auto aprobación
 
                     $allRol = Auth::user()->getAllRol();
                     $idRolUsuarioList = [];
@@ -999,7 +1072,7 @@ class RevisarAprobarController extends Controller{
                     }
                 }
             }
-            if ($request->accion > 0) {
+            if ($accion > 0) {
  
                 // $seNotificaraporEmail = true;
                 // TO-DO NOTIFICAR AL USUARIO QUE SU REQUERIMIENTO FUE APROBADO
@@ -1069,5 +1142,104 @@ class RevisarAprobarController extends Controller{
             DB::rollBack();
             return response()->json(['id_aprobacion' => -4, 'notificacion_por_emial' => false, 'mensaje' => 'Hubo un problema al guardar la respuesta. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
+    }
+
+    public function ejecutarAfectacionPresupuestoPorRegularizacion(){
+
+        $respuesta=[];
+        $idRequerimientosLogisiticos=[10538, 10539, 10540, 10652, 10653, 10669, 10670, 10672, 10680, 10685, 10721, 10727, 10737, 10742, 10760, 10805, 10822, 10823, 10824, 10838, 10851, 10853, 10878, 10903, 10918, 10932, 10938, 10939, 10940, 10945, 10946, 10947, 10950, 11015, 11021, 11115, 11116, 11118, 11121, 11141, 11151, 11166, 11249, 11251, 11267, 11306, 11316, 11319, 11320, 11321, 11326, 11354, 11355, 11368, 11375, 11376, 11378, 11379, 11381, 11388, 11390, 11391, 11394, 11395, 11396, 11399, 11409, 11410, 11418, 11425, 11426, 11440];
+            // $idRequerimientosPago= [7530,7590,7642,7643];
+            foreach ($idRequerimientosLogisiticos as $id) {
+              $respuesta[]=  $this->registrarAfectacionPorRegularizacion(1,1,$id);
+            }
+            // foreach ($idRequerimientosPago as $id) {
+            //     $respuesta[]=  $this->registrarAfectacionPorRegularizacion(1,11,$id);
+            // }
+            return  array_unique($respuesta);
+
+    }
+
+    public function registrarAfectacionPorRegularizacion($accion ,$idTipoDocumento, $idRequerimiento){
+
+        $mensaje='';
+        $afectacionPresupuesto=[];
+
+        if($accion ==1){
+            $mensaje='';
+
+            if($idTipoDocumento == 1){
+                $requerimiento = Requerimiento::find($idRequerimiento);
+                    if($this->tieneUnaExistenteAfectacionElRequerimiento(11,$idRequerimiento,$requerimiento->id_presupuesto_interno)==false){
+                        $afectacionPresupuesto = PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento,$idTipoDocumento);
+                        if($afectacionPresupuesto && $afectacionPresupuesto->id_presupuesto_interno >0 ){
+                            $mensaje.='presupuesto afectado';
+                    }else{    
+                        $mensaje.='ya fue afectado el presupuesto';
+                    }
+                }
+                
+            }else if($idTipoDocumento == 11){
+                $requerimientoPago = RequerimientoPago::find($idRequerimiento);
+                // dd($requerimientoPago);
+                // exit();
+                if($this->tieneUnaExistenteAfectacionElRequerimiento(11,$idRequerimiento,$requerimientoPago->id_presupuesto_interno)==false){
+                    $afectacionPresupuesto = PresupuestoInternoHistorialHelper::registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento,$idTipoDocumento);
+                    if($afectacionPresupuesto && $afectacionPresupuesto->id_presupuesto_interno >0 ){
+                        $mensaje.='presupuesto afectado';
+                    }else{
+                        $mensaje.='ya fue afectado el presupuesto';
+                    }
+                }
+            }
+
+        }elseif($accion ==2){
+            $mensaje='Documento rechazado';
+
+            // actualizar a true el campo de "documento_anulado" en la tabla historial_presupuesto_interno_saldo para determinar que registros ya no se atenderán
+            if($idTipoDocumento == 11){
+                // PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo(null,null,$idRequerimientoPago);
+                $requerimientoPago = RequerimientoPago::find($idRequerimiento);
+                if($requerimientoPago->id_presupuesto_interno>0){
+                    
+                    // Valida antes de registrar el retorno, solo si existe una afectacion, se buscaria la existencia del registro con el idRequerimiento, idPresupuesto, estadoAfectacion = 3
+                    if($this->tieneUnaExistenteAfectacionElRequerimiento(11,$requerimientoPago->id_requerimiento_pago,$requerimientoPago->id_presupuesto_interno)){
+                        
+                        if($requerimientoPago->mes_afectacion!=null){
+                            $mesRetorno=$requerimientoPago->mes_afectacion;
+                        }else{
+                            $mesRetorno= str_pad((Carbon::create($requerimientoPago->fecha_registro)->month), 2, "0", STR_PAD_LEFT);
+                        }
+    
+                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoPago($idRequerimiento, $mesRetorno);
+                        if($cantidadDeRetornoDePresupuesto >0){
+                            $mensaje.='se retorno el presupuesto';
+                        }
+                    }
+
+                }
+
+            }elseif($idTipoDocumento == 1){
+                // PresupuestoInternoHistorialHelper::actualizarRegistroPorDocumentoAnuladoEnHistorialSaldo($idRequerimiento,null,null);
+                $requerimientoLogistico = Requerimiento::find($idRequerimiento);
+                if($requerimientoLogistico->id_presupuesto_interno>0){
+
+                    // Valida antes de registrar el retorno, solo si existe una afectacion, se buscaria la existencia del registro con el idRequerimiento, idPresupuesto, estadoAfectacion = 3
+                    if($this->tieneUnaExistenteAfectacionElRequerimiento(1,$requerimientoLogistico->id_requerimiento, $requerimientoLogistico->id_presupuesto_interno)){
+
+                        if($requerimientoLogistico->mes_afectacion!=null){
+                            $mesRetorno=$requerimientoLogistico->mes_afectacion;
+                        }else{
+                            $mesRetorno= str_pad((Carbon::create($requerimientoLogistico->fecha_registro)->month), 2, "0", STR_PAD_LEFT);
+                        }
+                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoLogistico($idRequerimiento, $mesRetorno);
+                        if($cantidadDeRetornoDePresupuesto >0){
+                            $mensaje.='se retorno el presupuesto';
+                        }
+                    }
+                }
+            }
+        }
+
+        return $mensaje;
     }
 }

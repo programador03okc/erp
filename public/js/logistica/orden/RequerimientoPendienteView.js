@@ -654,6 +654,11 @@ class RequerimientoPendienteView {
                         let btnCrearOrdenCompra = '';
                         let btnGestionarEstadoRequerimiento = '';
                         let btnObservarRequerimientoLogistico = '<button type="button" class="btn btn-warning btn-xs handleClickObservarRequerimientoLogistico" name="btnObservarRequerimientoLogistico" title="Observar requerimiento" data-codigo-requerimiento="' + row.codigo + '" data-id-requerimiento="' + row.id_requerimiento + '"  data-observacion-logistica-sin-sustento="' + observacionLogisticaSinSustento + '"  ><i class="fas fa-exclamation-circle"></i></button>';
+
+                        if(row.id_presupuesto_interno >0){
+                            btnObservarRequerimientoLogistico=''; // TODO: aun no se completo el proceso para observar un requerimiento con ppto afectado.
+                        }
+                        
                         let btnCrearOrdenServicio = (array_accesos.find(element => element === 224) ? '<button type="button" class="btn btn-warning btn-xs handleClickCrearOrdenServicioPorRequerimiento" name="btnCrearOrdenServicioPorRequerimiento" title="Crear Orden de Servicio" data-id-requerimiento="' + row.id_requerimiento + '"  >OS</button>' : '');
                         let btnExportarExcel = (array_accesos.find(element => element === 221) ? '<button type="button" class="btn btn-default btn-xs handleClickSolicitudCotizacionExcel" name="btnSolicitudCotizacionExcel" title="Solicitud cotización excel" data-id-requerimiento="' + row.id_requerimiento + '" style="color:green;" ><i class="far fa-file-excel"></i></button>' : '');
                         let btnEnviarAListaAtendidos = '<button type="button" class="btn btn-default btn-xs handleClickEnviarAListaAtendidos" style="color:red;" name="btnEnviarAListaAtendidos" title="Enviar a lista de atendidos" data-id-requerimiento="' + row.id_requerimiento + '" data-codigo-requerimiento="' + row.codigo + '"><i class="fas fa-arrow-right fa-xs"></i></button>';

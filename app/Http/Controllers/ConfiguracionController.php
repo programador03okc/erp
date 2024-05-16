@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
 use App\Helpers\StringHelper;
 use App\Models\administracion\AdmGrupo;
 use App\Models\Administracion\Aprobacion;
@@ -2742,6 +2743,21 @@ class ConfiguracionController extends Controller{
                     $mensaje='Se anulo el requerimiento logistico '.$requerimientoLogistico->codigo;
                     $codigo=$requerimientoLogistico->codigo;
                     $afectado++;
+
+                    if($requerimientoLogistico->id_presupuesto_interno>0){
+
+                        if($requerimientoLogistico->mes_afectacion!=null){
+                            $mesRetorno=$requerimientoLogistico->mes_afectacion;
+                        }else{
+                            $mesRetorno= str_pad((Carbon::create($requerimientoLogistico->fecha_registro)->month), 2, "0", STR_PAD_LEFT);
+                        }
+
+                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoLogistico($requerimientoLogistico->id_requerimiento, $mesRetorno);
+                        if($cantidadDeRetornoDePresupuesto >0){
+                            $mensaje.='. Se retorno de presupuesto';
+                        }
+
+                    }
                 }elseif($tipoDocumento==11){ //requerimiento de pago
                     $requerimientoPago = RequerimientoPago::find($idRequerimiento);
                     $requerimientoPago->id_estado=7;
@@ -2749,6 +2765,21 @@ class ConfiguracionController extends Controller{
                     $mensaje='Se anulo el requerimiento de pago '.$requerimientoPago->codigo;
                     $codigo=$requerimientoPago->codigo;
                     $afectado++;
+
+                    
+                    if($requerimientoPago->id_presupuesto_interno>0){
+                        
+                        if($requerimientoPago->mes_afectacion!=null){
+                            $mesRetorno=$requerimientoPago->mes_afectacion;
+                        }else{
+                            $mesRetorno= str_pad((Carbon::create($requerimientoPago->fecha_registro)->month), 2, "0", STR_PAD_LEFT);
+                        }
+                        $cantidadDeRetornoDePresupuesto= PresupuestoInternoHistorialHelper::registrarRetornoDePresupuestoPorRequerimientoPago($requerimientoPago->id_requerimiento_pago,$mesRetorno);
+                        if($cantidadDeRetornoDePresupuesto >0){
+                            $mensaje.='. Se retorno de presupuesto';
+                        }
+
+                    }
                     
                 }
                 

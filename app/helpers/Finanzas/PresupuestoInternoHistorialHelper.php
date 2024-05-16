@@ -4,6 +4,7 @@ namespace App\Helpers\Finanzas;
 
 use App\Models\Almacen\DetalleRequerimiento;
 use App\Models\Almacen\Requerimiento;
+use App\Models\Almacen\TipoRequerimiento;
 use App\Models\Finanzas\HistorialPresupuestoInternoSaldo;
 use App\Models\Finanzas\PresupuestoInternoDetalle;
 use App\Models\Logistica\Orden;
@@ -22,45 +23,125 @@ class PresupuestoInternoHistorialHelper
 
     public static function registrarEstadoGastoAprobadoDeRequerimiento($idRequerimiento, $idTipoDocumento)
     {
+        $presupuestoInternoDetalle=[];
+        $mesAfectacionList =[];
+
         if ($idTipoDocumento == 1) {
             $requerimientoLogistico = Requerimiento::find($idRequerimiento);
-            if ($requerimientoLogistico->id_presupuesto_interno > 0) {
-                $detalle = DetalleRequerimiento::where([['id_requerimiento', '=', $idRequerimiento], ['estado', '!=', 7]])->get();
-                foreach ($detalle as $key => $item) {
-                    if($requerimientoLogistico->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
-                        if($requerimientoLogistico->tipo_cambio !=null){
-                            $precioUnitario = floatval($requerimientoLogistico->tipo_cambio) * floatval($item['precio_unitario']);
+            if($requerimientoLogistico->id_presupuesto_interno >0){
+                if($requerimientoLogistico->mes_afectacion!=null){
+                    $mesAfectacionList[]=$requerimientoLogistico->mes_afectacion;
+                }
+                if(count($mesAfectacionList)==1){ // solo tomar uno el primero del array, la orden deberia solo tener un requerimiento para tomar su campo de mes afectacion, si tiene mas requerimientos vinculados no considerar
+                    $fechaAfectacion= Carbon::now()->month($mesAfectacionList[0])->format('d-m-Y');
+                }else{
+                    $fechaAfectacion= Carbon::now()->format('d-m-Y');
+                }
+    
+                if ($requerimientoLogistico->id_presupuesto_interno > 0) {
+                    $detalle = DetalleRequerimiento::where([['id_requerimiento', '=', $idRequerimiento], ['estado', '!=', 7]])->get();
+                    
+                    $saldoPostAfecto= PresupuestoInternoHistorialHelper::validarSaldoAntesDeAfectarPresupuestoPorRequerimientoLogisticoSoloConRequerimiento(1,$idRequerimiento, $detalle, 'R', $fechaAfectacion);
+                    
+                    foreach ($detalle as $key => $item) {
+                        if($requerimientoLogistico->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
+                            if($requerimientoLogistico->tipo_cambio !=null){
+                                $precioUnitario = floatval($requerimientoLogistico->tipo_cambio) * floatval($item['precio_unitario']);
+                            }else{
+                                $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoLogistico->fecha_requerimiento,floatval($item['precio_unitario']));
+                            }
                         }else{
-                            $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoLogistico->fecha_requerimiento,floatval($item['precio_unitario']));
+                            $precioUnitario = floatval($item['precio_unitario']);
                         }
-                    }else{
-                        $precioUnitario = floatval($item['precio_unitario']);
-                    }
-                    $importe =floatval($item->cantidad) * floatval($precioUnitario) * floatval(1.18); // incluir IGV
-                    $registroExistente = HistorialPresupuestoInternoSaldo::where([['id_requerimiento', $idRequerimiento], ['id_requerimiento_detalle', $item->id_detalle_requerimiento], ['estado', 1]])->get();
-                    if (count($registroExistente) > 0) { // actualizar
-                        PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoLogistico($requerimientoLogistico->id_presupuesto_interno, $item->id_partida_pi, $importe, 1, $item->id_requerimiento, $item->id_detalle_requerimiento, $requerimientoLogistico->fecha_requerimiento,null,null,null,'Actualizar afectación regular');
-                    } else { //crear
-                        PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoLogistico($requerimientoLogistico->id_presupuesto_interno, $item->id_partida_pi, $importe, 1, $item->id_requerimiento, $item->id_detalle_requerimiento, $requerimientoLogistico->fecha_requerimiento,null,null,null,'Registrar afectación regular');
-                    }
-                }
-            }
-        } else if ($idTipoDocumento == 11) {
-            $requerimientoPago = RequerimientoPago::find($idRequerimiento);
-            if ($requerimientoPago->id_presupuesto_interno > 0) {
-                $detalle = RequerimientoPagoDetalle::where([['id_requerimiento_pago', '=', $idRequerimiento], ['id_estado', '!=', 7]])->get();
-                foreach ($detalle as $key => $item) {
-                    $importe = $item->cantidad * $item->precio_unitario;
-                    $registroExistente = HistorialPresupuestoInternoSaldo::where([['id_requerimiento_pago', $idRequerimiento], ['id_requerimiento_pago_detalle', $item->id_requerimiento_pago_detalle], ['estado', 1]])->get();
+                        $importe =floatval($item->cantidad) * floatval($precioUnitario);
 
-                    if (count($registroExistente) > 0) { // actualizar
-                        PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoPago($requerimientoPago->id_presupuesto_interno, $item->id_partida_pi, $importe, 1, $item->id_requerimiento_pago, $item->id_requerimiento_pago_detalle, $requerimientoPago->fecha_registro,null, 'Actualizar afectación regular');
-                    } else { // crear
-                        PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoPago($requerimientoPago->id_presupuesto_interno, $item->id_partida_pi, $importe, 1, $item->id_requerimiento_pago, $item->id_requerimiento_pago_detalle, $requerimientoPago->fecha_registro,null ,'Registrar afectación regular');
+                        if(floatval($requerimientoLogistico->monto_igv)>0){
+                            $importe =floatval($importe) * 1.18;
+                        }
+
+                        $registroExistente = HistorialPresupuestoInternoSaldo::where([['id_requerimiento', $idRequerimiento], ['id_requerimiento_detalle', $item->id_detalle_requerimiento], ['estado', 1]])->get();
+                        if (count($registroExistente) > 0) { // actualizar
+                            PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoLogistico($requerimientoLogistico->id_presupuesto_interno, $item->id_partida_pi, $importe, 3, $item->id_requerimiento, $item->id_detalle_requerimiento, $requerimientoLogistico->fecha_requerimiento,null,null,null,'Actualizar afectación regular'.($saldoPostAfecto<0?'Generó saldo negativo':''));
+                        } else { //crear
+                            PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoLogistico($requerimientoLogistico->id_presupuesto_interno, $item->id_partida_pi, $importe, 3, $item->id_requerimiento, $item->id_detalle_requerimiento, $requerimientoLogistico->fecha_requerimiento,null,null,null,'Registrar afectación regular'.($saldoPostAfecto<0?'Generó saldo negativo':''));
+                        }
+
+                        $presupuestoInternoDetalle =   PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                            $requerimientoLogistico->id_presupuesto_interno,
+                            $item->id_partida_pi,
+                            $fechaAfectacion,
+                            $importe,
+                            'R'
+                        );
                     }
+
+                     
+                    $requerimientoLogistico->mes_afectacion = date('m', strtotime($fechaAfectacion));
+                    $requerimientoLogistico->save();
                 }
             }
+
+        } else if ($idTipoDocumento == 11) {
+
+            $requerimientoPago = RequerimientoPago::find($idRequerimiento);
+
+            if($requerimientoPago->id_presupuesto_interno >0){
+                
+                if($requerimientoPago->mes_afectacion!=null){
+                    $mesAfectacionList[]=$requerimientoPago->mes_afectacion;
+                }
+                if(count($mesAfectacionList)==1){ // solo tomar uno el primero del array, la orden deberia solo tener un requerimiento para tomar su campo de mes afectacion, si tiene mas requerimientos vinculados no considerar
+                    $fechaAfectacion= Carbon::now()->month($mesAfectacionList[0])->format('d-m-Y');
+                }else{
+                    $fechaAfectacion= Carbon::now()->format('d-m-Y');
+                }
+    
+                if ($requerimientoPago->id_presupuesto_interno > 0) {
+                    $detalle = RequerimientoPagoDetalle::where([['id_requerimiento_pago', '=', $idRequerimiento], ['id_estado', '!=', 7]])->get();
+    
+                    $saldoPostAfecto= PresupuestoInternoHistorialHelper::validarSaldoAntesDeAfectarPresupuestoPorRequerimientoLogisticoSoloConRequerimiento(11,$idRequerimiento, $detalle, 'R', $fechaAfectacion);
+    
+                    foreach ($detalle as $key => $item) {
+
+
+                        if($requerimientoPago->id_moneda == 2) { // Si la moneda es dolares -> convertir a soles usando el tipo de cambio venta, si no existe el tiempo de cambio devolvera el precio unitario original.
+                            if($requerimientoPago->tipo_cambio !=null){
+                                $precioUnitario = floatval($requerimientoPago->tipo_cambio) * floatval($item['precio_unitario']);
+                            }else{
+                                $precioUnitario = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimientoPago->fecha_registro,floatval($item['precio_unitario']));
+                            }
+                        }else{
+                            $precioUnitario = floatval($item['precio_unitario']);
+                        }
+
+                        $importe = floatval($item->cantidad) * floatval($precioUnitario);
+                        $registroExistente = HistorialPresupuestoInternoSaldo::where([['id_requerimiento_pago', $idRequerimiento], ['id_requerimiento_pago_detalle', $item->id_requerimiento_pago_detalle], ['estado', 1]])->get();
+    
+                        if (count($registroExistente) > 0) { // actualizar
+                            PresupuestoInternoHistorialHelper::actualizarHistorialSaldoParaDetalleRequerimientoPago($requerimientoPago->id_presupuesto_interno, $item->id_partida_pi, $importe, 1, $item->id_requerimiento_pago, $item->id_requerimiento_pago_detalle, $requerimientoPago->fecha_registro,null, 'Actualizar afectación regular'.($saldoPostAfecto<0?'Generó saldo negativo':''));
+                        } else { // crear
+                            PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoPago($requerimientoPago->id_presupuesto_interno, $item->id_partida_pi, $importe, 1, $item->id_requerimiento_pago, $item->id_requerimiento_pago_detalle, $requerimientoPago->fecha_registro,null ,'Registrar afectación regular'.($saldoPostAfecto<0?'Generó saldo negativo':''));
+                        }
+    
+    
+                        $presupuestoInternoDetalle =   PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                            $requerimientoPago->id_presupuesto_interno,
+                            $item->id_partida_pi,
+                            $fechaAfectacion,
+                            $importe,
+                            'R'
+                        );
+    
+                    }
+
+                    $requerimientoPago->mes_afectacion = date('m', strtotime($fechaAfectacion));
+                    $requerimientoPago->save();
+                }
+            }
+
         }
+
+        return $presupuestoInternoDetalle;
     }
 
 
@@ -85,6 +166,37 @@ class PresupuestoInternoHistorialHelper
                 }
             }
         }
+        return $saldoPostAfecto;
+    }
+    public static function validarSaldoAntesDeAfectarPresupuestoPorRequerimientoLogisticoSoloConRequerimiento($tipoRequerimiento,$idRequerimiento, $detalleItemList, $operacion, $fechaAfectacion)
+    {
+        $saldoPostAfecto = 0;
+
+        if($tipoRequerimiento==1){
+            $requerimiento= Requerimiento::find($idRequerimiento);
+        }elseif($tipoRequerimiento==11){
+            $requerimiento= RequerimientoPago::find($idRequerimiento);
+        }
+
+        if($requerimiento){
+            foreach ($detalleItemList as $det) {
+                if ($det->id_detalle_requerimiento > 0) {
+    
+                    if ($det->id_partida_pi > 0) {
+               
+                        $saldoPostAfecto =   PresupuestoInternoHistorialHelper::obtenerSaldoPostAfectoDePresupuesto(
+                            $requerimiento->id_presupuesto_interno,
+                            $det->id_partida_pi,
+                            $fechaAfectacion,
+                            $det->subtotal,
+                            $operacion
+                        );
+                    }
+                }
+            }
+        }
+
+       
         return $saldoPostAfecto;
     }
 
@@ -127,17 +239,6 @@ class PresupuestoInternoHistorialHelper
                 // Debugbar::info($detOrd->detalleRequerimiento->id_partida_pi);
 
                 if ($detOrd->detalleRequerimiento->id_partida_pi > 0) {
-                    // Debugbar::info($detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
-                    // $detOrd->detalleRequerimiento->id_partida_pi,
-                    // $detOrd->importe_item_para_presupuesto,
-                    // 3,
-                    // $detOrd->detalleRequerimiento->requerimiento->id_requerimiento,
-                    // $detOrd->id_detalle_requerimiento,
-                    // $fechaAfectacion,
-                    // $idOrden,
-                    // $detOrd->id_detalle_orden,
-                    // $idPago,
-                    // $descripcion);
                     
                         PresupuestoInternoHistorialHelper::registrarHistorialSaldoParaDetalleRequerimientoLogistico(
                             $detOrd->detalleRequerimiento->requerimiento->id_presupuesto_interno,
@@ -168,9 +269,7 @@ class PresupuestoInternoHistorialHelper
         return $presupuestoInternoDetalle;
     }
 
-
-
-
+    
 
     public static function registrarHistorialSaldoParaDetalleRequerimientoLogistico($idPresupuesto, $idPartida, $importe, $estado, $idRequerimiento, $idDetalleRequerimiento, $fecha, $idOrden = null, $idDetalleOrden = null, $idPago = null, $descripcion =null)
     {
@@ -646,6 +745,62 @@ class PresupuestoInternoHistorialHelper
                     $cantidadItemsConRetornoDePresupuesto ++;
                     PresupuestoInternoHistorialHelper::afectarPresupuesto(
                         $requerimientoPago->id_presupuesto_interno,
+                        $fila->id_partida_pi,
+                        $mes,
+                        $subtotalMoneda,
+                        'S'
+                    );
+                }
+            }
+        }
+
+        return $cantidadItemsConRetornoDePresupuesto;
+    }
+    public static function registrarRetornoDePresupuestoPorRequerimientoLogistico($idRequerimientoLogistico,$mes)
+    {
+        $cantidadItemsConRetornoDePresupuesto =0;
+        $requerimiento = Requerimiento::find($idRequerimientoLogistico);
+        if($requerimiento->id_presupuesto_interno >0){
+            $requerimientoDetalle = DetalleRequerimiento::where([['estado','!=',7],['id_requerimiento','=',$requerimiento->id_requerimiento]])->get();
+            foreach ($requerimientoDetalle as $fila) {
+                if ($fila->id_partida_pi > 0) {
+                    $nuevoHistorial = new HistorialPresupuestoInternoSaldo();
+                    $nuevoHistorial->id_presupuesto_interno = $requerimiento->id_presupuesto_interno;
+                    $nuevoHistorial->id_partida = $fila->id_partida_pi;
+                    $nuevoHistorial->id_requerimiento = $fila->id_requerimiento;
+                    $nuevoHistorial->id_requerimiento_detalle = $fila->id_requerimiento_detalle;
+                    $nuevoHistorial->id_orden = null;
+                    $nuevoHistorial->id_orden_detalle = null;
+                    $nuevoHistorial->id_requerimiento_pago =null;
+                    $nuevoHistorial->id_requerimiento_pago_detalle = null;
+                    $nuevoHistorial->tipo = 'RETORNO';
+                    $nuevoHistorial->descripcion = 'Retorno de presupuesto';
+                    $nuevoHistorial->operacion = 'S';
+                    if($requerimiento->id_moneda ==2){
+                        
+                        if($requerimiento->tipo_cambio!=null){
+                            $subtotalMoneda =  floatval(number_format(floatval($requerimiento->tipo_cambio) * floatval($fila->subtotal), 2, '.', ''));
+                        }else{
+                            $subtotalMoneda = PresupuestoInternoHistorialHelper::obtenerTipoCambioASoles($requerimiento->fecha_registro,floatval($fila->subtotal));
+                        }
+
+                    }else{
+                        $subtotalMoneda=floatval($fila->subtotal);
+                    }
+
+                    if(floatval($requerimiento->monto_igv)>0){
+                        $subtotalMoneda =floatval($subtotalMoneda) * 1.18;
+                    }
+
+                    $nuevoHistorial->importe = $subtotalMoneda;
+                    $nuevoHistorial->mes = $mes;
+                    $nuevoHistorial->fecha_registro = new Carbon();
+                    $nuevoHistorial->estado = 3;
+                    $nuevoHistorial->id_pago = null;
+                    $nuevoHistorial->save();
+                    $cantidadItemsConRetornoDePresupuesto ++;
+                    PresupuestoInternoHistorialHelper::afectarPresupuesto(
+                        $requerimiento->id_presupuesto_interno,
                         $fila->id_partida_pi,
                         $mes,
                         $subtotalMoneda,

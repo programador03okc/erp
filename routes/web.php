@@ -543,6 +543,8 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('documentos-aprobados', [RevisarAprobarController::class, 'mostrarListaDeDocumentosAprobados'])->name('documentos-aprobados');
 				Route::get('imprimir-requerimiento-pago-pdf/{id}', [RequerimientoPagoController::class, 'imprimirRequerimientoPagoPdf'])->name('imprimir-requerimiento-pago-pdf');
 				Route::post('guardar-respuesta', [RevisarAprobarController::class, 'guardarRespuesta'])->name('guardar-respuesta');
+				Route::get('ejecutar-afectacion-por-regularizacion', [RevisarAprobarController::class, 'ejecutarAfectacionPresupuestoPorRegularizacion'])->name('ejecutar-afectacion-por-regularizacion');
+				Route::get('registrar-afectacion-por-regularizacion/{accion}/{tipo_documento}/{id_requerimiento}', [RevisarAprobarController::class, 'registrarAfectacionPorRegularizacion'])->name('registrar-afectacion-por-regularizacion');
 				Route::get('mostrar-requerimiento-pago/{idRequerimientoPago}', [RequerimientoPagoController::class, 'mostrarRequerimientoPago'])->name('mostrar-requerimiento-pago');
 				Route::get('listar-categoria-adjunto', [ContabilidadController::class, 'listaTipoDocumentos'])->name('listar-categoria-adjunto');
 				Route::get('listar-adjuntos-requerimiento-pago-cabecera/{idRequerimentoPago}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoCabecera'])->name('listar-adjuntos-requerimiento-pago-cabecera');

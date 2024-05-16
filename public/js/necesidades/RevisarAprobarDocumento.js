@@ -268,6 +268,9 @@ class RevisarAprobarDocumentoView {
                         let btnVerEnModal = '<button type="button" role="button" class="btn btn-flat btn-xs btn-info handleClickVerEnVistaRapidaDocumento" name="btnVerEnVistaRapidaDocumento" ' + dataset + ' title="Vista rápida"><i class="fas fa-eye"></i></button>';
                         let btnAprobar = '<button type="button" role="button" class="btn btn-flat btn-xs btn-success handleClickAprobarDocumento" name="btnAprobarDocumento" ' + dataset + ' title="Aprobar"><i class="fas fa-check"></i></button>';
                         let btnObservar = '<button type="button" role="button" class="btn btn-flat btn-xs btn-warning handleClickObservarDocumento" name="btnObservarDocumento" ' + dataset + ' title="Observar"><i class="fas fa-exclamation-circle"></i></button>';
+                        if(row.id_presupuesto_interno>0){
+                            btnObservar=''; // TODO: aun no se completo el proceso para observar un requerimiento con ppto afectado.
+                        }
                         let btnAnular = '<button type="button" role="button" class="btn btn-flat btn-xs btn-danger handleClickRechazarDocumento" name="btnRechazarDocumento" ' + dataset + ' title="Rechazar"><i class="fas fa-ban"></i></button>';
 
                         return containerOpenBrackets + btnVerEnModal + btnAprobar + btnObservar + btnAnular + containerCloseBrackets;
@@ -409,6 +412,9 @@ class RevisarAprobarDocumentoView {
                         let containerCloseBrackets = '</div></center>';
                         let btnVerEnModal = '<button type="button" role="button" class="btn btn-flat btn-xs btn-info handleClickVerEnVistaRapidaDocumento" name="btnVerEnVistaRapidaDocumento" ' + dataset + ' title="Vista rápida"><i class="fas fa-eye"></i></button>';
                         let btnObservar = '<button type="button" role="button" class="btn btn-flat btn-xs btn-warning handleClickObservarDocumento" name="btnObservarDocumento" ' + dataset + ' title="Observar"><i class="fas fa-exclamation-circle"></i></button>';
+                        if(row.id_presupuesto_interno>0){
+                            btnObservar=''; // TODO: aun no se completo el proceso para observar un requerimiento con ppto afectado.
+                        }
                         let btnAnular = '<button type="button" role="button" class="btn btn-flat btn-xs btn-danger handleClickRechazarDocumento" name="btnRechazarDocumento" ' + dataset + ' title="Rechazar"><i class="fas fa-ban"></i></button>';
 
                         return containerOpenBrackets + btnVerEnModal + (row.id_estado == 2 && (row.pago_autorizado == false && row.pagado == false) ? (btnObservar + btnAnular) : '') + containerCloseBrackets;
@@ -1426,6 +1432,7 @@ class RevisarAprobarDocumentoView {
                 }
 
                 // si la cantidad d partidas sin presupuesto es mayor a cero, se emite alerta y se establece la accionGuardarrespuesta como falso
+                // console.log(cantidadPartidasSinPresupuesto);
                 if (cantidadPartidasSinPresupuesto > 0) {
                     accionGuardarRespuesta = false;
                     Lobibox.alert('warning', {
@@ -1455,6 +1462,7 @@ class RevisarAprobarDocumentoView {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             this.guardarRespuesta(payload).then((res) => {
+                                
                                 console.log(res);
                                 if (res.id_aprobacion > 0) {
                                     Lobibox.notify('success', {

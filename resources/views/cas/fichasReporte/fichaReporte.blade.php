@@ -63,6 +63,15 @@
                                         <tfoot></tfoot>
                                     </table>
                                 </div>
+                                <div class="col-md-12">
+                                    <div style="display:flex;">
+                                        <select class="form-control" name="selectPeriodoIncidencia" onChange="generarFiltrosIncidencias(event);" style="width: 100px;">
+                                            @foreach ($periodos as $periodo)
+                                            <option value="{{$periodo->id_periodo}}" @if (session('clPeriodoIncidencia')==$periodo->descripcion) selected @else '' @endif>{{$periodo->descripcion}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div id="devoluciones" class="tab-pane fade ">
@@ -89,6 +98,17 @@
                                         <tbody></tbody>
                                     </table>
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div style="display:flex;">
+                                        <select class="form-control" name="selectPeriodoDevoluciones" onChange="generarFiltrosDevoluciones(event);" style="width: 100px;">
+                                            @foreach ($periodos as $periodo)
+                                            <option value="{{$periodo->id_periodo}}" @if (session('clPeriodoDevolucion')==$periodo->descripcion) selected @else '' @endif>{{$periodo->descripcion}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>

@@ -7,6 +7,7 @@ use App\Exports\IncidenciasConHistorialExport;
 use App\Exports\IncidenciasExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Administracion\Periodo;
 use App\Models\Cas\Incidencia;
 use App\Models\Cas\IncidenciaProducto;
 use App\Models\Cas\IncidenciaReporte;
@@ -27,10 +28,12 @@ class FichaReporteController extends Controller
 {
     function view_ficha_reporte()
     {
+        $periodos = Periodo::mostrar();
+
         $usuarios = Usuario::join('configuracion.usuario_rol', 'usuario_rol.id_usuario', '=', 'sis_usua.id_usuario')
             ->where([['sis_usua.estado', '=', 1], ['usuario_rol.id_rol', '=', 20], ['usuario_rol.estado', '=', 1]])->get(); //20 CAS
 
-        return view('cas.fichasReporte.fichaReporte', compact('usuarios'));
+        return view('cas.fichasReporte.fichaReporte', compact('usuarios','periodos'));
     }
 
     function incidencias()
@@ -75,8 +78,23 @@ class FichaReporteController extends Controller
         return $lista;
     }
     public function listarIncidencias(Request $request)
-    {
+    {   
+
         $query = $this->incidencias()->orderBy('fecha_reporte','desc')->orderBy('id_incidencia','desc');
+        if (session()->has('clPeriodoIncidencia')) {
+            $anio = session()->get('clPeriodoIncidencia');
+            if($anio!=''){
+                $fechaInicio = Carbon::create($anio, 1, 1)->format('d-m-Y');
+                $fechaFin = Carbon::create($anio, 12, 31)->format('d-m-Y');
+                $query = $query->whereBetween('incidencia.fecha_registro', [$fechaInicio,$fechaFin]);
+            }
+        }else{
+            $anioActual = Periodo::obtenerDescripciónPeriodoActual();
+
+            $fechaInicio = Carbon::create($anioActual, 1, 1)->format('d-m-Y');
+            $fechaFin = Carbon::create($anioActual, 12, 31)->format('d-m-Y');
+            $query = $query->whereBetween('incidencia.fecha_registro', [$fechaInicio,$fechaFin]);
+        }
         return datatables($query)->toJson();
     }
 
@@ -620,5 +638,16 @@ class FichaReporteController extends Controller
         }
         // return $data;
         return Excel::download(new HorasAtencionExport(json_encode($data), $fecha_menor, $fecha_mayor, $dias), 'Reporte-horas-incidencia.xlsx');
+    }
+
+
+    public function generarFiltrosIncidencias(Request $request)
+    {
+        $año =$request->anio;
+        if($año!=null){
+            $request->session()->put('clPeriodoIncidencia', $año);
+        }
+
+        return response()->json('filtros', 200);
     }
 }

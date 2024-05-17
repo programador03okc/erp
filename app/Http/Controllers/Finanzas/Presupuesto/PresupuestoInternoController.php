@@ -1374,7 +1374,7 @@ class PresupuestoInternoController extends Controller
                         ['alm_req.id_moneda',1]
                     ])
          
-                    ->whereIn('alm_req.estado',[1,2])
+                    ->whereIn('alm_req.estado',[1])
                     ->whereIn('alm_req.mes_afectacion',[null,date("m")])
                     ->groupBy('alm_req.id_requerimiento','alm_req.monto_igv')
                     ->get();
@@ -1387,7 +1387,7 @@ class PresupuestoInternoController extends Controller
                         ['alm_req.id_moneda',2]
                     ])
                     ->whereIn('alm_req.mes_afectacion',[null,date("m")])
-                    ->whereIn('alm_req.estado',[1,2])
+                    ->whereIn('alm_req.estado',[1])
                     ->get();
                     $totalRequerimientoLogisticoPorConsumirHastaFaseAprobacionTipoCambio=[];
 
@@ -1429,7 +1429,7 @@ class PresupuestoInternoController extends Controller
 
                     ])
                     ->whereIn('requerimiento_pago.mes_afectacion',[null,date("m")])
-                    ->whereIn('requerimiento_pago.id_estado',[1,2])
+                    ->whereIn('requerimiento_pago.id_estado',[1])
                     ->get();
 
 

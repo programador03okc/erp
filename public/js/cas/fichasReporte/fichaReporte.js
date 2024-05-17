@@ -58,6 +58,7 @@ function listarIncidencias() {
         buttons: [buttonDescargarExcelIncidencias,buttonDescargarExcelIncidenciasConHistorial,filtros,reporte_atencion],
         language: vardataTables[0],
         serverSide: true,
+        destroy: true,
         ajax: {
             url: "listarIncidencias",
             type: "POST",
@@ -333,3 +334,25 @@ $('#reporte-excel-filtros').click(function (e) {
     $('body').append(form);
     form.submit();
 });
+
+
+
+
+
+
+function generarFiltrosIncidencias(event) {
+    $.ajax({
+        type: "POST",
+        url : "generar-filtros-incidencias",
+        data: {'anio':event.currentTarget.options[event.currentTarget.selectedIndex].text},
+        dataType: "JSON",
+        success: function (response) {
+            listarIncidencias();
+        }
+    }).fail( function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+
+}

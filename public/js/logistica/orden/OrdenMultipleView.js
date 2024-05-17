@@ -693,7 +693,7 @@ class OrdenView {
                 selectElement.remove(i);
             }
         }
-        console.log(data);
+        // console.log(data);
         data.forEach(element => {
             let option = document.createElement("option");
 
@@ -726,7 +726,7 @@ class OrdenView {
             }
         }
 
-        console.log(data);
+        // console.log(data);
         data.forEach(element => {
             let option = document.createElement("option");
 
@@ -1274,7 +1274,7 @@ class OrdenView {
 
 
         // crear un array de objetos de ordenes ( el total por proveedor)
-        console.log(proveedorDetReqNuevaOrden);
+        // console.log(proveedorDetReqNuevaOrden);
         let montoNetoOrden =0;
         let montoIgvOrden =0;
         let montoIcbperOrden =0;
@@ -1370,6 +1370,8 @@ class OrdenView {
                 'nombre_personal_autorizado_2': '',
                 'es_compra_local': false,
                 'observacion': cabeceraRequerimientoObject.observacion,
+                'incluye_igv': true,
+                'incluye_icbper': false,
                 'id_estado_orden': '',
                 'descripcion_estado_orden': '',
                 'monto_neto':montoNetoOrden,
@@ -2125,10 +2127,40 @@ class OrdenView {
     }
 
     updateIncluyeIGV(obj){
-        console.log(obj.checked);
+        (this.ordenArray).forEach((orden,key)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['incluye_igv']= obj.checked;
+                if(obj.checked ==false){
+                    this.ordenArray[key]['monto_igv']= 0;
+                }else{
+                    this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
+                    this.ordenArray[key]['monto_total']= parseFloat(this.ordenArray[key]['monto_neto'])+ (parseFloat(this.ordenArray[key]['monto_neto'])*0.18);
+                    
+                }
+             }
+        });
+
+
+ 
+
+
+        this.calcularTotales();
     }
 
     updateIncluyeICBPER(obj){
-        console.log(obj.checked);
+        // (this.ordenArray).forEach((orden,key)=>{
+        //     if(orden.id_orden==this.idOrdenSeleccionada){
+
+        //         $incluyeIGV = document.
+        //         this.ordenArray[key]['incluye_icbper']= obj.checked;
+        //         if(obj.checked ==false){
+        //             this.ordenArray[key]['monto_igv']= 0;
+        //         }else{
+        //             this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
+        //             this.ordenArray[key]['monto_total']= parseFloat(this.ordenArray[key]['monto_neto'])+ (parseFloat(this.ordenArray[key]['monto_neto'])*0.18);
+                    
+        //         }
+        //      }
+        // });
     }
 }

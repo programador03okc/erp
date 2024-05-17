@@ -1279,6 +1279,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::group(['as' => 'fichas.', 'prefix' => 'fichas'], function () {
 				Route::get('index', [FichaReporteController::class, 'view_ficha_reporte'])->name('index');
 				Route::post('listarIncidencias', [FichaReporteController::class, 'listarIncidencias'])->name('listar-incidencias');
+				Route::post('generar-filtros-incidencias', [FichaReporteController::class, 'generarFiltrosIncidencias'])->name('generar-filtros-incidencias');
 				Route::post('guardarFichaReporte', [FichaReporteController::class, 'guardarFichaReporte'])->name('guardar-ficha-reporte');
 				Route::post('actualizarFichaReporte', [FichaReporteController::class, 'actualizarFichaReporte'])->name('actualizar-ficha-reporte');
 				Route::get('anularFichaReporte/{id}', [FichaReporteController::class, 'anularFichaReporte'])->name('anular-ficha-reporte');
@@ -1289,8 +1290,9 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('imprimirFichaReporte/{id}', [FichaReporteController::class, 'imprimirFichaReporte'])->name('imprimir-ficha-reporte');
 				Route::get('incidenciasExcel', [FichaReporteController::class, 'incidenciasExcel'])->name('incidenciasExcel');
 				Route::get('incidenciasExcelConHistorial', [FichaReporteController::class, 'incidenciasExcelConHistorial'])->name('incidenciasExcelConHistorial');
-
+				
 				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones'])->name('listar-devoluciones');
+				Route::post('generar-filtros-devoluciones', [DevolucionController::class, 'generarFiltrosDevoluciones'])->name('generar-filtros-devoluciones');
 				Route::post('guardarFichaTecnica', [DevolucionController::class, 'guardarFichaTecnica'])->name('guardar-ficha-tecnica');
 				Route::get('verFichasTecnicasAdjuntas/{id}', [DevolucionController::class, 'verFichasTecnicasAdjuntas'])->name('ver-fichas-tecnicas');
 				Route::post('conformidadDevolucion', [DevolucionController::class, 'conformidadDevolucion'])->name('conformidad-devolucion');

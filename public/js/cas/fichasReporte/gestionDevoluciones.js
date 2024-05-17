@@ -13,6 +13,7 @@ function listarDevoluciones() {
         buttons: botones,
         language: vardataTables[0],
         serverSide: true,
+        destroy: true,
         ajax: 'listarDevoluciones',
         // ajax: {
         //     url: "listarDevoluciones",
@@ -293,4 +294,22 @@ function abrirDevolucion(id_devolucion) {
     // location.assign("/logistica/almacen/customizacion/hoja-transformacion/index");
     var win = window.open("/cas/garantias/devolucionCas/index", '_blank');
     win.focus();
+}
+
+
+function generarFiltrosDevoluciones(event) {
+    $.ajax({
+        type: "POST",
+        url : "generar-filtros-devoluciones",
+        data: {'anio':event.currentTarget.options[event.currentTarget.selectedIndex].text},
+        dataType: "JSON",
+        success: function (response) {
+            listarDevoluciones();
+        }
+    }).fail( function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+    });
+
 }

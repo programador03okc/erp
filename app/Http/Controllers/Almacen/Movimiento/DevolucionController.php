@@ -7,6 +7,7 @@ use App\Http\Controllers\AlmacenController as GenericoAlmacenController;
 use App\Http\Controllers\Tesoreria\CierreAperturaController as CierreAperturaController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Administracion\Periodo;
 use App\Models\almacen\Devolucion;
 use App\Models\almacen\DevolucionDetalle;
 use App\Models\Almacen\Reserva;
@@ -101,7 +102,22 @@ class DevolucionController extends Controller
             })
             // ->leftJoin('logistica.log_prove', 'log_prove.id_contribuyente', '=', 'com_cliente.id_contribuyente')
             ->join('cas.devolucion_estado', 'devolucion_estado.id_estado', '=', 'devolucion.estado')
-            ->where('devolucion.estado', '!=', 7)->get();
+            ->where('devolucion.estado', '!=', 7);
+
+            if (session()->has('clPeriodoDevolucion')) {
+                $anio = session()->get('clPeriodoDevolucion');
+                if($anio!=''){
+                    $fechaInicio = Carbon::create($anio, 1, 1)->format('d-m-Y');
+                    $fechaFin = Carbon::create($anio, 12, 31)->format('d-m-Y');
+                    $lista = $lista->whereBetween('devolucion.fecha_registro', [$fechaInicio,$fechaFin]);
+                }
+            }else{
+                $anioActual = Periodo::obtenerDescripciónPeriodoActual();
+    
+                $fechaInicio = Carbon::create($anioActual, 1, 1)->format('d-m-Y');
+                $fechaFin = Carbon::create($anioActual, 12, 31)->format('d-m-Y');
+                $lista = $lista->whereBetween('devolucion.fecha_registro', [$fechaInicio,$fechaFin]);
+            }
         return datatables($lista)->toJson();
         // return response()->json($lista);
     }
@@ -1011,5 +1027,16 @@ class DevolucionController extends Controller
         // })
         // ->toJson();
         ->make(true);
+    }
+
+
+    public function generarFiltrosDevoluciones(Request $request)
+    {
+        $año =$request->anio;
+        if($año!=null){
+            $request->session()->put('clPeriodoDevolucion', $año);
+        }
+
+        return response()->json('filtros', 200);
     }
 }

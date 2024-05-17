@@ -316,140 +316,197 @@ function validarPresupuesto(tipo, id, fecha_pago, monto_pago, fase) {
 
 function enviarAPago(tipo, id, fecha_pago, monto_pago, obj = null, idPagoCuotaDetalle=null) {
 
-    var customElement = $("<div>", {
-        "css": {
-            "font-size": "24px",
-            "text-align": "center",
-            "padding": "0px",
-            "margin-top": "-600px"
-        },
-        "class": "your-custom-class",
-        "text": "Validando Presupuesto..."
-    });
+    // var customElement = $("<div>", {
+    //     "css": {
+    //         "font-size": "24px",
+    //         "text-align": "center",
+    //         "padding": "0px",
+    //         "margin-top": "-600px"
+    //     },
+    //     "class": "your-custom-class",
+    //     "text": "Validando Presupuesto..."
+    // });
 
-    $('.page-main').LoadingOverlay("show", {
-        imageAutoResize: true,
-        progress: true,
-        custom: customElement,
-        imageColor: "#3c8dbc"
-    });
+    // $('.page-main').LoadingOverlay("show", {
+    //     imageAutoResize: true,
+    //     progress: true,
+    //     custom: customElement,
+    //     imageColor: "#3c8dbc"
+    // });
 
     if (obj != null) {
         obj.setAttribute("disabled", true);
     }
-    validarPresupuesto(tipo, id, fecha_pago, monto_pago,'FASE_AUTORIZACION').then((response) => {
 
-        $('.page-main').LoadingOverlay("hide", true);
-        let accionEnviarParaPago = false;
-
-        if (obj != null) {
-            obj.removeAttribute("disabled");
-        }
-
-        let mensajeConcatenado = [];
-        let cantidadPartidasSinPresupuesto = 0;
-
-        if (response.data && response.data.tiene_presupuesto ==false) {
-            accionEnviarParaPago=false;
-
-            (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
-                if (element.tiene_presupuesto == false) {
-                    cantidadPartidasSinPresupuesto++;
-                    let saldoFaltante= parseFloat(element.monto_soles_documento_actual) + parseFloat(element.monto_soles_comprometido_otros_documentos) -parseFloat(element.monto_aux)
-                    mensajeConcatenado.push(element.mensaje+" <br>Monto de documento actual: S/"+element.monto_soles_documento_actual+
-                    " <br>Monto de otros documentos comprometidos: S/"+element.monto_soles_comprometido_otros_documentos +
-                    "<br>Saldo(mes) disponible: S/"+element.monto_aux+ ", necesita +S/"+($.number(saldoFaltante,2,'.',','))
-                    );                }
-            });
-        }
-
-        if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
-        //     Lobibox.notify('warning', {
-        //         height:'auto',
-        //         sound:false,
-        //         msg: response.data.mensaje.toString()
-        //     });
-            Lobibox.notify('info', {
-            height:'auto',
-            sound:false,
-            msg: "Se requiere resolver la falta de presupuesto"
-            });
-        }
-
-        if (cantidadPartidasSinPresupuesto > 0) {
-            accionEnviarParaPago=false;
-            Lobibox.alert('warning', {
-                title: 'Validación de Presupuesto',
-                delay: false,
-                msg: mensajeConcatenado.toString()
-            });
-
-        } else {
-            accionEnviarParaPago=true; 
-        }
-
-        if(accionEnviarParaPago){
-            Swal.fire({
-                title: "¿Está seguro que desea autorizar el pago?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6", //"#00a65a",
-                cancelButtonColor: "#d33",
-                cancelButtonText: "Cancelar",
-                confirmButtonText: "Sí, Autorizar"
-            }).then(result => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'enviarAPago',// + tipo + '/' + id,
-                        data: {
-                            'tipo': tipo,
-                            'id': id,
-                            'idPagoCuotaDetalle': idPagoCuotaDetalle
-                        },
-                        dataType: 'JSON',
-                    }).done(function (response) {
-                        // console.log(response);
-                        Lobibox.notify(response.tipo, {
-                            size: "mini",
-                            rounded: true,
-                            sound: false,
-                            delayIndicator: false,
-                            msg: response.mensaje
-                        });
-                        if (tipo == "orden") {
-                            tableOrdenes.ajax.reload(null, false);
-                            if(idPagoCuotaDetalle>0){
-                                formatPagosEnCuotas(iTableCounter, id, tableOrdenes.row($(this).closest('tr')), "orden");
-                            }
-                        }
-                        else if (tipo == "requerimiento pago") {
-                            tableRequerimientos.ajax.reload(null, false);
-                        }
-                        else if (tipo == "orden") {
-                            tableComprobantes.ajax.reload(null, false);
-                        }
-                    }).always(function () {
-                        // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
-                    }).fail(function (jqXHR) {
-                        Lobibox.notify('error', {
-                            size: "mini",
-                            rounded: true,
-                            sound: false,
-                            delayIndicator: false,
-                            msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
-                        });
-                        //Cerrar el modal
-                        // $modal.modal('hide');
-                        console.log('Error devuelto: ' + jqXHR.responseText);
-                    });
+    Swal.fire({
+        title: "¿Está seguro que desea autorizar el pago?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6", //"#00a65a",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sí, Autorizar"
+    }).then(result => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: 'POST',
+                url: 'enviarAPago',// + tipo + '/' + id,
+                data: {
+                    'tipo': tipo,
+                    'id': id,
+                    'idPagoCuotaDetalle': idPagoCuotaDetalle
+                },
+                dataType: 'JSON',
+            }).done(function (response) {
+                // console.log(response);
+                Lobibox.notify(response.tipo, {
+                    size: "mini",
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: response.mensaje
+                });
+                if (tipo == "orden") {
+                    tableOrdenes.ajax.reload(null, false);
+                    if(idPagoCuotaDetalle>0){
+                        formatPagosEnCuotas(iTableCounter, id, tableOrdenes.row($(this).closest('tr')), "orden");
+                    }
                 }
+                else if (tipo == "requerimiento pago") {
+                    tableRequerimientos.ajax.reload(null, false);
+                }
+                else if (tipo == "orden") {
+                    tableComprobantes.ajax.reload(null, false);
+                }
+            }).always(function () {
+                // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
+            }).fail(function (jqXHR) {
+                Lobibox.notify('error', {
+                    size: "mini",
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
+                });
+                //Cerrar el modal
+                // $modal.modal('hide');
+                console.log('Error devuelto: ' + jqXHR.responseText);
             });
         }
+    });
+    // validarPresupuesto(tipo, id, fecha_pago, monto_pago,'FASE_AUTORIZACION').then((response) => {
 
-    }).catch(function (err) {
-        console.log(err)
-    })
+    //     $('.page-main').LoadingOverlay("hide", true);
+    //     let accionEnviarParaPago = false;
+
+    //     if (obj != null) {
+    //         obj.removeAttribute("disabled");
+    //     }
+
+    //     let mensajeConcatenado = [];
+    //     let cantidadPartidasSinPresupuesto = 0;
+
+    //     if (response.data && response.data.tiene_presupuesto ==false) {
+    //         accionEnviarParaPago=false;
+
+    //         (response.data.validacion_partidas_con_presupuesto_interno).forEach(element => {
+    //             if (element.tiene_presupuesto == false) {
+    //                 cantidadPartidasSinPresupuesto++;
+    //                 let saldoFaltante= parseFloat(element.monto_soles_documento_actual) + parseFloat(element.monto_soles_comprometido_otros_documentos) -parseFloat(element.monto_aux)
+    //                 mensajeConcatenado.push(element.mensaje+" <br>Monto de documento actual: S/"+element.monto_soles_documento_actual+
+    //                 " <br>Monto de otros documentos comprometidos: S/"+element.monto_soles_comprometido_otros_documentos +
+    //                 "<br>Saldo(mes) disponible: S/"+element.monto_aux+ ", necesita +S/"+($.number(saldoFaltante,2,'.',','))
+    //                 );                }
+    //         });
+    //     }
+
+    //     if (response.data && response.data.tiene_presupuesto ==false && response.data.mensaje !='') {
+    //     //     Lobibox.notify('warning', {
+    //     //         height:'auto',
+    //     //         sound:false,
+    //     //         msg: response.data.mensaje.toString()
+    //     //     });
+    //         Lobibox.notify('info', {
+    //         height:'auto',
+    //         sound:false,
+    //         msg: "Se requiere resolver la falta de presupuesto"
+    //         });
+    //     }
+
+    //     if (cantidadPartidasSinPresupuesto > 0) {
+    //         accionEnviarParaPago=false;
+    //         Lobibox.alert('warning', {
+    //             title: 'Validación de Presupuesto',
+    //             delay: false,
+    //             msg: mensajeConcatenado.toString()
+    //         });
+
+    //     } else {
+    //         accionEnviarParaPago=true; 
+    //     }
+
+    //     if(accionEnviarParaPago){
+    //         Swal.fire({
+    //             title: "¿Está seguro que desea autorizar el pago?",
+    //             icon: "warning",
+    //             showCancelButton: true,
+    //             confirmButtonColor: "#3085d6", //"#00a65a",
+    //             cancelButtonColor: "#d33",
+    //             cancelButtonText: "Cancelar",
+    //             confirmButtonText: "Sí, Autorizar"
+    //         }).then(result => {
+    //             if (result.isConfirmed) {
+    //                 $.ajax({
+    //                     type: 'POST',
+    //                     url: 'enviarAPago',// + tipo + '/' + id,
+    //                     data: {
+    //                         'tipo': tipo,
+    //                         'id': id,
+    //                         'idPagoCuotaDetalle': idPagoCuotaDetalle
+    //                     },
+    //                     dataType: 'JSON',
+    //                 }).done(function (response) {
+    //                     // console.log(response);
+    //                     Lobibox.notify(response.tipo, {
+    //                         size: "mini",
+    //                         rounded: true,
+    //                         sound: false,
+    //                         delayIndicator: false,
+    //                         msg: response.mensaje
+    //                     });
+    //                     if (tipo == "orden") {
+    //                         tableOrdenes.ajax.reload(null, false);
+    //                         if(idPagoCuotaDetalle>0){
+    //                             formatPagosEnCuotas(iTableCounter, id, tableOrdenes.row($(this).closest('tr')), "orden");
+    //                         }
+    //                     }
+    //                     else if (tipo == "requerimiento pago") {
+    //                         tableRequerimientos.ajax.reload(null, false);
+    //                     }
+    //                     else if (tipo == "orden") {
+    //                         tableComprobantes.ajax.reload(null, false);
+    //                     }
+    //                 }).always(function () {
+    //                     // $("select[name='id_cuenta_origen']").LoadingOverlay("hide", true);
+    //                 }).fail(function (jqXHR) {
+    //                     Lobibox.notify('error', {
+    //                         size: "mini",
+    //                         rounded: true,
+    //                         sound: false,
+    //                         delayIndicator: false,
+    //                         msg: 'Hubo un problema. Por favor actualice la página e intente de nuevo.'
+    //                     });
+    //                     //Cerrar el modal
+    //                     // $modal.modal('hide');
+    //                     console.log('Error devuelto: ' + jqXHR.responseText);
+    //                 });
+    //             }
+    //         });
+    //     }
+
+    // }).catch(function (err) {
+    //     console.log(err)
+    // })
 
 
 }

@@ -2127,6 +2127,7 @@ class OrdenView {
     }
 
     updateIncluyeIGV(obj){
+ 
         (this.ordenArray).forEach((orden,key)=>{
             if(orden.id_orden==this.idOrdenSeleccionada){
                 this.ordenArray[key]['incluye_igv']= obj.checked;
@@ -2134,33 +2135,38 @@ class OrdenView {
                     this.ordenArray[key]['monto_igv']= 0;
                 }else{
                     this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
-                    this.ordenArray[key]['monto_total']= parseFloat(this.ordenArray[key]['monto_neto'])+ (parseFloat(this.ordenArray[key]['monto_neto'])*0.18);
-                    
+                }
+                this.ordenArray[key]['monto_total']= parseFloat(this.ordenArray[key]['monto_neto'])+ (parseFloat(this.ordenArray[key]['monto_igv']));
+
+                if (this.ordenArray[key]['monto_icbper'] > 0){
+                    this.ordenArray[key]['monto_total'] =  parseFloat(this.ordenArray[key]['monto_total'])+0.50;
                 }
              }
         });
-
-
- 
-
 
         this.calcularTotales();
     }
 
     updateIncluyeICBPER(obj){
-        // (this.ordenArray).forEach((orden,key)=>{
-        //     if(orden.id_orden==this.idOrdenSeleccionada){
+        (this.ordenArray).forEach((orden,key)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                this.ordenArray[key]['incluye_icbper']= obj.checked;
+                if(obj.checked ==false){
+                    this.ordenArray[key]['monto_icbper']= 0;
+                }else{
+                    this.ordenArray[key]['monto_icbper']= 0.50;
+                }
 
-        //         $incluyeIGV = document.
-        //         this.ordenArray[key]['incluye_icbper']= obj.checked;
-        //         if(obj.checked ==false){
-        //             this.ordenArray[key]['monto_igv']= 0;
-        //         }else{
-        //             this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
-        //             this.ordenArray[key]['monto_total']= parseFloat(this.ordenArray[key]['monto_neto'])+ (parseFloat(this.ordenArray[key]['monto_neto'])*0.18);
-                    
-        //         }
-        //      }
-        // });
+                if(this.ordenArray[key]['monto_igv'] >0 || this.ordenArray[key]['incluye_igv']==true){
+                    this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
+                }else{
+                    this.ordenArray[key]['monto_igv']= 0;
+                }
+                this.ordenArray[key]['monto_total']= this.ordenArray[key]['monto_neto'] + parseFloat(this.ordenArray[key]['monto_igv'])+ (parseFloat(this.ordenArray[key]['monto_icbper']));
+            
+             }
+        });
+
+        this.calcularTotales();
     }
 }

@@ -4416,8 +4416,8 @@ class OrdenController extends Controller
     public function listarCuentasBancariasProveedor($idProveedor)
     {
         // $cuentas = CuentaContribuyente::mostrarCuentasContribuyente($idProveedor)->get();
-        $cuentas = Proveedor::mostrarCuentasProveedor($idProveedor)->get();
-        return $cuentas;
+        $proveedor = Proveedor::mostrarCuentasProveedor($idProveedor)->first();
+        return $proveedor->contribuyente->cuentaContribuyente;
     }
 
     public function guardarCuentaBancariaProveedor(Request $request)

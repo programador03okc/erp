@@ -510,7 +510,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('listar-adjuntos-requerimiento-pago-detalle/{idRequerimentoPagoDetalle}', [RequerimientoPagoController::class, 'listaAdjuntosRequerimientoPagoDetalle'])->name('listar-adjuntos-requerimiento-pago-detalle');
 				Route::get('listar-categoria-adjunto', [ContabilidadController::class, 'listaTipoDocumentos'])->name('listar-categoria-adjunto');
 				Route::post('mostrar-proveedores', [OrdenController::class, 'mostrarProveedores'])->name('mostrar-proveedores');
-				Route::get('listar-cuentas-bancarias-proveedor/{idProveedor?}', [OrdenController::class, 'listarCuentasBancariasProveedor'])->name('listar-cuentas-bancarias-proveedor');
+				Route::get('listar-cuentas-bancarias-proveedor/{idProveedor?}', [OrdenController::class, 'listarCuentasBancariasProveedor'])->name('listar-cuentas-bancarias-proveedor'); //?uso
 				Route::post('guardar-cuenta-bancaria-proveedor', [OrdenController::class, 'guardarCuentaBancariaProveedor'])->name('guardar-cuenta-bancaria-proveedor');
 				Route::get('imprimir-requerimiento-pago-pdf/{id}', [RequerimientoPagoController::class, 'imprimirRequerimientoPagoPdf'])->name('imprimir-requerimiento-pago-pdf');
 				Route::post('obtener-destinatario-por-nro-documento', [RequerimientoPagoController::class, 'obtenerDestinatarioPorNumeroDeDocumento'])->name('obtener-destinatario-por-nro-documento');

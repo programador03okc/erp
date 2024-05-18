@@ -179,8 +179,8 @@ function listarCuentasBancariasContribuyente(idProveedor) {
     limpiarTabla('listaCuentasBancariasProveedor');
 
     getCuentasBancarias(idProveedor).then(function (res) {
-        if (res[0].cuenta_contribuyente) {
-            ConstruirTablalistaCuentasBancariasProveedor(res[0].cuenta_contribuyente);
+        if (res) {
+            ConstruirTablalistaCuentasBancariasProveedor(res);
         }
     }).catch(function (err) {
         Swal.fire(
@@ -267,7 +267,7 @@ function ConstruirTablalistaCuentasBancariasProveedor(data) {
             },
             {
                 render: function (data, type, row) {
-                    return `<button type="button" class="btn btn-primary btn-xs" name="btnSeleccionarCuenta" title="Seleccionar cuenta"  data-id-cuenta="${(row.id_cuenta_contribuyente ?? '')}" data-nro-cuenta="${(row.nro_cuenta ?? '')}" onclick="seleccionarCuentaContribuyente(this);">Seleccionar</button>`;
+                    return `<button type="button" class="btn btn-primary btn-xs" name="btnSeleccionarCuenta" title="Seleccionar cuenta"  data-id-cuenta="${(row.id_cuenta_contribuyente ?? '')}" data-nro-cuenta="${(row.nro_cuenta ?? '')}" data-id-moneda="${(row.id_moneda ?? '')}" onclick="seleccionarCuentaContribuyente(this);">Seleccionar</button>`;
                 }, 'className': 'text-center'
             }
         ],
@@ -276,6 +276,7 @@ function ConstruirTablalistaCuentasBancariasProveedor(data) {
 
 function seleccionarCuentaContribuyente(obj) {
     $('#modal-cuentas-bancarias-proveedor').modal('hide');
+    document.querySelector("input[name='moneda_cuenta_principal_proveedor']").value = obj.dataset.idMoneda==1?'S/':(obj.dataset.idMoneda==2?'$':'');
     document.querySelector("input[name='nro_cuenta_principal_proveedor']").value = obj.dataset.nroCuenta;
     document.querySelector("input[name='id_cuenta_principal_proveedor']").value = obj.dataset.idCuenta;
 

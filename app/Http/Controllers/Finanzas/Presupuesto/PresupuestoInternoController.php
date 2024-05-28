@@ -1373,7 +1373,7 @@ class PresupuestoInternoController extends Controller
                         ['alm_det_req.estado','!=',7],
                         ['alm_req.id_moneda',1]
                     ])
-         
+
                     ->whereIn('alm_req.estado',[1])
                     ->whereIn('alm_req.mes_afectacion',[null,date("m")])
                     ->groupBy('alm_req.id_requerimiento','alm_req.monto_igv')
@@ -2063,6 +2063,7 @@ class PresupuestoInternoController extends Controller
     }
     public function saldosPresupuesto(Request $request)
     {
+
         // $presupuesto  = PresupuestoInterno::where('id_presupuesto_interno', $request->id)->first();
         // $presupuesto_detalle  = PresupuestoInternoDetalle::where('id_presupuesto_interno', $request->id)->orderBy('partida')->get();
 
@@ -2231,7 +2232,7 @@ class PresupuestoInternoController extends Controller
 
 
         // return Excel::download(new PresupuesInternoReporteAnualExport($modelo_partidas), 'presupuesto_interno.xlsx');
-        return Excel::download(new PresupuestoInternoSaldoExport($modelo_partidas), '' . $presupuesto->codigo . '-' . date('Y-m-d') . '.xlsx');
+        return Excel::download(new PresupuestoInternoSaldoExport($modelo_partidas, json_encode($presupuesto)), '' . $presupuesto->codigo . '-' . date('Y-m-d') . '.xlsx');
     }
 
     public function listarFinalizados()

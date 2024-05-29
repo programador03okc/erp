@@ -1534,6 +1534,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::name('elaborar.')->prefix('elaborar')->group(function () {
 						Route::get('index', [OrdenController::class, 'view_crear_orden_requerimiento'])->name('index');
 						Route::get('orden-multiple-index', [OrdenMultipleController::class, 'view_orden_multiple'])->name('orden-multiple-index'); // TODO: En desarrollo
+						Route::post('guardar-ordenes', [OrdenMultipleController::class, 'guardarOrdenes'])->name('guardar-ordenes');
 						Route::get('obtener-atencion-de-item-requerimiento/{idRequerimiento}', [OrdenMultipleController::class, 'ObtenerAtencionItemRequerimiento'])->name('obtener-atencion-de-item-requerimiento');
 						Route::get('obtener-data-proveedor/{idProveedor}', [OrdenMultipleController::class, 'obtenerDataProveedor'])->name('obtener-data-proveedor');
 						Route::get('porveedores', [OrdenMultipleController::class, 'listar_proveedores'])->name('porveedores');

@@ -13,6 +13,7 @@ use App\Models\Almacen\Requerimiento;
 use App\Models\Almacen\Reserva;
 use App\Models\Almacen\UnidadMedida;
 use App\models\Configuracion\AccesosUsuarios;
+use App\Models\Configuracion\LogActividad;
 use App\Models\Configuracion\Moneda;
 use App\Models\Contabilidad\Banco;
 use App\Models\Contabilidad\ContactoContribuyente;
@@ -24,6 +25,7 @@ use App\Models\Logistica\Orden;
 use App\Models\Logistica\OrdenCompraDetalle;
 use App\Models\Logistica\Proveedor;
 use App\Models\mgcp\CuadroCosto\Proveedor as CuadroCostoProveedor;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Exception;
 date_default_timezone_set('America/Lima');
@@ -404,15 +406,17 @@ class OrdenMultipleController extends Controller
             }
 
             $proveedorAgile= Proveedor::where('id_contribuyente',$contribuyenteAgile->id_contribuyente)->first();
-            $idProveedorAgile=$proveedorAgile->id_proveedor;
+           
+            if($proveedorAgile !=null && isset($contribuyenteAgile->id_contribuyente)){
+                $idProveedorAgile=$proveedorAgile->id_proveedor;
 
-            if(!$proveedorAgile && $contribuyenteAgile->id_contribuyente>0){
+            }else{
                 $nuevoProveedor= new Proveedor();
                 $nuevoProveedor->id_contribuyente = $contribuyenteAgile->id_contribuyente;
                 $nuevoProveedor->estado=1;
                 $nuevoProveedor->fecha_registro=New Carbon();
                 $nuevoProveedor->save();
-                $idProveedorAgile=$nuevoProveedor->id_proveedor;
+                $idProveedorAgile=$nuevoProveedor->id_proveedor;                
             }
         }
 
@@ -436,6 +440,114 @@ class OrdenMultipleController extends Controller
         ];
 
         return $data;
+
+    }
+
+
+    public function guardarOrdenes(Request $request){
+
+        DB::beginTransaction();
+        try {
+            $respuesta = '';
+            $alerta = 'error';
+            $mensaje='Sin acciones';
+            $validatorErrors=[];
+            // dd($request->all());
+            // exit();
+
+            $cantidadOrdenes = count($request->id_orden);
+            // dd($cantidadOrdenes);
+            // exit();
+            $failValidacion = 0;
+            for ($i = 0; $i < $cantidadOrdenes; $i++) {
+                if(!(isset($request->id_empresa[$i]) && intval($request->id_empresa[$i])>0) ){
+                    $validatorErrors[]='El campo empresa es requerido';
+                    $failValidacion++;
+                }
+                if(!(isset($request->id_proveedor[$i]) && intval($request->id_proveedor[$i])>0) ){
+                    $validatorErrors[]='El campo proveedor es requerido';
+                    $failValidacion++;
+                }
+                if(!(isset($request->id_cuenta_proveedor[$i]) && intval($request->id_cuenta_proveedor[$i])>0)){
+                    $validatorErrors[]='El campo cuenta bancaria de proveedor es requerido';
+                    $failValidacion++;
+                }
+                if(!(isset($request->plazo_entrega[$i]) && intval($request->plazo_entrega[$i])>0)){
+                    $validatorErrors[]='El campo plazo de entrega es requerido';
+                    $failValidacion++;
+                }
+
+            }
+            if($failValidacion>0){
+                $alerta = 'warning';
+                $respuesta = 'validación';
+                $mensaje = 'Validación fallida';
+
+                return response()->json(['alerta' => $alerta,  'respuesta' => $respuesta, 'mensaje' => $mensaje, 'validacion' => $validatorErrors]);
+
+            }
+            dd($failValidacion);
+            exit();
+            if($failValidacion==0){
+                for($i =0;$i < $cantidadOrdenes; $i++){
+                    if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $request->id_orden[$i])){
+                        $orden = new Orden();
+                    }else{
+                        $orden = Orden::firstOrNew(['id_orden_compra' => $request->id_orden[$i]]);
+                    }
+                    
+                    $orden->id_tp_documento = isset($request->id_tipo_orden[$i])?$request->id_tipo_orden[$i]:null;
+                    $orden->id_periodo = isset($request->id_periodo[$i])?$request->id_periodo[$i]:null;
+                    $orden->fecha = isset($request->fecha_emision[$i])?$request->fecha_emision[$i]:null;
+                    $orden->fecha_registro = new Carbon();
+                    $orden->id_usuario = Auth::user()->id_usuario;
+                    $orden->id_moneda = isset($request->id_moneda[$i])?$request->id_moneda[$i]:null;
+                    $orden->incluye_igv = isset($request->incluye_igv[$i]) ? $request->incluye_igv[$i] : false;
+                    $orden->incluye_icbper = isset($request->incluye_icbper[$i]) ? $request->incluye_icbper[$i] : false;
+                    $orden->monto_subtotal = isset($request->monto_subtotal[$i])?$request->monto_subtotal[$i]:null;
+                    $orden->monto_igv = isset($request->monto_igv[$i])?$request->monto_igv[$i]:null;
+                    $orden->monto_total = isset($request->monto_total[$i])?$request->monto_total[$i]:null;
+                    $orden->id_proveedor = isset($request->id_proveedor[$i])?$request->id_proveedor[$i]:null;
+                    $orden->id_cta_principal = isset($request->id_cuenta_proveedor[$i]) ? $request->id_cuenta_proveedor[$i] : null;
+                    $orden->id_contacto = isset($request->id_contacto_proveedor[$i]) ? $request->id_contacto_proveedor[$i] : null;
+                    $orden->id_condicion_softlink = isset($request->id_condicion_softlink[$i]) ? $request->id_condicion_softlink[$i] : null;
+                    $orden->plazo_dias = isset($request->plazo_dias[$i]) ? $request->plazo_dias[$i] : null;
+                    $orden->id_condicion = isset($request->id_condicion_compra[$i]) ? $request->id_condicion_compra[$i] : null;
+                    $orden->plazo_entrega =  isset($request->plazo_entrega[$i]) ? $request->plazo_entrega[$i] : null;
+                    $orden->id_tp_doc = isset($request->id_tipo_documento[$i]) ? $request->id_tipo_documento[$i] : null;
+                    $orden->personal_autorizado_1 = isset($request->personal_autorizado_1[$i]) ? $request->personal_autorizado_1[$i] : null;
+                    $orden->personal_autorizado_2 = isset($request->personal_autorizado_2[$i]) ? $request->personal_autorizado_2[$i] : null;
+                    $orden->id_sede = isset($request->id_sede[$i]) ? $request->id_sede[$i] : null;
+                    $orden->direccion_destino = isset($request->descripcion_ubigeo_entrega[$i]) ? trim(strtoupper($request->descripcion_ubigeo_entrega[$i])) : null;
+                    $orden->ubigeo_destino = isset($request->id_ubigeo_entrega[$i]) ? $request->id_ubigeo_entrega[$i] : null;
+                    $orden->en_almacen = false;
+                    $orden->estado = 1;
+                    $orden->estado_pago = 1;
+                    $orden->observacion = isset($request->observacion[$i]) ? trim(strtoupper($request->observacion[$i])) : null;
+                    $orden->tipo_cambio_compra = isset($request->tipo_cambio[$i]) ? $request->tipo_cambio[$i] : true;
+                    $orden->compra_local = isset($request->es_compra_local[$i]) ? $request->es_compra_local[$i] : false;
+                    $orden->save();
+
+    
+                    if($orden->id_orden_compra > 0){
+                        $mensaje = 'Se ha guardado la orden';
+                        LogActividad::registrar(Auth::user(), 'Crear ordenes', 2, $orden->getTable(), null, $orden, '', 'Gestión de ordenes');
+                    } 
+
+                    $respuesta = 'ok';
+                    $alerta = 'success';
+                
+                }
+                DB::commit();
+            
+            } 
+            return response()->json(['alerta' => $alerta,  'respuesta' => $respuesta, 'mensaje'=>$mensaje, 'validacion'=>[]],200);
+            
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['alerta' => $alerta,   'respuesta' => $respuesta, 'mensaje' => 'Hubo un problema al intentar guardar. Mensaje de error: ' . $e->getMessage(), 'validacion'=>[]]);
+        }
 
     }
 

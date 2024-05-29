@@ -195,7 +195,7 @@
                                                                 </dd>
                                                                 <dt>Fecha Emisión</dt>
                                                                 <dd>
-                                                                    <input class="form-control input-xs handleChangeUpdateFechaEmision" name="fecha_emision" type="datetime-local" value="2024-03-19T11:23">
+                                                                    <input class="form-control input-xs handleChangeUpdateFechaEmision" name="fecha_emision" >
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -297,6 +297,7 @@
                                                             <dl class="">
                                                                 <dt>Forma de pago</dt>
                                                                 <dd>
+                                                                 <input type="hidden" name="plazo_dias">
                                                                     <select class="form-control input-xs handleChangeFormaPago handleChangeUpdateFormaPago" name="id_condicion_softlink">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($condiciones_softlink as $cond)
@@ -441,7 +442,7 @@
                                         <div class="box box-widget">
                                             <div class="box-body">
                                                 <div class="table-responsive">
-                                                    <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden" width="100%">
+                                                    <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden" id="listaDetalleOrden" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width: 5%">Req.</th>
@@ -588,8 +589,8 @@
 </div>
 
 @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_catalogo_items')
-
 @include('logistica.gestion_logistica.proveedores.modal_cuentas_bancarias_proveedor')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_seleccionar_orden')
 
 
 <!-- @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_lista_oc_softlink')

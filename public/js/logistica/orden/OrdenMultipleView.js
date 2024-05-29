@@ -214,17 +214,17 @@ class OrdenView {
             this.updateDescripcionServicio(e.currentTarget);
         });
 
-        $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdateCantidad", (e) => {
-            this.updateCantidad(e.currentTarget);
-        });
+        // $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdateCantidad", (e) => {
+        //     this.updateCantidad(e.currentTarget);
+        // });
     
         $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateCantidad", (e) => {
             this.updateCantidad(e.currentTarget);
         });
 
-        $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdatePrecio", (e) => {
-            this.updatePrecio(e.currentTarget);
-        });
+        // $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdatePrecio", (e) => {
+        //     this.updatePrecio(e.currentTarget);
+        // });
 
         $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdatePrecio", (e) => {
             this.updatePrecio(e.currentTarget);
@@ -1584,10 +1584,31 @@ class OrdenView {
         });
 
 
-        this.calcularTotales();
+        this.imprimirTotales();
     }
 
     calcularTotales(){
+
+        let montoNeto =0;
+        let montoIGV =0;
+        (this.ordenArray).forEach((orden,keyOrden)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                (orden.detalle).forEach((item,keyItem) => {
+                    montoNeto +=this.ordenArray[keyOrden]['detalle'][keyItem]['subtotal'];
+                });
+
+                this.ordenArray[keyOrden]['monto_neto'] = parseFloat(montoNeto);
+                if(this.ordenArray[keyOrden]['incluye_igv']==true){
+                    montoIGV = parseFloat(montoNeto) * 0.18;
+                }
+                this.ordenArray[keyOrden]['monto_igv'] = montoIGV;
+                this.ordenArray[keyOrden]['monto_total'] = parseFloat(montoIGV) + parseFloat(montoNeto);
+                
+            }
+        });
+    }
+    
+    imprimirTotales(){
         let simboloMonedaOrden='';
         let montoNetoOrden = 0;
         let montoIgvOrden = 0;
@@ -1607,6 +1628,8 @@ class OrdenView {
         simboloMonedaSpan.forEach(element => {
             element.textContent=simboloMonedaOrden;
         });
+
+       
         document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='montoNeto']").textContent=$.number(montoNetoOrden,2,'.',',');
         if(montoIgvOrden>0){
             document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_igv']").checked =true;
@@ -2255,6 +2278,13 @@ class OrdenView {
         });
 
         this.calcularTotales();
+        this.imprimirTotales();
+
+        (this.ordenArray).forEach(element => {
+            if (element.id_orden == this.idOrdenSeleccionada) {
+                this.construirPanelDetalleOrden(element.detalle);
+            }
+        });
 
         // (this.ordenArray).forEach(element => {
         //     if (element.id_orden == this.idOrdenSeleccionada) {
@@ -2268,7 +2298,7 @@ class OrdenView {
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
 
-        // console.log(identificador, obj.value);
+        console.log(identificador, obj.value);
         (this.ordenArray).forEach((orden,keyOrden)=>{
             if(orden.id_orden==this.idOrdenSeleccionada){
                 (orden.detalle).forEach((item,keyItem) => {
@@ -2282,12 +2312,13 @@ class OrdenView {
         });
 
         this.calcularTotales();
+        this.imprimirTotales();
 
-        // (this.ordenArray).forEach(element => {
-        //     if (element.id_orden == this.idOrdenSeleccionada) {
-        //         this.construirPanelDetalleOrden(element.detalle);
-        //     }
-        // });
+        (this.ordenArray).forEach(element => {
+            if (element.id_orden == this.idOrdenSeleccionada) {
+                this.construirPanelDetalleOrden(element.detalle);
+            }
+        });
 
     }
 
@@ -2318,7 +2349,7 @@ class OrdenView {
              }
         });
         console.log(this.ordenArray);
-        this.calcularTotales();
+        this.imprimirTotales();
     }
 
     updateIncluyeICBPER(obj){
@@ -2341,7 +2372,7 @@ class OrdenView {
              }
         });
 
-        this.calcularTotales();
+        this.imprimirTotales();
     }
 
 

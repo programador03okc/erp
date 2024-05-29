@@ -230,10 +230,21 @@ class MigrateOrdenSoftLinkController extends Controller
                         ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'OJ'],
                         ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'OA']
                     ];
-                }
-
+                
+                } 
+             
                 $cod_suc = '';
                 $cod_docu = '';
+
+            if ($oc->id_tp_documento == 12) { //Importación
+                if ('OKC' == $oc->codigo_emp) {
+                    $cod_suc =1;
+                    $cod_docu = 'OI';
+                }else{
+                    return response()->json(array('tipo' => 'warning', 'mensaje' => 'Solo la empresa con código OKC puede crear una orden de importación'));
+                }
+            
+            }else{
 
                 foreach ($empresas_soft as $emp) {
                     if ($emp['nombre'] == $oc->codigo_emp) {
@@ -241,6 +252,7 @@ class MigrateOrdenSoftLinkController extends Controller
                         $cod_docu = $emp['cod_docu'];
                     }
                 }
+            }
 
                 // veriicar si existe un id_softlink para decidir si actualizar una orden en softlink o crear una nueva
                 if ($oc->id_softlink !== null) {

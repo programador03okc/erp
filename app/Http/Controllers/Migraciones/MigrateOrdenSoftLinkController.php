@@ -393,9 +393,7 @@ class MigrateOrdenSoftLinkController extends Controller
         }
 
 
-        $count = DB::connection('soft')->table('movimien')->count();
-        //codificar segun criterio x documento
-        $mov_id = $this->leftZero(10, (intval($count) + 1));
+        $mov_id = $this->obtenerMovId();
 
         //obtiene el ultimo registro
         $ult_mov = DB::connection('soft')->table('movimien')
@@ -414,7 +412,7 @@ class MigrateOrdenSoftLinkController extends Controller
         //anida el anio con el numero de documento
         $num_docu = $yy . $nro_mov;
 
-        $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
+        $mov_id = $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
 
         $i = 0;
         foreach ($detalles as $det) {
@@ -447,6 +445,14 @@ class MigrateOrdenSoftLinkController extends Controller
         return $arrayRspta;
     }
 
+    public function obtenerMovId(){
+        $count = DB::connection('soft')->table('movimien')->count();
+        //codificar segun criterio x documento
+        $mov_id = $this->leftZero(10, (intval($count) + 1));
+
+        return $mov_id;
+    }
+
     public function actualizarOrdenEnSoftlink($oc_softlink, $id_orden_compra, $oc, $detalles, $cod_suc, $cod_docu, $cuadros, $yy, $fecha, $igv, $tp_cambio)
     {
 
@@ -476,9 +482,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 $mon_impto = 0;
             }
 
-            $count = DB::connection('soft')->table('movimien')->count();
-            //codificar segun criterio x documento
-            $mov_id = $this->leftZero(10, (intval($count) + 1));
+            $mov_id = $this->obtenerMovId();
 
             //obtiene el ultimo registro
             $ult_mov = DB::connection('soft')->table('movimien')
@@ -498,7 +502,7 @@ class MigrateOrdenSoftLinkController extends Controller
             $num_docu = $yy . $nro_mov;
 
 
-            $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
+            $mov_id = $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
 
             $i = 0;
             foreach ($detalles as $det) {
@@ -628,6 +632,11 @@ class MigrateOrdenSoftLinkController extends Controller
 
     public function agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros)
     {
+
+        // actualizar el mov_id por si existe ya otro registro agregdo anteriormente con el mismo mov_id 
+        $mov_id = $this->obtenerMovId();
+
+
         DB::connection('soft')->table('movimien')->insert(
             [
                 'mov_id' => $mov_id,
@@ -729,6 +738,8 @@ class MigrateOrdenSoftLinkController extends Controller
         $ordenActualizada->save();
 
         $this->agregarLogActividad('NUEVO', $mov_id, $num_docu, $ordenActualizada);
+
+        return $mov_id;
     }
 
     public function agregarDetalleOrden($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i)

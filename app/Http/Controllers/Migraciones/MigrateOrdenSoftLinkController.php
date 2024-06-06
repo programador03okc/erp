@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Migraciones;
 
+use App\Exports\CorrelativosSoftlinkExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Configuracion\LogActividad;
@@ -9,6 +10,7 @@ use App\Models\Logistica\Orden;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MigrateOrdenSoftLinkController extends Controller
 {
@@ -118,6 +120,13 @@ class MigrateOrdenSoftLinkController extends Controller
           
             return ['orden_compra'=>$empresas_soft_orden_compra,'orden_servicio'=>$empresas_soft_orden_servicio,'orden_importacion'=>$empresas_soft_orden_importacion];
     }
+
+    public function descargarExcelCorrelativoDocumentoSoftlink(){
+
+        return Excel::download(new CorrelativosSoftlinkExport(), 'correlativo_softlink1.xlsx');
+
+    }
+
     //Valida el estado de la orden en softlink
     public function validarOrdenSoftlink($id_orden_compra)
     {

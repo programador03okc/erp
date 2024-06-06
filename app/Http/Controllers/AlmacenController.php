@@ -6676,7 +6676,7 @@ class AlmacenController extends Controller
                 ->where('id_doc_com', $d->id_doc_com)
                 ->first();
 
-            $prove = DB::connection('soft')->table('auxiliar')
+            $prove = DB::connection('soft1')->table('auxiliar')
                 ->where('ruc_auxi', $d->nro_documento)
                 ->first();
 
@@ -6684,7 +6684,7 @@ class AlmacenController extends Controller
 
             // }
 
-            $guardar = DB::connection('soft')->table('movimien')->insertGetId(
+            $guardar = DB::connection('soft1')->table('movimien')->insertGetId(
                 [
                     'tipo' => 1, //decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Tipo de Aplicacion 1=Compras 2=Ventas',
                     'cod_suc' => 1, //char(1) NOT NULL DEFAULT '' COMMENT 'ID de Sucursal',
@@ -7996,11 +7996,11 @@ class AlmacenController extends Controller
 
         foreach ($array_clasificacion as $key => $value) {
             // return trim($value->descripcion);exit;
-            $soplinea = DB::connection('soft')->table('soplinea')->where('nom_line',trim($value->descripcion))->first();
+            $soplinea = DB::connection('soft1')->table('soplinea')->where('nom_line',trim($value->descripcion))->first();
 
             if (!$soplinea) {
 
-                DB::connection('soft')->table('soplinea')->insert(
+                DB::connection('soft1')->table('soplinea')->insert(
                     [
                         'cod_line' => $value->id_clasificacion,
                         'nom_line' => trim($value->descripcion),
@@ -8014,18 +8014,18 @@ class AlmacenController extends Controller
             foreach ($value->categoria as $key_categoria => $value_categoria) {
                 foreach ($value_categoria->sub_categoria as $key_sub_categoria => $value_sub_categoria) {
                     $cod_sub1 = '';
-                    $cod_cate = DB::connection('soft')->table('sopsub1')->orderBy('cod_sub1','DESC')->first();
+                    $cod_cate = DB::connection('soft1')->table('sopsub1')->orderBy('cod_sub1','DESC')->first();
                     do {
 
                         $cod_sub1 = (intval($cod_cate->cod_sub1) + 1);
-                        $cod_cate = DB::connection('soft')->table('sopsub1')->where('cod_sub1',$cod_sub1)->first();
+                        $cod_cate = DB::connection('soft1')->table('sopsub1')->where('cod_sub1',$cod_sub1)->first();
 
                     } while ($cod_cate);
 
-                    $categoria_soflink = DB::connection('soft')->table('sopsub1')->where('nom_sub1',trim($value_sub_categoria->descripcion))->where('cod_line',$value->id_clasificacion)->first();
+                    $categoria_soflink = DB::connection('soft1')->table('sopsub1')->where('nom_sub1',trim($value_sub_categoria->descripcion))->where('cod_line',$value->id_clasificacion)->first();
 
                     if (!$categoria_soflink) {
-                        DB::connection('soft')->table('sopsub1')->insert(
+                        DB::connection('soft1')->table('sopsub1')->insert(
                             [
                                 'cod_sub1' => $cod_sub1,
                                 'nom_sub1' => trim($value_sub_categoria->descripcion),

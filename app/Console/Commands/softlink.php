@@ -60,7 +60,7 @@ class softlink extends Command
                 //     break;
 
             case 'migrar_tipo_cambio':
-                $data  = DB::connection('soft')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
+                $data  = DB::connection('soft1')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -75,7 +75,7 @@ class softlink extends Command
                         $cantidadMigrados++;
                     }
 
-                    DB::connection('soft')
+                    DB::connection('soft1')
                     ->table('tcambio')
                     ->where('dfecha', $value->dfecha)
                     ->update(
@@ -90,7 +90,7 @@ class softlink extends Command
                 break;
             case 'migrar_cabecera_movimientos':
 
-                $data  = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
+                $data  = DB::connection('soft1')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -204,7 +204,7 @@ class softlink extends Command
                         $nuevoMovimiento->save();
                         $cantidadMigrados++;
 
-                        DB::connection('soft')
+                        DB::connection('soft1')
                             ->table('movimien')
                             ->where('mov_id', $value->mov_id)
                             ->update(
@@ -222,12 +222,12 @@ class softlink extends Command
             case 'migrar_detalle_movimientos':
 
                 $cantidadMigrados = 0;
-                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
+                $aux = DB::connection('soft1')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
                 $cantidadAux = count($aux);
                 $bar = $this->output->createProgressBar($cantidadAux);
                 $bar->start();
                 foreach ($aux as $key => $value) {
-                    $data  = DB::connection('soft')->table('detmov')->where('mov_id', $value->mov_id)->orderBy('fec_pedi', 'asc')->get();
+                    $data  = DB::connection('soft1')->table('detmov')->where('mov_id', $value->mov_id)->orderBy('fec_pedi', 'asc')->get();
 
                     foreach ($data as $value) {
                         // $movimientosDetalleAGILE = MovimientoDetalle::where([
@@ -293,7 +293,7 @@ class softlink extends Command
                         $nuevoMovimientoDetalle->save();
                         $cantidadMigrados++;
 
-                        DB::connection('soft')
+                        DB::connection('soft1')
                             ->table('detmov')
                             ->where('unico', $value->unico)
                             ->update(
@@ -314,7 +314,7 @@ class softlink extends Command
 
             case 'migrar_series':
 
-                $data  = DB::connection('soft')->table('series')->where('flg_migracion', 0)->orderBy('fecha_ing', 'asc')->get();
+                $data  = DB::connection('soft1')->table('series')->where('flg_migracion', 0)->orderBy('fecha_ing', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -347,7 +347,7 @@ class softlink extends Command
                     $cantidadMigrados++;
 
 
-                    DB::connection('soft')
+                    DB::connection('soft1')
                         ->table('series')
                         ->where('mov_id', $value->mov_id)
                         ->update(
@@ -366,7 +366,7 @@ class softlink extends Command
 
             case 'migrar_productos':
 
-                $data  = DB::connection('soft')->table('sopprod')->orderBy('fec_ingre', 'asc')->get();
+                $data  = DB::connection('soft1')->table('sopprod')->orderBy('fec_ingre', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();

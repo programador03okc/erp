@@ -143,7 +143,7 @@ class MigrateFacturasSoftlinkController extends Controller
                 $fecha = date("Y-m-d", strtotime($doc->fecha_emision));
 
                 //obtiene el tipo de cambio
-                $tp_cambio = DB::connection('soft')->table('tcambio')
+                $tp_cambio = DB::connection('soft1')->table('tcambio')
                     ->where([['dfecha', '<=', new Carbon($doc->fecha_emision)]])
                     ->orderBy('dfecha', 'desc')
                     ->first();
@@ -155,7 +155,7 @@ class MigrateFacturasSoftlinkController extends Controller
                 //si existe un id_doc_softlink
                 if ($doc->id_doc_softlink !== null) {
                     //obtiene oc softlink
-                    $doc_softlink = DB::connection('soft')->table('movimien')->where('mov_id', $doc->id_doc_softlink)->first();
+                    $doc_softlink = DB::connection('soft1')->table('movimien')->where('mov_id', $doc->id_doc_softlink)->first();
 
                     if ($doc_softlink !== null) {
                         //pregunta si fue anulada en softlink
@@ -168,7 +168,7 @@ class MigrateFacturasSoftlinkController extends Controller
                             );
                         } else {
                             //actualiza orden
-                            DB::connection('soft')->table('movimien')
+                            DB::connection('soft1')->table('movimien')
                                 ->where('mov_id', $doc_softlink->mov_id)
                                 ->update(
                                     [
@@ -205,7 +205,7 @@ class MigrateFacturasSoftlinkController extends Controller
 
                                 if ($det->id_doc_det_softlink !== null) {
                                     //actualiza el detalle
-                                    DB::connection('soft')->table('detmov')
+                                    DB::connection('soft1')->table('detmov')
                                         ->where('unico', $det->id_doc_det_softlink)
                                         ->update([
                                             'fec_pedi' => $fecha,
@@ -254,7 +254,7 @@ class MigrateFacturasSoftlinkController extends Controller
                     }
                 } else {
                     //crea el documento
-                    $count = DB::connection('soft')->table('movimien')->count();
+                    $count = DB::connection('soft1')->table('movimien')->count();
                     //codificar segun criterio x documento
                     $mov_id = $this->leftZero(10, (intval($count) + 1));
                     //obtiene el correlativo
@@ -264,7 +264,7 @@ class MigrateFacturasSoftlinkController extends Controller
                     //anida la serie con el numero de documento
                     $num_docu = $doc->serie . $nro_mov;
                     //buscar si existe el comprobante en sofltink
-                    $doc_softlink = DB::connection('soft')->table('movimien')
+                    $doc_softlink = DB::connection('soft1')->table('movimien')
                         ->where([
                             ['cod_suc', '=', $cod_suc],
                             ['cod_auxi', '=', $cod_auxi],
@@ -316,8 +316,8 @@ class MigrateFacturasSoftlinkController extends Controller
                         $this->agregarAudita($doc, $doc->serie, $doc->numero);
                     }
 
-                    $soc = DB::connection('soft')->table('movimien')->where('mov_id', $mov_id)->first();
-                    $sdet = DB::connection('soft')->table('detmov')->where('mov_id', $mov_id)->get();
+                    $soc = DB::connection('soft1')->table('movimien')->where('mov_id', $mov_id)->first();
+                    $sdet = DB::connection('soft1')->table('detmov')->where('mov_id', $mov_id)->get();
 
                     $arrayRspta = array(
                         'tipo' => 'success',
@@ -341,15 +341,15 @@ class MigrateFacturasSoftlinkController extends Controller
 
     public function agregarAudita($doc, $yy, $nro_mov)
     {
-        $vendedor = DB::connection('soft')->table('vendedor')
+        $vendedor = DB::connection('soft1')->table('vendedor')
             ->select('usuario')
             ->where('codvend', $doc->codvend_softlink)
             ->first();
 
-        $count = DB::connection('soft')->table('audita')->count();
+        $count = DB::connection('soft1')->table('audita')->count();
 
         //Agrega registro de auditoria
-        DB::connection('soft')->table('audita')
+        DB::connection('soft1')->table('audita')
             ->insert([
                 'unico' => sprintf('%010d', $count + 1),
                 'usuario' => $doc->codvend_softlink,
@@ -361,7 +361,7 @@ class MigrateFacturasSoftlinkController extends Controller
 
     public function agregarComprobante($mov_id, $cod_suc, $doc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_doc_com)
     {
-        DB::connection('soft')->table('movimien')->insert(
+        DB::connection('soft1')->table('movimien')->insert(
             [
                 'mov_id' => $mov_id,
                 'tipo' => '1', //Compra 
@@ -469,13 +469,13 @@ class MigrateFacturasSoftlinkController extends Controller
     public function agregarDetalleComprobante($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i)
     {
         //cuenta los registros
-        $count_det = DB::connection('soft')->table('detmov')->count();
+        $count_det = DB::connection('soft1')->table('detmov')->count();
         //aumenta uno y completa los 10 digitos
         $mov_det_id = $this->leftZero(10, (intval($count_det) + 1));
         //Obtiene y/o crea el producto
         // $cod_prod = $this->obtenerProducto($det);
 
-        DB::connection('soft')->table('detmov')->insert(
+        DB::connection('soft1')->table('detmov')->insert(
             [
                 'unico' => $mov_det_id,
                 'mov_id' => $mov_id,
@@ -731,7 +731,7 @@ class MigrateFacturasSoftlinkController extends Controller
 
                         if ($det->id_doc_det_softlink !== null) {
                             //actualiza el detalle
-                            DB::connection('soft')->table('detmov')
+                            DB::connection('soft1')->table('detmov')
                                 ->where('unico', $det->id_doc_det_softlink)
                                 ->update([
                                     'cod_prod' => $cod_prod,

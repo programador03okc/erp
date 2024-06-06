@@ -169,6 +169,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('cargar_distrito/{id}', [ConfiguracionController::class, 'select_dist_prov'])->name('cargar_distrito');
 	Route::get('cargar_estructura_org/{id}', [ConfiguracionController::class, 'cargar_estructura_org'])->name('cargar_estructura_org');
 	Route::get('migrar_orden_compra/{id}', [MigrateOrdenSoftLinkController::class, 'migrarOrdenCompra'])->name('migrar-orden-compra');
+	Route::get('obtener_correlativo_documento_softlink', [MigrateOrdenSoftLinkController::class, 'getCorrelativoDocumentoSoftlink'])->name('obtener-correlativo-documento-softlink');
 	Route::get('migrar_venta_directa/{id}', [MigrateRequerimientoSoftLinkController::class, 'migrar_venta_directa'])->name('migrar-venta-directa');
 	// Route::get('anular_presup', 'ProyectosController@anular_presup');
 	// Route::get('listarUsu', 'Almacen\Movimiento\TransferenciaController@listarUsu');

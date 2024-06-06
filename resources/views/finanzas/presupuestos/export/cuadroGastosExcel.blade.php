@@ -120,6 +120,19 @@
                 <td>{{$d->subtotal}}</td>
                 <td>{{$d->tipo_cambio}}</td>
                 <td>{{$d->estado_pago}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{strtoupper($d->partida_descripcion)=='MANO DE OBRA'?$d->cantidad:''}}</td>
+                <td>{{strtoupper($d->partida_descripcion)=='MANO DE OBRA'?$d->abreviatura:''}}</td>
+                <td>{{strtoupper($d->partida_descripcion)=='MANO DE OBRA'?$d->simbolo_moneda_requerimiento:''}}</td>
+                <td>{{strtoupper($d->partida_descripcion)=='MANO DE OBRA'?$d->precio_unitario:''}}</td>
+                <td>0</td>
+                <td>0</td>
+                <td>{{strtoupper($d->partida_descripcion)=='MANO DE OBRA'?$d->subtotal:''}}</td>
+
+
             </tr>
             @endforeach
             @foreach ($devoluciones as $d)

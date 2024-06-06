@@ -77,6 +77,9 @@ class OrdenView {
         $('#form-orden').on("click", "button.handleClickMigrarOrdenASoftlink", (e) => {
             this.migrarOrdenes();
         });
+        $('#form-orden').on("click", "button.handleClickHistorialOrdenes", (e) => {
+            this.historialOrdenes();
+        });
         $('#form-orden').on("change", "select.onChangeSeleccionarProveedor", (e) => {
             this.llenarDatosCabeceraSeccionProveedor(e.currentTarget.value)
         });
@@ -234,13 +237,14 @@ class OrdenView {
             this.updateIncluyeIGV(e.currentTarget);
         });
 
-        $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateIncluyeICBPER", (e) => {
-            this.updateIncluyeICBPER(e.currentTarget);
-        });
+        // $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateIncluyeICBPER", (e) => {
+        //     this.updateIncluyeICBPER(e.currentTarget);
+        // });
     }
 
 
     seleccionarOrden(id_orden) {
+        this.idOrdenSeleccionada=id_orden;
         let cardOrden = document.querySelector("ul[id='contenedor_lista_ordenes']").children;
         let cardOrdenArray = Array.from(cardOrden);
         cardOrdenArray.forEach(element => {
@@ -254,6 +258,7 @@ class OrdenView {
             }
         });
 
+        console.log(this.ordenArray);
 
     }
 
@@ -1103,7 +1108,7 @@ class OrdenView {
                         showDenyButton: true,
                         showCancelButton: false,
                         confirmButtonText: "Si, continuar",
-                        denyButtonText: `Terminar selección`
+                        denyButtonText: `Cerrar`
                     }).then((result) => {
                         if (result.isConfirmed) {
                             return false;
@@ -1329,14 +1334,14 @@ class OrdenView {
                     'id_detalle_requerimiento': element.id_detalle_requerimiento ? element.id_detalle_requerimiento :'',
                     'id_tipo_item': element.id_tipo_item,
                     'id_producto': (element.id_producto ? element.id_producto : ''),
-                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto.codigo ? element.producto.codigo : '') : '<small>(No aplica)</small>',
+                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto !=null && element.producto.hasOwnProperty('codigo') ? element.producto.codigo : '') : '<small>(No aplica)</small>',
                     'codigo_requerimiento': element.codigo_requerimiento ? element.codigo_requerimiento : '',
-                    'codigo_softlink': element.producto.cod_softlink ? element.producto.cod_softlink : '',
-                    'part_number': element.producto.part_number ? element.producto.part_number : '',
-                    'descripcion': (element.producto.descripcion ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
+                    'codigo_softlink': element.producto!=null && element.producto.hasOwnProperty('cod_softlink') ? element.producto.cod_softlink : '',
+                    'part_number': element.producto!=null && element.producto.hasOwnProperty('part_number') ? element.producto.part_number : '',
+                    'descripcion': (element.producto!=null && element.producto.hasOwnProperty('descripcion') ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
                     'descripcion_complementaria': (element.descripcion_complementaria ? element.descripcion_complementaria : ''),
-                    'id_unidad_medida': (element.producto.id_unidad_medida ? element.producto.id_unidad_medida : element.id_unidad_medida),
-                    'abreviatura_unidad_medida': (element.producto != null && element.producto.unidad_medida != null ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
+                    'id_unidad_medida': (element.producto!=null && element.producto.hasOwnProperty('id_unidad_medida') ? element.producto.id_unidad_medida : element.id_unidad_medida),
+                    'abreviatura_unidad_medida': (element.producto != null && element.producto.hasOwnProperty('unidad_medida') ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
                     'cantidad_solicitada': (element.cantidad > 0 ? element.cantidad : '<small>(no definido en el requerimiento)</small'),
                     'cantidad_pendiente_atender': (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
                     'cantidad_atendida_almacen': (element.cantidad_atendida_almacen > 0 ? element.cantidad_atendida_almacen : '0'),
@@ -1490,6 +1495,7 @@ class OrdenView {
         if (data.id_proveedor > 0) {
             document.querySelector("form[id='form-orden'] p[name='direccion_proveedor']").textContent = data.direccion_fiscal_proveedor ? data.direccion_fiscal_proveedor : '';
             document.querySelector("form[id='form-orden'] select[name='id_proveedor']").value = data.id_proveedor ? data.id_proveedor : '';
+            console.log(data.id_proveedor, data.id_cuenta_proveedor);
             this.llenarDatosCabeceraSeccionProveedor(data.id_proveedor, data.id_cuenta_proveedor);
         }
         
@@ -1519,26 +1525,26 @@ class OrdenView {
 
         });
 
-        if (cantidadItemsAgregados > 0) {
-            Lobibox.notify('success', {
-                title: false,
-                size: 'mini',
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: `Se listan ${cantidadItemsAgregados} ítem(s)`
-            });
-        }
-        if (CantidadItemsPendientesPorMapear > 0) {
-            Lobibox.notify('warning', {
-                title: false,
-                size: 'mini',
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: `Aun tiene ${CantidadItemsPendientesPorMapear} ítem(s) por mapear`
-            });
-        }
+        // if (cantidadItemsAgregados > 0) {
+        //     Lobibox.notify('success', {
+        //         title: false,
+        //         size: 'mini',
+        //         rounded: true,
+        //         sound: false,
+        //         delayIndicator: false,
+        //         msg: `Se listan ${cantidadItemsAgregados} ítem(s)`
+        //     });
+        // }
+        // if (CantidadItemsPendientesPorMapear > 0) {
+        //     Lobibox.notify('warning', {
+        //         title: false,
+        //         size: 'mini',
+        //         rounded: true,
+        //         sound: false,
+        //         delayIndicator: false,
+        //         msg: `Aun tiene ${CantidadItemsPendientesPorMapear} ítem(s) por mapear`
+        //     });
+        // }
         this.agregarItemADetalleOrden(payload);
     }
 
@@ -1636,13 +1642,13 @@ class OrdenView {
         }else{
             document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_igv']").checked =false;
         }
-        if(montoIcbperOrden>0){
-            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =true;
-        }else{
-            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =false;
-        }
+        // if(montoIcbperOrden>0){
+        //     document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =true;
+        // }else{
+        //     document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =false;
+        // }
         document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='igv']").textContent=$.number(montoIgvOrden,2,'.',',');
-        document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='icbper']").textContent=$.number(montoIcbperOrden,2,'.',',');
+        // document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='icbper']").textContent=$.number(montoIcbperOrden,2,'.',',');
         document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='montoTotal']").textContent=$.number(montoTotalOrden,2,'.',',');
 
     }
@@ -2087,10 +2093,10 @@ class OrdenView {
     }
 
     updateCuentaBancariaProveedor(obj){
+
         (this.ordenArray).forEach((element,key)=>{
             if(element.id_orden==this.idOrdenSeleccionada){
                 this.ordenArray[key]['id_cuenta_proveedor']= obj.value;
-                // console.log(obj.options);
                 this.ordenArray[key]['numero_cuenta_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-nro-cuenta');
                 this.ordenArray[key]['numero_cuenta_interbancaria_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-nro-cuenta-interbancaria');
                 this.ordenArray[key]['id_moneda_cuenta_proveedor']= obj.options[obj.selectedIndex].getAttribute('data-id-moneda');
@@ -2298,7 +2304,7 @@ class OrdenView {
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
 
-        console.log(identificador, obj.value);
+        // console.log(identificador, obj.value);
         (this.ordenArray).forEach((orden,keyOrden)=>{
             if(orden.id_orden==this.idOrdenSeleccionada){
                 (orden.detalle).forEach((item,keyItem) => {
@@ -2352,77 +2358,76 @@ class OrdenView {
         this.imprimirTotales();
     }
 
-    updateIncluyeICBPER(obj){
-        (this.ordenArray).forEach((orden,key)=>{
-            if(orden.id_orden==this.idOrdenSeleccionada){
-                this.ordenArray[key]['incluye_icbper']= obj.checked;
-                if(obj.checked ==false){
-                    this.ordenArray[key]['monto_icbper']= 0;
-                }else{
-                    this.ordenArray[key]['monto_icbper']= 0.50;
-                }
+    // updateIncluyeICBPER(obj){
+    //     (this.ordenArray).forEach((orden,key)=>{
+    //         if(orden.id_orden==this.idOrdenSeleccionada){
+    //             this.ordenArray[key]['incluye_icbper']= obj.checked;
+    //             if(obj.checked ==false){
+    //                 this.ordenArray[key]['monto_icbper']= 0;
+    //             }else{
+    //                 this.ordenArray[key]['monto_icbper']= 0.50;
+    //             }
 
-                if(this.ordenArray[key]['monto_igv'] >0 || this.ordenArray[key]['incluye_igv']==true){
-                    this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
-                }else{
-                    this.ordenArray[key]['monto_igv']= 0;
-                }
-                this.ordenArray[key]['monto_total']= this.ordenArray[key]['monto_neto'] + parseFloat(this.ordenArray[key]['monto_igv'])+ (parseFloat(this.ordenArray[key]['monto_icbper']));
+    //             if(this.ordenArray[key]['monto_igv'] >0 || this.ordenArray[key]['incluye_igv']==true){
+    //                 this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
+    //             }else{
+    //                 this.ordenArray[key]['monto_igv']= 0;
+    //             }
+    //             this.ordenArray[key]['monto_total']= this.ordenArray[key]['monto_neto'] + parseFloat(this.ordenArray[key]['monto_igv'])+ (parseFloat(this.ordenArray[key]['monto_icbper']));
             
-             }
-        });
+    //          }
+    //     });
 
-        this.imprimirTotales();
-    }
+    //     this.imprimirTotales();
+    // }
 
 
     guardarOrdenes() {
-        console.log(this.ordenArray);
+        console.log(this.ordenArray); 
 
         if (this.ordenArray.length>0) {
 
-            let formData = new FormData();
+            // let formData = new FormData();
 
-            for (let item of this.ordenArray) {
-                for (let key in item) {
-                  if (key === 'detalle') {
-                    for (let previewKey in item[key][0]) {
-                      formData.append(`detalle[${previewKey}]`, item[key][0][previewKey]);
-                    }
-                  } else {
-                    formData.append(`${key}[]`, item[key]);
-                  }
-                }
-              }
+            // for (let item of this.ordenArray) {
+            //     for (let key in item) {
+            //       if (key === 'detalle') {
+            //         for (let previewKey in item[key][0]) {
+            //           formData.append(`detalle[${previewKey}][]`, item[key][0][previewKey]);
+            //         }
+            //       } else {
+            //         formData.append(`${key}[]`, item[key]);
+            //       }
+            //     }
+            //   }
               
+            
 
               $.ajax({
                 type: 'POST',
                 url: 'guardar-ordenes',
-                data: formData,
-                processData: false,
-                contentType: false,
                 dataType: 'JSON',
+                data: {data:this.ordenArray},
                 beforeSend: (data) => { // Are not working with dataType:'jsonp'
 
                     // $('#modal-loader').modal({backdrop: 'static', keyboard: false});
-                    var customElement = $("<div>", {
-                        "css": {
-                            "font-size": "24px",
-                            "text-align": "center",
-                            "padding": "0px",
-                            "margin-top": "-400px"
-                        },
-                        "class": "your-custom-class",
-                        "text": "Guardando..."
-                    });
+                    // var customElement = $("<div>", {
+                    //     "css": {
+                    //         "font-size": "24px",
+                    //         "text-align": "center",
+                    //         "padding": "0px",
+                    //         "margin-top": "-400px"
+                    //     },
+                    //     "class": "your-custom-class",
+                    //     "text": "Guardando..."
+                    // });
 
-                    $('#wrapper-okc').LoadingOverlay("show", {
-                        imageAutoResize: true,
-                        progress: true,
-                        custom: customElement,
-                        imageColor: "#3c8dbc"
-                    });
+                    // $('#wrapper-okc').LoadingOverlay("show", {
+                    //     imageAutoResize: true,
+                    //     progress: true,
+                    //     custom: customElement,
+                    //     imageColor: "#3c8dbc"
+                    // });
                 },
                 success: (response) => {
                     console.log(response);
@@ -2491,4 +2496,113 @@ class OrdenView {
 
     }
 
+
+    historialOrdenes(){
+        $('#modal-historial-ordenes').modal('show');
+
+        $tablaHistorialOrdenes = $('#tablaHistorialOrdenes').DataTable({
+            'dom': 'Blfrtip',
+            'buttons': [],
+            'language': vardataTables[0],
+            'order': [[3, 'desc']],
+            'serverSide': true,
+            'destroy': true,
+            'stateSave': true,
+            'bLengthChange': false,
+            "pageLength": 20,
+            'ajax': {
+                'url': route('logistica.gestion-logistica.compras.pendientes.requerimientos-pendientes'),
+                'type': 'GET',
+                beforeSend: data => {
+
+                    $("#tablaHistorialOrdenes").LoadingOverlay("show", {
+                        imageAutoResize: true,
+                        progress: true,
+                        imageColor: "#3c8dbc"
+                    });
+                }
+
+            },
+            'columns': [
+                { 'data': 'fecha_emision', 'name': 'fecha_emision', 'className': 'text-center' },
+                {
+                    'data': 'codigo', 'name': 'codigo', 'className': 'text-center', 'render': function (data, type, row) {
+                        return `<a href="/logistica/gestion-logistica/compras/ordenes/elaborar/generar-orden-pdf/${row.id_orden_compra}" target="_blank" title="Abrir Orden">${row.codigo}</a>`;
+                    }
+                },
+                { 'data': 'codigo_softlink', 'name': 'codigo_softlink', 'className': 'text-center' },
+                { 'data': 'data_codigo_requerimiento', 'name': 'data_codigo_requerimiento', 'className': 'text-left' },
+                { 'data': 'razon_social_proveedor', 'name': 'razon_social_proveedor', 'className': 'text-left' },
+                { 'data': 'condicion_compra', 'name': 'condicion_compra', 'className': 'text-left' },
+                { 'data': 'plazo_entrega', 'name': 'plazo_entrega', 'className': 'text-left' },
+                { 'data': 'descripcion_moneda', 'name': 'descripcion_moneda', 'className': 'text-left' },
+                { 'data': 'monto_total', 'name': 'monto_total', 'className': 'text-left' },
+                { 'data': 'razon_social_empresa', 'name': 'razon_social_empresa', 'className': 'text-left' },
+                { 'data': 'descripcion_sede', 'name': 'descripcion_sede', 'className': 'text-left' },
+                { 'data': 'codigo_grupo', 'name': 'codigo_grupo', 'className': 'text-left' },
+                { 'data': 'descripcion_estado', 'name': 'descripcion_estado', 'className': 'text-left' },
+                { 'data': 'descripcion_estado_pago', 'name': 'descripcion_estado', 'className': 'text-left' },
+                {
+                    'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
+                        let openDiv = '<div class="btn-group" role="group">';
+                        let closeDiv = '</div>';
+                        let btnSeleccionarHasDisable = '';
+                        let mensajeTitle = [];
+                        return openDiv + '<button type="button" class="btn btn-' + (btnSeleccionarHasDisable != '' ? 'default' : 'success') + ' btn-xs handleClickSeleccionarRequerimientoPendiente" name="btnSeleccionar" title="' + (mensajeTitle.length > 0 ? mensajeTitle.toString() : 'Seleccionar') + '" data-id-orden="' + row.id_orden_compra + '"  ' + btnSeleccionarHasDisable + ' ><i class="fas fa-check"></i> Seleccionar</button>' + closeDiv;
+
+                    }
+                }
+            ],
+            'columnDefs': [
+            ],
+            'rowCallback': function (row, data, dataIndex) {
+            },
+            'initComplete': function () {
+
+                //Boton de busqueda
+                const $filter = $('#tablaHistorialOrdenes_filter');
+                const $input = $filter.find('input');
+                $filter.append('<button id="btnBuscarHistorialOrden" class="btn btn-default btn-sm pull-right" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>');
+                $input.off();
+                $input.on('keyup', (e) => {
+                    if (e.key == 'Enter') {
+                        $('#btnBuscarHistorialOrden').trigger('click');
+                    }
+                });
+                $('#btnBuscarHistorialOrden').on('click', (e) => {
+                    $tablaHistorialOrdenes.search($input.val()).draw();
+                })
+                //Fin boton de busqueda
+            },
+            "drawCallback": function (settings) {
+                //Botón de búsqueda
+                $('#tablaHistorialOrdenes_filter input').prop('disabled', false);
+                $('#btnBuscarHistorialOrden').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                $('#tablaHistorialOrdenes_filter input').trigger('focus');
+                //fin botón búsqueda
+                if ($tablaHistorialOrdenes.rows().data().length == 0) {
+                    Lobibox.notify('info', {
+                        title: false,
+                        size: 'mini',
+                        rounded: true,
+                        sound: false,
+                        delayIndicator: false,
+                        msg: `No se encontro data disponible para mostrar`
+                    });
+                }
+                //Botón de búsqueda
+                $('#tablaHistorialOrdenes_filter input').prop('disabled', false);
+                $('#btnBuscarHistorialOrden').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                $('#tablaHistorialOrdenes_filter input').trigger('focus');
+                //fin botón búsqueda
+                $("#tablaHistorialOrdenes").LoadingOverlay("hide", true);
+
+            },
+            "createdRow": function (row, data, dataIndex) {
+
+             
+            }
+
+        });
+    }
 }

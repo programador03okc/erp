@@ -169,6 +169,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('cargar_distrito/{id}', [ConfiguracionController::class, 'select_dist_prov'])->name('cargar_distrito');
 	Route::get('cargar_estructura_org/{id}', [ConfiguracionController::class, 'cargar_estructura_org'])->name('cargar_estructura_org');
 	Route::get('migrar_orden_compra/{id}', [MigrateOrdenSoftLinkController::class, 'migrarOrdenCompra'])->name('migrar-orden-compra');
+	Route::get('obtener_correlativo_documento_softlink', [MigrateOrdenSoftLinkController::class, 'getCorrelativoDocumentoSoftlink'])->name('obtener-correlativo-documento-softlink');
+	Route::get('obtener_correlativo_documento_softlink_excel', [MigrateOrdenSoftLinkController::class, 'descargarExcelCorrelativoDocumentoSoftlink'])->name('obtener-correlativo-documento-softlink-excel');
 	Route::get('migrar_venta_directa/{id}', [MigrateRequerimientoSoftLinkController::class, 'migrar_venta_directa'])->name('migrar-venta-directa');
 	// Route::get('anular_presup', 'ProyectosController@anular_presup');
 	// Route::get('listarUsu', 'Almacen\Movimiento\TransferenciaController@listarUsu');
@@ -1534,6 +1536,7 @@ Route::middleware(['auth'])->group(function () {
 					Route::name('elaborar.')->prefix('elaborar')->group(function () {
 						Route::get('index', [OrdenController::class, 'view_crear_orden_requerimiento'])->name('index');
 						Route::get('orden-multiple-index', [OrdenMultipleController::class, 'view_orden_multiple'])->name('orden-multiple-index'); // TODO: En desarrollo
+						Route::post('guardar-ordenes', [OrdenMultipleController::class, 'guardarOrdenes'])->name('guardar-ordenes');
 						Route::get('obtener-atencion-de-item-requerimiento/{idRequerimiento}', [OrdenMultipleController::class, 'ObtenerAtencionItemRequerimiento'])->name('obtener-atencion-de-item-requerimiento');
 						Route::get('obtener-data-proveedor/{idProveedor}', [OrdenMultipleController::class, 'obtenerDataProveedor'])->name('obtener-data-proveedor');
 						Route::get('porveedores', [OrdenMultipleController::class, 'listar_proveedores'])->name('porveedores');

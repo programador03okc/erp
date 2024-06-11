@@ -85,6 +85,7 @@
                         <button type="button" name="btn-nuevo" class="btn btn-primary btn-sm handleClickCrearNuevaOrden" title="Nuevo"><i class="fas fa-file"></i> Crear nueva Orden</button>
                         <button type="button" name="btn-guardar" class="btn btn-success btn-sm handleClickGuardarOrden" title="Guardar"><i class="fas fa-save"></i> Guardar</button>
                         <button type="button" name="btn-migrar-orden-softlink" class="btn btn-warning btn-sm handleClickMigrarOrdenASoftlink" title="Migrar a softlink" disabled><i class="fas fa-file-export"></i> Migrar Orden a soflink</button>
+                        <button type="button" name="btn-historial-ordenes" class="btn btn-default btn-sm handleClickHistorialOrdenes" title="Historial de Ordenes" ><i class="fas fa-folder"></i> Historial de Ordenes</button>
                     </div>
                     <div>
                         <h5><span class="label label-info">Tipo cambio: <span name="tipo_cambio">0</span></span></h5>
@@ -195,7 +196,7 @@
                                                                 </dd>
                                                                 <dt>Fecha Emisión</dt>
                                                                 <dd>
-                                                                    <input class="form-control input-xs handleChangeUpdateFechaEmision" name="fecha_emision" type="datetime-local" value="2024-03-19T11:23">
+                                                                    <input class="form-control input-xs handleChangeUpdateFechaEmision" name="fecha_emision">
                                                                 </dd>
                                                             </dl>
                                                         </div>
@@ -297,6 +298,7 @@
                                                             <dl class="">
                                                                 <dt>Forma de pago</dt>
                                                                 <dd>
+                                                                    <input type="hidden" name="plazo_dias">
                                                                     <select class="form-control input-xs handleChangeFormaPago handleChangeUpdateFormaPago" name="id_condicion_softlink">
                                                                         <option value="" disabled>Elija una opción</option>
                                                                         @foreach ($condiciones_softlink as $cond)
@@ -441,7 +443,7 @@
                                         <div class="box box-widget">
                                             <div class="box-body">
                                                 <div class="table-responsive">
-                                                    <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden" width="100%">
+                                                    <table class="mytable table table-hover table-condensed table-bordered table-okc-view dataTable no-footer" name="listaDetalleOrden" id="listaDetalleOrden" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width: 5%">Req.</th>
@@ -472,14 +474,6 @@
                                                                     <input class="handleClickIncluyeIGV handleChangeUpdateIncluyeIGV" type="checkbox" name="incluye_igv" checked> <strong>Incluye IGV</strong>
                                                                 </td>
                                                                 <td class="text-right"><span name="simboloMoneda">S/</span><label name="igv">
-                                                                        0.00</label></td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="11" class="text-right">
-                                                                    <input class="handleClickIncluyeICBPER handleChangeUpdateIncluyeICBPER" type="checkbox" name="incluye_icbper"> <strong>Incluye ICBPER</strong>
-                                                                </td>
-                                                                <td class="text-right"><span name="simboloMoneda">S/</span><label name="icbper">
                                                                         0.00</label></td>
                                                                 <td></td>
                                                             </tr>
@@ -546,7 +540,7 @@
 
 
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-lista-requerimientos-pendientes">
-    <div class="modal-dialog modal-lg" style="width: 140rem;">
+    <div class="modal-dialog modal-lg" style="width: 95vw;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
@@ -555,28 +549,32 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="mytable table table-condensed table-striped table-hover table-bordered table-okc-view" id="tablaRequerimientosPendientes" width="100%" style="font-size: 11px;">
-                            <thead>
-                                <tr>
-                                    <th hidden>Id</th>
-                                    <th style="text-align:center;">Prio.</th>
-                                    <th style="text-align:center;">Empresa - Sede</th>
-                                    <th style="text-align:center; width:10%;">Código</th>
-                                    <th style="text-align:center;">Fecha creación</th>
-                                    <th style="text-align:center;">Fecha limite</th>
-                                    <th style="text-align:center;">Concepto</th>
-                                    <th style="text-align:center;">Tipo Req.</th>
-                                    <th style="text-align:center;">División</th>
-                                    <th style="text-align:center;">Solicitado por</th>
-                                    <th style="text-align:center;">Req. creado por</th>
-                                    <th style="text-align:center;">Observación</th>
-                                    <th style="text-align:center;">Estado</th>
-                                    <th style="text-align:center;">Tipo Item</th>
-                                    <th style="text-align:center;width:7%;">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <div class="box box-widget">
+                            <div class="box-body">
+                                <table class="table-responsive table table-condensed table-striped table-hover table-bordered table-okc-view" id="tablaRequerimientosPendientes" width="100%" style="font-size: 11px;">
+                                    <thead>
+                                        <tr>
+                                            <th hidden>Id</th>
+                                            <th style="text-align:center;">Prio.</th>
+                                            <th style="text-align:center;">Empresa - Sede</th>
+                                            <th style="text-align:center; width:10%;">Código</th>
+                                            <th style="text-align:center;">Fecha creación</th>
+                                            <th style="text-align:center;">Fecha limite</th>
+                                            <th style="text-align:center;">Concepto</th>
+                                            <th style="text-align:center;">Tipo Req.</th>
+                                            <th style="text-align:center;">División</th>
+                                            <th style="text-align:center;">Solicitado por</th>
+                                            <th style="text-align:center;">Req. creado por</th>
+                                            <th style="text-align:center;">Observación</th>
+                                            <th style="text-align:center;">Estado</th>
+                                            <th style="text-align:center;">Tipo Item</th>
+                                            <th style="text-align:center;width:7%;">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -587,9 +585,55 @@
     </div>
 </div>
 
-@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_catalogo_items')
 
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-historial-ordenes">
+    <div class="modal-dialog modal-lg" style="width: 95vw;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Historial de ordenes elaboradas</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-widget">
+                            <div class="box-body">
+                                <table class="table-responsive table table-condensed table-striped table-hover table-bordered table-okc-view" id="tablaHistorialOrdenes" width="100%" style="font-size: 11px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center; width:5%;">Fecha emisión</th>
+                                            <th style="text-align:center; width:5%;">Cód. Orden</th>
+                                            <th style="text-align:center; width:5%;">Cód. Softlink</th>
+                                            <th style="text-align:center; width:10%;">Cod. Requerimiento</th>
+                                            <th style="text-align:center; width:20%;">Proveedor</th>
+                                            <th style="text-align:center; width:20%;">Coondición</th>
+                                            <th style="text-align:center; width:20%;">Plazo Entrega</th>
+                                            <th style="text-align:center; width:5%;">Moneda</th>
+                                            <th style="text-align:center; width:20%;">Total</th>
+                                            <th style="text-align:center; width:20%;">Empresa</th>
+                                            <th style="text-align:center; width:20%;">Sede</th>
+                                            <th style="text-align:center; width:10%;">Cod. grupo.</th>
+                                            <th style="text-align:center; width:5%;">Estado orden</th>
+                                            <th style="text-align:center; width:5%;">Estado pago</th>
+                                            <th style="text-align:center;width:5%;">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" class="close" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_catalogo_items')
 @include('logistica.gestion_logistica.proveedores.modal_cuentas_bancarias_proveedor')
+@include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_seleccionar_orden')
 
 
 <!-- @include('logistica.gestion_logistica.compras.ordenes.elaborar.modal_lista_oc_softlink')

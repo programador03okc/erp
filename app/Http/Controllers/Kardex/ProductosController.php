@@ -216,7 +216,7 @@ class ProductosController extends Controller
         //     $value->detalle = MovimientoDetalle::where('mov_id',$value->mov_id)->get();
         //     array_push($array_detalle, $value->detalle);
         // }
-        // $data  = DB::connection('soft')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->orderBy('fec_docu','asc')->get();
+        // $data  = DB::connection('soft1')->table('movimien')->whereIN('cod_docu',['GR','G1','G2','G4','G5','G6'])->orderBy('fec_docu','asc')->get();
         // foreach ($data as $key => $value) {
         //     return $value;
         // }

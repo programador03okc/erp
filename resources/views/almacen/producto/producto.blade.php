@@ -126,7 +126,7 @@
                                             </ol>
                                         </div>
                                         <div class="col-md-4">
-                                            <h5>Clasificación</h5>
+                                            <h5>Grupo</h5>
                                             <select class="form-control activation js-example-basic-single" name="id_clasif" disabled="true">
                                                 <option value="0">Elija una opción</option>
                                                 @foreach ($clasificaciones as $clasif)
@@ -145,17 +145,6 @@
                                         </div>
                                         <div class="col-md-4">
                                             <h5>SubCategoría</h5>
-                                            <select class="form-control activation js-example-basic-single" name="id_categoria" disabled="true">
-                                                <option value="0">Elija una opción</option>
-                                                @foreach ($categorias as $cat)
-                                                <option value="{{$cat->id_categoria}}">{{$cat->descripcion}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h5>Marca</h5>
                                             <select class="form-control activation js-example-basic-single" name="id_subcategoria" disabled="true">
                                                 <option value="0">Elija una opción</option>
                                                 @foreach ($subcategorias as $subcat)
@@ -163,6 +152,9 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="row">
+
                                         <div class="col-md-4">
                                             <h5>Part Number</h5>
                                             <input type="text" class="form-control activation" name="part_number" disabled="true">

@@ -22,7 +22,7 @@ class MigrateMovimientosSoftlinkController extends Controller
     //     $cantidadRegistrosMigrados=0;
     //     DB::beginTransaction();
     //     try {
-    //         $softlinkMovimien = DB::connection('soft')->table('movimien')->where('cod_docu','GR')->orderBy('fec_docu','desc')->limit(500)->get();
+    //         $softlinkMovimien = DB::connection('soft1')->table('movimien')->where('cod_docu','GR')->orderBy('fec_docu','desc')->limit(500)->get();
     //         $conexion='ok';
      
     //         if ($softlinkMovimien !== null) {

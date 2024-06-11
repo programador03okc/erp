@@ -98,10 +98,9 @@ function mostrar_producto(id) {
             $('[name=part_number]').val(response['producto'][0].part_number);
             $('[name=descripcion]').val(response['producto'][0].descripcion);
             $('[name=id_unidad_medida]').val(response['producto'][0].id_unidad_medida);
+            $('[name=id_clasif]').val(response['producto'][0].id_clasif).trigger('change.select2');
+            $('[name=id_tipo_producto]').val(response['producto'][0].id_categoria).trigger('change.select2');
             $('[name=id_subcategoria]').val(response['producto'][0].id_subcategoria).trigger('change.select2');
-            $('[name=id_categoria]').val(response['producto'][0].id_categoria).trigger('change.select2');
-            $('[name=id_tipo_producto]').val(response['producto'][0].id_tipo_producto).trigger('change.select2');
-            $('[name=id_clasif]').val(response['producto'][0].id_clasificacion).trigger('change.select2');
             $('#tipo_descripcion').text(response['producto'][0].tipo_descripcion);
             $('#cat_descripcion').text(response['producto'][0].cat_descripcion);
             $('#subcat_descripcion').text(response['producto'][0].subcat_descripcion);
@@ -183,7 +182,7 @@ $("[name=id_clasif]").on('change', function () {
 $("[name=id_tipo_producto]").on('change', function () {
     var id_tipo = $(this).val();
     console.log(id_tipo);
-    $('[name=id_categoria]').html('');
+    $('[name=id_subcategoria]').html('');
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': token },
@@ -193,12 +192,12 @@ $("[name=id_tipo_producto]").on('change', function () {
             console.log(response);
 
             if (response.length > 0) {
-                $('[name=id_categoria]').html('');
+                $('[name=id_subcategoria]').html('');
                 html = '<option value="0" >Elija una opción</option>';
                 response.forEach(element => {
-                    html += `<option value="${element.id_categoria}" >${element.descripcion}</option>`;
+                    html += `<option value="${element.id_subcategoria}" >${element.descripcion}</option>`;
                 });
-                $('[name=id_categoria]').html(html);
+                $('[name=id_subcategoria]').html(html);
             }
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -378,7 +377,7 @@ function unid_abrev($id_name) {
 }
 
 function validaProducto() {
-    var id_categoria = $('[name=id_categoria]').val();
+    // var id_categoria = $('[name=id_categoria]').val();
     var id_subcategoria = $('[name=id_subcategoria]').val();
     var id_clasif = $('[name=id_clasif]').val();
     var descripcion = $('[name=descripcion]').val();
@@ -386,14 +385,12 @@ function validaProducto() {
     var id_moneda = $('[name=id_moneda]').val();
     var msj = '';
 
-    if (id_categoria == '' || id_categoria == '0' || id_categoria == null) {
+ 
+    if (id_subcategoria == '' || id_subcategoria == '0' || id_subcategoria == null) {
         msj += (msj == '' ? 'Es necesario que elija una SubCategoría' : ', una SubCategoría');
     }
-    if (id_subcategoria == '' || id_subcategoria == '0' || id_subcategoria == null) {
-        msj += (msj == '' ? 'Es necesario que elija una Marca' : ', una Marca');
-    }
     if (id_clasif == '' || id_clasif == '0' || id_clasif == null) {
-        msj += (msj == '' ? 'Es necesario que alija una Clasificación' : ', una clasificación');
+        msj += (msj == '' ? 'Es necesario que alija un Grupo' : ', un Grupo');
     }
     if (descripcion == '' || descripcion == null) {
         msj += (msj == '' ? 'Es necesario que ingrese una Descripción' : ', una descripción');

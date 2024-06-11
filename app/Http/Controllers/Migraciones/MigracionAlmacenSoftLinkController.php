@@ -213,7 +213,7 @@ class MigracionAlmacenSoftLinkController extends Controller
         foreach ($collection as $key => $value) {
             if ($key!==0) {
                 if ($value[1]) {
-                    $producto_softlink = DB::connection('soft')->table('sopprod')->where('cod_prod',$value[1])->first();
+                    $producto_softlink = DB::connection('soft1')->table('sopprod')->where('cod_prod',$value[1])->first();
 
 
 
@@ -221,7 +221,7 @@ class MigracionAlmacenSoftLinkController extends Controller
 
                     if ($producto_softlink) {
                         array_push($array_productos_soflink,$producto_softlink);
-                        DB::connection('soft')
+                        DB::connection('soft1')
                         ->table('sopprod')
                         ->where('cod_prod',$value[1])
                         ->update(
@@ -240,19 +240,19 @@ class MigracionAlmacenSoftLinkController extends Controller
                         );
 
                         if ($value[4] && $value[5]) {
-                            $clasificacion_softlink = DB::connection('soft')->table('soplinea')->where('nom_line',$value[4])->first();
+                            $clasificacion_softlink = DB::connection('soft1')->table('soplinea')->where('nom_line',$value[4])->first();
 
                             $categoria_softlink=array();
 
                             if ($clasificacion_softlink) {
-                                $categoria_softlink = DB::connection('soft')->table('sopsub1')->where('nom_sub1',$value[5])->first();
+                                $categoria_softlink = DB::connection('soft1')->table('sopsub1')->where('nom_sub1',$value[5])->first();
                             }
                             $clasificacion_agil = Clasificacion::where('descripcion',$value[4])->first();
                             $categoria_agil = Categoria::where('id_clasificacion',$clasificacion_agil->id_clasificacion)->first();
                             $subcategoria_agil = SubCategoria::where('descripcion',$value[5])->where('id_tipo_producto',$categoria_agil->id_tipo_producto)->first();
 
                             if ($clasificacion_softlink && $categoria_softlink) {
-                                DB::connection('soft')
+                                DB::connection('soft1')
                                 ->table('sopprod')
                                 ->where('cod_prod',$value[1])
                                 ->update(

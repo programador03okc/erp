@@ -1779,6 +1779,7 @@ class OrdenController extends Controller
                 'alm_item.codigo AS codigo_item',
                 'alm_prod.descripcion AS descripcion_producto',
                 'alm_prod.codigo AS codigo_producto',
+                'alm_prod.cod_softlink AS codigo_softlink',
                 'alm_prod.part_number',
                 'log_det_ord_compra.garantia',
                 'log_det_ord_compra.estado',
@@ -1917,6 +1918,7 @@ class OrdenController extends Controller
                     'codigo_item' => $data->codigo_item,
                     'id_producto' => $data->id_producto,
                     'codigo_producto' => $data->codigo_producto,
+                    'codigo_softlink' => $data->codigo_softlink,
                     'descripcion_producto' => $data->descripcion_producto,
                     'part_number' => $data->part_number,
                     'descripcion_adicional' => $data->descripcion_adicional,
@@ -2182,6 +2184,7 @@ class OrdenController extends Controller
                 <thead style=" background-color:'.$colorBrand.';">
                     <tr class="subtitle">
                         <td style="width:5px; text-align:center;">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Product code' : 'Código') . '</td>
+                        <td style="width:5px; text-align:center;">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Softlink code' : 'Cód. Softlink') . '</td>
                         <td style="width:5px; text-align:center;">Part number</td>
                         <td style="width:280px; text-align:center;">' . ($ordenArray['head']['id_tp_documento'] == 12 ? 'Product description' : 'Descripción') . '</td>
                         <td style="width:15px; text-align:center;">Und</td>
@@ -2219,6 +2222,7 @@ class OrdenController extends Controller
             $html .= '<tr style="text-align:left">';
             // $html .= '<td>' . ($key + 1) . '</td>';
             $html .= '<td>' . $data['codigo_producto'] . '</td>';
+            $html .= '<td>' . $data['codigo_softlink'] . '</td>';
             $html .= '<td>' . $data['part_number'] . '</td>';
             if ($data['id_producto'] > 0 && strlen($data['descripcion_producto']) > 0) {
 

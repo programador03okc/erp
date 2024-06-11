@@ -17,9 +17,9 @@ class MigrateProductoSoftlinkController extends Controller
                 ->select(
                     'alm_prod.*',
                     'alm_und_medida.abreviatura',
-                    'alm_cat_prod.descripcion as categoria',
-                    'alm_subcat.descripcion as subcategoria',
                     'alm_clasif.descripcion as clasificacion',
+                    'alm_tp_prod.descripcion as categoria',
+                    'alm_subcat.descripcion as subcategoria',
                     // 'alm_tp_prod.descripcion as tipo_descripcion',
                     // 'alm_tp_prod.id_tipo_producto',
                     'alm_tp_prod.id_clasificacion',
@@ -27,10 +27,10 @@ class MigrateProductoSoftlinkController extends Controller
                     // 'adm_estado_doc.estado_doc',
                     // 'adm_estado_doc.bootstrap_color',
                 )
+                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
+                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
                 ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
-                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_cat_prod.id_tipo_producto')
-                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_tp_prod.id_clasificacion')
+                // ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
                 ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
                 // ->leftjoin('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'alm_prod.id_usuario')
                 // ->leftjoin('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'alm_prod.estado')
@@ -40,7 +40,7 @@ class MigrateProductoSoftlinkController extends Controller
             $prod = null;
             if (!empty(trim($producto->part_number))) { //if ($producto->part_number !== null && $producto->part_number !== '') {
                 // return [$producto];exit;
-                $prod = DB::connection('soft')->table('sopprod')
+                $prod = DB::connection('soft2')->table('sopprod')
                     ->select('cod_prod')
                     ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
                     ->where([
@@ -50,7 +50,7 @@ class MigrateProductoSoftlinkController extends Controller
                     ->first();
 
             } else if ($producto->descripcion !== null && $producto->descripcion !== '') {
-                $prod = DB::connection('soft')->table('sopprod')
+                $prod = DB::connection('soft2')->table('sopprod')
                     ->select('cod_prod')
                     ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
                     ->where([
@@ -70,7 +70,7 @@ class MigrateProductoSoftlinkController extends Controller
 
                 $cod_unid = $this->obtenerUnidadMedida($producto->abreviatura);
                 // return $cod_cate;exit;
-                DB::connection('soft')
+                DB::connection('soft2')
                 ->table('sopprod')
                 ->where('cod_prod',$cod_prod)
                 ->update(
@@ -93,7 +93,7 @@ class MigrateProductoSoftlinkController extends Controller
             } //Si no existe, genera el producto
             else {
                 //obtiene el sgte codigo
-                $ultimo = DB::connection('soft')->table('sopprod')
+                $ultimo = DB::connection('soft2')->table('sopprod')
                     ->select('cod_prod')
                     ->where([['cod_prod', '!=', 'TEXTO']])
                     ->orderBy('cod_prod', 'desc')
@@ -109,7 +109,7 @@ class MigrateProductoSoftlinkController extends Controller
 
                 $cod_unid = $this->obtenerUnidadMedida($producto->abreviatura);
 
-                DB::connection('soft')->table('sopprod')->insert(
+                DB::connection('soft2')->table('sopprod')->insert(
                     [
                         'cod_prod' => $cod_prod,
                         'cod_clasi' => $cod_clasi,
@@ -179,15 +179,15 @@ class MigrateProductoSoftlinkController extends Controller
                     ]
                 );
 
-                $sucursales = DB::connection('soft')->table('sucursal')->get();
+                $sucursales = DB::connection('soft2')->table('sucursal')->get();
 
                 foreach ($sucursales as $suc) {
-                    $prod = DB::connection('soft')->table('precios')
+                    $prod = DB::connection('soft2')->table('precios')
                         ->where([['cod_prod', '=', $cod_prod], ['cod_suc', '=', $suc->cod_suc]])
                         ->first();
 
                     if ($prod == null) {
-                        DB::connection('soft')->table('precios')->insert(
+                        DB::connection('soft2')->table('precios')->insert(
                             [
                                 'cod_prod' => $cod_prod,
                                 'cod_suc' => $suc->cod_suc,
@@ -215,15 +215,15 @@ class MigrateProductoSoftlinkController extends Controller
                     }
                 }
 
-                $almacenes = DB::connection('soft')->table('almacen')->get();
+                $almacenes = DB::connection('soft2')->table('almacen')->get();
 
                 foreach ($almacenes as $alm) {
-                    $stock = DB::connection('soft')->table('stocks')
+                    $stock = DB::connection('soft2')->table('stocks')
                         ->where([['cod_suc', '=', $alm->cod_suc], ['cod_alma', '=', $alm->cod_alma], ['cod_prod', '=', $cod_prod]])
                         ->first();
 
                     if ($stock == null) {
-                        DB::connection('soft')->table('stocks')->insert(
+                        DB::connection('soft2')->table('stocks')->insert(
                             [
                                 'cod_suc' => $alm->cod_suc,
                                 'cod_alma' => $alm->cod_alma,
@@ -254,7 +254,7 @@ class MigrateProductoSoftlinkController extends Controller
     public function obtenerClasificacion($clasificacion)
     {
         //verifica si tiene clasificacion
-        $clasif = DB::connection('soft')->table('soplinea')
+        $clasif = DB::connection('soft2')->table('soplinea')
             ->select('cod_line')
             ->where('nom_line', trim($clasificacion))
             ->first();
@@ -264,12 +264,12 @@ class MigrateProductoSoftlinkController extends Controller
         if ($clasif !== null) {
             $cod_clasi = $clasif->cod_line;
         } else {
-            $ultimo_line = DB::connection('soft')->table('soplinea')
+            $ultimo_line = DB::connection('soft2')->table('soplinea')
                 ->select('cod_line')->orderBy('cod_line', 'desc')->first();
 
             $cod_clasi = $this->leftZero(2, (intval($ultimo_line->cod_line) + 1));
 
-            DB::connection('soft')->table('soplinea')->insert(
+            DB::connection('soft2')->table('soplinea')->insert(
                 [
                     'cod_line' => $cod_clasi,
                     'nom_line' => trim($clasificacion),
@@ -284,7 +284,7 @@ class MigrateProductoSoftlinkController extends Controller
     public function obtenerCategoria($categoria, $id_categoria)
     {
         //verifica si existe categoria
-        $cate = DB::connection('soft')->table('sopsub1')
+        $cate = DB::connection('soft2')->table('sopsub1')
             ->select('cod_sub1')
             ->where('nom_sub1', trim($categoria))
             ->first();
@@ -294,12 +294,12 @@ class MigrateProductoSoftlinkController extends Controller
         if ($cate !== null) {
             $cod_cate = $cate->cod_sub1;
         } else {
-            $ultima_cate = DB::connection('soft')->table('sopsub1')
+            $ultima_cate = DB::connection('soft2')->table('sopsub1')
                 ->select('cod_sub1')->orderBy('cod_sub1', 'desc')->first();
 
             $cod_cate = $this->leftZero(3, (intval($ultima_cate->cod_sub1) + 1));
 
-            DB::connection('soft')->table('sopsub1')->insert(
+            DB::connection('soft2')->table('sopsub1')->insert(
                 [
                     'cod_sub1' => $cod_cate,
                     'nom_sub1' => trim($categoria),
@@ -308,8 +308,8 @@ class MigrateProductoSoftlinkController extends Controller
                 ]
             );
 
-            DB::table('almacen.alm_cat_prod')
-                ->where('id_categoria', $id_categoria)
+            DB::table('almacen.alm_tp_prod')
+                ->where('id_tipo_producto', $id_categoria)
                 ->update(['cod_softlink' => $cod_cate]);
         }
         return $cod_cate;
@@ -318,7 +318,7 @@ class MigrateProductoSoftlinkController extends Controller
     public function obtenerSubCategoria($subcategoria, $id_subcategoria)
     {
         //verifica si existe subcategoria
-        $subcate = DB::connection('soft')->table('sopsub2')
+        $subcate = DB::connection('soft2')->table('sopsub2')
             ->select('cod_sub2')
             ->where('nom_sub2', trim($subcategoria))
             ->first();
@@ -328,12 +328,12 @@ class MigrateProductoSoftlinkController extends Controller
         if ($subcate !== null) {
             $cod_subc = $subcate->cod_sub2;
         } else {
-            $ultima_subc = DB::connection('soft')->table('sopsub2')
+            $ultima_subc = DB::connection('soft2')->table('sopsub2')
                 ->select('cod_sub2')->orderBy('cod_sub2', 'desc')->first();
 
             $cod_subc = $this->leftZero(3, (intval($ultima_subc->cod_sub2) + 1));
 
-            DB::connection('soft')->table('sopsub2')->insert(
+            DB::connection('soft2')->table('sopsub2')->insert(
                 [
                     'cod_sub2' => $cod_subc,
                     'nom_sub2' => trim($subcategoria),
@@ -353,7 +353,7 @@ class MigrateProductoSoftlinkController extends Controller
     public function obtenerUnidadMedida($abreviatura)
     {
         //verifica si existe unidad medida
-        $unidad = DB::connection('soft')->table('unidades')
+        $unidad = DB::connection('soft2')->table('unidades')
             ->select('cod_unid')
             ->where('nom_unid', trim($abreviatura))
             ->first();
@@ -363,11 +363,11 @@ class MigrateProductoSoftlinkController extends Controller
         if ($unidad !== null) {
             $cod_unid = $unidad->cod_unid;
         } else {
-            $count_unid = DB::connection('soft')->table('unidades')->count();
+            $count_unid = DB::connection('soft2')->table('unidades')->count();
 
             $cod_unid = $this->leftZero(3, (intval($count_unid) + 1));
 
-            DB::connection('soft')->table('unidades')->insert(
+            DB::connection('soft2')->table('unidades')->insert(
                 [
                     'cod_unid' => $cod_unid,
                     'nom_unid' => trim($abreviatura),
@@ -407,7 +407,7 @@ class MigrateProductoSoftlinkController extends Controller
             ->get();
 
         foreach ($productos as $p) {
-            $prod = DB::connection('soft')->table('series')
+            $prod = DB::connection('soft2')->table('series')
                 ->select(
                     'series.fecha_ing',
                     'detmov.pre_prod',

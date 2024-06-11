@@ -14,6 +14,8 @@ use App\Models\softlink\TipoCambio;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\StringHelper;
+use App\Http\Controllers\Migraciones\MigrateProductoSoftlinkController;
 
 class softlink extends Command
 {
@@ -60,29 +62,29 @@ class softlink extends Command
                 //     break;
 
             case 'migrar_tipo_cambio':
-                $data  = DB::connection('soft')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
+                $data  = DB::connection('soft2')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
                 foreach ($data as $value) {
-                    if($value->dfecha != '0000-00-00' && $value->dfecha !=null){
+                    if ($value->dfecha != '0000-00-00' && $value->dfecha != null) {
                         $tipoCambio = new TipoCambio();
-                        $tipoCambio->dfecha =$value->dfecha;
-                        $tipoCambio->cambio =$value->cambio;
-                        $tipoCambio->cambio2 =$value->cambio2;
-                        $tipoCambio->cambio3 =$value->cambio3;
+                        $tipoCambio->dfecha = $value->dfecha;
+                        $tipoCambio->cambio = $value->cambio;
+                        $tipoCambio->cambio2 = $value->cambio2;
+                        $tipoCambio->cambio3 = $value->cambio3;
                         $tipoCambio->save();
                         $cantidadMigrados++;
                     }
 
-                    DB::connection('soft')
-                    ->table('tcambio')
-                    ->where('dfecha', $value->dfecha)
-                    ->update(
-                        ['flg_migracion' => 1]
-                    );
+                    DB::connection('soft2')
+                        ->table('tcambio')
+                        ->where('dfecha', $value->dfecha)
+                        ->update(
+                            ['flg_migracion' => 1]
+                        );
 
-                  $bar->advance();
+                    $bar->advance();
                 }
                 $bar->finish();
                 $this->info("\nSe migró $cantidadMigrados registros de tipo de cambio de softlink a la tabla local kardex.tcambio");
@@ -90,7 +92,7 @@ class softlink extends Command
                 break;
             case 'migrar_cabecera_movimientos':
 
-                $data  = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
+                $data  = DB::connection('soft2')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -204,7 +206,7 @@ class softlink extends Command
                         $nuevoMovimiento->save();
                         $cantidadMigrados++;
 
-                        DB::connection('soft')
+                        DB::connection('soft2')
                             ->table('movimien')
                             ->where('mov_id', $value->mov_id)
                             ->update(
@@ -222,12 +224,12 @@ class softlink extends Command
             case 'migrar_detalle_movimientos':
 
                 $cantidadMigrados = 0;
-                $aux = DB::connection('soft')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
+                $aux = DB::connection('soft2')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
                 $cantidadAux = count($aux);
                 $bar = $this->output->createProgressBar($cantidadAux);
                 $bar->start();
                 foreach ($aux as $key => $value) {
-                    $data  = DB::connection('soft')->table('detmov')->where('mov_id', $value->mov_id)->orderBy('fec_pedi', 'asc')->get();
+                    $data  = DB::connection('soft2')->table('detmov')->where('mov_id', $value->mov_id)->orderBy('fec_pedi', 'asc')->get();
 
                     foreach ($data as $value) {
                         // $movimientosDetalleAGILE = MovimientoDetalle::where([
@@ -293,7 +295,7 @@ class softlink extends Command
                         $nuevoMovimientoDetalle->save();
                         $cantidadMigrados++;
 
-                        DB::connection('soft')
+                        DB::connection('soft2')
                             ->table('detmov')
                             ->where('unico', $value->unico)
                             ->update(
@@ -314,7 +316,7 @@ class softlink extends Command
 
             case 'migrar_series':
 
-                $data  = DB::connection('soft')->table('series')->where('flg_migracion', 0)->orderBy('fecha_ing', 'asc')->get();
+                $data  = DB::connection('soft2')->table('series')->where('flg_migracion', 0)->orderBy('fecha_ing', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -347,7 +349,7 @@ class softlink extends Command
                     $cantidadMigrados++;
 
 
-                    DB::connection('soft')
+                    DB::connection('soft2')
                         ->table('series')
                         ->where('mov_id', $value->mov_id)
                         ->update(
@@ -366,7 +368,7 @@ class softlink extends Command
 
             case 'migrar_productos':
 
-                $data  = DB::connection('soft')->table('sopprod')->orderBy('fec_ingre', 'asc')->get();
+                $data  = DB::connection('soft2')->table('sopprod')->orderBy('fec_ingre', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -457,7 +459,7 @@ class softlink extends Command
                 $cantidadProductosAgregados = 0;
                 $cantidadDetalleProductosAgregados = 0;
 
-              
+
                 $to = Carbon::parse();
                 $from = Carbon::parse('2023-01-01')->toDateTimeString();
                 $movimiento = Movimiento::whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('estado_migracion', 1)->whereBetween('fec_docu', [$from, $to])->orderBy('fec_docu', 'asc')->get();
@@ -486,34 +488,34 @@ class softlink extends Command
                             $cantidadProductosAgregados++;
 
                             $actualiarDetalleMovimiento = MovimientoDetalle::where('unico', $movDetValue->unico)->first();
-                            if($actualiarDetalleMovimiento!=null){
+                            if ($actualiarDetalleMovimiento != null) {
                                 $actualiarDetalleMovimiento->estado_migracion = 2; // procesado
                                 $actualiarDetalleMovimiento->save();
                             }
 
                             $series = Serie::where('cod_prod', trim($movDetValue->cod_prod))->get();
-                            
+
                             foreach ($series as $serie) {
                                 if ($series && intval($serie->id) > 0) {
                                     // $nuevoProductoDetalle = new ProductoDetalle();
-                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie'=> trim($serie->serie)]);
-                                    if($movValue->tipo == 2){
-                                        if($serie->fecha_sal ==null ){
-                                            $estado=1;
-                                        }else{
-                                            $estado=0;
+                                    $nuevoProductoDetalle = ProductoDetalle::firstOrNew(['serie' => trim($serie->serie)]);
+                                    if ($movValue->tipo == 2) {
+                                        if ($serie->fecha_sal == null) {
+                                            $estado = 1;
+                                        } else {
+                                            $estado = 0;
                                         }
-                                    }else{
-                                        $estado=1;
+                                    } else {
+                                        $estado = 1;
                                     }
                                     $verificarSerie = ProductoDetalle::verificarSerie(trim($serie->serie), null);
                                     $nuevoProductoDetalle->serie = trim($verificarSerie['serie']);
                                     $nuevoProductoDetalle->fecha = $serie->fechavcto;
                                     $nuevoProductoDetalle->producto_id = $nuevoProducto->id;
-                                    $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) ==""?null:trim($serie->id_ingreso);
-                                    $nuevoProductoDetalle->fecha_ing =  trim($serie->fecha_ing) ==""?null:trim($serie->fecha_ing);
-                                    $nuevoProductoDetalle->id_salida = trim($serie->id_salida) ==""?null:trim($serie->id_salida);
-                                    $nuevoProductoDetalle->fecha_sal = trim($serie->fecha_sal) ==""?null:trim($serie->fecha_sal);
+                                    $nuevoProductoDetalle->id_ingreso =  trim($serie->id_ingreso) == "" ? null : trim($serie->id_ingreso);
+                                    $nuevoProductoDetalle->fecha_ing =  trim($serie->fecha_ing) == "" ? null : trim($serie->fecha_ing);
+                                    $nuevoProductoDetalle->id_salida = trim($serie->id_salida) == "" ? null : trim($serie->id_salida);
+                                    $nuevoProductoDetalle->fecha_sal = trim($serie->fecha_sal) == "" ? null : trim($serie->fecha_sal);
                                     $nuevoProductoDetalle->estado = 1;
                                     $nuevoProductoDetalle->disponible = $estado;
                                     $nuevoProductoDetalle->autogenerado = $verificarSerie['autogenerado'];
@@ -521,7 +523,6 @@ class softlink extends Command
                                     $cantidadDetalleProductosAgregados++;
                                 }
                             }
-
                         }
                     }
 
@@ -538,6 +539,252 @@ class softlink extends Command
 
 
                 break;
+
+            case 'migra_productos_con_nueva_categoria':
+              
+                $productos = DB::table('almacen.alm_prod')
+                ->select(
+                    'alm_prod.*',
+                    'alm_und_medida.abreviatura',
+                    'alm_clasif.descripcion as clasificacion',
+                    'alm_tp_prod.descripcion as categoria',
+                    'alm_subcat.descripcion as subcategoria'
+                    // 'alm_tp_prod.id_clasificacion'
+                )
+                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
+                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
+                // ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
+                ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+                ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+                ->whereNotNull('alm_prod.id_grupo_sap')
+                ->get();
+
+                $cantidadAux = count($productos);
+                $bar = $this->output->createProgressBar($cantidadAux);
+                $bar->start();
+               
+
+            //Verifica si esxiste el producto
+            $cantidadProductosAgregados=0;
+            foreach ($productos as $producto) {
+                $prod = null;
+                if (!empty(trim($producto->part_number))) { //if ($producto->part_number !== null && $producto->part_number !== '') {
+                    // return [$producto];exit;
+                    $prod = DB::connection('soft2')->table('sopprod')
+                        ->select('cod_prod')
+                        ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
+                        ->where([
+                            ['sopprod.cod_espe', '=', trim($producto->part_number)],
+                            ['sopsub2.nom_sub2', '=', $producto->subcategoria]
+                        ])
+                        ->first();
+
+                } else if ($producto->descripcion !== null && $producto->descripcion !== '') {
+                    $prod = DB::connection('soft2')->table('sopprod')
+                        ->select('cod_prod')
+                        ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
+                        ->where([
+                            ['nom_prod', '=', trim($producto->descripcion)],
+                            ['sopsub2.nom_sub2', '=', $producto->subcategoria]
+                        ])
+                        ->first();
+                }
+
+                $cod_prod = null;
+                //Si existe copia el cod_prod
+                if ($prod !== null) {
+                    $cod_prod = $prod->cod_prod;
+                    $cod_clasi = (new MigrateProductoSoftlinkController)->obtenerClasificacion($producto->clasificacion);
+                    $cod_cate = (new MigrateProductoSoftlinkController)->obtenerCategoria($producto->categoria, $producto->id_categoria);
+                    $cod_subc = (new MigrateProductoSoftlinkController)->obtenerSubCategoria($producto->subcategoria, $producto->id_subcategoria);
+
+                    $cod_unid = (new MigrateProductoSoftlinkController)->obtenerUnidadMedida($producto->abreviatura);
+                    // return $cod_cate;exit;
+                    DB::connection('soft2')
+                    ->table('sopprod')
+                    ->where('cod_prod',$cod_prod)
+                    ->update(
+                        [
+                            'cod_prod' => $cod_prod,
+                            'cod_clasi' => $cod_clasi,
+                            'cod_cate' => $cod_cate,
+                            'cod_subc' => $cod_subc,
+                            'cod_espe' => trim($producto->part_number),
+                            'cod_sunat' => '',
+                            'nom_prod' => trim($producto->descripcion),
+                            'cod_unid' => $cod_unid,
+                            'nom_unid' => trim($producto->abreviatura),
+                            'ult_edicion' => date('Y-m-d H:i:s'),
+                            'tip_moneda' => $producto->id_moneda,
+                            'flg_serie' => ($producto->series ? 1 : 0), //Revisar
+                            'txt_observa' => ($producto->notas !== null ? $producto->notas : '')
+                        ]
+                    );
+                } //Si no existe, genera el producto
+                else {
+                    //obtiene el sgte codigo
+                    $ultimo = DB::connection('soft2')->table('sopprod')
+                        ->select('cod_prod')
+                        ->where([['cod_prod', '!=', 'TEXTO']])
+                        ->orderBy('cod_prod', 'desc')
+                        ->first();
+
+                    $cod_prod = StringHelper::leftZero(6, (intval($ultimo->cod_prod) + 1));
+
+                    $cod_clasi = (new MigrateProductoSoftlinkController)->obtenerClasificacion($producto->clasificacion);
+
+                    $cod_cate = (new MigrateProductoSoftlinkController)->obtenerCategoria($producto->categoria, $producto->id_categoria);
+
+                    $cod_subc = (new MigrateProductoSoftlinkController)->obtenerSubCategoria($producto->subcategoria, $producto->id_subcategoria);
+
+                    $cod_unid = (new MigrateProductoSoftlinkController)->obtenerUnidadMedida($producto->abreviatura);
+
+                    DB::connection('soft2')->table('sopprod')->insert(
+                        [
+                            'cod_prod' => $cod_prod,
+                            'cod_clasi' => $cod_clasi,
+                            'cod_cate' => $cod_cate,
+                            'cod_subc' => $cod_subc,
+                            'cod_prov' => '',
+                            'cod_espe' => (trim($producto->part_number) !='') ?trim($producto->part_number):'',
+                            'cod_sunat' => '',
+                            'nom_prod' => trim($producto->descripcion),
+                            'cod_unid' => $cod_unid,
+                            'nom_unid' => trim($producto->abreviatura),
+                            'fac_unid' => 1,
+                            'kardoc_costo' => 0,
+                            'kardoc_stock' => 0,
+                            'kardoc_ultingfec' => '0000-00-00',
+                            'kardoc_ultingcan' => 0,
+                            'kardoc_unico' => '',
+                            'fec_ingre' => date('Y-m-d'),
+                            'flg_descargo' => 1,
+                            'tip_moneda' => $producto->id_moneda,
+                            'flg_serie' => ($producto->series ? 1 : 0), //Revisar
+                            'txt_observa' => ($producto->notas !== null ? $producto->notas : ''),
+                            'flg_afecto' => 1,
+                            'flg_suspen' => 0,
+                            'apl_lista' => 3,
+                            'foto' => '',
+                            'aweb' => '',
+                            'bi_c' => '',
+                            'impto1_c' => '',
+                            'impto2_c' => '',
+                            'impto3_c' => '',
+                            'dscto_c' => '',
+                            'bi_v' => '',
+                            'impto1_v' => '',
+                            'impto2_v' => '',
+                            'impto3_v' => '',
+                            'dscto_v' => '',
+                            'cta_s_caja' => 0,
+                            'cta_d_caja' => '',
+                            'cod_ubic' => '',
+                            'peso' => 0,
+                            'flg_percep' => 0,
+                            'por_percep' => 0,
+                            'gasto' => 0,
+                            'dsctocompra' => 0,
+                            'dsctocompra2' => 0,
+                            'cod_promo' => '',
+                            'can_promo' => 0,
+                            'ult_edicion' => date('Y-m-d H:i:s'),
+                            'ptosbonus' => 0,
+                            'bonus_moneda' => 0,
+                            'bonus_importe' => 0,
+                            'flg_detrac' => 0,
+                            'por_detrac' => 0,
+                            'cod_detrac' => '',
+                            'mon_detrac' => 0,
+                            'largo' => 0,
+                            'ancho' => 0,
+                            'area' => 0,
+                            'aweb' => 0,
+                            'id_product' => 0,
+                            'width' => 0,
+                            'height' => 0,
+                            'depth' => 0,
+                            'weight' => 0,
+                            'costo_adicional' => 0
+                        ]
+                    );
+
+                    $sucursales = DB::connection('soft2')->table('sucursal')->get();
+
+                    foreach ($sucursales as $suc) {
+                        $prod = DB::connection('soft2')->table('precios')
+                            ->where([['cod_prod', '=', $cod_prod], ['cod_suc', '=', $suc->cod_suc]])
+                            ->first();
+
+                        if ($prod == null) {
+                            DB::connection('soft2')->table('precios')->insert(
+                                [
+                                    'cod_prod' => $cod_prod,
+                                    'cod_suc' => $suc->cod_suc,
+                                    'en_lista' => 1,
+                                    'lsupendido' => 0,
+                                    'fecha_susp' => '0000-00-00',
+                                    'precio_venta' => 0,
+                                    'precio_mayor' => 0,
+                                    'precio_tres' => 0,
+                                    'precio_cuatro' => 0,
+                                    'precio_cinco' => 0,
+                                    'precio_seis' => 0,
+                                    'precio_costo' => 0,
+                                    'precio_inver' => 0,
+                                    'precio_refer' => 0,
+                                    'porct_1' => 0,
+                                    'porct_2' => 0,
+                                    'porct_3' => 0,
+                                    'porct_4' => 0,
+                                    'porct_5' => 0,
+                                    'porct_6' => 0,
+                                    'costo_ultimo' => 0
+                                ]
+                            );
+                        }
+                    }
+
+                    $almacenes = DB::connection('soft2')->table('almacen')->get();
+
+                    foreach ($almacenes as $alm) {
+                        $stock = DB::connection('soft2')->table('stocks')
+                            ->where([['cod_suc', '=', $alm->cod_suc], ['cod_alma', '=', $alm->cod_alma], ['cod_prod', '=', $cod_prod]])
+                            ->first();
+
+                        if ($stock == null) {
+                            DB::connection('soft2')->table('stocks')->insert(
+                                [
+                                    'cod_suc' => $alm->cod_suc,
+                                    'cod_alma' => $alm->cod_alma,
+                                    'cod_prod' => $cod_prod,
+                                    'stock_act' => 0,
+                                    'stock_ing' => 0,
+                                    'stock_ped' => 0,
+                                    'stock_min' => 0,
+                                    'stock_max' => 0,
+                                    'cod_ubic' => '',
+                                ]
+                            );
+                        }
+                    }
+                }
+                DB::table('almacen.alm_prod')
+                ->where('id_producto', $producto->id_producto)
+                ->update(['cod_softlink' => $cod_prod]);
+                
+                $bar->advance();
+
+                $cantidadProductosAgregados++;
+            
+            }
+
+            $bar->finish();
+
+            $this->info("\nSe insertó $cantidadProductosAgregados registros");
+
+
+            break;
 
             default:
                 $this->info("No existe opción para ejecutar");

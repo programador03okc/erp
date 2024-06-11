@@ -77,6 +77,9 @@ class OrdenView {
         $('#form-orden').on("click", "button.handleClickMigrarOrdenASoftlink", (e) => {
             this.migrarOrdenes();
         });
+        $('#form-orden').on("click", "button.handleClickHistorialOrdenes", (e) => {
+            this.historialOrdenes();
+        });
         $('#form-orden').on("change", "select.onChangeSeleccionarProveedor", (e) => {
             this.llenarDatosCabeceraSeccionProveedor(e.currentTarget.value)
         });
@@ -126,6 +129,12 @@ class OrdenView {
         });
         $('#contenedor_orden').on("click", "button.handleClickEliminarItemOrden", (e) => {
             this.eliminarItemOrden(e.currentTarget);
+        });
+        $('#contenedor_orden').on("click", "button.handleClickMoverItemOrden", (e) => {
+            this.moverItemOrden(e.currentTarget);
+        });
+        $('#listaSeleccionarOrden').on("click", "button.handleClickMoverAOrden", (e) => {
+            this.moverAOrden(e.currentTarget);
         });
 
         $('#contenedor_orden').on("change", "select.handleChangeUpdateTipoOrden", (e) => {
@@ -208,17 +217,17 @@ class OrdenView {
             this.updateDescripcionServicio(e.currentTarget);
         });
 
-        $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdateCantidad", (e) => {
-            this.updateCantidad(e.currentTarget);
-        });
+        // $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdateCantidad", (e) => {
+        //     this.updateCantidad(e.currentTarget);
+        // });
     
         $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateCantidad", (e) => {
             this.updateCantidad(e.currentTarget);
         });
 
-        $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdatePrecio", (e) => {
-            this.updatePrecio(e.currentTarget);
-        });
+        // $('table[name="listaDetalleOrden"]').on("keyup", "input.handleChangeUpdatePrecio", (e) => {
+        //     this.updatePrecio(e.currentTarget);
+        // });
 
         $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdatePrecio", (e) => {
             this.updatePrecio(e.currentTarget);
@@ -228,13 +237,14 @@ class OrdenView {
             this.updateIncluyeIGV(e.currentTarget);
         });
 
-        $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateIncluyeICBPER", (e) => {
-            this.updateIncluyeICBPER(e.currentTarget);
-        });
+        // $('table[name="listaDetalleOrden"]').on("change", "input.handleChangeUpdateIncluyeICBPER", (e) => {
+        //     this.updateIncluyeICBPER(e.currentTarget);
+        // });
     }
 
 
     seleccionarOrden(id_orden) {
+        this.idOrdenSeleccionada=id_orden;
         let cardOrden = document.querySelector("ul[id='contenedor_lista_ordenes']").children;
         let cardOrdenArray = Array.from(cardOrden);
         cardOrdenArray.forEach(element => {
@@ -248,6 +258,7 @@ class OrdenView {
             }
         });
 
+        console.log(this.ordenArray);
 
     }
 
@@ -340,10 +351,10 @@ class OrdenView {
                             </li>
                         </ul>
                         <div class="text-left">
-                            <button type="button" class="btn btn-xs btn-default handleClickSeleccionarOrden" id="btnSeleccionarOrden" title="Seleccionar" data-id="${data.id}"><i class="fas fa-check"></i> Seleccionar</button>
-                            <button type="button" class="btn btn-xs btn-default handleClickImprimirOrden" id="btnImprimirOrden" title="Imprimir" data-id="${data.id}"><i class="fas fa-print"></i> Imprimir</button>
-                            <button type="button" class="btn btn-xs btn-default handleClickEditarOrden" id="btnEditarOrden" title="Editar" data-id="${data.id}"><i class="fas fa-edit"></i> Editar</button>
-                            <button type="button" class="btn btn-xs btn-default handleClickAnularOrden" id="btnAnularOrden" title="Anular" data-id="${data.id}"><i class="fas fa-trash"></i> Anular</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickSeleccionarOrden" id="btnSeleccionarOrden" title="Seleccionar" data-id="${data.id_orden}"><i class="fas fa-check"></i> Seleccionar</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickImprimirOrden" id="btnImprimirOrden" title="Imprimir" data-id="${data.id_orden}"><i class="fas fa-print"></i> Imprimir</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickEditarOrden" id="btnEditarOrden" title="Editar" data-id="${data.id_orden}"><i class="fas fa-edit"></i> Editar</button>
+                            <button type="button" class="btn btn-xs btn-default handleClickAnularOrden" id="btnAnularOrden" title="Anular" data-id="${data.id_orden}"><i class="fas fa-trash"></i> Anular</button>
                         </div>
                     </div>
                 </div>
@@ -612,7 +623,7 @@ class OrdenView {
             'codigo_softlink': '',
             'id_periodo': '',
             'descripcion_periodo':'',
-            'fecha_emision': '',
+            'fecha_emision': moment().format("DD-MM-YYYY"),
             'id_empresa': 1,
             'descripcion_empresa': 'OK Computer',
             'id_sede': 4,
@@ -640,7 +651,7 @@ class OrdenView {
             'descripcion_condicion_compra': '',
             'id_condicion_softlink': '',
             'descripcion_condicion_softlink': '',
-            'plazo_entrega_dias': 1,
+            'plazo_entrega': 1,
             'requerimiento_vinculado_list': [],
             'id_tipo_documento': 2,
             'descripcion_tipo_documento': '01 - Factura',
@@ -674,7 +685,6 @@ class OrdenView {
             document.querySelector("p[name='direccion_proveedor']").textContent = res.contribuyente != null ? res.contribuyente.direccion_fiscal : '';
             // TODO : 1) ACtualizar direccion proveedor en this.ordenArray 
             this.llenarDatosCabeceraCuentaBancariaProveedor(res.cuenta_contribuyente, idCuentaProveedor);
-            console.log(res);
             this.llenarDatosCabeceraConcactoProveedor(res.contacto_contribuyente);
             // document.querySelector("select[name='contacto_proveedor']").textContent = '';
             // document.querySelector("p[name='telefono_contacto']").textContent = '';
@@ -714,6 +724,10 @@ class OrdenView {
             option.value = element.id_cuenta_contribuyente;
             selectElement.add(option);
         });
+
+        if(data.length>0){
+            this.updateCuentaBancariaProveedor(selectElement);
+        }
     }
 
     llenarDatosCabeceraConcactoProveedor(data) {
@@ -823,7 +837,7 @@ class OrdenView {
                 cache: false,
                 dataType: 'JSON',
                 success: (response) => {
-                    console.log(response);
+                    // console.log(response);
                     if (response.status == '200') {
                         $('#modal-agregar-cuenta-bancaria-proveedor').modal('hide');
                         Lobibox.notify('success', {
@@ -886,8 +900,9 @@ class OrdenView {
 
     actualizarSelectCuentasBancariasProveedor(idProveedor, idCuentaBancaria = null) {
         this.getCuentasBancarias(idProveedor).then((res) => {
-            if (res[0].cuenta_contribuyente) {
-                this.llenarDatosCabeceraCuentaBancariaProveedor(res[0].cuenta_contribuyente, idCuentaBancaria);
+            // console.log(res);
+            if (res) {
+                this.llenarDatosCabeceraCuentaBancariaProveedor(res, idCuentaBancaria);
             }
         }).catch((err) => {
             Swal.fire(
@@ -1087,6 +1102,23 @@ class OrdenView {
 
 
                     }
+                    Swal.fire({
+                        title: "Desea continuar con la seleccion de requerimientos?",
+                        width: 400,
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: "Si, continuar",
+                        denyButtonText: `Cerrar`
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            return false;
+            
+                        } else if (result.isDenied) {
+            
+                            $('#modal-lista-requerimientos-pendientes').modal('hide');
+
+                        }
+                    });
 
                 }
             }).catch((err) => {
@@ -1100,11 +1132,24 @@ class OrdenView {
             });
 
         } else {
-            Swal.fire(
-                '',
-                'El requerimiento ya fue agregado',
-                'warning'
-            );
+            Swal.fire({
+                title: "El requerimiento ya fue agregado, Desea continuar?",
+                width: 500,
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: "Si, continuar",
+                denyButtonText: `Cerrar`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    return false;
+    
+                } else if (result.isDenied) {
+    
+                    $('#modal-lista-requerimientos-pendientes').modal('hide');
+
+                }
+            });
+
         }
 
     }
@@ -1289,14 +1334,14 @@ class OrdenView {
                     'id_detalle_requerimiento': element.id_detalle_requerimiento ? element.id_detalle_requerimiento :'',
                     'id_tipo_item': element.id_tipo_item,
                     'id_producto': (element.id_producto ? element.id_producto : ''),
-                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto.codigo ? element.producto.codigo : '') : '<small>(No aplica)</small>',
+                    'codigo_producto': element.id_tipo_item == 1 ? (element.producto !=null && element.producto.hasOwnProperty('codigo') ? element.producto.codigo : '') : '<small>(No aplica)</small>',
                     'codigo_requerimiento': element.codigo_requerimiento ? element.codigo_requerimiento : '',
-                    'codigo_softlink': element.producto.cod_softlink ? element.producto.cod_softlink : '',
-                    'part_number': element.producto.part_number ? element.producto.part_number : '',
-                    'descripcion': (element.producto.descripcion ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
+                    'codigo_softlink': element.producto!=null && element.producto.hasOwnProperty('cod_softlink') ? element.producto.cod_softlink : '',
+                    'part_number': element.producto!=null && element.producto.hasOwnProperty('part_number') ? element.producto.part_number : '',
+                    'descripcion': (element.producto!=null && element.producto.hasOwnProperty('descripcion') ? element.producto.descripcion : (element.descripcion != null ? element.descripcion : '')),
                     'descripcion_complementaria': (element.descripcion_complementaria ? element.descripcion_complementaria : ''),
-                    'id_unidad_medida': (element.producto.id_unidad_medida ? element.producto.id_unidad_medida : element.id_unidad_medida),
-                    'abreviatura_unidad_medida': (element.producto != null && element.producto.unidad_medida != null ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
+                    'id_unidad_medida': (element.producto!=null && element.producto.hasOwnProperty('id_unidad_medida') ? element.producto.id_unidad_medida : element.id_unidad_medida),
+                    'abreviatura_unidad_medida': (element.producto != null && element.producto.hasOwnProperty('unidad_medida') ? element.producto.unidad_medida.abreviatura : (element.unidad_medida != null ? element.unidad_medida : 'sin und.')),
                     'cantidad_solicitada': (element.cantidad > 0 ? element.cantidad : '<small>(no definido en el requerimiento)</small'),
                     'cantidad_pendiente_atender': (element.cantidad ? ((parseFloat(element.cantidad) - (parseFloat(element.cantidad_atendida_almacen) + parseFloat(element.cantidad_atendida_almacen)))) : 0),
                     'cantidad_atendida_almacen': (element.cantidad_atendida_almacen > 0 ? element.cantidad_atendida_almacen : '0'),
@@ -1329,7 +1374,7 @@ class OrdenView {
                 'codigo_softlink': '',
                 'id_periodo': cabeceraRequerimientoObject.id_periodo,
                 'descripcion_periodo': cabeceraRequerimientoObject.descripcion_periodo,
-                'fecha_emision': '', //moment().format("DD-MM-YYYY");
+                'fecha_emision': moment().format("DD-MM-YYYY"),
                 'id_empresa': cabeceraRequerimientoObject.id_empresa,
                 'descripcion_empresa': cabeceraRequerimientoObject.descripcion_empresa,
                 'id_sede': cabeceraRequerimientoObject.id_sede,
@@ -1354,10 +1399,11 @@ class OrdenView {
                 'id_rubro_proveedor': '',
                 'descripcion_rubro_proveedor': '',
                 'id_condicion_compra': '',
+                'plazo_dias': '',
                 'descripcion_condicion_compra': '',
                 'id_condicion_softlink': '',
                 'descripcion_condicion_softlink': '',
-                'plazo_entrega_dias': 1,
+                'plazo_entrega': 1,
                 'requerimiento_vinculado_list': [cabeceraRequerimientoObject],
                 'id_tipo_documento': 2,
                 'descripcion_tipo_documento': '01 - Factura',
@@ -1412,17 +1458,6 @@ class OrdenView {
 
     }
 
-
-    guardarOrdenes() {
-
-    }
-
-
-    migrarOrdenes() {
-
-    }
-
-
     autoSeleccionarOrdenParaMostrar(data) {
         if (this.idOrdenSeleccionada == '' || this.idOrdenSeleccionada == null) {// si NO existe un id, selecciona le primero del array
             if (data.length > 0) {
@@ -1447,6 +1482,7 @@ class OrdenView {
         document.querySelector("form[id='form-orden'] span[name='tipo_cambio']").textContent = data.tipo_cambio ? data.tipo_cambio : '';
         document.querySelector("form[id='form-orden'] select[name='id_tipo_orden']").value = data.id_tipo_orden ? data.id_tipo_orden : '';
         document.querySelector("form[id='form-orden'] select[name='id_moneda']").value = data.id_moneda ? data.id_moneda : '';
+        document.querySelector("form[id='form-orden'] input[name='fecha_emision']").value = data.fecha_emision ? data.fecha_emision : '';
         const SelectorSede = document.querySelector("form[id='form-orden'] select[name='id_sede']");
         SelectorSede.value = data.id_sede ? data.id_sede : '';
         var id_empresa = SelectorSede.options[SelectorSede.selectedIndex].getAttribute('data-id-empresa');
@@ -1459,9 +1495,11 @@ class OrdenView {
         if (data.id_proveedor > 0) {
             document.querySelector("form[id='form-orden'] p[name='direccion_proveedor']").textContent = data.direccion_fiscal_proveedor ? data.direccion_fiscal_proveedor : '';
             document.querySelector("form[id='form-orden'] select[name='id_proveedor']").value = data.id_proveedor ? data.id_proveedor : '';
+            console.log(data.id_proveedor, data.id_cuenta_proveedor);
             this.llenarDatosCabeceraSeccionProveedor(data.id_proveedor, data.id_cuenta_proveedor);
         }
-
+        
+        document.querySelector("form[id='form-orden'] input[name='plazo_entrega']").value = data.plazo_entrega > 0 ? data.plazo_entrega: '';
         document.querySelector("form[id='form-orden'] p[name='requerimiento_vinculados']").textContent = data.requerimiento_vinculado_list.length > 0 ? data.requerimiento_vinculado_list.map(function (e) { return e.codigo }).join(", ") : '';
 
         $('.selectpicker').selectpicker('refresh')
@@ -1469,6 +1507,9 @@ class OrdenView {
     }
 
     construirPanelDetalleOrden(data) {
+
+        this.limpiarTabla('listaDetalleOrden');
+
         let payload = [];
         let CantidadItemsPendientesPorMapear = 0;
         let cantidadItemsAgregados = 0;
@@ -1484,26 +1525,26 @@ class OrdenView {
 
         });
 
-        if (cantidadItemsAgregados > 0) {
-            Lobibox.notify('success', {
-                title: false,
-                size: 'mini',
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: `Se agregó ${cantidadItemsAgregados} ítem(s)`
-            });
-        }
-        if (CantidadItemsPendientesPorMapear > 0) {
-            Lobibox.notify('warning', {
-                title: false,
-                size: 'mini',
-                rounded: true,
-                sound: false,
-                delayIndicator: false,
-                msg: `Aun tiene ${CantidadItemsPendientesPorMapear} ítem(s) por mapear`
-            });
-        }
+        // if (cantidadItemsAgregados > 0) {
+        //     Lobibox.notify('success', {
+        //         title: false,
+        //         size: 'mini',
+        //         rounded: true,
+        //         sound: false,
+        //         delayIndicator: false,
+        //         msg: `Se listan ${cantidadItemsAgregados} ítem(s)`
+        //     });
+        // }
+        // if (CantidadItemsPendientesPorMapear > 0) {
+        //     Lobibox.notify('warning', {
+        //         title: false,
+        //         size: 'mini',
+        //         rounded: true,
+        //         sound: false,
+        //         delayIndicator: false,
+        //         msg: `Aun tiene ${CantidadItemsPendientesPorMapear} ítem(s) por mapear`
+        //     });
+        // }
         this.agregarItemADetalleOrden(payload);
     }
 
@@ -1531,23 +1572,49 @@ class OrdenView {
             <td>
                 <div class="input-group">
                     <div class="input-group-addon" style="background:lightgray;" name="simboloMoneda">${element.simbolo_moneda}</div>
-                    <input class="form-control precio input-sm text-right handleBurUpdateSubtotal handleChangeUpdateCantidad" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${$.number(element.precio_unitario,2,'.',',')}" >
+                    <input class="form-control precio input-sm text-right handleBurUpdateSubtotal handleChangeUpdatePrecio" data-id-tipo-item="${element.id_tipo_item}" type="number" min="0" name="precioUnitario[]"  placeholder="" value="${$.number(element.precio_unitario,2,'.',',')}" >
                 </div>
             </td>
             <td style="text-align:right;"><span class="moneda" name="simboloMoneda">${element.simbolo_moneda}</span><span class="subtotal" name="subtotal[]">${$.number(element.subtotal,2,'.',',')??'0.00'}</span></td>
             <td>
-                <button type="button" class="btn btn-danger btn-sm handleClickEliminarItemOrden" name="btnEliminarItemOrden" title="Eliminar Item">
-                <i class="fas fa-trash fa-sm"></i>
-                </button>
+                <div style="display:flex;justify-content: center;vertical-align: middle;">
+                    <button type="button" class="btn btn-danger btn-xs handleClickEliminarItemOrden" name="btnEliminarItemOrden" title="Eliminar Item" ${this.ordenArray.length>0?'':'disabled'}>
+                    <i class="fas fa-trash fa-sm"></i>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-xs handleClickMoverItemOrden" name="btnMoverItemOrden" title="Mover Item" ${this.ordenArray.length>1?'':'disabled'}>
+                    <i class="fas fa-level-up-alt"></i>
+                    </button>
+                </div>
             </td>
         </tr>`);
         });
 
 
-        this.calcularTotales();
+        this.imprimirTotales();
     }
 
     calcularTotales(){
+
+        let montoNeto =0;
+        let montoIGV =0;
+        (this.ordenArray).forEach((orden,keyOrden)=>{
+            if(orden.id_orden==this.idOrdenSeleccionada){
+                (orden.detalle).forEach((item,keyItem) => {
+                    montoNeto +=this.ordenArray[keyOrden]['detalle'][keyItem]['subtotal'];
+                });
+
+                this.ordenArray[keyOrden]['monto_neto'] = parseFloat(montoNeto);
+                if(this.ordenArray[keyOrden]['incluye_igv']==true){
+                    montoIGV = parseFloat(montoNeto) * 0.18;
+                }
+                this.ordenArray[keyOrden]['monto_igv'] = montoIGV;
+                this.ordenArray[keyOrden]['monto_total'] = parseFloat(montoIGV) + parseFloat(montoNeto);
+                
+            }
+        });
+    }
+    
+    imprimirTotales(){
         let simboloMonedaOrden='';
         let montoNetoOrden = 0;
         let montoIgvOrden = 0;
@@ -1567,19 +1634,21 @@ class OrdenView {
         simboloMonedaSpan.forEach(element => {
             element.textContent=simboloMonedaOrden;
         });
+
+       
         document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='montoNeto']").textContent=$.number(montoNetoOrden,2,'.',',');
         if(montoIgvOrden>0){
             document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_igv']").checked =true;
         }else{
             document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_igv']").checked =false;
         }
-        if(montoIcbperOrden>0){
-            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =true;
-        }else{
-            document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =false;
-        }
+        // if(montoIcbperOrden>0){
+        //     document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =true;
+        // }else{
+        //     document.querySelector("table[name='listaDetalleOrden'] tfoot input[name='incluye_icbper']").checked =false;
+        // }
         document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='igv']").textContent=$.number(montoIgvOrden,2,'.',',');
-        document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='icbper']").textContent=$.number(montoIcbperOrden,2,'.',',');
+        // document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='icbper']").textContent=$.number(montoIcbperOrden,2,'.',',');
         document.querySelector("table[name='listaDetalleOrden'] tfoot label[name='montoTotal']").textContent=$.number(montoTotalOrden,2,'.',',');
 
     }
@@ -1601,7 +1670,7 @@ class OrdenView {
                 const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
                 var regExp = /[a-zA-Z]/g; //expresión regular
                 
-                console.log(this.ordenArray);
+                // console.log(this.ordenArray);
                 
                 if(this.ordenArray.length ==0){
                     tr.remove();
@@ -1661,6 +1730,109 @@ class OrdenView {
     
         return (parseInt(tamOriginalArrayDetalle)-parseInt(tamFiltradoArrayDetalle));
 
+    }
+
+
+    moverItemOrden(obj){
+        let tr = obj.closest("tr");
+        const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
+        // var regExp = /[a-zA-Z]/g; //expresión regular
+        // if (regExp.test(identificador) == true) {
+        // }
+        $('#modal-seleccionar-orden').modal({
+            show: true,
+            backdrop: 'true',
+            keyboard: true
+        });
+
+
+        this.limpiarTabla('listaSeleccionarOrden');
+
+        if(this.ordenArray.length>0){
+            this.ordenArray.forEach(element => {
+
+                if(element.id_orden!=this.idOrdenSeleccionada){
+                    document.querySelector("table[id='listaSeleccionarOrden'] tbody").insertAdjacentHTML('beforeend', `<tr style="text-align:center;">
+                    <td class="text-center">${element.codigo_orden??'<small>(sin codigo)</small>'}</td>
+                    <td class="text-left">${element.descripcion_empresa}</td>
+                    <td class="text-left">${element.razon_social_proveedor}</td>
+                     <td>
+                        <div style="display:flex;justify-content: center;vertical-align: middle;">
+                            <button type="button" class="btn btn-success btn-xs handleClickMoverAOrden" name="btnMoverAOrden" title="Mover Item a Orden" data-id-detalle-orden="${identificador}" data-id-orden="${element.id_orden}">
+                            Seleccionar
+                            </button>
+                        </div>
+                    </td>
+                </tr>`);     
+            }
+        });
+
+        }
+ 
+        
+    }
+
+
+    moverAOrden(obj){
+
+        $('#listaDetalleOrden').LoadingOverlay("show", {
+            imageAutoResize: true,
+            progress: true,
+            imageColor: "#3c8dbc"
+        });
+        // console.log(obj.dataset.idOrden); //  orden destino
+        // console.log(obj.dataset.idDetalleOrden); // item seleccionado
+
+        // crear copia del item de orden origen
+        let copyItem='';
+        let idItemEliminado='';
+        this.ordenArray.forEach(element => {
+            if(element.id_orden==this.idOrdenSeleccionada){
+                if(element.detalle.length>0){
+                    (element.detalle).forEach((item) => {
+                        if(item.id_detalle_orden == obj.dataset.idDetalleOrden){
+                            copyItem= item;
+                            idItemEliminado= item.id_detalle_orden;
+                        }
+                    });
+                }
+            }
+        });
+        //eliminar item de orden origen
+        this.ordenArray.forEach(element => {
+            if(element.id_orden==this.idOrdenSeleccionada){
+                if(element.detalle.length>0){
+                    const arrayWithoutCopyItem = (element.detalle).filter(function (item) {
+                        return item.id_detalle_orden !== idItemEliminado;
+                    });
+                    console.log(arrayWithoutCopyItem);
+                    element.detalle =arrayWithoutCopyItem;
+                }
+            }
+        });
+
+
+        // insertar el item de la orden destino
+
+        this.ordenArray.forEach(element => {
+            if(element.id_orden==obj.dataset.idOrden){
+                if(copyItem!=''){
+                    element.detalle.push(copyItem);
+                }
+            }
+        });
+
+
+        (this.ordenArray).forEach(element => {
+            if (element.id_orden == this.idOrdenSeleccionada) {
+                this.construirPanelDetalleOrden(element.detalle);
+            }
+        });
+
+        $('#listaDetalleOrden').LoadingOverlay("hide", true);
+
+        
+        console.log(this.ordenArray);
     }
     
 
@@ -1921,6 +2093,7 @@ class OrdenView {
     }
 
     updateCuentaBancariaProveedor(obj){
+
         (this.ordenArray).forEach((element,key)=>{
             if(element.id_orden==this.idOrdenSeleccionada){
                 this.ordenArray[key]['id_cuenta_proveedor']= obj.value;
@@ -1972,6 +2145,7 @@ class OrdenView {
             // plazo_dias = 0;
         }
         // console.log(id_condicion_softlink,text_condicion_softlink,dias_condicion_softlink,id_condicion,plazo_dias);
+        document.querySelector("form[id='form-orden'] input[name='plazo_dias']").value = dias_condicion_softlink;
         (this.ordenArray).forEach((element,key)=>{
             if(element.id_orden==this.idOrdenSeleccionada){
                 this.ordenArray[key]['id_condicion_compra']=id_condicion;
@@ -1987,7 +2161,7 @@ class OrdenView {
         // console.log(obj.value);
         (this.ordenArray).forEach((element,key)=>{
             if(element.id_orden==this.idOrdenSeleccionada){
-                this.ordenArray[key]['plazo_entrega_dias']= obj.options[obj.selectedIndex].text;
+                this.ordenArray[key]['plazo_entrega']= obj.options[obj.selectedIndex].text;
 
             }
         });
@@ -2095,17 +2269,35 @@ class OrdenView {
         const tr = obj.closest("tr");
         const identificador =tr.querySelector("input[name='id_detalle_orden[]']").value;
 
-        // console.log(identificador, obj.value);
+        console.log(identificador, obj.value);
         (this.ordenArray).forEach((orden,keyOrden)=>{
             if(orden.id_orden==this.idOrdenSeleccionada){
                 (orden.detalle).forEach((item,keyItem) => {
                     if(item.id_detalle_orden ==identificador){
                         this.ordenArray[keyOrden]['detalle'][keyItem]['cantidad_pendiente_atender']= obj.value;
+                        this.ordenArray[keyOrden]['detalle'][keyItem]['subtotal']= obj.value * this.ordenArray[keyOrden]['detalle'][keyItem]['precio_unitario'];
+
                     }
                 });
                 // console.log(this.ordenArray[keyOrden]);
              }
         });
+
+        this.calcularTotales();
+        this.imprimirTotales();
+
+        (this.ordenArray).forEach(element => {
+            if (element.id_orden == this.idOrdenSeleccionada) {
+                this.construirPanelDetalleOrden(element.detalle);
+            }
+        });
+
+        // (this.ordenArray).forEach(element => {
+        //     if (element.id_orden == this.idOrdenSeleccionada) {
+        //         this.construirPanelDetalleOrden(element.detalle);
+        //     }
+        // });
+
     }
     
     updatePrecio(obj){
@@ -2118,10 +2310,20 @@ class OrdenView {
                 (orden.detalle).forEach((item,keyItem) => {
                     if(item.id_detalle_orden ==identificador){
                         this.ordenArray[keyOrden]['detalle'][keyItem]['precio_unitario']= obj.value;
+                        this.ordenArray[keyOrden]['detalle'][keyItem]['subtotal']= obj.value * this.ordenArray[keyOrden]['detalle'][keyItem]['cantidad_pendiente_atender'];
                     }
                 });
                 // console.log(this.ordenArray[keyOrden]);
              }
+        });
+
+        this.calcularTotales();
+        this.imprimirTotales();
+
+        (this.ordenArray).forEach(element => {
+            if (element.id_orden == this.idOrdenSeleccionada) {
+                this.construirPanelDetalleOrden(element.detalle);
+            }
         });
 
     }
@@ -2130,6 +2332,15 @@ class OrdenView {
  
         (this.ordenArray).forEach((orden,key)=>{
             if(orden.id_orden==this.idOrdenSeleccionada){
+
+
+                if(orden.detalle.length>0){
+                    orden.detalle.forEach(item => {
+                        this.ordenArray[key]['monto_neto']+= parseFloat(item.precio_unitario )* parseFloat(item.cantidad_pendiente_atender);
+                    });
+                }
+
+
                 this.ordenArray[key]['incluye_igv']= obj.checked;
                 if(obj.checked ==false){
                     this.ordenArray[key]['monto_igv']= 0;
@@ -2143,30 +2354,255 @@ class OrdenView {
                 }
              }
         });
-
-        this.calcularTotales();
+        console.log(this.ordenArray);
+        this.imprimirTotales();
     }
 
-    updateIncluyeICBPER(obj){
-        (this.ordenArray).forEach((orden,key)=>{
-            if(orden.id_orden==this.idOrdenSeleccionada){
-                this.ordenArray[key]['incluye_icbper']= obj.checked;
-                if(obj.checked ==false){
-                    this.ordenArray[key]['monto_icbper']= 0;
-                }else{
-                    this.ordenArray[key]['monto_icbper']= 0.50;
-                }
+    // updateIncluyeICBPER(obj){
+    //     (this.ordenArray).forEach((orden,key)=>{
+    //         if(orden.id_orden==this.idOrdenSeleccionada){
+    //             this.ordenArray[key]['incluye_icbper']= obj.checked;
+    //             if(obj.checked ==false){
+    //                 this.ordenArray[key]['monto_icbper']= 0;
+    //             }else{
+    //                 this.ordenArray[key]['monto_icbper']= 0.50;
+    //             }
 
-                if(this.ordenArray[key]['monto_igv'] >0 || this.ordenArray[key]['incluye_igv']==true){
-                    this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
-                }else{
-                    this.ordenArray[key]['monto_igv']= 0;
-                }
-                this.ordenArray[key]['monto_total']= this.ordenArray[key]['monto_neto'] + parseFloat(this.ordenArray[key]['monto_igv'])+ (parseFloat(this.ordenArray[key]['monto_icbper']));
+    //             if(this.ordenArray[key]['monto_igv'] >0 || this.ordenArray[key]['incluye_igv']==true){
+    //                 this.ordenArray[key]['monto_igv']= this.ordenArray[key]['monto_neto']*0.18;
+    //             }else{
+    //                 this.ordenArray[key]['monto_igv']= 0;
+    //             }
+    //             this.ordenArray[key]['monto_total']= this.ordenArray[key]['monto_neto'] + parseFloat(this.ordenArray[key]['monto_igv'])+ (parseFloat(this.ordenArray[key]['monto_icbper']));
             
-             }
-        });
+    //          }
+    //     });
 
-        this.calcularTotales();
+    //     this.imprimirTotales();
+    // }
+
+
+    guardarOrdenes() {
+        console.log(this.ordenArray); 
+
+        if (this.ordenArray.length>0) {
+
+            // let formData = new FormData();
+
+            // for (let item of this.ordenArray) {
+            //     for (let key in item) {
+            //       if (key === 'detalle') {
+            //         for (let previewKey in item[key][0]) {
+            //           formData.append(`detalle[${previewKey}][]`, item[key][0][previewKey]);
+            //         }
+            //       } else {
+            //         formData.append(`${key}[]`, item[key]);
+            //       }
+            //     }
+            //   }
+              
+            
+
+              $.ajax({
+                type: 'POST',
+                url: 'guardar-ordenes',
+                dataType: 'JSON',
+                data: {data:this.ordenArray},
+                beforeSend: (data) => { // Are not working with dataType:'jsonp'
+
+                    // $('#modal-loader').modal({backdrop: 'static', keyboard: false});
+                    // var customElement = $("<div>", {
+                    //     "css": {
+                    //         "font-size": "24px",
+                    //         "text-align": "center",
+                    //         "padding": "0px",
+                    //         "margin-top": "-400px"
+                    //     },
+                    //     "class": "your-custom-class",
+                    //     "text": "Guardando..."
+                    // });
+
+                    // $('#wrapper-okc').LoadingOverlay("show", {
+                    //     imageAutoResize: true,
+                    //     progress: true,
+                    //     custom: customElement,
+                    //     imageColor: "#3c8dbc"
+                    // });
+                },
+                success: (response) => {
+                    console.log(response);
+                    if (response.respuesta == 'ok') {
+                        $('#wrapper-okc').LoadingOverlay("hide", true);
+
+                        Lobibox.notify('success', {
+                            title: false,
+                            size: 'mini',
+                            rounded: true,
+                            sound: false,
+                            delayIndicator: false,
+                            msg: response.mensaje
+                        });
+                    } else {
+                        $('#wrapper-okc').LoadingOverlay("hide", true);
+                        Swal.fire(
+                            '',
+                            response.mensaje,
+                            response.alerta
+                        );
+
+                        if(response.validacion.length>0){
+                            Swal.fire(
+                                '',
+                                (response.validacion).toString()
+                                ,
+                                response.alerta
+                            );
+                        }
+                    }
+                },
+                fail: (jqXHR, textStatus, errorThrown) => {
+                    $('#wrapper-okc').LoadingOverlay("hide", true);
+                    Swal.fire(
+                        '',
+                        'Lo sentimos hubo un error en el servidor al intentar guardar, por favor vuelva a intentarlo',
+                        'error'
+                    );
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+        }else{
+            Swal.fire(
+                '',
+                'No se encontro ninguna orden para guardar',
+                'error'
+            );
+        }
+    }
+    
+    
+    migrarOrdenes() {
+        console.log(this.ordenArray);
+        if (this.ordenArray.length>0) {
+            // TODO : enviar a migrar ordenes
+        }else{
+            Swal.fire(
+                '',
+                'No se encontro ninguna orden para migrar',
+                'error'
+            );
+        }
+
+    }
+
+
+    historialOrdenes(){
+        $('#modal-historial-ordenes').modal('show');
+
+        $tablaHistorialOrdenes = $('#tablaHistorialOrdenes').DataTable({
+            'dom': 'Blfrtip',
+            'buttons': [],
+            'language': vardataTables[0],
+            'order': [[3, 'desc']],
+            'serverSide': true,
+            'destroy': true,
+            'stateSave': true,
+            'bLengthChange': false,
+            "pageLength": 20,
+            'ajax': {
+                'url': route('logistica.gestion-logistica.compras.pendientes.requerimientos-pendientes'),
+                'type': 'GET',
+                beforeSend: data => {
+
+                    $("#tablaHistorialOrdenes").LoadingOverlay("show", {
+                        imageAutoResize: true,
+                        progress: true,
+                        imageColor: "#3c8dbc"
+                    });
+                }
+
+            },
+            'columns': [
+                { 'data': 'fecha_emision', 'name': 'fecha_emision', 'className': 'text-center' },
+                {
+                    'data': 'codigo', 'name': 'codigo', 'className': 'text-center', 'render': function (data, type, row) {
+                        return `<a href="/logistica/gestion-logistica/compras/ordenes/elaborar/generar-orden-pdf/${row.id_orden_compra}" target="_blank" title="Abrir Orden">${row.codigo}</a>`;
+                    }
+                },
+                { 'data': 'codigo_softlink', 'name': 'codigo_softlink', 'className': 'text-center' },
+                { 'data': 'data_codigo_requerimiento', 'name': 'data_codigo_requerimiento', 'className': 'text-left' },
+                { 'data': 'razon_social_proveedor', 'name': 'razon_social_proveedor', 'className': 'text-left' },
+                { 'data': 'condicion_compra', 'name': 'condicion_compra', 'className': 'text-left' },
+                { 'data': 'plazo_entrega', 'name': 'plazo_entrega', 'className': 'text-left' },
+                { 'data': 'descripcion_moneda', 'name': 'descripcion_moneda', 'className': 'text-left' },
+                { 'data': 'monto_total', 'name': 'monto_total', 'className': 'text-left' },
+                { 'data': 'razon_social_empresa', 'name': 'razon_social_empresa', 'className': 'text-left' },
+                { 'data': 'descripcion_sede', 'name': 'descripcion_sede', 'className': 'text-left' },
+                { 'data': 'codigo_grupo', 'name': 'codigo_grupo', 'className': 'text-left' },
+                { 'data': 'descripcion_estado', 'name': 'descripcion_estado', 'className': 'text-left' },
+                { 'data': 'descripcion_estado_pago', 'name': 'descripcion_estado', 'className': 'text-left' },
+                {
+                    'data': 'id_requerimiento', 'name': 'alm_req.id_requerimiento', 'className': 'text-center', "searchable": false, 'render': function (data, type, row) {
+                        let openDiv = '<div class="btn-group" role="group">';
+                        let closeDiv = '</div>';
+                        let btnSeleccionarHasDisable = '';
+                        let mensajeTitle = [];
+                        return openDiv + '<button type="button" class="btn btn-' + (btnSeleccionarHasDisable != '' ? 'default' : 'success') + ' btn-xs handleClickSeleccionarRequerimientoPendiente" name="btnSeleccionar" title="' + (mensajeTitle.length > 0 ? mensajeTitle.toString() : 'Seleccionar') + '" data-id-orden="' + row.id_orden_compra + '"  ' + btnSeleccionarHasDisable + ' ><i class="fas fa-check"></i> Seleccionar</button>' + closeDiv;
+
+                    }
+                }
+            ],
+            'columnDefs': [
+            ],
+            'rowCallback': function (row, data, dataIndex) {
+            },
+            'initComplete': function () {
+
+                //Boton de busqueda
+                const $filter = $('#tablaHistorialOrdenes_filter');
+                const $input = $filter.find('input');
+                $filter.append('<button id="btnBuscarHistorialOrden" class="btn btn-default btn-sm pull-right" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>');
+                $input.off();
+                $input.on('keyup', (e) => {
+                    if (e.key == 'Enter') {
+                        $('#btnBuscarHistorialOrden').trigger('click');
+                    }
+                });
+                $('#btnBuscarHistorialOrden').on('click', (e) => {
+                    $tablaHistorialOrdenes.search($input.val()).draw();
+                })
+                //Fin boton de busqueda
+            },
+            "drawCallback": function (settings) {
+                //Botón de búsqueda
+                $('#tablaHistorialOrdenes_filter input').prop('disabled', false);
+                $('#btnBuscarHistorialOrden').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                $('#tablaHistorialOrdenes_filter input').trigger('focus');
+                //fin botón búsqueda
+                if ($tablaHistorialOrdenes.rows().data().length == 0) {
+                    Lobibox.notify('info', {
+                        title: false,
+                        size: 'mini',
+                        rounded: true,
+                        sound: false,
+                        delayIndicator: false,
+                        msg: `No se encontro data disponible para mostrar`
+                    });
+                }
+                //Botón de búsqueda
+                $('#tablaHistorialOrdenes_filter input').prop('disabled', false);
+                $('#btnBuscarHistorialOrden').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>').prop('disabled', false);
+                $('#tablaHistorialOrdenes_filter input').trigger('focus');
+                //fin botón búsqueda
+                $("#tablaHistorialOrdenes").LoadingOverlay("hide", true);
+
+            },
+            "createdRow": function (row, data, dataIndex) {
+
+             
+            }
+
+        });
     }
 }

@@ -94,9 +94,21 @@ class PresupuestoController extends Controller
                 'alm_det_req.cantidad',
                 'alm_det_req.descripcion',
                 'alm_det_req.precio_unitario as precio_requerimiento',
-                'log_det_ord_compra.cantidad as cantidad_orden',
-                'unidad_ord.abreviatura as unidad_orden',
-                'log_det_ord_compra.precio as precio_orden',
+                // 'log_det_ord_compra.cantidad as cantidad_orden',
+                DB::raw("(CASE
+                WHEN upper(presup_par.descripcion) = 'MANO DE OBRA' AND log_det_ord_compra.id_orden_compra isNull THEN alm_det_req.cantidad
+                ELSE log_det_ord_compra.cantidad END) AS cantidad_orden
+                "),
+                // 'unidad_ord.abreviatura as unidad_orden',
+                DB::raw("(CASE
+                WHEN upper(presup_par.descripcion) = 'MANO DE OBRA'  AND log_det_ord_compra.id_orden_compra isNull  THEN alm_und_medida.abreviatura
+                ELSE unidad_ord.abreviatura END) AS unidad_orden
+                "),
+                // 'log_det_ord_compra.precio as precio_orden',
+                DB::raw("(CASE
+                WHEN upper(presup_par.descripcion) = 'MANO DE OBRA'  AND log_det_ord_compra.id_orden_compra isNull THEN alm_det_req.precio_unitario
+                ELSE log_det_ord_compra.precio END) AS precio_orden
+                "),
                 'log_det_ord_compra.subtotal as subtotal_orden',
                 'alm_req.codigo',
                 'alm_req.fecha_requerimiento',
@@ -104,14 +116,24 @@ class PresupuestoController extends Controller
                 'proveedor.razon_social as proveedor_razon_social',
                 'alm_und_medida.abreviatura',
                 'log_ord_compra.codigo as codigo_orden',
+                // DB::raw("(CASE
+                // WHEN upper(presup_par.descripcion) = 'MANO DE OBRA' THEN alm_req.codigo
+                // ELSE log_ord_compra.codigo END) AS codigo_orden
+                // "),
                 'log_ord_compra.fecha_registro as fecha_orden',
                 'log_ord_compra.id_moneda',
-                'moneda_ord.simbolo as simbolo_moneda_orden',
+                // 'moneda_ord.simbolo as simbolo_moneda_orden',
+
+                DB::raw("(CASE
+                WHEN upper(presup_par.descripcion) = 'MANO DE OBRA'  AND log_det_ord_compra.id_orden_compra isNull THEN moneda_req.simbolo
+                ELSE moneda_ord.simbolo END) AS simbolo_moneda_orden
+                "),
+
                 'moneda_req.simbolo as simbolo_moneda_requerimiento',
                 'presup_par.descripcion as partida_descripcion',
                 DB::raw("(SELECT presup_titu.descripcion FROM finanzas.presup_titu
                 WHERE presup_titu.codigo = presup_par.cod_padre
-                and presup_titu.id_presup = presup_par.id_presup) AS titulo_descripcion"),
+                and presup_titu.id_presup = presup_par.id_presup limit 1) AS titulo_descripcion"),
                 DB::raw("(SELECT (select venta from contabilidad.cont_tp_cambio 
                 where cont_tp_cambio.fecha<=registro_pago.fecha_pago limit 1) tipo_cambio_venta
                             FROM tesoreria.registro_pago
@@ -280,7 +302,7 @@ class PresupuestoController extends Controller
             $detalle,
             $pagos,
             $devoluciones,
-        ), $presup->descripcion . '.xlsx');
+        ), (str_replace("/","-",$presup->descripcion)) . '.xlsx');
     }
 
     public function mostrarPresupuestosProyectos(){

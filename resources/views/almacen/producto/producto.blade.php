@@ -332,11 +332,12 @@
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
-    <script src="{{ asset('js/almacen/producto/producto.js')}}"></script>
+    <script src="{{ asset('js/almacen/producto/producto.js')}}?v={{filemtime(public_path('js/almacen/producto/producto.js'))}}"></script>
+    <script src="{{ asset('js/almacen/producto/productoModal.js')}}?v={{filemtime(public_path('js/almacen/producto/productoModal.js'))}}"></script>
+    <script src="{{ asset('js/almacen/producto/producto_ubicacion.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_ubicacion.js'))}}"></script>
     <!-- <script src="{{ asset('js/almacen/producto/subcategoriaModal.js')}}"></script> -->
-    <script src="{{ asset('js/almacen/producto/productoModal.js')}}"></script>
-    <script src="{{ asset('js/almacen/producto/producto_ubicacion.js')}}"></script>
-    <script src="{{ asset('js/almacen/producto/producto_serie.js')}}"></script>
+    <script src="{{ asset('js/almacen/producto/producto_serie.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_serie.js'))}}"></script>
+
     <script>
         $(document).ready(function() {
             

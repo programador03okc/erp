@@ -1393,8 +1393,8 @@ class MigrateOrdenSoftLinkController extends Controller
                 ]
             );
 
-            DB::table('almacen.alm_cat_prod')
-                ->where('id_categoria', $id_categoria)
+            DB::table('almacen.alm_tp_prod')
+                ->where('id_tipo_producto', $id_categoria)
                 ->update(['cod_softlink' => $cod_cate]);
         }
         return $cod_cate;

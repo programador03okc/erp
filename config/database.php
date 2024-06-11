@@ -69,6 +69,18 @@ return [
             'prefix'     => '',
             'strict'     => false,
         ],
+        'softtest'  => [
+            'driver'     => 'mysql',
+            'host'       => env('SOFT1_HOST', '127.0.0.1'),
+            'port'       => env('SOFTTEST_PORT', '3306'),
+            'database'   => env('SOFTTEST_DATABASE', 'ok2024test'),
+            'username'   => env('SOFTTEST_USERNAME', 'softlink_okc_use'),
+            'password'   => env('SOFTTEST_PASSWORD', ',Q{L:T-5PXmz+R(9'),
+            'charset'    => 'latin1',
+            'collation'  => 'latin1_swedish_ci',
+            'prefix'     => '',
+            'strict'     => false,
+        ],
 
         'pgsql_rrhh' => [
             'driver'    => env('DB_CONNECTION_RRHH'),

@@ -11,42 +11,44 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Helpers\StringHelper;
 
 class MigrateOrdenSoftLinkController extends Controller
 {
 
-    public function getCorrelativoDocumentoSoftlink(){
+    public function getCorrelativoDocumentoSoftlink()
+    {
 
 
-            $empresas_soft_orden_compra = [
-                ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OC', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 2, 'nombre' => 'PYC', 'cod_docu' => 'O3', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 3, 'nombre' => 'SVS', 'cod_docu' => 'O2', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 4, 'nombre' => 'RBDB', 'cod_docu' => 'O4', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'O5', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'O6', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>'']
-            ];
+        $empresas_soft_orden_compra = [
+            ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OC', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 2, 'nombre' => 'PYC', 'cod_docu' => 'O3', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 3, 'nombre' => 'SVS', 'cod_docu' => 'O2', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 4, 'nombre' => 'RBDB', 'cod_docu' => 'O4', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'O5', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'O6', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => '']
+        ];
 
-            $empresas_soft_orden_servicio = [
-                ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OS', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 2, 'nombre' => 'PYC', 'cod_docu' => 'OP', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 3, 'nombre' => 'SVS', 'cod_docu' => 'OV', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 4, 'nombre' => 'RBDB', 'cod_docu' => 'OR', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'OJ', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-                ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'OA', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>'']
-            ];
+        $empresas_soft_orden_servicio = [
+            ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OS', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 2, 'nombre' => 'PYC', 'cod_docu' => 'OP', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 3, 'nombre' => 'SVS', 'cod_docu' => 'OV', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 4, 'nombre' => 'RBDB', 'cod_docu' => 'OR', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'OJ', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+            ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'OA', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => '']
+        ];
 
-            $empresas_soft_orden_importacion = [
-                ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OI', 'next_num_docu_soft1'=>'','ultimo_correlativo_soft1'=>''],
-            ];
+        $empresas_soft_orden_importacion = [
+            ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OI', 'next_num_docu_soft1' => '', 'ultimo_correlativo_soft1' => ''],
+        ];
 
-            $hoy = date('Y-m-d'); //Carbon::now()
-            $yy = $this->leftZero(4, intval(date('y', strtotime($hoy))));
+        $hoy = date('Y-m-d'); //Carbon::now()
+        $yy = $this->leftZero(4, intval(date('y', strtotime($hoy))));
 
 
-            foreach ($empresas_soft_orden_compra as $key => $value) {
+        foreach ($empresas_soft_orden_compra as $key => $value) {
 
-                $ult_mov = DB::connection('soft1')->table('movimien')
+            $ult_mov = DB::connection('soft1')->table('movimien')
                 ->where([
                     ['num_docu', '>', $yy . '0000000'],
                     ['num_docu', '<', $yy . '9999999'],
@@ -56,20 +58,19 @@ class MigrateOrdenSoftLinkController extends Controller
                 ])
                 ->orderBy('num_docu', 'desc')->first();
 
-                //obtiene el correlativo
-                $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
-                //crea el correlativo del documento
-                $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
-                //anida el anio con el numero de documento
-                $num_docu = $yy . $nro_mov;
-                $empresas_soft_orden_compra[$key]['next_num_docu_soft1']=$num_docu;
-                $empresas_soft_orden_compra[$key]['ultimo_correlativo_soft1']=intval($num_ult_mov);
+            //obtiene el correlativo
+            $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
+            //crea el correlativo del documento
+            $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+            //anida el anio con el numero de documento
+            $num_docu = $yy . $nro_mov;
+            $empresas_soft_orden_compra[$key]['next_num_docu_soft1'] = $num_docu;
+            $empresas_soft_orden_compra[$key]['ultimo_correlativo_soft1'] = intval($num_ult_mov);
+        }
 
-            }
+        foreach ($empresas_soft_orden_servicio as $key => $value) {
 
-            foreach ($empresas_soft_orden_servicio as $key => $value) {
-
-                $ult_mov = DB::connection('soft1')->table('movimien')
+            $ult_mov = DB::connection('soft1')->table('movimien')
                 ->where([
                     ['num_docu', '>', $yy . '0000000'],
                     ['num_docu', '<', $yy . '9999999'],
@@ -79,20 +80,19 @@ class MigrateOrdenSoftLinkController extends Controller
                 ])
                 ->orderBy('num_docu', 'desc')->first();
 
-                //obtiene el correlativo
-                $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
-                //crea el correlativo del documento
-                $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
-                //anida el anio con el numero de documento
-                $num_docu = $yy . $nro_mov;
-                $empresas_soft_orden_servicio[$key]['next_num_docu_soft1']=$num_docu;
-                $empresas_soft_orden_servicio[$key]['ultimo_correlativo_soft1']=intval($num_ult_mov);
+            //obtiene el correlativo
+            $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
+            //crea el correlativo del documento
+            $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+            //anida el anio con el numero de documento
+            $num_docu = $yy . $nro_mov;
+            $empresas_soft_orden_servicio[$key]['next_num_docu_soft1'] = $num_docu;
+            $empresas_soft_orden_servicio[$key]['ultimo_correlativo_soft1'] = intval($num_ult_mov);
+        }
 
-            }
+        foreach ($empresas_soft_orden_importacion as $key => $value) {
 
-            foreach ($empresas_soft_orden_importacion as $key => $value) {
-
-                $ult_mov = DB::connection('soft1')->table('movimien')
+            $ult_mov = DB::connection('soft1')->table('movimien')
                 ->where([
                     ['num_docu', '>', $yy . '0000000'],
                     ['num_docu', '<', $yy . '9999999'],
@@ -102,30 +102,131 @@ class MigrateOrdenSoftLinkController extends Controller
                 ])
                 ->orderBy('num_docu', 'desc')->first();
 
-                //obtiene el correlativo
-                $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
-                //crea el correlativo del documento
-                $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
-                //anida el anio con el numero de documento
-                $num_docu = $yy . $nro_mov;
-                $empresas_soft_orden_importacion[$key]['next_num_docu_soft1']=$num_docu;
-                $empresas_soft_orden_importacion[$key]['ultimo_correlativo_soft1']=intval($num_ult_mov);
-            }
+            //obtiene el correlativo
+            $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
+            //crea el correlativo del documento
+            $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+            //anida el anio con el numero de documento
+            $num_docu = $yy . $nro_mov;
+            $empresas_soft_orden_importacion[$key]['next_num_docu_soft1'] = $num_docu;
+            $empresas_soft_orden_importacion[$key]['ultimo_correlativo_soft1'] = intval($num_ult_mov);
+        }
+
+
+        return ['orden_compra'=>$empresas_soft_orden_compra,'orden_servicio'=>$empresas_soft_orden_servicio,'orden_importacion'=>$empresas_soft_orden_importacion];
+         
+    }
+
+    public function getCorrelativoDocumentoSoftlinkStatic(){
+        $json = '{
+    "orden_compra": [
+        {
+            "id": 1,
+            "nombre": "OKC",
+            "cod_docu": "OC",
+            "next_num_docu_soft1": "00240000395",
+            "ultimo_correlativo_soft1": 394
+        },
+        {
+            "id": 2,
+            "nombre": "PYC",
+            "cod_docu": "O3",
+            "next_num_docu_soft1": "00240000113",
+            "ultimo_correlativo_soft1": 112
+        },
+        {
+            "id": 3,
+            "nombre": "SVS",
+            "cod_docu": "O2",
+            "next_num_docu_soft1": "00240000006",
+            "ultimo_correlativo_soft1": 5
+        },
+        {
+            "id": 4,
+            "nombre": "RBDB",
+            "cod_docu": "O4",
+            "next_num_docu_soft1": "00240000001",
+            "ultimo_correlativo_soft1": 0
+        },
+        {
+            "id": 5,
+            "nombre": "JEDR",
+            "cod_docu": "O5",
+            "next_num_docu_soft1": "00240000001",
+            "ultimo_correlativo_soft1": 0
+        },
+        {
+            "id": 6,
+            "nombre": "PTEC",
+            "cod_docu": "O6",
+            "next_num_docu_soft1": "00240000009",
+            "ultimo_correlativo_soft1": 8
+        }
+    ],
+    "orden_servicio": [
+        {
+            "id": 1,
+            "nombre": "OKC",
+            "cod_docu": "OS",
+            "next_num_docu_soft1": "00240000243",
+            "ultimo_correlativo_soft1": 242
+        },
+        {
+            "id": 2,
+            "nombre": "PYC",
+            "cod_docu": "OP",
+            "next_num_docu_soft1": "00240000036",
+            "ultimo_correlativo_soft1": 35
+        },
+        {
+            "id": 3,
+            "nombre": "SVS",
+            "cod_docu": "OV",
+            "next_num_docu_soft1": "00240000006",
+            "ultimo_correlativo_soft1": 5
+        },
+        {
+            "id": 4,
+            "nombre": "RBDB",
+            "cod_docu": "OR",
+            "next_num_docu_soft1": "00240000002",
+            "ultimo_correlativo_soft1": 1
+        },
+        {
+            "id": 5,
+            "nombre": "JEDR",
+            "cod_docu": "OJ",
+            "next_num_docu_soft1": "00240000001",
+            "ultimo_correlativo_soft1": 0
+        },
+        {
+            "id": 6,
+            "nombre": "PTEC",
+            "cod_docu": "OA",
+            "next_num_docu_soft1": "00240000007",
+            "ultimo_correlativo_soft1": 6
+        }
+    ],
+    "orden_importacion": [
+        {
+            "id": 1,
+            "nombre": "OKC",
+            "cod_docu": "OI",
+            "next_num_docu_soft1": "00240000013",
+            "ultimo_correlativo_soft1": 12
+        }
+    ]
+}';
+            return (json_decode($json, true));
+    }
+    
+    public function descargarExcelCorrelativoDocumentoSoftlink()
+    {
+        
+        return Excel::download(new CorrelativosSoftlinkExport(), 'correlativo_softlink1.xlsx');
+    }
         
 
-            // $count = DB::connection('soft1')->table('movimien')->count();
-            // $mov_id = $this->leftZero(10, (intval($count) + 1));
-    
- 
-          
-            return ['orden_compra'=>$empresas_soft_orden_compra,'orden_servicio'=>$empresas_soft_orden_servicio,'orden_importacion'=>$empresas_soft_orden_importacion];
-    }
-
-    public function descargarExcelCorrelativoDocumentoSoftlink(){
-
-        return Excel::download(new CorrelativosSoftlinkExport(), 'correlativo_softlink1.xlsx');
-
-    }
 
     //Valida el estado de la orden en softlink
     public function validarOrdenSoftlink($id_orden_compra)
@@ -141,11 +242,11 @@ class MigrateOrdenSoftLinkController extends Controller
             //si existe un id_softlink
             if ($oc->id_softlink !== null) {
                 //obtiene oc softlink
-                $oc_softlink = DB::connection('soft1')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
+                $oc_softlink = DB::connection('soft2')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
 
                 if ($oc_softlink !== null) {
                     //pregunta si fue referenciado
-                    $guia_referen = DB::connection('soft1')->table('movimien')
+                    $guia_referen = DB::connection('soft2')->table('movimien')
                         ->where([
                             ['cod_pedi', '=', $oc_softlink->cod_docu],
                             ['num_pedi', '=', $oc_softlink->num_docu],
@@ -265,8 +366,8 @@ class MigrateOrdenSoftLinkController extends Controller
                     'alm_prod.part_number',
                     'alm_prod.descripcion',
                     'alm_und_medida.abreviatura',
-                    'alm_cat_prod.id_categoria',
-                    'alm_cat_prod.descripcion as categoria',
+                    'alm_tp_prod.id_tipo_producto as id_categoria',
+                    'alm_tp_prod.descripcion as categoria',
                     'alm_subcat.id_subcategoria',
                     'alm_subcat.descripcion as subcategoria',
                     'alm_clasif.descripcion as clasificacion',
@@ -277,10 +378,10 @@ class MigrateOrdenSoftLinkController extends Controller
                 )
                 ->join('logistica.log_ord_compra', 'log_ord_compra.id_orden_compra', '=', 'log_det_ord_compra.id_orden_compra')
                 ->leftjoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'log_det_ord_compra.id_producto')
+                // ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
+                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
+                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
                 ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
-                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_cat_prod.id_tipo_producto')
-                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_tp_prod.id_clasificacion')
                 ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
                 ->leftjoin('almacen.alm_det_req', 'alm_det_req.id_detalle_requerimiento', '=', 'log_det_ord_compra.id_detalle_requerimiento')
                 ->leftjoin('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
@@ -308,7 +409,7 @@ class MigrateOrdenSoftLinkController extends Controller
             $fecha = date("Y-m-d", strtotime($oc->fecha));
 
             //obtiene el tipo de cambio
-            $tp_cambio = DB::connection('soft1')->table('tcambio')
+            $tp_cambio = DB::connection('soft2')->table('tcambio')
                 ->where([['dfecha', '<=', new Carbon($oc->fecha)]])
                 ->orderBy('dfecha', 'desc')
                 ->first();
@@ -335,8 +436,6 @@ class MigrateOrdenSoftLinkController extends Controller
                         ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'O5'],
                         ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'O6']
                     ];
-
-                    
                 } else if ($oc->id_tp_documento == 3) { //Servicio
 
                     $empresas_soft = [
@@ -347,39 +446,37 @@ class MigrateOrdenSoftLinkController extends Controller
                         ['id' => 5, 'nombre' => 'JEDR', 'cod_docu' => 'OJ'],
                         ['id' => 6, 'nombre' => 'PTEC', 'cod_docu' => 'OA']
                     ];
-                
-                }  else if ($oc->id_tp_documento == 12) { //importación
+                } else if ($oc->id_tp_documento == 12) { //importación
                     $empresas_soft = [
                         ['id' => 1, 'nombre' => 'OKC', 'cod_docu' => 'OI']
                     ];
-
                 }
-             
+
                 $cod_suc = '';
                 $cod_docu = '';
 
-            if ($oc->id_tp_documento == 12 && $oc->codigo_emp !='OKC') { //Importación
-                     return response()->json(array('tipo' => 'warning', 'mensaje' => 'Solo la empresa con código OKC puede crear una orden de importación'));
-            }else{
+                if ($oc->id_tp_documento == 12 && $oc->codigo_emp != 'OKC') { //Importación
+                    return response()->json(array('tipo' => 'warning', 'mensaje' => 'Solo la empresa con código OKC puede crear una orden de importación'));
+                } else {
 
-                foreach ($empresas_soft as $emp) {
-                    if ($emp['nombre'] == $oc->codigo_emp) {
-                        $cod_suc = $emp['id'];
-                        $cod_docu = $emp['cod_docu'];
+                    foreach ($empresas_soft as $emp) {
+                        if ($emp['nombre'] == $oc->codigo_emp) {
+                            $cod_suc = $emp['id'];
+                            $cod_docu = $emp['cod_docu'];
+                        }
                     }
                 }
-            }
 
                 // veriicar si existe un id_softlink para decidir si actualizar una orden en softlink o crear una nueva
                 if ($oc->id_softlink !== null) {
                     //obtiene oc softlink
-                    $oc_softlink = DB::connection('soft1')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
+                    $oc_softlink = DB::connection('soft2')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
 
 
                     if ($oc_softlink !== null) {
 
                         //pregunta si fue referenciado
-                        $guia_referen = DB::connection('soft1')->table('movimien')
+                        $guia_referen = DB::connection('soft2')->table('movimien')
                             ->where([
                                 ['cod_pedi', '=', $oc_softlink->cod_docu],
                                 ['num_pedi', '=', $oc_softlink->num_docu],
@@ -438,10 +535,10 @@ class MigrateOrdenSoftLinkController extends Controller
 
             // si existe uno o mas cod_docu con num_doc iguales entonces debe volver a contar para aumentar el contador y actualizar las tablas movimien y detmov
             if ($oc->id_softlink == null) {
-                $cantidadCodigosExistentes = DB::connection('soft1')->table('movimien')->where([['num_docu', $ordenEnSoftlink['orden_softlink']], ['cod_docu', $cod_docu]])->count();
+                $cantidadCodigosExistentes = DB::connection('soft2')->table('movimien')->where([['num_docu', $ordenEnSoftlink['orden_softlink']], ['cod_docu', $cod_docu]])->count();
                 if ($cantidadCodigosExistentes > 1) {
                     //obtiene el ultimo registro
-                    $ult_mov = DB::connection('soft1')->table('movimien')
+                    $ult_mov = DB::connection('soft2')->table('movimien')
                         ->where([
                             ['num_docu', '>', $yy . '0000000'],
                             ['num_docu', '<', $yy . '9999999'],
@@ -457,11 +554,11 @@ class MigrateOrdenSoftLinkController extends Controller
                     //anida el anio con el numero de documento
                     $num_docu = $yy . $nro_mov;
 
-                    DB::connection('soft1')->table('movimien')
+                    DB::connection('soft2')->table('movimien')
                         ->where('mov_id', $ordenEnSoftlink['mov_id'])
                         ->update(['num_docu' => $num_docu]);
 
-                    DB::connection('soft1')->table('detmov')
+                    DB::connection('soft2')->table('detmov')
                         ->where('mov_id', $ordenEnSoftlink['mov_id'])
                         ->update(['num_docu' => $num_docu]);
 
@@ -511,8 +608,30 @@ class MigrateOrdenSoftLinkController extends Controller
 
         $mov_id = $this->obtenerMovId();
 
+        // obtener ultimo correlativo de softlink1 
+        $ultimosCorrelativosSoftlink1 = $this->getCorrelativoDocumentoSoftlinkStatic();
+        $ult_correlativo_softlink1 = 0;
+        $arrayTipoOrden='';
+        if ($oc->id_tp_documento == 2) { // compra
+            $arrayTipoOrden = 'orden_compra';
+        }
+        if ($oc->id_tp_documento == 3) { // servicio
+            $arrayTipoOrden = 'orden_servicio';
+        }
+        if ($oc->id_tp_documento == 12) { // importacion
+            $arrayTipoOrden = 'orden_importacion';
+        }
+  
+        foreach ($ultimosCorrelativosSoftlink1[$arrayTipoOrden] as $key => $value) {
+            if ($value['nombre'] == $oc->codigo_emp) {
+                $ult_correlativo_softlink1 = $value['ultimo_correlativo_soft1'];
+            }
+        }
+        //
+
+
         //obtiene el ultimo registro
-        $ult_mov = DB::connection('soft1')->table('movimien')
+        $ult_mov = DB::connection('soft2')->table('movimien')
             ->where([
                 ['num_docu', '>', $yy . '0000000'],
                 ['num_docu', '<', $yy . '9999999'],
@@ -524,8 +643,9 @@ class MigrateOrdenSoftLinkController extends Controller
         //obtiene el correlativo
         $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
         //crea el correlativo del documento
-        $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+        $nro_mov = $this->leftZero(7, (intval($num_ult_mov)  + (intval($num_ult_mov)>0?0:$ult_correlativo_softlink1)+ 1));
         //anida el anio con el numero de documento
+
         $num_docu = $yy . $nro_mov;
 
         $mov_id = $this->agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros);
@@ -544,8 +664,8 @@ class MigrateOrdenSoftLinkController extends Controller
         }
         $this->agregarAudita($oc, $yy, $nro_mov, 'NUEVO');
 
-        $soc = DB::connection('soft1')->table('movimien')->where('mov_id', $mov_id)->first();
-        $sdet = DB::connection('soft1')->table('detmov')->where('mov_id', $mov_id)->get();
+        $soc = DB::connection('soft2')->table('movimien')->where('mov_id', $mov_id)->first();
+        $sdet = DB::connection('soft2')->table('detmov')->where('mov_id', $mov_id)->get();
 
         $arrayRspta = array(
             'tipo' => 'success',
@@ -561,8 +681,9 @@ class MigrateOrdenSoftLinkController extends Controller
         return $arrayRspta;
     }
 
-    public function obtenerMovId(){
-        $count = DB::connection('soft1')->table('movimien')->count();
+    public function obtenerMovId()
+    {
+        $count = DB::connection('soft2')->table('movimien')->count();
         //codificar segun criterio x documento
         $mov_id = $this->leftZero(10, (intval($count) + 1));
 
@@ -600,8 +721,31 @@ class MigrateOrdenSoftLinkController extends Controller
 
             $mov_id = $this->obtenerMovId();
 
+
+        // obtener ultimo correlativo de softlink1 
+        $ultimosCorrelativosSoftlink1 = $this->getCorrelativoDocumentoSoftlinkStatic();
+        $ult_correlativo_softlink1 = 0;
+        $arrayTipoOrden='';
+        if ($oc->id_tp_documento == 2) { // compra
+            $arrayTipoOrden = 'orden_compra';
+        }
+        if ($oc->id_tp_documento == 3) { // servicio
+            $arrayTipoOrden = 'orden_servicio';
+        }
+        if ($oc->id_tp_documento == 12) { // importacion
+            $arrayTipoOrden = 'orden_importacion';
+        }
+  
+        foreach ($ultimosCorrelativosSoftlink1[$arrayTipoOrden] as $key => $value) {
+            if ($value['nombre'] == $oc->codigo_emp) {
+                $ult_correlativo_softlink1 = $value['ultimo_correlativo_soft1'];
+            }
+        }
+        //
+
+
             //obtiene el ultimo registro
-            $ult_mov = DB::connection('soft1')->table('movimien')
+            $ult_mov = DB::connection('soft2')->table('movimien')
                 ->where([
                     ['num_docu', '>', $yy . '0000000'],
                     ['num_docu', '<', $yy . '9999999'],
@@ -613,7 +757,7 @@ class MigrateOrdenSoftLinkController extends Controller
             //obtiene el correlativo
             $num_ult_mov = substr(($ult_mov !== null ? $ult_mov->num_docu : 0), 4);
             //crea el correlativo del documento
-            $nro_mov = $this->leftZero(7, (intval($num_ult_mov) + 1));
+            $nro_mov = $this->leftZero(7, (intval($num_ult_mov) +  (intval($num_ult_mov)>0?0:intval($ult_correlativo_softlink1))  + 1));
             //anida el anio con el numero de documento
             $num_docu = $yy . $nro_mov;
 
@@ -633,22 +777,20 @@ class MigrateOrdenSoftLinkController extends Controller
                 $this->actualizaStockEnTransito($oc, $cod_prod, $det, $cod_suc);
             }
             $this->agregarAudita($oc, $yy, $nro_mov, 'NUEVO');
-    
-            $soc = DB::connection('soft1')->table('movimien')->where('mov_id', $mov_id)->first();
-            $sdet = DB::connection('soft1')->table('detmov')->where('mov_id', $mov_id)->get();
-    
+
+            $soc = DB::connection('soft2')->table('movimien')->where('mov_id', $mov_id)->first();
+            $sdet = DB::connection('soft2')->table('detmov')->where('mov_id', $mov_id)->get();
+
             $arrayRspta = array(
                 'tipo' => 'success',
                 'mov_id' => $mov_id,
-                'mensaje' => $respuestaAnularOrdenSoftlink['mensaje'].'. Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
+                'mensaje' => $respuestaAnularOrdenSoftlink['mensaje'] . '. Se migró correctamente la OC Nro. ' . $num_docu . ' con id ' . $mov_id,
                 'orden_softlink' => $num_docu, //($yy . '-' . $nro_mov),
                 'ocSoftlink' => array('cabecera' => $soc, 'detalle' => $sdet),
                 'ocAgile' => array('cabecera' => $oc, 'detalle' => $detalles),
                 'soc' => $soc,
                 'sdet' => $sdet
             );
-
-
         } else {
 
             //persona juridica x defecto
@@ -665,7 +807,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 $mon_impto = 0;
             }
 
-            DB::connection('soft1')->table('movimien')
+            DB::connection('soft2')->table('movimien')
                 ->where('mov_id', $oc_softlink->mov_id)
                 ->update(
                     [
@@ -703,7 +845,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
                 if ($det->id_oc_det_softlink !== null) {
                     //actualiza el detalle
-                    DB::connection('soft1')->table('detmov')
+                    DB::connection('soft2')->table('detmov')
                         ->where('unico', $det->id_oc_det_softlink)
                         ->update([
                             'fec_pedi' => $fecha,
@@ -741,7 +883,6 @@ class MigrateOrdenSoftLinkController extends Controller
             $this->agregarAudita($oc, $yy, $oc_softlink->num_docu, 'MODIFICO');
 
             $this->agregarLogActividad('MODIFICO', $oc_softlink->mov_id, $oc_softlink->num_docu, $ordenActualizada);
-
         }
         return $arrayRspta;
     }
@@ -753,7 +894,7 @@ class MigrateOrdenSoftLinkController extends Controller
         $mov_id = $this->obtenerMovId();
 
 
-        DB::connection('soft1')->table('movimien')->insert(
+        DB::connection('soft2')->table('movimien')->insert(
             [
                 'mov_id' => $mov_id,
                 'tipo' => '1', //Compra 
@@ -861,13 +1002,13 @@ class MigrateOrdenSoftLinkController extends Controller
     public function agregarDetalleOrden($det, $mov_id, $cod_prod, $cod_docu, $num_docu, $fecha, $igv, $i)
     {
         //cuenta los registros
-        $count_det = DB::connection('soft1')->table('detmov')->count();
+        $count_det = DB::connection('soft2')->table('detmov')->count();
         //aumenta uno y completa los 10 digitos
         $mov_det_id = $this->leftZero(10, (intval($count_det) + 1));
         //Obtiene y/o crea el producto
         // $cod_prod = $this->obtenerProducto($det);
 
-        DB::connection('soft1')->table('detmov')->insert(
+        DB::connection('soft2')->table('detmov')->insert(
             [
                 'unico' => $mov_det_id,
                 'mov_id' => $mov_id,
@@ -931,7 +1072,7 @@ class MigrateOrdenSoftLinkController extends Controller
     public function actualizaStockEnTransito($oc, $cod_prod, $det, $cod_suc)
     {
         //OBTIENE STOCK EN TRANSITO
-        $stock = DB::connection('soft1')->table('stocks')
+        $stock = DB::connection('soft2')->table('stocks')
             ->where([
                 ['cod_alma', '=', $oc->codigo_almacen],
                 ['cod_prod', '=', $cod_prod]
@@ -939,11 +1080,11 @@ class MigrateOrdenSoftLinkController extends Controller
 
         if ($stock !== null) {
             //ACTUALIZA STOCK EN TRANSITO
-            DB::connection('soft1')->table('stocks')
+            DB::connection('soft2')->table('stocks')
                 ->update(['stock_ing' => (floatval($stock->stock_ing) + floatval($det->cantidad))]);
         } else {
             //CREA
-            DB::connection('soft1')->table('stocks')
+            DB::connection('soft2')->table('stocks')
                 ->insert([
                     'cod_suc' => $cod_suc,
                     'cod_alma' => $oc->codigo_almacen,
@@ -960,16 +1101,16 @@ class MigrateOrdenSoftLinkController extends Controller
 
     public function agregarAudita($oc, $yy, $nro_mov, $accion)
     {
-        $vendedor = DB::connection('soft1')->table('vendedor')
+        $vendedor = DB::connection('soft2')->table('vendedor')
             ->select('usuario')
             ->where('codvend', $oc->codvend_softlink)
             ->first();
 
-        $count = DB::connection('soft1')->table('audita')->count();
+        $count = DB::connection('soft2')->table('audita')->count();
 
         //Agrega registro de auditoria
         if ($accion == 'NUEVO') {
-            DB::connection('soft1')->table('audita')
+            DB::connection('soft2')->table('audita')
                 ->insert([
                     'unico' => sprintf('%010d', $count + 1),
                     'usuario' => $oc->codvend_softlink,
@@ -978,7 +1119,7 @@ class MigrateOrdenSoftLinkController extends Controller
                     'accion' => $accion . ': OC ' . $yy . '-' . $nro_mov
                 ]);
         } elseif ($accion == 'MODIFICO') {
-            DB::connection('soft1')->table('audita')
+            DB::connection('soft2')->table('audita')
                 ->insert([
                     'unico' => sprintf('%010d', $count + 1),
                     'usuario' => $oc->codvend_softlink,
@@ -1018,7 +1159,7 @@ class MigrateOrdenSoftLinkController extends Controller
         //Verifica si esxiste el producto
         $prod = null;
         if (!empty($det->part_number)) { //if ($det->part_number !== null && $det->part_number !== '') {
-            $prod = DB::connection('soft1')->table('sopprod')
+            $prod = DB::connection('soft2')->table('sopprod')
                 ->select('cod_prod')
                 ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
                 ->where([
@@ -1027,7 +1168,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 ])
                 ->first();
         } else if ($det->descripcion !== null && $det->descripcion !== '') {
-            $prod = DB::connection('soft1')->table('sopprod')
+            $prod = DB::connection('soft2')->table('sopprod')
                 ->select('cod_prod')
                 ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
                 ->where([
@@ -1043,7 +1184,7 @@ class MigrateOrdenSoftLinkController extends Controller
         } //Si no existe, genera el producto
         else {
             //obtiene el sgte codigo
-            $ultimo = DB::connection('soft1')->table('sopprod')
+            $ultimo = DB::connection('soft2')->table('sopprod')
                 ->select('cod_prod')
                 ->where([['cod_prod', '!=', 'TEXTO']])
                 ->orderBy('cod_prod', 'desc')
@@ -1059,7 +1200,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
             $cod_unid = $this->obtenerUnidadMedida($det->abreviatura);
 
-            DB::connection('soft1')->table('sopprod')->insert(
+            DB::connection('soft2')->table('sopprod')->insert(
                 [
                     'cod_prod' => $cod_prod,
                     'cod_clasi' => $cod_clasi,
@@ -1129,15 +1270,15 @@ class MigrateOrdenSoftLinkController extends Controller
                 ]
             );
 
-            $sucursales = DB::connection('soft1')->table('sucursal')->get();
+            $sucursales = DB::connection('soft2')->table('sucursal')->get();
 
             foreach ($sucursales as $suc) {
-                $prod = DB::connection('soft1')->table('precios')
+                $prod = DB::connection('soft2')->table('precios')
                     ->where([['cod_prod', '=', $cod_prod], ['cod_suc', '=', $suc->cod_suc]])
                     ->first();
 
                 if ($prod == null) {
-                    DB::connection('soft1')->table('precios')->insert(
+                    DB::connection('soft2')->table('precios')->insert(
                         [
                             'cod_prod' => $cod_prod,
                             'cod_suc' => $suc->cod_suc,
@@ -1165,15 +1306,15 @@ class MigrateOrdenSoftLinkController extends Controller
                 }
             }
 
-            $almacenes = DB::connection('soft1')->table('almacen')->get();
+            $almacenes = DB::connection('soft2')->table('almacen')->get();
 
             foreach ($almacenes as $alm) {
-                $stock = DB::connection('soft1')->table('stocks')
+                $stock = DB::connection('soft2')->table('stocks')
                     ->where([['cod_suc', '=', $alm->cod_suc], ['cod_alma', '=', $alm->cod_alma], ['cod_prod', '=', $cod_prod]])
                     ->first();
 
                 if ($stock == null) {
-                    DB::connection('soft1')->table('stocks')->insert(
+                    DB::connection('soft2')->table('stocks')->insert(
                         [
                             'cod_suc' => $alm->cod_suc,
                             'cod_alma' => $alm->cod_alma,
@@ -1198,7 +1339,7 @@ class MigrateOrdenSoftLinkController extends Controller
     public function obtenerClasificacion($clasificacion)
     {
         //verifica si tiene clasificacion
-        $clasif = DB::connection('soft1')->table('soplinea')
+        $clasif = DB::connection('soft2')->table('soplinea')
             ->select('cod_line')
             ->where('nom_line', trim($clasificacion))
             ->first();
@@ -1208,12 +1349,12 @@ class MigrateOrdenSoftLinkController extends Controller
         if ($clasif !== null) {
             $cod_clasi = $clasif->cod_line;
         } else {
-            $ultimo_line = DB::connection('soft1')->table('soplinea')
+            $ultimo_line = DB::connection('soft2')->table('soplinea')
                 ->select('cod_line')->orderBy('cod_line', 'desc')->first();
 
             $cod_clasi = $this->leftZero(2, (intval($ultimo_line->cod_line) + 1));
 
-            DB::connection('soft1')->table('soplinea')->insert(
+            DB::connection('soft2')->table('soplinea')->insert(
                 [
                     'cod_line' => $cod_clasi,
                     'nom_line' => trim($clasificacion),
@@ -1228,7 +1369,7 @@ class MigrateOrdenSoftLinkController extends Controller
     public function obtenerCategoria($categoria, $id_categoria)
     {
         //verifica si existe categoria
-        $cate = DB::connection('soft1')->table('sopsub1')
+        $cate = DB::connection('soft2')->table('sopsub1')
             ->select('cod_sub1')
             ->where('nom_sub1', trim($categoria))
             ->first();
@@ -1238,12 +1379,12 @@ class MigrateOrdenSoftLinkController extends Controller
         if ($cate !== null) {
             $cod_cate = $cate->cod_sub1;
         } else {
-            $ultima_cate = DB::connection('soft1')->table('sopsub1')
+            $ultima_cate = DB::connection('soft2')->table('sopsub1')
                 ->select('cod_sub1')->orderBy('cod_sub1', 'desc')->first();
 
             $cod_cate = $this->leftZero(3, (intval($ultima_cate->cod_sub1) + 1));
 
-            DB::connection('soft1')->table('sopsub1')->insert(
+            DB::connection('soft2')->table('sopsub1')->insert(
                 [
                     'cod_sub1' => $cod_cate,
                     'nom_sub1' => trim($categoria),
@@ -1262,7 +1403,7 @@ class MigrateOrdenSoftLinkController extends Controller
     public function obtenerSubCategoria($subcategoria, $id_subcategoria)
     {
         //verifica si existe subcategoria
-        $subcate = DB::connection('soft1')->table('sopsub2')
+        $subcate = DB::connection('soft2')->table('sopsub2')
             ->select('cod_sub2')
             ->where('nom_sub2', trim($subcategoria))
             ->first();
@@ -1272,12 +1413,12 @@ class MigrateOrdenSoftLinkController extends Controller
         if ($subcate !== null) {
             $cod_subc = $subcate->cod_sub2;
         } else {
-            $ultima_subc = DB::connection('soft1')->table('sopsub2')
+            $ultima_subc = DB::connection('soft2')->table('sopsub2')
                 ->select('cod_sub2')->orderBy('cod_sub2', 'desc')->first();
 
             $cod_subc = $this->leftZero(3, (intval($ultima_subc->cod_sub2) + 1));
 
-            DB::connection('soft1')->table('sopsub2')->insert(
+            DB::connection('soft2')->table('sopsub2')->insert(
                 [
                     'cod_sub2' => $cod_subc,
                     'nom_sub2' => trim($subcategoria),
@@ -1297,7 +1438,7 @@ class MigrateOrdenSoftLinkController extends Controller
     public function obtenerUnidadMedida($abreviatura)
     {
         //verifica si existe unidad medida
-        $unidad = DB::connection('soft1')->table('unidades')
+        $unidad = DB::connection('soft2')->table('unidades')
             ->select('cod_unid')
             ->where('nom_unid', trim($abreviatura))
             ->first();
@@ -1307,11 +1448,11 @@ class MigrateOrdenSoftLinkController extends Controller
         if ($unidad !== null) {
             $cod_unid = $unidad->cod_unid;
         } else {
-            $count_unid = DB::connection('soft1')->table('unidades')->count();
+            $count_unid = DB::connection('soft2')->table('unidades')->count();
 
             $cod_unid = $this->leftZero(3, (intval($count_unid) + 1));
 
-            DB::connection('soft1')->table('unidades')->insert(
+            DB::connection('soft2')->table('unidades')->insert(
                 [
                     'cod_unid' => $cod_unid,
                     'nom_unid' => trim($abreviatura),
@@ -1330,7 +1471,7 @@ class MigrateOrdenSoftLinkController extends Controller
     public function obtenerProveedor($nro_documento, $razon_social, $doc_tipo, $cod_di)
     {
         if ($nro_documento !== null && $nro_documento !== '') {
-            $proveedor = DB::connection('soft1')->table('auxiliar')
+            $proveedor = DB::connection('soft2')->table('auxiliar')
                 ->select('cod_auxi')
                 ->where([
                     ['ruc_auxi', '=', $nro_documento],
@@ -1338,7 +1479,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 ])
                 ->first();
         } else {
-            $proveedor = DB::connection('soft1')->table('auxiliar')
+            $proveedor = DB::connection('soft2')->table('auxiliar')
                 ->select('cod_auxi')
                 ->where([
                     ['nom_auxi', '=', $razon_social],
@@ -1351,7 +1492,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
         if ($proveedor == null) {
             //obtiene el codigo mayor
-            $mayor = DB::connection('soft1')->table('auxiliar')
+            $mayor = DB::connection('soft2')->table('auxiliar')
                 ->select('cod_auxi')
                 ->where([
                     ['cod_auxi', '!=', 'TRANSF'],
@@ -1363,7 +1504,7 @@ class MigrateOrdenSoftLinkController extends Controller
             $cod_auxi = $this->leftZero(6, (intval($mayor->cod_auxi) + 1));
 
 
-            DB::connection('soft1')->table('auxiliar')->insert(
+            DB::connection('soft2')->table('auxiliar')->insert(
                 [
                     'tip_auxi' => 'P',
                     'cod_auxi' => $cod_auxi,
@@ -1457,10 +1598,10 @@ class MigrateOrdenSoftLinkController extends Controller
             //si existe un id_softlink
             if (!empty($oc->id_softlink)) {
                 //pregunta si ya se ha migrado antes
-                $oc_softlink = DB::connection('soft1')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
+                $oc_softlink = DB::connection('soft2')->table('movimien')->where('mov_id', $oc->id_softlink)->first();
 
                 //verifica si ya fue referenciado
-                $guia_referen = DB::connection('soft1')->table('movimien')
+                $guia_referen = DB::connection('soft2')->table('movimien')
                     ->where([
                         ['cod_pedi', '=', $oc_softlink->cod_docu],
                         ['num_pedi', '=', $oc_softlink->num_docu],
@@ -1487,7 +1628,7 @@ class MigrateOrdenSoftLinkController extends Controller
                     );
                 } else {
                     //Anula orden en softlink
-                    DB::connection('soft1')->table('movimien')->where('mov_id', $oc->id_softlink)
+                    DB::connection('soft2')->table('movimien')->where('mov_id', $oc->id_softlink)
                         ->update([
                             'flg_anulado' => 1,
                             'fec_anul' => new Carbon(),
@@ -1533,7 +1674,7 @@ class MigrateOrdenSoftLinkController extends Controller
             }
             // $fechaDesde = (new Carbon($fecha))->subMonth(3);
 
-            $lista = DB::connection('soft1')->table('movimien')
+            $lista = DB::connection('soft2')->table('movimien')
                 ->select('mov_id', 'num_docu', 'cod_docu', 'auxiliar.nom_auxi')
                 ->join('auxiliar', 'auxiliar.cod_auxi', '=', 'movimien.cod_auxi')
                 ->where([

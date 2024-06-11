@@ -130,7 +130,7 @@ class ProductoController extends Controller
                     'alm_subcat.descripcion as marca'
                 )
                 ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                ->where('alm_prod.part_number', trim($part_number))
+                ->where([['alm_prod.part_number', trim($part_number)],['alm_prod.estado','=',1]])
                 ->get();
         } else if ($descripcion !== '') {
             $prod = DB::table('almacen.alm_prod')
@@ -142,7 +142,7 @@ class ProductoController extends Controller
                     'alm_subcat.descripcion as marca'
                 )
                 ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                ->where('alm_prod.descripcion', trim($descripcion))
+                ->where([['alm_prod.descripcion', trim($descripcion)],['alm_prod.estado','=',1]])
                 ->get();
         }
         $output['data'] = $prod;
@@ -232,8 +232,8 @@ class ProductoController extends Controller
             $producto = new Producto();
             $producto->part_number = $pn;
             $producto->id_clasif = $request->id_clasif;
+            $producto->id_categoria = $request->id_tipo_producto;
             $producto->id_subcategoria = $request->id_subcategoria;
-            $producto->id_categoria = $request->id_categoria;
             $producto->descripcion = $des;
             $producto->id_unidad_medida = ($request->id_unidad_medida !== 0 ? $request->id_unidad_medida : null);
             $producto->id_unid_equi = (($request->id_unid_equi !== 0 && $request->id_unid_equi !== null) ? $request->id_unid_equi : null);
@@ -270,9 +270,9 @@ class ProductoController extends Controller
 
 
             $productoCreado = DB::table('almacen.alm_prod')
-                ->select('alm_prod.*', 'alm_und_medida.abreviatura', 'alm_cat_prod.descripcion as categoria', 'alm_subcat.descripcion as subcategoria')
+                ->select('alm_prod.*', 'alm_und_medida.abreviatura', 'alm_tp_prod.descripcion as categoria', 'alm_subcat.descripcion as subcategoria')
                 ->join('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
-                ->join('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
+                ->join('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
                 ->join('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
                 ->where('id_producto', $producto->id_producto)->first();
 

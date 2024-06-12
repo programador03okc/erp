@@ -366,11 +366,21 @@ class MigrateOrdenSoftLinkController extends Controller
                     'alm_prod.part_number',
                     'alm_prod.descripcion',
                     'alm_und_medida.abreviatura',
-                    'alm_tp_prod.id_tipo_producto as id_categoria',
-                    'alm_tp_prod.descripcion as categoria',
-                    'alm_subcat.id_subcategoria',
-                    'alm_subcat.descripcion as subcategoria',
-                    'alm_clasif.descripcion as clasificacion',
+                    // * softlink1
+                    // 'alm_tp_prod.id_tipo_producto as id_categoria',
+                    // 'alm_tp_prod.descripcion as categoria',
+                    // 'alm_subcat.id_subcategoria',
+                    // 'alm_subcat.descripcion as subcategoria',
+                    // 'alm_clasif.descripcion as clasificacion',
+                    // * softlink2
+                    'grupo.id as id_grupo',
+                    'grupo.descripcion as grupo',
+                    'categoria.id as id_categoria',
+                    'categoria.descripcion as categoria',
+                    'subcategoria.id as id_subcategoria',
+                    'subcategoria.descripcion as subcategoria',
+                    
+
                     'log_ord_compra.id_moneda',
                     'alm_prod.series',
                     'alm_prod.notas',
@@ -378,10 +388,18 @@ class MigrateOrdenSoftLinkController extends Controller
                 )
                 ->join('logistica.log_ord_compra', 'log_ord_compra.id_orden_compra', '=', 'log_det_ord_compra.id_orden_compra')
                 ->leftjoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'log_det_ord_compra.id_producto')
-                // ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
-                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
-                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
-                ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+                // * softlink1
+                // ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
+                // ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
+                // ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+                
+                
+                // * softlink2
+                ->leftJoin('almacen.producto_sap', 'producto_sap.codigo_agile', '=', 'alm_prod.codigo')
+                ->leftJoin('clasificacion_sap.subcategoria', 'subcategoria.id', '=', 'producto_sap.subcategoria_id')
+                ->leftJoin('clasificacion_sap.categoria', 'categoria.id', '=', 'subcategoria.categoria_id')
+                ->leftJoin('clasificacion_sap.grupo', 'grupo.id', '=', 'categoria.grupo_id')
+
                 ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
                 ->leftjoin('almacen.alm_det_req', 'alm_det_req.id_detalle_requerimiento', '=', 'log_det_ord_compra.id_detalle_requerimiento')
                 ->leftjoin('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
@@ -1192,7 +1210,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
             $cod_prod = $this->leftZero(6, (intval($ultimo->cod_prod) + 1));
 
-            $cod_clasi = $this->obtenerClasificacion($det->clasificacion);
+            $cod_clasi = $this->obtenerClasificacion($det->grupo);
 
             $cod_cate = $this->obtenerCategoria($det->categoria, $det->id_categoria);
 

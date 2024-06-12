@@ -38,6 +38,8 @@ use App\Http\Controllers\Cas\CasModeloController;
 use App\Http\Controllers\Cas\CasProductoController;
 use App\Http\Controllers\Cas\FichaReporteController;
 use App\Http\Controllers\Cas\IncidenciaController;
+use App\Http\Controllers\ClasificacionSap\CategoriaSapController;
+use App\Http\Controllers\ClasificacionSap\SubcategoriaSapController;
 use App\Http\Controllers\Comercial\ClienteController;
 use App\Http\Controllers\ComprasPendientesController;
 use App\Http\Controllers\ComprobanteCompraController;
@@ -635,8 +637,14 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
 				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen'])->name('mostrar-prods-almacen');
 				Route::get('mostrar_producto/{id}', [ProductoController::class, 'mostrar_producto'])->name('mostrar-producto');
+				// * INICIA: Antigua clasificacion softlink1
 				Route::get('mostrarCategoriasPorClasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar-categorias-por-clasificacion');
 				Route::get('mostrarSubCategoriasPorCategoria/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria'])->name('mostrar-sub-categorias-por-categoria');
+				// * FIN: Antigua clasificacion softlink1
+				// * INICIA: clasificacion sap
+				Route::get('mostrarCategoriasSapPorGrupo/{id}', [CategoriaSapController::class, 'mostrarCategoriasSapPorGrupo'])->name('mostrar-categorias-sap-por-grupo');
+				Route::get('mostrarSubCategoriasSapPorCategoria/{id}', [SubcategoriaSapController::class, 'mostrarSubCategoriasSapPorCategoria'])->name('mostrar-sub-categorias-sap-por-categoria');
+				// * FIN: clasificacion sap
 				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto'])->name('guardar-producto');
 				Route::post('actualizar_producto', [ProductoController::class, 'update_producto'])->name('actualizar-producto');
 				Route::get('anular_producto/{id}', [ProductoController::class, 'anular_producto'])->name('anular-producto');

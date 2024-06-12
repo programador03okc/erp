@@ -119,42 +119,79 @@
                                                 <li><label id="subcat_descripcion"></label></li>
                                                 <li><span id="estado" class="label "></span></li>
                                                 <li>
-                                                    <!-- <button type="button" class="btn btn-success btn-sm btn-flat" onClick="migrarProductoSoftlink();"
-                                                        data-toggle="tooltip" data-placement="bottom" title="Migrar producto a Softlink">
-                                                        Migrar a Softlink <i class="fas fa-step-forward"></i> </button> -->
+                                                    <button type="button" class="btn btn-success btn-sm btn-flat" onClick="migrarProductoSoftlink();"
+                                                        data-toggle="tooltip" data-placement="bottom" title="Migrar producto a Softlink" disabled>
+                                                        Migrar a Softlink <i class="fas fa-step-forward"></i> </button>
                                                 </li>
                                             </ol>
                                         </div>
-                                        <div class="col-md-4">
-                                            <h5>Grupo</h5>
+                                        <!-- <div class="col-md-4">
+                                            <h5>Clasificación</h5>
                                             <select class="form-control activation js-example-basic-single" name="id_clasif" disabled="true">
                                                 <option value="0">Elija una opción</option>
+                                                {{-- 
                                                 @foreach ($clasificaciones as $clasif)
                                                 <option value="{{$clasif->id_clasificacion}}">{{$clasif->descripcion}}</option>
-                                                @endforeach
+                                                @endforeach 
+                                                --}}
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <h5>Categoría</h5>
                                             <select class="form-control activation js-example-basic-single" name="id_tipo_producto" disabled="true">
                                                 <option value="0">Elija una opción</option>
-                                                @foreach ($tipos as $tp)
+                                                {{-- @foreach ($tipos as $tp)
                                                 <option value="{{$tp->id_tipo_producto}}">{{$tp->descripcion}}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h5>SubCategoría</h5>
+                                            <select class="form-control activation js-example-basic-single" name="id_categoria" disabled="true">
+                                                <option value="0">Elija una opción</option>
+                                                {{-- @foreach ($categorias as $cat)
+                                                <option value="{{$cat->id_categoria}}">{{$cat->descripcion}}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div> -->
+                                        <div class="col-md-4">
+                                            <h5>Grupo</h5>
+                                            <select class="form-control activation js-example-basic-single" name="id_grupo_sap" disabled="true">
+                                                <option value="0">Elija una opción</option>
+                                                @foreach ($grupos as $grupo)
+                                                <option value="{{$grupo->id}}">{{$grupo->descripcion}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h5>Categoría</h5>
+                                            <select class="form-control activation js-example-basic-single" name="id_categoria_sap" disabled="true">
+                                                <option value="0">Elija una opción</option>
+                                                @foreach ($categorias as $categoria)
+                                                <option value="{{$categoria->id}}">{{$categoria->descripcion}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <h5>SubCategoría</h5>
-                                            <select class="form-control activation js-example-basic-single" name="id_subcategoria" disabled="true">
+                                            <select class="form-control activation js-example-basic-single" name="id_subcategoria_sap" disabled="true">
                                                 <option value="0">Elija una opción</option>
-                                                @foreach ($subcategorias as $subcat)
-                                                <option value="{{$subcat->id_subcategoria}}">{{$subcat->descripcion}}</option>
+                                                @foreach ($subcategorias as $subcategoria)
+                                                <option value="{{$subcategoria->id}}">{{$subcategoria->descripcion}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row">
-
+                                        <!-- <div class="col-md-4">
+                                            <h5>Marca</h5>
+                                            <select class="form-control activation js-example-basic-single" name="id_subcategoria" disabled="true">
+                                                <option value="0">Elija una opción</option>
+                                                {{-- @foreach ($subcategorias as $subcat)
+                                                <option value="{{$subcat->id_subcategoria}}">{{$subcat->descripcion}}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div> -->
                                         <div class="col-md-4">
                                             <h5>Part Number</h5>
                                             <input type="text" class="form-control activation" name="part_number" disabled="true">
@@ -332,12 +369,14 @@
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
-    <script src="{{ asset('js/almacen/producto/producto.js')}}?v={{filemtime(public_path('js/almacen/producto/producto.js'))}}"></script>
+    
+    <!-- <script src="{{ asset('js/almacen/producto/producto.js')}}?v={{filemtime(public_path('js/almacen/producto/producto.js'))}}"></script> --> <!-- * antigua clasificacion -->
+    <script src="{{ asset('js/almacen/producto/producto_sap.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_sap.js'))}}"></script><!-- * lasificacion sap -->
+    
     <script src="{{ asset('js/almacen/producto/productoModal.js')}}?v={{filemtime(public_path('js/almacen/producto/productoModal.js'))}}"></script>
     <script src="{{ asset('js/almacen/producto/producto_ubicacion.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_ubicacion.js'))}}"></script>
     <!-- <script src="{{ asset('js/almacen/producto/subcategoriaModal.js')}}"></script> -->
     <script src="{{ asset('js/almacen/producto/producto_serie.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_serie.js'))}}"></script>
-
     <script>
         $(document).ready(function() {
             

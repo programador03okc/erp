@@ -98,14 +98,22 @@ function mostrar_producto(id) {
             $('[name=part_number]').val(response['producto'][0].part_number);
             $('[name=descripcion]').val(response['producto'][0].descripcion);
             $('[name=id_unidad_medida]').val(response['producto'][0].id_unidad_medida);
-            $('[name=id_subcategoria]').val(response['producto'][0].id_subcategoria).trigger('change.select2');
-            $('[name=id_categoria]').val(response['producto'][0].id_categoria).trigger('change.select2');
-            $('[name=id_tipo_producto]').val(response['producto'][0].id_tipo_producto).trigger('change.select2');
-            $('[name=id_clasif]').val(response['producto'][0].id_clasificacion).trigger('change.select2');
+            // * INICIA: antigua clasificacion softlink1
+            // $('[name=id_clasif]').val(response['producto'][0].id_clasif).trigger('change.select2');
+            // $('[name=id_tipo_producto]').val(response['producto'][0].id_categoria).trigger('change.select2');
+            // $('[name=id_subcategoria]').val(response['producto'][0].id_subcategoria).trigger('change.select2');
+            // $('[name=subcat_descripcion]').val(response['producto'][0].subcat_descripcion);
+            // * FIN: antigua clasificacion softlink1
+
+            // * INICIA: clasificacion sap
+            $('[name=id_grupo_sap]').val(response['producto'][0].id_grupo_sap).trigger('change.select2');
+            $('[name=id_categoria_sap]').val(response['producto'][0].id_categoria_sap).trigger('change.select2');
+            $('[name=id_subcategoria_sap]').val(response['producto'][0].id_subcategoria_sap).trigger('change.select2');
+            // * FIN: clasificacion sap
+            
             $('#tipo_descripcion').text(response['producto'][0].tipo_descripcion);
             $('#cat_descripcion').text(response['producto'][0].cat_descripcion);
             $('#subcat_descripcion').text(response['producto'][0].subcat_descripcion);
-            $('[name=subcat_descripcion]').val(response['producto'][0].subcat_descripcion);
             $('[name=id_unid_equi]').val(response['producto'][0].id_unid_equi);
             $('[name=sunat_unsps]').val(response['producto'][0].sunat_unsps);
             $('[name=codigo_compuesto]').val(response['producto'][0].codigo_compuesto);
@@ -151,26 +159,26 @@ function mostrar_producto(id) {
     });
 }
 
-$("[name=id_clasif]").on('change', function () {
-    var id_clasificacion = $(this).val();
-    console.log(id_clasificacion);
-    $('[name=id_tipo_producto]').html('');
-    $('[name=id_categoria]').html('');
+$("[name=id_grupo_sap]").on('change', function () {
+    var id_grupo_sap = $(this).val();
+    console.log(id_grupo_sap);
+    $('[name=id_categoria_sap]').html('');
+    $('[name=id_subcategoria_sap]').html('');
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': token },
-        url: 'mostrarCategoriasPorClasificacion/' + id_clasificacion,
+        url: 'mostrarCategoriasSapPorGrupo/' + id_grupo_sap,
         dataType: 'JSON',
         success: function (response) {
             console.log(response);
 
             if (response.length > 0) {
-                $('[name=id_tipo_producto]').html('');
+                $('[name=id_categoria_sap]').html('');
                 html = '<option value="0" >Elija una opción</option>';
                 response.forEach(element => {
-                    html += `<option value="${element.id_tipo_producto}" >${element.descripcion}</option>`;
+                    html += `<option value="${element.id}" >${element.descripcion}</option>`;
                 });
-                $('[name=id_tipo_producto]').html(html);
+                $('[name=id_categoria_sap]').html(html);
             }
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -180,25 +188,25 @@ $("[name=id_clasif]").on('change', function () {
     });
 });
 
-$("[name=id_tipo_producto]").on('change', function () {
-    var id_tipo = $(this).val();
-    console.log(id_tipo);
-    $('[name=id_categoria]').html('');
+$("[name=id_categoria_sap]").on('change', function () {
+    var id_categoria_sap = $(this).val();
+    console.log(id_categoria_sap);
+    $('[name=id_subcategoria_sap]').html('');
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': token },
-        url: 'mostrarSubCategoriasPorCategoria/' + id_tipo,
+        url: 'mostrarSubCategoriasSapPorCategoria/' + id_categoria_sap,
         dataType: 'JSON',
         success: function (response) {
             console.log(response);
 
             if (response.length > 0) {
-                $('[name=id_categoria]').html('');
+                $('[name=id_subcategoria_sap]').html('');
                 html = '<option value="0" >Elija una opción</option>';
                 response.forEach(element => {
-                    html += `<option value="${element.id_categoria}" >${element.descripcion}</option>`;
+                    html += `<option value="${element.id}" >${element.descripcion}</option>`;
                 });
-                $('[name=id_categoria]').html(html);
+                $('[name=id_subcategoria_sap]').html(html);
             }
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -378,22 +386,20 @@ function unid_abrev($id_name) {
 }
 
 function validaProducto() {
-    var id_categoria = $('[name=id_categoria]').val();
-    var id_subcategoria = $('[name=id_subcategoria]').val();
-    var id_clasif = $('[name=id_clasif]').val();
+    // var id_categoria = $('[name=id_categoria]').val();
+    var id_subcategoria_sap = $('[name=id_subcategoria_sap]').val();
+    var id_grupo_sap = $('[name=id_grupo_sap]').val();
     var descripcion = $('[name=descripcion]').val();
     var id_unidad_medida = $('[name=id_unidad_medida]').val();
     var id_moneda = $('[name=id_moneda]').val();
     var msj = '';
 
-    if (id_categoria == '' || id_categoria == '0' || id_categoria == null) {
+ 
+    if (id_subcategoria_sap == '' || id_subcategoria_sap == '0' || id_subcategoria_sap == null) {
         msj += (msj == '' ? 'Es necesario que elija una SubCategoría' : ', una SubCategoría');
     }
-    if (id_subcategoria == '' || id_subcategoria == '0' || id_subcategoria == null) {
-        msj += (msj == '' ? 'Es necesario que elija una Marca' : ', una Marca');
-    }
-    if (id_clasif == '' || id_clasif == '0' || id_clasif == null) {
-        msj += (msj == '' ? 'Es necesario que alija una Clasificación' : ', una clasificación');
+    if (id_grupo_sap == '' || id_grupo_sap == '0' || id_grupo_sap == null) {
+        msj += (msj == '' ? 'Es necesario que alija un Grupo' : ', un Grupo');
     }
     if (descripcion == '' || descripcion == null) {
         msj += (msj == '' ? 'Es necesario que ingrese una Descripción' : ', una descripción');

@@ -52,7 +52,7 @@
                            <button type="button" name="btn-imprimir-orden-pdf" class="btn btn-info btn-sm handleClickImprimirOrdenPdf" title="Imprimir orden en .pdf" disabled><i class="fas fa-print"></i> Imprimir</button>
                         @endif
                         <!-- @if (in_array(285,$array_accesos)) -->
-                        <!-- <button type="button" name="btn-migrar-orden-softlink" class="btn btn-warning btn-sm handleClickMigrarOrdenASoftlink" title="Migrar orden a softlink" disabled><i class="fad fa-clone"></i>  Migrar Orden a soflink</button> -->
+                        <button type="button" name="btn-migrar-orden-softlink" class="btn btn-warning btn-sm handleClickMigrarOrdenASoftlink" title="Migrar orden a softlink" disabled><i class="fad fa-clone"></i>  Migrar Orden a soflink</button>
                         <!-- @endif -->
                         <button type="button" name="btn-enviar-email-finalizacion-cuadro-presupuesto" class="btn btn-default btn-sm handleClickEstadoCuadroPresupuesto oculto" id="btn-enviar-email-finalizacion-cuadro-presupuesto" style="background-color: #9b659b; color:#fff;" title="Enviar email finalización CDP"><i class="fas fa-info-circle"></i> Estado CDP</button>
                         @if (in_array(286,$array_accesos))

@@ -17,9 +17,9 @@ class MigrateProductoSoftlinkController extends Controller
                 ->select(
                     'alm_prod.*',
                     'alm_und_medida.abreviatura',
-                    'alm_clasif.descripcion as clasificacion',
-                    'alm_tp_prod.descripcion as categoria',
+                    'alm_cat_prod.descripcion as categoria',
                     'alm_subcat.descripcion as subcategoria',
+                    'alm_clasif.descripcion as clasificacion',
                     // 'alm_tp_prod.descripcion as tipo_descripcion',
                     // 'alm_tp_prod.id_tipo_producto',
                     'alm_tp_prod.id_clasificacion',
@@ -27,9 +27,12 @@ class MigrateProductoSoftlinkController extends Controller
                     // 'adm_estado_doc.estado_doc',
                     // 'adm_estado_doc.bootstrap_color',
                 )
-                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
-                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
                 ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+                ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
+                ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_cat_prod.id_tipo_producto')
+                ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_tp_prod.id_clasificacion')
+                ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+                
                 // ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
                 ->leftjoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
                 // ->leftjoin('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'alm_prod.id_usuario')
@@ -251,6 +254,7 @@ class MigrateProductoSoftlinkController extends Controller
         }
     }
 
+    
     public function obtenerClasificacion($clasificacion)
     {
         //verifica si tiene clasificacion
@@ -308,8 +312,8 @@ class MigrateProductoSoftlinkController extends Controller
                 ]
             );
 
-            DB::table('almacen.alm_tp_prod')
-                ->where('id_tipo_producto', $id_categoria)
+            DB::table('almacen.alm_cat_prod')
+                ->where('id_categoria', $id_categoria)
                 ->update(['cod_softlink' => $cod_cate]);
         }
         return $cod_cate;

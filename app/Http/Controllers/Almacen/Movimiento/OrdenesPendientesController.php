@@ -345,7 +345,7 @@ class OrdenesPendientesController extends Controller
             // inner join almacen.alm_prod_serie on alm_prod_serie.id_guia_com_det = mov_alm_det.id_guia_com_det and alm_prod_serie.estado !=7
             // where mov_alm_det.id_mov_alm = mov_alm.id_mov_alm
             // and mov_alm_det.estado != 7) AS lista_series"),
-        
+
         )
             ->leftJoin('almacen.guia_com', 'guia_com.id_guia', '=', 'mov_alm.id_guia_com')
             ->leftJoin('cas.devolucion', 'devolucion.id_devolucion', '=', 'mov_alm.id_devolucion')
@@ -444,7 +444,7 @@ class OrdenesPendientesController extends Controller
                     where   ing.id_mov_alm = mov_alm.id_mov_alm and
                             od.estado != 7 and
                             od.estado != 1) AS count_despachos_oc")
-        
+
         )
             ->join('almacen.mov_alm', 'mov_alm.id_mov_alm', '=', 'mov_alm_det.id_mov_alm')
             ->join('almacen.alm_prod_serie', 'alm_prod_serie.id_guia_com_det', '=', 'mov_alm_det.id_guia_com_det')
@@ -880,7 +880,7 @@ class OrdenesPendientesController extends Controller
                         $request->fecha_emision, // $request->fecha_almacen, se cambio a solicitud del sr juan mamani 3/01/2023
                         $request->id_almacen
                     );
-    
+
                     $id_ingreso = DB::table('almacen.mov_alm')->insertGetId(
                         [
                             'id_almacen' => $request->id_almacen,
@@ -898,7 +898,7 @@ class OrdenesPendientesController extends Controller
                         ],
                         'id_mov_alm'
                     );
-    
+
                     if ($request->id_transformacion !== null) {
                         DB::table('almacen.transformacion')
                             ->where('id_transformacion', $request->id_transformacion)
@@ -908,15 +908,15 @@ class OrdenesPendientesController extends Controller
                             ]); //Procesado
                     }
                     $detalle_oc = json_decode($request->detalle);
-    
+
                     //Ingreso por transformacion
                     if ($request->id_operacion == '26') {
                         $id_od = $request->id_od;
                         $id_requerimiento = $request->id_requerimiento;
-    
+
                         $tipo_cambio = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $request->fecha_almacen]])
                             ->orderBy('fecha', 'DESC')->first();
-    
+
                         foreach ($detalle_oc as $det) {
                             //Agrega sobrante
                             $id_sobrante = null;
@@ -930,11 +930,11 @@ class OrdenesPendientesController extends Controller
                                 }
                             }
                             // $unitario = $request->moneda_transformacion == 2 ? ($det->unitario * $request->tipo_cambio_transformacion) : $det->unitario;
-    
+
                             if ($det->tipo == "sobrante") {
-    
+
                                 if ($det->id_producto == null) {
-    
+
                                     $id_producto = DB::table('almacen.alm_prod')->insertGetId(
                                         [
                                             'part_number' => $det->part_number,
@@ -951,13 +951,13 @@ class OrdenesPendientesController extends Controller
                                         ],
                                         'id_producto'
                                     );
-    
+
                                     $codigo = GenericoAlmacenController::leftZero(7, $id_producto);
-    
+
                                     DB::table('almacen.alm_prod')
                                         ->where('id_producto', $id_producto)
                                         ->update(['codigo' => $codigo]);
-    
+
                                     // $id_sobrante = DB::table('almacen.transfor_sobrante')->insertGetId(
                                     //     [
                                     //         'id_transformacion' => $request->id_transformacion,
@@ -973,7 +973,7 @@ class OrdenesPendientesController extends Controller
                                 } else {
                                     $id_producto = $det->id_producto;
                                 }
-    
+
                                 DB::table('almacen.transfor_sobrante')
                                     ->where('id_sobrante', $det->id)
                                     ->update([
@@ -983,14 +983,14 @@ class OrdenesPendientesController extends Controller
                                         'valor_total' => (floatval($unitario) * floatval($det->cantidad))
                                     ]);
                             } else if ($det->tipo == "transformado") {
-    
+
                                 DB::table('almacen.transfor_transformado')
                                     ->where('id_transformado', $det->id)
                                     ->update([
                                         'valor_unitario' => $unitario,
                                         'valor_total' => (floatval($unitario) * floatval($det->cantidad))
                                     ]);
-    
+
                                 if ($id_requerimiento !== null) {
                                     //Realiza la reserva en el requerimiento con item tiene transformacion
                                     // $det_req = DB::table('almacen.alm_det_req')
@@ -1012,7 +1012,7 @@ class OrdenesPendientesController extends Controller
                                         ->update([
                                             'estado' => 10
                                         ]);
-    
+
                                     DB::table('almacen.alm_reserva')
                                         ->insert([
                                             'codigo' => Reserva::crearCodigo($request->id_almacen),
@@ -1048,7 +1048,7 @@ class OrdenesPendientesController extends Controller
                                 ],
                                 'id_guia_com_det'
                             );
-    
+
                             if ($det->series !== null) {
                                 //agrega series
                                 foreach ($det->series as $serie) {
@@ -1086,16 +1086,16 @@ class OrdenesPendientesController extends Controller
                             );
                             OrdenesPendientesController::actualiza_prod_ubi($id_producto, $request->id_almacen);
                         }
-    
+
                         // $od_detalles = DB::table('almacen.orden_despacho_det')
                         //     ->where('id_od', $id_od)
                         //     ->get();
-    
+
                         // foreach ($od_detalles as $det) {
                         //     $detreq = DB::table('almacen.alm_det_req')
                         //         ->where('id_detalle_requerimiento', $det->id_detalle_requerimiento)
                         //         ->first();
-    
+
                         //     $detdes = DB::table('almacen.orden_despacho_det')
                         //         ->select(DB::raw('SUM(cantidad) as suma_cantidad'))
                         //         ->join('almacen.orden_despacho', 'orden_despacho.id_od', '=', 'orden_despacho_det.id_od')
@@ -1112,14 +1112,14 @@ class OrdenesPendientesController extends Controller
                         //             ->update(['estado' => 10]);
                         //     }
                         // }
-    
+
                         // $culminados = DB::table('almacen.alm_det_req')
                         //     ->where([
                         //         ['id_requerimiento', '=', $id_requerimiento],
                         //         ['estado', '=', 10]
                         //     ])
                         //     ->count();
-    
+
                         // $todos = DB::table('almacen.alm_det_req')
                         //     ->where([
                         //         ['id_requerimiento', '=', $id_requerimiento],
@@ -1127,13 +1127,13 @@ class OrdenesPendientesController extends Controller
                         //         ['estado', '!=', 7]
                         //     ])
                         //     ->count();
-    
+
                         // if ($culminados == $todos) {
                         //     DB::table('almacen.alm_req')
                         //         ->where('id_requerimiento', $id_requerimiento)
                         //         ->update(['estado' => 10]);
                         // }
-    
+
                         DB::table('almacen.alm_req_obs')
                             ->insert([
                                 'id_requerimiento' => $id_requerimiento,
@@ -1146,13 +1146,13 @@ class OrdenesPendientesController extends Controller
                     //Ingreso por compra guia compra o importacion
                     else if ($request->id_operacion == '2' || $request->id_operacion == '18') {
                         $ids_ocd = [];
-    
+
                         foreach ($detalle_oc as $d) {
                             if ($d->id_detalle_orden !== null) {
                                 array_push($ids_ocd, $d->id_detalle_orden);
                             }
                         }
-    
+
                         $detalle = DB::table('logistica.log_det_ord_compra')
                             ->select(
                                 'log_det_ord_compra.*',
@@ -1169,16 +1169,16 @@ class OrdenesPendientesController extends Controller
                             ->leftjoin('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
                             ->whereIn('id_detalle_orden', $ids_ocd)
                             ->get();
-    
+
                         $cantidad = 0;
                         $padres_oc = [];
                         $padres_req = [];
-    
+
                         $tipo_cambio = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $request->fecha_almacen]])
                             ->orderBy('fecha', 'DESC')->first();
-    
+
                         foreach ($detalle as $det) {
-    
+
                             if (!in_array($det->id_orden_compra, $padres_oc)) {
                                 array_push($padres_oc, $det->id_orden_compra);
                             }
@@ -1252,7 +1252,7 @@ class OrdenesPendientesController extends Controller
                                 ],
                                 'id_mov_alm_det'
                             );
-    
+
                             OrdenesPendientesController::actualiza_prod_ubi($det->id_producto, $request->id_almacen);
                             //actualiza el estado de la orden y requerimiento
                             $this->actualizaEstadoOrden($det, $cantidad, $request->id_almacen, $id_guia_com_det);
@@ -1262,10 +1262,10 @@ class OrdenesPendientesController extends Controller
                     }
                     //Ingreso por devolucion de cliente o proveedor
                     else if ($request->id_operacion == '24' || $request->id_operacion == '5' || $request->id_operacion=='28' ) {
-    
+
                         $tipo_cambio = TipoCambio::where([['moneda', '=', 2], ['fecha', '<=', $request->fecha_almacen]])
                             ->orderBy('fecha', 'DESC')->first();
-    
+
                         DB::table('cas.devolucion')
                             ->where('id_devolucion', $request->id_devolucion)
                             ->update([
@@ -1273,9 +1273,9 @@ class OrdenesPendientesController extends Controller
                                 'id_moneda' => $request->moneda_devolucion,
                                 'tipo_cambio' => $tipo_cambio->venta,
                             ]);
-    
+
                         foreach ($detalle_oc as $det) {
-    
+
                             if ($det->id_moneda == $request->moneda_devolucion) {
                                 $unitario = $det->unitario;
                             } else {
@@ -1302,7 +1302,7 @@ class OrdenesPendientesController extends Controller
                                 ],
                                 'id_guia_com_det'
                             );
-    
+
                             if ($det->series !== null) {
                                 //agrega series
                                 foreach ($det->series as $serie) {
@@ -1337,7 +1337,7 @@ class OrdenesPendientesController extends Controller
                                 ],
                                 'id_mov_alm_det'
                             );
-    
+
                             OrdenesPendientesController::actualiza_prod_ubi($det->id_producto, $request->id_almacen);
                         }
                     }
@@ -1347,7 +1347,7 @@ class OrdenesPendientesController extends Controller
                     $tipo = 'warning';
                     $mensaje = 'Ya existe la serie-número de Guía!';
                 }
-            } 
+            }
             DB::commit();
             return response()->json([
                 'tipo' => $tipo,

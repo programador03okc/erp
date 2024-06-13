@@ -26,12 +26,14 @@ class ApiController extends Controller
             $query = DB::table('contabilidad.cont_tp_cambio')->where('fecha', $fecha);
 
             if ($query->count() == 0) {
-                $apiQ = json_decode($this->consultaSunat('https://api.apis.net.pe/v1/tipo-cambio-sunat'));
+                $url = 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date='.$fecha;
+                $apiQ = json_decode($this->consultaSunat($url));
                 if ($apiQ) {
                     $compra = (float) $apiQ->compra;
                     $venta = (float) $apiQ->venta;
                     $promedio = ($compra + $venta) / 2;
-                    $ventaMGC = $venta + ($venta * 0.01);
+                    // $ventaMGC = $venta + ($venta * 0.01); // CALCULO ANTERIOR
+                    $ventaMGC = $venta + ($venta * 0.02);
                 }
 
                 DB::table('contabilidad.cont_tp_cambio')->insertGetId([
@@ -99,10 +101,19 @@ class ApiController extends Controller
 
     public function consultaSunat($url)
     {
+        $token = 'apis-token-9009.I7acqpEHhJrPnI6KtejmCdk0gfaoKoo6';
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $token),
+        ));
         return curl_exec($curl);
     }
 }

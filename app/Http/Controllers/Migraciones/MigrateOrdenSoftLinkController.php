@@ -421,7 +421,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 }
 
                 
-                if(!$det->id_subcategoria >0){
+                if(($det->id_subcategoria ==null) && $det->tipo_item_id ==1 ){
 
                     $itemSinClasificacion[] =$det->descripcion;
                     }

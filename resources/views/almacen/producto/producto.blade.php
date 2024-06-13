@@ -120,7 +120,7 @@
                                                 <li><span id="estado" class="label "></span></li>
                                                 <li>
                                                     <button type="button" class="btn btn-success btn-sm btn-flat" onClick="migrarProductoSoftlink();"
-                                                        data-toggle="tooltip" data-placement="bottom" title="Migrar producto a Softlink" disabled>
+                                                        data-toggle="tooltip" data-placement="bottom" title="Migrar producto a Softlink2" >
                                                         Migrar a Softlink <i class="fas fa-step-forward"></i> </button>
                                                 </li>
                                             </ol>

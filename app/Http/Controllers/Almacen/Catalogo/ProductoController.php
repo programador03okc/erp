@@ -374,14 +374,17 @@ class ProductoController extends Controller
         $id_item = 0;
         $id_producto = $request->id_producto;
 
+        $producto = Producto::find($id_producto);
+
         if ($count == 0) {
             DB::table('almacen.alm_prod')
                 ->where('id_producto', $id_producto)
                 ->update([
                     'part_number' => $request->part_number,
-                    'id_subcategoria' => $request->id_subcategoria,
-                    'id_categoria' => $request->id_categoria,
-                    'id_clasif' => $request->id_clasif,
+                    // * clasificacion softlink1
+                    // 'id_subcategoria' => $request->id_subcategoria,
+                    // 'id_categoria' => $request->id_categoria,
+                    // 'id_clasif' => $request->id_clasif,
                     'descripcion' => $des,
                     'id_unidad_medida' => $request->id_unidad_medida,
                     'id_unid_equi' => $request->id_unid_equi,
@@ -397,6 +400,13 @@ class ProductoController extends Controller
                     'ancho' => $request->ancho,
                     'alto' => $request->alto,
                 ]);
+
+                $productoSap = ProductoSap::firstOrNew(['codigo_agile' => $producto->codigo]);
+                $productoSap->codigo_agile = $producto->codigo;
+                $productoSap->subcategoria_id = $request->id_subcategoria_sap;
+                $productoSap->updated_at = new Carbon();
+                $productoSap->save();
+
 
             $id_item = DB::table('almacen.alm_item')
                 ->select('alm_item.id_item')

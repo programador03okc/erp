@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Migraciones;
 use App\Helpers\StringHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Almacen\ProductoSap;
 use Illuminate\Support\Facades\DB;
 
 class MigrateProductoSoftlinkController extends Controller
@@ -279,6 +280,8 @@ class MigrateProductoSoftlinkController extends Controller
 
                 ->where([['alm_prod.id_producto', '=', $id_producto]])
                 ->first();
+
+               
             //Verifica si esxiste el producto
             $prod = null;
             if (!empty(trim($producto->part_number))) { //if ($producto->part_number !== null && $producto->part_number !== '') {
@@ -485,6 +488,14 @@ class MigrateProductoSoftlinkController extends Controller
             DB::table('almacen.alm_prod')
                 ->where('id_producto', $producto->id_producto)
                 ->update(['cod_softlink' => $cod_prod]);
+                
+
+            $productoSap = ProductoSap::firstOrNew(['codigo_agile' => $producto->codigo]);
+            $productoSap->codigo_agile = $producto->codigo;
+            $productoSap->subcategoria_id = $producto->id_subcategoria;
+            $productoSap->cod_softlink = $cod_prod;
+            $productoSap->save();
+
 
             DB::commit();
             return response()->json(array('tipo' => 'success', 'codigo_softlink' => $cod_prod, 'mensaje' => 'Se migró correctamente el producto a Softlink con cod: ' . $cod_prod));

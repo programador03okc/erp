@@ -667,6 +667,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('anular_serie/{id}', [ProductoController::class, 'anular_serie'])->name('anular-serie');
 
 				Route::get('obtenerProductoSoftlink/{id}', [MigrateProductoSoftlinkController::class, 'obtenerProductoSoftlink'])->name('obtener-producto-softlink');
+				Route::get('obtenerProductoSoftlink2/{id}', [MigrateProductoSoftlinkController::class, 'obtenerProductoSoftlink2'])->name('obtener-producto-softlink2');
 			});
 
 			Route::group(['as' => 'catalogo-productos.', 'prefix' => 'catalogo-productos'], function () {

@@ -412,11 +412,22 @@ class MigrateOrdenSoftLinkController extends Controller
                 ->get();
 
             $cuadros = [];
+            $itemSinClasificacion=[];
             foreach ($detalles as $det) {
                 if ($det->codigo_oportunidad !== null) {
                     if (!in_array($det->codigo_oportunidad, $cuadros)) {
                         array_push($cuadros, $det->codigo_oportunidad);
                     }
+                }
+
+                
+                if(!$det->id_subcategoria >0){
+
+                    $itemSinClasificacion[] =$det->descripcion;
+                    }
+                    
+                if(count($itemSinClasificacion)>0){
+                    return response()->json(array('tipo' => 'warning', 'mensaje' => 'Revise los items de esta orden sin definir clasificación: <br>'.implode("<br>", $itemSinClasificacion) ));
                 }
             }
 

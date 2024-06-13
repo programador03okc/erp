@@ -513,7 +513,7 @@ function migrarOrdenASoftlink() {
                     }
                 }
 
-                Lobibox.notify(response.tipo, {
+                Lobibox.alert(response.tipo, {
                     title: false,
                     size: 'mini',
                     rounded: true,

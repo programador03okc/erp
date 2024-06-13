@@ -512,7 +512,7 @@ function migrarProductoSoftlink() {
     if (id_producto !== '') {
         $.ajax({
             type: 'GET',
-            url: 'obtenerProductoSoftlink/' + id_producto,
+            url: 'obtenerProductoSoftlink2/' + id_producto,
             dataType: 'JSON',
             beforeSend: data => {
                 $("#tab-producto").LoadingOverlay("show", {

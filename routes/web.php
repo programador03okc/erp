@@ -253,6 +253,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('index', [ConfiguracionController::class, 'view_requerimientos_sin_atender'])->name('index');
 				Route::get('lista', [ConfiguracionController::class, 'listar_requerimientos_sin_atender'])->name('lista');
 				Route::post('anular', [ConfiguracionController::class, 'anular_requerimiento_sin_atender'])->name('anular');
+				Route::post('retornar', [ConfiguracionController::class, 'retornar_requerimiento_sin_atender'])->name('retornar');
 			});
 		});
 

@@ -2818,5 +2818,83 @@ class ConfiguracionController extends Controller{
             return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'Hubo un problema al anular la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
     }
+
+    public function retornar_requerimiento_sin_atender(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $idDocumento= $request->id_documento;
+            $sustento = $request->sustento;
+            $idUsuario= Auth::user()->id_usuario;
+            $mensaje ='';
+            $tipoEstado='info';
+            $afectado=0;
+            $idRequerimiento = Documento::getIdDocByIdDocAprob($idDocumento);
+            $tipoDocumento = Documento::getIdTipoDocumento($idDocumento);
+            $codigo='';
+
+            if($tipoDocumento>0){
+                if($tipoDocumento==1){ // requerimiento logístico
+                    $requerimiento = Requerimiento::find($idRequerimiento);
+                    $requerimiento->estado=1;
+                    $requerimiento->save();
+                    
+                    $mensaje='Se retornó el requerimiento logistico '.$requerimiento->codigo;
+                    $codigo=$requerimiento->codigo;
+                    $afectado++;
+
+                   
+                }elseif($tipoDocumento==11){ //requerimiento de pago
+                    $requerimiento = RequerimientoPago::find($idRequerimiento);
+                    $requerimiento->id_estado=1;
+                    $requerimiento->save();
+
+                    $mensaje='Se retorno el requerimiento de pago '.$requerimiento->codigo;
+                    $codigo=$requerimiento->codigo;
+                    $afectado++;
+
+                    
+                }
+
+                // eliminar vistos realizados
+                // $vistosRealiados=Aprobacion::where('id_doc_aprob',$idDocumento)->get();
+                // if($vistosRealiados){
+                //     foreach ($vistosRealiados as $key => $value) {
+                //        $visto = Aprobacion::find($value->id_aprobacion);
+                //        $visto->delete();
+                //     }
+                // }
+
+                $vistosRealiados = Aprobacion::where('id_doc_aprob', $idDocumento)->get();
+                $vistosRealiados->each(function ($registro) {
+                    $registro->delete();
+                });
+                
+                if($afectado >0){
+                    $tipoEstado='success';
+                }else{
+                    $tipoEstado='warning';
+                    $mensaje='No se pudo retornar el requerimiento';
+
+                }
+
+                $comentarioDetalle = 'retornar a elaborado requerimiento, código: ' . ($codigo ?? '') . ', Retornado por: ' . Auth::user()->nombre_corto.', sustento: '.($sustento != null ? trim(strtoupper($sustento)) : '');
+                LogActividad::registrar(Auth::user(), 'retornar a elaborado requerimiento', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioDetalle, 'Configuración');
+
+                
+            }else{
+                return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'No se encontro el ID de documento']);
+
+            }
+            DB::commit();
+
+            return response()->json(['id_documento' => $idDocumento, 'tipo_estado' => $tipoEstado,  'mensaje' => $mensaje]);
+
+
+        } catch (\PDOException $e) {
+            DB::rollBack();
+            return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'Hubo un problema al anular la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+        }
+    }
 }
 

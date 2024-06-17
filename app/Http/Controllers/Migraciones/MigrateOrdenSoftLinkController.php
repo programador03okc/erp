@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\StringHelper;
+use App\Models\Almacen\Producto;
+use App\Models\Almacen\ProductoSap;
 
 class MigrateOrdenSoftLinkController extends Controller
 {
@@ -363,6 +365,7 @@ class MigrateOrdenSoftLinkController extends Controller
             $detalles = DB::table('logistica.log_det_ord_compra')
                 ->select(
                     'log_det_ord_compra.*',
+                    'alm_prod.codigo as codigo_agile',
                     'alm_prod.part_number',
                     'alm_prod.descripcion',
                     'alm_und_medida.abreviatura',
@@ -1362,6 +1365,11 @@ class MigrateOrdenSoftLinkController extends Controller
         DB::table('almacen.alm_prod')
             ->where('id_producto', $det->id_producto)
             ->update(['cod_softlink' => $cod_prod]);
+
+        DB::table('almacen.producto_sap')
+            ->where('codigo_agile', $det->codigo_agile)
+            ->update(['cod_softlink' => $cod_prod]);
+        
         return $cod_prod;
     }
 

@@ -24,8 +24,8 @@
                                 <h5>Agencia de transporte *</h5>
                                 <div style="display:flex;">
                                     <input class="oculto" name="tr_id_transportista" />
-                                    <input type="text" class="form-control" name="tr_razon_social" placeholder="Seleccione un transportista..." aria-describedby="basic-addon1" disabled="true">
-                                    <button type="button" class="input-group-text activation" id="basic-addon1" onClick="openTransportistaModal();">
+                                    <input type="text" class="form-control" name="tr_razon_social" placeholder="Seleccione un transportista..." disabled="true">
+                                    <button type="button" class="input-group-text activation" onClick="openTransportistaModal();">
                                         <i class="fa fa-search"></i>
                                     </button>
                                     {{-- <button type="button" class="btn-primary activation" title="Agregar Proveedor" onClick="addProveedorModal();">

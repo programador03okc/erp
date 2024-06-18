@@ -62,7 +62,7 @@ class softlink extends Command
                 //     break;
 
             case 'migrar_tipo_cambio':
-                $data  = DB::connection('soft2')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
+                $data  = DB::connection('softtest')->table('tcambio')->where('flg_migracion', 0)->orderBy('dfecha', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -77,7 +77,7 @@ class softlink extends Command
                         $cantidadMigrados++;
                     }
 
-                    DB::connection('soft2')
+                    DB::connection('softtest')
                         ->table('tcambio')
                         ->where('dfecha', $value->dfecha)
                         ->update(
@@ -92,7 +92,7 @@ class softlink extends Command
                 break;
             case 'migrar_cabecera_movimientos':
 
-                $data  = DB::connection('soft2')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
+                $data  = DB::connection('softtest')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 0)->orderBy('fec_docu', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -206,7 +206,7 @@ class softlink extends Command
                         $nuevoMovimiento->save();
                         $cantidadMigrados++;
 
-                        DB::connection('soft2')
+                        DB::connection('softtest')
                             ->table('movimien')
                             ->where('mov_id', $value->mov_id)
                             ->update(
@@ -224,12 +224,12 @@ class softlink extends Command
             case 'migrar_detalle_movimientos':
 
                 $cantidadMigrados = 0;
-                $aux = DB::connection('soft2')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
+                $aux = DB::connection('softtest')->table('movimien')->whereIN('cod_docu', ['GR', 'G1', 'G2', 'G4', 'G5', 'G6'])->where('flg_migracion', 1)->orderBy('fec_docu', 'asc')->get();
                 $cantidadAux = count($aux);
                 $bar = $this->output->createProgressBar($cantidadAux);
                 $bar->start();
                 foreach ($aux as $key => $value) {
-                    $data  = DB::connection('soft2')->table('detmov')->where('mov_id', $value->mov_id)->orderBy('fec_pedi', 'asc')->get();
+                    $data  = DB::connection('softtest')->table('detmov')->where('mov_id', $value->mov_id)->orderBy('fec_pedi', 'asc')->get();
 
                     foreach ($data as $value) {
                         // $movimientosDetalleAGILE = MovimientoDetalle::where([
@@ -295,7 +295,7 @@ class softlink extends Command
                         $nuevoMovimientoDetalle->save();
                         $cantidadMigrados++;
 
-                        DB::connection('soft2')
+                        DB::connection('softtest')
                             ->table('detmov')
                             ->where('unico', $value->unico)
                             ->update(
@@ -316,7 +316,7 @@ class softlink extends Command
 
             case 'migrar_series':
 
-                $data  = DB::connection('soft2')->table('series')->where('flg_migracion', 0)->orderBy('fecha_ing', 'asc')->get();
+                $data  = DB::connection('softtest')->table('series')->where('flg_migracion', 0)->orderBy('fecha_ing', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -349,7 +349,7 @@ class softlink extends Command
                     $cantidadMigrados++;
 
 
-                    DB::connection('soft2')
+                    DB::connection('softtest')
                         ->table('series')
                         ->where('mov_id', $value->mov_id)
                         ->update(
@@ -368,7 +368,7 @@ class softlink extends Command
 
             case 'migrar_productos':
 
-                $data  = DB::connection('soft2')->table('sopprod')->orderBy('fec_ingre', 'asc')->get();
+                $data  = DB::connection('softtest')->table('sopprod')->orderBy('fec_ingre', 'asc')->get();
                 $cantidadMigrados = 0;
                 $bar = $this->output->createProgressBar(count($data));
                 $bar->start();
@@ -570,7 +570,7 @@ class softlink extends Command
                 $prod = null;
                 if (!empty(trim($producto->part_number))) { //if ($producto->part_number !== null && $producto->part_number !== '') {
                     // return [$producto];exit;
-                    $prod = DB::connection('soft2')->table('sopprod')
+                    $prod = DB::connection('softtest')->table('sopprod')
                         ->select('cod_prod')
                         ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
                         ->where([
@@ -580,7 +580,7 @@ class softlink extends Command
                         ->first();
 
                 } else if ($producto->descripcion !== null && $producto->descripcion !== '') {
-                    $prod = DB::connection('soft2')->table('sopprod')
+                    $prod = DB::connection('softtest')->table('sopprod')
                         ->select('cod_prod')
                         ->join('sopsub2', 'sopsub2.cod_sub2', '=', 'sopprod.cod_subc')
                         ->where([
@@ -600,7 +600,7 @@ class softlink extends Command
 
                     $cod_unid = (new MigrateProductoSoftlinkController)->obtenerUnidadMedida($producto->abreviatura);
                     // return $cod_cate;exit;
-                    DB::connection('soft2')
+                    DB::connection('softtest')
                     ->table('sopprod')
                     ->where('cod_prod',$cod_prod)
                     ->update(
@@ -623,7 +623,7 @@ class softlink extends Command
                 } //Si no existe, genera el producto
                 else {
                     //obtiene el sgte codigo
-                    $ultimo = DB::connection('soft2')->table('sopprod')
+                    $ultimo = DB::connection('softtest')->table('sopprod')
                         ->select('cod_prod')
                         ->where([['cod_prod', '!=', 'TEXTO']])
                         ->orderBy('cod_prod', 'desc')
@@ -639,7 +639,7 @@ class softlink extends Command
 
                     $cod_unid = (new MigrateProductoSoftlinkController)->obtenerUnidadMedida($producto->abreviatura);
 
-                    DB::connection('soft2')->table('sopprod')->insert(
+                    DB::connection('softtest')->table('sopprod')->insert(
                         [
                             'cod_prod' => $cod_prod,
                             'cod_clasi' => $cod_clasi,
@@ -709,15 +709,15 @@ class softlink extends Command
                         ]
                     );
 
-                    $sucursales = DB::connection('soft2')->table('sucursal')->get();
+                    $sucursales = DB::connection('softtest')->table('sucursal')->get();
 
                     foreach ($sucursales as $suc) {
-                        $prod = DB::connection('soft2')->table('precios')
+                        $prod = DB::connection('softtest')->table('precios')
                             ->where([['cod_prod', '=', $cod_prod], ['cod_suc', '=', $suc->cod_suc]])
                             ->first();
 
                         if ($prod == null) {
-                            DB::connection('soft2')->table('precios')->insert(
+                            DB::connection('softtest')->table('precios')->insert(
                                 [
                                     'cod_prod' => $cod_prod,
                                     'cod_suc' => $suc->cod_suc,
@@ -745,15 +745,15 @@ class softlink extends Command
                         }
                     }
 
-                    $almacenes = DB::connection('soft2')->table('almacen')->get();
+                    $almacenes = DB::connection('softtest')->table('almacen')->get();
 
                     foreach ($almacenes as $alm) {
-                        $stock = DB::connection('soft2')->table('stocks')
+                        $stock = DB::connection('softtest')->table('stocks')
                             ->where([['cod_suc', '=', $alm->cod_suc], ['cod_alma', '=', $alm->cod_alma], ['cod_prod', '=', $cod_prod]])
                             ->first();
 
                         if ($stock == null) {
-                            DB::connection('soft2')->table('stocks')->insert(
+                            DB::connection('softtest')->table('stocks')->insert(
                                 [
                                     'cod_suc' => $alm->cod_suc,
                                     'cod_alma' => $alm->cod_alma,

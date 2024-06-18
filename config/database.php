@@ -43,14 +43,14 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
-        'soft2'  => [
+        'softtest'  => [
             'driver'     => 'mysql',
-            'host'       => env('SOFT2_HOST', '127.0.0.1'),
+            'host'       => env('softtest_HOST', '127.0.0.1'),
             // 'host'       => env('SOFT_HOST', '192.168.11.3'),
-            'port'       => env('SOFT2_PORT', '3306'),
-            'database'   => env('SOFT2_DATABASE', 'ok2024'),
-            'username'   => env('SOFT2_USERNAME', 'root'),
-            'password'   => env('SOFT2_PASSWORD', 'Inicio01'),
+            'port'       => env('softtest_PORT', '3306'),
+            'database'   => env('softtest_DATABASE', 'ok2024'),
+            'username'   => env('softtest_USERNAME', 'root'),
+            'password'   => env('softtest_PASSWORD', 'Inicio01'),
             'charset'    => 'latin1',
             'collation'  => 'latin1_swedish_ci',
             'prefix'     => '',

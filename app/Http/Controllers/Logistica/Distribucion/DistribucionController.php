@@ -1984,6 +1984,7 @@ class DistribucionController extends Controller
         $od = DB::table('almacen.orden_despacho')
             ->select(
                 'alm_req.id_requerimiento',
+                'alm_req.id_cc',
                 'orden_despacho.codigo',
                 'alm_req.fecha_entrega',
                 'orden_despacho.importe_flete',
@@ -2005,7 +2006,7 @@ class DistribucionController extends Controller
                     'accion' => 'ENTREGADO',
                     'descripcion' => 'Entregado al cliente',
                     'id_usuario' => $id_usuario,
-                    'fecha_registro' => $fechaRegistro
+                    'fecha_registro' => $fechaRegistro,
                 ]);
 
             $oc = DB::table('almacen.alm_req')
@@ -2091,7 +2092,8 @@ class DistribucionController extends Controller
                 'gasto_extra_sin_igv' => $request->gasto_extra_sin_igv,
                 'gasto_extra' => $request->gasto_extra_sin_igv,
                 'aplica_igv' => false,
-                'fecha_registro' => $fechaRegistro
+                'fecha_registro' => $fechaRegistro,
+                'id_cc' => $od->id_cc
             ], 'id_obs');
         
 

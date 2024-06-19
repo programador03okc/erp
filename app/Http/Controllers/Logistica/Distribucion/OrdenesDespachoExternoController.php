@@ -1142,12 +1142,12 @@ class OrdenesDespachoExternoController extends Controller
                         'oc_propias_view.tipo',
                         'oc_directas.id_despacho as id_despacho_directa',
                         'oc_propias.id_despacho as id_despacho_propia',
+                        'alm_req.id_cc',
                         DB::raw("(SELECT SUM(orden_despacho_obs.gasto_extra) FROM almacen.orden_despacho_obs
-                        inner join almacen.orden_despacho on
-                        (orden_despacho_obs.id_od = orden_despacho.id_od)
-                        where   orden_despacho.id_requerimiento = alm_req.id_requerimiento
-                                and orden_despacho.aplica_cambios = false
-                                and orden_despacho.estado != 7) AS gasto_extra")
+                                    inner join almacen.orden_despacho on (orden_despacho_obs.id_od = orden_despacho.id_od)
+                                    where orden_despacho.id_requerimiento = alm_req.id_requerimiento
+                                    and orden_despacho.aplica_cambios = false and orden_despacho.estado != 7)
+                                AS gasto_extra")
                     )
                     // ->join('almacen.orden_despacho', 'orden_despacho.id_requerimiento', '=', 'alm_req.id_requerimiento')
                     ->join('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
@@ -1220,7 +1220,8 @@ class OrdenesDespachoExternoController extends Controller
                             'observacion' => 'Guía N° ' . $request->serie . '-' . $request->numero,
                             'fecha_estado' => $request->fecha_transportista,
                             'registrado_por' => $id_usuario,
-                            'fecha_registro' => $fecha_registro
+                            'fecha_registro' => $fecha_registro,
+                            'id_cc' => $oc->id_cc
                         ]);
                 } else {
                     //si no existe este estado lo crea
@@ -1231,7 +1232,8 @@ class OrdenesDespachoExternoController extends Controller
                             'fecha_estado' => $request->fecha_transportista,
                             'observacion' => 'Guía N° ' . $request->serie . '-' . $request->numero,
                             'registrado_por' => $id_usuario,
-                            'fecha_registro' => $fecha_registro
+                            'fecha_registro' => $fecha_registro,
+                            'id_cc' => $oc->id_cc
                         ]);
                 }
 

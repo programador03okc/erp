@@ -164,10 +164,10 @@ function despachoTransportista(data, idOd=null) {
         data: data,
         dataType: 'JSON',
         success: function (response) {
-            console.log(response);
             if (response > 0) {
                 $("#requerimientosEnProceso").DataTable().ajax.reload(null, false);
                 $('#modal-orden_despacho_transportista').modal('hide');
+
                 Lobibox.notify("success", {
                     title: false,
                     size: "mini",

@@ -112,7 +112,9 @@ $filasCuadro = CcAmFila::join('almacen.alm_det_req', function ($join) {
 ->where('cc_am_filas.id_cc_am', $cuadroCosto->id)
 ->orderBy('cc_am_filas.id', 'asc')->distinct()->get();
 
+ 
 $ordenCompra = $oportunidad->ordenCompraPropia;
+
 ?>
 
 <body>
@@ -238,11 +240,13 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
         </thead>
         <tbody>
             <?php
-            $movimientos = CcFilaMovimientoTransformacion::leftjoin('almacen.alm_det_req','alm_det_req.id_cc_am_filas','=','cc_fila_movimientos_transformacion.id_fila_ingresa')
-->leftJoin('mgcp_cuadro_costos.cc_am_filas','cc_am_filas.id','=','alm_det_req.id_cc_am_filas')
-->leftJoin('almacen.alm_prod','alm_prod.id_producto','=','alm_det_req.id_producto')
-->select('cc_fila_movimientos_transformacion.*','alm_prod.codigo as codigo_agile','alm_prod.cod_softlink',
-'alm_prod.part_number','alm_prod.descripcion as producto_descripcion_agile','cc_am_filas.cantidad')
+            $movimientos = CcFilaMovimientoTransformacion::
+            leftjoin('almacen.alm_det_req','alm_det_req.id_cc_am_filas','=','cc_fila_movimientos_transformacion.id_fila_ingresa')
+            ->leftJoin('mgcp_cuadro_costos.cc_am_filas','cc_am_filas.id','=','alm_det_req.id_cc_am_filas')
+            ->leftJoin('almacen.alm_prod','alm_prod.id_producto','=','alm_det_req.id_producto')
+            ->leftJoin('mgcp_cuadro_costos.cc_am_filas as fila_sale','fila_sale.id','=','cc_fila_movimientos_transformacion.id_fila_sale')
+            ->select('cc_fila_movimientos_transformacion.*','alm_prod.codigo as codigo_agile','alm_prod.cod_softlink',
+            'alm_prod.part_number','alm_prod.descripcion as producto_descripcion_agile','cc_am_filas.cantidad','fila_sale.descripcion')
             ->where('cc_fila_movimientos_transformacion.id_fila_base', $fila->id)
             ->orderBy('cc_fila_movimientos_transformacion.id', 'asc')->get();
             ?>
@@ -257,7 +261,7 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
                 <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->codigo_agile!==null?$movimiento->codigo_agile:'') : ''}}</td>
                 <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->cod_softlink!==null?$movimiento->cod_softlink:'') : ''}}</td>
                 <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->producto_descripcion_agile!==null?$movimiento->producto_descripcion_agile:'') : ''}}</td>
-                <td>{{$movimiento->sale}}</td>
+                <td>{{($movimiento->sale) ? $movimiento->sale : $movimiento->descripcion}}</td>
                 <td>{{$movimiento->comentario}}</td>
             </tr>
             @endforeach

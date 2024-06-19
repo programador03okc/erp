@@ -7,7 +7,7 @@ function openFechaProgramada(id, od) {
 }
 
 function generarDespachoInterno() {
-    document.querySelectorAll("div[id='modal-despacho_fecha_programada'] button[id='btnDespachoObsGenerar']")[1].setAttribute("disabled", true);
+    document.querySelectorAll("div[id='modal-despacho_fecha_programada'] button[id='btnDespachoObsGenerar']")[0].setAttribute("disabled", true);
     var id = $('[name=req_id_requerimiento]').val();
     var fec = $('[name=fecha_despacho]').val();
     var fdoc = $('[name=fecha_documento]').val();
@@ -25,7 +25,7 @@ function generarDespachoInterno() {
         dataType: 'JSON',
         success: function (response) {
             console.log(response);
-            document.querySelectorAll("div[id='modal-despacho_fecha_programada'] button[id='btnDespachoObsGenerar']")[1].removeAttribute("disabled");
+            document.querySelectorAll("div[id='modal-despacho_fecha_programada'] button[id='btnDespachoObsGenerar']")[0].removeAttribute("disabled");
 
             Lobibox.notify(response.tipo, {
                 title: false,
@@ -43,7 +43,7 @@ function generarDespachoInterno() {
             }
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        document.querySelectorAll("div[id='modal-despacho_fecha_programada'] button[id='btnDespachoObsGenerar']")[1].removeAttribute("disabled");
+        document.querySelectorAll("div[id='modal-despacho_fecha_programada'] button[id='btnDespachoObsGenerar']")[0].removeAttribute("disabled");
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);

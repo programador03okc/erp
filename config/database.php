@@ -71,7 +71,7 @@ return [
         ],
         'softtest'  => [
             'driver'     => 'mysql',
-            'host'       => env('SOFT1_HOST', '127.0.0.1'),
+            'host'       => env('SOFTTEST_HOST', '127.0.0.1'),
             'port'       => env('SOFTTEST_PORT', '3306'),
             'database'   => env('SOFTTEST_DATABASE', 'ok2024test'),
             'username'   => env('SOFTTEST_USERNAME', 'softlink_okc_use'),

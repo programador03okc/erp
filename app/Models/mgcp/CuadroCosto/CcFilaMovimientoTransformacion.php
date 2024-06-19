@@ -11,9 +11,9 @@ class CcFilaMovimientoTransformacion extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'mgcp_cuadro_costos.cc_fila_movimientos_transformacion';
-    public $timestamps = false;
+    // public $timestamps = false;
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
-    
+
     public function setSaleAttribute($value)
     {
         $this->attributes['sale'] = mb_strtoupper($value);

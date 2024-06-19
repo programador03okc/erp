@@ -5015,7 +5015,8 @@ class OrdenController extends Controller
                 'estado_orden' => $d['descripcion_estado'] ?? '',
                 'estado_pago' => $d['descripcion_estado_pago'] ?? '-',
                 'monto_total' => $d['monto_total'] ?? '',
-                'monto_total_cdp' =>  $d['data_importe_oportunidad'] ?? ''
+                'monto_total_cdp' =>  $d['data_importe_oportunidad'] ?? '',
+                'elaborado_por' => $d['elaborado_por'] ?? ''
             ];
         }
 

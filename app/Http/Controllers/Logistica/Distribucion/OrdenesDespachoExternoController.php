@@ -1114,6 +1114,8 @@ class OrdenesDespachoExternoController extends Controller
                 $fechaRegistroFlete = new Carbon();
             }
 
+            $fleteConIGV = (($request->importe_flete) ? $request->importe_flete : (($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : null));
+            $fleteSinIGV = ($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : null;
             $data = DB::table('almacen.orden_despacho')
                 ->where('id_od', $request->id_od)
                 ->update([
@@ -1124,8 +1126,8 @@ class OrdenesDespachoExternoController extends Controller
                     'fecha_despacho_real' => $request->fecha_despacho_real,
                     'codigo_envio' => $request->codigo_envio,
                     'aplica_igv' => ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false),
-                    'importe_flete' => $request->importe_flete,
-                    'importe_flete_sin_igv' => $request->importe_flete_sin_igv,
+                    'importe_flete' => $fleteConIGV,
+                    'importe_flete_sin_igv' => $fleteSinIGV,
                     'serie_guia_venta' => $request->serie_guia_venta,
                     'numero_guia_venta' => $request->numero_guia_venta,
                     'id_estado_envio' => $id_estado_envio,
@@ -1205,12 +1207,7 @@ class OrdenesDespachoExternoController extends Controller
 
             if (!empty($request->serie) && !empty($request->numero) || ($request->importe_flete_sin_igv !=null && $request->importe_flete_sin_igv >=0 )) {
                 //si se ingreso serie y numero de la guia se agrega el nuevo estado envio
-                $obs = DB::table('almacen.orden_despacho_obs')
-                    ->where([
-                        ['id_od', '=', $request->id_od],
-                        ['accion', '=', $id_estado_envio]
-                    ])
-                    ->first();
+                $obs = DB::table('almacen.orden_despacho_obs')->where('id_od', $request->id_od)->where('accion', $id_estado_envio)->first();
 
                 if ($obs !== null) {
                     //si ya existe este estado lo actualiza
@@ -1219,6 +1216,8 @@ class OrdenesDespachoExternoController extends Controller
                         ->update([
                             'observacion' => 'Guía N° ' . $request->serie . '-' . $request->numero,
                             'fecha_estado' => $request->fecha_transportista,
+                            'gasto_extra_sin_igv' => $fleteSinIGV,
+                            'gasto_extra' => $fleteConIGV,
                             'registrado_por' => $id_usuario,
                             'fecha_registro' => $fecha_registro,
                             'id_cc' => $oc->id_cc
@@ -1230,6 +1229,8 @@ class OrdenesDespachoExternoController extends Controller
                             'id_od' => $request->id_od,
                             'accion' => $id_estado_envio,
                             'fecha_estado' => $request->fecha_transportista,
+                            'gasto_extra_sin_igv' => $fleteSinIGV,
+                            'gasto_extra' => $fleteConIGV,
                             'observacion' => 'Guía N° ' . $request->serie . '-' . $request->numero,
                             'registrado_por' => $id_usuario,
                             'fecha_registro' => $fecha_registro,

@@ -1924,8 +1924,8 @@ class DistribucionController extends Controller
                                 'observacion' => null,
                                 'fecha_estado' => $data->fecha_estado,
                                 'registrado_por' => Auth::user()->id_usuario,
-                                'gasto_extra' => $data->importe_con_igv,
-                                'gasto_extra_sin_igv' => $data->importe_sin_igv,
+                                'gasto_extra' => (($data->importe_con_igv != null) ? $data->importe_con_igv : 0),
+                                'gasto_extra_sin_igv' => (($data->importe_sin_igv != null) ? $data->importe_sin_igv : 0),
                                 'aplica_igv' => $data->aplica_igv,
                                 'fecha_registro' => new Carbon()
                             ], 'id_obs');
@@ -2089,8 +2089,8 @@ class DistribucionController extends Controller
                 'observacion' => $request->observacion,
                 'fecha_estado' => $request->fecha_estado,
                 'registrado_por' => $id_usuario,
-                'gasto_extra_sin_igv' => $request->gasto_extra_sin_igv,
-                'gasto_extra' => $request->gasto_extra_sin_igv,
+                'gasto_extra_sin_igv' => (($request->gasto_extra_sin_igv != null) ? $request->gasto_extra_sin_igv : 0),
+                'gasto_extra' => ($request->gasto_extra_sin_igv != null) ? $request->gasto_extra_sin_igv : 0,
                 'aplica_igv' => false,
                 'fecha_registro' => $fechaRegistro,
                 'id_cc' => $od->id_cc

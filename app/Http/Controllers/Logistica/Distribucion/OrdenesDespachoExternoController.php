@@ -156,7 +156,7 @@ class OrdenesDespachoExternoController extends Controller
                             and orden_despacho.estado != 7) AS count_estados_envios"),
                 DB::raw("(SELECT SUM(orden_despacho_obs.gasto_extra) FROM almacen.orden_despacho_obs where
                             orden_despacho_obs.id_od = orden_despacho.id_od
-                            and orden_despacho.estado != 7) AS gasto_extra"),
+                            and orden_despacho.estado != 7 and orden_despacho_obs.accion > 2) AS gasto_extra"),
                 DB::raw("(SELECT orden_despacho_obs.adjunto FROM almacen.orden_despacho_obs where
                             orden_despacho_obs.id_od = orden_despacho.id_od
                             and (orden_despacho_obs.accion = 8 or orden_despacho_obs.accion = 7 or orden_despacho_obs.accion = 6)
@@ -1114,8 +1114,8 @@ class OrdenesDespachoExternoController extends Controller
                 $fechaRegistroFlete = new Carbon();
             }
 
-            $fleteConIGV = (($request->importe_flete) ? $request->importe_flete : (($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : null));
-            $fleteSinIGV = ($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : null;
+            $fleteConIGV = (($request->importe_flete) ? $request->importe_flete : (($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : 0));
+            $fleteSinIGV = ($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : 0;
             $data = DB::table('almacen.orden_despacho')
                 ->where('id_od', $request->id_od)
                 ->update([

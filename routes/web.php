@@ -1533,7 +1533,10 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('listar-archivos-adjuntos-pago/{id}', [RequerimientoController::class, 'listarArchivoAdjuntoPago'])->name('listar-archivos-adjuntos-pago');
 					Route::get('listar-categoria-adjunto', [RequerimientoController::class, 'mostrarCategoriaAdjunto'])->name('listar-categoria-adjunto');
 					Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
-					Route::get('almacenes-con-stock-disponible/{idProducto}', [ComprasPendientesController::class, 'mostrarAlmacenesConStockDisponible'])->name('almacenes-con-stock-disponible');
+
+					// Route::get('almacenes-con-stock-disponible/{idProducto}', [ComprasPendientesController::class, 'mostrarAlmacenesConStockDisponible'])->name('almacenes-con-stock-disponible');
+					Route::get('almacenes-sin-considerar-stock-disponible/{idProducto}/{idRequerimiento}', [ComprasPendientesController::class, 'mostrarAlmacenesSinConsiderarStockDisponible'])->name('almacenes-con-stock-disponible');
+
 					Route::post('actualizar-tipo-item-detalle-requerimiento', [ComprasPendientesController::class, 'actualizarTipoItemDetalleRequerimiento'])->name('actualizar-tipo-item-detalle-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');

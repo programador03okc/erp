@@ -17,6 +17,18 @@
                         <fieldset class="group-table" style="padding-top: 20px;">
                         <div class="row">
                             <div class="col-md-12">
+                                <span>Cod.Agile: </span>
+                                <label id="codigoAgile"></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span>Cod.Softlink: </span>
+                                <label id="codigoSoftlink"></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <span>Part number: </span>
                                 <label id="partNumber"></label>
                             </div>

@@ -1443,14 +1443,14 @@ class ComprasPendientesController extends Controller
             $data = [];
             $idSedeList=[];
             $stockSolicitado=1;
-            if($idRequerimiento>0){
-                $requerimiento = Requerimiento::find($idRequerimiento);
-                $sedes=Sede::where([['id_empresa', $requerimiento->id_empresa],['estado',1]])->get();
+            // if($idRequerimiento>0){
+            //     $requerimiento = Requerimiento::find($idRequerimiento);
+            //     $sedes=Sede::where([['id_empresa', $requerimiento->id_empresa],['estado',1]])->get();
 
-                foreach ($sedes as $key => $value) {
-                    $idSedeList[]=$value->id_sede;
-                }
-            } 
+            //     foreach ($sedes as $key => $value) {
+            //         $idSedeList[]=$value->id_sede;
+            //     }
+            // } 
  
             if ($idProducto > 0) {
 
@@ -1465,9 +1465,9 @@ class ComprasPendientesController extends Controller
                 'alm_almacen.descripcion',
               )
                 ->where([['alm_almacen.id_tipo_almacen',1], ['alm_almacen.estado', 1]])
-                ->when((count($idSedeList) >0), function ($query) use ($idSedeList) {
-                     return $query->whereRaw('alm_almacen.id_sede IN (' . implode(',',$idSedeList).')');
-                })
+                // ->when((count($idSedeList) >0), function ($query) use ($idSedeList) {
+                //      return $query->whereRaw('alm_almacen.id_sede IN (' . implode(',',$idSedeList).')');
+                // })
                 ->get();
 
                 if(count($almacenes)>0){

@@ -361,7 +361,7 @@ class ListaOrdenView {
                     data: formData,
                     dataType: 'JSON',
                     beforeSend: (data) => { // Are not working with dataType:'jsonp'
-                        $('#modal-liberar-orden .modal-content').LoadingOverlay("show", {
+                        $('#modal-liberar-item-orden .modal-content').LoadingOverlay("show", {
                             imageAutoResize: true,
                             progress: true,
                             imageColor: "#3c8dbc"
@@ -369,7 +369,7 @@ class ListaOrdenView {
                     },
                     success: (response) => {
                         if (response.tipo_estado == 'success') {
-                            $('#modal-liberar-orden .modal-content').LoadingOverlay("hide", true);
+                            $('#modal-liberar-item-orden .modal-content').LoadingOverlay("hide", true);
     
                             Lobibox.notify('success', {
                                 title: false,
@@ -379,10 +379,10 @@ class ListaOrdenView {
                                 delayIndicator: false,
                                 msg: response.mensaje
                             });
-                            $('#modal-liberar-orden').modal('hide');
+                            $('#modal-liberar-item-orden').modal('hide');
     
                         } else {
-                            $('#modal-liberar-orden .modal-content').LoadingOverlay("hide", true);
+                            $('#modal-liberar-item-orden .modal-content').LoadingOverlay("hide", true);
                             // console.log(response);
                             Swal.fire(
                                 '',
@@ -392,7 +392,7 @@ class ListaOrdenView {
                         }
                     },
                     fail: (jqXHR, textStatus, errorThrown) => {
-                        $('#modal-liberar-orden .modal-content').LoadingOverlay("hide", true);
+                        $('#modal-liberar-item-orden .modal-content').LoadingOverlay("hide", true);
                         Swal.fire(
                             '',
                             'Lo sentimos hubo un error en el servidor al intentar liberar items de la orden, por favor vuelva a intentarlo',
@@ -869,7 +869,7 @@ class ListaOrdenView {
         let codigoOrden = obj.dataset.codigoOrden;
         let id = obj.dataset.idOrdenCompra;
       
-        $('#modal-liberar-orden').modal({
+        $('#modal-liberar-item-orden').modal({
             show: true,
             backdrop: 'static'
         });
@@ -880,7 +880,7 @@ class ListaOrdenView {
             console.log(err)
         })
 
-        document.querySelector("div[id='modal-liberar-orden'] span[id='codigo_orden']").textContent = codigoOrden;
+        document.querySelector("div[id='modal-liberar-item-orden'] span[id='codigo_orden']").textContent = codigoOrden;
 
 
     }

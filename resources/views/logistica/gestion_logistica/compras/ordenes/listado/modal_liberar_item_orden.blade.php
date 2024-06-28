@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="-1" role="dialog" id="modal-liberar-orden" style="overflow-y: scroll;">
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-liberar-item-orden" style="overflow-y: scroll;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="form-liberar-orden" enctype="multipart/form-data">

@@ -1605,6 +1605,9 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('verSession', [LogisticaController::class, 'verSession'])->name('ver-session');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel/{filtro?}', [OrdenController::class, 'exportListaOrdenesNivelCabeceraExcel'])->name('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-detalle-excel', [OrdenController::class, 'exportListaOrdenesNivelDetalleExcel'])->name('facturas');
+						Route::post('guardar-liberar-orden', [OrdenController::class, 'guardarLiberarOrden'])->name('guardar-liberar-orden');
+						
+						
 
 						// nivel
 						Route::post('lista-items-ordenes-elaboradas', [OrdenController::class, 'listaItemsOrdenesElaboradas'])->name('lista-items-ordenes-elaboradas');

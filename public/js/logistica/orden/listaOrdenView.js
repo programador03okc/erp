@@ -60,6 +60,9 @@ class ListaOrdenView {
         $('#listaOrdenes tbody').on("click", "button.handleClickAnularOrden", (e) => {
             this.anularOrden(e.currentTarget);
         });
+        $('#listaOrdenes tbody').on("click", "button.handleClickLiberarItemOrden", (e) => {
+            this.liberarItemOrden(e.currentTarget);
+        });
 
         $('#listaOrdenes tbody').on("click", "a.handleClickObtenerArchivos", (e) => {
             this.obtenerArchivos(e.currentTarget.dataset.id, e.currentTarget.dataset.tipo);
@@ -333,6 +336,86 @@ class ListaOrdenView {
             this.anularAdjuntoProveedor(e.currentTarget);
         });
 
+
+        $(document).on("submit", "#form-liberar-orden", (e) => {
+            e.preventDefault();
+            let formData = new FormData($('#form-liberar-orden')[0]);
+            // let itemOrdenParaLiberar=[];
+            let cantidadLiberar=0;
+            const detalleTabla = document.querySelector("table[id='tablaItemsDisponiblesParaLiberar'] tbody").childNodes;
+            detalleTabla.forEach(element => {
+                let inputCheckboxItem = element.querySelector("input");
+                if(inputCheckboxItem.checked ==true){
+                    // itemOrdenParaLiberar.push(inputCheckboxItem.dataset.idDetalleOrden);
+                    formData.append(`id_detalle_orden_list[]`, inputCheckboxItem.dataset.idDetalleOrden);
+                    cantidadLiberar++;
+                }                
+            });
+
+            if(cantidadLiberar>0){
+                $.ajax({
+                    type: 'POST',
+                    url: 'guardar-liberar-orden',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    dataType: 'JSON',
+                    beforeSend: (data) => { // Are not working with dataType:'jsonp'
+                        $('#modal-liberar-orden .modal-content').LoadingOverlay("show", {
+                            imageAutoResize: true,
+                            progress: true,
+                            imageColor: "#3c8dbc"
+                        });
+                    },
+                    success: (response) => {
+                        if (response.tipo_estado == 'success') {
+                            $('#modal-liberar-orden .modal-content').LoadingOverlay("hide", true);
+    
+                            Lobibox.notify('success', {
+                                title: false,
+                                size: 'mini',
+                                rounded: true,
+                                sound: false,
+                                delayIndicator: false,
+                                msg: response.mensaje
+                            });
+                            $('#modal-liberar-orden').modal('hide');
+    
+                        } else {
+                            $('#modal-liberar-orden .modal-content').LoadingOverlay("hide", true);
+                            // console.log(response);
+                            Swal.fire(
+                                '',
+                                response.mensaje,
+                                'error'
+                            );
+                        }
+                    },
+                    fail: (jqXHR, textStatus, errorThrown) => {
+                        $('#modal-liberar-orden .modal-content').LoadingOverlay("hide", true);
+                        Swal.fire(
+                            '',
+                            'Lo sentimos hubo un error en el servidor al intentar liberar items de la orden, por favor vuelva a intentarlo',
+                            'error'
+                        );
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                    }
+                });
+            }else{
+                Lobibox.notify('info', {
+                    title: false,
+                    size: 'mini',
+                    rounded: true,
+                    sound: false,
+                    delayIndicator: false,
+                    msg: 'Debe seleccionar al menos un item de la orden'
+                });
+            }
+
+            // console.log(itemOrdenParaLiberar);
+        });
 
     }
 
@@ -781,6 +864,54 @@ class ListaOrdenView {
         })
 
     }
+
+    liberarItemOrden(obj) {
+        let codigoOrden = obj.dataset.codigoOrden;
+        let id = obj.dataset.idOrdenCompra;
+      
+        $('#modal-liberar-orden').modal({
+            show: true,
+            backdrop: 'static'
+        });
+
+        this.listaOrdenCtrl.listarItemDeOrden(id).then((res) => {
+            this.llenarTablaItemsDisponiblesParaLiberar(res);
+        }).catch((err) => {
+            console.log(err)
+        })
+
+        document.querySelector("div[id='modal-liberar-orden'] span[id='codigo_orden']").textContent = codigoOrden;
+
+
+    }
+
+
+    llenarTablaItemsDisponiblesParaLiberar(data){
+        // console.log(data);
+        let html='';
+        document.querySelector("table[id='tablaItemsDisponiblesParaLiberar'] tbody").innerHTML=html;
+
+        if(data.length>0){
+            data.forEach(element => {
+            html += `<tr>
+                        <td style="text-align:center;"><input type="checkbox" name="chckItemOrden" data-id-detalle-orden="${element.id_detalle_orden}" /></td>
+                        <td style="text-align:center;">${element.codigo}</td>
+                        <td style="text-align:center;">${element.cod_softlink}</td>
+                        <td style="text-align:center;">${element.part_number}</td>
+                        <td style="text-align:left;">${element.descripcion} ${element.descripcion_adicional}</td>
+                        <td style="text-align:center;">${element.cantidad}</td>
+                        <td style="text-align:right;">${element.moneda_simbolo} ${$.number(element.precio,2,'.','')}</td>
+                        <td style="text-align:center;">${element.estado_doc}</td>
+                    </tr>`; 
+            });
+
+        }else{
+            html='<tr><td class="text-center" colspan="8">Sin data para mostrar</td></tr>';
+        }
+
+        document.querySelector("table[id='tablaItemsDisponiblesParaLiberar'] tbody").insertAdjacentHTML('beforeend', html);
+    }
+
 
     documentosVinculados(obj) {
         $('#modal-documentos-vinculados').modal({
@@ -2026,9 +2157,11 @@ class ListaOrdenView {
                                     <i class="fas fa-money-check-alt fa-xs"></i>
                                 </button>`: '');
 
+                            let btnLiberarOrden =   `<button type="button" class="btn btn-sm btn-default boton handleClickLiberarItemOrden" name="btnLiberarOrden" title="Liberar item de orden" data-codigo-orden="${row.codigo}" data-id-orden-compra="${row.id}" style="background-color:hotpink;"><i class="fas fa-object-ungroup fa-xs"></i></button>`;
+
                             let btnAdjuntar = (array_accesos.find(element => element === 249) ? `<button type="button"  class="btn btn-default adjuntar-archivos" data-toggle="tooltip" title="Adjuntar archivos" data-codigo="${row.codigo}" data-id="${row.id}" data-codigo="${row.codigo}" data-id-moneda="${row.id_moneda}" data-creditos="${row.credito_dias ?? ''}" data-fecha-emision="${ moment(row.fecha_emision).format('YYYY/MM/DD')  ?? ''}" data-enviar-pago="${row.enviar_pago ?? ''}"><i class="fas fa-paperclip fa-xs"></i></button>` : '');
                             let containerCloseBrackets = '</div>';
-                            return (containerOpenBrackets + btnVerDetalle + btnImprimirOrden + btnEnviarAPago + btnAnularOrden + btnAdjuntar + containerCloseBrackets);
+                            return (containerOpenBrackets + btnVerDetalle + btnImprimirOrden + btnEnviarAPago + btnAnularOrden + btnAdjuntar +btnLiberarOrden+ containerCloseBrackets);
 
                         }
                 }

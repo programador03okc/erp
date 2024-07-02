@@ -150,6 +150,7 @@ Auth::routes();
 Route::view('/', 'auth.login');
 
 Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('modulos');
+Route::get('status-connection', [ConfiguracionController::class, 'statusConnection'])->name('status-connection');
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
 Route::get('test-encrypt', [TestController::class, 'encriptar'])->name('test-encrypt');
 Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('test-lista-cliente');

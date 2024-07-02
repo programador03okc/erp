@@ -1839,6 +1839,7 @@ class OrdenController extends Controller
                     'sustento_anulacion' => $data->sustento_anulacion,
                     'estado' => $data->estado,
                     'entidad' => $data->entidad,
+                    'proyecto' => $data->proyecto,
                     'fecha_limite_oc' => $data->fecha_limite_oc,
 
                     // 'monto_igv' => $data->monto_igv,
@@ -1944,6 +1945,7 @@ class OrdenController extends Controller
         }
 
         $codigoReqList = [];
+        $proyectoList = [];
         $idCcList = [];
         if (count($idDetalleReqList) > 0) {
             $req = DB::table('almacen.alm_det_req')
@@ -1951,9 +1953,12 @@ class OrdenController extends Controller
                     'alm_req.id_requerimiento',
                     'alm_req.codigo',
                     'alm_req.concepto',
-                    'alm_req.id_cc'
+                    'alm_req.id_cc',
+                    'alm_req.id_proyecto',
+                    'proy_proyecto.descripcion as proyecto'
                 )
                 ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
+                ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
                 ->whereIn('alm_det_req.id_detalle_requerimiento', $idDetalleReqList)
                 ->distinct()
                 ->get();
@@ -1962,7 +1967,10 @@ class OrdenController extends Controller
                 foreach ($req as $data) {
                     $codigoReqList[] = $data->codigo;
                     $idCcList[] = $data->id_cc;
+                    $proyectoList[]=$data->proyecto;
                 }
+
+             
             }
 
             $cdc = DB::table('mgcp_cuadro_costos.cc')
@@ -1987,7 +1995,8 @@ class OrdenController extends Controller
 
 
 
-        $codigoReqText = implode(",", $codigoReqList);
+        $codigoReqText = implode(",", array_unique($codigoReqList));
+        $proyectoText = implode(",", array_unique($proyectoList));
 
         $result = [
             'head' => $head,
@@ -1995,6 +2004,7 @@ class OrdenController extends Controller
         ];
 
         $result['head']['codigo_requerimiento'] = $codigoReqText;
+        $result['head']['proyecto'] = $proyectoText;
         $result['head']['codigo_cc'] = isset($codigo_oportunidad) ? $codigo_oportunidad : '';
         $result['head']['nombre_responsable_cc'] = isset($nombre_responsable) ? $nombre_responsable : '';
 
@@ -2293,7 +2303,10 @@ class OrdenController extends Controller
                 <tr>
                     <td width="15%" class="verticalTop subtitle">-Entidad: </td>
                     <td class="verticalTop">' .  ($ordenArray['head']['entidad'] ? $ordenArray['head']['entidad'] : '') . '</td
-
+                </tr>
+                <tr>
+                    <td width="15%" class="verticalTop subtitle">-Proyecto: </td>
+                    <td class="verticalTop">' .  ($ordenArray['head']['proyecto'] ? $ordenArray['head']['proyecto'] : '') . '</td
                 </tr>
                 </table>
                 <br>
@@ -5690,11 +5703,11 @@ class OrdenController extends Controller
                 
                 // validar item si fue migrado a softlink y si tiene alguna referencia 
                 if($orden->id_softlink !=null){
-                    $oc_softlink = DB::connection('soft2')->table('movimien')->where('mov_id', $orden->id_softlink)->first();
+                    $oc_softlink = DB::connection(app('conexion_softlink'))->table('movimien')->where('mov_id', $orden->id_softlink)->first();
            
                     if ($oc_softlink !== null) {
                         //pregunta si fue referenciado
-                        $guia_referen = DB::connection('soft2')->table('movimien')
+                        $guia_referen = DB::connection(app('conexion_softlink'))->table('movimien')
                             ->where([
                                 ['cod_pedi', '=', $oc_softlink->cod_docu],
                                 ['num_pedi', '=', $oc_softlink->num_docu],

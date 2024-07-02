@@ -224,5 +224,37 @@ class ListaOrdenModel {
         });
     }
 
+
+    listarItemDeOrden(idOrden) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                type: 'GET',
+                url: `detalle-orden/${idOrden}`,
+                dataType: 'JSON',
+                // data: { 'idOrden': idOrden},
+
+                beforeSend: (data) => {
+
+                    $('#tablaItemsDisponiblesParaLiberar').LoadingOverlay("show", {
+                        imageAutoResize: true,
+                        progress: true,
+                        imageColor: "#3c8dbc"
+                    });
+                },
+                success(response) {
+                    resolve(response);
+                    $('#tablaItemsDisponiblesParaLiberar').LoadingOverlay("hide", true);
+
+                },
+                error: function (err) {
+                    reject(err) // Reject the promise and go to catch()
+                },
+                "drawCallback": function (settings) {
+                    $('#tablaItemsDisponiblesParaLiberar').LoadingOverlay("hide", true);
+                }
+            });
+        });
+    }
+
 }
 

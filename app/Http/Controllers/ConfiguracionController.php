@@ -40,7 +40,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+use Exception;
 use Illuminate\Support\Facades\Hash;
+use PDO;
 use Yajra\DataTables\Facades\DataTables;
 
 ini_set('max_execution_time', 3600);
@@ -2896,5 +2898,60 @@ class ConfiguracionController extends Controller{
             return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'Hubo un problema al anular la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
     }
-}
 
+
+    public function statusConnection(Request $request) {
+    
+            
+        try {
+
+            $pdoAgile = DB::connection('pgsql')->getPdo();
+            if ($pdoAgile) {
+                // echo "Conexión exitosa a la base de datos: " . DB::connection('pgsql')->getDatabaseName().'<br>';
+                echo "Conexión exitosa a Agile <br>";
+            } else {
+                echo "No está conectado al alias 'pgsql'.<br>";
+            }
+
+
+        } catch (Exception $e) {
+            // No está conectado a la base de datos
+            echo "No se pudo establecer la conexión a Agile.<br>";
+        }
+        try {
+
+            $pdoSoftlinkTest = DB::connection('softtest')->getPdo();
+            if ($pdoSoftlinkTest) {
+                // echo "Conexión exitosa a la base de datos: " . DB::connection('softtest')->getDatabaseName().'<br>';
+                echo "Conexión exitosa a Softlink test (entorno de pruebas).<br>";
+            } else {
+                echo "No está conectado al alias 'softtest'.<br>";
+            }
+
+
+        } catch (Exception $e) {
+            // No está conectado a la base de datos
+            echo "No se pudo establecer la conexión con Softlink Test (entorno de pruebas)<br>";
+        }
+
+        try {
+
+            $pdoSoftlink2 = DB::connection('soft2')->getPdo();
+            if ($pdoSoftlink2) {
+                // echo "Conexión exitosa a la base de datos: " . DB::connection('soft2')->getDatabaseName().'<br>';
+                echo "Conexión exitosa a la Softlink2 ";
+            } else {
+                echo "No está conectado al alias 'soft2'.<br>";
+            }
+
+
+        } catch (Exception $e) {
+            // No está conectado a la base de datos
+            // echo "No se pudo establecer la conexión al alias soft2.<br>";
+            echo "No se pudo establecer la conexión a Softlink2.<br>";
+        }
+        
+
+        
+    }
+}

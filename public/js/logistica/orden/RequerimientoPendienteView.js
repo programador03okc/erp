@@ -2056,7 +2056,8 @@ class RequerimientoPendienteView {
             })
             //inicio obtener lista de almacenes con stock del producto selecciondo
 
-            this.construirTablaAlmacenesConStockDisponible(obj.dataset.idProducto);
+            // this.construirTablaAlmacenesConStockDisponible(obj.dataset.idProducto);
+            this.construirTablaAlmacenesSinConsiderarStockDisponible(obj.dataset.idProducto,obj.dataset.idRequerimiento);
 
             // this.obtenerAlmacenesConStockDisponible(obj.dataset.idProducto).then((response) => {
             //     console.log(response);
@@ -2104,7 +2105,67 @@ class RequerimientoPendienteView {
     //         });
     // }
 
-    construirTablaAlmacenesConStockDisponible(idProducto) {
+    construirTablaAlmacenesSinConsiderarStockDisponible(idProducto, idRequerimiento=null) {
+
+        $('#listaAlmacenesConStockDeProducto').dataTable({
+            'dom': vardataTables[1],
+            'buttons': [],
+            'language': vardataTables[0],
+            "bDestroy": true,
+            "bInfo": false,
+            "bLengthChange": false,
+            "pageLength": 5,
+            "autoWidth": false,
+            'ajax': {
+                'url': 'almacenes-sin-considerar-stock-disponible/' + idProducto+ '/'+idRequerimiento,
+                'type': 'GET',
+                beforeSend: data => {
+
+                }
+
+            },
+            'columns': [
+                {
+                    'data': 'descripcion', 'name': 'alm_almacen.descripcion',
+                    render: function (data, type, row) {
+                        return ((row.codigo != null || row.descripcion != null) ? row.codigo + ' - ' + row.descripcion : '');
+                    }
+                },
+                { 'data': 'stock', 'className': "text-center" },
+                { 'data': 'cantidad_stock_comprometido', 'className': "text-center", 'searchable': false, 'orderable': false },
+                {
+                    'searchable': false, 'orderable': false,
+                    render: function (data, type, row) {
+                        return (row.stock - row.cantidad_stock_comprometido);
+                    }
+                },
+
+                {
+                    render: function (data, type, row) {
+
+                        return `<center><div class="btn-group" role="group" style="margin-bottom: 5px;">
+                    <button type="button" class="btn btn-xs btn-success handleClickSeleccionarAlmacenParaReserva"
+                        data-id-almacen="${row.id_almacen ?? ''}"
+                        data-id-requerimiento="${idRequerimiento ?? ''}"
+                        data-almacen-requerimiento="${row.codigo}-${row.descripcion}"
+                        data-stock-disponible="${(row.stock - row.cantidad_stock_comprometido)}"
+                        title="Agregar y guardar" ${(row.stock - row.cantidad_stock_comprometido) == 0 ? 'disabled' : ''} >Seleccionar</button>
+                    </div></center>`;
+
+                    }
+                },
+            ],
+
+            'columnDefs': [
+                { 'targets': 0, "width": "80%" },
+                { 'targets': 1, "width": "10%", 'className': "text-center" },
+                { 'targets': 2, "width": "10%", 'className': "text-center" }
+
+            ]
+        });
+    }
+
+    construirTablaAlmacenesConStockDisponible(idProducto) { // se usaba en remplazo de construirTablaAlmacenesSinConsiderarStockDisponible
 
         $('#listaAlmacenesConStockDeProducto').dataTable({
             'dom': vardataTables[1],
@@ -2177,6 +2238,8 @@ class RequerimientoPendienteView {
             document.querySelector("form[id='form-nueva-reserva'] input[name='idRequerimiento']").value = data.id_requerimiento;
             document.querySelector("form[id='form-nueva-reserva'] input[name='idDetalleRequerimiento']").value = data.id_detalle_requerimiento;
             document.querySelector("form[id='form-nueva-reserva'] input[name='idUnidadMedida']").value = data.id_unidad_medida;
+            document.querySelector("form[id='form-nueva-reserva'] label[id='codigoAgile']").textContent = data.producto.codigo != null ? data.producto.codigo : '';
+            document.querySelector("form[id='form-nueva-reserva'] label[id='codigoSoftlink']").textContent = data.producto.cod_softlink != null ? data.producto.cod_softlink : '';
             document.querySelector("form[id='form-nueva-reserva'] label[id='partNumber']").textContent = data.producto.part_number != null ? data.producto.part_number : (data.part_number != null ? data.part_number : '');
             document.querySelector("form[id='form-nueva-reserva'] label[id='descripcion']").textContent = data.producto.descripcion != null ? data.producto.descripcion : (data.descripcion != null ? data.descripcion : '');
             document.querySelector("form[id='form-nueva-reserva'] label[id='cantidad']").textContent = data.cantidad;
@@ -2269,6 +2332,7 @@ class RequerimientoPendienteView {
 
     anularReserva(obj) {
         let idProducto = document.querySelector("div[id='modal-nueva-reserva'] input[name='idProducto']").value;
+        let idRequerimiento = document.querySelector("div[id='modal-nueva-reserva'] input[name='idRequerimiento']").value;
         let motivoDeAnulacion = '';
         Swal.fire({
             title: 'Esta seguro que desea anular la reserva ' + (obj.dataset.codigoReserva != '' ? obj.dataset.codigoReserva : obj.dataset.idReserva) + '?. Escriba un motivo',
@@ -2349,7 +2413,8 @@ class RequerimientoPendienteView {
                                 });
                             });
                         }
-                        this.construirTablaAlmacenesConStockDisponible(idProducto);
+                        // this.construirTablaAlmacenesConStockDisponible(idProducto);
+                        this.construirTablaAlmacenesSinConsiderarStockDisponible(idProducto,idRequerimiento);
 
                         // if (response.lista_restablecidos.length > 0) {
                         //     (response.lista_restablecidos).forEach(element => {
@@ -2491,7 +2556,8 @@ class RequerimientoPendienteView {
                             msg: `${response.mensaje}`
                         });
                         obj.removeAttribute("disabled");
-                        this.construirTablaAlmacenesConStockDisponible(idProducto);
+                        // this.construirTablaAlmacenesConStockDisponible(idProducto);
+                        this.construirTablaAlmacenesSinConsiderarStockDisponible(idProducto,obj.dataset.idRequerimiento);
                         this.listarTablaListaConReserva(response.data)
                         this.llenarTablaModalAtenderConAlmacen(document.querySelector("form[id='form-nueva-reserva'] input[name='idRequerimiento']").value);
                         if (response.estado_requerimiento.hasOwnProperty('id')) {

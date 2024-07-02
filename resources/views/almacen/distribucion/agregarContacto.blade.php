@@ -33,7 +33,7 @@
                             <div style="display:flex;">
                                 <input class="oculto" name="ubigeo"/>
                                 <input type="text" class="form-control" name="name_ubigeo" readOnly>
-                                <button type="button" class="input-group-text btn-primary" id="basic-addon1" onClick="ubigeoModal();">
+                                <button type="button" class="input-group-text btn-primary" onClick="ubigeoModal();">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </div>

@@ -423,10 +423,10 @@ Control de Guías de Remisión
                             <div class="form-group">
                                 <label for="serie_guia_venta">Guía de venta </label>
                                 <div class="input-group multiple-input-group">
-                                    <input type="text" name="guia_venta_serie" class="form-control"
+                                    <input type="text" name="guia_venta_serie" class="form-control" maxlength="5"
                                          placeholder="Serie">
                                     <span class="input-group-text bg-default">-</span>
-                                    <input type="text" name="guia_venta_numero" class="form-control"
+                                    <input type="text" name="guia_venta_numero" class="form-control" maxlength="8"
                                          placeholder="Número">
                                 </div>
                             </div>

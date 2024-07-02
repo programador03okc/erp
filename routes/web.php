@@ -150,6 +150,7 @@ Auth::routes();
 Route::view('/', 'auth.login');
 
 Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('modulos');
+Route::get('status-connection', [ConfiguracionController::class, 'statusConnection'])->name('status-connection');
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
 Route::get('test-encrypt', [TestController::class, 'encriptar'])->name('test-encrypt');
 Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('test-lista-cliente');
@@ -1533,7 +1534,10 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('listar-archivos-adjuntos-pago/{id}', [RequerimientoController::class, 'listarArchivoAdjuntoPago'])->name('listar-archivos-adjuntos-pago');
 					Route::get('listar-categoria-adjunto', [RequerimientoController::class, 'mostrarCategoriaAdjunto'])->name('listar-categoria-adjunto');
 					Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
-					Route::get('almacenes-con-stock-disponible/{idProducto}', [ComprasPendientesController::class, 'mostrarAlmacenesConStockDisponible'])->name('almacenes-con-stock-disponible');
+
+					// Route::get('almacenes-con-stock-disponible/{idProducto}', [ComprasPendientesController::class, 'mostrarAlmacenesConStockDisponible'])->name('almacenes-con-stock-disponible');
+					Route::get('almacenes-sin-considerar-stock-disponible/{idProducto}/{idRequerimiento}', [ComprasPendientesController::class, 'mostrarAlmacenesSinConsiderarStockDisponible'])->name('almacenes-con-stock-disponible');
+
 					Route::post('actualizar-tipo-item-detalle-requerimiento', [ComprasPendientesController::class, 'actualizarTipoItemDetalleRequerimiento'])->name('actualizar-tipo-item-detalle-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
@@ -1602,6 +1606,9 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('verSession', [LogisticaController::class, 'verSession'])->name('ver-session');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel/{filtro?}', [OrdenController::class, 'exportListaOrdenesNivelCabeceraExcel'])->name('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-detalle-excel', [OrdenController::class, 'exportListaOrdenesNivelDetalleExcel'])->name('facturas');
+						Route::post('guardar-liberar-orden', [OrdenController::class, 'guardarLiberarOrden'])->name('guardar-liberar-orden');
+						
+						
 
 						// nivel
 						Route::post('lista-items-ordenes-elaboradas', [OrdenController::class, 'listaItemsOrdenesElaboradas'])->name('lista-items-ordenes-elaboradas');

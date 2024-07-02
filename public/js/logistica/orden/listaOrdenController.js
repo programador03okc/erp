@@ -66,12 +66,15 @@ class ListaOrdenCtrl {
     anularOrden(id,sustento){
         return this.listaOrdenModel.anularOrden(id,sustento);
     }
-
+    
     listarDocumentosVinculados(id){
         return this.listaOrdenModel.listarDocumentosVinculados(id);
     }
     generarFiltros(data){
         return this.listaOrdenModel.generarFiltros(data);
+    }
+    listarItemDeOrden(id){
+        return this.listaOrdenModel.listarItemDeOrden(id);
     }
 
 }

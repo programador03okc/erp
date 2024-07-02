@@ -1359,6 +1359,7 @@ class OrdenController extends Controller
             'log_ord_compra.tipo_impuesto',
             'log_det_ord_compra.*',
             'alm_prod.codigo',
+            'alm_prod.cod_softlink',
             'sis_moneda.simbolo as moneda_simbolo',
             'sis_moneda.descripcion as moneda_descripcion',
             'alm_prod.part_number',
@@ -1838,6 +1839,7 @@ class OrdenController extends Controller
                     'sustento_anulacion' => $data->sustento_anulacion,
                     'estado' => $data->estado,
                     'entidad' => $data->entidad,
+                    'proyecto' => $data->proyecto,
                     'fecha_limite_oc' => $data->fecha_limite_oc,
 
                     // 'monto_igv' => $data->monto_igv,
@@ -1943,6 +1945,7 @@ class OrdenController extends Controller
         }
 
         $codigoReqList = [];
+        $proyectoList = [];
         $idCcList = [];
         if (count($idDetalleReqList) > 0) {
             $req = DB::table('almacen.alm_det_req')
@@ -1950,9 +1953,12 @@ class OrdenController extends Controller
                     'alm_req.id_requerimiento',
                     'alm_req.codigo',
                     'alm_req.concepto',
-                    'alm_req.id_cc'
+                    'alm_req.id_cc',
+                    'alm_req.id_proyecto',
+                    'proy_proyecto.descripcion as proyecto'
                 )
                 ->join('almacen.alm_req', 'alm_req.id_requerimiento', '=', 'alm_det_req.id_requerimiento')
+                ->leftJoin('proyectos.proy_proyecto', 'proy_proyecto.id_proyecto', '=', 'alm_req.id_proyecto')
                 ->whereIn('alm_det_req.id_detalle_requerimiento', $idDetalleReqList)
                 ->distinct()
                 ->get();
@@ -1961,7 +1967,10 @@ class OrdenController extends Controller
                 foreach ($req as $data) {
                     $codigoReqList[] = $data->codigo;
                     $idCcList[] = $data->id_cc;
+                    $proyectoList[]=$data->proyecto;
                 }
+
+             
             }
 
             $cdc = DB::table('mgcp_cuadro_costos.cc')
@@ -1986,7 +1995,8 @@ class OrdenController extends Controller
 
 
 
-        $codigoReqText = implode(",", $codigoReqList);
+        $codigoReqText = implode(",", array_unique($codigoReqList));
+        $proyectoText = implode(",", array_unique($proyectoList));
 
         $result = [
             'head' => $head,
@@ -1994,6 +2004,7 @@ class OrdenController extends Controller
         ];
 
         $result['head']['codigo_requerimiento'] = $codigoReqText;
+        $result['head']['proyecto'] = $proyectoText;
         $result['head']['codigo_cc'] = isset($codigo_oportunidad) ? $codigo_oportunidad : '';
         $result['head']['nombre_responsable_cc'] = isset($nombre_responsable) ? $nombre_responsable : '';
 
@@ -2292,7 +2303,10 @@ class OrdenController extends Controller
                 <tr>
                     <td width="15%" class="verticalTop subtitle">-Entidad: </td>
                     <td class="verticalTop">' .  ($ordenArray['head']['entidad'] ? $ordenArray['head']['entidad'] : '') . '</td
-
+                </tr>
+                <tr>
+                    <td width="15%" class="verticalTop subtitle">-Proyecto: </td>
+                    <td class="verticalTop">' .  ($ordenArray['head']['proyecto'] ? $ordenArray['head']['proyecto'] : '') . '</td
                 </tr>
                 </table>
                 <br>
@@ -5015,7 +5029,8 @@ class OrdenController extends Controller
                 'estado_orden' => $d['descripcion_estado'] ?? '',
                 'estado_pago' => $d['descripcion_estado_pago'] ?? '-',
                 'monto_total' => $d['monto_total'] ?? '',
-                'monto_total_cdp' =>  $d['data_importe_oportunidad'] ?? ''
+                'monto_total_cdp' =>  $d['data_importe_oportunidad'] ?? '',
+                'elaborado_por' => $d['elaborado_por'] ?? ''
             ];
         }
 
@@ -5665,6 +5680,106 @@ class OrdenController extends Controller
 
 
         return $data;
+    }
+
+    public function guardarLiberarOrden(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $tipoEstado='error';
+            $mensaje='No se realizó ninguan acción';
+            $mensajeAdicional='';
+            $liberar=false;
+
+            if (!count($request->id_detalle_orden_list) > 0) {
+                $tipoEstado='warning';
+                return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => 'No se envio items para liberar']);
+            }else{
+                $primeDetalleOrden= OrdenCompraDetalle::find($request->id_detalle_orden_list[0]);
+            
+
+                $orden=Orden::find($primeDetalleOrden->id_orden_compra);
+                $codigoOrdenList[]=$orden->codigo;
+                
+                // validar item si fue migrado a softlink y si tiene alguna referencia 
+                if($orden->id_softlink !=null){
+                    $oc_softlink = DB::connection(app('conexion_softlink'))->table('movimien')->where('mov_id', $orden->id_softlink)->first();
+           
+                    if ($oc_softlink !== null) {
+                        //pregunta si fue referenciado
+                        $guia_referen = DB::connection(app('conexion_softlink'))->table('movimien')
+                            ->where([
+                                ['cod_pedi', '=', $oc_softlink->cod_docu],
+                                ['num_pedi', '=', $oc_softlink->num_docu],
+                                ['flg_anulado', '=', 0]
+                            ])
+                            ->first();
+    
+                        if ($guia_referen !== null) {
+                            return response()->json(['tipo_estado' => 'warning', 'mensaje' => 'Ésta orden ya fue referenciada en Softlink.']);
+                        }
+                        //pregunta si fue anulada en softlink
+                        else if ($oc_softlink->flg_anulado > 0) {
+
+                            return response()->json(['tipo_estado' => 'error', 'mensaje' => 'Ésta orden ya fue anulada en Softlink']);
+
+                        } else {
+                            
+                            $liberar=true;
+ 
+                        }
+                    }else{
+                        return response()->json(['tipo_estado' => 'warning', 'mensaje' => 'No se encontro el mov_id: '.$orden->id_softlink]);
+
+                    }
+                }else{
+                    $liberar = true;
+                }
+            
+                if($liberar){
+                    $codigoOrdenList=[];
+                    foreach(($request->id_detalle_orden_list) as $id_detalle_orden) {
+                     
+                        $detalleOrden = OrdenCompraDetalle::find($id_detalle_orden);
+    
+                        $detalleRequerimiento = DetalleRequerimiento::find($detalleOrden->id_detalle_requerimiento);
+                        $detalleRequerimiento->estado=1;
+                        $detalleRequerimiento->save();
+    
+                        // cambiar estado de requerimiento a atendido parcial 
+                    
+                        $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
+                        $requerimiento->estado=15;
+                        $requerimiento->save();
+    
+                        // guardar el valor original de detalle de orden para log de actividad
+                        $detalleOrdenOriginal =$detalleOrden;
+                        
+                        // liberar el item de la orden
+                        $detalleOrden->id_detalle_requerimiento =null;
+                        // anular item de orden si es true el valor de input anular_item_liberado_de_orden
+                        if(isset($request->anular_item_liberado_de_orden) && boolval($request->anular_item_liberado_de_orden) == true){
+                            $detalleOrden->estado =7;
+                            $mensajeAdicional='Se anulo los items seleccionados en la orden';
+                        }
+                        $detalleOrden->save();
+    
+                        $comentarioCabecera = 'Liberar items de orden '. implode(",",$codigoOrdenList). ', id_detalle_orden: '.$id_detalle_orden.', motivo: '.$request->motivo_liberar_orden;
+                        LogActividad::registrar(Auth::user(), 'Gestión de ordenes', 3, $detalleOrden->getTable(), $detalleOrdenOriginal, $detalleOrden, $comentarioCabecera, 'Logística');
+                        
+                    }
+                    $tipoEstado='success';
+                    $mensaje='Se libero los item seleccionados de la orden '.$mensajeAdicional;
+                }
+   
+                DB::commit(); 
+                return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => $mensaje]);
+            }
+
+        } catch (\PDOException $e) {
+            DB::rollBack();
+            return response()->json([ 'tipo_estado' => 'error', 'mensaje' => 'Hubo un problema al liberar items de la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+        }
     }
 
 }

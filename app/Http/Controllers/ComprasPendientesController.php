@@ -1434,6 +1434,71 @@ class ComprasPendientesController extends Controller
         }
     }
 
+    public function mostrarAlmacenesSinConsiderarStockDisponible($idProducto,$idRequerimiento){ //* por defecto era la función: mostrarAlmacenesConStockDisponible
+        DB::beginTransaction();
+        try {
+
+            $status = 0;
+            $mensaje = '';
+            $data = [];
+            $idSedeList=[];
+            $stockSolicitado=1;
+            // if($idRequerimiento>0){
+            //     $requerimiento = Requerimiento::find($idRequerimiento);
+            //     $sedes=Sede::where([['id_empresa', $requerimiento->id_empresa],['estado',1]])->get();
+
+            //     foreach ($sedes as $key => $value) {
+            //         $idSedeList[]=$value->id_sede;
+            //     }
+            // } 
+ 
+            if ($idProducto > 0) {
+
+                $itemDeRequerimiento = DetalleRequerimiento::where([['id_requerimiento',$idRequerimiento],['id_producto',$idProducto],['estado','!=',7]])->orderBy('cantidad','DESC')->first();
+                if($itemDeRequerimiento && ($itemDeRequerimiento->cantidad)>0){
+                    $stockSolicitado = $itemDeRequerimiento->cantidad;
+                }
+
+                $almacenes = Almacen::select(
+                'alm_almacen.id_almacen',
+                'alm_almacen.codigo',
+                'alm_almacen.descripcion',
+              )
+                ->where([['alm_almacen.id_tipo_almacen',1], ['alm_almacen.estado', 1]])
+                // ->when((count($idSedeList) >0), function ($query) use ($idSedeList) {
+                //      return $query->whereRaw('alm_almacen.id_sede IN (' . implode(',',$idSedeList).')');
+                // })
+                ->get();
+
+                if(count($almacenes)>0){
+                    $mensaje = 'OK';
+                    $status=200;
+                    foreach ($almacenes as $d) {
+                        $data[]=[
+                            'id_almacen'=>$d->id_almacen,
+                            'descripcion'=>$d->descripcion,
+                            'codigo'=>$d->codigo,
+                            'stock'=>$stockSolicitado,
+                            'cantidad_stock_comprometido'=>0
+                        ];
+                    }
+                }else{
+                    $mensaje = 'Sin data para mostrar';
+                }
+
+            } else {
+                $status = 201;
+                $mensaje = 'El ID producto no es valido';
+            }
+            DB::commit();
+
+            return response()->json(['status' => $status, 'mensaje' => $mensaje, 'data' => $data]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => $status, 'mensaje' => 'Hubo un problema al intentar obtener lista de almacenes. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage(), 'data' => []]);
+        }
+    }
+
     public function mostrarAlmacenesConStockDisponible($idProducto){
         DB::beginTransaction();
         try {

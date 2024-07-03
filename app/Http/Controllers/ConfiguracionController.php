@@ -40,7 +40,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+use Exception;
 use Illuminate\Support\Facades\Hash;
+use PDO;
 use Yajra\DataTables\Facades\DataTables;
 
 ini_set('max_execution_time', 3600);
@@ -2818,5 +2820,138 @@ class ConfiguracionController extends Controller{
             return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'Hubo un problema al anular la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
     }
-}
 
+    public function retornar_requerimiento_sin_atender(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $idDocumento= $request->id_documento;
+            $sustento = $request->sustento;
+            $idUsuario= Auth::user()->id_usuario;
+            $mensaje ='';
+            $tipoEstado='info';
+            $afectado=0;
+            $idRequerimiento = Documento::getIdDocByIdDocAprob($idDocumento);
+            $tipoDocumento = Documento::getIdTipoDocumento($idDocumento);
+            $codigo='';
+
+            if($tipoDocumento>0){
+                if($tipoDocumento==1){ // requerimiento logístico
+                    $requerimiento = Requerimiento::find($idRequerimiento);
+                    $requerimiento->estado=1;
+                    $requerimiento->save();
+                    
+                    $mensaje='Se retornó el requerimiento logistico '.$requerimiento->codigo;
+                    $codigo=$requerimiento->codigo;
+                    $afectado++;
+
+                   
+                }elseif($tipoDocumento==11){ //requerimiento de pago
+                    $requerimiento = RequerimientoPago::find($idRequerimiento);
+                    $requerimiento->id_estado=1;
+                    $requerimiento->save();
+
+                    $mensaje='Se retorno el requerimiento de pago '.$requerimiento->codigo;
+                    $codigo=$requerimiento->codigo;
+                    $afectado++;
+
+                    
+                }
+
+                // eliminar vistos realizados
+                // $vistosRealiados=Aprobacion::where('id_doc_aprob',$idDocumento)->get();
+                // if($vistosRealiados){
+                //     foreach ($vistosRealiados as $key => $value) {
+                //        $visto = Aprobacion::find($value->id_aprobacion);
+                //        $visto->delete();
+                //     }
+                // }
+
+                $vistosRealiados = Aprobacion::where('id_doc_aprob', $idDocumento)->get();
+                $vistosRealiados->each(function ($registro) {
+                    $registro->delete();
+                });
+                
+                if($afectado >0){
+                    $tipoEstado='success';
+                }else{
+                    $tipoEstado='warning';
+                    $mensaje='No se pudo retornar el requerimiento';
+
+                }
+
+                $comentarioDetalle = 'retornar a elaborado requerimiento, código: ' . ($codigo ?? '') . ', Retornado por: ' . Auth::user()->nombre_corto.', sustento: '.($sustento != null ? trim(strtoupper($sustento)) : '');
+                LogActividad::registrar(Auth::user(), 'retornar a elaborado requerimiento', 3, $requerimiento->getTable(), null, $requerimiento, $comentarioDetalle, 'Configuración');
+
+                
+            }else{
+                return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'No se encontro el ID de documento']);
+
+            }
+            DB::commit();
+
+            return response()->json(['id_documento' => $idDocumento, 'tipo_estado' => $tipoEstado,  'mensaje' => $mensaje]);
+
+
+        } catch (\PDOException $e) {
+            DB::rollBack();
+            return response()->json(['id_documento' => 0, 'tipo_estado' => 'error',  'mensaje' => 'Hubo un problema al anular la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
+        }
+    }
+
+
+    public function statusConnection(Request $request) {
+    
+            
+        try {
+
+            $pdoAgile = DB::connection('pgsql')->getPdo();
+            if ($pdoAgile) {
+                // echo "Conexión exitosa a la base de datos: " . DB::connection('pgsql')->getDatabaseName().'<br>';
+                echo "Conexión exitosa a Agile <br>";
+            } else {
+                echo "No está conectado al alias 'pgsql'.<br>";
+            }
+
+
+        } catch (Exception $e) {
+            // No está conectado a la base de datos
+            echo "No se pudo establecer la conexión a Agile.<br>";
+        }
+        try {
+
+            $pdoSoftlinkTest = DB::connection('softtest')->getPdo();
+            if ($pdoSoftlinkTest) {
+                // echo "Conexión exitosa a la base de datos: " . DB::connection('softtest')->getDatabaseName().'<br>';
+                echo "Conexión exitosa a Softlink test (entorno de pruebas).<br>";
+            } else {
+                echo "No está conectado al alias 'softtest'.<br>";
+            }
+
+
+        } catch (Exception $e) {
+            // No está conectado a la base de datos
+            echo "No se pudo establecer la conexión con Softlink Test (entorno de pruebas)<br>";
+        }
+
+        try {
+
+            $pdoSoftlink2 = DB::connection('soft2')->getPdo();
+            if ($pdoSoftlink2) {
+                // echo "Conexión exitosa a la base de datos: " . DB::connection('soft2')->getDatabaseName().'<br>';
+                echo "Conexión exitosa a la Softlink2 ";
+            } else {
+                echo "No está conectado al alias 'soft2'.<br>";
+            }
+
+
+        } catch (Exception $e) {
+            // No está conectado a la base de datos
+            // echo "No se pudo establecer la conexión al alias soft2.<br>";
+            echo "No se pudo establecer la conexión a Softlink2.<br>";
+        }
+        
+
+        
+    }
+}

@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubCategoria extends Model
 {
-    protected $table='almacen.alm_subcat';
+    protected $table='almacen.alm_cat_prod';
     public $timestamps=false;
-    protected $primaryKey='id_subcategoria';
+    protected $primaryKey='id_categoria';
     
 
 }

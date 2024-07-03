@@ -965,7 +965,7 @@ class RegistroPagoController extends Controller
             $pagoCuotaDetalle = PagoCuotaDetalle::where('id_pago',$id_pago)->get();
             foreach ($pagoCuotaDetalle as $value) {
                 $pagoCuotaDetalleUpdate= PagoCuotaDetalle::find($value->id_pago_cuota_detalle);
-                $pagoCuotaDetalleUpdate->estado=7;
+                $pagoCuotaDetalleUpdate->id_estado=7;
                 $pagoCuotaDetalleUpdate->save();
             }
            

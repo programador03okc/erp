@@ -22,7 +22,7 @@
 <body class="hold-transition skin-blue sidebar-mini skin-home">
     <div class="wrapper">
         @include("themes/header")
-        
+
         <div class="okc-content">
             <section class="content-header">
                 @yield('breadcrumb')
@@ -36,7 +36,7 @@
     </div>
 
     @include('themes.modal-clave')
-    
+
     <script src="{{ asset('template/adminlte2-4/plugins/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/dist/js/adminlte.min.js') }}"></script>
@@ -59,6 +59,7 @@
         $(document).ready(function() {
             validarClave();
 			notificacionesNoLeidas();
+			// validacionClave();
         });
     </script>
     @yield('scripts')

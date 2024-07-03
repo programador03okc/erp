@@ -43,7 +43,8 @@ class ListOrdenesHeadExport implements FromCollection, WithHeadings
             "Estado de orden",
             "Estado de pago",
             "Importe total orden",
-            "Importe total CDP"
+            "Importe total CDP",
+            "Elaborado por"
    
         ];
     }

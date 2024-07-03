@@ -156,7 +156,7 @@ class OrdenesDespachoExternoController extends Controller
                             and orden_despacho.estado != 7) AS count_estados_envios"),
                 DB::raw("(SELECT SUM(orden_despacho_obs.gasto_extra) FROM almacen.orden_despacho_obs where
                             orden_despacho_obs.id_od = orden_despacho.id_od
-                            and orden_despacho.estado != 7) AS gasto_extra"),
+                            and orden_despacho.estado != 7 and orden_despacho_obs.accion > 2) AS gasto_extra"),
                 DB::raw("(SELECT orden_despacho_obs.adjunto FROM almacen.orden_despacho_obs where
                             orden_despacho_obs.id_od = orden_despacho.id_od
                             and (orden_despacho_obs.accion = 8 or orden_despacho_obs.accion = 7 or orden_despacho_obs.accion = 6)
@@ -1114,6 +1114,8 @@ class OrdenesDespachoExternoController extends Controller
                 $fechaRegistroFlete = new Carbon();
             }
 
+            $fleteConIGV = (($request->importe_flete) ? $request->importe_flete : (($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : 0));
+            $fleteSinIGV = ($request->importe_flete_sin_igv) ? $request->importe_flete_sin_igv : 0;
             $data = DB::table('almacen.orden_despacho')
                 ->where('id_od', $request->id_od)
                 ->update([
@@ -1124,8 +1126,8 @@ class OrdenesDespachoExternoController extends Controller
                     'fecha_despacho_real' => $request->fecha_despacho_real,
                     'codigo_envio' => $request->codigo_envio,
                     'aplica_igv' => ((isset($request->aplica_igv) && $request->aplica_igv == 'on') ? true : false),
-                    'importe_flete' => $request->importe_flete,
-                    'importe_flete_sin_igv' => $request->importe_flete_sin_igv,
+                    'importe_flete' => $fleteConIGV,
+                    'importe_flete_sin_igv' => $fleteSinIGV,
                     'serie_guia_venta' => $request->serie_guia_venta,
                     'numero_guia_venta' => $request->numero_guia_venta,
                     'id_estado_envio' => $id_estado_envio,
@@ -1142,12 +1144,12 @@ class OrdenesDespachoExternoController extends Controller
                         'oc_propias_view.tipo',
                         'oc_directas.id_despacho as id_despacho_directa',
                         'oc_propias.id_despacho as id_despacho_propia',
+                        'alm_req.id_cc',
                         DB::raw("(SELECT SUM(orden_despacho_obs.gasto_extra) FROM almacen.orden_despacho_obs
-                        inner join almacen.orden_despacho on
-                        (orden_despacho_obs.id_od = orden_despacho.id_od)
-                        where   orden_despacho.id_requerimiento = alm_req.id_requerimiento
-                                and orden_despacho.aplica_cambios = false
-                                and orden_despacho.estado != 7) AS gasto_extra")
+                                    inner join almacen.orden_despacho on (orden_despacho_obs.id_od = orden_despacho.id_od)
+                                    where orden_despacho.id_requerimiento = alm_req.id_requerimiento
+                                    and orden_despacho.aplica_cambios = false and orden_despacho.estado != 7)
+                                AS gasto_extra")
                     )
                     // ->join('almacen.orden_despacho', 'orden_despacho.id_requerimiento', '=', 'alm_req.id_requerimiento')
                     ->join('mgcp_cuadro_costos.cc', 'cc.id', '=', 'alm_req.id_cc')
@@ -1205,12 +1207,7 @@ class OrdenesDespachoExternoController extends Controller
 
             if (!empty($request->serie) && !empty($request->numero) || ($request->importe_flete_sin_igv !=null && $request->importe_flete_sin_igv >=0 )) {
                 //si se ingreso serie y numero de la guia se agrega el nuevo estado envio
-                $obs = DB::table('almacen.orden_despacho_obs')
-                    ->where([
-                        ['id_od', '=', $request->id_od],
-                        ['accion', '=', $id_estado_envio]
-                    ])
-                    ->first();
+                $obs = DB::table('almacen.orden_despacho_obs')->where('id_od', $request->id_od)->where('accion', $id_estado_envio)->first();
 
                 if ($obs !== null) {
                     //si ya existe este estado lo actualiza
@@ -1219,8 +1216,11 @@ class OrdenesDespachoExternoController extends Controller
                         ->update([
                             'observacion' => 'Guía N° ' . $request->serie . '-' . $request->numero,
                             'fecha_estado' => $request->fecha_transportista,
+                            'gasto_extra_sin_igv' => $fleteSinIGV,
+                            'gasto_extra' => $fleteConIGV,
                             'registrado_por' => $id_usuario,
-                            'fecha_registro' => $fecha_registro
+                            'fecha_registro' => $fecha_registro,
+                            'id_cc' => $oc->id_cc
                         ]);
                 } else {
                     //si no existe este estado lo crea
@@ -1229,9 +1229,12 @@ class OrdenesDespachoExternoController extends Controller
                             'id_od' => $request->id_od,
                             'accion' => $id_estado_envio,
                             'fecha_estado' => $request->fecha_transportista,
+                            'gasto_extra_sin_igv' => $fleteSinIGV,
+                            'gasto_extra' => $fleteConIGV,
                             'observacion' => 'Guía N° ' . $request->serie . '-' . $request->numero,
                             'registrado_por' => $id_usuario,
-                            'fecha_registro' => $fecha_registro
+                            'fecha_registro' => $fecha_registro,
+                            'id_cc' => $oc->id_cc
                         ]);
                 }
 

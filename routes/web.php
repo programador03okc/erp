@@ -38,6 +38,8 @@ use App\Http\Controllers\Cas\CasModeloController;
 use App\Http\Controllers\Cas\CasProductoController;
 use App\Http\Controllers\Cas\FichaReporteController;
 use App\Http\Controllers\Cas\IncidenciaController;
+use App\Http\Controllers\ClasificacionSap\CategoriaSapController;
+use App\Http\Controllers\ClasificacionSap\SubcategoriaSapController;
 use App\Http\Controllers\Comercial\ClienteController;
 use App\Http\Controllers\ComprasPendientesController;
 use App\Http\Controllers\ComprobanteCompraController;
@@ -148,6 +150,7 @@ Auth::routes();
 Route::view('/', 'auth.login');
 
 Route::get('modulos', [ConfiguracionController::class, 'getModulos'])->name('modulos');
+Route::get('status-connection', [ConfiguracionController::class, 'statusConnection'])->name('status-connection');
 Route::get('test-claves', [TestController::class, 'actualizarClaves'])->name('test-claves');
 Route::get('test-encrypt', [TestController::class, 'encriptar'])->name('test-encrypt');
 Route::get('test-lista-cliente', [TestController::class, 'clientes'])->name('test-lista-cliente');
@@ -251,6 +254,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('index', [ConfiguracionController::class, 'view_requerimientos_sin_atender'])->name('index');
 				Route::get('lista', [ConfiguracionController::class, 'listar_requerimientos_sin_atender'])->name('lista');
 				Route::post('anular', [ConfiguracionController::class, 'anular_requerimiento_sin_atender'])->name('anular');
+				Route::post('retornar', [ConfiguracionController::class, 'retornar_requerimiento_sin_atender'])->name('retornar');
 			});
 		});
 
@@ -635,8 +639,14 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('mostrar_prods', [ProductoController::class, 'mostrar_prods'])->name('mostrar-prods');
 				Route::get('mostrar_prods_almacen/{id}', [ProductoController::class, 'mostrar_prods_almacen'])->name('mostrar-prods-almacen');
 				Route::get('mostrar_producto/{id}', [ProductoController::class, 'mostrar_producto'])->name('mostrar-producto');
+				// * INICIA: Antigua clasificacion softlink1
 				Route::get('mostrarCategoriasPorClasificacion/{id}', [CategoriaController::class, 'mostrarCategoriasPorClasificacion'])->name('mostrar-categorias-por-clasificacion');
 				Route::get('mostrarSubCategoriasPorCategoria/{id}', [SubCategoriaController::class, 'mostrarSubCategoriasPorCategoria'])->name('mostrar-sub-categorias-por-categoria');
+				// * FIN: Antigua clasificacion softlink1
+				// * INICIA: clasificacion sap
+				Route::get('mostrarCategoriasSapPorGrupo/{id}', [CategoriaSapController::class, 'mostrarCategoriasSapPorGrupo'])->name('mostrar-categorias-sap-por-grupo');
+				Route::get('mostrarSubCategoriasSapPorCategoria/{id}', [SubcategoriaSapController::class, 'mostrarSubCategoriasSapPorCategoria'])->name('mostrar-sub-categorias-sap-por-categoria');
+				// * FIN: clasificacion sap
 				Route::post('guardar_producto', [ProductoController::class, 'guardar_producto'])->name('guardar-producto');
 				Route::post('actualizar_producto', [ProductoController::class, 'update_producto'])->name('actualizar-producto');
 				Route::get('anular_producto/{id}', [ProductoController::class, 'anular_producto'])->name('anular-producto');
@@ -659,6 +669,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('anular_serie/{id}', [ProductoController::class, 'anular_serie'])->name('anular-serie');
 
 				Route::get('obtenerProductoSoftlink/{id}', [MigrateProductoSoftlinkController::class, 'obtenerProductoSoftlink'])->name('obtener-producto-softlink');
+				Route::get('obtenerProductoSoftlink2/{id}', [MigrateProductoSoftlinkController::class, 'obtenerProductoSoftlink2'])->name('obtener-producto-softlink2');
 			});
 
 			Route::group(['as' => 'catalogo-productos.', 'prefix' => 'catalogo-productos'], function () {
@@ -1523,7 +1534,10 @@ Route::middleware(['auth'])->group(function () {
 					Route::get('listar-archivos-adjuntos-pago/{id}', [RequerimientoController::class, 'listarArchivoAdjuntoPago'])->name('listar-archivos-adjuntos-pago');
 					Route::get('listar-categoria-adjunto', [RequerimientoController::class, 'mostrarCategoriaAdjunto'])->name('listar-categoria-adjunto');
 					Route::post('guardar-adjuntos-adicionales-requerimiento-compra', [RequerimientoController::class, 'guardarAdjuntosAdicionales'])->name('guardar-adjuntos-adicionales-requerimiento-compra');
-					Route::get('almacenes-con-stock-disponible/{idProducto}', [ComprasPendientesController::class, 'mostrarAlmacenesConStockDisponible'])->name('almacenes-con-stock-disponible');
+
+					// Route::get('almacenes-con-stock-disponible/{idProducto}', [ComprasPendientesController::class, 'mostrarAlmacenesConStockDisponible'])->name('almacenes-con-stock-disponible');
+					Route::get('almacenes-sin-considerar-stock-disponible/{idProducto}/{idRequerimiento}', [ComprasPendientesController::class, 'mostrarAlmacenesSinConsiderarStockDisponible'])->name('almacenes-con-stock-disponible');
+
 					Route::post('actualizar-tipo-item-detalle-requerimiento', [ComprasPendientesController::class, 'actualizarTipoItemDetalleRequerimiento'])->name('actualizar-tipo-item-detalle-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
 					Route::post('actualizar-ajuste-estado-requerimiento', [ComprasPendientesController::class, 'actualizarAjusteEstadoRequerimiento'])->name('actualizar-ajuste-estado-requerimiento');
@@ -1592,6 +1606,9 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('verSession', [LogisticaController::class, 'verSession'])->name('ver-session');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel/{filtro?}', [OrdenController::class, 'exportListaOrdenesNivelCabeceraExcel'])->name('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-detalle-excel', [OrdenController::class, 'exportListaOrdenesNivelDetalleExcel'])->name('facturas');
+						Route::post('guardar-liberar-orden', [OrdenController::class, 'guardarLiberarOrden'])->name('guardar-liberar-orden');
+						
+						
 
 						// nivel
 						Route::post('lista-items-ordenes-elaboradas', [OrdenController::class, 'listaItemsOrdenesElaboradas'])->name('lista-items-ordenes-elaboradas');

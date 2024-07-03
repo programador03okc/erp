@@ -1147,6 +1147,8 @@ class RequerimientoController extends Controller
                 return response()->json(['id_requerimiento' => 0, 'codigo' => '', 'mensaje' => 'No se puede generar el requerimiento cuando el periodo operativo está cerrado']);
             }
 
+            $mesAfectacionHoy= str_pad((Carbon::create(now())->month), 2, "0", STR_PAD_LEFT);
+
             $requerimiento = new Requerimiento();
             // $requerimiento->codigo =  Requerimiento::crearCodigo($request->tipo_requerimiento, $request->id_grupo);
             $requerimiento->id_tipo_requerimiento = $request->tipo_requerimiento;
@@ -1191,7 +1193,7 @@ class RequerimientoController extends Controller
             $requerimiento->id_incidencia = isset($request->id_incidencia) && $request->id_incidencia != null ? $request->id_incidencia : null;
             $requerimiento->id_tipo_detalle = $idTipoDetalle;
             $requerimiento->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
-            $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
+            $requerimiento->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : $mesAfectacionHoy;
             $requerimiento->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
             $requerimiento->tipo_cambio = $this->getTipoCambioVenta(new Carbon());
             $requerimiento->save();

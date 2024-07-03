@@ -358,6 +358,7 @@ class RequerimientoPagoController extends Controller
                 return response()->json(['id_requerimiento_pago' => 0, 'codigo' => '', 'mensaje' => 'No se puede generar el requerimiento cuando el periodo operativo está cerrado']);
             }
 
+            $mesAfectacionHoy= str_pad((Carbon::create(now())->month), 2, "0", STR_PAD_LEFT);
 
             $requerimientoPago = new RequerimientoPago();
             $requerimientoPago->id_usuario = Auth::user()->id_usuario;
@@ -387,7 +388,7 @@ class RequerimientoPagoController extends Controller
             $requerimientoPago->id_estado = 1;
             $requerimientoPago->id_trabajador = $request->id_trabajador > 0 ? $request->id_trabajador : null;
             $requerimientoPago->id_presupuesto_interno = $request->id_presupuesto_interno > 0 ? $request->id_presupuesto_interno : null;
-            $requerimientoPago->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : null;
+            $requerimientoPago->mes_afectacion = isset($request->mes_afectacion) && $request->mes_afectacion != null ? $request->mes_afectacion : $mesAfectacionHoy;
             $requerimientoPago->tipo_impuesto = $request->tipo_impuesto > 0 ? $request->tipo_impuesto : null;
 
             // $requerimientoPago->id_condicion_softlink = $request->id_condicion_softlink?$request->id_condicion_softlink:null;

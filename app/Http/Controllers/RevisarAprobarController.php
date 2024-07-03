@@ -945,7 +945,6 @@ class RevisarAprobarController extends Controller{
                 }
             }
             // agregar vobo (1= aprobado, 2= rechazado, 3=observado, 5=Revisado)
-            $aprobacion= $this->registrarRespuesta($accion, $request->idFlujo, $request->idDocumento, $request->idTipoDocumento, $request->idRequerimiento, $request->idRequerimientoPago, $request->idUsuarioAprobante,$request->sustento, $request->idRolAprobante);
 
 
             // $montoTotal= 0;
@@ -977,7 +976,7 @@ class RevisarAprobarController extends Controller{
                     }
                 }
 
-                $requerimientoConEstadoActualizado= $this->actualizarEstadoRequerimiento($accion,$requerimiento,$request->aprobacionFinalOPendiente);
+                $this->actualizarEstadoRequerimiento($accion,$requerimiento,$request->aprobacionFinalOPendiente);
                 $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$request->aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $accion);
 
                 // $this->enviarNotificacionPorAprobacion($requerimiento,$request->sustento,$nombreCompletoUsuarioPropietarioDelDocumento,$nombreCompletoUsuarioRevisaAprueba,$montoTotal,$trazabilidad);
@@ -1031,7 +1030,7 @@ class RevisarAprobarController extends Controller{
                             $ordenActual=$flujo->orden;
                         }
                     }
-
+                   
                     if($ordenActual>0){
                         $i=1;
                         foreach ($flujoTotal as $flujo) {
@@ -1054,14 +1053,11 @@ class RevisarAprobarController extends Controller{
 
                                         if($request->idTipoDocumento ==1){ //documento de tipo: requerimiento b/s
                                             $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $accionNext);
-                                            $this->actualizarEstadoRequerimiento($accionNext,$requerimiento,$aprobacionFinalOPendiente);
-                                            // $this->enviarNotificacionPorAprobacion($requerimiento,$request->sustento,$nombreCompletoUsuarioPropietarioDelDocumento,$nombreCompletoUsuarioRevisaAprueba,$montoTotal,$trazabilidad);
+                                            // $this->actualizarEstadoRequerimiento($accionNext,$requerimiento,$aprobacionFinalOPendiente);
 
                                         }elseif($request->idTipoDocumento ==11){//documento de tipo: requerimiento pago
-                                            // $trazabilidad= $this->registrarTrazabilidad($request->idRequerimiento,$aprobacionFinalOPendiente,$request->idUsuarioAprobante, $nombreCompletoUsuarioRevisaAprueba, $accionNext);
-                                            $this->actualizarEstadoRequerimientoPago($accionNext,$requerimientoPago,$aprobacionFinalOPendiente);
+                                            // $this->actualizarEstadoRequerimientoPago($accionNext,$requerimientoPago,$aprobacionFinalOPendiente);
 
-                                            // $this->enviarNotificacionPorAprobacion($requerimiento,$request->sustento,$nombreCompletoUsuarioPropietarioDelDocumento,$nombreCompletoUsuarioRevisaAprueba,$montoTotal,$trazabilidad);
                                         }
                                     }
                                     $i++;
@@ -1073,6 +1069,13 @@ class RevisarAprobarController extends Controller{
                 }
             }
             if ($accion > 0) {
+
+                $aprobacion= $this->registrarRespuesta($accion, $request->idFlujo, $request->idDocumento, $request->idTipoDocumento, $request->idRequerimiento, $request->idRequerimientoPago, $request->idUsuarioAprobante,$request->sustento, $request->idRolAprobante);
+                // if($request->idTipoDocumento ==1){ //documento de tipo: requerimiento b/s
+                //     $this->actualizarEstadoRequerimiento($accion,$requerimiento,$aprobacionFinalOPendiente);
+                // }elseif($request->idTipoDocumento ==11){//documento de tipo: requerimiento pago
+                //     $this->actualizarEstadoRequerimientoPago($accion,$requerimientoPago,$aprobacionFinalOPendiente);
+                // }
  
                 // $seNotificaraporEmail = true;
                 // TO-DO NOTIFICAR AL USUARIO QUE SU REQUERIMIENTO FUE APROBADO

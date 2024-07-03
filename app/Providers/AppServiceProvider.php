@@ -15,6 +15,14 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+
+        $conexionSoftlink='softtest'; // default
+        if(config('app.env')=='production'){
+            $conexionSoftlink='soft2';
+        }
+
+        app()->instance('conexion_softlink',$conexionSoftlink);
+
     }
 
     /**

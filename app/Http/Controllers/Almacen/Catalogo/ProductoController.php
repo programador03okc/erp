@@ -13,17 +13,30 @@ use Illuminate\Support\Facades\Storage;
 // use Debugbar;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductosExport;
+use App\Http\Controllers\ClasificacionSap\CategoriaSapController;
+use App\Http\Controllers\ClasificacionSap\GrupoSapController;
+use App\Http\Controllers\ClasificacionSap\SubcategoriaSapController;
 use App\Models\Almacen\Producto;
+use App\Models\Almacen\ProductoSap;
 use App\Models\Configuracion\LogActividad;
+use Carbon\Carbon;
 
 class ProductoController extends Controller
 {
     function view_producto()
     {
         $tipos = AlmacenController::mostrar_tipos_cbo();
-        $clasificaciones = AlmacenController::mostrar_clasificaciones_cbo();
-        $subcategorias = AlmacenController::mostrar_subcategorias_cbo();
-        $categorias = AlmacenController::mostrar_categorias_cbo();
+        // * antigua clasificacion de softlink1
+        // $clasificaciones = AlmacenController::mostrar_clasificaciones_cbo();
+        // $subcategorias = AlmacenController::mostrar_subcategorias_cbo();
+        // $categorias = AlmacenController::mostrar_categorias_cbo();
+
+        // * clasificacion sap
+        $grupos = GrupoSapController::mostrar();
+        $categorias = CategoriaSapController::mostrar();
+        $subcategorias = SubcategoriaSapController::mostrar();
+
+
         $unidades = AlmacenController::mostrar_unidades_cbo();
         // $posiciones = $this->mostrar_posiciones_cbo();
         // $ubicaciones = $this->mostrar_ubicaciones_cbo();
@@ -41,7 +54,10 @@ class ProductoController extends Controller
             $value->accesos;
             array_push($array_accesos_botonera, $value->accesos->accesos_grupo);
         }
-        return view('almacen.producto.producto', compact('tipos', 'categorias', 'clasificaciones', 'subcategorias', 'unidades', 'monedas', 'array_accesos_botonera'));
+        // * antigua clasificacion softlink1
+        // return view('almacen.producto.producto', compact('tipos', 'categorias', 'clasificaciones', 'subcategorias', 'unidades', 'monedas', 'array_accesos_botonera'));
+        // * clasificacion sap
+        return view('almacen.producto.producto', compact('tipos', 'grupos','categorias', 'subcategorias', 'unidades', 'monedas', 'array_accesos_botonera'));
     }
 
     function view_prod_catalogo()
@@ -191,6 +207,12 @@ class ProductoController extends Controller
                 'sis_usua.nombre_corto',
                 'adm_estado_doc.estado_doc',
                 'adm_estado_doc.bootstrap_color',
+                'grupo.id as id_grupo_sap',
+                'grupo.descripcion as descripcion_grupo_sap',
+                'categoria.id as id_categoria_sap',
+                'categoria.descripcion as descripcion_categoria_sap',
+                'subcategoria.id as id_subcategoria_sap',
+                'subcategoria.descripcion as descripcion_subcategoria_sap'
             )
             ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
             ->leftjoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
@@ -198,6 +220,11 @@ class ProductoController extends Controller
             ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_tp_prod.id_clasificacion')
             ->leftjoin('configuracion.sis_usua', 'sis_usua.id_usuario', '=', 'alm_prod.id_usuario')
             ->leftjoin('administracion.adm_estado_doc', 'adm_estado_doc.id_estado_doc', '=', 'alm_prod.estado')
+            ->leftJoin('almacen.producto_sap', 'producto_sap.codigo_agile', '=', 'alm_prod.codigo')
+            ->leftJoin('clasificacion_sap.subcategoria', 'subcategoria.id', '=', 'producto_sap.subcategoria_id')
+            ->leftJoin('clasificacion_sap.categoria', 'categoria.id', '=', 'subcategoria.categoria_id')
+            ->leftJoin('clasificacion_sap.grupo', 'grupo.id', '=', 'categoria.grupo_id')
+
             ->where([['alm_prod.id_producto', '=', $id]])
             ->get();
 
@@ -231,9 +258,16 @@ class ProductoController extends Controller
 
             $producto = new Producto();
             $producto->part_number = $pn;
-            $producto->id_clasif = $request->id_clasif;
-            $producto->id_categoria = $request->id_tipo_producto;
-            $producto->id_subcategoria = $request->id_subcategoria;
+            // * INICIO: antigua clasificacion softlink1
+            // $producto->id_clasif = $request->id_clasif;
+            // $producto->id_categoria = $request->id_categoria;
+            // $producto->id_subcategoria = $request->id_subcategoria;
+            // * FIN: antigua clasificacion softlink1
+            // * INICIO: nueva clasificacion sap
+            $producto->id_grupo_sap = $request->id_grupo_sap;
+            $producto->id_categoria_sap = $request->id_categoria_sap;
+            $producto->id_subcategoria_sap = $request->id_subcategoria_sap;
+            // *FIN: nueva clasificacion sap
             $producto->descripcion = $des;
             $producto->id_unidad_medida = ($request->id_unidad_medida !== 0 ? $request->id_unidad_medida : null);
             $producto->id_unid_equi = (($request->id_unid_equi !== 0 && $request->id_unid_equi !== null) ? $request->id_unid_equi : null);
@@ -253,11 +287,22 @@ class ProductoController extends Controller
             $producto->fecha_registro = $fecha;
             $producto->save();
 
+   
+
+
             $codigo = AlmacenController::leftZero(7, $producto->id_producto);
 
             DB::table('almacen.alm_prod')
                 ->where('id_producto', $producto->id_producto)
                 ->update(['codigo' => $codigo]);
+
+
+            // * registrar producto con clasificacion sap
+            $productoSap = new ProductoSap();
+            $productoSap->codigo_agile =$codigo;
+            $productoSap->subcategoria_id =$request->id_subcategoria_sap;
+            $productoSap->created_at =new Carbon();
+            $productoSap->save();
 
             // $id_item = DB::table('almacen.alm_item')->insertGetId(
             //     [   'id_producto' => $id_producto,
@@ -268,13 +313,24 @@ class ProductoController extends Controller
             $comentario = 'Producto creado. Código: '.$codigo.', Partnumber: '.$producto->part_number.', Descripción: '.$producto->descripcion.' , Agregado por: ' . Auth::user()->nombre_corto;
             LogActividad::registrar(Auth::user(), 'Producto', 2, $producto->getTable(), null, $producto, $comentario, 'Almacén');
 
-
+            // * antigua clasificacion softlink1
+            // $productoCreado = DB::table('almacen.alm_prod')
+            //     ->select('alm_prod.*', 'alm_und_medida.abreviatura', 'alm_cat_prod.descripcion as categoria', 'alm_subcat.descripcion as subcategoria')
+            //     ->join('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+            //     ->join('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
+            //     ->join('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+            //     ->where('id_producto', $producto->id_producto)->first();
+            // * clasificacion antigua y si el producto cuenta con clasificacion sap se debe mostrar
             $productoCreado = DB::table('almacen.alm_prod')
-                ->select('alm_prod.*', 'alm_und_medida.abreviatura', 'alm_tp_prod.descripcion as categoria', 'alm_subcat.descripcion as subcategoria')
-                ->join('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
-                ->join('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
-                ->join('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                ->where('id_producto', $producto->id_producto)->first();
+                ->select('alm_prod.*', 'alm_und_medida.abreviatura', 'alm_cat_prod.descripcion as categoria', 'alm_subcat.descripcion as subcategoria')
+                ->leftJoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'alm_prod.id_unidad_medida')
+                ->leftJoin('almacen.alm_cat_prod', 'alm_cat_prod.id_categoria', '=', 'alm_prod.id_categoria')
+                ->leftJoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+                ->leftJoin('almacen.producto_sap', 'producto_sap.codigo_agile', '=', 'alm_prod.codigo')
+                ->leftJoin('clasificacion_sap.subcategoria', 'subcategoria.id', '=', 'producto_sap.subcategoria_id')
+                ->leftJoin('clasificacion_sap.categoria', 'categoria.id', '=', 'subcategoria.categoria_id')
+                ->leftJoin('clasificacion_sap.grupo', 'grupo.id', '=', 'categoria.grupo_id')
+                ->where('alm_prod.id_producto', $producto->id_producto)->first();
 
             return response()->json(['msj' => $msj, 'id_item' => 0, 'id_producto' => $producto->id_producto, 'producto' => $productoCreado]);
         } else {
@@ -318,14 +374,17 @@ class ProductoController extends Controller
         $id_item = 0;
         $id_producto = $request->id_producto;
 
+        $producto = Producto::find($id_producto);
+
         if ($count == 0) {
             DB::table('almacen.alm_prod')
                 ->where('id_producto', $id_producto)
                 ->update([
                     'part_number' => $request->part_number,
-                    'id_subcategoria' => $request->id_subcategoria,
-                    'id_categoria' => $request->id_categoria,
-                    'id_clasif' => $request->id_clasif,
+                    // * clasificacion softlink1
+                    // 'id_subcategoria' => $request->id_subcategoria,
+                    // 'id_categoria' => $request->id_categoria,
+                    // 'id_clasif' => $request->id_clasif,
                     'descripcion' => $des,
                     'id_unidad_medida' => $request->id_unidad_medida,
                     'id_unid_equi' => $request->id_unid_equi,
@@ -341,6 +400,13 @@ class ProductoController extends Controller
                     'ancho' => $request->ancho,
                     'alto' => $request->alto,
                 ]);
+
+                $productoSap = ProductoSap::firstOrNew(['codigo_agile' => $producto->codigo]);
+                $productoSap->codigo_agile = $producto->codigo;
+                $productoSap->subcategoria_id = $request->id_subcategoria_sap;
+                $productoSap->updated_at = new Carbon();
+                $productoSap->save();
+
 
             $id_item = DB::table('almacen.alm_item')
                 ->select('alm_item.id_item')

@@ -395,7 +395,7 @@ class ValidarPresupuestoInternoController extends Controller
 
             foreach (($presupuesto[0]->detalle) as $detalle) {
                 if ($detalle->id_presupuesto_interno_detalle == $idPartidaDePresupuestoInterno) {
-                    if (number_format($detalle->$nombreMesAux,2,'.','') >= (floatval($monto) + floatval($montoComprometido)) ) { // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
+                    if (number_format(floatval(str_replace(",", "", $detalle->$nombreMesAux)),2,'.','') >= (floatval($monto) + floatval($montoComprometido)) ) { // valida el ppto disponible en el mes con el monto total de la partida de item y tambien compara que el monto envia a pago(que se envia ingresando un monto en interfaz) no sea mayor
                         $mensaje="Tiene suficiente saldo en partida";
                         $data = [
                             'tiene_presupuesto' => true,
@@ -404,14 +404,14 @@ class ValidarPresupuestoInternoController extends Controller
                             'partida' => $detalle->partida,
                             'descripcion' => $detalle->descripcion,
                             'nombre_mes_aux' => $nombreMesAux,
-                            'monto_aux' => number_format($detalle->$nombreMesAux,2,'.',''),
+                            'monto_aux' => number_format(floatval(str_replace(",", "", $detalle->$nombreMesAux)),2,'.',''),
                             'monto_soles_documento_actual' => $monto,
                             'monto_soles_comprometido_otros_documentos' => $montoComprometido,
                             'mensaje'=>$mensaje
                             // 'monto_utilizado_por_otros_documentos' => $obtenerMontoUtilizadoPorRequerimientosLogisticosYPagoConPartida[0]['monto_total_partida_ulitizado'] ?? 0,
                         ];
                     } else {
-                        if(number_format($detalle->$nombreMesAux,2,'.','') < floatval($montoComprometido)){
+                        if(number_format(floatval(str_replace(",", "", $detalle->$nombreMesAux)),2,'.','') < floatval($montoComprometido)){
                             $mensaje.="Saldo insuficiente, otros documentos estan con saldo comprometido.";
                         }   
 

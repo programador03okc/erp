@@ -20,52 +20,52 @@
         <tr>
             {{-- <th style="border: 1 solid #000; background-color: #00b0f0;"></th>
             <th style="border: 1 solid #000; background-color: #00b0f0;"></th> --}}
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
+
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
+
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
+
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
+
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
 
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
-
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
-
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
-
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
-
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL</th>
-            <th style="border: 1 solid #000; background-color: #00b0f0;">TOTAL EJECUTADO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">PRESUPUESTO</th>
+            <th style="border: 1 solid #000; background-color: #00b0f0;">EJECUTADO</th>
             <th style="border: 1 solid #000; background-color: #00b0f0;">SALDO</th>
         </tr>
     </thead>

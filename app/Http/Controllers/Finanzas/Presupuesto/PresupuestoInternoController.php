@@ -8,6 +8,7 @@ use App\Exports\PresupuesInternoReporteAnualExport;
 use App\Exports\PresupuestoInternoSaldoExport;
 use App\Exports\ReporteSaldosExport;
 use App\Exports\ReporteSalosMensualesExport;
+use App\Exports\SaldosMensualesPresupuestoInternoExport;
 use App\Helpers\ConfiguracionHelper;
 use App\Helpers\StringHelper;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
@@ -1906,7 +1907,8 @@ class PresupuestoInternoController extends Controller
         }
 
         $historial_saldo = HistorialPresupuestoInternoSaldo::where('id_presupuesto_interno', $request->id)
-            // ->where('tipo','SALIDA')
+            ->where('documento_anulado','f')
+            ->where('tipo','SALIDA')
             // ->where('estado',3)
             // ->whereIn('mes',$mesEnFormatoFechaList)
             ->orderBy('id', 'ASC')->get();
@@ -2063,27 +2065,6 @@ class PresupuestoInternoController extends Controller
     }
     public function saldosPresupuesto(Request $request)
     {
-
-        // $presupuesto  = PresupuestoInterno::where('id_presupuesto_interno', $request->id)->first();
-        // $presupuesto_detalle  = PresupuestoInternoDetalle::where('id_presupuesto_interno', $request->id)->orderBy('partida')->get();
-
-        // foreach ($presupuesto_detalle as $key => $item) {
-        //     $monto = 0;
-        //     if ($item->registro == 2) {
-        //         $monto = HistorialPresupuestoInternoSaldo::totalEjecutadoPartida($item->id_presupuesto_interno_detalle);
-        //     }
-        //     $item->ejecutado = $monto;
-        //     $total_partida = PresupuestoInterno::calcularTotalPresupuestoFilas($presupuesto->id_presupuesto_interno, 3, 1);
-
-        //     $total = 0;
-        //     foreach ($total_partida as $value) {
-        //         if ($value['partida'] == $item->partida) {
-        //             $total = $value['total'];
-        //         }
-        //     }
-        //     $item->total = $total;
-        // }
-        // return Excel::download(new PresupuestoInternoSaldoExport(json_encode($presupuesto_detalle)), '' . $presupuesto->codigo . '-' . date('Y-m-d') . '.xlsx');
 
         $presupuestos = PresupuestoInterno::whereIn('id_presupuesto_interno',[$request->id])
         ->get();
@@ -2556,4 +2537,299 @@ class PresupuestoInternoController extends Controller
         $presupuesto_detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno',$id)->where('estado',1)->where('registro','2')->orderBy('partida', 'asc')->get();
         return Excel::download(new ReporteSalosMensualesExport(json_encode($presupuesto_detalle)), 'Saldos_mensuales-'.$presupuesto->codigo.'.xlsx');
     }
+    public function saldoMovimientoMensual($id){
+
+        $presupuestos = PresupuestoInterno::whereIn('id_presupuesto_interno',[$id])
+        ->get();
+
+        $presupuesto  = PresupuestoInterno::where('id_presupuesto_interno', $id)->first();
+
+        $modelo_partidas =  PresupuestoInternoModelo::where("id_tipo_presupuesto" ,3)->orderBy('partida', 'asc')->get();
+        foreach ( $modelo_partidas as $key_modelo => $value_modelo ) {
+
+            $value_modelo->registro = 0;
+            $value_modelo->total = 0;
+            $value_modelo->total_ejecutado = 0;
+            $value_modelo->total_saldo = 0;
+            $value_modelo->historial = array();
+
+            $value_modelo->enero_total      = 0;
+            $value_modelo->febrero_total    = 0;
+            $value_modelo->marzo_total      = 0;
+            $value_modelo->abril_total      = 0;
+            $value_modelo->mayo_total       = 0;
+            $value_modelo->junio_total      = 0;
+            $value_modelo->julio_total      = 0;
+            $value_modelo->agosto_total     = 0;
+            $value_modelo->setiembre_total  = 0;
+            $value_modelo->octubre_total    = 0;
+            $value_modelo->noviembre_total  = 0;
+            $value_modelo->diciembre_total  = 0;
+
+            $value_modelo->enero_ejecutado      = 0;
+            $value_modelo->febrero_ejecutado    = 0;
+            $value_modelo->marzo_ejecutado      = 0;
+            $value_modelo->abril_ejecutado      = 0;
+            $value_modelo->mayo_ejecutado       = 0;
+            $value_modelo->junio_ejecutado      = 0;
+            $value_modelo->julio_ejecutado      = 0;
+            $value_modelo->agosto_ejecutado     = 0;
+            $value_modelo->setiembre_ejecutado  = 0;
+            $value_modelo->octubre_ejecutado    = 0;
+            $value_modelo->noviembre_ejecutado  = 0;
+            $value_modelo->diciembre_ejecutado  = 0;
+
+
+            $value_modelo->enero_saldo      = 0;
+            $value_modelo->febrero_saldo    = 0;
+            $value_modelo->marzo_saldo      = 0;
+            $value_modelo->abril_saldo      = 0;
+            $value_modelo->mayo_saldo       = 0;
+            $value_modelo->junio_saldo      = 0;
+            $value_modelo->julio_saldo      = 0;
+            $value_modelo->agosto_saldo     = 0;
+            $value_modelo->setiembre_saldo  = 0;
+            $value_modelo->octubre_saldo    = 0;
+            $value_modelo->noviembre_saldo  = 0;
+            $value_modelo->diciembre_saldo  = 0;
+
+        }
+        // return $presupuestos;
+        $reporte_total = array();
+        // recorremos los presupuesto
+        foreach($presupuestos as $key=>$value){
+            // Sacamos el total en filas por presupuesto
+            $filas_totales = PresupuestoInterno::calcularTotalPresupuestoMeses($value->id_presupuesto_interno, 3, 1);
+            // recorremos el modelo donde se almacenara los valores en general
+            foreach ($modelo_partidas as $key_modelo => $value_modelo) {
+
+
+
+                // recorremos el array de filas calculadas ara obtener el monto y almacenarlo en el json principal
+                foreach ($filas_totales as $key_fila => $value_fila) {
+
+                    // igualamos partidas ara identificar el indice para guardar los valores en el json principal
+                    if($value_modelo->partida == $value_fila['partida']){
+                        // return $value_fila;
+                        $value_modelo->enero_total      = $value_fila['enero'];
+                            $value_modelo->febrero_total    = $value_fila['febrero'];
+                            $value_modelo->marzo_total      = $value_fila['marzo'];
+                            $value_modelo->abril_total      = $value_fila['abril'];
+                            $value_modelo->mayo_total       = $value_fila['mayo'];
+                            $value_modelo->junio_total      = $value_fila['junio'];
+                            $value_modelo->julio_total      = $value_fila['julio'];
+                            $value_modelo->agosto_total     = $value_fila['agosto'];
+                            $value_modelo->setiembre_total  = $value_fila['setiembre'];
+                            $value_modelo->octubre_total    = $value_fila['octubre'];
+                            $value_modelo->noviembre_total  = $value_fila['noviembre'];
+                        $value_modelo->diciembre_total  = $value_fila['diciembre'];
+
+                        // return $value_modelo;
+
+                        // buscamos la partida en el detalle del presupuesto para obtener su id
+                        $detalle = PresupuestoInternoDetalle::where('id_presupuesto_interno', $value->id_presupuesto_interno)->where('partida',$value_fila['partida'])->where('registro','2')->first();
+
+
+                        if($detalle){
+                            $value_modelo->registro = $detalle->registro;
+
+
+                            // buscamos el historial de la partida y sus gastos ejecutados
+
+                            for($i=1;$i<=12;$i++){
+                                $monto_ejecutado = 0;
+                                $numero_mes = ($i>9? ''.$i:'0'.$i);
+
+
+
+                                switch ($numero_mes) {
+                                    case '01':
+                                        // if("03.01.03.01" == $value_fila['partida']){
+                                        //     return $this->ejecutadoMes(
+                                        //         $detalle->id_presupuesto_interno_detalle,
+                                        //         $value_modelo->enero_ejecutado,
+                                        //         $numero_mes,
+                                        //         "03.01.03.01"
+                                        //     );
+                                        // }
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->enero_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->enero_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '02':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->febrero_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->febrero_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '03':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->marzo_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->marzo_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '04':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->abril_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->abril_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '05':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->mayo_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->mayo_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '06':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->junio_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->junio_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '07':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->julio_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->julio_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '08':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->agosto_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->agosto_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '09':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->setiembre_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->setiembre_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '10':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->octubre_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->octubre_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '11':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->noviembre_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->noviembre_ejecutado = $monto_ejecutado;
+                                    break;
+                                    case '12':
+                                        $monto_ejecutado = $this->ejecutadoMes(
+                                            $detalle->id_presupuesto_interno_detalle,
+                                            $value_modelo->diciembre_ejecutado,
+                                            $numero_mes
+                                        );
+                                        $value_modelo->diciembre_ejecutado = $monto_ejecutado;
+                                    break;
+
+                                }
+                            }
+
+
+                            // if(sizeof($ejecutados)>0){
+
+                            //     foreach ($ejecutados as $key_ejecutado => $value_ejecutado) {
+                            //         $monto_ejecutado = $monto_ejecutado + (float) $value_ejecutado->importe;
+                            //     }
+                            //     $value_modelo->enero_ejecutado = $value_modelo->enero_ejecutado + $monto_ejecutado;
+                            // }
+                        }
+                    }
+
+
+                }
+
+
+            }
+        }
+
+        // return $modelo_partidas;
+        $array_partida = '';
+        $tamano_array = 4;
+        do {
+
+            foreach ($modelo_partidas as $key => $value) {
+                $array_partida = explode('.',$value['partida']);
+                if(sizeof($array_partida) == $tamano_array){
+
+                    $padre = substr($value['partida'], 0, -3);
+
+                    foreach ($modelo_partidas as $key_sumar => $value_sumar) {
+
+                        if($padre == $value_sumar['partida']){
+                            $value_sumar['enero_ejecutado'] = $value_sumar['enero_ejecutado'] + $value['enero_ejecutado'];
+                            $value_sumar['febrero_ejecutado'] = $value_sumar['febrero_ejecutado'] + $value['febrero_ejecutado'];
+                            $value_sumar['marzo_ejecutado'] = $value_sumar['marzo_ejecutado'] + $value['marzo_ejecutado'];
+                            $value_sumar['abril_ejecutado'] = $value_sumar['abril_ejecutado'] + $value['abril_ejecutado'];
+                            $value_sumar['mayo_ejecutado'] = $value_sumar['mayo_ejecutado'] + $value['mayo_ejecutado'];
+                            $value_sumar['junio_ejecutado'] = $value_sumar['junio_ejecutado'] + $value['junio_ejecutado'];
+                            $value_sumar['julio_ejecutado'] = $value_sumar['julio_ejecutado'] + $value['julio_ejecutado'];
+                            $value_sumar['agosto_ejecutado'] = $value_sumar['agosto_ejecutado'] + $value['agosto_ejecutado'];
+                            $value_sumar['setiembre_ejecutado'] = $value_sumar['setiembre_ejecutado'] + $value['setiembre_ejecutado'];
+                            $value_sumar['octubre_ejecutado'] = $value_sumar['octubre_ejecutado'] + $value['octubre_ejecutado'];
+                            $value_sumar['noviembre_ejecutado'] = $value_sumar['noviembre_ejecutado'] + $value['noviembre_ejecutado'];
+                            $value_sumar['diciembre_ejecutado'] = $value_sumar['diciembre_ejecutado'] + $value['diciembre_ejecutado'];
+                        }
+                    }
+                }
+
+            }
+            $tamano_array = $tamano_array - 1;
+
+        } while ($tamano_array != 1);
+        return Excel::download(new SaldosMensualesPresupuestoInternoExport($modelo_partidas, json_encode($presupuesto)), '' . $presupuesto->codigo . '-MENSUAL-' . date('Y-m-d') . '.xlsx');
+        // return response()->json($modelo_partidas,200);
+    }
+
+    public function ejecutadoMes($id_presupuesto_interno_detalle, $ejecutado = 0, $numero_mes, $partida = ''){
+
+        $monto_ejecutado = 0;
+
+        $ejecutados = HistorialPresupuestoInternoSaldo::where('id_partida',$id_presupuesto_interno_detalle)
+        ->where('tipo','SALIDA')
+        ->where('estado',3)
+        ->where('mes',$numero_mes)
+        ->where('documento_anulado','f')
+        ->get();
+
+        // if("03.01.03.01" == $partida){
+        //     return $ejecutados;
+        // }
+
+        if(sizeof($ejecutados)>0){
+
+            foreach ($ejecutados as $key_ejecutado => $value_ejecutado) {
+                $monto_ejecutado = $monto_ejecutado + (float) $value_ejecutado->importe;
+            }
+            $ejecutado = $ejecutado + $monto_ejecutado;
+        }
+        return $ejecutado;
+    }
+
 }

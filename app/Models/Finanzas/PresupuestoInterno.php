@@ -735,4 +735,58 @@ class PresupuestoInterno extends Model
         }
         // return $partidas;
     }
+
+
+    public static function calcularTotalPresupuestoMeses($id_presupuesto_interno, $id_tipo_presupuesto, $tipoCampo = 1)
+    {
+        $presupuesto_interno_destalle=array();
+        switch ($id_tipo_presupuesto) {
+            case 1:
+                $presupuesto_interno_destalle= PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',1)->where('estado', 1)->orderBy('partida')->get();
+            break;
+
+            case 2:
+                $presupuesto_interno_destalle= PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',2)->where('estado', 1)->orderBy('partida')->get();
+            break;
+            case 3:
+                $presupuesto_interno_destalle= PresupuestoInternoDetalle::where('id_presupuesto_interno',$id_presupuesto_interno)->where('id_tipo_presupuesto',3)->where('estado', 1)->orderBy('partida')->get();
+            break;
+        }
+        $array_nivel_partida = array();
+        foreach ($presupuesto_interno_destalle as $key => $value) {
+            $total=0;
+
+            $enero      = ($tipoCampo == 1 ? $value->float_enero : floatval(str_replace(",", "", $value->enero_aux)));
+            $febrero    = ($tipoCampo == 1 ? $value->float_febrero : floatval(str_replace(",", "", $value->febrero_aux)));
+            $marzo      = ($tipoCampo == 1 ? $value->float_marzo : floatval(str_replace(",", "", $value->marzo_aux)));
+            $abril      = ($tipoCampo == 1 ? $value->float_abril : floatval(str_replace(",", "", $value->abril_aux)));
+            $mayo       = ($tipoCampo == 1 ? $value->float_mayo : floatval(str_replace(",", "", $value->mayo_aux)));
+            $junio      = ($tipoCampo == 1 ? $value->float_junio : floatval(str_replace(",", "", $value->junio_aux)));
+            $julio      = ($tipoCampo == 1 ? $value->float_julio : floatval(str_replace(",", "", $value->julio_aux)));
+            $agosto     = ($tipoCampo == 1 ? $value->float_agosto : floatval(str_replace(",", "", $value->agosto_aux)));
+            $setiembre  = ($tipoCampo == 1 ? $value->float_setiembre : floatval(str_replace(",", "", $value->setiembre_aux)));
+            $octubre    = ($tipoCampo == 1 ? $value->float_octubre : floatval(str_replace(",", "", $value->octubre_aux)));
+            $noviembre  = ($tipoCampo == 1 ? $value->float_noviembre : floatval(str_replace(",", "", $value->noviembre_aux)));
+            $diciembre  = ($tipoCampo == 1 ? $value->float_diciembre : floatval(str_replace(",", "", $value->diciembre_aux)));
+            $total      = $enero + $febrero + $marzo + $abril + $mayo + $junio + $julio + $agosto + $setiembre + $octubre + $noviembre + $diciembre;
+            array_push($array_nivel_partida,array(
+                "partida"       =>$value->partida,
+                "descripcion"   =>$value->descripcion,
+                "enero"         =>round($enero, 2),
+                "febrero"       =>round($febrero, 2),
+                "marzo"         =>round($marzo, 2),
+                "abril"         =>round($abril, 2),
+                "mayo"          =>round($mayo, 2),
+                "junio"         =>round($junio, 2),
+                "julio"         =>round($julio, 2),
+                "agosto"        =>round($agosto, 2),
+                "setiembre"     =>round($setiembre, 2),
+                "octubre"       =>round($octubre, 2),
+                "noviembre"     =>round($noviembre, 2),
+                "diciembre"     =>round($diciembre, 2),
+            ));
+        }
+
+        return $array_nivel_partida;
+    }
 }

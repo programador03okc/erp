@@ -135,7 +135,8 @@ function lista() {
 
                         html +='<a href="#" data-action="exportar-ejecutado" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat botonList " title="Exportar Ejecutados" data-original-title="Exportar Ejecutados"><i class="fa fa-file"></i></a>';
 
-                        html +='<a href="#" data-action="saldos-mensual" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat btn-sm" title="Saldos mensuales" data-original-title="Ver los saldos del mes"><i class="fa fa-balance-scale"></i></a>';
+                        html +='<a href="#" data-action="saldos-mensual" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat btn-sm" title="Saldos mensuales" data-original-title="Ver los saldos del mes"><i class="fa fa-balance-scale"></i></a>'
+                        html +='<a href="#" data-action="movimeintos-mensual" data-id="'+row['id_presupuesto_interno']+'" class="btn btn-default text-black btn-flat btn-sm" title="Movimientos mensuales" data-original-title="Movimientos"><i class="fa fa-book"></i></a>';
                     html+='';
                     return html;
                 },
@@ -489,4 +490,27 @@ $(document).on('click','[data-action="saldos-mensual"]',function (e) {
     // console.log(id);
     window.open(route("finanzas.presupuesto.presupuesto-interno.saldos-mensual",{id:id}), '_blank');
 
+});
+
+$(document).on('click','[data-action="movimeintos-mensual"]',function (e) {
+    e.preventDefault();
+
+    let id = $(this).attr('data-id');
+    console.log(id);
+    window.open(route("finanzas.presupuesto.presupuesto-interno.saldo-movimiento-mensual",{id:id}));
+    // $.ajax({
+    //     type: 'GET',
+    //     url: route("finanzas.presupuesto.presupuesto-interno.saldo-movimiento-mensual",{id:id}),
+    //     // data: {id:id},
+    //     dataType: 'JSON',
+    //     beforeSend: (data) => {
+
+    //     }
+    // }).done(function(data) {
+    //     console.log(data);
+    // }).fail( function( jqXHR, textStatus, errorThrown ){
+    //     console.log(jqXHR);
+    //     console.log(textStatus);
+    //     console.log(errorThrown);
+    // });
 });

@@ -1303,7 +1303,7 @@ Route::middleware(['auth'])->group(function () {
 				Route::get('imprimirFichaReporte/{id}', [FichaReporteController::class, 'imprimirFichaReporte'])->name('imprimir-ficha-reporte');
 				Route::get('incidenciasExcel', [FichaReporteController::class, 'incidenciasExcel'])->name('incidenciasExcel');
 				Route::get('incidenciasExcelConHistorial', [FichaReporteController::class, 'incidenciasExcelConHistorial'])->name('incidenciasExcelConHistorial');
-				
+
 				Route::get('listarDevoluciones', [DevolucionController::class, 'listarDevoluciones'])->name('listar-devoluciones');
 				Route::post('generar-filtros-devoluciones', [DevolucionController::class, 'generarFiltrosDevoluciones'])->name('generar-filtros-devoluciones');
 				Route::post('guardarFichaTecnica', [DevolucionController::class, 'guardarFichaTecnica'])->name('guardar-ficha-tecnica');
@@ -1433,6 +1433,8 @@ Route::middleware(['auth'])->group(function () {
 
                 Route::get('reporte-anual/{year}', [PresupuestoInternoController::class, 'reporteAnual'])->name('reporte-anual');
                 Route::get('saldos-mensual/{id}', [PresupuestoInternoController::class, 'saldosMensual'])->name('saldos-mensual');
+
+                Route::get('saldo-movimiento-mensual/{id}', [PresupuestoInternoController::class, 'saldoMovimientoMensual'])->name('saldo-movimiento-mensual');
 			});
 
 			Route::group(['as' => 'normalizar.', 'prefix' => 'normalizar'], function () {
@@ -1607,8 +1609,8 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel/{filtro?}', [OrdenController::class, 'exportListaOrdenesNivelCabeceraExcel'])->name('exportar-lista-ordenes-elaboradas-nivel-cabecera-excel');
 						Route::get('exportar-lista-ordenes-elaboradas-nivel-detalle-excel', [OrdenController::class, 'exportListaOrdenesNivelDetalleExcel'])->name('facturas');
 						Route::post('guardar-liberar-orden', [OrdenController::class, 'guardarLiberarOrden'])->name('guardar-liberar-orden');
-						
-						
+
+
 
 						// nivel
 						Route::post('lista-items-ordenes-elaboradas', [OrdenController::class, 'listaItemsOrdenesElaboradas'])->name('lista-items-ordenes-elaboradas');

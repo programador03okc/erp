@@ -67,6 +67,18 @@ return [
             'prefix'     => '',
             'strict'     => false,
         ],
+        'soft2'  => [
+            'driver'     => 'mysql',
+            'host'       => env('SOFT2_HOST', '127.0.0.1'),
+            'port'       => env('SOFT2_PORT', '3306'),
+            'database'   => env('SOFT2_DATABASE', 'ok2024'),
+            'username'   => env('SOFT2_USERNAME', 'root'),
+            'password'   => env('SOFT2_PASSWORD', 'root'),
+            'charset'    => 'latin1',
+            'collation'  => 'latin1_swedish_ci',
+            'prefix'     => '',
+            'strict'     => false,
+        ],
         'softtest'  => [
             'driver'     => 'mysql',
             'host'       => env('SOFTTEST_HOST', '127.0.0.1'),

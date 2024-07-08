@@ -23,6 +23,7 @@ use App\Models\Configuracion\LogActividad;
 use App\Models\Logistica\ProgramacionDespacho;
 use App\Models\mgcp\Oportunidad\Oportunidad;
 use App\Models\Tesoreria\TipoCambio;
+use App\Models\mgcp\CuadroCosto\CcAmFila;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -1316,6 +1317,7 @@ class TransformacionController extends Controller
                 $codigo = $transformacion->codigo;
                 $logo_empresa = ".$transformacion->logo_empresa";
 
+                // ----------------------------------
                 $vista = View::make(
                     'almacen/customizacion/hoja-transformacion',
                     compact('oportunidad', 'detalleRequerimiento', 'logo_empresa', 'codigo')

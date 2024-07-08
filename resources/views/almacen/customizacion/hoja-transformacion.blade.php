@@ -101,18 +101,17 @@ use App\Models\mgcp\CuadroCosto\CuadroCosto;
 
 $cuadroCosto = $oportunidad->cuadroCosto;
 $filasCuadro = CcAmFila::join('almacen.alm_det_req', function ($join) {
-                $join->on('alm_det_req.id_cc_am_filas', '=', 'cc_am_filas.id');
-                $join->where('alm_det_req.tiene_transformacion', '=', false);
-            })
-->join('almacen.alm_prod','alm_prod.id_producto','=','alm_det_req.id_producto')
-->join('almacen.alm_subcat','alm_subcat.id_subcategoria','=','alm_prod.id_subcategoria')
-->select('cc_am_filas.*','alm_prod.codigo as codigo_agile','alm_prod.cod_softlink',
-'alm_prod.part_number','alm_prod.descripcion as producto_descripcion_agile',
-'alm_subcat.descripcion as marca_agile')
-->where('cc_am_filas.id_cc_am', $cuadroCosto->id)
-->orderBy('cc_am_filas.id', 'asc')->distinct()->get();
+    $join->on('alm_det_req.id_cc_am_filas', '=', 'cc_am_filas.id');
+    $join->where('alm_det_req.tiene_transformacion', '=', false);
+})
+    ->leftJoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+    ->leftJoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
+    ->select('cc_am_filas.*', 'alm_prod.codigo as codigo_agile', 'alm_prod.cod_softlink', 'alm_prod.part_number', 'alm_prod.descripcion as producto_descripcion_agile', 'alm_subcat.descripcion as marca_agile')
+    ->where('cc_am_filas.id_cc_am', $cuadroCosto->id)
+    ->orderBy('cc_am_filas.id', 'asc')
+    ->distinct()
+    ->get();
 
- 
 $ordenCompra = $oportunidad->ordenCompraPropia;
 
 ?>
@@ -121,18 +120,20 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
     <table width="100%" style="margin-bottom: 0px">
         <tr>
             <td>
-                <img src="{{ $logo_empresa??'' }}" height="50px">
+                <img src="{{ $logo_empresa ?? '' }}" height="50px">
             </td>
         </tr>
     </table>
-    <h4 style="text-align: center;
+    <h4
+        style="text-align: center;
         background-color: #acf2bf;
         padding-top: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid black;
         border-top: 1px solid black;
-        font-size: 22px;margin:0px; padding:0px;">{{is_null($codigo) ? 'Orden de Servicio' : 'Orden de Transformación'}}</h4>
-    <h4 class="text-center" style="margin:0px; padding:0px;">{{is_null($codigo) ? '' : $codigo}}</h4>
+        font-size: 22px;margin:0px; padding:0px;">
+        {{ is_null($codigo) ? 'Orden de Servicio' : 'Orden de Transformación' }}</h4>
+    <h4 class="text-center" style="margin:0px; padding:0px;">{{ is_null($codigo) ? '' : $codigo }}</h4>
 
     <div class="seccion-hoja">
         <h4 style="font-size: 14px;">Detalles del cuadro</h4>
@@ -141,21 +142,22 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
         <thead>
             <tr>
                 <th style="width: 15%" class="text-right">Código CDP:</th>
-                <td style="width: 35%">{{$oportunidad->codigo_oportunidad}}</td>
+                <td style="width: 35%">{{ $oportunidad->codigo_oportunidad }}</td>
                 <th style="width: 15%" class="text-right">Empresa:</th>
-                <td style="width: 35%">{{is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->empresa->empresa}}</td>
+                <td style="width: 35%">{{ is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->empresa->empresa }}</td>
             </tr>
             <tr>
                 <th style="width: 15%" class="text-right">Cliente:</th>
-                <td style="width: 35%">{{is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->entidad->nombre}}</td>
+                <td style="width: 35%">{{ is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->entidad->nombre }}</td>
                 <th style="width: 15%" class="text-right">Lugar entrega:</th>
-                <td style="width: 35%">{{is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->lugar_entrega}}</td>
+                <td style="width: 35%">{{ is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->lugar_entrega }}</td>
             </tr>
             <tr>
                 <th style="width: 15%" class="text-right">O/C:</th>
-                <td style="width: 35%">{{is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->nro_orden}}</td>
+                <td style="width: 35%">{{ is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->nro_orden }}</td>
                 <th style="width: 15%" class="text-right">Fecha límite:</th>
-                <td style="width: 35%">{{is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->fecha_entrega_format}}</td>
+                <td style="width: 35%">{{ is_null($ordenCompra) ? '(Sin O/C)' : $ordenCompra->fecha_entrega_format }}
+                </td>
             </tr>
         </thead>
     </table>
@@ -163,136 +165,143 @@ $ordenCompra = $oportunidad->ordenCompraPropia;
         <h4 style="font-size: 14px;">Lista de productos</h4>
     </div>
     @php
-    $contador=1;
+        $contador = 1;
     @endphp
 
     @foreach ($filasCuadro as $fila)
-    @if ($fila->es_ingreso_transformacion)
-    @continue
-    @endif
-    <div class="producto-transformar">Producto {{ $contador++ }} ({{$fila->tieneTransformacion() ? 'con' : 'sin'}} transformación):</div>
-    <div class="seccion-producto">- Producto base</div>
-    <table class="bordered">
-        <thead>
-            <tr>
-                <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
-                <th class="text-center cabecera-producto" style="width: 8%">Cod. Agile</th>
-                <th class="text-center cabecera-producto" style="width: 8%">Cod. SoftLink</th>
-                <th class="text-center cabecera-producto" style="width: 15%">Nro. parte</th>
-                <th class="text-center cabecera-producto" style="width: 15%">Marca</th>
-                <th class="text-center cabecera-producto">Descripción del producto</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center">{{$fila->cantidad}}</td>
-                <td class="text-center">{{$fila->codigo_agile}}</td>
-                <td class="text-center">{{$fila->cod_softlink}}</td>
-                <td class="text-center">{{$fila->part_number}}</td>
-                <td class="text-center">{{$fila->marca_agile}}</td>
-                <td>{{$fila->producto_descripcion_agile}}</td>
-            </tr>
-        </tbody>
-    </table>
-    @if ($fila->tieneTransformacion())
-    <div class="seccion-producto">- Producto transformado</div>
-    <table class="bordered">
-        <thead>
-            <tr>
-                <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
-                <th class="text-center cabecera-producto" style="width: 15%">Nro. parte</th>
-                <th class="text-center cabecera-producto" style="width: 15%">Marca</th>
-                <th class="text-center cabecera-producto">Descripción del producto</th>
-                <th class="text-center cabecera-producto" style="width: 20%">Comentario</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center">{{$fila->cantidad}}</td>
-                <td class="text-center">{{$fila->part_no_producto_transformado}}</td>
-                <td class="text-center">{{$fila->marca_producto_transformado}}</td>
-                <td>{{$fila->descripcion_producto_transformado}}</td>
-                <td>{{$fila->comentario_producto_transformado}}</td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="5">
-                    Etiquetado: <span class="{{$fila->etiquetado_producto_transformado ? 'verde' : 'rojo'}}">{{$fila->etiquetado_producto_transformado ? 'Sí' : 'No'}}</span>,
-                    BIOS: <span class="{{$fila->bios_producto_transformado ? 'verde' : 'rojo'}}">{{$fila->bios_producto_transformado ? 'Sí' : 'No'}}</span>,
-                    Office preinstalado: <span class="{{$fila->office_preinstalado_producto_transformado ? 'verde' : 'rojo'}}">{{$fila->office_preinstalado_producto_transformado ? 'Sí' : 'No'}}</span>,
-                    Office activado: <span class="{{$fila->office_activado_producto_transformado ? 'verde' : 'rojo'}}">{{$fila->office_activado_producto_transformado ? 'Sí' : 'No'}}</span>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
-    <div class="seccion-producto">- Ingresos y salidas</div>
-    <table class="bordered" style="margin-bottom: 15px">
-        <thead>
-            <tr>
-                <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
-                <th class="text-center cabecera-producto" style="width: 12%">Cod. Agile</th>
-                <th class="text-center cabecera-producto" style="width: 12%">Cod. SoftLink</th>
-                <th class="text-center cabecera-producto" style="width: 33%">Ingresa</th>
-                <th class="text-center cabecera-producto" style="width: 33%">Sale</th>
-                <th class="text-center cabecera-producto" style="width: 34%">Comentario</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $movimientos = CcFilaMovimientoTransformacion::
-            leftjoin('almacen.alm_det_req','alm_det_req.id_cc_am_filas','=','cc_fila_movimientos_transformacion.id_fila_ingresa')
-            ->leftJoin('mgcp_cuadro_costos.cc_am_filas','cc_am_filas.id','=','alm_det_req.id_cc_am_filas')
-            ->leftJoin('almacen.alm_prod','alm_prod.id_producto','=','alm_det_req.id_producto')
-            ->leftJoin('mgcp_cuadro_costos.cc_am_filas as fila_sale','fila_sale.id','=','cc_fila_movimientos_transformacion.id_fila_sale')
-            ->select('cc_fila_movimientos_transformacion.*','alm_prod.codigo as codigo_agile','alm_prod.cod_softlink',
-            'alm_prod.part_number','alm_prod.descripcion as producto_descripcion_agile','cc_am_filas.cantidad','fila_sale.descripcion')
-            ->where('cc_fila_movimientos_transformacion.id_fila_base', $fila->id)
-            ->orderBy('cc_fila_movimientos_transformacion.id', 'asc')->get();
-            ?>
-            @if ($movimientos->count()==0)
-            <tr>
-                <td class="text-center" colspan="5">Sin datos de ingresos y salidas</td>
-            </tr>
-            @endif
-            @foreach ($movimientos as $movimiento)
-            <tr>
-                <td class="text-center">{{$movimiento->cantidad}}</td>
-                <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->codigo_agile!==null?$movimiento->codigo_agile:'') : ''}}</td>
-                <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->cod_softlink!==null?$movimiento->cod_softlink:'') : ''}}</td>
-                <td>{{$movimiento->id_fila_ingresa!==null ? ($movimiento->producto_descripcion_agile!==null?$movimiento->producto_descripcion_agile:'') : ''}}</td>
-                <td>{{($movimiento->sale) ? $movimiento->sale : $movimiento->descripcion}}</td>
-                <td>{{$movimiento->comentario}}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @endif
-    @if ($fila->tieneComentarios())
-    <div class="seccion-producto">- Comentarios</div>
-    <table class="bordered">
-        <thead>
-            <tr>
-                <th class="text-center cabecera-producto" style="width: 25%">Usuario</th>
-                <th class="text-center cabecera-producto" style="width: 15%">Fecha</th>
-                <th class="text-center cabecera-producto" style="width: 60%">Comentario</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-            $comentarios=$fila->comentarios;
-            @endphp
-            @foreach ($comentarios as $comentario)
-            <tr>
-                <td>{{$comentario->usuario->name??''}}</td>
-                <td class="text-center">{{$comentario->fecha??''}}</td>
-                <td>{{$comentario->comentario??''}}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @endif
-    <br>
+        @if ($fila->es_ingreso_transformacion)
+            @continue
+        @endif
+        <div class="producto-transformar">Producto {{ $contador++ }}
+            ({{ $fila->tieneTransformacion() ? 'con' : 'sin' }} transformación):</div>
+        <div class="seccion-producto">- Producto base</div>
+        <table class="bordered">
+            <thead>
+                <tr>
+                    <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
+                    <th class="text-center cabecera-producto" style="width: 8%">Cod. Agile</th>
+                    <th class="text-center cabecera-producto" style="width: 8%">Cod. SoftLink</th>
+                    <th class="text-center cabecera-producto" style="width: 15%">Nro. parte</th>
+                    <th class="text-center cabecera-producto" style="width: 15%">Marca</th>
+                    <th class="text-center cabecera-producto">Descripción del producto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">{{ $fila->cantidad }}</td>
+                    <td class="text-center">{{ $fila->codigo_agile }}</td>
+                    <td class="text-center">{{ $fila->cod_softlink }}</td>
+                    <td class="text-center">{{ $fila->part_number }}</td>
+                    <td class="text-center">{{ $fila->marca_agile }}</td>
+                    <td>{{ $fila->producto_descripcion_agile }}</td>
+                </tr>
+            </tbody>
+        </table>
+        @if ($fila->tieneTransformacion())
+            <div class="seccion-producto">- Producto transformado</div>
+            <table class="bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
+                        <th class="text-center cabecera-producto" style="width: 15%">Nro. parte</th>
+                        <th class="text-center cabecera-producto" style="width: 15%">Marca</th>
+                        <th class="text-center cabecera-producto">Descripción del producto</th>
+                        <th class="text-center cabecera-producto" style="width: 20%">Comentario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">{{ $fila->cantidad }}</td>
+                        <td class="text-center">{{ $fila->part_no_producto_transformado }}</td>
+                        <td class="text-center">{{ $fila->marca_producto_transformado }}</td>
+                        <td>{{ $fila->descripcion_producto_transformado }}</td>
+                        <td>{{ $fila->comentario_producto_transformado }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            Etiquetado: <span
+                                class="{{ $fila->etiquetado_producto_transformado ? 'verde' : 'rojo' }}">{{ $fila->etiquetado_producto_transformado ? 'Sí' : 'No' }}</span>,
+                            BIOS: <span
+                                class="{{ $fila->bios_producto_transformado ? 'verde' : 'rojo' }}">{{ $fila->bios_producto_transformado ? 'Sí' : 'No' }}</span>,
+                            Office preinstalado: <span
+                                class="{{ $fila->office_preinstalado_producto_transformado ? 'verde' : 'rojo' }}">{{ $fila->office_preinstalado_producto_transformado ? 'Sí' : 'No' }}</span>,
+                            Office activado: <span
+                                class="{{ $fila->office_activado_producto_transformado ? 'verde' : 'rojo' }}">{{ $fila->office_activado_producto_transformado ? 'Sí' : 'No' }}</span>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="seccion-producto">- Ingresos y salidas</div>
+            <table class="bordered" style="margin-bottom: 15px">
+                <thead>
+                    <tr>
+                        <th class="text-center cabecera-producto" style="width: 7%">Cant.</th>
+                        <th class="text-center cabecera-producto" style="width: 12%">Cod. Agile</th>
+                        <th class="text-center cabecera-producto" style="width: 12%">Cod. SoftLink</th>
+                        <th class="text-center cabecera-producto" style="width: 33%">Ingresa</th>
+                        <th class="text-center cabecera-producto" style="width: 33%">Sale</th>
+                        <th class="text-center cabecera-producto" style="width: 34%">Comentario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $movimientos = CcFilaMovimientoTransformacion::leftjoin('almacen.alm_det_req', 'alm_det_req.id_cc_am_filas', '=', 'cc_fila_movimientos_transformacion.id_fila_ingresa')
+                        ->leftJoin('mgcp_cuadro_costos.cc_am_filas', 'cc_am_filas.id', '=', 'alm_det_req.id_cc_am_filas')
+                        ->leftJoin('almacen.alm_prod', 'alm_prod.id_producto', '=', 'alm_det_req.id_producto')
+                        ->leftJoin('mgcp_cuadro_costos.cc_am_filas as fila_sale', 'fila_sale.id', '=', 'cc_fila_movimientos_transformacion.id_fila_sale')
+                        ->select('cc_fila_movimientos_transformacion.*', 'alm_prod.codigo as codigo_agile', 'alm_prod.cod_softlink', 'alm_prod.part_number', 'alm_prod.descripcion as producto_descripcion_agile', 'cc_am_filas.cantidad', 'fila_sale.descripcion')
+                        ->where('cc_fila_movimientos_transformacion.id_fila_base', $fila->id)
+                        ->orderBy('cc_fila_movimientos_transformacion.id', 'asc')
+                        ->get();
+                    ?>
+                    @if ($movimientos->count() == 0)
+                        <tr>
+                            <td class="text-center" colspan="5">Sin datos de ingresos y salidas</td>
+                        </tr>
+                    @endif
+                    @foreach ($movimientos as $movimiento)
+                        <tr>
+                            <td class="text-center">{{ $movimiento->cantidad }}</td>
+                            <td>{{ $movimiento->id_fila_ingresa !== null ? ($movimiento->codigo_agile !== null ? $movimiento->codigo_agile : '') : '' }}
+                            </td>
+                            <td>{{ $movimiento->id_fila_ingresa !== null ? ($movimiento->cod_softlink !== null ? $movimiento->cod_softlink : '') : '' }}
+                            </td>
+                            <td>{{ $movimiento->id_fila_ingresa !== null ? ($movimiento->producto_descripcion_agile !== null ? $movimiento->producto_descripcion_agile : '') : '' }}
+                            </td>
+                            <td>{{ $movimiento->sale ? $movimiento->sale : $movimiento->descripcion }}</td>
+                            <td>{{ $movimiento->comentario }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+        @if ($fila->tieneComentarios())
+            <div class="seccion-producto">- Comentarios</div>
+            <table class="bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center cabecera-producto" style="width: 25%">Usuario</th>
+                        <th class="text-center cabecera-producto" style="width: 15%">Fecha</th>
+                        <th class="text-center cabecera-producto" style="width: 60%">Comentario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $comentarios = $fila->comentarios;
+                    @endphp
+                    @foreach ($comentarios as $comentario)
+                        <tr>
+                            <td>{{ $comentario->usuario->name ?? '' }}</td>
+                            <td class="text-center">{{ $comentario->fecha ?? '' }}</td>
+                            <td>{{ $comentario->comentario ?? '' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+        <br>
     @endforeach
 
 </body>

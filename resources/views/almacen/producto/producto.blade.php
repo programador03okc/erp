@@ -125,35 +125,28 @@
                                                 </li>
                                             </ol>
                                         </div>
-                                        <!-- <div class="col-md-4">
-                                            <h5>Clasificación</h5>
-                                            <select class="form-control activation js-example-basic-single" name="id_clasif" disabled="true">
-                                                <option value="0">Elija una opción</option>
-                                                {{-- 
-                                                @foreach ($clasificaciones as $clasif)
-                                                <option value="{{$clasif->id_clasificacion}}">{{$clasif->descripcion}}</option>
-                                                @endforeach 
-                                                --}}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h5>Categoría</h5>
-                                            <select class="form-control activation js-example-basic-single" name="id_tipo_producto" disabled="true">
-                                                <option value="0">Elija una opción</option>
-                                                {{-- @foreach ($tipos as $tp)
-                                                <option value="{{$tp->id_tipo_producto}}">{{$tp->descripcion}}</option>
-                                                @endforeach --}}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h5>SubCategoría</h5>
-                                            <select class="form-control activation js-example-basic-single" name="id_categoria" disabled="true">
-                                                <option value="0">Elija una opción</option>
-                                                {{-- @foreach ($categorias as $cat)
-                                                <option value="{{$cat->id_categoria}}">{{$cat->descripcion}}</option>
-                                                @endforeach --}}
-                                            </select>
-                                        </div> -->
+                                        {{-- <div class="col-md-12">
+                                            <ol id="descripcion_sap" class="breadcrumb" style="padding-left: 20px;padding-right: 10px;margin-bottom:0px;margin-top: 15px;">
+                                                <li>SAP:
+                                                    <label class="codigo_sap"></label>
+                                                </li>
+                                                <li>
+                                                    <label class="clasificacion_sap"></label>
+                                                </li>
+                                                <li>
+                                                    <label class="grupo_Sap"></label>
+                                                </li>
+                                                <li>
+                                                    <label class="categoria_Sap"></label>
+                                                </li>
+                                                <li>
+                                                    <label class="sub_categoria_sap"></label>
+                                                </li>
+                                                <li>
+                                                    <span class="label estado_sap"></span>
+                                                </li>
+                                            </ol>
+                                        </div> --}}
                                         <div class="col-md-4">
                                             <h5>Grupo</h5>
                                             <select class="form-control activation js-example-basic-single" name="id_grupo_sap" disabled="true">
@@ -369,17 +362,17 @@
     <script src="{{ asset('template/adminlte2-4/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('template/adminlte2-4/plugins/bootstrap_filestyle/bootstrap-filestyle.min.js') }}"></script>
 
-    
+
     <!-- <script src="{{ asset('js/almacen/producto/producto.js')}}?v={{filemtime(public_path('js/almacen/producto/producto.js'))}}"></script> --> <!-- * antigua clasificacion -->
     <script src="{{ asset('js/almacen/producto/producto_sap.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_sap.js'))}}"></script><!-- * lasificacion sap -->
-    
+
     <script src="{{ asset('js/almacen/producto/productoModal.js')}}?v={{filemtime(public_path('js/almacen/producto/productoModal.js'))}}"></script>
     <script src="{{ asset('js/almacen/producto/producto_ubicacion.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_ubicacion.js'))}}"></script>
     <!-- <script src="{{ asset('js/almacen/producto/subcategoriaModal.js')}}"></script> -->
     <script src="{{ asset('js/almacen/producto/producto_serie.js')}}?v={{filemtime(public_path('js/almacen/producto/producto_serie.js'))}}"></script>
     <script>
         $(document).ready(function() {
-            
+
             $("#imagen").filestyle();
         });
     </script>

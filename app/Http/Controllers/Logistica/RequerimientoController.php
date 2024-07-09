@@ -2464,20 +2464,23 @@ class RequerimientoController extends Controller
                 $logistico = (sizeof($detalle)>0?'<span class="labelEstado label label-success">Logística: con orden</span>':'') ;
 
 
-                $detalle = DetalleRequerimiento::where('alm_det_req.id_requerimiento',$requerimientos->id_requerimiento)->where('estado','!=',7)->get();
+                $detalle = DetalleRequerimiento::where('id_requerimiento',$requerimientos->id_requerimiento)->where('estado','!=',7)->get();
                 // RP-240601
-                $pago = null;
+                $pago = '';
                 if(sizeof($detalle)>0){
                     foreach($detalle as $key=>$value){
                         $orden_detalle = OrdenCompraDetalle::where('id_detalle_requerimiento',$value->id_detalle_requerimiento)->first();
-                        $orden = Orden::where('id_orden_compra',$orden_detalle->id_orden_compra)->first();
+                        if($orden_detalle){
 
-                        $contador_estado = 0;
-                        if(in_array($orden->estado_pago,[5, 6, 8, 9])){
-                            $contador_estado++;
-                        }
-                        if($contador_estado>0){
-                            $pago = '<span class="labelEstado label label-success">Logística: enviado a pago</span>';
+                            $orden = Orden::find($orden_detalle->id_orden_compra);
+
+                            $contador_estado = 0;
+                            if(in_array($orden->estado_pago,[5, 6, 8, 9])){
+                                $contador_estado++;
+                            }
+                            if($contador_estado>0){
+                                $pago = '<span class="labelEstado label label-success">Logística: enviado a pago</span>';
+                            }
                         }
 
                     }
@@ -2487,8 +2490,8 @@ class RequerimientoController extends Controller
                 return $jefatura . '<br>' . $logistico . '<br>' . $pago ;
             })
             ->addColumn('etapas_numero', function ($requerimientos) {
+                $pago = [];
 
-                $pago = null;
                 return $pago;
             })
             // ->filterColumn('monto_total', function ($query, $keyword) {

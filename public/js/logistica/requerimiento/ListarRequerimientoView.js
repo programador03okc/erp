@@ -38,7 +38,7 @@ class ListarRequerimientoView {
                     element.removeChild(element.lastChild);
                 }
             }
-            
+
         });
     }
 
@@ -413,7 +413,7 @@ class ListarRequerimientoView {
                             }else if(element.estado_pago==10){
                                 textoTrazabilidad='Tesorería: Orden pagada con saldo';
                             }
-                            
+
                         });
                     }
                     switch (row['estado']) {
@@ -438,6 +438,7 @@ class ListarRequerimientoView {
 
                     }
                 } },
+                { 'data': 'etapas', 'name': 'etapas' }, /// estapas
                 { 'data': 'id_requerimiento',  'render': function (data, type, row) {
                     let containerOpenBrackets = '<div class="btn-group" role="group" style="margin-bottom: 5px;">';
                     let containerCloseBrackets = '</div>';
@@ -653,7 +654,7 @@ class ListarRequerimientoView {
                     document.querySelector("div[id='modal-requerimiento'] table[id='listaDetalleRequerimientoModal'] label[name='monto_igv']").textContent = $.number(montoIGV, 2);
                     document.querySelector("div[id='modal-requerimiento'] table[id='listaDetalleRequerimientoModal'] label[name='monto_total']").textContent = $.number(montoTotal, 2);
                 }
-                // 
+                //
 
                 $('#modal-requerimiento div.modal-body').LoadingOverlay("hide", true);
                 setTimeout(function () {
@@ -688,23 +689,23 @@ class ListarRequerimientoView {
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='tipo_cambio']").textContent = data.tipo_cambio??'';
         document.querySelector("div[id='modal-requerimiento'] table[id='tablaDatosGenerales'] td[id='simbolo_moneda']").textContent = data.simbolo_moneda;
         document.querySelector("div[id='modal-requerimiento'] span[name='simboloMoneda']").textContent = data.simbolo_moneda;
-        
+
         let allMesPpto=document.querySelectorAll("span[name='mes_ppto']");
         if(data.mes_afectacion!=null){
             allMesPpto.forEach(element => {
                 element.textContent = moment(data.mes_afectacion, 'MM').format('MMMM');
             });
-    
+
         }else{
             allMesPpto.forEach(element => {
                 if(data && data.fecha_registro !=null){
                     element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
                 }else{
                     element.textContent =  moment().format('MMMM');
-    
+
                 }
             });
-    
+
         }
 
 
@@ -795,7 +796,7 @@ class ListarRequerimientoView {
             }
         }
 
-        
+
 
     }
 
@@ -809,8 +810,8 @@ class ListarRequerimientoView {
         let simboloMonedaPresupuestoUtilizado = document.querySelector("td[id='simbolo_moneda']").textContent;;
         let actualTipoCambioCompra = document.querySelector("td[id='tipo_cambio']").textContent;
 
-        
-        
+
+
         for (let index = 0; index < tbodyChildren.length; index++) {
             if (tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida > 0) {
                 if (!partidaAgregadas.includes(tbodyChildren[index].querySelector("p[class='descripcion-partida']").dataset.idPartida)) {
@@ -834,7 +835,7 @@ class ListarRequerimientoView {
                 }
 
                 let subtotal = (tbodyChildren[index].querySelector("input[class~='cantidad']").value > 0 ? tbodyChildren[index].querySelector("input[class~='cantidad']").value : 0) * (tbodyChildren[index].querySelector("input[class~='precio']").value > 0 ? tbodyChildren[index].querySelector("input[class~='precio']").value : 0);
-                
+
                 if (document.querySelector("input[name='incluye_igv']") == true || document.querySelector("input[name='incluye_igv']").value == 'true') {
                     subtotal = (subtotal * 0.18) + subtotal;
                 }
@@ -881,7 +882,7 @@ class ListarRequerimientoView {
         data.forEach(element => {
 
         //     <td style="text-align:right; background-color: #fbdddd;">
-        //     <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 
+        //     <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)}
         //     <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" onClick="verRequerimientosVinculadosConPartida(${element.id_partida},'${element.codigo.trim()}','${element.descripcion.trim()}','${element.tipo_prespuesto}');"title="Ver Requerimientos vinculados con partida">
         //     <i class="fas fa-eye"></i>
         //     </button>
@@ -893,8 +894,8 @@ class ListarRequerimientoView {
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.presupuesto_mes, 2)}</td>
                 <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.total_saldo_mes_disponible, 2)}</td>
                 <td style="text-align:right; background-color: #fbdddd;">
-                    <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 
-                    <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" 
+                    <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)}
+                    <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados"
                     onClick="verRequerimientosVinculadosConPartida(${element.id_partida},'${element.codigo.trim()}','${element.descripcion.trim()}','${element.tipo_prespuesto}','${element.presupuesto_total}','${element.presupuesto_mes}');"title="Ver Requerimientos vinculados con partida">
                     <i class="fas fa-eye"></i>
                     </button>
@@ -995,12 +996,12 @@ class ListarRequerimientoView {
 
                 <td>
                     ${i + 1}
-                    <p class="descripcion-partida" 
+                    <p class="descripcion-partida"
                         data-tipo-presupuesto="${data[i].id_partida_pi>0?'INTERNO':'ANTIGUO'}"
-                        data-id-partida="${data[i].id_partida !=null ? data[i].id_partida : data[i].id_partida_pi}" 
-                        data-presupuesto-total="${data[i].presupuesto_interno_total_partida != null ?data[i].presupuesto_interno_total_partida: data[i].presupuesto_old_total_partida}" 
-                        data-presupuesto-mes="${data[i].presupuesto_interno_mes_partida}" 
-                        data-total-saldo-mes="${data[i].presupuesto_interno_saldo_mes_disponible_partida}" 
+                        data-id-partida="${data[i].id_partida !=null ? data[i].id_partida : data[i].id_partida_pi}"
+                        data-presupuesto-total="${data[i].presupuesto_interno_total_partida != null ?data[i].presupuesto_interno_total_partida: data[i].presupuesto_old_total_partida}"
+                        data-presupuesto-mes="${data[i].presupuesto_interno_mes_partida}"
+                        data-total-saldo-mes="${data[i].presupuesto_interno_saldo_mes_disponible_partida}"
                         data-total-por-consumido-con-igv-fase-aprobacion="${data[i].total_consumido_hasta_fase_aprobacion_con_igv}"
                         title="${data[i].id_partida !=null ? data[i].descripcion_partida.toUpperCase() :(data[i].id_partida_pi >0?data[i].descripcion_partida_presupuesto_interno.toUpperCase() : '') }";
                         style="display:none;"> ${data[i].id_partida >0 ?data[i].codigo_partida :(data[i].id_partida_pi >0?data[i].codigo_partida_presupuesto_interno : '')}

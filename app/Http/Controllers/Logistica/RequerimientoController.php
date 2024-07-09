@@ -326,7 +326,7 @@ class RequerimientoController extends Controller
                 'alm_tp_req.descripcion AS tipo_requerimiento',
                 'alm_req.codigo',
                 // 'oportunidades.codigo_oportunidad',
-                DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
+                DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr
                 JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_cc
                 JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
                 WHERE cr.id_requerimiento_logistico = alm_req.id_requerimiento) AS codigo_oportunidad"),
@@ -823,8 +823,8 @@ class RequerimientoController extends Controller
                         ELSE ''
                         END
                     FROM finanzas.presupuesto_interno_detalle
-                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
-                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno
+                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle
                     limit 1 ) AS presupuesto_interno_mes_partida"),
                     DB::raw("( SELECT
                     CASE WHEN (SELECT date_part('month', alm_req.fecha_registro)) =1 THEN presupuesto_interno_detalle.enero_aux
@@ -842,11 +842,11 @@ class RequerimientoController extends Controller
                         ELSE ''
                         END
                     FROM finanzas.presupuesto_interno_detalle
-                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
-                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                    WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno
+                    and alm_det_req.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle
                     limit 1 ) AS presupuesto_interno_saldo_mes_disponible_partida"),
 
-                    
+
                     DB::raw("( SELECT COALESCE(SUM(total),0) AS total
                     FROM (
                       SELECT (CASE WHEN r.monto_igv > 0 THEN 1.18 ELSE 1 END) * SUM(dr.cantidad * dr.precio_unitario) * (CASE WHEN r.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= r.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)  AS total
@@ -854,17 +854,17 @@ class RequerimientoController extends Controller
                       INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
                       WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle and (r.mes_afectacion= TO_CHAR(CURRENT_DATE, 'MM') or r.mes_afectacion isNull)
                       AND r.estado IN (1,2) AND dr.estado != 7
-                      GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro 
-                    ) AS t LIMIT 1) 
-                    + 
+                      GROUP BY r.monto_igv, r.id_moneda, r.fecha_registro
+                    ) AS t LIMIT 1)
+                    +
                     (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario * (CASE WHEN rp.id_moneda =2 THEN (select tc.venta from contabilidad.cont_tp_cambio tc WHERE tc.fecha <= rp.fecha_registro order by tc.fecha DESC limit 1 ) ELSE 1 END)),0)
                     FROM tesoreria.requerimiento_pago_detalle as drp
                     INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
                     WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7 and (rp.mes_afectacion= TO_CHAR(CURRENT_DATE, 'MM') or rp.mes_afectacion isNull)
                     limit 1)
-                    
+
                     AS total_consumido_hasta_fase_aprobacion_con_igv")
-                
+
                     // DB::raw("(SELECT dr.cantidad * dr.precio_unitario * 1.18 AS total
                     // FROM almacen.alm_det_req AS dr
                     // INNER JOIN almacen.alm_req AS r ON r.id_requerimiento = dr.id_requerimiento
@@ -878,15 +878,15 @@ class RequerimientoController extends Controller
                     // WHERE dr.id_partida_pi = presupuesto_interno_detalle.id_presupuesto_interno_detalle
                     // AND r.monto_igv = 0
                     // AND r.estado IN (1,2) AND dr.estado != 7
-                    // LIMIT 1) 
+                    // LIMIT 1)
                     // + (SELECT COALESCE(SUM(drp.cantidad * drp.precio_unitario ),0)
                     // FROM tesoreria.requerimiento_pago_detalle as drp
                     // INNER JOIN tesoreria.requerimiento_pago rp ON rp.id_requerimiento_pago = drp.id_requerimiento_pago
                     // WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
                     // limit 1)
                     // AS total_consumido_hasta_fase_aprobacion_con_igv")
-                    
-     
+
+
 
 
 
@@ -902,7 +902,7 @@ class RequerimientoController extends Controller
                     // WHERE  drp.id_partida_pi=presupuesto_interno_detalle.id_presupuesto_interno_detalle and rp.id_estado in (1,2) and drp.id_estado !=7
                     // limit 1)) AS total_consumido_hasta_fase_aprobacion_con_igv")
                 )
-              
+
                 ->where([
                     ['alm_det_req.estado', '!=', 7],
                     ['alm_det_req.id_requerimiento', '=', $requerimiento[0]['id_requerimiento']]
@@ -911,7 +911,7 @@ class RequerimientoController extends Controller
                 ->orderBy('alm_det_req.id_detalle_requerimiento', 'asc')
                 ->get();
 
-            
+
             $cdpRequerimiento = CdpRequerimiento::leftJoin('mgcp_cuadro_costos.cc_view', 'cc_view.id', '=', 'cdp_requerimiento.id_cc')
             ->select('cdp_requerimiento.*','cc_view.codigo_oportunidad','cc_view.nombre_entidad')
             ->where([['id_requerimiento_logistico',$requerimiento[0]['id_requerimiento']],['estado','!=',7]])->get();
@@ -1084,9 +1084,9 @@ class RequerimientoController extends Controller
         if($cc){
             $codigo_oportunidad=  $cc->codigo_oportunidad??null;
         }
-        
+
         return $codigo_oportunidad;
-         
+
     }
 
     public function getTipoCambioVenta($fecha)
@@ -1236,7 +1236,7 @@ class RequerimientoController extends Controller
 
             if ($tieneIdCdpVinculado == true) {
                 // recorrer input de cdp vinculados
-                
+
                 for ($c = 0; $c < $countIdCdpVinculado; $c++) {
                     $cdpRequerimiento = new CdpRequerimiento();
                     $cdpRequerimiento->id_cc = $request->id_cc_cpd_vinculado[$c];
@@ -1258,13 +1258,13 @@ class RequerimientoController extends Controller
                                 $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'.<br>';
                             }
                         }
-                        
-                        if($request->id_estado_envio[$c] ==16){    
+
+                        if($request->id_estado_envio[$c] ==16){
                             $seFijoElMontoFleteTransportista= (new DistribucionController)->guardarMontoFleteEnDespacho($cdpRequerimiento);
                             if($seFijoElMontoFleteTransportista){
                                 $mensajeEstadoTrazabilidad.='Se fijo el monto de transportista';
                             }
-    
+
                         }
 
                     }
@@ -1818,15 +1818,15 @@ class RequerimientoController extends Controller
                 if(isset($request->al_actualizar_crear_estados_trazabilidad) && $request->al_actualizar_crear_estados_trazabilidad=='SI' ){
                     if(isset($request->id_estado_envio[$c])){
                         if($request->id_estado_envio[$c] >0 && $request->id_estado_envio[$c] !=16){ // que sea mayor a cero y que no sea el estado monto flete transportista que no genera trazabilidad
-                          
+
                             $cantidadDeEstadosCreadosEnTrazabilidad= (new DistribucionController)->guardarEstadoEnvioFuenteRequerimiento($cdpRequerimiento);
-                           
+
                             if($cantidadDeEstadosCreadosEnTrazabilidad>0){
                                 $mensajeEstadoTrazabilidad.='Se creo '.$cantidadDeEstadosCreadosEnTrazabilidad.' estado(s) de trazabilidad en '.$cdpRequerimiento->codigo_oportunidad.'. ';
                             }
                         }
-                        
-                        if($request->id_estado_envio[$c] ==16){    
+
+                        if($request->id_estado_envio[$c] ==16){
                             $seFijoElMontoFleteTransportista= (new DistribucionController)->guardarMontoFleteEnDespacho($cdpRequerimiento);
                             if($seFijoElMontoFleteTransportista){
                                 $mensajeEstadoTrazabilidad.='Se fijo el monto de transportista';
@@ -2185,7 +2185,7 @@ class RequerimientoController extends Controller
                 'alm_req.id_presupuesto',
                 'alm_req.id_moneda',
                 'alm_req.*',
-                DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr 
+                DB::raw("(SELECT string_agg(DISTINCT op.codigo_oportunidad::text, ','::text) FROM almacen.cdp_requerimiento cr
                 JOIN mgcp_cuadro_costos.cc cdp ON cdp.id = cr.id_cc
                 JOIN mgcp_oportunidades.oportunidades op ON op.id = cdp.id_oportunidad
                 WHERE cr.id_requerimiento_logistico = alm_req.id_requerimiento) AS codigo_oportunidad"),
@@ -2452,7 +2452,45 @@ class RequerimientoController extends Controller
                 } catch (\Throwable $th) {
                 }
             })
+            ->addColumn('etapas', function ($requerimientos) {
+                $estados_jefatura = [1,3,7,12];
+                $jefatura = (in_array($requerimientos->estado,$estados_jefatura)?'':'<span class="labelEstado label label-success">Jefatura: aprobado</span>');
 
+                // logistico -----------------------
+                $detalle = DetalleRequerimiento::where('alm_det_req.id_requerimiento',$requerimientos->id_requerimiento)
+                ->join('logistica.log_det_ord_compra','log_det_ord_compra.id_detalle_requerimiento','=','alm_det_req.id_detalle_requerimiento')
+                ->get();
+
+                $logistico = (sizeof($detalle)>0?'<span class="labelEstado label label-success">Logística: con orden</span>':'') ;
+
+
+                $detalle = DetalleRequerimiento::where('alm_det_req.id_requerimiento',$requerimientos->id_requerimiento)->where('estado','!=',7)->get();
+                // RP-240601
+                $pago = null;
+                if(sizeof($detalle)>0){
+                    foreach($detalle as $key=>$value){
+                        $orden_detalle = OrdenCompraDetalle::where('id_detalle_requerimiento',$value->id_detalle_requerimiento)->first();
+                        $orden = Orden::where('id_orden_compra',$orden_detalle->id_orden_compra)->first();
+
+                        $contador_estado = 0;
+                        if(in_array($orden->estado_pago,[5, 6, 8, 9])){
+                            $contador_estado++;
+                        }
+                        if($contador_estado>0){
+                            $pago = '<span class="labelEstado label label-success">Logística: enviado a pago</span>';
+                        }
+
+                    }
+                }
+
+
+                return $jefatura . '<br>' . $logistico . '<br>' . $pago ;
+            })
+            ->addColumn('etapas_numero', function ($requerimientos) {
+
+                $pago = null;
+                return $pago;
+            })
             // ->filterColumn('monto_total', function ($query, $keyword) {
             //     $query->leftJoin('almacen.alm_det_req', 'alm_det_req.id_requerimiento', '=', 'alm_req.id_requerimiento');
             //     $query->whereRaw('SUM(almace.alm_det_req.cantidad * alm_det_req.precio_unitario) = '.$keyword);
@@ -2463,7 +2501,7 @@ class RequerimientoController extends Controller
             // WHERE   alm_det_req.id_requerimiento = alm_req.id_requerimiento AND
             // alm_det_req.estado != 7)");
             // })
-            ->rawColumns(['termometro'])->toJson();
+            ->rawColumns(['termometro','etapas'])->toJson();
     }
 
     function viewLista()
@@ -5098,7 +5136,7 @@ class RequerimientoController extends Controller
                     'alm_req.id_prioridad',
                     'alm_req.fecha_registro',
                     'alm_req.trabajador_id',
-                    DB::raw("(CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name 
+                    DB::raw("(CASE WHEN almacen.alm_req.id_tipo_requerimiento =1 THEN cc_view.name
                 ELSE UPPER(CONCAT(perso_solicitado_por.nombres,' ', perso_solicitado_por.apellido_paterno,' ', perso_solicitado_por.apellido_materno)) END) AS nombre_solicitado_por"),
                     'sis_usua.nombre_largo as nombre_usuario',
                     'alm_req.estado',
@@ -5147,8 +5185,8 @@ class RequerimientoController extends Controller
                     ELSE ''
                     END
                 FROM finanzas.presupuesto_interno_detalle
-                WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno 
-                and " . $request->id_partida . "=presupuesto_interno_detalle.id_presupuesto_interno_detalle 
+                WHERE presupuesto_interno_detalle.id_presupuesto_interno = alm_req.id_presupuesto_interno
+                and " . $request->id_partida . "=presupuesto_interno_detalle.id_presupuesto_interno_detalle
                 limit 1 ) AS presupuesto_interno_mes_partida ")
                 )
                 ->whereIn('alm_req.id_requerimiento', $idRequerimientoList)
@@ -5285,7 +5323,7 @@ class RequerimientoController extends Controller
     }
 
 
-    
+
     public function requerimientosVinculadosConPartida(Request $request)
     {
         $data=[];
@@ -5302,13 +5340,13 @@ class RequerimientoController extends Controller
             foreach ($detalleRequerimientoPago as $key => $value) {
                 $idRequerimientoPagoList[]=$value->id_requerimiento_pago;
             }
-            
+
 
             $data = RequerimientosElaboradosOAprobadosView::whereIn('id_requerimiento_logistico',$idRequerimientoLogisticoList)->orWhereIn('id_requerimiento_pago',$idRequerimientoPagoList);
         }
         return $data;
 
-    } 
+    }
 
     public function DataRequerimientosVinculadosConPartida($tipoPresupuesto, $idPartida){
         $content = new Request

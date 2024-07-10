@@ -2454,19 +2454,28 @@ class RequerimientoController extends Controller
             })
             ->addColumn('etapas', function ($requerimientos) {
                 $estados_jefatura = [1,3,7,12];
-                $jefatura = (in_array($requerimientos->estado,$estados_jefatura)?'':'<span class="labelEstado label label-success">Jefatura: aprobado</span>');
+
+                $pago = '<br><span class="labelEstado label label-default">Logística: enviado a pago</span>';
+
+                $estado_autorisado = '<br><span class="labelEstado label label-default">Tesorería: pago autorizado</span>';
+
+                $estado_pagado = '<br><span class="labelEstado label label-default">Tesorería: pagado / pagado con saldo</span>';
+
+                // $jefatura = (in_array($requerimientos->estado,$estados_jefatura)?'':'<span class="labelEstado label label-success">Jefatura: aprobado</span>');
+                $jefatura = '<span class="labelEstado label label-'.(in_array($requerimientos->estado,$estados_jefatura)?'default':'success').'">Jefatura: aprobado</span>';
 
                 // logistico -----------------------
                 $detalle = DetalleRequerimiento::where('alm_det_req.id_requerimiento',$requerimientos->id_requerimiento)
                 ->join('logistica.log_det_ord_compra','log_det_ord_compra.id_detalle_requerimiento','=','alm_det_req.id_detalle_requerimiento')
                 ->get();
 
-                $logistico = (sizeof($detalle)>0?'<span class="labelEstado label label-success">Logística: con orden</span>':'') ;
+                // $logistico = (sizeof($detalle)>0?'<br><span class="labelEstado label label-success">Logística: con orden</span>':'') ;
+                $logistico = '<br><span class="labelEstado label label-'.(sizeof($detalle)>0?'success':'default').'">Logística: con orden</span>' ;
 
 
                 $detalle = DetalleRequerimiento::where('id_requerimiento',$requerimientos->id_requerimiento)->where('estado','!=',7)->get();
                 // RP-240601
-                $pago = '';
+
                 if(sizeof($detalle)>0){
                     foreach($detalle as $key=>$value){
                         $orden_detalle = OrdenCompraDetalle::where('id_detalle_requerimiento',$value->id_detalle_requerimiento)->first();
@@ -2475,22 +2484,43 @@ class RequerimientoController extends Controller
                             $orden = Orden::find($orden_detalle->id_orden_compra);
 
                             $contador_estado = 0;
-                            if(in_array($orden->estado_pago,[5, 6, 8, 9])){
+                            $contador_estado_tesoreria = 0;
+                            if(in_array($orden->estado_pago,[5, 6, 8, 9, 10])){
                                 $contador_estado++;
                             }
-                            if($contador_estado>0){
-                                $pago = '<span class="labelEstado label label-success">Logística: enviado a pago</span>';
+                            // if($contador_estado>0){
+                            //     $pago = '<br><span class="labelEstado label label-success">Logística: enviado a pago</span>';
+                            // }
+                            $pago = '<br><span class="labelEstado label label-'.($contador_estado>0?'success':'default').'">Logística: enviado a pago</span>';
+
+                            // if($orden->estado_pago == 5 || in_array($orden->estado_pago,[9,10])){
+                            //     $estado_autorisado = '<br><span class="labelEstado label label-success">Tesorería: pago autorizado</span>';
+                            // }
+                            $estado_autorisado = '<br><span class="labelEstado label label-'.($orden->estado_pago == 5 || (in_array($orden->estado_pago,[6,9,10]))?'success':'default').'">Tesorería: pago autorizado</span>';
+
+                            // if(in_array($orden->estado_pago,[9,10])){
+                            //     $estado_pagado_saldo = '<br><span class="labelEstado label label-success">Tesorería: pagado con saldo</span>';
+                            // }
+                            $estado_pagado = '<br><span class="labelEstado label label-'.(in_array($orden->estado_pago,[9,10])?'success':'default').'">Tesorería: pagado / pagado con saldo</span>';
+
+                            if($orden->estado_pago == 6){
+                                $estado_pagado = '<br><span class="labelEstado label label-success">Tesorería: pagado</span>';
                             }
+                            // $estado_pagado = '<br><span class="labelEstado label label-'.($orden->estado_pago == 6?'success':'default').'">Tesorería: pagado</span>';
+
                         }
 
                     }
                 }
 
 
-                return $jefatura . '<br>' . $logistico . '<br>' . $pago ;
+                return $jefatura . $logistico . $pago. $estado_autorisado. $estado_pagado ;
+                // return $estados_estapa;
             })
             ->addColumn('etapas_numero', function ($requerimientos) {
                 $pago = [];
+
+                $detalle = DetalleRequerimiento::where('id_requerimiento',$requerimientos->id_requerimiento)->where('estado','!=',7)->get();
 
                 return $pago;
             })

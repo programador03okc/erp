@@ -20,32 +20,41 @@
             <th>Solicitado por</th>
             <th>Aprobado por</th>
             <th>Estado</th>
+            <th>Etapa</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($requerimientos as $requerimiento)
-        <tr>
-            <td>{{ $requerimiento["priori"] }}</td>
-            <td>{{ $requerimiento["codigo"] }}</td>
-            <td>{{ $requerimiento["codigo_oportunidad"] }}</td>
-            <td>{{ $requerimiento["concepto"] }}</td>
-            <td>{{ $requerimiento["fecha_registro"] }}</td>
-            <td>{{ $requerimiento["fecha_entrega"] }}</td>
-            <td>{{ $requerimiento["tipo_requerimiento"] }}</td>
-            <td>{{ $requerimiento["razon_social"] }}</td>
-            <td>{{ $requerimiento["sede"] }}</td>
-            <td>{{ $requerimiento["grupo"] }}</td>
-            <td>{{ $requerimiento["division"] }}</td>
-            <td>{{ $requerimiento["descripcion_proyecto"] }}</td>
-            <td>{{$requerimiento["simbolo_moneda"]}}</td>
-            <td>{{ $requerimiento["monto_total"] }}</td>
-            <td>{{ $requerimiento["observacion"] }}</td>
-            <td>{{ $requerimiento["nombre_usuario"] }}</td>
-            <td>{{ $requerimiento["nombre_solicitado_por"] }}</td>
-            <td>{{ $requerimiento["ultimo_aprobador"] }}</td>
-            <td>{{ $requerimiento["estado_doc"] }}</td>
+            @if ($requerimiento)
 
-        </tr>
+                <tr>
+                    <td>{{ $requerimiento["priori"] }}</td>
+                    <td>{{ $requerimiento["codigo"] }}</td>
+                    <td>{{ $requerimiento["codigo_oportunidad"] }}</td>
+                    <td>{{ $requerimiento["concepto"] }}</td>
+                    <td>{{ $requerimiento["fecha_registro"] }}</td>
+                    <td>{{ $requerimiento["fecha_entrega"] }}</td>
+                    <td>{{ $requerimiento["tipo_requerimiento"] }}</td>
+                    <td>{{ $requerimiento["razon_social"] }}</td>
+                    <td>{{ $requerimiento["sede"] }}</td>
+                    <td>{{ $requerimiento["grupo"] }}</td>
+                    <td>{{ $requerimiento["division"] }}</td>
+                    <td>{{ $requerimiento["descripcion_proyecto"] }}</td>
+                    <td>{{$requerimiento["simbolo_moneda"]}}</td>
+                    <td>{{ $requerimiento["monto_total"] }}</td>
+                    <td>{{ $requerimiento["observacion"] }}</td>
+                    <td>{{ $requerimiento["nombre_usuario"] }}</td>
+                    <td>{{ $requerimiento["nombre_solicitado_por"] }}</td>
+                    <td>{{ $requerimiento["ultimo_aprobador"] }}</td>
+                    <td>{{ $requerimiento["estado_doc"] }}</td>
+                    <td>{{ $requerimiento["etapas"] }}</td>
+
+                </tr>
+            @endif
         @endforeach
+        {{-- @php
+            dd($requerimientos);
+            echo ($requerimiento);
+        @endphp --}}
     </tbody>
 </table>

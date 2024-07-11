@@ -2408,7 +2408,7 @@ class OrdenController extends Controller
     <br>
     ';
 
-    if(!empty($ordenArray['head']['imagen_firma'])){
+    if(!empty($ordenArray['head']['imagen_firma']) && $ordenArray['head']['imagen_firma']!=null){
 
         $html .= '<br>
         <table width="100%" border=0>

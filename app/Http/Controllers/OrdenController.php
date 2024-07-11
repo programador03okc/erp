@@ -2416,7 +2416,7 @@ class OrdenController extends Controller
                 <td style="text-align: center;"><img src="'.$ordenArray['head']['imagen_firma'].'" width="30%"></td>
             </tr>
             <tr>
-                <td style="text-align: center;"> <hr style="text-align: center;border-top: 1px solid #fff;width: 200px;border-left: 1px solid #fff;border-right: 1px solid #fff;"><br> <strong >Personal: </strong>'.$ordenArray['head']['nombre_usuario'].'</td>
+                <td style="text-align: center;"> <hr style="text-align: center;border-top: 1px solid #fff;width: 200px;border-left: 1px solid #fff;border-right: 1px solid #fff;"><br> <strong >RESPONSABLE DE LA O.C.</strong></td>
             </tr>
         </table>
         <br>

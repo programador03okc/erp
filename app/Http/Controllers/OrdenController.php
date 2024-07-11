@@ -1720,7 +1720,8 @@ class OrdenController extends Controller
             inner join mgcp_cuadro_costos.cc c on c.id = ar.id_cc
             inner join mgcp_oportunidades.oportunidades o on o.id = c.id_oportunidad
             inner join mgcp_ordenes_compra.oc_propias_view opv  on opv.id_oportunidad = c.id_oportunidad
-            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra  ) AS fecha_limite_oc")
+            where ldoc.id_orden_compra =log_ord_compra.id_orden_compra  ) AS fecha_limite_oc"),
+            'sis_usua.imagen_firma'
 
         )
             ->leftJoin('administracion.adm_tp_docum', 'adm_tp_docum.id_tp_documento', '=', 'log_ord_compra.id_tp_documento')
@@ -1798,6 +1799,7 @@ class OrdenController extends Controller
                 'alm_und_medida.descripcion AS unidad_medida',
                 'log_det_ord_compra.subtotal',
                 'log_det_ord_compra.id_detalle_requerimiento'
+
             )
             ->leftJoin('almacen.alm_und_medida', 'alm_und_medida.id_unidad_medida', '=', 'log_det_ord_compra.id_unidad_medida')
             ->leftJoin('almacen.alm_item', 'alm_item.id_item', '=', 'log_det_ord_compra.id_item')
@@ -1907,6 +1909,7 @@ class OrdenController extends Controller
                         'sede' => $data->codigo_sede_empresa
                     ],
                     'nombre_usuario' => $data->nombre_usuario,
+                    "imagen_firma"=>$data->imagen_firma
                 ];
             }
         }
@@ -1970,7 +1973,7 @@ class OrdenController extends Controller
                     $proyectoList[]=$data->proyecto;
                 }
 
-             
+
             }
 
             $cdc = DB::table('mgcp_cuadro_costos.cc')
@@ -2015,7 +2018,18 @@ class OrdenController extends Controller
     public function imprimir_orden_por_requerimiento_pdf($id_orden_compra)
     {
         $ordenArray = $this->get_orden_por_requerimiento($id_orden_compra);
-        // return dd($ordenArray);
+        // return [$ordenArray];
+        $condiciones_terminos_titulo = '<strong>CONDICIONES Y TÉRMINOS DE COMPRA</strong>';
+        $condiciones_terminos = '
+        Los materiales deben ser entregados de acuerdo a las especificaciones técnicas indicadas en la Orden de Compra o anexos a ella. Las facturas serán recepcionadas con una copia de la orden compra o guía de remisión y/o copia del certificado de calidad.
+        No se aceptarán facturas por montos diferentes a la presente orden de compra.<br><br>
+        Se realizará la inspección de los productos al momento de recepción de los mismos y se comunicará al proveedor en caso de alguna no conformidad.<br><br>
+        <strong>OK COMPUTER E.I.R.L.</strong> Comunicará  a sus proveedores sobre el control y seguimiento del desempeño de los mismos
+        Cuando sea aplicable <strong>OK COMPUTER E.I.R.L..</strong> velará por el cuidado de la propiedad del proveedor cuando esté bajo su control y esté siendo utilizada según las condiciones pactadas. Además se compromete a informar al proveedor en caso imprevistos asociados a su propiedad.
+        La recepción de la presente orden de compra significa la aceptación de la misma.';
+
+        $imagen_firma = 'images/firmas_usuarios/JOSE-PAREDES.png';
+
         $sizeOrdenHeader = count($ordenArray['head']);
         if ($sizeOrdenHeader == 0) {
             $html = 'Error en documento';
@@ -2381,6 +2395,35 @@ class OrdenController extends Controller
         </table>
         <br>
     ';
+
+    $html .= '<br>
+    <table width="100%" border=0>
+        <tr>
+            <td>'.$condiciones_terminos_titulo.'</td>
+        </tr>
+        <tr>
+            <td style="text-align: justify;">'.$condiciones_terminos.'</td>
+        </tr>
+    </table>
+    <br>
+    ';
+
+    if(!empty($ordenArray['head']['imagen_firma'])){
+
+        $html .= '<br>
+        <table width="100%" border=0>
+            <tr>
+                <td style="text-align: center;"><img src="'.$ordenArray['head']['imagen_firma'].'" width="30%"></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;"> <hr style="text-align: center;border-top: 1px solid #fff;width: 200px;border-left: 1px solid #fff;border-right: 1px solid #fff;"><br> <strong >Personal: </strong>'.$ordenArray['head']['nombre_usuario'].'</td>
+            </tr>
+        </table>
+        <br>
+        ';
+    }
+
+
 
         $html .= '<br>
 
@@ -3821,7 +3864,8 @@ class OrdenController extends Controller
     {
         $pdf = \App::make('dompdf.wrapper');
         $id = $id_orden_compra;
-
+        // return asset('images/firmas_usuarios');
+        // return $this->imprimir_orden_por_requerimiento_pdf($id);
         $pdf->loadHTML($this->imprimir_orden_por_requerimiento_pdf($id));
         // return response()->json($this->imprimir_orden_por_requerimiento_pdf($id));
         return $pdf->stream();
@@ -4913,7 +4957,7 @@ class OrdenController extends Controller
         $orden->save();
 
 
-        
+
         $comentario = 'Enviado a pago directo, orden:' .$orden->codigo. ', enviado por: ' . Auth::user()->nombre_corto;
         LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $orden->getTable(), null, $orden, $comentario, 'Logística');
 
@@ -5696,15 +5740,15 @@ class OrdenController extends Controller
                 return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => 'No se envio items para liberar']);
             }else{
                 $primeDetalleOrden= OrdenCompraDetalle::find($request->id_detalle_orden_list[0]);
-            
+
 
                 $orden=Orden::find($primeDetalleOrden->id_orden_compra);
                 $codigoOrdenList[]=$orden->codigo;
-                
-                // validar item si fue migrado a softlink y si tiene alguna referencia 
+
+                // validar item si fue migrado a softlink y si tiene alguna referencia
                 if($orden->id_softlink !=null){
                     $oc_softlink = DB::connection(app('conexion_softlink'))->table('movimien')->where('mov_id', $orden->id_softlink)->first();
-           
+
                     if ($oc_softlink !== null) {
                         //pregunta si fue referenciado
                         $guia_referen = DB::connection(app('conexion_softlink'))->table('movimien')
@@ -5714,7 +5758,7 @@ class OrdenController extends Controller
                                 ['flg_anulado', '=', 0]
                             ])
                             ->first();
-    
+
                         if ($guia_referen !== null) {
                             return response()->json(['tipo_estado' => 'warning', 'mensaje' => 'Ésta orden ya fue referenciada en Softlink.']);
                         }
@@ -5724,9 +5768,9 @@ class OrdenController extends Controller
                             return response()->json(['tipo_estado' => 'error', 'mensaje' => 'Ésta orden ya fue anulada en Softlink']);
 
                         } else {
-                            
+
                             $liberar=true;
- 
+
                         }
                     }else{
                         return response()->json(['tipo_estado' => 'warning', 'mensaje' => 'No se encontro el mov_id: '.$orden->id_softlink]);
@@ -5735,26 +5779,26 @@ class OrdenController extends Controller
                 }else{
                     $liberar = true;
                 }
-            
+
                 if($liberar){
                     $codigoOrdenList=[];
                     foreach(($request->id_detalle_orden_list) as $id_detalle_orden) {
-                     
+
                         $detalleOrden = OrdenCompraDetalle::find($id_detalle_orden);
-    
+
                         $detalleRequerimiento = DetalleRequerimiento::find($detalleOrden->id_detalle_requerimiento);
                         $detalleRequerimiento->estado=1;
                         $detalleRequerimiento->save();
-    
-                        // cambiar estado de requerimiento a atendido parcial 
-                    
+
+                        // cambiar estado de requerimiento a atendido parcial
+
                         $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
                         $requerimiento->estado=15;
                         $requerimiento->save();
-    
+
                         // guardar el valor original de detalle de orden para log de actividad
                         $detalleOrdenOriginal =$detalleOrden;
-                        
+
                         // liberar el item de la orden
                         $detalleOrden->id_detalle_requerimiento =null;
                         // anular item de orden si es true el valor de input anular_item_liberado_de_orden
@@ -5763,16 +5807,16 @@ class OrdenController extends Controller
                             $mensajeAdicional='Se anulo los items seleccionados en la orden';
                         }
                         $detalleOrden->save();
-    
+
                         $comentarioCabecera = 'Liberar items de orden '. implode(",",$codigoOrdenList). ', id_detalle_orden: '.$id_detalle_orden.', motivo: '.$request->motivo_liberar_orden;
                         LogActividad::registrar(Auth::user(), 'Gestión de ordenes', 3, $detalleOrden->getTable(), $detalleOrdenOriginal, $detalleOrden, $comentarioCabecera, 'Logística');
-                        
+
                     }
                     $tipoEstado='success';
                     $mensaje='Se libero los item seleccionados de la orden '.$mensajeAdicional;
                 }
-   
-                DB::commit(); 
+
+                DB::commit();
                 return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => $mensaje]);
             }
 

@@ -39,26 +39,26 @@ class reporteRequerimientosBienesServiciosExcel implements FromView,ShouldAutoSi
         foreach($requerimientos as $element){
 
             $data[]=[
-                'priori'=> $element->priori,
-                'codigo'=> $element->codigo,
-                'codigo_oportunidad'=> $element->codigo_oportunidad,
+                'priori'=> str_replace("'", "", str_replace("", "", $element->priori)),
+                'codigo'=> str_replace("'", "", str_replace("", "", $element->codigo)),
+                'codigo_oportunidad'=> str_replace("'", "", str_replace("", "", $element->codigo_oportunidad)),
                 'concepto'=> str_replace("'", "", str_replace("", "", $element->concepto)),
-                'fecha_registro'=> $element->fecha_registro,
-                'fecha_entrega'=> $element->fecha_entrega,
-                'tipo_requerimiento'=> $element->tipo_requerimiento,
-                'razon_social'=> $element->razon_social,
-                'sede'=> $element->sede,
-                'grupo'=> $element->grupo,
-                'division'=> $element->division,
-                'descripcion_proyecto'=> $element->descripcion_proyecto,
-                'simbolo_moneda'=> $element->simbolo_moneda,
+                'fecha_registro'=> str_replace("'", "", str_replace("", "", $element->fecha_registro)),
+                'fecha_entrega'=> str_replace("'", "", str_replace("", "", $element->fecha_entrega)),
+                'tipo_requerimiento'=> str_replace("'", "", str_replace("", "", $element->tipo_requerimiento)),
+                'razon_social'=> str_replace("'", "", str_replace("", "", $element->razon_social)),
+                'sede'=> str_replace("'", "", str_replace("", "", $element->sede)),
+                'grupo'=> str_replace("'", "", str_replace("", "", $element->grupo)),
+                'division'=> str_replace("'", "", str_replace("", "", $element->division)),
+                'descripcion_proyecto'=> str_replace("'", "", str_replace("", "", $element->descripcion_proyecto)),
+                'simbolo_moneda'=> str_replace("'", "", str_replace("", "", $element->simbolo_moneda)),
                 'monto_total'=> number_format($element->monto_total,2),
-                'observacion'=> $element->observacion,
-                'nombre_usuario'=> $element->nombre_usuario,
-                'nombre_solicitado_por'=> $element->nombre_solicitado_por,
-                'ultimo_aprobador'=>$element->ultimo_aprobador,
-                'observacion'=> $element->observacion,
-                'estado_doc'=> $element->nombre_estado
+                'observacion'=> str_replace("'", "", str_replace("", "", $element->observacion)),
+                'nombre_usuario'=> str_replace("'", "", str_replace("", "", $element->nombre_usuario)),
+                'nombre_solicitado_por'=> str_replace("'", "", str_replace("", "", $element->nombre_solicitado_por)),
+                'ultimo_aprobador'=>str_replace("'", "", str_replace("", "", $element->ultimo_aprobador)),
+                'observacion'=> str_replace("'", "", str_replace("", "", $element->observacion)),
+                'estado_doc'=> str_replace("'", "", str_replace("", "", $element->nombre_estado))
 
             ];
         }

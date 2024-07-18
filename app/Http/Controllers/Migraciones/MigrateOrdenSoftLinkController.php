@@ -116,7 +116,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
 
         return ['orden_compra'=>$empresas_soft_orden_compra,'orden_servicio'=>$empresas_soft_orden_servicio,'orden_importacion'=>$empresas_soft_orden_importacion];
-         
+
     }
 
     public function getCorrelativoDocumentoSoftlinkStatic(){
@@ -221,13 +221,13 @@ class MigrateOrdenSoftLinkController extends Controller
 }';
             return (json_decode($json, true));
     }
-    
+
     public function descargarExcelCorrelativoDocumentoSoftlink()
     {
-        
+
         return Excel::download(new CorrelativosSoftlinkExport(), 'correlativo_softlink1.xlsx');
     }
-        
+
 
 
     //Valida el estado de la orden en softlink
@@ -338,9 +338,9 @@ class MigrateOrdenSoftLinkController extends Controller
                     'sis_identi.cod_softlink as cod_di',
                     'adm_empresa.codigo as codigo_emp',
                     'sis_usua.codvend_softlink',
-                    DB::raw("(SELECT SUM(log_det_ord_compra.precio * log_det_ord_compra.cantidad) FROM logistica.log_det_ord_compra 
-                      WHERE log_det_ord_compra.estado <> 7 
-                      AND log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra) 
+                    DB::raw("(SELECT SUM(log_det_ord_compra.precio * log_det_ord_compra.cantidad) FROM logistica.log_det_ord_compra
+                      WHERE log_det_ord_compra.estado <> 7
+                      AND log_det_ord_compra.id_orden_compra = log_ord_compra.id_orden_compra)
                       as total_precio")
                 )
                 ->join('logistica.log_prove', 'log_prove.id_proveedor', '=', 'log_ord_compra.id_proveedor')
@@ -382,7 +382,7 @@ class MigrateOrdenSoftLinkController extends Controller
                     'categoria.descripcion as categoria',
                     'subcategoria.id as id_subcategoria',
                     'subcategoria.descripcion as subcategoria',
-                    
+
 
                     'log_ord_compra.id_moneda',
                     'alm_prod.series',
@@ -395,8 +395,8 @@ class MigrateOrdenSoftLinkController extends Controller
                 // ->leftjoin('almacen.alm_clasif', 'alm_clasif.id_clasificacion', '=', 'alm_prod.id_clasif')
                 // ->leftjoin('almacen.alm_tp_prod', 'alm_tp_prod.id_tipo_producto', '=', 'alm_prod.id_categoria')
                 // ->leftjoin('almacen.alm_subcat', 'alm_subcat.id_subcategoria', '=', 'alm_prod.id_subcategoria')
-                
-                
+
+
                 // * softlink2
                 ->leftJoin('almacen.producto_sap', 'producto_sap.codigo_agile', '=', 'alm_prod.codigo')
                 ->leftJoin('clasificacion_sap.subcategoria', 'subcategoria.id', '=', 'producto_sap.subcategoria_id')
@@ -423,12 +423,12 @@ class MigrateOrdenSoftLinkController extends Controller
                     }
                 }
 
-                
+
                 if(($det->id_subcategoria ==null) && $det->tipo_item_id ==1 ){
 
                     $itemSinClasificacion[] =$det->descripcion;
                     }
-                    
+
                 if(count($itemSinClasificacion)>0){
                     return response()->json(array('tipo' => 'warning', 'mensaje' => 'Revise los items de esta orden sin definir clasificación: <br>'.implode("<br>", $itemSinClasificacion) ));
                 }
@@ -640,7 +640,7 @@ class MigrateOrdenSoftLinkController extends Controller
 
         $mov_id = $this->obtenerMovId();
 
-        // obtener ultimo correlativo de softlink1 
+        // obtener ultimo correlativo de softlink1
         $ultimosCorrelativosSoftlink1 = $this->getCorrelativoDocumentoSoftlinkStatic();
         $ult_correlativo_softlink1 = 0;
         $arrayTipoOrden='';
@@ -653,7 +653,7 @@ class MigrateOrdenSoftLinkController extends Controller
         if ($oc->id_tp_documento == 12) { // importacion
             $arrayTipoOrden = 'orden_importacion';
         }
-  
+
         foreach ($ultimosCorrelativosSoftlink1[$arrayTipoOrden] as $key => $value) {
             if ($value['nombre'] == $oc->codigo_emp) {
                 $ult_correlativo_softlink1 = $value['ultimo_correlativo_soft1'];
@@ -754,7 +754,7 @@ class MigrateOrdenSoftLinkController extends Controller
             $mov_id = $this->obtenerMovId();
 
 
-        // obtener ultimo correlativo de softlink1 
+        // obtener ultimo correlativo de softlink1
         $ultimosCorrelativosSoftlink1 = $this->getCorrelativoDocumentoSoftlinkStatic();
         $ult_correlativo_softlink1 = 0;
         $arrayTipoOrden='';
@@ -767,7 +767,7 @@ class MigrateOrdenSoftLinkController extends Controller
         if ($oc->id_tp_documento == 12) { // importacion
             $arrayTipoOrden = 'orden_importacion';
         }
-  
+
         foreach ($ultimosCorrelativosSoftlink1[$arrayTipoOrden] as $key => $value) {
             if ($value['nombre'] == $oc->codigo_emp) {
                 $ult_correlativo_softlink1 = $value['ultimo_correlativo_soft1'];
@@ -886,7 +886,7 @@ class MigrateOrdenSoftLinkController extends Controller
                             'nom_prod' => ($cod_prod == '005675' ? 'OTROS SERVICIOS - ' . $det->descripcion_adicional : $det->descripcion),
                             'can_pedi' => $det->cantidad,
                             'sal_pedi' => $det->cantidad,
-                            'can_devo' => $i, //numeracion del item 
+                            'can_devo' => $i, //numeracion del item
                             'pre_prod' => ($det->precio !== null ? $det->precio : 0),
                             'pre_neto' => ($det->precio !== null ? ($det->precio * $det->cantidad) : 0),
                             'impto1' => $igv,
@@ -922,14 +922,14 @@ class MigrateOrdenSoftLinkController extends Controller
     public function agregarOrden($mov_id, $cod_suc, $oc, $cod_docu, $num_docu, $fecha, $cod_auxi, $igv, $mon_impto, $tp_cambio, $id_orden_compra, $cuadros)
     {
 
-        // actualizar el mov_id por si existe ya otro registro agregdo anteriormente con el mismo mov_id 
+        // actualizar el mov_id por si existe ya otro registro agregdo anteriormente con el mismo mov_id
         $mov_id = $this->obtenerMovId();
 
 
         DB::connection(app('conexion_softlink'))->table('movimien')->insert(
             [
                 'mov_id' => $mov_id,
-                'tipo' => '1', //Compra 
+                'tipo' => '1', //Compra
                 'cod_suc' => $cod_suc,
                 'cod_alma' => $oc->codigo_almacen,
                 'cod_docu' => $cod_docu,
@@ -1036,7 +1036,16 @@ class MigrateOrdenSoftLinkController extends Controller
         //cuenta los registros
         $count_det = DB::connection(app('conexion_softlink'))->table('detmov')->count();
         //aumenta uno y completa los 10 digitos
-        $mov_det_id = $this->leftZero(10, (intval($count_det) + 1));
+        $suma_unica = 0;
+        do {
+            $suma_unica = $suma_unica + 1;
+            $mov_det_id = $this->leftZero(10, (intval($count_det) + $suma_unica));
+
+            $buscar = DB::connection(app('conexion_softlink'))->table('detmov')
+            ->where([
+                ['unico', '=', $count_det]
+            ])->first();
+        } while ($buscar);
         //Obtiene y/o crea el producto
         // $cod_prod = $this->obtenerProducto($det);
 
@@ -1044,7 +1053,7 @@ class MigrateOrdenSoftLinkController extends Controller
             [
                 'unico' => $mov_det_id,
                 'mov_id' => $mov_id,
-                'tipo' => '1', //Compra 
+                'tipo' => '1', //Compra
                 'cod_docu' => $cod_docu,
                 'num_docu' => $num_docu,
                 'fec_pedi' => $fecha,
@@ -1054,7 +1063,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 'nom_prod' => ($cod_prod == '005675' ? 'OTROS SERVICIOS - ' . $det->descripcion_adicional : $det->descripcion),
                 'can_pedi' => $det->cantidad,
                 'sal_pedi' => $det->cantidad,
-                'can_devo' => $i, //numeracion del item 
+                'can_devo' => $i, //numeracion del item
                 'pre_prod' => ($det->precio !== null ? $det->precio : 0),
                 'dscto_condi' => '0.000',
                 'dscto_categ' => '0.000',
@@ -1369,7 +1378,7 @@ class MigrateOrdenSoftLinkController extends Controller
         DB::table('almacen.producto_sap')
             ->where('codigo_agile', $det->codigo_agile)
             ->update(['cod_softlink' => $cod_prod]);
-        
+
         return $cod_prod;
     }
 
@@ -1710,7 +1719,7 @@ class MigrateOrdenSoftLinkController extends Controller
                 }
             }
             // $fechaDesde = (new Carbon($fecha))->subMonth(3);
-          
+
             $lista = DB::connection(app('conexion_softlink'))->table('movimien')
                 ->select('mov_id', 'num_docu', 'cod_docu', 'auxiliar.nom_auxi')
                 ->join('auxiliar', 'auxiliar.cod_auxi', '=', 'movimien.cod_auxi')

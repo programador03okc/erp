@@ -1036,16 +1036,17 @@ class MigrateOrdenSoftLinkController extends Controller
         //cuenta los registros
         $count_det = DB::connection(app('conexion_softlink'))->table('detmov')->count();
         //aumenta uno y completa los 10 digitos
-        $suma_unica = 0;
-        do {
-            $suma_unica = $suma_unica + 1;
-            $mov_det_id = $this->leftZero(10, (intval($count_det) + $suma_unica));
+        $mov_det_id = $this->leftZero(10, (intval($count_det) + 1));
+        // $suma_unica = 0;
+        // do {
+        //     $suma_unica = $suma_unica + 1;
+        //     $mov_det_id = $this->leftZero(10, (intval($count_det) + $suma_unica));
 
-            $buscar = DB::connection(app('conexion_softlink'))->table('detmov')
-            ->where([
-                ['unico', '=', $count_det]
-            ])->first();
-        } while ($buscar);
+        //     $buscar = DB::connection(app('conexion_softlink'))->table('detmov')
+        //     ->where([
+        //         ['unico', '=', $count_det]
+        //     ])->first();
+        // } while ($buscar);
         //Obtiene y/o crea el producto
         // $cod_prod = $this->obtenerProducto($det);
 

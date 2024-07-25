@@ -5802,7 +5802,7 @@ class OrdenController extends Controller
             // return $orden_detalle;
             $orden_detalle = json_encode($orden_detalle);
 
-            return Excel::download(new VerificacionBienesExport($orden_detalle), 'verificacion-bienes-'.$orden->codigo.'-20519865476.xlsx');
+            return Excel::download(new VerificacionBienesExport($orden_detalle), 'OKC-LOG-FOR-004-'.$orden->codigo.'-20519865476.xlsx');
         }else{
             return '<h3>El reporte no est disponible para esat division</h3>';
         }

@@ -16,7 +16,7 @@
                     {{-- <img src="{{ asset('images/img-avatar.png') }}"> --}}
                     <div><img src="{{public_path().'/'.$logo_okc}}" width="150px" ></div>
                 </th>
-                <th style="border: 2px solid #000000;">GESTIÓN LOGÍSTICA</th>
+                <th style="border: 2px solid #000000;height: 30px;">GESTIÓN LOGÍSTICA</th>
                 <td style="border: 2px solid #000000;"></td>
                 <td style="border: 2px solid #000000;"></td>
                 <td style="border: 2px solid #000000;"></td>
@@ -28,14 +28,14 @@
             <tr>
                 {{-- <th></th> --}}
                 <th style="border: 2px solid #000000;"></th>
-                <th style="border: 2px solid #000000;">FORMATO</th>
+                <th style="border: 2px solid #000000;height: 30px;">FORMATO</th>
                 <td style="border: 2px solid #000000;"></td>
                 <td style="border: 2px solid #000000;"></td>
                 <td style="border: 2px solid #000000;"></td>
                 <th style="border: 2px solid #000000;">FECHA DE APROBACIÓN</th>
                 <td style="border: 2px solid #000000;"></td>
                 <td style="border: 2px solid #000000;"></td>
-                <th style="border: 2px solid #000000;">01/066/2024</th>
+                <th style="border: 2px solid #000000;">15/01/2024</th>
             </tr>
             <tr>
                 {{-- <th></th> --}}
@@ -103,7 +103,7 @@
             <tr>
                 {{-- <td></td> --}}
                 <td>Producto</td>
-                <td style="border-bottom: 2px solid #000000;">{{$producto}}</td>
+                <td style="border-bottom: 2px solid #000000;height: 50px;">{{$producto.$producto}}</td>
                 <td style="border-bottom: 2px solid #000000;"></td>
                 <td style="border-bottom: 2px solid #000000;"></td>
                 <td style="border-bottom: 2px solid #000000;"></td>
@@ -127,7 +127,7 @@
             <tr>
                 {{-- <td></td> --}}
                 <td>Proveedor</td>
-                <td style="border-bottom: 2px solid #000000;"><p>{{$proveedor}}</p></td>
+                <td style="border-bottom: 2px solid #000000;height: 50px;"><p>{{$proveedor}}</p></td>
                 <td style="border-bottom: 2px solid #000000;"></td>
                 <td style="border-bottom: 2px solid #000000;"></td>
                 <td style="border-bottom: 2px solid #000000;"></td>

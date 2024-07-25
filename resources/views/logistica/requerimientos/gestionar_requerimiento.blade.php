@@ -3,14 +3,11 @@
 
 {{-- @if(Auth::user()->tieneAccion(102)) --}}
 @section('option')
-@include('layouts.option')
+{{-- @include('layouts.option') --}}
 @endsection
 {{-- @elseif(Auth::user()->tieneAccion(103)) --}}
 @section('option')
-    @if (Auth::user()->id==31)
-        {{-- @include('layouts.option_historial') --}}
-    @endif
-
+@include('layouts.option_historial')
 @endsection
 {{-- @endif --}}
 

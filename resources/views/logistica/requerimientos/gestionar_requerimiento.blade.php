@@ -3,7 +3,7 @@
 
 {{-- @if(Auth::user()->tieneAccion(102)) --}}
 @section('option')
-@include('layouts.option')
+{{-- @include('layouts.option') --}}
 @endsection
 {{-- @elseif(Auth::user()->tieneAccion(103)) --}}
 @section('option')

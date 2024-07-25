@@ -25,6 +25,7 @@ use App\Exports\ReporteComprasLocalesExcel;
 use App\Exports\ReporteOrdenesCompraExcel;
 use App\Exports\ReporteOrdenesServicioExcel;
 use App\Exports\ReporteTransitoOrdenesCompraExcel;
+use App\Exports\VerificacionBienesExport;
 use App\Helpers\CuadroPresupuestoHelper;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
 use App\Helpers\Necesidad\RequerimientoHelper;
@@ -1970,7 +1971,7 @@ class OrdenController extends Controller
                     $proyectoList[]=$data->proyecto;
                 }
 
-             
+
             }
 
             $cdc = DB::table('mgcp_cuadro_costos.cc')
@@ -4913,7 +4914,7 @@ class OrdenController extends Controller
         $orden->save();
 
 
-        
+
         $comentario = 'Enviado a pago directo, orden:' .$orden->codigo. ', enviado por: ' . Auth::user()->nombre_corto;
         LogActividad::registrar(Auth::user(), 'Enviar a pago', 3, $orden->getTable(), null, $orden, $comentario, 'Logística');
 
@@ -5696,15 +5697,15 @@ class OrdenController extends Controller
                 return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => 'No se envio items para liberar']);
             }else{
                 $primeDetalleOrden= OrdenCompraDetalle::find($request->id_detalle_orden_list[0]);
-            
+
 
                 $orden=Orden::find($primeDetalleOrden->id_orden_compra);
                 $codigoOrdenList[]=$orden->codigo;
-                
-                // validar item si fue migrado a softlink y si tiene alguna referencia 
+
+                // validar item si fue migrado a softlink y si tiene alguna referencia
                 if($orden->id_softlink !=null){
                     $oc_softlink = DB::connection(app('conexion_softlink'))->table('movimien')->where('mov_id', $orden->id_softlink)->first();
-           
+
                     if ($oc_softlink !== null) {
                         //pregunta si fue referenciado
                         $guia_referen = DB::connection(app('conexion_softlink'))->table('movimien')
@@ -5714,7 +5715,7 @@ class OrdenController extends Controller
                                 ['flg_anulado', '=', 0]
                             ])
                             ->first();
-    
+
                         if ($guia_referen !== null) {
                             return response()->json(['tipo_estado' => 'warning', 'mensaje' => 'Ésta orden ya fue referenciada en Softlink.']);
                         }
@@ -5724,9 +5725,9 @@ class OrdenController extends Controller
                             return response()->json(['tipo_estado' => 'error', 'mensaje' => 'Ésta orden ya fue anulada en Softlink']);
 
                         } else {
-                            
+
                             $liberar=true;
- 
+
                         }
                     }else{
                         return response()->json(['tipo_estado' => 'warning', 'mensaje' => 'No se encontro el mov_id: '.$orden->id_softlink]);
@@ -5735,26 +5736,26 @@ class OrdenController extends Controller
                 }else{
                     $liberar = true;
                 }
-            
+
                 if($liberar){
                     $codigoOrdenList=[];
                     foreach(($request->id_detalle_orden_list) as $id_detalle_orden) {
-                     
+
                         $detalleOrden = OrdenCompraDetalle::find($id_detalle_orden);
-    
+
                         $detalleRequerimiento = DetalleRequerimiento::find($detalleOrden->id_detalle_requerimiento);
                         $detalleRequerimiento->estado=1;
                         $detalleRequerimiento->save();
-    
-                        // cambiar estado de requerimiento a atendido parcial 
-                    
+
+                        // cambiar estado de requerimiento a atendido parcial
+
                         $requerimiento = Requerimiento::find($detalleRequerimiento->id_requerimiento);
                         $requerimiento->estado=15;
                         $requerimiento->save();
-    
+
                         // guardar el valor original de detalle de orden para log de actividad
                         $detalleOrdenOriginal =$detalleOrden;
-                        
+
                         // liberar el item de la orden
                         $detalleOrden->id_detalle_requerimiento =null;
                         // anular item de orden si es true el valor de input anular_item_liberado_de_orden
@@ -5763,16 +5764,16 @@ class OrdenController extends Controller
                             $mensajeAdicional='Se anulo los items seleccionados en la orden';
                         }
                         $detalleOrden->save();
-    
+
                         $comentarioCabecera = 'Liberar items de orden '. implode(",",$codigoOrdenList). ', id_detalle_orden: '.$id_detalle_orden.', motivo: '.$request->motivo_liberar_orden;
                         LogActividad::registrar(Auth::user(), 'Gestión de ordenes', 3, $detalleOrden->getTable(), $detalleOrdenOriginal, $detalleOrden, $comentarioCabecera, 'Logística');
-                        
+
                     }
                     $tipoEstado='success';
                     $mensaje='Se libero los item seleccionados de la orden '.$mensajeAdicional;
                 }
-   
-                DB::commit(); 
+
+                DB::commit();
                 return response()->json(['tipo_estado' => $tipoEstado, 'mensaje' => $mensaje]);
             }
 
@@ -5780,6 +5781,24 @@ class OrdenController extends Controller
             DB::rollBack();
             return response()->json([ 'tipo_estado' => 'error', 'mensaje' => 'Hubo un problema al liberar items de la orden. Por favor intentelo de nuevo. Mensaje de error: ' . $e->getMessage()]);
         }
+    }
+    public function excelVerificacionBienes($id){
+        $orden_detalle = OrdenCompraDetalle::find($id);
+        $orden = Orden::find($orden_detalle->id_orden_compra);
+        $log_provee = Proveedor::find($orden->id_proveedor);
+        $contri = Contribuyente::find($log_provee->id_contribuyente);
+
+        $orden_detalle->proveedor = $contri->razon_social;
+        $orden_detalle->codigo = $orden->codigo;
+        $orden_detalle->fecha_emision = $orden->fecha;
+
+
+        $orden_detalle->fecha_solicitud_pago = $orden->fecha_solicitud_pago;
+        $orden_detalle->fecha_autorizar = $orden->fecha_autorizacion;
+        // return $orden_detalle;
+        $orden_detalle = json_encode($orden_detalle);
+
+        return Excel::download(new VerificacionBienesExport($orden_detalle), 'verificacion-bienes-'.$orden->codigo.'-20519865476.xlsx');
     }
 
 }

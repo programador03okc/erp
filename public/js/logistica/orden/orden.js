@@ -113,6 +113,28 @@ $(function () {
         vincularRequerimiento(e.currentTarget);
     });
 
+    //exportara en modelo excel el formato de checks
+    $('#listaDetalleOrden').on("click", '[data-action="click"]', (e) => { //old
+        let id = $(e.currentTarget).attr('data-id');
+        window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes",{id:id}));
+        console.log(id);
+    });
+    $('.btn-group').on("click", '[data-action="exportar-bienes"]', (e) => { //old
+        // let id = $(e.currentTarget).val();
+        // window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes",{id:id}));
+        let lista = $('#listaDetalleOrden [data-action="click-bienes"]')
+        if (lista.length>0) {
+            $.each(lista, function (index, element) {
+                if(element.children[0].checked){
+                    window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes",{id:element.children[0].value}));
+                }
+            });
+        }else{
+            console.log('sin marcar');
+        }
+    });
+
+
 });
 
 function makeId() {
@@ -265,7 +287,7 @@ function actualizarValorIncluyeIGV(obj) {
 
 }
 function actualizarValorIncluyeICBPER(obj) {
-    
+
     if( obj.checked==true){
         document.querySelector("label[name='icbper']").textContent="0.50";
     }else{
@@ -634,7 +656,7 @@ function changeFechaEmision(obj) {
         if(element.textContent == $añoFechaEmision ){
             idPeriodo=element.value;
         }
-        
+
     });
     selectPeriodo.value=idPeriodo;
 }
@@ -839,6 +861,13 @@ function construirFormularioOrden(data) {
                         <button type="button" class="btn btn-danger btn-sm ${(detalle[i].guia_compra_detalle != null && detalle[i].guia_compra_detalle.length > 0 ? '' : 'activation')} handleClickOpenModalEliminarItemOrden" name="btnOpenModalEliminarItemOrden" title="Eliminar Item" disabled>
                         <i class="fas fa-trash fa-sm"></i>
                         </button>
+
+                        <button type="button" class="btn btn-warning btn-sm " data-action="click" title="Exportar  Item" data-id="`+detalle[i].id_detalle_orden+`">
+                        <i class="fas fa-file-excel fa-sm"></i>
+                        </button><br>
+                        <label data-action="click-bienes">
+                            <input type="checkbox" value="`+detalle[i].id_detalle_orden+`"  checked/> Bienes
+                        </label>
                     </td>
                 </tr>`);
 
@@ -870,6 +899,12 @@ function construirFormularioOrden(data) {
                     <button type="button" class="btn btn-danger btn-sm activation handleClickOpenModalEliminarItemOrden" name="btnOpenModalEliminarItemOrden" title="Eliminar Item" disabled>
                     <i class="fas fa-trash fa-sm"></i>
                     </button>
+                    <button type="button" class="btn btn-warning btn-sm " data-action="click" title="Eliminar Item" data-id="`+detalle[i].id_detalle_orden+`">
+                        <i class="fas fa-file-excel fa-sm"></i>
+                    </button><br>
+                    <label data-action="click-bienes">
+                        <input type="checkbox" value="`+detalle[i].id_detalle_orden+`"  checked/> Bienes
+                    </label>
                 </td>
             </tr>`);
         }

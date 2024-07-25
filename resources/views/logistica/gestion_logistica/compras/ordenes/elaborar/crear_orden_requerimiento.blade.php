@@ -93,7 +93,7 @@
                             <h5>Código orden softlink</h5>
                             <input class="form-control activation" name="codigo_orden" type="text" placeholder="" readonly>
                         </div>
-                        
+
                         <div class="col-md-1" id="group-periodo_orden">
                             <h5>Periodo</h5>
                             <select class="form-control activation handleChangePeriodo" name="id_periodo">
@@ -359,6 +359,8 @@
                             <button type="button" class="btn btn-xs btn-info activation handleClickCatalogoProductosObsequioModal" id="btnAgregarProductoObsequio" data-toggle="tooltip" data-placement="bottom" title="Agregar producto para obsequio"><i class="fas fa-plus"></i> Productos para obsequio</button>
                             <button type="button" class="btn btn-xs btn-primary activation handleClickAgregarServicio" id="btnAgregarServicio" data-toggle="tooltip" data-placement="bottom" title="Agregar servicio"><i class="fas fa-plus"></i> Servicio</button>
                             <button type="button" class="btn btn-xs btn-default activation handleClickVincularRequerimientoAOrdenModalOLD" onClick="openVincularRequerimientoConOrden();" id="btnAgregarVinculoRequerimiento" data-toggle="tooltip" data-placement="bottom" title="Agregar items de otro requerimiento" disabled><i class="fas fa-plus"></i> Vincular otro requerimiento
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default " data-action="exportar-bienes" data-toggle="tooltip" data-placement="bottom" title="Exportar check de bienes"><i class="fas fa-plus"></i> EXPORTAR CHECK DE BIENES
                             </button>
                         </div>
                         <table class="table table-striped table-condensed table-bordered" id="listaDetalleOrden" width="100%">

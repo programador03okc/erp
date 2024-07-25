@@ -1590,6 +1590,8 @@ Route::middleware(['auth'])->group(function () {
 						Route::post('validar-orden-agil-orden-softlink', [OrdenController::class, 'validarOrdenAgilOrdenSoftlink'])->name('validar-orden-agil-orden-softlink');
 						Route::post('vincular-oc-softlink', [OrdenController::class, 'vincularOcSoftlink'])->name('vincular-oc-softlink');
 						Route::get('imprimir_orden_servicio_o_transformacion/{idOportunidad}', [TransformacionController::class, 'imprimir_orden_servicio_o_transformacion'])->name('imprimir-orden-servicio-o-transformacion');
+
+                        Route::get('excel-verificacion-bienes/{id}', [OrdenController::class, 'excelVerificacionBienes'])->name('excel-verificacion-bienes');
 					});
 					Route::name('listado.')->prefix('listado')->group(function () {
 

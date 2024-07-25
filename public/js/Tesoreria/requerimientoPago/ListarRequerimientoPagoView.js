@@ -942,7 +942,7 @@ class ListarRequerimientoPagoView {
         $tablaListaRequerimientoPago = $('#ListaRequerimientoPago').DataTable({
             'dom': vardataTables[1],
             'buttons': [
-                button_crear_nuevo_requerimiento
+                // button_crear_nuevo_requerimiento
                 // {
                 //     text: '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo',
                 //     attr: {
@@ -956,7 +956,7 @@ class ListarRequerimientoPagoView {
                 //     },
                 //     className: 'btn-success btn-sm'
                 // }
-                 ,button_filtros, button_descargar_excel_cabecera, button_descargar_excel_items
+                 button_filtros, button_descargar_excel_cabecera, button_descargar_excel_items
             ],
             'language': vardataTables[0],
             'order': [[0, 'desc']],

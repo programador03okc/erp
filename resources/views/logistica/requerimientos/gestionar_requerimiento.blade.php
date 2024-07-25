@@ -8,7 +8,7 @@
 {{-- @elseif(Auth::user()->tieneAccion(103)) --}}
 @section('option')
     @if (Auth::user()->id==31)
-        @include('layouts.option_historial')
+        {{-- @include('layouts.option_historial') --}}
     @endif
 
 @endsection

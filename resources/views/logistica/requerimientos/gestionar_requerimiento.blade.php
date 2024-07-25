@@ -4,6 +4,9 @@
 {{-- @if(Auth::user()->tieneAccion(102)) --}}
 @section('option')
 {{-- @include('layouts.option') --}}
+@if ((Auth::user()->id_usuario===31))
+@include('layouts.option')
+@endif
 @endsection
 {{-- @elseif(Auth::user()->tieneAccion(103)) --}}
 @section('option')
@@ -18,8 +21,8 @@ Crear / editar requerimiento
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{route('necesidades.index')}}"><i class="fas fa-tachometer-alt"></i> Necesidades</a></li>
-    <li>Requerimientos de compra</li>
-    <li class="active">Crear / editar</li>
+    <li>Requerimientos de compra </li>
+    <li class="active">Crear / editar </li>
 </ol>
 @endsection
 

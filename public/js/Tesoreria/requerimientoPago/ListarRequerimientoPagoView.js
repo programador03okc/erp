@@ -315,7 +315,7 @@ class ListarRequerimientoPagoView {
             idMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").value;
             simboloMonedaPresupuestoUtilizado = document.querySelector("select[name='moneda']").options[document.querySelector("select[name='moneda']").selectedIndex].dataset.simbolo;
             tbodyChildren =  document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children;
-            
+
         }
         if(document.querySelector("div[id='modal-vista-rapida-requerimiento-pago']").classList.contains("in")){
             divPadre="div[id='modal-vista-rapida-requerimiento-pago'] ";
@@ -323,7 +323,7 @@ class ListarRequerimientoPagoView {
             simboloMonedaPresupuestoUtilizado = idMonedaPresupuestoUtilizado =='1'?'S/':(idMonedaPresupuestoUtilizado==2?'$':'') ;
             tbodyChildren =  document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
         }
-        
+
         // let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").childElementCount > 0 ? document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children : document.querySelector("tbody[id='body_requerimiento_pago_detalle_vista']").children;
 
         let actualTipoCambioCompra = document.querySelector("span[id='tipo_cambio_compra']").textContent;
@@ -396,7 +396,7 @@ class ListarRequerimientoPagoView {
 
             }
         }
-        
+
         for (let p = 0; p < tempPartidasActivas.length; p++) {
             tempPartidasActivas[p].presupuesto_mes = Util.formatoNumero(tempPartidasActivas[p].presupuesto_mes,2,'.','');
             tempPartidasActivas[p].presupuesto_total= Util.formatoNumero(tempPartidasActivas[p].presupuesto_total,2,'.','');
@@ -439,8 +439,8 @@ class ListarRequerimientoPagoView {
                     <td style="text-align:right; background-color: #ddeafb;"><span>S/</span>${Util.formatoNumero(element.total_saldo_mes_disponible, 2)}</td>
                     <td style="text-align:right; background-color: #fbdddd;" ${displayMontoUtilizadoActual}><span class="simboloMoneda">${element.simbolo_moneda_presupuesto_utilizado}</span>${element.presupuesto_utilizado_al_cambio > 0 ? (Util.formatoNumero(element.presupuesto_utilizado, 2) + ' (S/' + Util.formatoNumero(element.presupuesto_utilizado_al_cambio, 2) + ')') : (Util.formatoNumero(element.presupuesto_utilizado, 2))}</td>
                     <td style="text-align:right; background-color: #fbdddd;">
-                        <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)} 
-                        <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados" 
+                        <span>S/</span>${Util.formatoNumero(element.total_por_consumido_con_igv_fase_aprobacion, 2)}
+                        <button type="button" class="btn btn-primary btn-xs" name="btnVerRequerimientosVinculados"
                         onClick="verRequerimientosVinculadosConPartida(${element.id_partida},'${element.codigo.trim()}','${element.descripcion.trim()}','${element.tipo_prespuesto}','${element.presupuesto_total}','${element.presupuesto_mes}');"title="Ver Requerimientos vinculados con partida">
                         <i class="fas fa-eye"></i>
                         </button>
@@ -475,14 +475,14 @@ class ListarRequerimientoPagoView {
                 '',
                 'No se detectó un centro de costo para este proyecto, debería establecer manualmente el centro de costo',
                 'info'
-            ); 
+            );
         }
     }
 
     autoLlenarCentroCosto(){
         let tbodyChildren = document.querySelector("tbody[id='body_detalle_requerimiento_pago']").children;
         if (tbodyChildren.length > 0) {
-            
+
             Swal.fire({
                 title: 'Establecer el centro de costo seleccionado para todos los ítem ingresados?',
                 icon: 'warning',
@@ -498,10 +498,10 @@ class ListarRequerimientoPagoView {
                         tbodyChildren[i].querySelector("input[class='centroCosto']").value = tempCentroCostoSelected.id;
                         tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").title = tempCentroCostoSelected.descripcion;
                         tbodyChildren[i].querySelector("p[class='descripcion-centro-costo']").textContent = tempCentroCostoSelected.codigo;
-    
+
                     }
                 }
-            });           
+            });
         }
     }
 
@@ -940,7 +940,8 @@ class ListarRequerimientoPagoView {
             } : []);
         $tablaListaRequerimientoPago = $('#ListaRequerimientoPago').DataTable({
             'dom': vardataTables[1],
-            'buttons': [button_crear_nuevo_requerimiento
+            'buttons': [
+                // button_crear_nuevo_requerimiento
                 // {
                 //     text: '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo',
                 //     attr: {
@@ -954,7 +955,7 @@ class ListarRequerimientoPagoView {
                 //     },
                 //     className: 'btn-success btn-sm'
                 // }
-                , button_filtros, button_descargar_excel_cabecera, button_descargar_excel_items
+                 button_filtros, button_descargar_excel_cabecera, button_descargar_excel_items
             ],
             'language': vardataTables[0],
             'order': [[0, 'desc']],
@@ -1196,7 +1197,7 @@ class ListarRequerimientoPagoView {
             allMesPpto.forEach(element => {
                 element.textContent = moment(mesAfectacion.value, 'MM').format('MMMM');
             });
-    
+
         }else{
             allMesPpto.forEach(element => {
                     element.textContent =  moment().format('MMMM');
@@ -2487,7 +2488,7 @@ class ListarRequerimientoPagoView {
                     cancelButtonColor: '#d33',
                     cancelButtonText: 'No',
                     confirmButtonText: 'Si, crear'
-    
+
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.querySelector("input[name='al_actualizar_crear_estados_trazabilidad']").value='SI';
@@ -2890,13 +2891,13 @@ class ListarRequerimientoPagoView {
                     element.textContent = moment(data.fecha_registro, 'DD-MM-YYYY').format('MMMM');
                 }else{
                     element.textContent =  moment().format('MMMM');
-    
+
                 }
             });
 
         }
 
- 
+
 
         if (data.id_presupuesto_interno > 0) {
             document.querySelector("div[id='modal-vista-rapida-requerimiento-pago'] table[id='tablaDatosGenerales'] td[id='presupuesto_interno']").textContent = (data.presupuesto_interno != null ? data.presupuesto_interno.codigo : '') + ' - ' + (data.presupuesto_interno != null ? data.presupuesto_interno.descripcion : '');
@@ -3186,7 +3187,7 @@ class ListarRequerimientoPagoView {
         // }
 
         $("select[name='id_presupuesto_interno']").val(data.id_presupuesto_interno);
-        
+
         if(data.mes_afectacion!=null){
             this.habilitarInputMesAfectacion(true);
             $("select[name='mes_afectacion']").val(data.mes_afectacion);

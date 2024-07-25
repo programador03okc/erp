@@ -384,7 +384,7 @@ Crear / editar requerimiento
                                         <div class="input-group-okc">
                                             <select class="form-control activation" name="mes_afectacion" >
                                             @for ($i = 0; $i < (date("m")); $i++)
-                                                <?php 
+                                                <?php
                                                 $numeroMes=$i+1;
                                                 $dateTimeObj   = DateTime::createFromFormat('!m',$numeroMes );
                                                 $monthName = IntlDateFormatter::formatObject($dateTimeObj, 'MMMM', 'es');

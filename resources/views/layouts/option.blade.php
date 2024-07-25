@@ -8,7 +8,7 @@
     <button type="button" class="btn-okc" id="btnCopiar" disabled ><i class="fas fa-copy fa-lg"></i> Copiar</button>
     <button type="button" class="btn-okc" id="btnCancelar"><i class="fas fa-times fa-lg"></i> Cancelar</button> --}}
 
-    @if (!empty($modulo))
+    {{-- @if (!empty($modulo))
         @switch($modulo)
             @case('necesidades')
                 @if (in_array(1,$array_accesos_botonera))
@@ -90,7 +90,7 @@
         <button type="button" class="btn-okc" id="btnHistorial"><i class="fas fa-folder fa-lg"></i> Historial</button>
         <button type="button" class="btn-okc" id="btnCopiar" disabled ><i class="fas fa-copy fa-lg"></i> Copiar</button>
         <button type="button" class="btn-okc" id="btnCancelar"><i class="fas fa-times fa-lg"></i> Cancelar</button>
-    @endif
+    @endif --}}
 </div>
 
 @endsection

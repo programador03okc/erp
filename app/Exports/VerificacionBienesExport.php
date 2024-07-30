@@ -2,6 +2,12 @@
 
 namespace App\Exports;
 
+use App\Models\Almacen\DetalleRequerimiento;
+use App\Models\Almacen\Requerimiento;
+use App\Models\Contabilidad\Contribuyente;
+use App\Models\Logistica\Orden;
+use App\Models\Logistica\OrdenCompraDetalle;
+use App\Models\Logistica\Proveedor;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
@@ -14,25 +20,43 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 class VerificacionBienesExport implements FromView, WithStyles, WithColumnWidths
 {
     public $data;
+    public $id;
 
-    public function __construct($data)
+    public function __construct($id)
     {
-        $this->data = json_decode($data);
+        // $this->data = json_decode($data);
+        $this->id = $id;
     }
     public function view(): View
     {
-        // dd($this->data->id_detalle_orden);
+        $orden_detalle = OrdenCompraDetalle::find($this->id);
+        $orden = Orden::find($orden_detalle->id_orden_compra);
+        $log_provee = Proveedor::find($orden->id_proveedor);
+        $contri = Contribuyente::find($log_provee->id_contribuyente);
+
+        $requerimiento_detalle = DetalleRequerimiento::where('id_detalle_requerimiento',$orden_detalle->id_detalle_requerimiento)->first();
+        $requerimiento = Requerimiento::find($requerimiento_detalle->id_requerimiento);
+
+        $orden_detalle->proveedor = $contri->razon_social;
+        $orden_detalle->codigo = $orden->codigo;
+        $orden_detalle->fecha_emision = $orden->fecha;
+
+
+        $orden_detalle->fecha_solicitud_pago = $orden->fecha_solicitud_pago;
+        $orden_detalle->fecha_autorizar = $orden->fecha_autorizacion;
+        // dd($orden_detalle);
+        // $orden_detalle = json_encode($orden_detalle);
         // dd($this->data);
         // $imagen = asset('./images/logo_okc.png');
         $imagen = 'images/logo_okc.png';
         return view('logistica.gestion_logistica.compras.ordenes.export.verificación_bienes',[
-            'data'              => $this->data,
-            'producto'          => $this->data->descripcion_adicional,
-            'cantidad'          => (string)$this->data->cantidad,
-            'proveedor'         => $this->data->proveedor,
-            'oc'                => $this->data->codigo,
-            'fecha_recepcion'   => $this->data->fecha_emision,
-            'fecha_autorizar' => date("d/m/Y", strtotime($this->data->fecha_autorizar)) ,
+            'data'              => $orden_detalle,
+            'producto'          => $orden_detalle->descripcion_adicional,
+            'cantidad'          => (string)$orden_detalle->cantidad,
+            'proveedor'         => $orden_detalle->proveedor,
+            'oc'                => $orden_detalle->codigo,
+            'fecha_recepcion'   => $orden_detalle->fecha_emision,
+            'fecha_autorizar' => date("d/m/Y", strtotime($orden_detalle->fecha_autorizar)) ,
             "logo_okc"=>$imagen
         ]);
     }

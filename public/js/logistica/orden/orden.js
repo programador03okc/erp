@@ -122,13 +122,24 @@ $(function () {
     $('.btn-group').on("click", '[data-action="exportar-bienes"]', (e) => { //old
         // let id = $(e.currentTarget).val();
         // window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes",{id:id}));
-        let lista = $('#listaDetalleOrden [data-action="click-bienes"]')
+        let lista = $('#listaDetalleOrden [data-action="click-bienes"]');
+        let orden_detalle = [];
+        let strin_id = '';
         if (lista.length>0) {
             $.each(lista, function (index, element) {
                 if(element.children[0].checked){
-                    window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes",{id:element.children[0].value}));
+                    orden_detalle.push(element.children[0].value);
+                    if(index==0){
+                        strin_id = element.children[0].value;
+                    }else{
+                        strin_id = strin_id + '-'+ element.children[0].value;
+                    }
+
+                    // window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes",{id:element.children[0].value}));
                 }
             });
+
+            window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes-hojas",{id:JSON.stringify(strin_id)}));
         }else{
             console.log('sin marcar');
         }

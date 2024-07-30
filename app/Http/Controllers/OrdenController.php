@@ -26,6 +26,7 @@ use App\Exports\ReporteOrdenesCompraExcel;
 use App\Exports\ReporteOrdenesServicioExcel;
 use App\Exports\ReporteTransitoOrdenesCompraExcel;
 use App\Exports\VerificacionBienesExport;
+use App\Exports\VerificacionBienesHojasExport;
 use App\Helpers\CuadroPresupuestoHelper;
 use App\Helpers\Finanzas\PresupuestoInternoHistorialHelper;
 use App\Helpers\Necesidad\RequerimientoHelper;
@@ -5792,21 +5793,27 @@ class OrdenController extends Controller
         $requerimiento = Requerimiento::find($requerimiento_detalle->id_requerimiento);
         if($requerimiento->division_id==14){
 
-            $orden_detalle->proveedor = $contri->razon_social;
-            $orden_detalle->codigo = $orden->codigo;
-            $orden_detalle->fecha_emision = $orden->fecha;
+            // $orden_detalle->proveedor = $contri->razon_social;
+            // $orden_detalle->codigo = $orden->codigo;
+            // $orden_detalle->fecha_emision = $orden->fecha;
 
 
-            $orden_detalle->fecha_solicitud_pago = $orden->fecha_solicitud_pago;
-            $orden_detalle->fecha_autorizar = $orden->fecha_autorizacion;
-            // return $orden_detalle;
-            $orden_detalle = json_encode($orden_detalle);
+            // $orden_detalle->fecha_solicitud_pago = $orden->fecha_solicitud_pago;
+            // $orden_detalle->fecha_autorizar = $orden->fecha_autorizacion;
+            // $orden_detalle = json_encode($orden_detalle);
 
-            return Excel::download(new VerificacionBienesExport($orden_detalle), 'OKC-LOG-FOR-004-'.$orden->codigo.'-20519865476.xlsx');
+            return Excel::download(new VerificacionBienesExport($id), 'OKC-LOG-FOR-004-'.$orden->codigo.'-20519865476.xlsx');
         }else{
             return '<h3>El reporte no est disponible para esat division</h3>';
         }
 
+    }
+
+    public function excelVerificacionBienesHojas($id){
+        // ex
+        // $array = explode('-',$id);
+        return Excel::download(new VerificacionBienesHojasExport($id), 'OKC-LOG-FOR-004-'.'-20519865476.xlsx');
+        // return response()->json(["data"=>$array],200);
     }
 
 }

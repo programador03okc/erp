@@ -455,7 +455,7 @@ $("#form-mapeoItemsRequerimiento").on("submit", function (e) {
                                     btnOpenModalAtenderConAlmacen.title = "Reserva en almacén";
                                     btnOpenModalAtenderConAlmacen.dataset.idRequerimiento = idRequerimiento;
                                     btnOpenModalAtenderConAlmacen.innerHTML = "<i class='fas fa-dolly fa-sm'></i>";
-                                    btnOpenModalAtenderConAlmacen.disabled = true;
+                                    btnOpenModalAtenderConAlmacen.disabled = auth_user.id_usuario==78?false:true;
                                     divBtnGroup.appendChild(btnOpenModalAtenderConAlmacen);
                                 }
                                 if (divBtnGroup.querySelector("button[name='btnCrearOrdenCompraPorRequerimiento']") == null) {
@@ -466,7 +466,7 @@ $("#form-mapeoItemsRequerimiento").on("submit", function (e) {
                                     btnCrearOrdenCompraPorRequerimiento.title = "Crear Orden de Compra";
                                     btnCrearOrdenCompraPorRequerimiento.dataset.idRequerimiento = idRequerimiento;
                                     btnCrearOrdenCompraPorRequerimiento.innerHTML = "OC";
-                                    btnCrearOrdenCompraPorRequerimiento.disabled=true;
+                                    btnCrearOrdenCompraPorRequerimiento.disabled=auth_user.id_usuario==78?false:true;
                                     divBtnGroup.appendChild(btnCrearOrdenCompraPorRequerimiento);
 
                                 }

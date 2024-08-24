@@ -255,14 +255,14 @@ function listarRequerimientosPendientes(usuario) {
                         (array_accesos.find(element => element === 261)?`<button type="button" class="interno btn btn-${row['codigo_despacho_interno'] !== null ? 'danger' : 'default'} btn-flat btn-xs " data-toggle="tooltip"
                         data-placement="bottom" title="Despacho Interno" data-id="${row['id_requerimiento']}"
                         data-estado="${row['estado_di']}" data-estado-despacho="${row['estado_despacho']}"
-                        data-idod="${row['id_despacho_interno']}" disabled>
+                        data-idod="${row['id_despacho_interno']}" ${(auth_user.id_usuario==78?'':'disabled')}>
                         <strong>ODI</strong></button>`:'')
                         : ''}
 
                         ${row['id_requerimiento'] !== null ?
                         (array_accesos.find(element => element === 262)?`<button type="button" class="envio_od btn btn-${row['id_od'] !== null ? 'warning' : 'default'} btn-flat btn-xs " data-toggle="tooltip"
                             data-placement="bottom" title="Orden de Despacho. ${row['productos_no_mapeados']>0?"Faltan "+row['productos_no_mapeados']+ " items por mapear":""}" data-id="${row['id_requerimiento']}" data-tipo="${row['id_tipo_requerimiento']}"
-                            data-fentrega="${row['fecha_entrega']}" data-cdp="${row['codigo_oportunidad']}" data-cantidad-productos-no-mapeados="${row['productos_no_mapeados']}" ${row['productos_no_mapeados'] >0 ?"disabled":""} disabled>
+                            data-fentrega="${row['fecha_entrega']}" data-cdp="${row['codigo_oportunidad']}" data-cantidad-productos-no-mapeados="${row['productos_no_mapeados']}" ${row['productos_no_mapeados'] >0 ?"disabled":""}  ${(auth_user.id_usuario==78?'':'disabled')}>
                             <strong>ODE</strong></button>
                             `:''): ''}
                         `+

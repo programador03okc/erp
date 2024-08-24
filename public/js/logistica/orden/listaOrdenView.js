@@ -2127,7 +2127,7 @@ class ListaOrdenView {
                             if (row.fecha_ultimo_ingreso_almacen != null || [5, 6, 8, 9, 10].includes(row.estado_pago) == true) {
                                 btnAnularOrden = (array_accesos.find(element => element === 248) ? '<button type="button" class="btn btn-sm btn-default boton" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '" disabled ><i class="fas fa-backspace fa-xs"></i></button>' : '');
                             } else {
-                                btnAnularOrden = (array_accesos.find(element => element === 248) ? '<button type="button" class="btn btn-sm btn-danger boton handleClickAnularOrden" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '"><i class="fas fa-backspace fa-xs"></i></button>' : '');
+                                btnAnularOrden = (array_accesos.find(element => element === 248) ? '<button type="button" class="btn btn-sm btn-danger boton handleClickAnularOrden" name="btnAnularOrden" title="Anular orden" data-codigo-orden="' + row.codigo + '" data-id-orden-compra="' + row.id + '" disabled><i class="fas fa-backspace fa-xs"></i></button>' : '');
                             }
                             let btnVerDetalle = (array_accesos.find(element => element === 245) ? `<button type="button" class="ver-detalle btn btn-sm btn-primary boton handleCliclVerDetalleOrden" data-toggle="tooltip" data-placement="bottom" title="Ver Detalle" data-id="${row.id}">
                                                 <i class="fas fa-chevron-down"></i>
@@ -2152,12 +2152,12 @@ class ListaOrdenView {
                                 data-id-cuenta-persona-pago="${row.id_cuenta_persona_pago ?? ''}"
                                 data-comentario-pago="${row.comentario_pago ?? ''}"
                                 data-lista-requerimientos-con-tipo-impuesto="${row.lista_requerimientos_con_tipo_impuesto ?? ''}"
-
+                                disabled
                                 >
                                     <i class="fas fa-money-check-alt fa-xs"></i>
                                 </button>`: '');
 
-                            let btnLiberarOrden =   `<button type="button" class="btn btn-sm btn-default boton handleClickLiberarItemOrden" name="btnLiberarOrden" title="Liberar item de orden" data-codigo-orden="${row.codigo}" data-id-orden-compra="${row.id}" style="background-color:hotpink;"><i class="fas fa-object-ungroup fa-xs"></i></button>`;
+                            let btnLiberarOrden =   `<button type="button" class="btn btn-sm btn-default boton handleClickLiberarItemOrden" name="btnLiberarOrden" title="Liberar item de orden" data-codigo-orden="${row.codigo}" data-id-orden-compra="${row.id}" style="background-color:hotpink;" disabled><i class="fas fa-object-ungroup fa-xs"></i></button>`;
 
                             let btnAdjuntar = (array_accesos.find(element => element === 249) ? `<button type="button"  class="btn btn-default adjuntar-archivos" data-toggle="tooltip" title="Adjuntar archivos" data-codigo="${row.codigo}" data-id="${row.id}" data-codigo="${row.codigo}" data-id-moneda="${row.id_moneda}" data-creditos="${row.credito_dias ?? ''}" data-fecha-emision="${ moment(row.fecha_emision).format('YYYY/MM/DD')  ?? ''}" data-enviar-pago="${row.enviar_pago ?? ''}"><i class="fas fa-paperclip fa-xs"></i></button>` : '');
                             let containerCloseBrackets = '</div>';

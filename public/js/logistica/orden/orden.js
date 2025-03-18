@@ -125,6 +125,8 @@ $(function () {
         let lista = $('#listaDetalleOrden [data-action="click-bienes"]');
         let orden_detalle = [];
         let strin_id = '';
+        let codigo_orden = $('[name="codigo_orden_interno"]').text();
+        console.log(codigo_orden);
         if (lista.length>0) {
             $.each(lista, function (index, element) {
                 if(element.children[0].checked){
@@ -139,7 +141,7 @@ $(function () {
                 }
             });
 
-            window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes-hojas",{id:JSON.stringify(strin_id)}));
+            window.open(route("logistica.gestion-logistica.compras.ordenes.elaborar.excel-verificacion-bienes-hojas",{id:JSON.stringify(strin_id), codigo:codigo_orden}));
         }else{
             console.log('sin marcar');
         }

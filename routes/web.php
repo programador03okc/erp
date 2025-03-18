@@ -1592,7 +1592,7 @@ Route::middleware(['auth'])->group(function () {
 						Route::get('imprimir_orden_servicio_o_transformacion/{idOportunidad}', [TransformacionController::class, 'imprimir_orden_servicio_o_transformacion'])->name('imprimir-orden-servicio-o-transformacion');
 
                         Route::get('excel-verificacion-bienes/{id}', [OrdenController::class, 'excelVerificacionBienes'])->name('excel-verificacion-bienes');
-                        Route::get('excel-verificacion-bienes-hojas/{id}', [OrdenController::class, 'excelVerificacionBienesHojas'])->name('excel-verificacion-bienes-hojas');
+                        Route::get('excel-verificacion-bienes-hojas/{id}/{codigo}', [OrdenController::class, 'excelVerificacionBienesHojas'])->name('excel-verificacion-bienes-hojas');
 					});
 					Route::name('listado.')->prefix('listado')->group(function () {
 

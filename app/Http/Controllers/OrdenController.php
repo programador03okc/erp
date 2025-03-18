@@ -5809,10 +5809,14 @@ class OrdenController extends Controller
 
     }
 
-    public function excelVerificacionBienesHojas($id){
+    public function excelVerificacionBienesHojas($id, $codigo_orden){
         // ex
-        // $array = explode('-',$id);
-        return Excel::download(new VerificacionBienesHojasExport($id), 'OKC-LOG-FOR-004-'.'-20519865476.xlsx');
+        $array = explode('-',$id);
+        $orden = Orden::where('codigo','like','%'.$codigo_orden.'%')->first();
+        $fecha = date("Y-m-d", strtotime($orden->fecha_registro));
+        // return [$fecha];
+        // return Excel::download(new VerificacionBienesHojasExport($id), 'OKC-LOG-FOR-004-'.'-20519865476.xlsx');
+        return Excel::download(new VerificacionBienesHojasExport($id), $orden->codigo.' '.$fecha.'.xlsx');
         // return response()->json(["data"=>$array],200);
     }
 

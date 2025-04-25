@@ -14,7 +14,7 @@ function listarUbigeos() {
         'buttons': [],
         'language': vardataTables[0],
         'bDestroy': true,
-        'ajax': 'listar_ubigeos',
+        'ajax': route('cas.garantias.incidencias.listar-ubigeos'),
         'columns': [
             { 'data': 'id_dis' },
             { 'data': 'codigo' },

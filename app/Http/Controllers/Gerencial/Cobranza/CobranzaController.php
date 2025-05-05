@@ -131,7 +131,7 @@ class CobranzaController extends Controller
         if ($request->session()->has('cobranzaSemaforo')) {
 
             $optionSemaforo =session()->get('cobranzaSemaforo');
-             
+
             if($optionSemaforo ==0){
                 $data = $data->whereRaw("coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) >= 0 and coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) < 5");
 
@@ -222,14 +222,14 @@ class CobranzaController extends Controller
                 return '<div class="text-center"> <i class="fas fa-thermometer-full red"  data-toggle="tooltip" data-placement="right" title="Rojo"></i></div>';
 
             }
-  
+
         })
         ->editColumn('importe', function ($data) { return number_format($data->importe, 2); })
         ->editColumn('fase', function ($data) {
             return ($data->fase != null) ? '<label class="label label-primary label-badge">'.$data->fase.'</label>' : '<label class="label label-danger label-badge">-</label>';
          })
         ->rawColumns(['fase', 'accion','semaforo'])
-        
+
         ->make(true);
     }
 
@@ -265,7 +265,8 @@ class CobranzaController extends Controller
                 $cobranza->fuente_financ = $request->ff;
                 $cobranza->ocam = $request->oc; // OCAM es igul que la oc
                 $cobranza->siaf = $request->siaf;
-                $cobranza->fecha_emision = $request->fecha_emi;
+                // $cobranza->fecha_emision = $request->fecha_emi;
+                $cobranza->fecha_final = $request->fecha_final;
                 $cobranza->fecha_recepcion = $request->fecha_rec;
                 $cobranza->moneda = $request->moneda;
                 $cobranza->importe = $request->importe;
@@ -457,9 +458,9 @@ class CobranzaController extends Controller
 
     public function buscarContacto(Request $request)
     {
-        
+
         $data = Observaciones::select('nombre_contacto','telefono_contacto','area_contacto_id')->with('areaContacto')->where([['cobranza_id', $request->cobranza_id],['estado','!=',7]])->distinct();
- 
+
 
         return DataTables::of($data)->make(true);
     }
@@ -554,7 +555,7 @@ class CobranzaController extends Controller
         ->leftJoin('almacen.orden_despacho','orden_despacho.id_requerimiento','=','alm_req.id_requerimiento')
         ->leftJoin('almacen.orden_despacho_obs','orden_despacho_obs.id_od','=','orden_despacho.id_od')
         ->where([['alm_req.estado','!=',7],['orden_despacho.estado','!=',7],['oc_propias.id',$cobranza->id_oc],['orden_despacho.aplica_cambios',false],['orden_despacho_obs.accion',8]])->orderBy('orden_despacho_obs.fecha_registro','desc')->limit(1)->get();
-        
+
         if(count($guiaDespacho)>0){
             $guia=[
                 'fecha_entrega_real'=>$guiaDespacho[0]['fecha_estado'],
@@ -564,12 +565,12 @@ class CobranzaController extends Controller
             ];
 
         }
- 
+
 
         $observaciones = Observaciones::with(['estadoDocumento','usuario','areaContacto','adjunto' => function ($q) {
             $q->where('cobranza_adjunto_observacion.estado','!=', 7);
         }
-        
+
         ])->where([['cobranza_id', $id],['estado','!=',7]])->orderBy('created_at', 'desc')->get();
         return response()->json(["success" => true, "status" => 200, "observaciones"=> $observaciones,"guia"=>$guia]);
     }
@@ -596,7 +597,7 @@ class CobranzaController extends Controller
             $observacion->updated_at = date('Y-m-d H:i:s');
             $observacion->save();
 
-     
+
 
             if($observacion->id >0 && (isset($request->archivo_adjunto) || $request->archivo_adjunto !=null)){
                 // $cantidadDeAdjunto =  count($request->adjunto);
@@ -608,7 +609,7 @@ class CobranzaController extends Controller
                     $extension = pathinfo($file, PATHINFO_EXTENSION);
                     $newNameFile = $observacion->cobranza_id . $key  . $sufijo . '.' . $extension;
                     Storage::disk('archivos')->put("cobranzas/" . $newNameFile, File::get($archivo));
-    
+
                     $idAdjunto = DB::table('cobranza.cobranza_adjunto_observacion')->insertGetId(
                         [
                             'observacion_id'            => $observacion->id,
@@ -620,7 +621,7 @@ class CobranzaController extends Controller
                         ],
                         'id'
                     );
-    
+
                     $idAdjuntoList[] = $idAdjunto;
                 }
             }

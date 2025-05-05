@@ -259,8 +259,8 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <h6>Fecha Emisión</h6>
-                                <input type="date" class="form-control input-sm text-center" name="fecha_emi" id="fecha_emi"
+                                <h6>Fecha Final de entrega</h6>
+                                <input type="date" class="form-control input-sm text-center" name="fecha_final" id="fecha_final"
                                 required>
                             </div>
                         </div>
@@ -589,7 +589,7 @@
                                         <label>Descripcion</label>
                                         <textarea class="form-control input-sm" name="descripcion_observacion" id="descripcion_observacion"  style="height: 6rem; overflow:scroll;"></textarea>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
@@ -608,7 +608,7 @@
                                         <label>Nombre contacto</label>
                                         <input type="text" class="form-control input-sm actualizarValidacionIngresoTexto" name="nombre_contacto" id="nombre_contacto" />
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Área</label>
@@ -619,7 +619,7 @@
                                                 @endforeach
                                             </select>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

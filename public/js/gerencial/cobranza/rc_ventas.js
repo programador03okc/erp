@@ -27,7 +27,7 @@ $(function () {
     $('#modal-observaciones').on("change", "select.actualizarValidacionIngresoTexto", (e) => {
         actualizarValidacionIngresoTexto(e);
     });
-    
+
     $('#modal-lista-contactos').on("click", "button.seleccionar-contacto", (e) => {
         document.querySelector("div[id='modal-observaciones'] input[id='nombre_contacto']").value=e.currentTarget.dataset.nombreContacto??'';
         document.querySelector("div[id='modal-observaciones'] input[id='telefono_contacto']").value=e.currentTarget.dataset.telefonoContacto??'';
@@ -35,8 +35,8 @@ $(function () {
         $('#modal-lista-contactos').modal('hide');
 
     });
-    
- 
+
+
     listar();
 
     $('#formulario').on('submit', function (e) {
@@ -122,7 +122,7 @@ $(function () {
             Array.prototype.forEach.call(document.querySelector("input[id='adjunto']").files, (file) => {
                 formData.append(`archivo_adjunto[]`, file);
             });
-    
+
             Swal.fire({
                 title: 'Guardar observación',
                 text: "¿Esta seguro de guardar este registro?",
@@ -267,6 +267,7 @@ $(function () {
 
                 $('[name="id_doc_ven"]').val(datos.id_doc_ven);
                 $('[name="id"]').val(datos.id_registro_cobranza);
+                $('[name="fecha_final"]').val(datos.fecha_final);
 
                 $("#modal-cobranza").find(".modal-title").text("Editar el registro de Cobranza");
                 $('#modal-cobranza').modal('show');
@@ -368,6 +369,8 @@ $(function () {
     $('#btnAgregarMgc').on('click', function (e) {
 
         if (idRequerimiento > 0) {
+            console.log(idRequerimiento);
+
             cargarValores(idRequerimiento);
             idRequerimiento = 0;
             $('#lista-procesadas').modal('hide');
@@ -526,6 +529,8 @@ function listar() {
             // $('[name="vendedor"]').val(null).trigger('change');
             $("#modal-cobranza").find(".modal-title").text("Nuevo el registro de Cobranza");
             $('#modal-cobranza').modal('show');
+            $('select option').removeAttr('selected');
+            $('select option[value=""]').attr('selected','true');
         },
         className: 'btn btn-primary btn-sm',
         init: function(api, node, config) {
@@ -760,13 +765,17 @@ function cargarValores(idReq) {
                     $('[name="fact"]').val(response.data.factura);
                 }
 
-                $('[name="empresa"]').removeAttr('selected');
+                $('[name="empresa"] option').removeAttr('selected');
+                $('[name="empresa"] option[value="'+response.data.id_empresa+'"]').attr('selected','true');
                 $('[name="fecha_inicio"]').val(response.data.inicio_entrega);
                 $('[name="fecha_entrega"]').val(response.data.fecha_entrega);
                 $('[name="id_oc"]').val(response.data.id);
 
                 $('[name="orden_compra"]').val(response.data.orden_compra);
                 $('[name="siaf"]').val(response.data.siaf);
+
+                $('[name="id_cliente"]').val(response.data.id_entidad);
+                $('[name="cliente"]').val(response.data.nombre_entidad);
                 console.log(response.data);
             }
         }
@@ -866,7 +875,7 @@ function listarObservaciones(id) {
                     datosObservaciones.forEach(element => {
                         let fechaRegistro = moment(element.created_at).format("MM-DD-YY");
                         let usuario = (element.usuario_id != null) ? element.usuario.nombre_corto : '-';
-                         
+
                         element.adjunto.forEach(adj => {
                             linkAdjuntos += `<a href="/files/cobranzas/${adj.archivo}" target="_blank">${adj.archivo}</a>`;
                         });
@@ -881,19 +890,19 @@ function listarObservaciones(id) {
                             <td class="text-center">`+ (fechaRegistro??'') +`</td>
                             <td class="text-center">
                                 <div style="display:flex; flex-direction:row;">
-                                <button class="btn btn-xs btn-${(element.telefono_contacto!=null && element.telefono_contacto.length>0)?'info':'default'} ver-mas-observacion" 
-                                    data-id="`+ element.id +`" 
+                                <button class="btn btn-xs btn-${(element.telefono_contacto!=null && element.telefono_contacto.length>0)?'info':'default'} ver-mas-observacion"
+                                    data-id="`+ element.id +`"
                                     data-cobranza="`+ element.cobranza_id +`"
                                     data-telefono-contacto="`+ (element.telefono_contacto??'') +`"
                                     data-nombre-contacto="`+ (element.nombre_contacto??'') +`"
                                     data-area-contacto="`+ (element.area_contacto!=null?element.area_contacto.nombre:'') +`"
-                                    ><i class="fa fa-eye"></i></button> 
+                                    ><i class="fa fa-eye"></i></button>
                                 <button class="btn btn-xs btn-danger eliminar-observacion" data-id="`+ element.id +`" data-cobranza="`+ element.cobranza_id +`"><i class="fa fa-trash"></i></button>
                                 </div>
                             </td>
                         </tr>`;
                     });
-                } 
+                }
 
                 if(datosObservaciones.length==0 && (datosGuia.hasOwnProperty('fecha_entrega_real')==false && datosGuia.hasOwnProperty('adjunto')==false)) {
                     resultado = '<tr><td colspan="5">No se encontraron resultados</td></tr>';
@@ -1140,7 +1149,7 @@ function validarFormularioListaObservaciones(){
     if (document.querySelector("select[name='estado']").value == '') {
         validoEstado = false;
     }
-    
+
 
     if (document.querySelector("input[name='telefono_contacto']").value != '') {
         if (document.querySelector("input[name='nombre_contacto']").value == '') {
@@ -1178,7 +1187,7 @@ function validarFormularioListaObservaciones(){
 
     }
     return (validoNombre*validoArea * validoEstado);
-    
+
 }
 
 
@@ -1230,7 +1239,7 @@ function listaContactoModal(){
             {data: 'area_contacto.nombre'},
             { className: "text-center selecionar",
                 render: function (data, type, row) {
-                    return `<button class="btn btn-xs btn-success seleccionar-contacto" 
+                    return `<button class="btn btn-xs btn-success seleccionar-contacto"
                     data-nombre-contacto="`+ row.nombre_contacto +`"
                     data-telefono-contacto="`+ row.telefono_contacto +`"
                     data-area-contacto-descripcion="`+ (row.area_contacto !=null?row.area_contacto.nombre:'') +`"

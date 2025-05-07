@@ -286,6 +286,8 @@ class CobranzaController extends Controller
                 $cobranza->inicio_entrega = $request->fecha_inicio;
                 $cobranza->fecha_entrega = $request->fecha_entrega;
                 $cobranza->id_oc = $request->id_oc;
+                $cobranza->area_usario = $request->area_usario;
+                $cobranza->penalidad = $request->penalidad;
             $cobranza->save();
 
             if((int) $request->id > 0){

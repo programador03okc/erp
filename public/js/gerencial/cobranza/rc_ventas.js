@@ -256,7 +256,7 @@ $(function () {
                 if (pagos) {
                     $('[name="fecha_ppago"]').val(pagos.fecha);
                 }
-                diasAtraso();
+
 
                 $('[name="plazo_credito"]').val(datos.plazo_credito);
                 $('[name="area"] option').removeAttr('selected');
@@ -269,8 +269,12 @@ $(function () {
                 $('[name="id"]').val(datos.id_registro_cobranza);
                 $('[name="fecha_final"]').val(datos.fecha_final);
 
+                $('[name="area_usario"]').val(datos.area_usario);
+                $('[name="penalidad"]').val(datos.penalidad);
+
                 $("#modal-cobranza").find(".modal-title").text("Editar el registro de Cobranza");
                 $('#modal-cobranza').modal('show');
+                diasAtraso();
             }
         }).fail( function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR);
@@ -1038,24 +1042,33 @@ function generarFiltros() {
 }
 
 function diasAtraso() {
-    let fecha_emision = new Date($('[name="fecha_rec"]').val().split('/').reverse().join('-')).getTime();
-    let fecha_vencimiento = new Date($('[name="fecha_ppago"]').val().split('/').reverse().join('-')).getTime();
-    let numero_dias = 0;
+    // let fecha_emision = new Date($('[name="fecha_rec"]').val().split('/').reverse().join('-')).getTime();
+    // let fecha_vencimiento = new Date($('[name="fecha_ppago"]').val().split('/').reverse().join('-')).getTime();
+    // let numero_dias = 0;
 
-    numero_dias = fecha_vencimiento - fecha_emision  ;
-    numero_dias = numero_dias / (1000 * 60 * 60 * 24)
-    numero_dias = numero_dias * (-1);
-    if (numero_dias <= 0) {
-        numero_dias = 0;
+    // numero_dias = fecha_vencimiento - fecha_emision  ;
+    // numero_dias = numero_dias / (1000 * 60 * 60 * 24)
+    // numero_dias = numero_dias * (-1);
+    // if (numero_dias <= 0) {
+    //     numero_dias = 0;
+    // }
+
+    // let fecha_actual = new Date().getTime();
+    // let atraso = fecha_actual - fecha_emision;
+    // atraso = atraso / (1000 * 60 * 60 * 24);
+    // let diasAtraso = (atraso > 0) ? atraso = Math.trunc(atraso) : atraso = 0;
+
+    let fecha_entrega = new Date($('[name="fecha_entrega"]').val()).getTime(); // el campo que usa es la fecha termino en el formulario
+    let fecha_final = new Date($('[name="fecha_final"]').val()).getTime(); // el campo que usa es el de fecha final de entrega
+    let diff = fecha_final - fecha_entrega;
+    let diasAtraso = diff/(1000*60*60*24);
+
+    if(Number.isNaN(diasAtraso)){
+        diasAtraso = 0;
     }
-
-    let fecha_actual = new Date().getTime();
-    let atraso = fecha_actual - fecha_emision;
-    atraso = atraso / (1000 * 60 * 60 * 24);
-    let diasAtraso = (atraso > 0) ? atraso = Math.trunc(atraso) : atraso = 0;
-
     $('[name="atraso"]').val(diasAtraso);
     $('[name="dias_atraso"]').val(diasAtraso);
+
 }
 
 function exportarExcel() {

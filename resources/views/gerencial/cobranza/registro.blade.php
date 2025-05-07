@@ -260,14 +260,14 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <h6>Fecha Final de entrega</h6>
-                                <input type="date" class="form-control input-sm text-center" name="fecha_final" id="fecha_final"
+                                <input type="date" class="form-control input-sm text-center dias-atraso" name="fecha_final" id="fecha_final"
                                 required>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <h6>Fecha Recepción</h6>
-                                <input type="date" class="form-control input-sm text-center dias-atraso" name="fecha_rec" id="fecha_rec" required>
+                                <input type="date" class="form-control input-sm text-center " name="fecha_rec" id="fecha_rec" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -292,7 +292,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <h6>Fecha Pago (próx)</h6>
-                                <input type="date" class="form-control input-sm text-center dias-atraso" data-form="editar-formulario" name="fecha_ppago" id="fecha_ppago" value="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control input-sm text-center " data-form="editar-formulario" name="fecha_ppago" id="fecha_ppago" value="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -343,20 +343,28 @@
                         </div>
 					</div>
                     <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Fecha inicio :</h6>
+                                <input id="fecha_inicio_nuevo" class="form-control input-sm text-center" type="date" name="fecha_inicio">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Fecha termino :</h6>
+                                <input id="fecha_entrega_nuevo " class="form-control input-sm text-center dias-atraso" type="date" name="fecha_entrega">
+                            </div>
+                        </div>
                         <div class="col-md-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <h6>Fecha inicio :</h6>
-                                        <input id="fecha_inicio_nuevo" class="form-control input-sm text-center" type="date" name="fecha_inicio">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <h6>Fecha termino :</h6>
-                                        <input id="fecha_entrega_nuevo" class="form-control input-sm text-center" type="date" name="fecha_entrega">
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <h6>Area de usuario :</h6>
+                                <input class="form-control input-sm text-center " type="text" name="area_usario" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Penalidad :</h6>
+                                <input class="form-control input-sm text-center " type="number" name="penalidad">
                             </div>
                         </div>
                     </div>

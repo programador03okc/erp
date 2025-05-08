@@ -243,11 +243,11 @@ $(function () {
                 $('[name="fact"]').val(datos.factura);
                 $('[name="siaf"]').val(datos.siaf);
                 $('[name="ue"]').val(datos.uu_ee);
-                $('[name="ff"]').val(datos.fuente_financ);
+                // $('[name="ff"]').val(datos.fuente_financ);
                 $('[name="moneda"] option').removeAttr('selected');
                 $('[name="moneda"] option[value="'+ datos.moneda +'"]').attr('selected','true');
                 $('[name="importe"]').val(datos.importe);
-                $('[name="categ"]').val(datos.categoria);
+                // $('[name="categ"]').val(datos.categoria);
                 $('[name="fecha_emi"]').val(datos.fecha_emision);
                 $('[name="fecha_rec"]').val(datos.fecha_recepcion);
                 $('[name="estado_doc"] option').removeAttr('selected');
@@ -261,7 +261,7 @@ $(function () {
                 $('[name="plazo_credito"]').val(datos.plazo_credito);
                 $('[name="area"] option').removeAttr('selected');
                 $('[name="area"] option[value="'+ datos.id_area +'"]').attr('selected','true');
-                $('[name="fecha_inicio"]').val(datos.inicio_entrega);
+                // $('[name="fecha_inicio"]').val(datos.inicio_entrega);
                 $('[name="fecha_entrega"]').val(datos.fecha_entrega);
                 $('[name="vendedor"]').val(datos.vendedor).trigger('change');
 
@@ -771,7 +771,7 @@ function cargarValores(idReq) {
 
                 $('[name="empresa"] option').removeAttr('selected');
                 $('[name="empresa"] option[value="'+response.data.id_empresa+'"]').attr('selected','true');
-                $('[name="fecha_inicio"]').val(response.data.inicio_entrega);
+                // $('[name="fecha_inicio"]').val(response.data.inicio_entrega);
                 $('[name="fecha_entrega"]').val(response.data.fecha_entrega);
                 $('[name="id_oc"]').val(response.data.id);
 

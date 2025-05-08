@@ -224,7 +224,7 @@
                                 <input type="text" class="form-control input-sm text-center" name="ue" id="ue" placeholder="UU.EE">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <div class="form-group">
                                 <h6>FTE FTO.</h6>
                                 <div class="input-group input-group-sm">
@@ -236,7 +236,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-3">
                             <div class="form-group">
                                 <h6>Importe</h6>
@@ -251,12 +251,12 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <div class="form-group">
                                 <h6>Categoría</h6>
                                 <input type="text" class="form-control input-sm text-center" name="categ" id="categ" placeholder="Categoría">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-2">
                             <div class="form-group">
                                 <h6>Fecha Final de entrega</h6>
@@ -343,21 +343,22 @@
                         </div>
 					</div>
                     <div class="row">
-                        <div class="col-md-2">
+                        {{-- <div class="col-md-2">
                             <div class="form-group">
                                 <h6>Fecha inicio :</h6>
                                 <input id="fecha_inicio_nuevo" class="form-control input-sm text-center" type="date" name="fecha_inicio">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-2">
                             <div class="form-group">
+                                {{-- <h6>Fecha termino :</h6> --}}
                                 <h6>Fecha termino :</h6>
                                 <input id="fecha_entrega_nuevo " class="form-control input-sm text-center dias-atraso" type="date" name="fecha_entrega">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <h6>Area de usuario :</h6>
+                                <h6>Area de usuaria :</h6>
                                 <input class="form-control input-sm text-center " type="text" name="area_usario" maxlength="50">
                             </div>
                         </div>

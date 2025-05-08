@@ -39,6 +39,7 @@ use App\Models\mgcp\AcuerdoMarco\OrdenCompraPropias;
 use App\Models\mgcp\OrdenCompra\Propia\Directa\OrdenCompraDirecta;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
 use Carbon\Carbon;
+use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -170,7 +171,15 @@ class CobranzaController extends Controller
 
         return DataTables::of($data)
         ->addColumn('atraso', function ($data){
-            return ($this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) > 0) ? $this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) : '0';
+            // return ($this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) > 0) ? $this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) : '0';
+
+            $fecha_entrega = new DateTime($data->fecha_entrega);
+            $fecha_final = new DateTime($data->fecha_final);
+
+            $diferencia = $fecha_final->diff($fecha_entrega);
+
+            return $diferencia->days;
+
         })
         ->addColumn('accion', function ($data) {
             $array_accesos = [];
@@ -262,7 +271,7 @@ class CobranzaController extends Controller
                 $cobranza->id_cliente = $request->id_cliente;
                 $cobranza->factura = $request->fact;
                 $cobranza->uu_ee = $request->ue;
-                $cobranza->fuente_financ = $request->ff;
+                // $cobranza->fuente_financ = $request->ff;
                 $cobranza->ocam = $request->oc; // OCAM es igul que la oc
                 $cobranza->siaf = $request->siaf;
                 // $cobranza->fecha_emision = $request->fecha_emi;
@@ -278,12 +287,12 @@ class CobranzaController extends Controller
                 $cobranza->id_area = $request->area;
                 $cobranza->id_periodo = $request->periodo;
                 $cobranza->codigo_empresa = $empresa->codigo;
-                $cobranza->categoria = $request->categ;
+                // $cobranza->categoria = $request->categ;
                 $cobranza->cdp = $request->cdp;
                 $cobranza->plazo_credito = $request->plazo_credito;
                 $cobranza->id_doc_ven = $request->id_doc_ven;
                 $cobranza->oc_fisica = $request->orden_compra;
-                $cobranza->inicio_entrega = $request->fecha_inicio;
+                // $cobranza->inicio_entrega = $request->fecha_inicio;
                 $cobranza->fecha_entrega = $request->fecha_entrega;
                 $cobranza->id_oc = $request->id_oc;
                 $cobranza->area_usario = $request->area_usario;

@@ -606,10 +606,10 @@ function listar() {
             {data: 'cliente'},
             {data: 'factura', className: "text-center"},
             {data: 'uu_ee', className: "text-center"},
-            {data: 'fuente_financ', className: "text-center"},
+            // {data: 'fuente_financ', className: "text-center"},
             {data: 'oc_fisica', className: "text-center"},
             {data: 'siaf', className: "text-center"},
-            {data: 'fecha_emision', className: "text-center"},
+            // {data: 'fecha_emision', className: "text-center"},
             {data: 'fecha_recepcion', className: "text-center"},
             {data: 'periodo', className: "text-center"},
             {data: 'atraso', className: "text-center"},
@@ -620,9 +620,10 @@ function listar() {
             {data: 'fase', className: "text-center", searchable: false, orderable: false},
             {
                 render: function (data, type, row) {
-                    var fecha_inicio = row['inicio_entrega'] ? row['inicio_entrega']:'-';
+                    // var fecha_inicio = row['inicio_entrega'] ? row['sinicio_entrega']:'-';
                     var fecha_entrega = row['fecha_entrega'] ? row['fecha_entrega']:'-';
-                    return (`${fecha_inicio} <br> ${fecha_entrega}`);
+                    // return (`${fecha_inicio} <br> ${fecha_entrega}`);
+                    return (`${fecha_entrega}`);
                 },
                 className: "text-center", searchable: false, orderable: false
             },
@@ -778,9 +779,10 @@ function cargarValores(idReq) {
                 $('[name="orden_compra"]').val(response.data.orden_compra);
                 $('[name="siaf"]').val(response.data.siaf);
 
-                $('[name="id_cliente"]').val(response.data.id_entidad);
-                $('[name="cliente"]').val(response.data.nombre_entidad);
-                console.log(response.data);
+                $('[name="id_cliente"]').val(response.cliente.id_cliente);
+                $('[name="cliente"]').val(response.contribuyente.razon_social);
+                $('[name="penalidad"]').val(response.penalidad_monto);
+                console.log(response);
             }
         }
     }).fail( function(jqXHR, textStatus, errorThrown) {

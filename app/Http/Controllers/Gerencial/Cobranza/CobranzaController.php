@@ -35,6 +35,7 @@ use App\models\Gerencial\TipoTramite;
 use App\Models\Gerencial\Vendedor;
 use App\Models\Logistica\Proveedor;
 use App\Models\mgcp\AcuerdoMarco\AcuerdoMarco;
+use App\Models\mgcp\AcuerdoMarco\Entidad\Entidad;
 use App\Models\mgcp\AcuerdoMarco\OrdenCompraPropias;
 use App\Models\mgcp\OrdenCompra\Propia\Directa\OrdenCompraDirecta;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
@@ -245,10 +246,13 @@ class CobranzaController extends Controller
     public function guardarRegistro(Request $request)
     {
         // return [$request->ip()];exit;
+
+        // return [$entidad,$cliente];exit;
         DB::beginTransaction();
         try {
             $empresa = Empresa::find($request->empresa);
             $programacion_pago = [];
+
 
             /**
              * Registro de cobranza
@@ -297,6 +301,7 @@ class CobranzaController extends Controller
                 $cobranza->id_oc = $request->id_oc;
                 $cobranza->area_usario = $request->area_usario;
                 $cobranza->penalidad = $request->penalidad;
+                // $cobranza->id_entidad_comercial = $cliente->id_cliente;
             $cobranza->save();
 
             if((int) $request->id > 0){
@@ -516,11 +521,48 @@ class CobranzaController extends Controller
         //     return response()->json(["status"=>400, "success"=>false, "data"=>$cliente_gerencial, "factura"=>$doc_ven, "oc"=> $oc_propias_view ? $oc_propias_view : []]);
         // }
         $oc_propias_view = OrdenCompraPropiaView::find($id_requerimiento);
+
+
         if ($oc_propias_view) {
-            return response()->json(["status"=>200,"data"=>$oc_propias_view],200);
+            $penalidad = Penalidad::where('id_oc', $oc_propias_view->id)->where('estado', 1)->orderBy('id_penalidad', 'desc')->get();
+            $penalidad_monto = $penalidad[0]->monto ?? 0;
+
+            // creacion del cliente en el agil
+            $entidad = Entidad::find($oc_propias_view->id_entidad);
+            $contribuyente = Contribuyente::where('nro_documento',$entidad->ruc)->first();
+            if(!$contribuyente){
+
+                $contribuyente = new Contribuyente();
+                $contribuyente->nro_documento = $entidad->ruc;
+                $contribuyente->razon_social = $entidad->nombre;
+                $contribuyente->direccion_fiscal = $entidad->direccion;
+                $contribuyente->estado = 1;
+                $contribuyente->fecha_registro = date('Y-m-d');
+                $contribuyente->transportista = false;
+                $contribuyente->ubigeo = 0;
+                $contribuyente->save();
+
+
+                // return $entidad;
+            }
+            $cliente = Cliente::where('id_contribuyente',$contribuyente->id_contribuyente)->first();
+            if(!$cliente){
+                $cliente = new Cliente();
+                $cliente->id_contribuyente = $contribuyente->id_contribuyente;
+                $cliente->estado = 1;
+                $cliente->id_entidad = $entidad->id;
+                $cliente->fecha_registro = date('Y-m-d H:i:s');
+                $cliente->save();
+            }
+
+            $cliente->id_entidad = $entidad->id;
+            $cliente->save();
+
+            return response()->json(["status"=>200,"data"=>$oc_propias_view, "penalidad_monto"=>$penalidad_monto, "penalidad"=>$penalidad, "cliente"=>$cliente, "contribuyente"=>$contribuyente],200);
         }else{
             return response()->json(["status"=>401],401);
         }
+
     }
 
     public function obtenerFase($id)

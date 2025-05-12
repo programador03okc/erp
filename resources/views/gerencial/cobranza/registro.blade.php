@@ -68,10 +68,10 @@
 								<th>Nombre del Cliente</th>
 								<th width="70">Fact.</th>
 								<th width="11">UU. EE</th>
-								<th width="11">FTE. FTO</th>
+								{{-- <th width="11">FTE. FTO</th> --}}
 								<th width="15">OC Fisica</th>
 								<th width="11">SIAF</th>
-								<th width="60">Fec. Emis</th>
+								{{-- <th width="60">Fec. Emis</th> --}}
 								<th width="60">Fec. Recep</th>
 								<th width="12">Periodo</th>
 								<th width="12">Atraso</th>
@@ -81,7 +81,8 @@
 								<th id="tdResp">A. Respo.</th>
 								<th width="10">Fase</th>
 								<th class="hidden">Tipo</th>
-                                <th width="60">Fec. inicio / entrega <em>(estimada)</em> </th>
+                                {{-- <th width="60">Fec. inicio / entrega <em>(estimada)</em> </th> --}}
+                                <th width="60">Fec. entrega </th>
                                 <th width="60">Fec. entrega <em>(real)</em> </th>
 								<th id="tdAct">-</th>
                             </tr>
@@ -352,7 +353,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 {{-- <h6>Fecha termino :</h6> --}}
-                                <h6>Fecha termino :</h6>
+                                <h6>Fecha real de entrega :</h6>
                                 <input id="fecha_entrega_nuevo " class="form-control input-sm text-center dias-atraso" type="date" name="fecha_entrega">
                             </div>
                         </div>

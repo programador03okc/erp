@@ -401,7 +401,7 @@
                 </div>
                 <fieldset class="group-table" id="fieldsetFallaReportada">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-md-4">
                             <div class="form-horizontal">
                                 <div class="form-group " style=";">
                                     <label class="col-sm-4 control-label">Tipo de falla</label>
@@ -415,6 +415,41 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Tipo de servicio</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control js-example-basic-single  limpiarIncidencia"
+                                            name="id_tipo_servicio">
+                                            <option value="">Elija una opción</option>
+                                            @foreach ($tipoServicios as $tpservicio)
+                                            <option value="{{$tpservicio->id_tipo_servicio}}" {{ ($servicio ? ($tpservicio->id_tipo_servicio == $servicio->id_tipo_servicio?'selected':'') :'') }}
+                                                >{{$tpservicio->descripcion}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-4 control-label">Equipo operativo</label>
+                                    <div class="col-sm-8">
+                                        <label>
+                                            <input type="checkbox" name="equipo_operativo" class="flat-red" {{ ($servicio ? (true == $servicio->equipo_operativo?'checked':'') :'') }}  >
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
                                 <div class="form-group " style=";">
                                     <label class="col-sm-4 control-label">Modo</label>
                                     <div class="col-sm-8">
@@ -428,6 +463,45 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Medio reporte</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control js-example-basic-single  limpiarIncidencia"
+                                            name="id_medio">
+                                            <option value="">Elija una opción</option>
+                                            @foreach ($medios as $medio)
+                                            <option value="{{$medio->id_medio}}"{{ ($servicio ? ($medio->id_medio == $servicio->id_medio?'selected':'') :'') }}
+                                                >{{$medio->descripcion}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Conformidad</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control js-example-basic-single  limpiarIncidencia"
+                                            name="conformidad">
+                                            <option value="">Elija una opción</option>
+                                            <option value="PRE" {{ ($servicio ? ('PRE' == $servicio->conformidad?'selected':'') :'') }}>PRE</option>
+                                            <option value="POST" {{ ($servicio ? ('POST' == $servicio->conformidad?'selected':'') :'') }}>POST</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+
+                            <div class="form-horizontal">
                                 <div class="form-group " style=";">
                                     <label class="col-sm-4 control-label">Tipo garantía</label>
                                     <div class="col-sm-8">
@@ -447,32 +521,6 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group " style=";">
-                                    <label class="col-sm-4 control-label">Tipo de servicio</label>
-                                    <div class="col-sm-8">
-                                        <select class="form-control js-example-basic-single  limpiarIncidencia"
-                                            name="id_tipo_servicio">
-                                            <option value="">Elija una opción</option>
-                                            @foreach ($tipoServicios as $tpservicio)
-                                            <option value="{{$tpservicio->id_tipo_servicio}}" {{ ($servicio ? ($tpservicio->id_tipo_servicio == $servicio->id_tipo_servicio?'selected':'') :'') }}
-                                                >{{$tpservicio->descripcion}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group " style=";">
-                                    <label class="col-sm-4 control-label">Medio reporte</label>
-                                    <div class="col-sm-8">
-                                        <select class="form-control js-example-basic-single  limpiarIncidencia"
-                                            name="id_medio">
-                                            <option value="">Elija una opción</option>
-                                            @foreach ($medios as $medio)
-                                            <option value="{{$medio->id_medio}}"{{ ($servicio ? ($medio->id_medio == $servicio->id_medio?'selected':'') :'') }}
-                                                >{{$medio->descripcion}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group " style=";">
                                     <label class="col-sm-4 control-label">Atiende</label>
                                     <div class="col-sm-8">
                                         <select class="form-control js-example-basic-single  limpiarIncidencia"
@@ -491,29 +539,166 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group " style=";">
-                                    <label class="col-sm-4 control-label">Equipo operativo</label>
-                                    <div class="col-sm-8">
-                                        <label>
-                                            <input type="checkbox" name="equipo_operativo" class="flat-red" {{ ($servicio ? (true == $servicio->equipo_operativo?'checked':'') :'') }}  >
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group " style=";">
-                                    <label class="col-sm-4 control-label">Conformidad</label>
-                                    <div class="col-sm-8">
-                                        <select class="form-control js-example-basic-single  limpiarIncidencia"
-                                            name="conformidad">
-                                            <option value="">Elija una opción</option>
-                                            <option value="PRE" {{ ($servicio ? ('PRE' == $servicio->conformidad?'selected':'') :'') }}>PRE</option>
-                                            <option value="POST" {{ ($servicio ? ('POST' == $servicio->conformidad?'selected':'') :'') }}>POST</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group " style=";">
                                     <label class="col-sm-4 control-label">Nro. de caso</label>
                                     <div class="col-sm-8">
                                         <input type="text" class="form-control  limpiarIncidencia" name="numero_caso" value="{{($servicio?$servicio->numero_caso:'')}}"/>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Versión BIOS / Firmware actual</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="bios_actual" value="{{($servicio?$servicio->bios_actual:'')}}" required/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Versión BIOS / Firmware actualizada</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="bios_actualizada" value="{{($servicio?$servicio->bios_actualizada:'')}}" required/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Estado de Sericio</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="estado_servicio" value="{{($servicio?$servicio->estado_servicio:'')}}" required/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label">¿Daños físicos detectados?</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="fisico_detectado" class="flat-green" {{ ($servicio ? (true == $servicio->fisico_detectado?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label">¿Tornillos, tapas, jefes, accesorios completos?</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="accesorios_completos" class="flat-green" {{ ($servicio ? (true == $servicio->accesorios_completos?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label">¿Se encuentra correctamente ensamblado?</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="ensamblado" class="flat-green" {{ ($servicio ? (true == $servicio->ensamblado?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label"> ¿Presenta signos de desgaste?</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="desgaste" class="flat-green" {{ ($servicio ? (true == $servicio->desgaste?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label"> ¿Presenta signos de golpes?</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="golpes" class="flat-green" {{ ($servicio ? (true == $servicio->golpes?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label">¿El equipo se encuentra limpio?</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="equipo_limpo" class="flat-green" {{ ($servicio ? (true == $servicio->equipo_limpo?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-8 control-label">¿El equipo presenta indicios de manipulación o daños, ya sean internos o externos, que puedan ser considerados como causa de exclusión de garantía?</label>
+                                    <div class="col-sm-4">
+                                        <label>
+                                            <input type="checkbox" name="manipulacion_danos" class="flat-green" {{ ($servicio ? (true == $servicio->manipulacion_danos?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-horizontal">
+                                <div class="form-group " style="">
+                                    <label class="col-sm-6 control-label">Verifica Boletines / Tips</label>
+                                    <div class="col-sm-6">
+                                        <label>
+                                            <input type="checkbox" name="boletines" class="flat-green" {{ ($servicio ? (true == $servicio->boletines?'checked':'') :'') }}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group ">
+                                <label class=" control-label">Hora de llegada</label>
+                                <div class="">
+                                    <input type="time" class="form-control" name="hora_llegada" value="{{($servicio?$servicio->hora_llegada:'')}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group ">
+                                <label class=" control-label">Hora de Inicio</label>
+                                <div class="">
+                                    <input type="time" class="form-control" name="hora_inicio" value="{{($servicio?$servicio->hora_inicio:'')}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group ">
+                                <label class=" control-label">Hora de Fin</label>
+                                <div class="">
+                                    <input type="time" class="form-control" name="hora_fin" value="{{($servicio?$servicio->hora_fin:'')}}"/>
                                 </div>
                             </div>
                         </div>

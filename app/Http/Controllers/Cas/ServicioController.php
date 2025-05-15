@@ -149,6 +149,21 @@ class ServicioController extends Controller
             // $servicio->region = $request->region;
             $servicio->descripcion_accion = $request->descripcion_accion;
             // $servicio->dias_atencion = $request->dias_atencion;
+
+            $servicio->hora_fin = $request->hora_fin;
+            $servicio->hora_inicio = $request->hora_inicio;
+            $servicio->hora_llegada = $request->hora_llegada;
+            $servicio->boletines = $request->boletines;
+            $servicio->manipulacion_danos = $request->manipulacion_danos;
+            $servicio->equipo_limpo = $request->equipo_limpo;
+            $servicio->golpes = $request->golpes;
+            $servicio->desgaste = $request->desgaste;
+            $servicio->ensamblado = $request->ensamblado;
+            $servicio->accesorios_completos = $request->accesorios_completos;
+            $servicio->fisico_detectado = $request->fisico_detectado;
+            $servicio->estado_servicio = $request->estado_servicio;
+            $servicio->bios_actualizada = $request->bios_actualizada;
+            $servicio->bios_actual = $request->bios_actual;
         $servicio->save();
 
         return response()->json([

@@ -571,7 +571,7 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group " style=";">
-                                    <label class="col-sm-4 control-label">Estado de Sericio</label>
+                                    <label class="col-sm-4 control-label">Estado de Servicio</label>
                                     <div class="col-sm-8">
                                         <input type="text" class="form-control" name="estado_servicio" value="{{($servicio?$servicio->estado_servicio:'')}}" required/>
                                     </div>
@@ -730,7 +730,7 @@
                                 <div class="form-group " style=";">
                                     <label class="col-sm-6 control-label">Costo del servicio contratado (S/)</label>
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control  limpiarIncidencia" name="importe_gastado" value="{{($servicio?$servicio->importe_gastado:'')}}"/>
+                                        <input type="number" class="form-control  limpiarIncidencia" name="importe_gastado" value="{{($servicio?$servicio->importe_gastado:'70')}}"/>
                                     </div>
                                 </div>
                             </div>

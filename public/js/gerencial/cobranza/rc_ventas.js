@@ -1062,9 +1062,10 @@ function diasAtraso() {
 
     let fecha_entrega = new Date($('[name="fecha_entrega"]').val()).getTime(); // el campo que usa es la fecha termino en el formulario
     let fecha_final = new Date($('[name="fecha_final"]').val()).getTime(); // el campo que usa es el de fecha final de entrega
-    let diff = fecha_final - fecha_entrega;
+    let diff = fecha_entrega - fecha_final ;
     let diasAtraso = diff/(1000*60*60*24);
 
+    // (12 - 05 -2025) -  (30 -04-2025) REVISAR ESTA FECHA DEBERIA BOTAR -12 NO 12 POSITIVO
     if(Number.isNaN(diasAtraso)){
         diasAtraso = 0;
     }

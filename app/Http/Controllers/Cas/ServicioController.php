@@ -58,9 +58,9 @@ class ServicioController extends Controller
                 data-placement="bottom" data-id="'.$data->id.'" title="Cancelar Servicio" >
                 <i class="fa fa-trash"></i></button>
 
-                <button type="button" class="pdf btn btn-default boton" data-toggle="tooltip"
+                <a href="'.route('cas.servicios.pdf',["id"=>$data->id]).'" class="pdf btn btn-default boton" data-toggle="tooltip"
                 data-placement="bottom" data-id="'.$data->id.'" title="Reporte PDF" >
-                <i class="fa fa-file-pdf"></i></button>
+                <i class="fa fa-file-pdf"></i></a>
             </div>';
         })->rawColumns(['accion','estado_doc'])->make(true);
     }
@@ -210,6 +210,13 @@ class ServicioController extends Controller
             "icon"=> "success",
         ]);
 
+    }
+    public function pdf($id){
+        $servicio = Servicio::find($id);
+        return response()->json([
+            'data' => $servicio,
+            "title"=> "Éxito",
+        ]);
     }
 
 }

@@ -1351,6 +1351,8 @@ Route::middleware(['auth'])->group(function () {
 			Route::post('guardar', [ServicioController::class, 'guardar'])->name('guardar');
 			Route::post('guardar-fecha-cierre', [ServicioController::class, 'guardarFechaCierre'])->name('guardar-fecha-cierre');
 			Route::put('cancelar/{id_servicio}', [ServicioController::class, 'cancelar'])->name('cancelar');
+
+            Route::get('pdf/{id}', [ServicioController::class, 'pdf'])->name('pdf');
 		});
 	});
 

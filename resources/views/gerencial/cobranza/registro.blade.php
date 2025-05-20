@@ -298,7 +298,7 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <h6>Días Atraso</h6>
+                                <h6>Días Atraso entrega</h6>
                                 <input type="hidden" name="dias_atraso" value="0">
                                 <input type="text" class="form-control input-sm text-center" name="atraso" id="atraso" value="0" data-form="guardar-formulario" disabled>
                             </div>

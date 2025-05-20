@@ -180,7 +180,7 @@
                                 <div class="form-group " style="">
                                     <label class="col-sm-4 control-label">Quien reporta</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control  limpiarIncidencia" name="usuario_final" value="{{($servicio?$servicio->usuario_final:'')}}"/>
+                                        <input type="text" class="form-control  limpiarIncidencia" name="usuario_final" value="{{($servicio?$servicio->usuario_final:'')}}"  required/>
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +191,7 @@
                                 <div class="form-group" >
                                     <label class="col-sm-2 control-label">Dirección</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control  limpiarIncidencia" name="direccion_contacto" value="{{($servicio?$servicio->direccion_contacto:'')}}"/>
+                                        <input type="text" class="form-control  limpiarIncidencia" name="direccion_contacto" value="{{($servicio?$servicio->direccion_contacto:'')}}" required/>
                                     </div>
                                 </div>
                             </div>
@@ -202,7 +202,7 @@
                                     <label class="col-sm-3 control-label">Horario</label>
                                     <div class="col-sm-9">
                                         <div class="form-control-static limpiarTexto horario_contacto d-none"></div>
-                                        <input class="form-control  limpiarIncidencia" type="text" name="horario_contacto" value="{{($servicio?$servicio->horario_contacto:'')}}">
+                                        <input class="form-control  limpiarIncidencia" type="text" name="horario_contacto" value="{{($servicio?$servicio->horario_contacto:'')}}" required>
                                     </div>
                                 </div>
                             </div>
@@ -333,6 +333,8 @@
                                         <input type="text" class="form-control  limpiarIncidencia" name="serie" value="{{($servicio?$servicio->serie:'')}}" required/>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-horizontal">
                                 <div class="form-group" >
                                     <label class="col-sm-4 control-label">Marca</label>
                                     <div class="col-sm-8">
@@ -361,7 +363,13 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group" >
+                                <div class="form-group" style="">
+                                    <label class="col-sm-2 control-label">Part Number </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control  limpiarIncidencia" name="part_number" value="{{($servicio?$servicio->part_number:'')}}" required/>
+                                    </div>
+                                </div>
+                                {{-- <div class="form-group" >
                                     <label class="col-sm-2 control-label">Tipo</label>
                                     <div class="col-sm-10">
                                         <select class="form-control js-example-basic-single  limpiarIncidencia" name="id_tipo" required>
@@ -371,7 +379,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -682,7 +690,7 @@
                             <div class="form-group ">
                                 <label class=" control-label">Hora de llegada</label>
                                 <div class="">
-                                    <input type="time" class="form-control" name="hora_llegada" value="{{($servicio?$servicio->hora_llegada:'')}}"/>
+                                    <input type="time" class="form-control" name="hora_llegada" value="{{($servicio?$servicio->hora_llegada:'')}}" required/>
                                 </div>
                             </div>
                         </div>
@@ -690,7 +698,7 @@
                             <div class="form-group ">
                                 <label class=" control-label">Hora de Inicio</label>
                                 <div class="">
-                                    <input type="time" class="form-control" name="hora_inicio" value="{{($servicio?$servicio->hora_inicio:'')}}"/>
+                                    <input type="time" class="form-control" name="hora_inicio" value="{{($servicio?$servicio->hora_inicio:'')}}" required/>
                                 </div>
                             </div>
                         </div>
@@ -698,7 +706,7 @@
                             <div class="form-group ">
                                 <label class=" control-label">Hora de Fin</label>
                                 <div class="">
-                                    <input type="time" class="form-control" name="hora_fin" value="{{($servicio?$servicio->hora_fin:'')}}"/>
+                                    <input type="time" class="form-control" name="hora_fin" value="{{($servicio?$servicio->hora_fin:'')}}" required/>
                                 </div>
                             </div>
                         </div>
@@ -710,7 +718,7 @@
                                     {{-- <label class="col-sm-4 control-label">Ingrese la falla reportada</label> --}}
                                     <div class="col-sm-12">
                                         <textarea class="form-control  limpiarIncidencia" name="falla_reportada"
-                                        placeholder="Ingrese la falla reportada">{{($servicio?$servicio->falla_reportada:'')}}</textarea>
+                                        placeholder="Ingrese la falla reportada" required>{{($servicio?$servicio->falla_reportada:'')}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -753,7 +761,7 @@
                                     {{-- <label class="col-sm-4 control-label">Ingrese la falla reportada</label> --}}
                                     <div class="col-sm-12">
                                         <textarea class="form-control  limpiarIncidencia" name="comentarios_cierre"
-                                        placeholder="Ingrese los comentarios del cierre">{{($servicio?$servicio->comentarios_cierre:'')}}</textarea>
+                                        placeholder="Ingrese los comentarios del cierre" required>{{($servicio?$servicio->comentarios_cierre:'')}}</textarea>
                                     </div>
                                 </div>
                             </div>

@@ -57,6 +57,10 @@ class ServicioController extends Controller
                 <button type="button" class="cancelar btn btn-danger boton" data-toggle="tooltip"
                 data-placement="bottom" data-id="'.$data->id.'" title="Cancelar Servicio" >
                 <i class="fa fa-trash"></i></button>
+
+                <button type="button" class="pdf btn btn-default boton" data-toggle="tooltip"
+                data-placement="bottom" data-id="'.$data->id.'" title="Reporte PDF" >
+                <i class="fa fa-file-pdf"></i></button>
             </div>';
         })->rawColumns(['accion','estado_doc'])->make(true);
     }
@@ -164,6 +168,7 @@ class ServicioController extends Controller
             $servicio->estado_servicio = $request->estado_servicio;
             $servicio->bios_actualizada = $request->bios_actualizada;
             $servicio->bios_actual = $request->bios_actual;
+            $servicio->part_number = $request->part_number;
         $servicio->save();
 
         return response()->json([

@@ -22,6 +22,8 @@ use App\Models\Configuracion\Usuario;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\App;
 
 class ServicioController extends Controller
 {
@@ -213,10 +215,18 @@ class ServicioController extends Controller
     }
     public function pdf($id){
         $servicio = Servicio::find($id);
-        return response()->json([
-            'data' => $servicio,
-            "title"=> "Éxito",
-        ]);
+        // return response()->json([
+        //     'data' => $servicio,
+        //     "title"=> "Éxito",
+        // ]);
+
+        $vista = View::make('cas/fichasReporte/servicio', get_defined_vars())->render();
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML($vista);
+
+        return $pdf->stream();
+        return $pdf->download('prueba1.pdf');
     }
 
 }

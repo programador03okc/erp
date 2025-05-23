@@ -61,7 +61,7 @@ class ServicioController extends Controller
                 <i class="fa fa-trash"></i></button>
 
                 <a href="'.route('cas.servicios.pdf',["id"=>$data->id]).'" class="pdf btn btn-default boton" data-toggle="tooltip"
-                data-placement="bottom" data-id="'.$data->id.'" title="Reporte PDF" >
+                data-placement="bottom" data-id="'.$data->id.'" title="Reporte PDF" target="_blank">
                 <i class="fa fa-file-pdf"></i></a>
             </div>';
         })->rawColumns(['accion','estado_doc'])->make(true);
@@ -215,13 +215,15 @@ class ServicioController extends Controller
     }
     public function pdf($id){
         $servicio = Servicio::find($id);
+        $usuarios = Usuario::find($servicio->id_responsable);
         // return response()->json([
         //     'data' => $servicio,
         //     "title"=> "Éxito",
         // ]);
-
+        $logo = Empresa::where('id_empresa',$servicio->id_empresa)->first();
+        $logo_empresa = ".$logo->logo_empresa";
         $vista = View::make('cas/fichasReporte/servicio', get_defined_vars())->render();
-
+        // return $logo;
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML($vista);
 

@@ -85,7 +85,7 @@
                                     <label class="col-sm-4 control-label">Fecha aceptacion</label>
                                     <div class="col-sm-8">
                                         <input type="date" class="form-control  limpiarIncidencia" name="fecha_aceptacion"
-                                            value="{{($servicio?$servicio->fecha_aceptacion:'')}}"
+                                            value="{{($servicio?$servicio->fecha_aceptacion:'')}}" required
                                         />
                                     </div>
                                 </div>
@@ -145,9 +145,9 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group" >
-                                    <label class="col-sm-4 control-label">Fecha reporte</label>
+                                    <label class="col-sm-4 control-label">Fecha de labor en sitio</label>
                                     <div class="col-sm-8">
-                                        <input type="date" class="form-control  limpiarIncidencia" name="fecha_reporte" value="{{($servicio?$servicio->fecha_reporte:'')}}"/>
+                                        <input type="date" class="form-control  limpiarIncidencia" name="fecha_reporte" value="{{($servicio?$servicio->fecha_reporte:'')}}" required/>
                                     </div>
                                 </div>
                             </div>
@@ -443,13 +443,21 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="form-horizontal">
+                            {{-- <div class="form-horizontal">
                                 <div class="form-group " style="">
                                     <label class="col-sm-4 control-label">Equipo operativo</label>
                                     <div class="col-sm-8">
                                         <label>
                                             <input type="checkbox" name="equipo_operativo" class="flat-red" {{ ($servicio ? (true == $servicio->equipo_operativo?'checked':'') :'') }}  >
                                         </label>
+                                    </div>
+                                </div>
+                            </div> --}}
+                            <div class="form-horizontal">
+                                <div class="form-group " style=";">
+                                    <label class="col-sm-4 control-label">Nro orden trabajo (WO)</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control  limpiarIncidencia" name="nro_orden_trabajo" value="{{($servicio?$servicio->nro_orden_trabajo:'')}}" required/>
                                     </div>
                                 </div>
                             </div>
@@ -549,7 +557,7 @@
                                 <div class="form-group " style=";">
                                     <label class="col-sm-4 control-label">Nro. de caso</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control  limpiarIncidencia" name="numero_caso" value="{{($servicio?$servicio->numero_caso:'')}}"/>
+                                        <input type="text" class="form-control  limpiarIncidencia" name="numero_caso" value="{{($servicio?$servicio->numero_caso:'')}}" required/>
                                     </div>
                                 </div>
                             </div>
@@ -761,7 +769,7 @@
                                     {{-- <label class="col-sm-4 control-label">Ingrese la falla reportada</label> --}}
                                     <div class="col-sm-12">
                                         <textarea class="form-control  limpiarIncidencia" name="comentarios_cierre"
-                                        placeholder="Ingrese los comentarios del cierre" required>{{($servicio?$servicio->comentarios_cierre:'')}}</textarea>
+                                        placeholder="Ingrese los comentarios del cierre">{{($servicio?$servicio->comentarios_cierre:'')}}</textarea>
                                     </div>
                                 </div>
                             </div>

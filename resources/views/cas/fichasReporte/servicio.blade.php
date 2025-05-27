@@ -9,7 +9,7 @@
 <style>
     * {
         font-family: "DejaVu Sans";
-        font-size: 10px;
+        font-size: 12px;
     }
     table {
         width: 100%;
@@ -30,16 +30,16 @@
                      RST - Reporte de Servicio Técnico
                 </td>
                 <td colspan="2" align="center">
-                    N° 123116
+                    N° {{$servicio->correlativo}}
                 </td>
             </tr>
             <tr>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Ticket:</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">123116</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Caso:</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">2024478629</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Nro. de caso:</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">{{$servicio->numero_caso}}</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Nro orden trabajo (WO):</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">{{$servicio->nro_orden_trabajo}}</td>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Fecha de Servicio:</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;">03-04-2025</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;">{{$servicio->fecha_reporte}}</td>
             </tr>
             <tr>
                 <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;">Cliente/Usuario:</td>
@@ -132,7 +132,15 @@
             </tr>
             <tr>
                 <td style="border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;" colspan="6">
-                    {{$servicio->comentarios_cierre}}
+                    {{-- {{$servicio->comentarios_cierre}} --}}
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
                 </td>
             </tr>
             <tr>
@@ -162,12 +170,20 @@
                 </td>
             </tr>
             <tr>
-                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;" colspan="3">Firma del cliente: {{$servicio->nombre_contacto}}</td>
+                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;" colspan="3">Firma del cliente: </td>
                 <td style="border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;" colspan="3">Técnico asignado: {{$usuarios->nombre_corto}}</td>
             </tr>
             <tr>
-                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;">Nivel de satisfacción: 1-2-3-4-5 </td>
-                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;" colspan="5">OKCGROUP S.A.C. - Teléfono: 0800-----</td>
+                {{-- <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;">Nivel de satisfacción: 1-2-3-4-5 </td> --}}
+                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;" colspan="6" align="center">OKC GROUP S.A.C. </td>
+            </tr>
+            <tr>
+                <td  colspan="3">
+                    <img src="{{ $caritas }}" height="100px">
+                </td>
+                <td align="center" colspan="3">
+                    <img src="{{ $lenovo }}" height="40px">
+                </td>
             </tr>
         </tbody>
     </table>

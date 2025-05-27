@@ -32,7 +32,7 @@ class ServicioController extends Controller
         return view('cas.servicios.lista', get_defined_vars());
     }
     function listar() {
-        $data     = Servicio::get();
+        $data     = Servicio::where('estado',1)->get();
         //$tipo_cambio = TipoCambio::orderBy('name', 'desc')->first();
         return DataTables::of($data)
         ->addColumn('estado_doc', function ($data) {
@@ -103,10 +103,17 @@ class ServicioController extends Controller
         $tipo = '';
         $yyyy = date('Y',  strtotime($request->fecha_documento));
         // $servicio = new Servicio();
+        // return Servicio::nuevoCorrelativo($request->id_empresa, $request->fecha_documento);
         $servicio = Servicio::firstOrNew(
             ['id' => $request->id_servicio],
         );
-            $servicio->codigo = Servicio::nuevoCodigo($request->id_empresa, $request->fecha_documento);
+            if($request->id_servicio ==0){
+                $servicio->codigo = Servicio::nuevoCodigo($request->id_empresa, $request->fecha_documento);
+                $servicio->correlativo = Servicio::nuevoCorrelativo($request->id_empresa, $request->fecha_documento);
+                $servicio->fecha_registro = new Carbon();
+            }
+
+
             $servicio->fecha_reporte = $request->fecha_reporte;
             $servicio->id_requerimiento = $request->id_requerimiento;
             $servicio->id_responsable = $request->id_responsable;
@@ -140,7 +147,7 @@ class ServicioController extends Controller
             $servicio->direccion_contacto = $request->direccion_contacto;
             $servicio->anio = $yyyy;
             $servicio->estado = 1;
-            $servicio->fecha_registro = new Carbon();
+
 
             $servicio->serie = $request->serie;
             $servicio->producto = $request->producto;
@@ -171,6 +178,7 @@ class ServicioController extends Controller
             $servicio->bios_actualizada = $request->bios_actualizada;
             $servicio->bios_actual = $request->bios_actual;
             $servicio->part_number = $request->part_number;
+            $servicio->nro_orden_trabajo = $request->nro_orden_trabajo;
         $servicio->save();
 
         return response()->json([
@@ -222,8 +230,12 @@ class ServicioController extends Controller
         // ]);
         $logo = Empresa::where('id_empresa',$servicio->id_empresa)->first();
         $logo_empresa = ".$logo->logo_empresa";
+        $caritas = "images/caras.png";
+        $lenovo = "images/lenobo.png";
+        // return $caritas;
         $vista = View::make('cas/fichasReporte/servicio', get_defined_vars())->render();
         // return $logo;
+
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML($vista);
 

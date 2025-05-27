@@ -86,8 +86,9 @@ class ServicioView {
                 {data: 'estado_doc', className: 'text-center'},
                 {data: 'empresa', className: 'text-center'},
                 {data: 'cliente', className: 'text-center'},
-                {data: 'nro_orden', className: 'text-center'},
-                {data: 'factura', className: 'text-center'},
+                {data: 'numero_caso', className: 'text-center'},
+                {data: 'nro_orden_trabajo', className: 'text-center'},
+
                 {data: 'nombre_contacto', className: 'text-center'},
                 {data: 'fecha_reporte', className: 'text-center'},
                 {data: 'serie', className: 'text-center'},

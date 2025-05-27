@@ -33,10 +33,11 @@
                                 <th>Estado</th>
                                 <th>Empresa</th>
                                 <th>Cliente</th>
-                                <th>Nro Orden</th>
-                                <th>Factura</th>
+                                <th>Nro. de caso</th>
+                                <th>Nro orden trabajo (WO)</th>
+
                                 <th>Nombre contacto</th>
-                                <th>Fecha reporte</th>
+                                <th>Fecha de labor en sitio</th>
                                 <th>Serie</th>
                                 <th>Fecha registro</th>
                                 <th>Responsable</th>

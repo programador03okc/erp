@@ -32,4 +32,18 @@ class Servicio extends Model
 
         return 'SRV-' . $empresa->codigo . '-' . $yy . $correlativo;
     }
+    public static function nuevoCorrelativo($id_empresa, $fecha)
+    {
+        $yy = date('y');
+        $yyyy = date('Y');
+
+        $empresa = Empresa::find($id_empresa);
+
+        $ultimoId = Servicio::orderBy('id', 'desc')
+        ->value('id');
+
+        $correlativo = StringHelper::leftZero(4, ($ultimoId + 1));
+
+        return $yy . $correlativo;
+    }
 }

@@ -80,6 +80,11 @@ class ServicioView {
                 // data: buscar,
                 data: {_token : token},
             },
+            rowCallback: function (row, data) {
+                let $class = '';
+                $($(row).find("td")[9]).css("background","#9dffa1");
+            },
+
             columns: [
                 // {data: 'id', className: 'text-center'},
                 {data: 'codigo', className: 'text-center'},

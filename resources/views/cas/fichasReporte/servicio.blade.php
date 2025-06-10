@@ -39,7 +39,7 @@
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Nro orden trabajo (WO):</td>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">{{$servicio->nro_orden_trabajo}}</td>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;">Fecha de Servicio:</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;">{{$servicio->fecha_reporte}}</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;">{{ date("d/m/Y", strtotime($servicio->fecha_reporte)) }}</td>
             </tr>
             <tr>
                 <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;">Cliente/Usuario:</td>
@@ -61,7 +61,7 @@
             </tr>
             <tr>
                 <td style="border-bottom: 1px solid #000; border-left: 1px solid #000;">Falla Reportada:</td>
-                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;" colspan="5">{{$servicio->falla_reportada}}</td>
+                <td style="border-bottom: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;" colspan="5">{{ $servicio->falla_reportada }}</td>
             </tr>
             {{-- ------- checks --}}
             <tr>

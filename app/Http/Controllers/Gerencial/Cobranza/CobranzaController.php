@@ -301,6 +301,8 @@ class CobranzaController extends Controller
                 $cobranza->id_oc = $request->id_oc;
                 $cobranza->area_usario = $request->area_usario;
                 $cobranza->penalidad = $request->penalidad;
+                $cobranza->fecha_pago_efectivo_real = $request->fecha_pago_efectivo_real;
+                $cobranza->fecha_pago_efectivo_real_change = ($request->fecha_pago_efectivo_real_change==1?true:false);
                 // $cobranza->id_entidad_comercial = $cliente->id_cliente;
             $cobranza->save();
 

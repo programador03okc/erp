@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
                             <div class="form-horizontal">
                                 <div class="form-group" >
                                     <label class="col-sm-3 control-label">Nro Orden</label>
@@ -100,7 +100,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-4">
                             <div class="form-horizontal">
                                 <div class="form-group">

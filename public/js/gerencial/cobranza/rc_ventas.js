@@ -218,6 +218,7 @@ $(function () {
             dataType: 'JSON',
             success: function(response) {
                 console.log(response);
+                $('[name="fecha_pago_efectivo_real"]').removeAttr('disabled');
                 let datos = response.data;
                 let clientes = response.cliente;
                 let pagos = response.programacion_pago;
@@ -272,9 +273,16 @@ $(function () {
                 $('[name="area_usario"]').val(datos.area_usario);
                 $('[name="penalidad"]').val(datos.penalidad);
 
+                $('[name="fecha_pago_efectivo_real"]').val(datos.fecha_pago_efectivo_real);
+                $('[name="fecha_pago_efectivo_real_hiden"]').val(datos.fecha_pago_efectivo_real);
                 $("#modal-cobranza").find(".modal-title").text("Editar el registro de Cobranza");
                 $('#modal-cobranza').modal('show');
                 diasAtraso();
+                diasTranscurrido();
+                if (datos.fecha_pago_efectivo_real_change == true) {
+                    console.log('true');
+                    $('[name="fecha_pago_efectivo_real"]').attr('disabled','true')
+                }
             }
         }).fail( function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR);
@@ -535,6 +543,12 @@ function listar() {
             $('#modal-cobranza').modal('show');
             $('select option').removeAttr('selected');
             $('select option[value=""]').attr('selected','true');
+            let hoy = new Date();
+            $('[name="fecha_pago_efectivo_real"]').removeAttr('disabled');
+            $('[name="fecha_pago_efectivo_real"]').val(hoy.toISOString().split('T')[0]);
+            $('[name="fecha_pago_efectivo_real_hiden"]').val(hoy.toISOString().split('T')[0]);
+
+
         },
         className: 'btn btn-primary btn-sm',
         init: function(api, node, config) {
@@ -1275,4 +1289,37 @@ function listaContactoModal(){
             $(e.currentTarget).LoadingOverlay("hide", true);
         }
     });
+}
+$('.dias-transcurridos').change((e) => {
+    diasTranscurrido();
+    let name = $(e.currentTarget).attr('name');
+    let fecha_hiden = $('[name="fecha_pago_efectivo_real_hiden"]').val();
+    console.log(name);
+    if('fecha_pago_efectivo_real'==name){
+        let fecha_moficada = $('[name="fecha_pago_efectivo_real"]').val();
+        if(fecha_moficada != fecha_hiden){
+            $('[name="fecha_pago_efectivo_real_change"]').val(1);
+            console.log('es diferente');
+
+        }else{
+            $('[name="fecha_pago_efectivo_real_change"]').val(0);
+            console.log('son iguales');
+        }
+
+    }else{}
+
+});
+function diasTranscurrido(){
+    let fecha_efectivo_real = new Date($('[name="fecha_pago_efectivo_real"]').val()).getTime();
+    let fecha_real_entrega = new Date($('[name="fecha_entrega"]').val()).getTime();
+
+    let diff = fecha_efectivo_real - fecha_real_entrega ;
+    let diasTranscurridos = diff/(1000*60*60*24);
+
+    // (12 - 05 -2025) -  (30 -04-2025) REVISAR ESTA FECHA DEBERIA BOTAR -12 NO 12 POSITIVO
+    if(Number.isNaN(diasTranscurridos)){
+        diasTranscurridos = 0;
+    }
+    $('[name="dias_transcurridos"]').val(diasTranscurridos);
+
 }

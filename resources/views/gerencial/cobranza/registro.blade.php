@@ -292,7 +292,8 @@
 					<div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <h6>Fecha Pago (próx)</h6>
+                                {{-- <h6>Fecha Pago (próx)</h6> --}}
+                                <h6>Fecha pago Proyección</h6>
                                 <input type="date" class="form-control input-sm text-center " data-form="editar-formulario" name="fecha_ppago" id="fecha_ppago" value="{{date('Y-m-d')}}">
                             </div>
                         </div>
@@ -354,7 +355,7 @@
                             <div class="form-group">
                                 {{-- <h6>Fecha termino :</h6> --}}
                                 <h6>Fecha real de entrega :</h6>
-                                <input id="fecha_entrega_nuevo " class="form-control input-sm text-center dias-atraso" type="date" name="fecha_entrega">
+                                <input id="fecha_entrega_nuevo " class="form-control input-sm text-center dias-atraso dias-transcurridos" type="date" name="fecha_entrega">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -367,6 +368,20 @@
                             <div class="form-group">
                                 <h6>Penalidad :</h6>
                                 <input class="form-control input-sm text-center " type="number" name="penalidad">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Fecha pago Efectivo/Real :</h6>
+                                <input type="hidden" name="fecha_pago_efectivo_real_change" value="0">
+                                <input type="hidden" name="fecha_pago_efectivo_real_hiden" value="">
+                                <input class="form-control input-sm text-center dias-transcurridos" type="date" name="fecha_pago_efectivo_real" value="" >
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Días de transcurridos :</h6>
+                                <input class="form-control input-sm text-center " type="number" name="dias_transcurridos" value="0">
                             </div>
                         </div>
                     </div>

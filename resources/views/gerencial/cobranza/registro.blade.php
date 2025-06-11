@@ -68,10 +68,10 @@
 								<th>Nombre del Cliente</th>
 								<th width="70">Fact.</th>
 								<th width="11">UU. EE</th>
-								<th width="11">FTE. FTO</th>
+								{{-- <th width="11">FTE. FTO</th> --}}
 								<th width="15">OC Fisica</th>
 								<th width="11">SIAF</th>
-								<th width="60">Fec. Emis</th>
+								{{-- <th width="60">Fec. Emis</th> --}}
 								<th width="60">Fec. Recep</th>
 								<th width="12">Periodo</th>
 								<th width="12">Atraso</th>
@@ -81,7 +81,8 @@
 								<th id="tdResp">A. Respo.</th>
 								<th width="10">Fase</th>
 								<th class="hidden">Tipo</th>
-                                <th width="60">Fec. inicio / entrega <em>(estimada)</em> </th>
+                                {{-- <th width="60">Fec. inicio / entrega <em>(estimada)</em> </th> --}}
+                                <th width="60">Fec. entrega </th>
                                 <th width="60">Fec. entrega <em>(real)</em> </th>
 								<th id="tdAct">-</th>
                             </tr>
@@ -224,7 +225,7 @@
                                 <input type="text" class="form-control input-sm text-center" name="ue" id="ue" placeholder="UU.EE">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <div class="form-group">
                                 <h6>FTE FTO.</h6>
                                 <div class="input-group input-group-sm">
@@ -236,7 +237,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-3">
                             <div class="form-group">
                                 <h6>Importe</h6>
@@ -251,23 +252,23 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <div class="form-group">
                                 <h6>Categoría</h6>
                                 <input type="text" class="form-control input-sm text-center" name="categ" id="categ" placeholder="Categoría">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-2">
                             <div class="form-group">
-                                <h6>Fecha Emisión</h6>
-                                <input type="date" class="form-control input-sm text-center" name="fecha_emi" id="fecha_emi"
+                                <h6>Fecha Final de entrega</h6>
+                                <input type="date" class="form-control input-sm text-center dias-atraso" name="fecha_final" id="fecha_final"
                                 required>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <h6>Fecha Recepción</h6>
-                                <input type="date" class="form-control input-sm text-center dias-atraso" name="fecha_rec" id="fecha_rec" required>
+                                <input type="date" class="form-control input-sm text-center " name="fecha_rec" id="fecha_rec" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -291,13 +292,14 @@
 					<div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <h6>Fecha Pago (próx)</h6>
-                                <input type="date" class="form-control input-sm text-center dias-atraso" data-form="editar-formulario" name="fecha_ppago" id="fecha_ppago" value="{{date('Y-m-d')}}">
+                                {{-- <h6>Fecha Pago (próx)</h6> --}}
+                                <h6>Fecha pago Proyección</h6>
+                                <input type="date" class="form-control input-sm text-center " data-form="editar-formulario" name="fecha_ppago" id="fecha_ppago" value="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <h6>Días Atraso</h6>
+                                <h6>Días Atraso entrega</h6>
                                 <input type="hidden" name="dias_atraso" value="0">
                                 <input type="text" class="form-control input-sm text-center" name="atraso" id="atraso" value="0" data-form="guardar-formulario" disabled>
                             </div>
@@ -343,20 +345,43 @@
                         </div>
 					</div>
                     <div class="row">
+                        {{-- <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Fecha inicio :</h6>
+                                <input id="fecha_inicio_nuevo" class="form-control input-sm text-center" type="date" name="fecha_inicio">
+                            </div>
+                        </div> --}}
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {{-- <h6>Fecha termino :</h6> --}}
+                                <h6>Fecha real de entrega :</h6>
+                                <input id="fecha_entrega_nuevo " class="form-control input-sm text-center dias-atraso dias-transcurridos" type="date" name="fecha_entrega">
+                            </div>
+                        </div>
                         <div class="col-md-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <h6>Fecha inicio :</h6>
-                                        <input id="fecha_inicio_nuevo" class="form-control input-sm text-center" type="date" name="fecha_inicio">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <h6>Fecha termino :</h6>
-                                        <input id="fecha_entrega_nuevo" class="form-control input-sm text-center" type="date" name="fecha_entrega">
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <h6>Area de usuaria :</h6>
+                                <input class="form-control input-sm text-center " type="text" name="area_usario" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Penalidad :</h6>
+                                <input class="form-control input-sm text-center " type="number" name="penalidad">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Fecha pago Efectivo/Real :</h6>
+                                <input type="hidden" name="fecha_pago_efectivo_real_change" value="0">
+                                <input type="hidden" name="fecha_pago_efectivo_real_hiden" value="">
+                                <input class="form-control input-sm text-center dias-transcurridos" type="date" name="fecha_pago_efectivo_real" value="" >
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <h6>Días de transcurridos :</h6>
+                                <input class="form-control input-sm text-center " type="number" name="dias_transcurridos" value="0">
                             </div>
                         </div>
                     </div>
@@ -589,7 +614,7 @@
                                         <label>Descripcion</label>
                                         <textarea class="form-control input-sm" name="descripcion_observacion" id="descripcion_observacion"  style="height: 6rem; overflow:scroll;"></textarea>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
@@ -608,7 +633,7 @@
                                         <label>Nombre contacto</label>
                                         <input type="text" class="form-control input-sm actualizarValidacionIngresoTexto" name="nombre_contacto" id="nombre_contacto" />
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Área</label>
@@ -619,7 +644,7 @@
                                                 @endforeach
                                             </select>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

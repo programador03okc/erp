@@ -27,7 +27,7 @@ $(function () {
     $('#modal-observaciones').on("change", "select.actualizarValidacionIngresoTexto", (e) => {
         actualizarValidacionIngresoTexto(e);
     });
-    
+
     $('#modal-lista-contactos').on("click", "button.seleccionar-contacto", (e) => {
         document.querySelector("div[id='modal-observaciones'] input[id='nombre_contacto']").value=e.currentTarget.dataset.nombreContacto??'';
         document.querySelector("div[id='modal-observaciones'] input[id='telefono_contacto']").value=e.currentTarget.dataset.telefonoContacto??'';
@@ -35,8 +35,8 @@ $(function () {
         $('#modal-lista-contactos').modal('hide');
 
     });
-    
- 
+
+
     listar();
 
     $('#formulario').on('submit', function (e) {
@@ -122,7 +122,7 @@ $(function () {
             Array.prototype.forEach.call(document.querySelector("input[id='adjunto']").files, (file) => {
                 formData.append(`archivo_adjunto[]`, file);
             });
-    
+
             Swal.fire({
                 title: 'Guardar observación',
                 text: "¿Esta seguro de guardar este registro?",
@@ -218,6 +218,7 @@ $(function () {
             dataType: 'JSON',
             success: function(response) {
                 console.log(response);
+                $('[name="fecha_pago_efectivo_real"]').removeAttr('disabled');
                 let datos = response.data;
                 let clientes = response.cliente;
                 let pagos = response.programacion_pago;
@@ -243,11 +244,11 @@ $(function () {
                 $('[name="fact"]').val(datos.factura);
                 $('[name="siaf"]').val(datos.siaf);
                 $('[name="ue"]').val(datos.uu_ee);
-                $('[name="ff"]').val(datos.fuente_financ);
+                // $('[name="ff"]').val(datos.fuente_financ);
                 $('[name="moneda"] option').removeAttr('selected');
                 $('[name="moneda"] option[value="'+ datos.moneda +'"]').attr('selected','true');
                 $('[name="importe"]').val(datos.importe);
-                $('[name="categ"]').val(datos.categoria);
+                // $('[name="categ"]').val(datos.categoria);
                 $('[name="fecha_emi"]').val(datos.fecha_emision);
                 $('[name="fecha_rec"]').val(datos.fecha_recepcion);
                 $('[name="estado_doc"] option').removeAttr('selected');
@@ -256,20 +257,32 @@ $(function () {
                 if (pagos) {
                     $('[name="fecha_ppago"]').val(pagos.fecha);
                 }
-                diasAtraso();
+
 
                 $('[name="plazo_credito"]').val(datos.plazo_credito);
                 $('[name="area"] option').removeAttr('selected');
                 $('[name="area"] option[value="'+ datos.id_area +'"]').attr('selected','true');
-                $('[name="fecha_inicio"]').val(datos.inicio_entrega);
+                // $('[name="fecha_inicio"]').val(datos.inicio_entrega);
                 $('[name="fecha_entrega"]').val(datos.fecha_entrega);
                 $('[name="vendedor"]').val(datos.vendedor).trigger('change');
 
                 $('[name="id_doc_ven"]').val(datos.id_doc_ven);
                 $('[name="id"]').val(datos.id_registro_cobranza);
+                $('[name="fecha_final"]').val(datos.fecha_final);
 
+                $('[name="area_usario"]').val(datos.area_usario);
+                $('[name="penalidad"]').val(datos.penalidad);
+
+                $('[name="fecha_pago_efectivo_real"]').val(datos.fecha_pago_efectivo_real);
+                $('[name="fecha_pago_efectivo_real_hiden"]').val(datos.fecha_pago_efectivo_real);
                 $("#modal-cobranza").find(".modal-title").text("Editar el registro de Cobranza");
                 $('#modal-cobranza').modal('show');
+                diasAtraso();
+                diasTranscurrido();
+                if (datos.fecha_pago_efectivo_real_change == true) {
+                    console.log('true');
+                    $('[name="fecha_pago_efectivo_real"]').attr('disabled','true')
+                }
             }
         }).fail( function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR);
@@ -368,6 +381,8 @@ $(function () {
     $('#btnAgregarMgc').on('click', function (e) {
 
         if (idRequerimiento > 0) {
+            console.log(idRequerimiento);
+
             cargarValores(idRequerimiento);
             idRequerimiento = 0;
             $('#lista-procesadas').modal('hide');
@@ -526,6 +541,14 @@ function listar() {
             // $('[name="vendedor"]').val(null).trigger('change');
             $("#modal-cobranza").find(".modal-title").text("Nuevo el registro de Cobranza");
             $('#modal-cobranza').modal('show');
+            $('select option').removeAttr('selected');
+            $('select option[value=""]').attr('selected','true');
+            let hoy = new Date();
+            $('[name="fecha_pago_efectivo_real"]').removeAttr('disabled');
+            $('[name="fecha_pago_efectivo_real"]').val(hoy.toISOString().split('T')[0]);
+            $('[name="fecha_pago_efectivo_real_hiden"]').val(hoy.toISOString().split('T')[0]);
+
+
         },
         className: 'btn btn-primary btn-sm',
         init: function(api, node, config) {
@@ -597,10 +620,10 @@ function listar() {
             {data: 'cliente'},
             {data: 'factura', className: "text-center"},
             {data: 'uu_ee', className: "text-center"},
-            {data: 'fuente_financ', className: "text-center"},
+            // {data: 'fuente_financ', className: "text-center"},
             {data: 'oc_fisica', className: "text-center"},
             {data: 'siaf', className: "text-center"},
-            {data: 'fecha_emision', className: "text-center"},
+            // {data: 'fecha_emision', className: "text-center"},
             {data: 'fecha_recepcion', className: "text-center"},
             {data: 'periodo', className: "text-center"},
             {data: 'atraso', className: "text-center"},
@@ -611,9 +634,10 @@ function listar() {
             {data: 'fase', className: "text-center", searchable: false, orderable: false},
             {
                 render: function (data, type, row) {
-                    var fecha_inicio = row['inicio_entrega'] ? row['inicio_entrega']:'-';
+                    // var fecha_inicio = row['inicio_entrega'] ? row['sinicio_entrega']:'-';
                     var fecha_entrega = row['fecha_entrega'] ? row['fecha_entrega']:'-';
-                    return (`${fecha_inicio} <br> ${fecha_entrega}`);
+                    // return (`${fecha_inicio} <br> ${fecha_entrega}`);
+                    return (`${fecha_entrega}`);
                 },
                 className: "text-center", searchable: false, orderable: false
             },
@@ -760,14 +784,19 @@ function cargarValores(idReq) {
                     $('[name="fact"]').val(response.data.factura);
                 }
 
-                $('[name="empresa"]').removeAttr('selected');
-                $('[name="fecha_inicio"]').val(response.data.inicio_entrega);
+                $('[name="empresa"] option').removeAttr('selected');
+                $('[name="empresa"] option[value="'+response.data.id_empresa+'"]').attr('selected','true');
+                // $('[name="fecha_inicio"]').val(response.data.inicio_entrega);
                 $('[name="fecha_entrega"]').val(response.data.fecha_entrega);
                 $('[name="id_oc"]').val(response.data.id);
 
                 $('[name="orden_compra"]').val(response.data.orden_compra);
                 $('[name="siaf"]').val(response.data.siaf);
-                console.log(response.data);
+
+                $('[name="id_cliente"]').val(response.cliente.id_cliente);
+                $('[name="cliente"]').val(response.contribuyente.razon_social);
+                $('[name="penalidad"]').val(response.penalidad_monto);
+                console.log(response);
             }
         }
     }).fail( function(jqXHR, textStatus, errorThrown) {
@@ -866,7 +895,7 @@ function listarObservaciones(id) {
                     datosObservaciones.forEach(element => {
                         let fechaRegistro = moment(element.created_at).format("MM-DD-YY");
                         let usuario = (element.usuario_id != null) ? element.usuario.nombre_corto : '-';
-                         
+
                         element.adjunto.forEach(adj => {
                             linkAdjuntos += `<a href="/files/cobranzas/${adj.archivo}" target="_blank">${adj.archivo}</a>`;
                         });
@@ -881,19 +910,19 @@ function listarObservaciones(id) {
                             <td class="text-center">`+ (fechaRegistro??'') +`</td>
                             <td class="text-center">
                                 <div style="display:flex; flex-direction:row;">
-                                <button class="btn btn-xs btn-${(element.telefono_contacto!=null && element.telefono_contacto.length>0)?'info':'default'} ver-mas-observacion" 
-                                    data-id="`+ element.id +`" 
+                                <button class="btn btn-xs btn-${(element.telefono_contacto!=null && element.telefono_contacto.length>0)?'info':'default'} ver-mas-observacion"
+                                    data-id="`+ element.id +`"
                                     data-cobranza="`+ element.cobranza_id +`"
                                     data-telefono-contacto="`+ (element.telefono_contacto??'') +`"
                                     data-nombre-contacto="`+ (element.nombre_contacto??'') +`"
                                     data-area-contacto="`+ (element.area_contacto!=null?element.area_contacto.nombre:'') +`"
-                                    ><i class="fa fa-eye"></i></button> 
+                                    ><i class="fa fa-eye"></i></button>
                                 <button class="btn btn-xs btn-danger eliminar-observacion" data-id="`+ element.id +`" data-cobranza="`+ element.cobranza_id +`"><i class="fa fa-trash"></i></button>
                                 </div>
                             </td>
                         </tr>`;
                     });
-                } 
+                }
 
                 if(datosObservaciones.length==0 && (datosGuia.hasOwnProperty('fecha_entrega_real')==false && datosGuia.hasOwnProperty('adjunto')==false)) {
                     resultado = '<tr><td colspan="5">No se encontraron resultados</td></tr>';
@@ -1029,24 +1058,34 @@ function generarFiltros() {
 }
 
 function diasAtraso() {
-    let fecha_emision = new Date($('[name="fecha_rec"]').val().split('/').reverse().join('-')).getTime();
-    let fecha_vencimiento = new Date($('[name="fecha_ppago"]').val().split('/').reverse().join('-')).getTime();
-    let numero_dias = 0;
+    // let fecha_emision = new Date($('[name="fecha_rec"]').val().split('/').reverse().join('-')).getTime();
+    // let fecha_vencimiento = new Date($('[name="fecha_ppago"]').val().split('/').reverse().join('-')).getTime();
+    // let numero_dias = 0;
 
-    numero_dias = fecha_vencimiento - fecha_emision  ;
-    numero_dias = numero_dias / (1000 * 60 * 60 * 24)
-    numero_dias = numero_dias * (-1);
-    if (numero_dias <= 0) {
-        numero_dias = 0;
+    // numero_dias = fecha_vencimiento - fecha_emision  ;
+    // numero_dias = numero_dias / (1000 * 60 * 60 * 24)
+    // numero_dias = numero_dias * (-1);
+    // if (numero_dias <= 0) {
+    //     numero_dias = 0;
+    // }
+
+    // let fecha_actual = new Date().getTime();
+    // let atraso = fecha_actual - fecha_emision;
+    // atraso = atraso / (1000 * 60 * 60 * 24);
+    // let diasAtraso = (atraso > 0) ? atraso = Math.trunc(atraso) : atraso = 0;
+
+    let fecha_entrega = new Date($('[name="fecha_entrega"]').val()).getTime(); // el campo que usa es la fecha termino en el formulario
+    let fecha_final = new Date($('[name="fecha_final"]').val()).getTime(); // el campo que usa es el de fecha final de entrega
+    let diff = fecha_entrega - fecha_final ;
+    let diasAtraso = diff/(1000*60*60*24);
+
+    // (12 - 05 -2025) -  (30 -04-2025) REVISAR ESTA FECHA DEBERIA BOTAR -12 NO 12 POSITIVO
+    if(Number.isNaN(diasAtraso)){
+        diasAtraso = 0;
     }
-
-    let fecha_actual = new Date().getTime();
-    let atraso = fecha_actual - fecha_emision;
-    atraso = atraso / (1000 * 60 * 60 * 24);
-    let diasAtraso = (atraso > 0) ? atraso = Math.trunc(atraso) : atraso = 0;
-
     $('[name="atraso"]').val(diasAtraso);
     $('[name="dias_atraso"]').val(diasAtraso);
+
 }
 
 function exportarExcel() {
@@ -1140,7 +1179,7 @@ function validarFormularioListaObservaciones(){
     if (document.querySelector("select[name='estado']").value == '') {
         validoEstado = false;
     }
-    
+
 
     if (document.querySelector("input[name='telefono_contacto']").value != '') {
         if (document.querySelector("input[name='nombre_contacto']").value == '') {
@@ -1178,7 +1217,7 @@ function validarFormularioListaObservaciones(){
 
     }
     return (validoNombre*validoArea * validoEstado);
-    
+
 }
 
 
@@ -1230,7 +1269,7 @@ function listaContactoModal(){
             {data: 'area_contacto.nombre'},
             { className: "text-center selecionar",
                 render: function (data, type, row) {
-                    return `<button class="btn btn-xs btn-success seleccionar-contacto" 
+                    return `<button class="btn btn-xs btn-success seleccionar-contacto"
                     data-nombre-contacto="`+ row.nombre_contacto +`"
                     data-telefono-contacto="`+ row.telefono_contacto +`"
                     data-area-contacto-descripcion="`+ (row.area_contacto !=null?row.area_contacto.nombre:'') +`"
@@ -1250,4 +1289,37 @@ function listaContactoModal(){
             $(e.currentTarget).LoadingOverlay("hide", true);
         }
     });
+}
+$('.dias-transcurridos').change((e) => {
+    diasTranscurrido();
+    let name = $(e.currentTarget).attr('name');
+    let fecha_hiden = $('[name="fecha_pago_efectivo_real_hiden"]').val();
+    console.log(name);
+    if('fecha_pago_efectivo_real'==name){
+        let fecha_moficada = $('[name="fecha_pago_efectivo_real"]').val();
+        if(fecha_moficada != fecha_hiden){
+            $('[name="fecha_pago_efectivo_real_change"]').val(1);
+            console.log('es diferente');
+
+        }else{
+            $('[name="fecha_pago_efectivo_real_change"]').val(0);
+            console.log('son iguales');
+        }
+
+    }else{}
+
+});
+function diasTranscurrido(){
+    let fecha_efectivo_real = new Date($('[name="fecha_pago_efectivo_real"]').val()).getTime();
+    let fecha_real_entrega = new Date($('[name="fecha_entrega"]').val()).getTime();
+
+    let diff = fecha_efectivo_real - fecha_real_entrega ;
+    let diasTranscurridos = diff/(1000*60*60*24);
+
+    // (12 - 05 -2025) -  (30 -04-2025) REVISAR ESTA FECHA DEBERIA BOTAR -12 NO 12 POSITIVO
+    if(Number.isNaN(diasTranscurridos)){
+        diasTranscurridos = 0;
+    }
+    $('[name="dias_transcurridos"]').val(diasTranscurridos);
+
 }

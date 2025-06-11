@@ -38,6 +38,7 @@ use App\Http\Controllers\Cas\CasModeloController;
 use App\Http\Controllers\Cas\CasProductoController;
 use App\Http\Controllers\Cas\FichaReporteController;
 use App\Http\Controllers\Cas\IncidenciaController;
+use App\Http\Controllers\Cas\ServicioController;
 use App\Http\Controllers\ClasificacionSap\CategoriaSapController;
 use App\Http\Controllers\ClasificacionSap\SubcategoriaSapController;
 use App\Http\Controllers\Comercial\ClienteController;
@@ -1340,6 +1341,18 @@ Route::middleware(['auth'])->group(function () {
 				Route::post('actualizar', [CasProductoController::class, 'actualizar'])->name('actualizar');
 				Route::post('eliminar', [CasProductoController::class, 'eliminar'])->name('eliminar');
 			});
+		});
+        Route::group(['as' => 'servicios.', 'prefix' => 'servicios'], function () {
+			// Lista de Presupuestos
+			Route::get('crear', [ServicioController::class, 'crear'])->name('crear');
+			Route::get('editar/{id}', [ServicioController::class, 'crear'])->name('editar');
+			Route::get('lista', [ServicioController::class, 'lista'])->name('lista');
+			Route::post('listar', [ServicioController::class, 'listar'])->name('listar');
+			Route::post('guardar', [ServicioController::class, 'guardar'])->name('guardar');
+			Route::post('guardar-fecha-cierre', [ServicioController::class, 'guardarFechaCierre'])->name('guardar-fecha-cierre');
+			Route::put('cancelar/{id_servicio}', [ServicioController::class, 'cancelar'])->name('cancelar');
+
+            Route::get('pdf/{id}', [ServicioController::class, 'pdf'])->name('pdf');
 		});
 	});
 

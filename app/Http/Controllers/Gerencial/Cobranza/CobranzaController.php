@@ -35,10 +35,12 @@ use App\models\Gerencial\TipoTramite;
 use App\Models\Gerencial\Vendedor;
 use App\Models\Logistica\Proveedor;
 use App\Models\mgcp\AcuerdoMarco\AcuerdoMarco;
+use App\Models\mgcp\AcuerdoMarco\Entidad\Entidad;
 use App\Models\mgcp\AcuerdoMarco\OrdenCompraPropias;
 use App\Models\mgcp\OrdenCompra\Propia\Directa\OrdenCompraDirecta;
 use App\Models\mgcp\OrdenCompra\Propia\OrdenCompraPropiaView;
 use Carbon\Carbon;
+use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -131,7 +133,7 @@ class CobranzaController extends Controller
         if ($request->session()->has('cobranzaSemaforo')) {
 
             $optionSemaforo =session()->get('cobranzaSemaforo');
-             
+
             if($optionSemaforo ==0){
                 $data = $data->whereRaw("coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) >= 0 and coalesce(EXTRACT(DAY FROM  CURRENT_DATE::timestamp - fecha_entrega_real::timestamp),0) < 5");
 
@@ -170,7 +172,15 @@ class CobranzaController extends Controller
 
         return DataTables::of($data)
         ->addColumn('atraso', function ($data){
-            return ($this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) > 0) ? $this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) : '0';
+            // return ($this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) > 0) ? $this->restar_fechas($data->fecha_recepcion, date('Y-m-d')) : '0';
+
+            $fecha_entrega = new DateTime($data->fecha_entrega);
+            $fecha_final = new DateTime($data->fecha_final);
+
+            $diferencia = $fecha_final->diff($fecha_entrega);
+
+            return $diferencia->days;
+
         })
         ->addColumn('accion', function ($data) {
             $array_accesos = [];
@@ -222,24 +232,27 @@ class CobranzaController extends Controller
                 return '<div class="text-center"> <i class="fas fa-thermometer-full red"  data-toggle="tooltip" data-placement="right" title="Rojo"></i></div>';
 
             }
-  
+
         })
         ->editColumn('importe', function ($data) { return number_format($data->importe, 2); })
         ->editColumn('fase', function ($data) {
             return ($data->fase != null) ? '<label class="label label-primary label-badge">'.$data->fase.'</label>' : '<label class="label label-danger label-badge">-</label>';
          })
         ->rawColumns(['fase', 'accion','semaforo'])
-        
+
         ->make(true);
     }
 
     public function guardarRegistro(Request $request)
     {
         // return [$request->ip()];exit;
+
+        // return [$entidad,$cliente];exit;
         DB::beginTransaction();
         try {
             $empresa = Empresa::find($request->empresa);
             $programacion_pago = [];
+
 
             /**
              * Registro de cobranza
@@ -262,10 +275,11 @@ class CobranzaController extends Controller
                 $cobranza->id_cliente = $request->id_cliente;
                 $cobranza->factura = $request->fact;
                 $cobranza->uu_ee = $request->ue;
-                $cobranza->fuente_financ = $request->ff;
+                // $cobranza->fuente_financ = $request->ff;
                 $cobranza->ocam = $request->oc; // OCAM es igul que la oc
                 $cobranza->siaf = $request->siaf;
-                $cobranza->fecha_emision = $request->fecha_emi;
+                // $cobranza->fecha_emision = $request->fecha_emi;
+                $cobranza->fecha_final = $request->fecha_final;
                 $cobranza->fecha_recepcion = $request->fecha_rec;
                 $cobranza->moneda = $request->moneda;
                 $cobranza->importe = $request->importe;
@@ -277,14 +291,19 @@ class CobranzaController extends Controller
                 $cobranza->id_area = $request->area;
                 $cobranza->id_periodo = $request->periodo;
                 $cobranza->codigo_empresa = $empresa->codigo;
-                $cobranza->categoria = $request->categ;
+                // $cobranza->categoria = $request->categ;
                 $cobranza->cdp = $request->cdp;
                 $cobranza->plazo_credito = $request->plazo_credito;
                 $cobranza->id_doc_ven = $request->id_doc_ven;
                 $cobranza->oc_fisica = $request->orden_compra;
-                $cobranza->inicio_entrega = $request->fecha_inicio;
+                // $cobranza->inicio_entrega = $request->fecha_inicio;
                 $cobranza->fecha_entrega = $request->fecha_entrega;
                 $cobranza->id_oc = $request->id_oc;
+                $cobranza->area_usario = $request->area_usario;
+                $cobranza->penalidad = $request->penalidad;
+                $cobranza->fecha_pago_efectivo_real = $request->fecha_pago_efectivo_real;
+                $cobranza->fecha_pago_efectivo_real_change = ($request->fecha_pago_efectivo_real_change==1?true:false);
+                // $cobranza->id_entidad_comercial = $cliente->id_cliente;
             $cobranza->save();
 
             if((int) $request->id > 0){
@@ -457,9 +476,9 @@ class CobranzaController extends Controller
 
     public function buscarContacto(Request $request)
     {
-        
+
         $data = Observaciones::select('nombre_contacto','telefono_contacto','area_contacto_id')->with('areaContacto')->where([['cobranza_id', $request->cobranza_id],['estado','!=',7]])->distinct();
- 
+
 
         return DataTables::of($data)->make(true);
     }
@@ -504,11 +523,48 @@ class CobranzaController extends Controller
         //     return response()->json(["status"=>400, "success"=>false, "data"=>$cliente_gerencial, "factura"=>$doc_ven, "oc"=> $oc_propias_view ? $oc_propias_view : []]);
         // }
         $oc_propias_view = OrdenCompraPropiaView::find($id_requerimiento);
+
+
         if ($oc_propias_view) {
-            return response()->json(["status"=>200,"data"=>$oc_propias_view],200);
+            $penalidad = Penalidad::where('id_oc', $oc_propias_view->id)->where('estado', 1)->orderBy('id_penalidad', 'desc')->get();
+            $penalidad_monto = $penalidad[0]->monto ?? 0;
+
+            // creacion del cliente en el agil
+            $entidad = Entidad::find($oc_propias_view->id_entidad);
+            $contribuyente = Contribuyente::where('nro_documento',$entidad->ruc)->first();
+            if(!$contribuyente){
+
+                $contribuyente = new Contribuyente();
+                $contribuyente->nro_documento = $entidad->ruc;
+                $contribuyente->razon_social = $entidad->nombre;
+                $contribuyente->direccion_fiscal = $entidad->direccion;
+                $contribuyente->estado = 1;
+                $contribuyente->fecha_registro = date('Y-m-d');
+                $contribuyente->transportista = false;
+                $contribuyente->ubigeo = 0;
+                $contribuyente->save();
+
+
+                // return $entidad;
+            }
+            $cliente = Cliente::where('id_contribuyente',$contribuyente->id_contribuyente)->first();
+            if(!$cliente){
+                $cliente = new Cliente();
+                $cliente->id_contribuyente = $contribuyente->id_contribuyente;
+                $cliente->estado = 1;
+                $cliente->id_entidad = $entidad->id;
+                $cliente->fecha_registro = date('Y-m-d H:i:s');
+                $cliente->save();
+            }
+
+            $cliente->id_entidad = $entidad->id;
+            $cliente->save();
+
+            return response()->json(["status"=>200,"data"=>$oc_propias_view, "penalidad_monto"=>$penalidad_monto, "penalidad"=>$penalidad, "cliente"=>$cliente, "contribuyente"=>$contribuyente],200);
         }else{
             return response()->json(["status"=>401],401);
         }
+
     }
 
     public function obtenerFase($id)
@@ -554,7 +610,7 @@ class CobranzaController extends Controller
         ->leftJoin('almacen.orden_despacho','orden_despacho.id_requerimiento','=','alm_req.id_requerimiento')
         ->leftJoin('almacen.orden_despacho_obs','orden_despacho_obs.id_od','=','orden_despacho.id_od')
         ->where([['alm_req.estado','!=',7],['orden_despacho.estado','!=',7],['oc_propias.id',$cobranza->id_oc],['orden_despacho.aplica_cambios',false],['orden_despacho_obs.accion',8]])->orderBy('orden_despacho_obs.fecha_registro','desc')->limit(1)->get();
-        
+
         if(count($guiaDespacho)>0){
             $guia=[
                 'fecha_entrega_real'=>$guiaDespacho[0]['fecha_estado'],
@@ -564,12 +620,12 @@ class CobranzaController extends Controller
             ];
 
         }
- 
+
 
         $observaciones = Observaciones::with(['estadoDocumento','usuario','areaContacto','adjunto' => function ($q) {
             $q->where('cobranza_adjunto_observacion.estado','!=', 7);
         }
-        
+
         ])->where([['cobranza_id', $id],['estado','!=',7]])->orderBy('created_at', 'desc')->get();
         return response()->json(["success" => true, "status" => 200, "observaciones"=> $observaciones,"guia"=>$guia]);
     }
@@ -596,7 +652,7 @@ class CobranzaController extends Controller
             $observacion->updated_at = date('Y-m-d H:i:s');
             $observacion->save();
 
-     
+
 
             if($observacion->id >0 && (isset($request->archivo_adjunto) || $request->archivo_adjunto !=null)){
                 // $cantidadDeAdjunto =  count($request->adjunto);
@@ -608,7 +664,7 @@ class CobranzaController extends Controller
                     $extension = pathinfo($file, PATHINFO_EXTENSION);
                     $newNameFile = $observacion->cobranza_id . $key  . $sufijo . '.' . $extension;
                     Storage::disk('archivos')->put("cobranzas/" . $newNameFile, File::get($archivo));
-    
+
                     $idAdjunto = DB::table('cobranza.cobranza_adjunto_observacion')->insertGetId(
                         [
                             'observacion_id'            => $observacion->id,
@@ -620,7 +676,7 @@ class CobranzaController extends Controller
                         ],
                         'id'
                     );
-    
+
                     $idAdjuntoList[] = $idAdjunto;
                 }
             }

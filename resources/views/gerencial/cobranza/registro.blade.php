@@ -525,6 +525,7 @@
                                             <option value="COMPROMISO">COMPROMISO</option>
                                             <option value="DEVENGADO">DEVENGADO</option>
                                             <option value="PAGADO">PAGADO</option>
+                                            <option value="SIN DESPACHO">SIN DESPACHO</option>
                                         </select>
                                     </div>
                                 </div>

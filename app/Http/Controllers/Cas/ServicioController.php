@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cas;
 
+use App\Exports\ServicioExport;
 use App\Http\Controllers\Controller;
 use App\Models\Cas\Servicio;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\App;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ServicioController extends Controller
 {
@@ -32,7 +34,7 @@ class ServicioController extends Controller
         return view('cas.servicios.lista', get_defined_vars());
     }
     function listar() {
-        $data     = Servicio::where('estado',1)->get();
+        $data     = Servicio::where('estado','!=',7)->get();
         //$tipo_cambio = TipoCambio::orderBy('name', 'desc')->first();
         return DataTables::of($data)
         ->addColumn('estado_doc', function ($data) {
@@ -94,7 +96,12 @@ class ServicioController extends Controller
             ->join('configuracion.ubi_dpto', 'ubi_dpto.id_dpto', '=', 'ubi_prov.id_dpto')
             ->where('ubi_dis.id_dis', $servicio->id_ubigeo_contacto)
             ->first();
-            $ubigeo = $ubigeo_first->descripcion.' - '.$ubigeo_first->provincia.' - '.$ubigeo_first->departamento;
+            // return $ubigeo_first;
+
+            if($ubigeo_first){
+                $ubigeo = $ubigeo_first->descripcion.' - '.$ubigeo_first->provincia.' - '.$ubigeo_first->departamento;
+            }
+
         }
         return view('cas.servicios.formulario', get_defined_vars());
     }
@@ -179,6 +186,9 @@ class ServicioController extends Controller
             $servicio->bios_actual = $request->bios_actual;
             $servicio->part_number = $request->part_number;
             $servicio->nro_orden_trabajo = $request->nro_orden_trabajo;
+
+            $servicio->estado_wo = $request->estado_wo;
+            $servicio->incidencia = $request->incidencia;
         $servicio->save();
 
         return response()->json([
@@ -241,6 +251,46 @@ class ServicioController extends Controller
 
         return $pdf->stream();
         return $pdf->download('prueba1.pdf');
+    }
+
+    public function exportarServicio()
+    {
+        $servicios = Servicio::where('estado','!=',7)->get();
+        foreach ($servicios as $key => $value) {
+            $region = '';
+            $ubigeo_first = DB::table('configuracion.ubi_dis')
+            ->select('ubi_dis.*', 'ubi_prov.descripcion as provincia', 'ubi_dpto.descripcion as departamento')
+            ->join('configuracion.ubi_prov', 'ubi_prov.id_prov', '=', 'ubi_dis.id_prov')
+            ->join('configuracion.ubi_dpto', 'ubi_dpto.id_dpto', '=', 'ubi_prov.id_dpto')
+            ->where('ubi_dis.id_dis', $value->id_ubigeo_contacto)
+            ->first();
+            // return $ubigeo_first;
+
+            if($ubigeo_first){
+                $region = $ubigeo_first->descripcion;
+            }
+            $value->region = $region;
+
+            // responsable
+            $responsable = Usuario::find($value->id_responsable);
+            if($responsable){
+                $value->responsable = $responsable->nombre_corto;
+            }
+
+            //empresa
+            $empresa = Empresa::where('id_empresa',$value->id_empresa)->first();
+            $value->empresa_razon_social = $empresa->contribuyente->razon_social;
+
+        }
+        return Excel::download(new ServicioExport($servicios), 'servicios.xlsx');
+        // return response()->json([
+        //     'status' => true,
+        //     'data' => $servicios,
+        //     "title"=> "Éxito",
+        //     "text"=> "Servicios exportados correctamente",
+        //     "icon"=> "success",
+        // ]);
+
     }
 
 }

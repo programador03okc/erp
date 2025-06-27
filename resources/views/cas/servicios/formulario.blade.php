@@ -91,21 +91,11 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="col-md-4">
-                            <div class="form-horizontal">
-                                <div class="form-group" >
-                                    <label class="col-sm-3 control-label">Nro Orden</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control  limpiarIncidencia" name="nro_orden" value="{{($servicio?$servicio->nro_orden:'')}}"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
                         <div class="col-md-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Responsable</label>
-                                    <div class="col-sm-8">
+                                    <label class="col-sm-3 control-label">Responsable</label>
+                                    <div class="col-sm-9">
                                         <select class="form-control js-example-basic-single  limpiarIncidencia"
                                             name="id_responsable" required>
                                             <option value="">Elija una opción</option>
@@ -116,6 +106,20 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Incidencia</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="incidencia" id="incidencia" required>
+                                            <option value="">Seleccionar...</option>
+                                            <option value="1°. ATENCION" {{ ($servicio ? ($servicio->incidencia == '1°. ATENCION'?'selected':'') :'') }}>1°. ATENCION</option>
+                                        </select>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -154,6 +158,7 @@
                         </div>
                     </div>
                     <div class="row">
+
                         <div class="col-md-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
@@ -161,6 +166,22 @@
                                     <div class="col-sm-8">
                                         <div class="form-control-static limpiarTexto fecha_registro">{{($servicio?$servicio->fecha_registro:'')}}</div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Estado WO</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="estado_wo" id="estado_wo" required>
+                                            <option value="">Seleccionar...</option>
+                                            <option value="REPARADO" {{ ($servicio ? ($servicio->estado_wo == 'REPARADO'?'selected':'') :'') }}>REPARADO (ATENCION Y CAMBIO DE PIEZA EXITOSA)</option>
+                                            <option value="PIEZAS EN TRANSITO" {{ ($servicio ? ($servicio->estado_wo == 'PIEZAS EN TRANSITO'?'selected':'') :'') }}>PIEZAS EN TRANSITO (COMPONENTES EN CAMINO A NUESTRO ALMACEN)</option>
+                                            <option value="TECNICO ASIGNADO" {{ ($servicio ? ($servicio->estado_wo == 'TECNICO ASIGNADO'?'selected':'') :'') }}>TECNICO ASIGNADO (PROGRAMACION DE TECNICO PARA VALIDACION LOGICA - DRIVERS)</option>
+                                        </select>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -224,8 +245,8 @@
                                 <div class="form-group" >
                                     <label class="col-sm-2 control-label">Ubigeo</label>
                                     <div class="col-sm-10" style="display:flex;">
-                                        <input class="oculto" name="id_ubigeo_contacto" value="{{($servicio?$servicio->id_ubigeo_contacto:'')}}"/>
-                                        <input type="text" class="form-control" name="ubigeo_contacto" value="{{$ubigeo}}" readOnly>
+                                        <input class="oculto" name="id_ubigeo_contacto" value="{{($servicio?$servicio->id_ubigeo_contacto:'')}}"  />
+                                        <input type="text" class="form-control" name="ubigeo_contacto" value="{{$ubigeo}}" required disabled>
                                         <button type="button" class="input-group-text btn-primary " id="basic-addon1"
                                             onClick="abrirUbigeoModal('incidencia');">
                                             <i class="fa fa-search"></i>

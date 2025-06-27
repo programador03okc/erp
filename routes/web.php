@@ -1353,6 +1353,7 @@ Route::middleware(['auth'])->group(function () {
 			Route::put('cancelar/{id_servicio}', [ServicioController::class, 'cancelar'])->name('cancelar');
 
             Route::get('pdf/{id}', [ServicioController::class, 'pdf'])->name('pdf');
+            Route::get('exportar-servicio', [ServicioController::class, 'exportarServicio'])->name('exportar-servicio');
 		});
 	});
 

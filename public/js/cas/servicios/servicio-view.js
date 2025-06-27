@@ -31,6 +31,24 @@ class ServicioView {
                         $(node).removeClass('btn-primary')
                     },
                     className: 'btn-light btn-sm btn-info'
+                },
+                {
+                    text: '<i class="fa fa-plus"></i> Exportar servicio',
+                    attr: {
+                        id: 'btn-exportable',
+                    },
+                    action: () => {
+                        // vistaCrear();
+                        // location.href = route('cas.servicios.exportar-servicio');
+
+                        window.open(route('cas.servicios.exportar-servicio'));
+
+                    },
+                    init: function(api, node, config) {
+
+                        $(node).removeClass('btn-primary')
+                    },
+                    className: 'btn-light btn-sm btn-default'
                 }
             ],
             // pagingType: 'full_numbers',
